@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Created-By: 1.5.0_07 (Sun Microsystems Inc.)
+Plugin-Class: Simple
+Plugin-Description: Simpler
+

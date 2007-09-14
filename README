@@ -1,0 +1,72 @@
+This is a readme.txt to the Java OpenStreetMap Editor
+
+
+Install Notes
+-------------
+
+To run JOSM, you need:
+
+* The jar file (e.g. josm.jar)
+* The latest Java Runtime Environment 1.5. 
+
+
+How to get Java
+---------------
+
+You need at least Version 1.5 (called Java5 or "Tiger"). 
+
+Microsoft Windows people should just visit java.sun.com and
+download the latest Java5 executable. 
+
+To get Java under linux, I recommend downloading the environment 
+directly from Sun at http://java.sun.com. There is a linux 
+binary installer which you have to execute from a console.
+
+However, if you run Debian or Ubuntu or any other dpkg-based
+distribution, you may use unofficial precompiled packages.
+You have to add the following line to your /etc/apt/sources.list
+(replace "stable" with your installation)
+
+deb http://ftp.debian-unofficial.org/debian/ stable non-free
+
+The package is called sun-j2se5.0-jre-binary.
+
+For MacOS user: There is an installer for Mac OS X 10.4:
+http://www.apple.com/support/downloads/java2se50release1.html
+
+Sorry, there is no Version of Java5 for Mac OS X 10.3 available :-(
+
+
+How to launch
+-------------
+
+Microsoft Windows people launch by double clicking on the jar file.
+If this does not help, open a command shell and type 
+"java -jar josm-latest.jar" in the directory that holds the file.
+(Please replace josm-latest.jar with the name of your jar file, if
+you don't used the latest version.)
+
+Under Linux open a shell, go to the file directory and type
+"java -jar josm-latest.jar" to launch. If this don't help, try to set
+you JAVA_HOME variable to the java location (the root location, not
+the bin. "/usr/lib/sun-j2se5.0-jdk" if you used the prebuild 
+package).
+
+MacOS people just click on the jar-file.
+
+
+How to get the Source
+---------------------
+
+Download it directly from the subversion at 
+http://www.eigenheimstrasse.de/svn/josm. To use the command line
+subverion client, type
+
+svn co http://www.eigenheimstrasse.de/svn/josm
+
+
+And gimme feedback: josm@eigenheimstrasse.de (start your mail subject 
+with "JOSM", so my spam filter will not eat you)
+
+
+Ciao, Imi.

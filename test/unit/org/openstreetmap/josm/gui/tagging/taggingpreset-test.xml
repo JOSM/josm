@@ -1,0 +1,14 @@
+<annotations>
+  <item name="Highway">
+    <label text="Inserting a highway in UK" />
+
+    <text key="name" text="Highway (e.g. M3)" />
+    <combo key="highway" text="Type" values="major,minor" delete_if_empty="true" />
+
+    <!-- Highways are usually oneway -->
+    <check key="oneway" text="Oneway" default="on" />
+
+    <!-- Always setting class=highway -->
+    <key key="class" value="highway" />
+  </item>
+</annotations>

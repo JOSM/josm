@@ -1,0 +1,73 @@
+The XML Parser is MinML2 from 
+http://www.wilson.co.uk/xml/minml2.htm. The license is 
+attached below.
+
+The jpeg metadata extraction code is from Drew Noakes
+(http://drewnoakes.com/code/exif).
+
+Most icons are inspired and stolen from gnome-media package 
+of my local linux installation. The images are licensed 
+under LGPL but redistributed by me under the terms of GPL
+2.0. The world image is from onearth.pl.
+
+The gettext-commons-0.9.jar is from Felix Berger and Steffen 
+Pingel (http://xnap-commons.sourceforge.net/gettext-commons/).
+The jar-file is licensed under LGPL.
+
+Some plugins (hosted elsewhere) are from Nick Whitelegg.
+Frederik Ramm did some of the actions and the MarkerLayer.
+Several smaller patches are contributed by community members
+of OSM.
+
+Internalisation:
+German: Sven Anders <sven@anders-hamburg.de>
+French: Frédéric Bonifas <fredericbonifas@gmail.com>
+Romanian: Ovidiu Constantin
+British: Bruce Cowan
+
+
+All the rest are belong to me.
+
+
+Imi.
+
+
+
+All content of MinML2.jar is licensed under:
+----------------MinML2 license--------------------
+Copyright (c) 1999, John Wilson (tug@wilson.co.uk). 
+All rights reserved.
+Redistribution and use in source and binary forms,
+with or without modification, are permitted provided
+that the following conditions are met:
+
+Redistributions of source code must retain the above
+copyright notice, this list of conditions and the
+following disclaimer.
+
+Redistributions in binary form must reproduce the
+above copyright notice, this list of conditions and
+the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+
+All advertising materials mentioning features or use
+of this software must display the following acknowledgement: 
+
+This product includes software developed by John Wilson. 
+The name of John Wilson may not be used to endorse or promote
+products derived from this software without specific prior
+written permission. 
+
+THIS SOFTWARE IS PROVIDED BY JOHN WILSON ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JOHN WILSON
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE
+--------------------------------------------------
