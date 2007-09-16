@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -19,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -508,6 +510,17 @@ public class GeoImageLayer extends Layer {
 			w = Math.round(maxSize*((float)w/h));
 			h = maxSize;
 		}
-		return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+		return new ImageIcon(createResizedCopy(img, w, h));
+	}
+	
+	private static BufferedImage createResizedCopy(Image originalImage, 
+			int scaledWidth, int scaledHeight)
+	{
+		BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = scaledBI.createGraphics();
+
+		g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null); 
+		g.dispose();
+		return scaledBI;
 	}
 }
