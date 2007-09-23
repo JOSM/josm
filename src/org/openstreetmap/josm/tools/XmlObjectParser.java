@@ -69,7 +69,7 @@ public class XmlObjectParser implements Iterable<Object> {
 			if (mapping.containsKey(qname) && !mapping.get(qname).onStart)
 				report();
 			else if (characters != null && !current.isEmpty()) {
-				setValue(qname, characters);
+				setValue(qname, characters.trim());
 				characters = "";
 			}
 		}
