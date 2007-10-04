@@ -73,7 +73,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 		});
 		taggingPresetSources.setVisibleRowCount(3);
 
-		taggingPresetSources.setToolTipText(tr("The sources (url or filename) of tagging preset definition files. See http://josm.eigenheimstrasse.de/wiki/TaggingPresets for help."));
+		taggingPresetSources.setToolTipText(tr("The sources (url or filename) of tagging preset definition files. See http://josm.openstreetmap.de/wiki/TaggingPresets for help."));
 		addAnno.setToolTipText(tr("Add a new tagging preset source to the list."));
 		deleteAnno.setToolTipText(tr("Delete the selected source from the list."));
 

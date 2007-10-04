@@ -59,14 +59,10 @@ How to get the Source
 ---------------------
 
 Download it directly from the subversion at 
-http://www.eigenheimstrasse.de/svn/josm. To use the command line
+https://josm.openstreetmap.de/svn/trunk. To use the command line
 subverion client, type
 
-svn co http://www.eigenheimstrasse.de/svn/josm
-
-
-And gimme feedback: josm@eigenheimstrasse.de (start your mail subject 
-with "JOSM", so my spam filter will not eat you)
+svn co https://josm.openstreetmap.de/svn/trunk
 
 
 Ciao, Imi.

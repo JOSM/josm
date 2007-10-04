@@ -1,9 +1,9 @@
 JOSM and all files included in this archive and the source archive from
 
-http://www.eigenheimstrasse.de/svn/josm
+http://josm.openstreetmap.de/svn
 
-except the JDOM files, MinML2 files and parts of UTM.java are
-copyrighted 2005-2006 by Immanuel Scholz.
+Most files are copyrighted 2005-2007 by Immanuel Scholz, some are by
+Frederick Ramm and other people.
 The files are distributed under the terms of the following License:
 
 

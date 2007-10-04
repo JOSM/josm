@@ -46,7 +46,7 @@ public class HelpAction extends AbstractAction {
     }
 
 	private JFrame helpBrowser = new JFrame("JOSM Online Help");
-	private String baseurl = Main.pref.get("help.baseurl", "http://josm.eigenheimstrasse.de");
+	private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
 	private JEditorPane help = new JEditorPane();
 	private WikiReader reader = new WikiReader(baseurl);
 	private String url;
