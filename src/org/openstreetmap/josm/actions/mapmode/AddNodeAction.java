@@ -149,7 +149,7 @@ public class AddNodeAction extends MapMode {
 				if (insertInto == null)
 					return;
 			} 
-			// If ALT is held, instead of creating a new node, re-use an existing
+			// If SHIFT is held, instead of creating a new node, re-use an existing
 			// node (making this action identical to AddSegmentAction with the
 			// small difference that the node used will then be selected to allow
 			// continuation of the "add node and connect" stuff)
@@ -190,8 +190,10 @@ public class AddNodeAction extends MapMode {
 					way.nodes.add(n1);
 					cmds.add(new AddCommand(way));
 				} else {
-					if (insertInto != null && way == insertInto.way) {
-						way = newInsertInto;
+					if (insertInto != null) {
+						if (way == insertInto.way) {
+							way = newInsertInto;
+						}
 					} else {
 						Way wnew = new Way(way);
 						cmds.add(new ChangeCommand(way, wnew));
@@ -221,14 +223,14 @@ public class AddNodeAction extends MapMode {
 	private Way getWayForNode(Node n) {
 		Way way = null;
 		for (Way w : Main.ds.ways) {
+			if (w.nodes.size() < 1) continue;
 			int i = w.nodes.indexOf(n);
-			if (i == -1) continue;
-			if (i == 0 || i == w.nodes.size() - 1) {
-					if (way != null)
-						return null;
-					way = w;
-				}
+			if (w.nodes.get(0) == n || w.nodes.get(w.nodes.size() - 1) == n) {
+				if (way != null)
+					return null;
+				way = w;
 			}
+		}
 		return way;
 	}
 	
