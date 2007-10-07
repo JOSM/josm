@@ -108,7 +108,8 @@ public class OsmDataLayer extends Layer {
 	public boolean uploadedModified = false;
 
 	public final LinkedList<ModifiedChangedListener> listenerModified = new LinkedList<ModifiedChangedListener>();
-
+	public final LinkedList<DataChangeListener> listenerDataChanged = new LinkedList<DataChangeListener>();
+	
 	private SimplePaintVisitor mapPainter = new SimplePaintVisitor();
 
 	/**
@@ -176,6 +177,7 @@ public class OsmDataLayer extends Layer {
 		// copy the merged layer's data source info
 		for (DataSource src : ((OsmDataLayer)from).data.dataSources) 
 			data.dataSources.add(src);
+		fireDataChange();
 		
 		if (visitor.conflicts.isEmpty())
 			return;
@@ -314,4 +316,10 @@ public class OsmDataLayer extends Layer {
 	public void setMapPainter(SimplePaintVisitor mapPainter) {
     	this.mapPainter = mapPainter;
     }
+	
+	public void fireDataChange() {
+		for (DataChangeListener dcl : listenerDataChanged) {
+			dcl.dataChanged(this);
+		}
+	}
 }

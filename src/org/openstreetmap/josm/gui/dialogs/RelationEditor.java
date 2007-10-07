@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map.Entry;
 
@@ -173,7 +174,7 @@ public class RelationEditor extends JFrame {
 		// setting up the member table
 		
 	    memberData.setColumnIdentifiers(new String[]{tr("Role"),tr("Occupied By")});
-		memberTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		memberTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		memberTable.getColumnModel().getColumn(1).setCellRenderer(new OsmPrimitivRenderer());
 		/*
 		memberTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
@@ -227,9 +228,10 @@ public class RelationEditor extends JFrame {
 
 		buttonPanel.add(createButton(marktr("Select"),"select", tr("Highlight the member from the current table row as JOSM's selection"), KeyEvent.VK_S, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int row = memberTable.getSelectedRow();
-				OsmPrimitive p = (OsmPrimitive) memberTable.getValueAt(row, 1);
-				Main.ds.setSelected(Collections.singleton(p));
+				int[] rows = memberTable.getSelectedRows();
+				ArrayList<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(rows.length);
+				for (int i : rows) { sel.add((OsmPrimitive)memberTable.getValueAt(i, 1)); }
+				Main.ds.setSelected(sel);
 			}
 		}));
 		bothTables.add(buttonPanel, GBC.eop().fill(GBC.HORIZONTAL));

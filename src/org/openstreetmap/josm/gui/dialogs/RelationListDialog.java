@@ -30,6 +30,10 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.layer.DataChangeListener;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -41,7 +45,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
-public class RelationListDialog extends ToggleDialog {
+public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataChangeListener {
 
 	/**
 	 * The selection's list data.
@@ -94,17 +98,8 @@ public class RelationListDialog extends ToggleDialog {
 				}
 			}
 		}));
-		
+		Layer.listeners.add(this);
 		add(buttonPanel, BorderLayout.SOUTH);
-		
-		/*
-		DataSet.dataListeners.add(new DataChangedListener() {
-			public void dataChanged() {
-				updateList();
-				repaint();
-			}
-		});
-		*/
 	}
 
 	private JButton createButton(String name, String imagename, String tooltip, int mnemonic, ActionListener actionListener) {
@@ -130,6 +125,30 @@ public class RelationListDialog extends ToggleDialog {
 				list.setElementAt(e, i++);
 		}
 		list.setSize(i);
+	}
+	
+	public void activeLayerChange(Layer a, Layer b) {
+		if (a instanceof OsmDataLayer && b instanceof OsmDataLayer) {
+			((OsmDataLayer)a).listenerDataChanged.remove(this);
+			((OsmDataLayer)b).listenerDataChanged.add(this);
+			updateList();
+			repaint();
+		}
+	}
+	
+	public void layerRemoved(Layer a) {
+		if (a instanceof OsmDataLayer) {
+			((OsmDataLayer)a).listenerDataChanged.remove(this);
+		}
+	}
+	public void layerAdded(Layer a) {
+		if (a instanceof OsmDataLayer) {
+			((OsmDataLayer)a).listenerDataChanged.add(this);
+		}
+	}	
+	public void dataChanged(OsmDataLayer l) {
+		updateList();
+		repaint();
 	}
 	
 }
