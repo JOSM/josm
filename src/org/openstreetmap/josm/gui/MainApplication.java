@@ -111,12 +111,6 @@ public class MainApplication extends Main {
 			JOptionPane.showMessageDialog(null, "Preferences could not be loaded. Writing default preference file to "+pref.getPreferencesDir()+"preferences");
 			Main.pref.resetToDefault();
 		}
-		
-		if (!Main.pref.getBoolean("plugins-0.5", false)) {
-			Main.pref.put("plugins", null);
-			Main.pref.put("plugins-0.5", "true");
-			System.out.println("disabled plugins setting. re-enable the plugins you need.");
-		}
 
 		// load the early plugins
 		Main.loadPlugins(true);

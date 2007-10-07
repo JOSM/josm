@@ -237,12 +237,19 @@ abstract public class Main {
 						System.out.println("loading "+info.name);
 						Main.plugins.add(info.load(klass));
 					}
-				} catch (PluginException e) {
+				} catch (Throwable e) {
 					e.printStackTrace();
 					if (early)
-						System.out.println("Could not load plugin: "+info.name); // do not translate
+						System.out.println("Could not load plugin: "+info.name+" - deleted from preferences"); // do not translate
 					else
-						JOptionPane.showMessageDialog(Main.parent, tr("Could not load plugin {0}.", info.name));
+						JOptionPane.showMessageDialog(Main.parent, tr("Could not load plugin {0}. Deleted from preferences.", info.name));
+					plugins.remove(info.name);
+					String plist = null;
+					for (String pn : plugins) { 
+						if (plist==null) plist=""; else plist=plist+",";
+						plist=plist+pn;
+					}
+					Main.pref.put("plugins", plist);
 				}
 			}
 		}
