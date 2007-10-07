@@ -59,10 +59,10 @@ public class GettingStarted extends JPanel implements ActionListener {
 			"0.5".equals(Main.pref.get("osm-server.additionalVersions", "0.5"))
 		);
 		
-		if (changePrefs) {;
+		if (changePrefs) {
 			Main.pref.put("osm-server.version", null);
 			Main.pref.put("osm-server.additional-versions", null);
-			panel.add(new JLabel("<html><h3>Your preferences have been changed by removing <b>osm-server.version</b> and/or <b>osm-server.additional-versions</b> which were still to referring 0.4.</h3></html>"), GBC.eol());
+			panel.add(new JLabel("<html><h3>Your preferences have been changed by removing <b>osm-server.version</b> and/or <b>osm-server.additional-versions</b> which were still referring to 0.4.</h3></html>"), GBC.eol());
 		}
 		
 		addLine("wiki", "Read the [Wiki page on API 0.5]");
