@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,7 +30,7 @@ public class GettingStarted extends JPanel implements ActionListener {
 		public LinkLabel(String text, String action) {
 			this.action = action;
 			String normalized = text.replaceAll("\\[([^\\]]*)\\]", "$1");
-			String link = "<html><h2>"+text.replaceAll("\\[([^\\]]*)\\]", "<a href='"+action+"'>$1</a>")+"</h2></html>";
+			String link = "<html><h3>"+text.replaceAll("\\[([^\\]]*)\\]", "<a href='"+action+"'>$1</a>")+"</h3></html>";
 			setContentType("text/html");
 			setText(link);
 			setToolTipText(normalized);
@@ -69,7 +70,8 @@ public class GettingStarted extends JPanel implements ActionListener {
 		addGettingStarted();
 		addGettingHelp();
 		
-		panel.add(GBC.glue(0,140), GBC.eol());
+		panel.add(GBC.glue(0,70), GBC.eol());
+		//panel.setMinimumSize(new Dimension(400, 600));
 		add(panel);
     }
 
@@ -86,7 +88,7 @@ public class GettingStarted extends JPanel implements ActionListener {
     }
 
 	public void addCategory(String category) {
-	    panel.add(new JLabel("<html><h1>"+category+"</h1></html>"), GBC.eop().fill(GBC.HORIZONTAL).insets(0,20,0,0));
+	    panel.add(new JLabel("<html><h2>"+category+"</h2></html>"), GBC.eol().fill(GBC.HORIZONTAL).insets(0,20,0,0));
     }
 
 	public void addLine(String action, String text) {
@@ -94,7 +96,7 @@ public class GettingStarted extends JPanel implements ActionListener {
         button.setBorder(null);
         button.addActionListener(this);
         button.setActionCommand(action);
-		panel.add(button, GBC.std().insets(40,0,15,0));
+		panel.add(button, GBC.std().insets(20,0,5,0));
 		panel.add(new LinkLabel(text,action),GBC.eol());
     }
 
