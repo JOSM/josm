@@ -23,7 +23,6 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -37,8 +36,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * deleted. The exact definition of "all its references" are in 
  * @see #deleteWithReferences(OsmPrimitive)
  *
- * Pressing Alt will select the way instead of a segment, as usual.
- * 
  * If the user did not press Ctrl and the object has any references, the user
  * is informed and nothing is deleted.
  *
@@ -56,7 +53,7 @@ public class DeleteAction extends MapMode {
 	public DeleteAction(MapFrame mapFrame) {
 		super(tr("Delete"), 
 				"delete", 
-				tr("Delete nodes, streets or segments."), 
+				tr("Delete nodes or ways."), 
 				KeyEvent.VK_D, 
 				mapFrame, 
 				ImageProvider.getCursor("normal", "delete"));
@@ -91,7 +88,7 @@ public class DeleteAction extends MapMode {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 		
-		OsmPrimitive sel = Main.map.mapView.getNearest(e.getPoint(), (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0);
+		OsmPrimitive sel = Main.map.mapView.getNearest(e.getPoint());
 		if (sel == null)
 			return;
 
@@ -104,18 +101,14 @@ public class DeleteAction extends MapMode {
 	}
 
 	/**
-	 * Delete the primitives and everything they references.
+	 * Delete the primitives and everything they reference.
 	 * 
-	 * If a node is deleted, the node and all segments, ways and areas
+	 * If a node is deleted, the node and all ways and relations
 	 * the node is part of are deleted as well.
 	 * 
-	 * If a segment is deleted, all ways the segment is part of 
-	 * are deleted as well. No nodes are deleted.
+	 * If a way is deleted, all relations the way is member of are also deleted.
 	 * 
-	 * If a way is deleted, only the way and no segments or nodes are 
-	 * deleted.
-	 * 
-	 * If an area is deleted, only the area gets deleted.
+	 * If a way is deleted, only the way and no nodes are deleted.
 	 * 
 	 * @param selection The list of all object to be deleted.
 	 */
@@ -133,10 +126,9 @@ public class DeleteAction extends MapMode {
 	 * used somewhere and that "somewhere" is not going to be deleted,
 	 * inform the user and do not delete.
 	 * 
-	 * If deleting a node which is part of exactly two segments, and both segments
-	 * have no conflicting keys, join them and remove the node.
-	 * If the two segments are part of the same way, remove the deleted segment
-	 * from the way.
+	 * If a node is to be deleted which is in the middle of exactly one way,
+	 * the node is removed from the way's node list and after that removed
+	 * itself.
 	 * 
 	 * @param selection The objects to delete.
 	 * @param msgBox Whether a message box for errors should be shown
@@ -148,7 +140,7 @@ public class DeleteAction extends MapMode {
 			osm.visit(v);
 			if (!selection.containsAll(v.data)) {
 				if (osm instanceof Node && joinIfPossible) {
-					String reason = deleteNodeAndJoinSegment((Node)osm);
+					String reason = deleteNodeAndJoinWay((Node)osm);
 					if (reason != null && msgBox) {
 						JOptionPane.showMessageDialog(Main.parent,tr("Cannot delete node.")+" "+reason);
 						return;
@@ -166,53 +158,38 @@ public class DeleteAction extends MapMode {
 			Main.main.undoRedo.add(new DeleteCommand(del));
 	}
 
-	private String deleteNodeAndJoinSegment(Node n) {
-		ArrayList<Segment> segs = new ArrayList<Segment>(2);
-		for (Segment s : Main.ds.segments) {
-			if (!s.deleted && (s.from == n || s.to == n)) {
-				if (segs.size() > 1)
-					return tr("Used by more than two segments.");
-				segs.add(s);
-			}
-		}
-		if (segs.size() != 2)
-			return tr("Used by only one segment.");
-		Segment seg1 = segs.get(0);
-		Segment seg2 = segs.get(1);
-		if (seg1.from == seg2.to) {
-			Segment s = seg1;
-			seg1 = seg2;
-			seg2 = s;
-		}
-		if (seg1.from == seg2.from || seg1.to == seg2.to)
-			return tr("Wrong direction of segments.");
-		for (Entry<String, String> e : seg1.entrySet())
-			if (seg2.keySet().contains(e.getKey()) && !seg2.get(e.getKey()).equals(e.getValue()))
-				return tr("Conflicting keys");
-		ArrayList<Way> ways = new ArrayList<Way>(2);
+	private String deleteNodeAndJoinWay(Node n) {
+		ArrayList<Way> ways = new ArrayList<Way>(1);
 		for (Way w : Main.ds.ways) {
-			if (w.deleted)
-				continue;
-			if ((w.segments.contains(seg1) && !w.segments.contains(seg2)) || (w.segments.contains(seg2) && !w.segments.contains(seg1)))
-				return tr("Segments are part of different ways.");
-			if (w.segments.contains(seg1) && w.segments.contains(seg2))
+			if (!w.deleted && w.nodes.contains(n)) {
 				ways.add(w);
 		}
-		Segment s = new Segment(seg1);
-		s.to = seg2.to;
-		if (s.keys == null)
-			s.keys = seg2.keys;
-		else if (seg2.keys != null)
-			s.keys.putAll(seg2.keys);
-		Collection<Command> cmds = new LinkedList<Command>();
-		for (Way w : ways) {
-			Way copy = new Way(w);
-			copy.segments.remove(seg2);
-			cmds.add(new ChangeCommand(w, copy));
 		}
-		cmds.add(new ChangeCommand(seg1, s));
-		cmds.add(new DeleteCommand(Arrays.asList(new OsmPrimitive[]{n, seg2})));
-		Main.main.undoRedo.add(new SequenceCommand(tr("Delete Node"), cmds));
+
+		if (ways.size() > 1)
+			return tr("Used by more than one way.");
+		
+		if (ways.size() == 1) {
+			// node in way
+			Way w = ways.get(0);
+
+			int i = w.nodes.indexOf(n);
+			if (w.nodes.lastIndexOf(n) != i)
+				return tr("Occurs more than once in the same way.");
+			if (i == 0 || i == w.nodes.size() - 1)
+				return tr("Is at the end of a way");
+
+			Way wnew = new Way(w);
+			wnew.nodes.remove(i);
+
+			Collection<Command> cmds = new LinkedList<Command>();
+			cmds.add(new ChangeCommand(w, wnew));
+			cmds.add(new DeleteCommand(Collections.singleton(n)));
+			Main.main.undoRedo.add(new SequenceCommand(tr("Delete Node"), cmds));
+		} else {
+			// unwayed node
+			Main.main.undoRedo.add(new DeleteCommand(Collections.singleton(n)));	
+		}
 		return null;
     }
 }

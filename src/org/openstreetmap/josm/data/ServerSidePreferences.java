@@ -44,7 +44,7 @@ public class ServerSidePreferences extends Preferences {
 		}
 		public String download() {
 			try {
-				System.out.println("reading preferenced from "+serverUrl);
+				System.out.println("reading preferences from "+serverUrl);
 				HttpURLConnection con = (HttpURLConnection)serverUrl.openConnection();
 				addAuth(con);
 				con.connect();

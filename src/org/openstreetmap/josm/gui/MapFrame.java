@@ -14,7 +14,6 @@ import javax.swing.JToolBar;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.AddSegmentAction;
-import org.openstreetmap.josm.actions.mapmode.AddWayAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectionAction;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.actions.mapmode.AddNodeAction.AddNodeGroup;
 import org.openstreetmap.josm.actions.mapmode.MoveAction.MoveGroup;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
+import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.PropertiesDialog;
@@ -84,7 +84,6 @@ public class MapFrame extends JPanel implements Destroyable {
 		toolBarActions.add(new IconToggleButton(new MoveGroup(this)));
 		toolBarActions.add(new IconToggleButton(new AddNodeGroup(this)));
 		toolBarActions.add(new IconToggleButton(new AddSegmentAction(this)));
-		toolBarActions.add(new IconToggleButton(new AddWayAction(this)));
 		toolBarActions.add(new IconToggleButton(new DeleteAction(this)));
 
 		for (Component c : toolBarActions.getComponents())
@@ -103,6 +102,7 @@ public class MapFrame extends JPanel implements Destroyable {
 		addToggleDialog(new UserListDialog());
 		addToggleDialog(conflictDialog = new ConflictDialog());
 		addToggleDialog(new CommandStackDialog(this));
+		addToggleDialog(new RelationListDialog());
 
 		// status line below the map
 		if (!Main.applet)

@@ -66,8 +66,6 @@ public class XmlWriter {
 		out.close();
 	}
 
-
-
 	/**
 	 * The output writer to save the values to.
 	 */

@@ -37,11 +37,8 @@ import javax.swing.table.TableModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictItem;
 import org.openstreetmap.josm.data.conflict.DeleteConflict;
-import org.openstreetmap.josm.data.conflict.FromConflict;
 import org.openstreetmap.josm.data.conflict.PositionConflict;
 import org.openstreetmap.josm.data.conflict.PropertyConflict;
-import org.openstreetmap.josm.data.conflict.SegmentConflict;
-import org.openstreetmap.josm.data.conflict.ToConflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -139,9 +136,6 @@ public class ConflictResolver extends JPanel {
 		Collection<ConflictItem> possibleConflicts = new ArrayList<ConflictItem>();
 		possibleConflicts.add(new DeleteConflict());
 		possibleConflicts.add(new PositionConflict());
-		possibleConflicts.add(new FromConflict());
-		possibleConflicts.add(new ToConflict());
-		possibleConflicts.add(new SegmentConflict());
 		TreeSet<String> allkeys = new TreeSet<String>();
 		for (Entry<OsmPrimitive, OsmPrimitive> e : conflicts.entrySet()) {
 			allkeys.addAll(e.getKey().keySet());

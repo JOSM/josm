@@ -33,9 +33,9 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
@@ -59,7 +59,7 @@ public class OsmDataLayer extends Layer {
 	public final static class DataCountVisitor implements Visitor {
 		public final int[] normal = new int[3];		
 		public final int[] deleted = new int[3];
-		public final String[] names = {"node", "segment", "way"};
+		public final String[] names = {"node", "way", "relation"};
 
 		private void inc(final OsmPrimitive osm, final int i) {
 			normal[i]++;
@@ -71,11 +71,10 @@ public class OsmDataLayer extends Layer {
 			inc(n, 0);
 		}
 
-		public void visit(final Segment ls) {
-			inc(ls, 1);
-		}
-
 		public void visit(final Way w) {
+			inc(w, 1);
+		}
+		public void visit(final Relation w) {
 			inc(w, 2);
 		}
 	}
@@ -132,7 +131,7 @@ public class OsmDataLayer extends Layer {
 	/**
 	 * Draw all primitives in this layer but do not draw modified ones (they
 	 * are drawn by the edit layer).
-	 * Draw nodes last to overlap the segments they belong to.
+	 * Draw nodes last to overlap the ways they belong to.
 	 */
 	@Override public void paint(final Graphics g, final MapView mv) {
 		boolean inactive = Main.map.mapView.getActiveLayer() != this && Main.pref.getBoolean("draw.data.inactive_color", true);
@@ -162,7 +161,6 @@ public class OsmDataLayer extends Layer {
 	@Override public String getToolTipText() {
 		String tool = "";
 		tool += undeletedSize(data.nodes)+" "+trn("node", "nodes", undeletedSize(data.nodes))+", ";
-		tool += undeletedSize(data.segments)+" "+trn("segment", "segments", undeletedSize(data.segments))+", ";
 		tool += undeletedSize(data.ways)+" "+trn("way", "ways", undeletedSize(data.ways));
 		if (associatedFile != null)
 			tool = "<html>"+tool+"<br>"+associatedFile.getPath()+"</html>";
@@ -220,8 +218,6 @@ public class OsmDataLayer extends Layer {
 		if (processed != null) {
 			final Set<OsmPrimitive> processedSet = new HashSet<OsmPrimitive>(processed);
 			for (final Iterator<Node> it = data.nodes.iterator(); it.hasNext();)
-				cleanIterator(it, processedSet);
-			for (final Iterator<Segment> it = data.segments.iterator(); it.hasNext();)
 				cleanIterator(it, processedSet);
 			for (final Iterator<Way> it = data.ways.iterator(); it.hasNext();)
 				cleanIterator(it, processedSet);

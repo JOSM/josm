@@ -79,7 +79,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 		add(buttonPanel, BorderLayout.SOUTH);
 		selectionChanged(Main.ds.getSelected());
 
-		DataSet.listeners.add(this);
+		DataSet.selListeners.add(this);
 	}
 
 	private JButton createButton(String name, String icon, String tooltip, ActionListener action) {

@@ -3,9 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.Point;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 import javax.swing.JComponent;
 
@@ -15,8 +13,8 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.projection.Projection;
 
 /**
@@ -146,68 +144,61 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	}
 
 	/**
-	 * @return the nearest way to the screen point given.
+	 * @return the nearest way segment to the screen point given that is not 
+	 * in ignore.
+	 * 
+	 * @param p the point for which to search the nearest segment.
+	 * @param ignore a collection of segments which are not to be returned.
+	 * May be null.
 	 */
-	public final Way getNearestWay(Point p) {
+	public final WaySegment getNearestWaySegment(Point p, Collection<WaySegment> ignore) {
 		Way minPrimitive = null;
+		int minI = 0;
 		double minDistanceSq = Double.MAX_VALUE;
 		for (Way w : Main.ds.ways) {
 			if (w.deleted)
 				continue;
-			for (Segment ls : w.segments) {
-				if (ls.deleted || ls.incomplete)
+			Node lastN = null;
+			int i = -2;
+			for (Node n : w.nodes) {
+				i++;
+				if (n.deleted) continue;
+				if (lastN == null) {
+					lastN = n;
 					continue;
-				Point A = getPoint(ls.from.eastNorth);
-				Point B = getPoint(ls.to.eastNorth);
-				double c = A.distanceSq(B);
-				double a = p.distanceSq(B);
-				double b = p.distanceSq(A);
-				double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
-				if (perDist < 100 && minDistanceSq > perDist && a < c+100 && b < c+100) {
-					minDistanceSq = perDist;
-					minPrimitive = w;
 				}
+				if (ignore == null || !ignore.contains(new WaySegment(w, i))) {
+					Point A = getPoint(lastN.eastNorth);
+					Point B = getPoint(n.eastNorth);
+					double c = A.distanceSq(B);
+					double a = p.distanceSq(B);
+					double b = p.distanceSq(A);
+					double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
+					if (perDist < 100 && minDistanceSq > perDist && a < c+100 && b < c+100) {
+						minDistanceSq = perDist;
+						minPrimitive = w;
+						minI = i;
+					}
+				}
+				lastN = n;
 			}
 		}
-		return minPrimitive;
+		return minPrimitive == null ? null : new WaySegment(minPrimitive, minI);
 	}
 
 	/**
-	 * @return the nearest segment to the screen point given 
-	 * 
-	 * @param p the point for which to search the nearest segment.
+	 * @return the nearest way segment to the screen point given.
 	 */
-	public final Segment getNearestSegment(Point p) {
-		List<Segment> e = Collections.emptyList();
-		return getNearestSegment(p, e);
+	public final WaySegment getNearestWaySegment(Point p) {
+		return getNearestWaySegment(p, null);
 	}
 	
 	/**
-	 * @return the nearest segment to the screen point given that is not 
-	 * in ignoreThis.
-	 * 
-	 * @param p the point for which to search the nearest segment.
-	 * @param ignore a collection of segments which are not to be returned. Must not be null.
+	 * @return the nearest way to the screen point given.
 	 */
-	public final Segment getNearestSegment(Point p, Collection<Segment> ignore) {
-		Segment minPrimitive = null;
-		double minDistanceSq = Double.MAX_VALUE;
-		// segments
-		for (Segment ls : Main.ds.segments) {
-			if (ls.deleted || ls.incomplete || ignore.contains(ls))
-				continue;
-			Point A = getPoint(ls.from.eastNorth);
-			Point B = getPoint(ls.to.eastNorth);
-			double c = A.distanceSq(B);
-			double a = p.distanceSq(B);
-			double b = p.distanceSq(A);
-			double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
-			if (perDist < 100 && minDistanceSq > perDist && a < c+100 && b < c+100) {
-				minDistanceSq = perDist;
-				minPrimitive = ls;
-			}
-		}
-		return minPrimitive;
+	public final Way getNearestWay(Point p) {
+		WaySegment nearestWaySeg = getNearestWaySegment(p);
+		return nearestWaySeg == null ? null : nearestWaySeg.way;
     }
 
 	/**
@@ -216,85 +207,63 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 * First, a node will be searched. If a node within 10 pixel is found, the
 	 * nearest node is returned.
 	 *
-	 * If no node is found, search for pending segments.
+	 * If no node is found, search for near ways.
 	 *
-	 * If no such segment is found, and a non-pending segment is
-	 * within 10 pixel to p, this segment is returned, except when
-	 * <code>wholeWay</code> is <code>true</code>, in which case the
-	 * corresponding Way is returned.
-	 *
-	 * If no segment is found and the point is within an area, return that
-	 * area.
-	 *
-	 * If no area is found, return <code>null</code>.
+	 * If nothing is found, return <code>null</code>.
 	 *
 	 * @param p				 The point on screen.
-	 * @param segmentInsteadWay Whether the segment (true) or only the whole
-	 * 					 	 way should be returned.
 	 * @return	The primitive, that is nearest to the point p.
 	 */
-	public OsmPrimitive getNearest(Point p, boolean segmentInsteadWay) {
+	public OsmPrimitive getNearest(Point p) {
 		OsmPrimitive osm = getNearestNode(p);
-		if (osm == null && !segmentInsteadWay)
-			osm = getNearestWay(p);
 		if (osm == null)
-			osm = getNearestSegment(p);
+			osm = getNearestWay(p);
 		return osm;
+	}
+
+	@Deprecated
+	public OsmPrimitive getNearest(Point p, boolean segmentInsteadWay) {
+		return getNearest(p);
 	}
 
 	/**
 	 * @return A list of all objects that are nearest to
-	 * the mouse. To do this, first the nearest object is
-	 * determined.
-	 *
-	 * If its a node, return all segments and
-	 * streets the node is part of, as well as all nodes
-	 * (with their segments and ways) with the same
-	 * location.
-	 *
-	 * If its a segment, return all ways this segment
-	 * belongs to as well as all segments that are between
-	 * the same nodes (in both direction) with all their ways.
+	 * the mouse.  Does a simple sequential scan on all the data.
 	 *
 	 * @return A collection of all items or <code>null</code>
 	 * 		if no item under or near the point. The returned
 	 * 		list is never empty.
 	 */
 	public Collection<OsmPrimitive> getAllNearest(Point p) {
-		OsmPrimitive osm = getNearest(p, true);
-		if (osm == null)
-			return null;
-		Collection<OsmPrimitive> c = new HashSet<OsmPrimitive>();
-		c.add(osm);
-		if (osm instanceof Node) {
-			Node node = (Node)osm;
-			for (Node n : Main.ds.nodes)
-				if (!n.deleted && n.coor.equals(node.coor))
-					c.add(n);
-			for (Segment ls : Main.ds.segments)
-				// segments never match nodes, so they are skipped by contains
-				if (!ls.deleted && !ls.incomplete && (c.contains(ls.from) || c.contains(ls.to)))
-					c.add(ls);
-		}
-		if (osm instanceof Segment) {
-			Segment line = (Segment)osm;
-			for (Segment ls : Main.ds.segments)
-				if (!ls.deleted && ls.equalPlace(line))
-					c.add(ls);
-		}
-		if (osm instanceof Node || osm instanceof Segment) {
+		Collection<OsmPrimitive> nearest = new HashSet<OsmPrimitive>();
 			for (Way w : Main.ds.ways) {
-				if (w.deleted)
+			if (w.deleted) continue;
+			Node lastN = null;
+			for (Node n : w.nodes) {
+				if (n.deleted) continue;
+				if (lastN == null) {
+					lastN = n;
 					continue;
-				for (Segment ls : w.segments) {
-					if (!ls.deleted && !ls.incomplete && c.contains(ls)) {
-						c.add(w);
+				}
+				Point A = getPoint(lastN.eastNorth);
+				Point B = getPoint(n.eastNorth);
+				double c = A.distanceSq(B);
+				double a = p.distanceSq(B);
+				double b = p.distanceSq(A);
+				double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
+				if (perDist < 100 && a < c+100 && b < c+100) {
+					nearest.add(w);
 						break;
 					}
+				lastN = n;
 				}
 			}
+		for (Node n : Main.ds.nodes) {
+			if (!n.deleted && getPoint(n.eastNorth).distanceSq(p) < 100) {
+				nearest.add(n);
+			}
 		}
-		return c;
+		return nearest.isEmpty() ? null : nearest;
 	}
 
 	/**

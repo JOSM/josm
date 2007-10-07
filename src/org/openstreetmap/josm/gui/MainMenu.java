@@ -17,7 +17,6 @@ import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.DownloadAction;
-import org.openstreetmap.josm.actions.DownloadIncompleteAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
@@ -25,8 +24,7 @@ import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RedoAction;
-import org.openstreetmap.josm.actions.ReorderAction;
-import org.openstreetmap.josm.actions.ReverseSegmentAction;
+import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
@@ -55,12 +53,11 @@ public class MainMenu extends JMenuBar {
 	public final NewAction newAction = new NewAction();
 	public final OpenAction open = new OpenAction();
 	public final DownloadAction download = new DownloadAction();
-	public final Action reverseSegment = new ReverseSegmentAction();
+	public final Action reverseWay = new ReverseWayAction();
 	public final Action splitWay = new SplitWayAction();
 	public final Action combineWay = new CombineWayAction();
 	public final Action alignInCircle = new AlignInCircleAction();
 	public final Action alignInLine = new AlignInLineAction();
-	public final Action reorder = new ReorderAction();
 	public final Action upload = new UploadAction();
 	public final Action save = new SaveAction(null);
 	public final Action saveAs = new SaveAsAction(null);
@@ -69,7 +66,6 @@ public class MainMenu extends JMenuBar {
 	public final Action preferences = new PreferencesAction();
 	public final HelpAction help = new HelpAction();
 	public final Action about = new AboutAction();
-	public final DownloadIncompleteAction downloadIncomplete = new DownloadIncompleteAction();
 	
 	public final JMenu layerMenu = new JMenu(tr("Layer"));
 	public final JMenu editMenu = new JMenu(tr("Edit"));
@@ -116,8 +112,7 @@ public class MainMenu extends JMenuBar {
 		toolsMenu.add(alignInCircle);
 		toolsMenu.add(alignInLine);
 		toolsMenu.addSeparator();
-		toolsMenu.add(reverseSegment);
-		toolsMenu.add(reorder);
+		toolsMenu.add(reverseWay);
 		toolsMenu.addSeparator();
 		toolsMenu.add(splitWay);
 		toolsMenu.add(combineWay);
@@ -125,7 +120,6 @@ public class MainMenu extends JMenuBar {
 
 		connectionMenu.setMnemonic('C');
 		connectionMenu.add(download);
-		connectionMenu.add(downloadIncomplete);
 		connectionMenu.add(upload);
 		add(connectionMenu);
 

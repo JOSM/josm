@@ -37,7 +37,6 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
@@ -70,16 +69,10 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 			DataSet ds = new DataSet();
 			for (Collection<GpsPoint> c : data) {
 				Way w = new Way();
-				Node start = null;
 				for (GpsPoint p : c) {
-					Node end = new Node(p.latlon);
-					ds.nodes.add(end);
-					if (start != null) {
-						Segment segment = new Segment(start,end);
-						w.segments.add(segment);
-						ds.segments.add(segment);
-					}
-					start = end;
+					Node n = new Node(p.latlon);
+					ds.nodes.add(n);
+					w.nodes.add(n);
 				}
 				ds.ways.add(w);
 			}

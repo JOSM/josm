@@ -9,9 +9,9 @@ import java.util.Map.Entry;
 
 import javax.swing.tree.MutableTreeNode;
 
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -36,11 +36,11 @@ abstract public class Command {
 		public void visit(Node n) {
 			orig.put(n, new Node(n));
 		}
-		public void visit(Segment s) {
-			orig.put(s, new Segment(s));
-		}
 		public void visit(Way w) {
 			orig.put(w, new Way(w));
+		}
+		public void visit(Relation e) {
+			orig.put(e, new Relation(e));
 		}
 	}
 

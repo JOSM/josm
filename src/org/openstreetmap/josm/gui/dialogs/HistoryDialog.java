@@ -143,7 +143,7 @@ public class HistoryDialog extends ToggleDialog implements SelectionChangedListe
 		revertButton.setToolTipText(tr("Revert the state of all currently selected objects to the version selected in the history list."));
 		revertButton.putClientProperty("help", "Dialog/History/Revert");
 		
-		DataSet.listeners.add(this);
+		DataSet.selListeners.add(this);
 	}
 
 

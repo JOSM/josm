@@ -4,7 +4,8 @@ package org.openstreetmap.josm.data.osm.visitor;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.openstreetmap.josm.data.osm.Segment;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -29,23 +30,22 @@ public class AllNodesVisitor implements Visitor {
 	}
 
 	/**
-	 * Line segments have exactly two nodes: from and to.
+	 * Ways have their way nodes.
 	 */
-	public void visit(Segment ls) {
-		if (!ls.incomplete) {
-			visit(ls.from);
-			visit(ls.to);
-		}
+	public void visit(Way w) {
+		for (Node n : w.nodes)
+			visit(n);
 	}
 
 	/**
-	 * Ways have all nodes from their segments.
+	 * Relations may have any number of nodes.
+	 * FIXME: do we want to collect nodes from segs/ways that are relation members?
+	 * if so, use AutomatchVisitor!
 	 */
-	public void visit(Way w) {
-		for (Segment ls : w.segments)
-			visit(ls);
+	public void visit(Relation e) {
+		for (RelationMember m : e.members)
+			if (m.member instanceof Node) visit((Node)m.member);
 	}
-
 	/**
 	 * @return All nodes the given primitive has.
 	 */

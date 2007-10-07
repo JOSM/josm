@@ -161,7 +161,7 @@ public class MoveAction extends MapMode implements SelectionEnded {
 			return;
 
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
-		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint(), (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0);
+		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint());
 		if (osm != null) {
 			if (!sel.contains(osm))
 				Main.ds.setSelected(osm);

@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -31,10 +32,11 @@ public class DeleteCommand extends Command {
 
 	@Override public void executeCommand() {
 		super.executeCommand();
-		for (OsmPrimitive osm : data)
+		for (OsmPrimitive osm : data) {
 			osm.delete(true);
+		}
 	}
-
+	
 	@Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
 		deleted.addAll(data);
 	}

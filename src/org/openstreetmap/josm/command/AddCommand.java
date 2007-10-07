@@ -11,6 +11,7 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AddVisitor;
 import org.openstreetmap.josm.data.osm.visitor.DeleteVisitor;
@@ -21,6 +22,8 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 /**
  * A command that adds an osm primitive to a dataset. Keys cannot be added this
  * way. Use ChangeKeyValueCommand instead.
+ * 
+ * See ChangeCommand for comments on relation back references.
  * 
  * @author imi
  */

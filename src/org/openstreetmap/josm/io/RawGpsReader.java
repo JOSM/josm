@@ -93,7 +93,23 @@ public class RawGpsReader {
 					currentTagValues.put(peek, oldContents + contents);	
 				}
 				tags.push(tag);
-			}
+			} else if (peek.equals("text")) {
+                            String tag = tags.pop();
+                            if (tags.empty() || !tags.peek().equals("link")) {
+                                tags.push(tag);
+                                return;
+                            }
+                            String contents = new String(ch, start, length);
+                            // we just want the contents of <link><text></text></link> to
+                            // all be stored under link.
+                            String oldContents = currentTagValues.get("link");
+                            if (oldContents == null) {
+                                currentTagValues.put("link", contents);
+                            } else {
+                                currentTagValues.put("link", oldContents + contents);
+                            }
+                            tags.push(tag);
+                        }
 		}
 
 		@Override public void endElement(String namespaceURI, String localName, String qName) {
@@ -108,7 +124,16 @@ public class RawGpsReader {
 			} else if (qName.equals("trkseg") || qName.equals("trk") || qName.equals("gpx")) {
 				newTrack();
 				currentTagValues.clear();
-			}
+			} else if (qName.equals("link")) {
+                            String contents = currentTagValues.get(qName);
+                            if (contents != null) {
+                                // strip off leading and trailing whitespace
+                                currentTagValues.put(qName,
+                                                     contents
+                                                      .replaceFirst("^\\s+", "")
+                                                      .replaceFirst("\\s+$", ""));
+                            }
+                        }
 			tags.pop();
 		}
 

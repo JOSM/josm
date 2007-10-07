@@ -47,6 +47,14 @@ public class GettingStarted extends JPanel implements ActionListener {
 		
 		panel = new JPanel(new GridBagLayout());
 		
+		panel.add(new JLabel("<html><h2>You are running a technology preview with support for <i>API 0.5</i>.</h2>" +
+				"<h3>API 0.5 supports object relationships, and segments have been removed.</h3>" +
+				"<h3>This version is hard-coded to use the API 0.5 running on <i>openstreetmap.gryph.de</i> which has data from a recent planet file."+
+				"<br>Please be gentle with that machine and request only moderate bounding boxes.<br>" +
+				"<br>Username and password are also hardcoded, so your real username and password are not transmitted.<br>" +
+		"</h3>"), GBC.eol());
+		
+		addLine("wiki", "Read the [Wiki page on API 0.5]");
 		addGettingStarted();
 		addGettingHelp();
 		
@@ -85,6 +93,8 @@ public class GettingStarted extends JPanel implements ActionListener {
 			Main.main.menu.download.actionPerformed(e);
 		else if (e.getActionCommand().equals("help"))
 			Main.main.menu.help.actionPerformed(e);
+		else if (e.getActionCommand().equals("wiki"))
+			OpenBrowser.displayUrl("http://wiki.openstreetmap.org/index.php?title=OSM_Protocol_Version_0.5");
 		else if (e.getActionCommand().equals("tutorial"))
 			OpenBrowser.displayUrl("http://josm.openstreetmap.de/wiki/TutorialVideos");
 		else if (e.getActionCommand().equals("mailinglist"))

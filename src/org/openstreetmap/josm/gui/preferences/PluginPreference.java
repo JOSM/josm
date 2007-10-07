@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -193,7 +194,18 @@ public class PluginPreference implements PreferenceSetting {
 		Collection<PluginDescription> availablePlugins = getAvailablePlugins();
 		pluginMap = new HashMap<PluginDescription, Boolean>();
 		pluginPanel.removeAll();
-		Collection<String> enabledPlugins = Arrays.asList(Main.pref.get("plugins").split(","));
+
+		// the following could probably be done more elegantly?
+		Collection<String> enabledPlugins = null;
+		String enabledProp = Main.pref.get("plugins");
+		if ((enabledProp == null) || ("".equals(enabledProp))) {
+			enabledPlugins = Collections.EMPTY_SET;
+		}
+		else
+		{
+			enabledPlugins = Arrays.asList(enabledProp.split(","));
+		}
+		
 		for (final PluginDescription plugin : availablePlugins) {
 			boolean enabled = enabledPlugins.contains(plugin.name);
 			final JCheckBox pluginCheck = new JCheckBox(plugin.name+(plugin.version != null && !plugin.version.equals("") ? " Version: "+plugin.version : ""), enabled);

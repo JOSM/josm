@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm.visitor;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.Segment;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 
@@ -21,16 +21,13 @@ public class BoundingXYVisitor implements Visitor {
 		visit(n.eastNorth);
 	}
 
-	public void visit(Segment ls) {
-		if (!ls.incomplete) {
-			visit(ls.from);
-			visit(ls.to);
-		}
+	public void visit(Way w) {
+		for (Node n : w.nodes)
+			visit(n);
 	}
 
-	public void visit(Way w) {
-		for (Segment ls : w.segments)
-			visit(ls);
+	public void visit(Relation e) {
+		// relations have no bounding box.
 	}
 
 	public void visit(EastNorth eastNorth) {

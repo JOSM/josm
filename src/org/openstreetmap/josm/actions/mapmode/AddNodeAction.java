@@ -23,14 +23,16 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This mode adds a new node to the dataset. The user clicks on a place to add
  * and there is it. Nothing more, nothing less.
+ *
+ * FIXME: "nothing more, nothing less" is a bit out-of-date
  *
  * Newly created nodes are selected. Shift modifier does not cancel the old
  * selection as usual.
@@ -40,7 +42,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class AddNodeAction extends MapMode {
 
-	enum Mode {node, nodesegment, autonode}
+	enum Mode {node, nodeway, autonode}
 	private final Mode mode;
 
 	public static class AddNodeGroup extends GroupAction {
@@ -48,8 +50,8 @@ public class AddNodeAction extends MapMode {
 			super(KeyEvent.VK_N,0);
 			putValue("help", "Action/AddNode");
 			actions.add(new AddNodeAction(mf,tr("Add node"), Mode.node, tr("Add a new node to the map")));
-			actions.add(new AddNodeAction(mf, tr("Add node into segment"), Mode.nodesegment,tr( "Add a node into an existing segment")));
-			actions.add(new AddNodeAction(mf, tr("Add node and connect"), Mode.autonode,tr( "Add a node and connect it to the selected node (with CTRL: add node into segment; with SHIFT: re-use existing node)")));
+			actions.add(new AddNodeAction(mf, tr("Add node into way"), Mode.nodeway,tr( "Add a node into an existing way")));
+			actions.add(new AddNodeAction(mf, tr("Add node and connect"), Mode.autonode,tr( "Add a node and connect it to the selected node (with CTRL: add node into way; with SHIFT: re-use existing node)")));
 			setCurrent(0);
 		}
 	}
@@ -82,9 +84,7 @@ public class AddNodeAction extends MapMode {
 	 * If user clicked with the left button, add a node at the current mouse
 	 * position.
 	 *
-	 * If in nodesegment mode, add the node to the line segment by splitting the
-	 * segment. The new created segment will be inserted in every way the segment
-	 * was part of.
+	 * If in nodeway mode, insert the node into the way. 
 	 */
 	@Override public void mouseClicked(MouseEvent e) {
 		if (e.getButton() != MouseEvent.BUTTON1)
@@ -97,20 +97,24 @@ public class AddNodeAction extends MapMode {
 		}
 
 		Command c = new AddCommand(n);
-		if (mode == Mode.nodesegment) {
-			Segment s = Main.map.mapView.getNearestSegment(e.getPoint());
-			if (s == null)
+		if (mode == Mode.nodeway) {
+			WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
+			if (ws == null)
 				return;
 			
 			// see if another segment is also near
-			Segment other = Main.map.mapView.getNearestSegment(e.getPoint(), Collections.singleton(s));
+			WaySegment other = Main.map.mapView.getNearestWaySegment(e.getPoint(),
+				Collections.singleton(ws));
+
+			Node n1 = ws.way.nodes.get(ws.lowerIndex),
+				n2 = ws.way.nodes.get(ws.lowerIndex + 1);
 
 			if (other == null && (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == 0) {
 				// moving the new point to the perpendicular point
-				// FIXME: when two segments are split, should move the new point to the
+				// FIXME: when two way segments are split, should move the new point to the
 				// intersection point!
-				EastNorth A = s.from.eastNorth;
-				EastNorth B = s.to.eastNorth;
+				EastNorth A = n1.eastNorth;
+				EastNorth B = n2.eastNorth;
 				double ab = A.distance(B);
 				double nb = n.eastNorth.distance(B);
 				double na = n.eastNorth.distance(A);
@@ -123,24 +127,25 @@ public class AddNodeAction extends MapMode {
 			cmds.add(c);
 			
 			// split the first segment
-			splitSegmentAtNode(s, n, cmds);
+			splitWaySegmentAtNode(ws, n, cmds);
 			
 			// if a second segment was found, split that as well
-			if (other != null) splitSegmentAtNode(other, n, cmds);
+			if (other != null) splitWaySegmentAtNode(other, n, cmds);
 
 			c = new SequenceCommand(tr((other == null) ? 
-				"Add node into segment" : "Add common node into two segments"), cmds);
+				"Add node into way" : "Add common node into two ways"), cmds);
 		}
 
 		// Add a node and connecting segment.
 		if (mode == Mode.autonode) {
 
-			Segment insertInto = null;
+			WaySegment insertInto = null;
 			Node reuseNode = null;
 			
-			// If CTRL is held, insert the node into a potentially existing segment
+			// If CTRL is held, insert the node into a potentially existing way segment
 			if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0) {
-				insertInto = Main.map.mapView.getNearestSegment(e.getPoint());
+				insertInto = Main.map.mapView.getNearestWaySegment(e.getPoint());
+				if (insertInto == null) System.err.println("Couldn't find nearby way segment");
 				if (insertInto == null)
 					return;
 			} 
@@ -149,7 +154,7 @@ public class AddNodeAction extends MapMode {
 			// small difference that the node used will then be selected to allow
 			// continuation of the "add node and connect" stuff)
 			else if ((e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0) {
-				OsmPrimitive clicked = Main.map.mapView.getNearest(e.getPoint(), false);
+				OsmPrimitive clicked = Main.map.mapView.getNearest(e.getPoint());
 				if (clicked == null || !(clicked instanceof Node))
 					return;
 				reuseNode = (Node) clicked;
@@ -158,10 +163,12 @@ public class AddNodeAction extends MapMode {
 			Collection<OsmPrimitive> selection = Main.ds.getSelected();
 			if (selection.size() == 1 && selection.iterator().next() instanceof Node) {
 				Node n1 = (Node)selection.iterator().next();
+
 				Collection<Command> cmds = new LinkedList<Command>();
 				
 				if (reuseNode != null) {
 					// in re-use node mode, n1 must not be identical to clicked node
+					if (n1 == reuseNode) System.err.println("n1 == reuseNode");
 					if (n1 == reuseNode) return;
 					// replace newly created node with existing node
 					n = reuseNode;
@@ -170,27 +177,35 @@ public class AddNodeAction extends MapMode {
 					cmds.add(c);
 				}
 				
-				Segment s = new Segment(n1, n);
-				
+				/* Keep track of the way we change, it might be the same into
+				 * which we insert the node.
+				 */
+				Way newInsertInto = null;
 				if (insertInto != null)
-					splitSegmentAtNode(insertInto, n, cmds);
-				
-				cmds.add(new AddCommand(s));			
+					newInsertInto = splitWaySegmentAtNode(insertInto, n, cmds);
 
 				Way way = getWayForNode(n1);
-				if (way != null) {
-					Way newWay = new Way(way);
-					if (way.segments.get(0).from == n1) {
-						Node tmp = s.from;
-						s.from = s.to;
-						s.to = tmp;
-						newWay.segments.add(0, s);
-					} else
-						newWay.segments.add(s);
-					cmds.add(new ChangeCommand(way, newWay));
+				if (way == null) {
+					way = new Way();
+					way.nodes.add(n1);
+					cmds.add(new AddCommand(way));
+				} else {
+					if (insertInto != null && way == insertInto.way) {
+						way = newInsertInto;
+					} else {
+						Way wnew = new Way(way);
+						cmds.add(new ChangeCommand(way, wnew));
+						way = wnew;
+					}
 				}
 
-				c = new SequenceCommand(tr((insertInto == null) ? "Add node and connect" : "Add node into segment and connect"), cmds);
+				if (way.nodes.get(way.nodes.size() - 1) == n1) {
+					way.nodes.add(n);
+				} else {
+					way.nodes.add(0, n);
+				}
+
+				c = new SequenceCommand(tr((insertInto == null) ? "Add node and connect" : "Add node into way and connect"), cmds);
 			}	
 		}		
 	
@@ -200,49 +215,27 @@ public class AddNodeAction extends MapMode {
 	}
 	
 	/**
-	 * @return If the node is part of exactly one way, return this. 
+	 * @return If the node is the end of exactly one way, return this. 
 	 * 	<code>null</code> otherwise.
 	 */
 	private Way getWayForNode(Node n) {
 		Way way = null;
 		for (Way w : Main.ds.ways) {
-			for (Segment s : w.segments) {
-				if (s.from == n || s.to == n) {
+			int i = w.nodes.indexOf(n);
+			if (i == -1) continue;
+			if (i == 0 || i == w.nodes.size() - 1) {
 					if (way != null)
-						return null;
-					if (s.from == s.to)
 						return null;
 					way = w;
 				}
 			}
-		}
 		return way;
 	}
 	
-	private void splitSegmentAtNode(Segment s, Node n, Collection<Command> cmds) {
-		Segment s1 = new Segment(s);
-		s1.to = n;
-		Segment s2 = new Segment(s.from, s.to);
-		s2.from = n;
-		if (s.keys != null)
-			s2.keys = new HashMap<String, String>(s.keys);
-
-		cmds.add(new ChangeCommand(s, s1));
-		cmds.add(new AddCommand(s2));
-
-		// Add the segment to every way
-		for (Way wold : Main.ds.ways) {
-			if (wold.segments.contains(s)) {
-				Way wnew = new Way(wold);
-				Collection<Segment> segs = new ArrayList<Segment>(wnew.segments);
-				wnew.segments.clear();
-				for (Segment waySeg : segs) {
-					wnew.segments.add(waySeg);
-					if (waySeg == s)
-						wnew.segments.add(s2);
-				}
-				cmds.add(new ChangeCommand(wold, wnew));
-			}
-		}
+	private Way splitWaySegmentAtNode(WaySegment ws, Node n, Collection<Command> cmds) {
+		Way wnew = new Way(ws.way);
+		wnew.nodes.add(ws.lowerIndex + 1, n);
+		cmds.add(new ChangeCommand(ws.way, wnew));
+		return wnew;
 	}
 }

@@ -47,10 +47,13 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
 import org.openstreetmap.josm.gui.tagging.ForwardActionListener;
+import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
 import org.openstreetmap.josm.tools.GBC;
@@ -76,6 +79,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener {
 
 	/**
+	 * Used to display relation names in the membership table
+	 */
+	private NameVisitor nameVisitor = new NameVisitor();
+	
+	/**
 	 * Watches for double clicks and from editing or new property, depending on the
 	 * location, the click was.
 	 * @author imi
@@ -84,21 +92,31 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		@Override public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() < 2)
 				return;
-			if (e.getSource() instanceof JScrollPane)
-				add();
-			else {
+	
+			if (e.getSource() == propertyTable)
+			{
 				int row = propertyTable.rowAtPoint(e.getPoint());
-				edit(row);
+				if (row > -1) {
+					propertyEdit(row);
+					return;
 			}
+			} else if (e.getSource() == membershipTable) {
+				int row = membershipTable.rowAtPoint(e.getPoint());
+				if (row > -1) {
+					membershipEdit(row);
+					return;
+				}
+			}
+			add();
 		}
 	}
 
 	/**
-	 * Edit the value in the table row
-	 * @param row 	The row of the table, from which the value is edited.
+	 * Edit the value in the properties table row
+	 * @param row The row of the table from which the value is edited.
 	 */
-	void edit(int row) {
-		String key = data.getValueAt(row, 0).toString();
+	void propertyEdit(int row) {
+		String key = propertyData.getValueAt(row, 0).toString();
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		if (sel.isEmpty()) {
 			JOptionPane.showMessageDialog(Main.parent, tr("Please select the objects you want to change properties for."));
@@ -117,35 +135,33 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		p.add(Box.createHorizontalStrut(10), GBC.std());
 		p.add(keyField, GBC.eol().fill(GBC.HORIZONTAL));
 				
-		final JComboBox combo = (JComboBox)data.getValueAt(row, 1);
+		final JTextField valueField = new JTextField((String)propertyData.getValueAt(row, 1));
 		p.add(new JLabel(tr("Value")), GBC.std());
 		p.add(Box.createHorizontalStrut(10), GBC.std());
-		p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
+		p.add(valueField, GBC.eol().fill(GBC.HORIZONTAL));
 
 		final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
 			@Override public void selectInitialValue() {
-				combo.requestFocusInWindow();
-				combo.getEditor().selectAll();
+				valueField.requestFocusInWindow();
+				valueField.selectAll();
 			}
 		};
 		final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
-		combo.getEditor().addActionListener(new ActionListener(){
+		valueField.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				optionPane.setValue(JOptionPane.OK_OPTION);
 				dlg.setVisible(false);
 			}
 		});
-		String oldComboEntry = combo.getEditor().getItem().toString();
 		dlg.setVisible(true);
 
 		Object answer = optionPane.getValue();
 		if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE ||
 				(answer instanceof Integer && (Integer)answer != JOptionPane.OK_OPTION)) {
-			combo.getEditor().setItem(oldComboEntry);
 			return;
 		}
 
-		String value = combo.getEditor().getItem().toString();
+		String value = valueField.getText();
 		if (value.equals(tr("<different>")))
 			return;
 		if (value.equals(""))
@@ -163,10 +179,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 					new ChangePropertyCommand(sel, newkey, value)));
 		}
 
-		if (!key.equals(newkey) || value == null)
 			selectionChanged(sel); // update whole table
-
 		Main.parent.repaint(); // repaint all - drawing could have been changed
+	}
+
+	/**
+	 * This simply fires up an relation editor for the relation shown; everything else
+	 * is the editor's business.
+	 * 
+	 * @param row
+	 */
+	void membershipEdit(int row) {	
+		final RelationEditor editor = new RelationEditor((Relation)membershipData.getValueAt(row, 0));
+		editor.setVisible(true);
 	}
 
 	/**
@@ -196,8 +221,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 				values.add(osm.get(key));
 			}
 		}
-		for (int i = 0; i < data.getRowCount(); ++i)
-			allData.remove(data.getValueAt(i, 0));
+		for (int i = 0; i < propertyData.getRowCount(); ++i)
+			allData.remove(propertyData.getValueAt(i, 0));
 		final AutoCompleteComboBox keys = new AutoCompleteComboBox();
 		keys.setPossibleItems(allData.keySet());
 		keys.setEditable(true);
@@ -248,7 +273,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	 * @param row	The row, which key gets deleted from the dataset.
 	 */
 	private void delete(int row) {
-		String key = data.getValueAt(row, 0).toString();
+		String key = propertyData.getValueAt(row, 0).toString();
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
 		selectionChanged(sel); // update table
@@ -257,18 +282,33 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	/**
 	 * The property data.
 	 */
-	private final DefaultTableModel data = new DefaultTableModel(){
+	private final DefaultTableModel propertyData = new DefaultTableModel() {
 		@Override public boolean isCellEditable(int row, int column) {
 			return false;
 		}
 		@Override public Class<?> getColumnClass(int columnIndex) {
-			return columnIndex == 1 ? JComboBox.class : String.class;
+			return String.class;
 		}
 	};
+
+	/**
+	 * The membership data.
+	 */
+	private final DefaultTableModel membershipData = new DefaultTableModel() {
+		@Override public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+		@Override public Class<?> getColumnClass(int columnIndex) {
+			return columnIndex == 1 ? Relation.class : String.class;
+		}
+	};
+	
 	/**
 	 * The properties list.
 	 */
-	private final JTable propertyTable = new JTable(data);
+	private final JTable propertyTable = new JTable(propertyData);
+	private final JTable membershipTable = new JTable(membershipData);
+
 	public JComboBox taggingPresets = new JComboBox();
 
 
@@ -276,7 +316,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	 * Create a new PropertiesDialog
 	 */
 	public PropertiesDialog(MapFrame mapFrame) {
-		super(tr("Properties"), "propertiesdialog", tr("Properties for selected objects."), KeyEvent.VK_P, 150);
+		super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."), KeyEvent.VK_P, 150);
 
 		if (TaggingPresetPreference.taggingPresets.size() > 0) {
 			Vector<ActionListener> allPresets = new Vector<ActionListener>();
@@ -299,13 +339,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		});
 		taggingPresets.setRenderer(new TaggingCellRenderer());
 
-		data.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
+		// setting up the properties table
+		
+		propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
 		propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		propertyTable.setDefaultRenderer(JComboBox.class, new DefaultTableCellRenderer(){
+	
+		propertyTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
 			@Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
 				if (c instanceof JLabel) {
-					String str = ((JComboBox)value).getEditor().getItem().toString();
+					String str = (String) value;
 					((JLabel)c).setText(str);
 					if (str.equals(tr("<different>")))
 						c.setFont(c.getFont().deriveFont(Font.ITALIC));
@@ -313,14 +356,35 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 				return c;
 			}
 		});
-		propertyTable.setDefaultRenderer(String.class, new DefaultTableCellRenderer(){
+		
+		// setting up the membership table
+		
+		membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role")});
+		membershipTable.setRowSelectionAllowed(false);
+		
+		membershipTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
 			@Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				return super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+				Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+				if (c instanceof JLabel) {
+					nameVisitor.visit((Relation)value);
+					((JLabel)c).setText(nameVisitor.name);
+				}
+				return c;
 			}
 		});
+		
+		// combine both tables and wrap them in a scrollPane
+		JPanel bothTables = new JPanel();
+		bothTables.setLayout(new GridBagLayout());
+		bothTables.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
+		bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
+		bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
+		bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
+		
 		DblClickWatch dblClickWatch = new DblClickWatch();
 		propertyTable.addMouseListener(dblClickWatch);
-		JScrollPane scrollPane = new JScrollPane(propertyTable);
+		membershipTable.addMouseListener(dblClickWatch);
+		JScrollPane scrollPane = new JScrollPane(bothTables);
 		scrollPane.addMouseListener(dblClickWatch);
 		add(scrollPane, BorderLayout.CENTER);
 
@@ -334,7 +398,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 					if (sel == -1)
 						JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
 					else
-						edit(sel);
+						propertyEdit(sel);
 				} else if (e.getActionCommand().equals("Delete")) {
 					if (sel == -1)
 						JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
@@ -343,12 +407,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 				}
 			}
 		};
+		
 		buttonPanel.add(createButton(marktr("Add"),tr("Add a new key/value pair to all objects"), KeyEvent.VK_A, buttonAction));
 		buttonPanel.add(createButton(marktr("Edit"),tr( "Edit the value of the selected key for all objects"), KeyEvent.VK_E, buttonAction));
 		buttonPanel.add(createButton(marktr("Delete"),tr("Delete the selected key in all objects"), KeyEvent.VK_D, buttonAction));
 		add(buttonPanel, BorderLayout.SOUTH);
 
-		DataSet.listeners.add(this);
+		DataSet.selListeners.add(this);
 	}
 
 	private JButton createButton(String name, String tooltip, int mnemonic, ActionListener actionListener) {
@@ -374,7 +439,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			return; // selection changed may be received in base class constructor before init
 		if (propertyTable.getCellEditor() != null)
 			propertyTable.getCellEditor().cancelCellEditing();
-		data.setRowCount(0);
+
+		// re-load property data
+		
+		propertyData.setRowCount(0);
 
 		Map<String, Integer> valueCount = new HashMap<String, Integer>();
 		TreeMap<String, Collection<String>> props = new TreeMap<String, Collection<String>>();
@@ -390,10 +458,38 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		}
 		for (Entry<String, Collection<String>> e : props.entrySet()) {
-			JComboBox value = new JComboBox(e.getValue().toArray());
-			value.setEditable(true);
-			value.getEditor().setItem(e.getValue().size() > 1 || valueCount.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next());
-			data.addRow(new Object[]{e.getKey(), value});
+			String value=(e.getValue().size() > 1 || valueCount.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next());
+			propertyData.addRow(new Object[]{e.getKey(), value});
+		}
+		
+		// re-load membership data
+		// this is rather expensive since we have to walk through all members of all existing relationships.
+		// could use back references here for speed if necessary.
+		
+		membershipData.setRowCount(0);
+		
+		Map<Relation, Integer> valueCountM = new HashMap<Relation, Integer>();
+		TreeMap<Relation, Collection<String>> roles = new TreeMap<Relation, Collection<String>>();
+		for (Relation r : Main.ds.relations) {
+			for (RelationMember m : r.members) {
+				if (newSelection.contains(m.member)) {
+					Collection<String> value = roles.get(r);
+					if (value == null) {
+						value = new TreeSet<String>();
+						roles.put(r, value);
+					}
+					value.add(m.role);
+					valueCountM.put(r, valueCount.containsKey(r) ? valueCount.get(r)+1 : 1);
+				}
+			}
+		}
+		
+		for (Entry<Relation, Collection<String>> e : roles.entrySet()) {
+			//JComboBox value = new JComboBox(e.getValue().toArray());
+			//value.setEditable(true);
+			//value.getEditor().setItem(e.getValue().size() > 1 || valueCount.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next());
+			String value = e.getValue().size() > 1 || valueCountM.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next();
+			membershipData.addRow(new Object[]{e.getKey(), value});
 		}
 	}
 }

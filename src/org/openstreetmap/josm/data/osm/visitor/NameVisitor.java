@@ -1,5 +1,4 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-
 package org.openstreetmap.josm.data.osm.visitor;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -12,9 +11,9 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -40,25 +39,6 @@ public class NameVisitor implements Visitor {
 	
 	
 	/**
-	 * If the segment has a key named "name", its value is displayed. 
-	 * Otherwise, if it has "id", this is used. If none of these available, 
-	 * "(x1,y1) -> (x2,y2)" is displayed with the nodes coordinates.
-	 */
-	public void visit(Segment ls) {
-		name = ls.get("name");
-		if (name == null) {
-			if (ls.incomplete)
-				name = ls.id == 0 ? tr("new") : ls.id+" ("+tr("unknown")+")";
-			else
-				name = (ls.id==0?"":ls.id+" ")+"("+ls.from.coor.lat()+","+ls.from.coor.lon()+") -> ("+ls.to.coor.lat()+","+ls.to.coor.lon()+")";
-		}
-		addId(ls);
-		icon = ImageProvider.get("data", "segment");
-		trn("segment", "segments", 0); // no marktrn available
-		className = "segment";
-	}
-
-	/**
 	 * If the node has a name-key or id-key, this is displayed. If not, (lat,lon)
 	 * is displayed.
 	 */
@@ -80,23 +60,26 @@ public class NameVisitor implements Visitor {
 		name = w.get("name");
 		if (name == null) name = w.get("ref");
 		if (name == null) {
-			AllNodesVisitor.getAllNodes(w.segments);
-			Set<Node> nodes = new HashSet<Node>();
-			for (Segment ls : w.segments) {
-				if (!ls.incomplete) {
-					nodes.add(ls.from);
-					nodes.add(ls.to);
-				}
-			}
 			String what = (w.get("highway") != null) ? "highway " : (w.get("railway") != null) ? "railway " : (w.get("waterway") != null) ? "waterway " : "";
-			name = what + trn("{0} node", "{0} nodes", nodes.size(), nodes.size());
+			name = what + trn("{0} node", "{0} nodes", w.nodes.size(), w.nodes.size());
 		}
-		if (w.isIncomplete())
-			name += " ("+tr("incomplete")+")";
 		addId(w);
 		icon = ImageProvider.get("data", "way");
 		trn("way", "ways", 0); // no marktrn available
 		className = "way";
+	}
+	
+	/**
+	 */
+	public void visit(Relation e) {
+		name = e.get("type");
+		// FIXME add names of members
+		if (name == null)
+			name = "relation";
+		addId(e);
+		icon = ImageProvider.get("data", "relation");
+		trn("relation", "relations", 0); // no marktrn available
+		className = "relation";
 	}
 	
 	public JLabel toLabel() {

@@ -14,9 +14,10 @@ import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -50,9 +51,9 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 	 * @param mapFrame The MapFrame this action belongs to.
 	 */
 	public AddSegmentAction(MapFrame mapFrame) {
-		super(tr("Add segment"), 
+		super(tr("Connect two nodes"), 
 				"addsegment", 
-				tr("Add a segment between two nodes."), 
+				tr("Connect two nodes using ways."), 
 				KeyEvent.VK_G, 
 				mapFrame, 
 				ImageProvider.getCursor("normal", "segment"));
@@ -71,7 +72,9 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 		drawHint(false);
 	}
 
-	
+	/**
+	 * Called when user hits space bar while dragging.
+	 */
 	@Override public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		makeSegment();
@@ -84,12 +87,11 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 
-		OsmPrimitive clicked = Main.map.mapView.getNearest(e.getPoint(), true);
-		if (clicked == null || !(clicked instanceof Node))
-			return;
+		Node clicked = Main.map.mapView.getNearestNode(e.getPoint());
+		if (clicked == null) return;
 
 		drawHint(false);
-		first = second = (Node)clicked;
+		first = second = clicked;
 	}
 
 	/**
@@ -100,13 +102,11 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
 			return;
 
-		OsmPrimitive clicked = Main.map.mapView.getNearest(e.getPoint(), (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0);
-		if (clicked == null || clicked == second || !(clicked instanceof Node))
-			return;
+		Node hovered = Main.map.mapView.getNearestNode(e.getPoint());
+		if (hovered == second) return;
 
 		drawHint(false);
-
-		second = (Node)clicked;
+		second = hovered;
 		drawHint(true);
 	}
 
@@ -115,9 +115,28 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 	 */
 	@Override public void mouseReleased(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
+			drawHint(false);
 			makeSegment();
-			first = null; // release segment drawing
+			first = null;
 		}
+	}
+
+	/**
+	 * @return If the node is the end of exactly one way, return this. 
+	 * 	<code>null</code> otherwise.
+	 */
+	private Way getWayForNode(Node n) {
+		Way way = null;
+		for (Way w : Main.ds.ways) {
+			int i = w.nodes.indexOf(n);
+			if (i == -1) continue;
+			if (i == 0 || i == w.nodes.size() - 1) {
+				if (way != null)
+					return null;
+				way = w;
+			}
+		}
+		return way;
 	}
 
 	/**
@@ -125,29 +144,45 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 	 * not already a segment.
 	 */
 	private void makeSegment() {
-		if (first == null || second == null) {
-			first = null;
-			second = null;
-			return;
-		}
-
-		drawHint(false);
+		Node n1 = first;
+		Node n2 = second;
 		
-		Node start = first;
-		Node end = second;
+		// this is to allow continued segment drawing by hitting the space bar
+		// at every intermediate node
 		first = second;
 		second = null;
-		
-		if (start != end) {
-			// try to find a segment
-			for (Segment ls : Main.ds.segments)
-				if (!ls.deleted && ((start == ls.from && end == ls.to) || (end == ls.from && start == ls.to)))
-					return; // already a segment here - be happy, do nothing.
 
-			Segment ls = new Segment(start, end);
-			Main.main.undoRedo.add(new AddCommand(ls));
-			Collection<OsmPrimitive> sel = Main.ds.getSelected();
-			sel.add(ls);
+		if (n1 == null || n2 == null || n1 == n2) return;
+
+		Way w = getWayForNode(n1);
+		Way wnew;
+		Collection<OsmPrimitive> sel = Main.ds.getSelected();
+		
+		if (w == null) {
+			// create a new way and add it to the current selection.
+			wnew = new Way();
+			wnew.nodes.add(n1);
+			wnew.nodes.add(n2);
+			Main.main.undoRedo.add(new AddCommand(wnew));
+			sel.add(wnew);
+			Main.ds.setSelected(sel);
+		} else {
+			// extend an existing way; only add to current selection if
+			// it is not already in there.
+			wnew = new Way(w);
+			if (wnew.nodes.get(wnew.nodes.size() - 1) == n1) {
+				wnew.nodes.add(n2);
+			} else {
+				wnew.nodes.add(0, n2);
+			}
+			Main.main.undoRedo.add(new ChangeCommand(w, wnew));
+			// do not use wnew below; ChangeCommand only uses wnew as a
+			// message about changes to be done to w but will not replace w!
+			if (!sel.contains(w)) {
+				sel.add(w);
+			}
+			// do not move this into the if block above since it also
+			// fires the selection change event which is desired.
 			Main.ds.setSelected(sel);
 		}
 

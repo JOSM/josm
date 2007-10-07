@@ -84,7 +84,7 @@ public class MapView extends NavigatableComponent {
 		new MapMover(this, Main.contentPane);
 
 		// listend to selection changes to redraw the map
-		DataSet.listeners.add(new SelectionChangedListener(){
+		DataSet.selListeners.add(new SelectionChangedListener(){
 			public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
 				repaint();
 			}

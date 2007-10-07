@@ -24,7 +24,6 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
@@ -281,8 +280,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 	 * Return a list of all objects in the rectangle, respecting the different
 	 * modifier.
 	 * @param alt Whether the alt key was pressed, which means select all objects
-	 * 		that are touched, instead those which are completly covered. Also 
-	 * 		select whole ways instead of segments.
+	 * 		that are touched, instead those which are completly covered.
 	 */
 	public Collection<OsmPrimitive> getObjectsInRectangle(Rectangle r, boolean alt) {
 		Collection<OsmPrimitive> selection = new LinkedList<OsmPrimitive>();
@@ -292,7 +290,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 		Point center = new Point(r.x+r.width/2, r.y+r.height/2);
 
 		if (clicked) {
-			OsmPrimitive osm = nc.getNearest(center, alt);
+			OsmPrimitive osm = nc.getNearest(center);
 			if (osm != null)
 				selection.add(osm);
 		} else {
@@ -302,56 +300,30 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 					selection.add(n);
 			}
 			
-			// pending segments
-			for (Segment s : Main.ds.segments)
-				if (!s.deleted && rectangleContainSegment(r, alt, s))
-					selection.add(s);
-
 			// ways
 			for (Way w : Main.ds.ways) {
-				if (w.deleted)
-					continue;
-				boolean someSelectableSegment = false;
-				boolean wholeWaySelected = true;
-				for (Segment s : w.segments) {
-					if (s.incomplete)
+				if (w.deleted || w.nodes.isEmpty())
 						continue;
-					someSelectableSegment = true;
-					if (!rectangleContainSegment(r, alt, s)) {
-						wholeWaySelected = false;
+				if (alt) {
+					for (Node n : w.nodes) {
+						if (r.contains(nc.getPoint(n.eastNorth))) {
+							selection.add(w);
 						break;
 					}
 				}
-				if (someSelectableSegment && wholeWaySelected)
-					selection.add(w);
+				} else {
+					boolean allIn = true;
+					for (Node n : w.nodes) {
+						if (!r.contains(nc.getPoint(n.eastNorth))) {
+							allIn = false;
+							break;
 			}
 		}
-		return selection;
+					if (allIn) selection.add(w);
+				}
 	}
-
-	/**
-	 * Decide whether the segment is in the rectangle Return 
-	 * <code>true</code>, if it is in or false if not.
-	 * 
-	 * @param r			The rectangle, in which the segment has to be.
-	 * @param alt		Whether user pressed the Alt key
-	 * @param ls		The segment.
-	 * @return <code>true</code>, if the Segment was added to the selection.
-	 */
-	private boolean rectangleContainSegment(Rectangle r, boolean alt, Segment ls) {
-		if (ls.incomplete)
-			return false;
-		if (alt) {
-			Point p1 = nc.getPoint(ls.from.eastNorth);
-			Point p2 = nc.getPoint(ls.to.eastNorth);
-			if (r.intersectsLine(p1.x, p1.y, p2.x, p2.y))
-				return true;
-		} else {
-			if (r.contains(nc.getPoint(ls.from.eastNorth))
-					&& r.contains(nc.getPoint(ls.to.eastNorth)))
-				return true;
 		}
-		return false;
+		return selection;
 	}
 	
 	public void mouseClicked(MouseEvent e) {}

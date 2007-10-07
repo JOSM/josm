@@ -18,6 +18,14 @@ public final class Node extends OsmPrimitive {
 	public volatile EastNorth eastNorth;
 
 	/**
+	 * Create an incomplete Node object
+	 */
+	public Node(long id) {
+		this.id = id;
+		incomplete = true;
+	}
+	
+	/**
 	 * Create an identical clone of the argument (including the id)
 	 */
 	public Node(Node clone) {

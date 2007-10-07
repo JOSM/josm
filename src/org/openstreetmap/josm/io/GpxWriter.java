@@ -10,7 +10,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.RawGpsLayer.GpsPoint;
 
@@ -31,11 +30,8 @@ public class GpxWriter extends XmlWriter {
 	}
 
 	/**
-	 * Export the dataset to gpx. Only the physical segment structure is
-	 * exported. To do this, the list of ways is processed. If a way span a 
-	 * sequence of segments, this is added as one trkseg.
-	 * Then, all remaining segments are added in one extra trk. Finally,
-	 * all remaining nodes are added as wpt.
+	 * Export the dataset to gpx.  The ways are converted to trksegs, each in
+	 * a seperate trk.  Finally, all remaining nodes are added as wpt.
 	 */
 	public static final class All implements XmlWriter.OsmWriterInterface {
 		private final DataSet data;
@@ -105,52 +101,14 @@ public class GpxWriter extends XmlWriter {
 				if (w.deleted)
 					continue;
 				out.println("  <trk>");
-				Segment oldLs = null;
-				for (Segment ls : w.segments) {
-					if (ls.incomplete)
-						continue;
-					// end old segemnt, if no longer match a chain
-					if (oldLs != null && !oldLs.to.coor.equals(ls.from.coor)) {
-						out.println("    </trkseg>");
-						writer.outputNode(oldLs.to, false);
-						all.remove(oldLs.to);
-						oldLs = null;
-					}
-					// start new segment if necessary
-					if (oldLs == null)
 						out.println("    <trkseg>");
-					writer.outputNode(ls.from, false);
-					all.remove(ls.from);
-					oldLs = ls;
-					all.remove(ls);
-				}
-				// write last node if there
-				if (oldLs != null) {
-					writer.outputNode(oldLs.to, false);
-					all.remove(oldLs.to);
+				for (Node n : w.nodes) {
+					writer.outputNode(n, false);
+					all.remove(n);
+			}
 					out.println("    </trkseg>");
-				}
 				out.println("  </trk>");
 				all.remove(w);
-			}
-
-			// add remaining segments
-			Collection<Segment> segments = new LinkedList<Segment>();
-			for (OsmPrimitive osm : all)
-				if (osm instanceof Segment && !((Segment)osm).incomplete)
-					segments.add((Segment)osm);
-			if (!segments.isEmpty()) {
-				out.println("  <trk>");
-				for (Segment ls : segments) {
-					out.println("    <trkseg>");
-					writer.outputNode(ls.from, false);
-					all.remove(ls.from);
-					writer.outputNode(ls.to, false);
-					all.remove(ls.to);
-					out.println("    </trkseg>");
-					all.remove(ls);
-				}
-				out.println("  </trk>");
 			}
 
 			// finally add the remaining nodes

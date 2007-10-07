@@ -125,7 +125,7 @@ public class MapStatus extends JPanel implements Helpful {
 
 					OsmPrimitive osmNearest = null;
 					// Set the text label in the bottom status bar
-					osmNearest = mv.getNearest(ms.mousePos, (ms.modifiers & MouseEvent.ALT_DOWN_MASK) != 0);
+					osmNearest = mv.getNearest(ms.mousePos);
 					if (osmNearest != null) {
 						NameVisitor visitor = new NameVisitor();
 						osmNearest.visit(visitor);

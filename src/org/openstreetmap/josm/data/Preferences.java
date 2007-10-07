@@ -53,6 +53,21 @@ public class Preferences {
 	protected final SortedMap<String, String> properties = new TreeMap<String, String>();
 
 	/**
+	 * Override some values on read. This is intended to be used for technology previews
+	 * where we want to temporarily modify things without changing the user's preferences
+	 * file.
+	 */
+	protected static final SortedMap<String, String> override = new TreeMap<String, String>();
+	static {
+		override.put("osm-server.version", "0.5");
+		override.put("osm-server.additional-versions", "");
+		override.put("osm-server.url", "http://openstreetmap.gryph.de/api");
+		override.put("osm-server.username", "fred@remote.org");
+		override.put("osm-server.password", "fredfred");
+		override.put("plugins", null);
+	}
+
+	/**
 	 * Return the location of the user defined preferences file
 	 */
 	public String getPreferencesDir() {
@@ -62,7 +77,7 @@ public class Preferences {
 	}
 
 	/**
-	 * @return A list of all existing directories, where ressources could be stored.
+	 * @return A list of all existing directories, where resources could be stored.
 	 */
 	public Collection<String> getAllPossiblePreferenceDirs() {
 	    LinkedList<String> locations = new LinkedList<String>();
@@ -92,14 +107,18 @@ public class Preferences {
 
 
 	synchronized public boolean hasKey(final String key) {
-		return properties.containsKey(key);
+		return override.containsKey(key) ? override.get(key) != null : properties.containsKey(key);
 	}
 	synchronized public String get(final String key) {
+		if (override.containsKey(key))
+			return override.get(key);
 		if (!properties.containsKey(key))
 			return "";
 		return properties.get(key);
 	}
 	synchronized public String get(final String key, final String def) {
+		if (override.containsKey(key)) 
+			return override.get(key);
 		final String prop = properties.get(key);
 		if (prop == null || prop.equals(""))
 			return def;
@@ -110,12 +129,20 @@ public class Preferences {
 		for (final Entry<String,String> e : properties.entrySet())
 			if (e.getKey().startsWith(prefix))
 				all.put(e.getKey(), e.getValue());
+		for (final Entry<String,String> e : override.entrySet())
+			if (e.getKey().startsWith(prefix))
+				if (e.getValue() == null)
+					all.remove(e.getKey());
+				else
+					all.put(e.getKey(), e.getValue());
 		return all;
 	}
 	synchronized public boolean getBoolean(final String key) {
 		return getBoolean(key, false);
 	}
 	synchronized public boolean getBoolean(final String key, final boolean def) {
+		if (override.containsKey(key))
+			return override.get(key) == null ? def : Boolean.parseBoolean(override.get(key));
 		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
 	}
 
@@ -147,9 +174,10 @@ public class Preferences {
 	protected void save() {
 		try {
 			final PrintWriter out = new PrintWriter(new FileWriter(getPreferencesDir() + "preferences"), false);
-			for (final Entry<String, String> e : properties.entrySet())
+			for (final Entry<String, String> e : properties.entrySet()) {
 				if (!e.getValue().equals(""))
 					out.println(e.getKey() + "=" + e.getValue());
+			}
 			out.close();
 		} catch (final IOException e) {
 			e.printStackTrace();

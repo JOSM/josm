@@ -9,9 +9,10 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
@@ -24,7 +25,7 @@ public class MergeVisitor implements Visitor {
 
 	/**
 	 * Map from primitives in the database to visited primitives. (Attention: The other way 
-	 * round than mergedNodes and mergedSegments)
+	 * round than mergedNodes)
 	 */
 	public Map<OsmPrimitive, OsmPrimitive> conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
 
@@ -37,12 +38,6 @@ public class MergeVisitor implements Visitor {
 	 * in ds.nodes instead.
 	 */
 	private final Map<Node, Node> mergedNodes = new HashMap<Node, Node>();
-	/**
-	 * A list of all segments that got replaced with others.
-	 * Key is the segment in the other's dataset and the value is the one that is now
-	 * in ds.segments.
-	 */
-	private final Map<Segment, Segment> mergedSegments = new HashMap<Segment, Segment>();
 
 	public MergeVisitor(DataSet ds, DataSet mergeds) {
 		this.ds = ds;
@@ -80,66 +75,16 @@ public class MergeVisitor implements Visitor {
 	}
 
 	/**
-	 * Merge the segment if id matches or if both nodes are the same (and the
-	 * id is zero of either segment). Nodes are the "same" when they @see match
+	 * Simply calls cloneFrom() for now.
+	 * Might be useful to keep around to facilitate merge with the relations
+	 * branch.
 	 */
-	public void visit(Segment other) {
-		if (mergeAfterId(mergedSegments, ds.segments, other))
-			return;
-
-		Segment my = null;
-		for (Segment ls : ds.segments) {
-			if (match(other, ls) && ((mergeds == null) || (!mergeds.segments.contains(ls)))) {
-				my = ls;
-				break;
-			}
-		}
-		
-		if (my == null)
-			ds.segments.add(other);
-		else if (my.incomplete && !other.incomplete) {
-			mergedSegments.put(other, my);
-			my.cloneFrom(other);
-		} else if (!other.incomplete) {
-			mergedSegments.put(other, my);
-			mergeCommon(my, other);
-			if (my.modified && !other.modified)
-				return;
-			if (!match(my.from, other.from)) {
-				my.from = other.from;
-				my.modified = other.modified;
-			}
-			if (!match(my.to, other.to)) {
-				my.to = other.to;
-				my.modified = other.modified;
-			}
-		}
-	}
-
 	private <T extends OsmPrimitive> void cloneFromExceptIncomplete(T myOsm, T otherOsm) {
-		if (!(myOsm instanceof Way))
-			myOsm.cloneFrom(otherOsm);
-		else {
-			Way my = (Way)myOsm;
-			Way other = (Way)otherOsm;
-			HashMap<Long, Segment> copy = new HashMap<Long, Segment>();
-			for (Segment s : my.segments)
-				copy.put(s.id, s);
-			my.cloneFrom(other);
-			my.segments.clear();
-			for (Segment s : other.segments) {
-				Segment myS = copy.get(s.id);
-				if (s.incomplete && myS != null && !myS.incomplete) {
-					mergedSegments.put(s, myS);
-					my.segments.add(myS);
-				} else
-					my.segments.add(s);
-			}
-		}
+		myOsm.cloneFrom(otherOsm);
     }
 
 	/**
-	 * Merge the way if id matches or if all segments matches and the
+	 * Merge the way if id matches or if all nodes match and the
 	 * id is zero of either way.
 	 */
 	public void visit(Way other) {
@@ -154,10 +99,48 @@ public class MergeVisitor implements Visitor {
 			}
 		}
 		if (my == null) {
-			// Add the way and replace any incomplete segments that we already have
 			ds.ways.add(other);
-			for (Segment s : other.segments) {
-				if (s.incomplete) {
+		} else {
+			mergeCommon(my, other);
+			if (my.modified && !other.modified)
+				return;
+			boolean same = true;
+			Iterator<Node> it = other.nodes.iterator();
+			for (Node n : my.nodes) {
+				if (!match(n, it.next()))
+					same = false;
+			}
+			if (!same) {
+				my.nodes.clear();
+				my.nodes.addAll(other.nodes);
+				my.modified = other.modified;
+			}
+		}
+	}
+
+	/**
+	 * Merge the relation if id matches or if all members match and the
+	 * id of either relation is zero.
+	 */
+	public void visit(Relation other) {
+		if (mergeAfterId(null, ds.relations, other))
+			return;
+
+		Relation my = null;
+		for (Relation e : ds.relations) {
+			if (match(other, e) && ((mergeds == null) || (!mergeds.relations.contains(e)))) {
+				my = e;
+				break;
+			}
+		}
+		
+		if (my == null) {
+			// Add the relation and replace any incomplete segments that we already have
+			ds.relations.add(other);
+			// FIXME unclear!
+			/*
+			for (RelationMember em : other.getMembers()) {
+				if (em.member.incomplete) {
 					for (Segment ourSegment : ds.segments) {
 						if (ourSegment.id == s.id) {
 							mergedSegments.put(s, ourSegment);
@@ -165,17 +148,24 @@ public class MergeVisitor implements Visitor {
 						}
 					}
 				}
-			}
+			}*/
 		} else {
 			mergeCommon(my, other);
 			if (my.modified && !other.modified)
 				return;
 			boolean same = true;
-			Iterator<Segment> it = other.segments.iterator();
-			for (Segment ls : my.segments) {
-				if (!match(ls, it.next()))
+			if (other.members.size() != my.members.size()) {
 					same = false;
+			} else {
+				for (RelationMember em : my.members) {
+					if (!other.members.contains(em)) {
+						same = false;
+						break;
+					}
+				}
 			}
+			// FIXME Unclear
+			/*
 			if (!same) {
 				HashMap<Long, Segment> copy = new HashMap<Long, Segment>();
 				for (Segment s : my.segments)
@@ -191,6 +181,7 @@ public class MergeVisitor implements Visitor {
 				}
 				my.modified = other.modified;
 			}
+			*/
 		}
 	}
 
@@ -199,11 +190,6 @@ public class MergeVisitor implements Visitor {
 	 * data.
 	 */
 	public void fixReferences() {
-		for (Segment s : ds.segments)
-			fixSegment(s);
-		for (OsmPrimitive osm : conflicts.values())
-			if (osm instanceof Segment)
-				fixSegment((Segment)osm);
 		for (Way w : ds.ways)
 			fixWay(w);
 		for (OsmPrimitive osm : conflicts.values())
@@ -213,33 +199,21 @@ public class MergeVisitor implements Visitor {
 
 	private void fixWay(Way w) {
 	    boolean replacedSomething = false;
-	    LinkedList<Segment> newSegments = new LinkedList<Segment>();
-	    for (Segment ls : w.segments) {
-	    	Segment otherLs = mergedSegments.get(ls);
-	    	newSegments.add(otherLs == null ? ls : otherLs);
-	    	if (otherLs != null)
+	    LinkedList<Node> newNodes = new LinkedList<Node>();
+	    for (Node n : w.nodes) {
+	    	Node otherN = mergedNodes.get(n);
+	    	newNodes.add(otherN == null ? n : otherN);
+	    	if (otherN != null)
 	    		replacedSomething = true;
 	    }
 	    if (replacedSomething) {
-	    	w.segments.clear();
-	    	w.segments.addAll(newSegments);
-	    }
-	    for (Segment ls : w.segments)
-	    	fixSegment(ls);
+	    	w.nodes.clear();
+	    	w.nodes.addAll(newNodes);
     }
-
-	private void fixSegment(Segment ls) {
-		
-	    if (mergedNodes.containsKey(ls.from)) 
-	    	ls.from = mergedNodes.get(ls.from);
-	    
-	    if (mergedNodes.containsKey(ls.to))  
-	    	ls.to = mergedNodes.get(ls.to);
-	   
     }
 
 	/**
-	 * @return Whether the nodes matches (in sense of "be mergable").
+	 * @return Whether the nodes match (in sense of "be mergable").
 	 */
 	private boolean match(Node n1, Node n2) {
 		if (n1.id == 0 || n2.id == 0)
@@ -248,33 +222,38 @@ public class MergeVisitor implements Visitor {
 	}
 
 	/**
-	 * @return Whether the segments matches (in sense of "be mergable").
-	 */
-	private boolean match(Segment ls1, Segment ls2) {
-		if (ls1.id == ls2.id && ls1.id != 0)
-			return true;
-		//if (ls1.id != 0 && ls2.id != 0)
-		//	return false;
-		if (ls1.incomplete || ls2.incomplete)
-			return false;
-		return match(ls1.from, ls2.from) && match(ls1.to, ls2.to);
-	}
-
-	/**
-	 * @return Whether the ways matches (in sense of "be mergable").
+	 * @return Whether the ways match (in sense of "be mergable").
 	 */
 	private boolean match(Way w1, Way w2) {
 		if (w1.id == 0 || w2.id == 0) {
-			if (w1.segments.size() != w2.segments.size())
-				return false;
-			Iterator<Segment> it = w1.segments.iterator();
-			for (Segment ls : w2.segments)
-				if (!match(ls, it.next()))
+			if (w1.nodes.size() != w2.nodes.size())
+			return false;
+			Iterator<Node> it = w1.nodes.iterator();
+			for (Node n : w2.nodes)
+				if (!match(n, it.next()))
 					return false;
 			return true;
 		}
 		return w1.id == w2.id;
 	}
+	/**
+	 * @return Whether the relations match (in sense of "be mergable").
+	 */
+	private boolean match(Relation w1, Relation w2) {
+		// FIXME this is not perfect yet...
+		if (w1.id == 0 || w2.id == 0) {
+			if (w1.members.size() != w2.members.size())
+				return false;
+			for (RelationMember em : w1.members) {
+				if (!w2.members.contains(em)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return w1.id == w2.id;
+	}
+
 
 	/**
 	 * Merge the common parts of an osm primitive.
@@ -326,8 +305,6 @@ public class MergeVisitor implements Visitor {
 				return true; // merge done.
 			}
 			if (my.id == other.id && my.id != 0) {
-				if (my instanceof Segment && ((Segment)my).incomplete)
-					return false; // merge always over an incomplete
 				if (my.modified && other.modified) {
 					conflicts.put(my, other);
 					if (merged != null)

@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.Relation;
 
 /**
  * Implements a google-like search.
@@ -118,10 +118,10 @@ public class SearchCompiler {
 		@Override public boolean match(OsmPrimitive osm) {
 			if (osm instanceof Node)
 				return type.equals("node");
-			if (osm instanceof Segment)
-				return type.equals("segment");
 			if (osm instanceof Way)
 				return type.equals("way");
+			if (osm instanceof Relation)
+				return type.equals("relation");
 			throw new IllegalStateException("unknown class "+osm.getClass());
 		}
 		@Override public String toString() {return "type="+type;}
@@ -143,7 +143,8 @@ public class SearchCompiler {
 
 	private static class Incomplete extends Match {
 		@Override public boolean match(OsmPrimitive osm) {
-			return osm instanceof Way && ((Way)osm).isIncomplete();
+			// return osm instanceof Way && ((Way)osm).isIncomplete();
+            return false;
 		}
 		@Override public String toString() {return "incomplete";}
 	}

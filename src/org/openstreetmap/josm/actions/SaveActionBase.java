@@ -125,7 +125,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 					copy(file, tmpFile);
 				}
 				OsmWriter.output(new FileOutputStream(file), new OsmWriter.All(layer.data, false));
-				if (tmpFile != null && !Main.pref.getBoolean("save.keepbackup"))
+				if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null))
 					tmpFile.delete();
 			} else if (ExtensionFileFilter.filters[ExtensionFileFilter.CSV].acceptName(file.getPath())) {
 				JOptionPane.showMessageDialog(Main.parent, tr("CSV output not supported yet."));

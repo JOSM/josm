@@ -12,6 +12,12 @@ import javax.swing.tree.MutableTreeNode;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 
+/**
+ * Command that basically replaces one OSM primitive by another of the 
+ * same type.
+ *  
+ * @author Imi
+ */
 public class ChangeCommand extends Command {
 
 	private final OsmPrimitive osm;

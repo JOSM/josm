@@ -8,9 +8,10 @@ import java.util.Map.Entry;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
@@ -36,13 +37,20 @@ public class OsmWriter extends XmlWriter implements Visitor {
 	public abstract static class Osm implements OsmWriterInterface {
 		public void header(PrintWriter out) {
 			out.print("<osm version='");
-			out.print(Main.pref.get("osm-server.version", "0.4"));
+			out.print(Main.pref.get("osm-server.version", "0.5"));
 			out.println("' generator='JOSM'>");
 		}
 		public void footer(PrintWriter out) {
 			out.println("</osm>");
 		}
 	}
+	
+	// simple helper to write the object's class to the out stream
+	private Visitor typeWriteVisitor = new Visitor() {
+		public void visit(Node n) { out.print("node"); }
+		public void visit(Way w) { out.print("way"); }
+		public void visit(Relation e) { out.print("relation"); }
+	};
 	
 	/**
 	 * An output writer for function output that writes everything of the given dataset into
@@ -68,12 +76,12 @@ public class OsmWriter extends XmlWriter implements Visitor {
 			for (Node n : ds.nodes)
 				if (shouldWrite(n))
 					writer.visit(n);
-			for (Segment ls : ds.segments)
-				if (shouldWrite(ls))
-					writer.visit(ls);
 			for (Way w : ds.ways)
 				if (shouldWrite(w))
 					writer.visit(w);
+			for (Relation e : ds.relations)
+				if (shouldWrite(e))
+					writer.visit(e);
         }
 
 		private boolean shouldWrite(OsmPrimitive osm) {
@@ -122,21 +130,26 @@ public class OsmWriter extends XmlWriter implements Visitor {
 		addTags(n, "node", true);
 	}
 
-	public void visit(Segment ls) {
-		if (ls.incomplete)
-			return; // Do not write an incomplete segment
-		addCommon(ls, "segment");
-		out.print(" from='"+getUsedId(ls.from)+"' to='"+getUsedId(ls.to)+"'");
-		addTags(ls, "segment", true);
-	}
-
 	public void visit(Way w) {
 		addCommon(w, "way");
 		out.println(">");
-		for (Segment ls : w.segments)
-			out.println("    <seg id='"+getUsedId(ls)+"' />");
+		for (Node n : w.nodes)
+			out.println("    <nd ref='"+getUsedId(n)+"' />");
 		addTags(w, "way", false);
 	}
+
+	public void visit(Relation e) {
+		addCommon(e, "relation");
+		out.println(">");
+		for (RelationMember em : e.members) {
+			out.print("    <member type='");
+			em.member.visit(typeWriteVisitor);
+			out.println("' ref='"+getUsedId(em.member)+"' role='" + 
+				XmlWriter.encode(em.role) + "' />");
+		}
+		addTags(e, "relation", false);
+	}
+	
 
 	/**
 	 * Return the id for the given osm primitive (may access the usedId map)

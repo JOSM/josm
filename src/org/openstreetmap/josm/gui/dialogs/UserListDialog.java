@@ -53,7 +53,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 		add(new JScrollPane(userTable), BorderLayout.CENTER);
 		selectionChanged(Main.ds.getSelected());
 		
-		DataSet.listeners.add(this);
+		DataSet.selListeners.add(this);
 	}
 
 	@Override public void setVisible(boolean b) {

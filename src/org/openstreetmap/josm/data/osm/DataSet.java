@@ -30,18 +30,16 @@ public class DataSet implements Cloneable {
 	public Collection<Node> nodes = new LinkedList<Node>();
 
 	/**
-	 * All segments goes here, even when they are in a way.
-	 */
-	public Collection<Segment> segments = new LinkedList<Segment>();
-
-	/**
 	 * All ways (Streets etc.) in the DataSet.
 	 *
-	 * The nodes of the way segments of this way must be objects from
-	 * the nodes list, however the way segments are stored only in the
-	 * way list.
+	 * The way nodes are stored only in the way list.
 	 */
 	public Collection<Way> ways = new LinkedList<Way>();
+
+	/**
+	 * All relations/relationships
+	 */
+	public Collection<Relation> relations = new LinkedList<Relation>();
 
 	/**
 	 * All data sources of this DataSet.
@@ -54,18 +52,18 @@ public class DataSet implements Cloneable {
 	 * occour, regardless of the current active dataset. (However, the
 	 * selection does only change in the active layer)
 	 */
-	public static Collection<SelectionChangedListener> listeners = new LinkedList<SelectionChangedListener>();
+	public static Collection<SelectionChangedListener> selListeners = new LinkedList<SelectionChangedListener>();
 
 	/**
 	 * @return A collection containing all primitives of the dataset. The
-	 * data is ordered after: first comes nodes, then segments, then ways.
+	 * data is ordered after: first come nodes, then ways, then relations.
 	 * Ordering in between the categories is not guaranteed.
 	 */
 	public List<OsmPrimitive> allPrimitives() {
 		List<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
 		o.addAll(nodes);
-		o.addAll(segments);
 		o.addAll(ways);
+		o.addAll(relations);
 		return o;
 	}
 
@@ -87,8 +85,8 @@ public class DataSet implements Cloneable {
 	@Deprecated
 	public void clearSelection() {
 		clearSelection(nodes);
-		clearSelection(segments);
 		clearSelection(ways);
+		clearSelection(relations);
 		Collection<OsmPrimitive> sel = Collections.emptyList();
 		fireSelectionChanged(sel);
 	}
@@ -99,15 +97,15 @@ public class DataSet implements Cloneable {
 	 */
 	public Collection<OsmPrimitive> getSelected() {
 		Collection<OsmPrimitive> sel = getSelected(nodes);
-		sel.addAll(getSelected(segments));
 		sel.addAll(getSelected(ways));
+		sel.addAll(getSelected(relations));
 		return sel;
 	}
 
 	public void setSelected(Collection<? extends OsmPrimitive> selection) {
 		clearSelection(nodes);
-		clearSelection(segments);
 		clearSelection(ways);
+		clearSelection(relations);
 		for (OsmPrimitive osm : selection)
 			osm.selected = true;
 		fireSelectionChanged(selection);
@@ -119,8 +117,8 @@ public class DataSet implements Cloneable {
 			return;
 		}
 		clearSelection(nodes);
-		clearSelection(segments);
 		clearSelection(ways);
+		clearSelection(relations);
 		for (OsmPrimitive o : osm)
 			if (o != null)
 				o.selected = true;
@@ -157,18 +155,18 @@ public class DataSet implements Cloneable {
 	 * the event immediately. For more, @see SelectionChangedListener
 	 */
 	public static void fireSelectionChanged(Collection<? extends OsmPrimitive> sel) {
-		for (SelectionChangedListener l : listeners)
+		for (SelectionChangedListener l : selListeners)
 			l.selectionChanged(sel);
 	}
-
+	
 	@Override public DataSet clone() {
 		DataSet ds = new DataSet();
 		for (Node n : nodes)
 			ds.nodes.add(new Node(n));
-		for (Segment s : segments)
-			ds.segments.add(new Segment(s));
 		for (Way w : ways)
 			ds.ways.add(new Way(w));
+		for (Relation e : relations)
+			ds.relations.add(new Relation(e));
 		for (DataSource source : dataSources)
 			ds.dataSources.add(new DataSource(source.bounds, source.origin));
 	    return ds;

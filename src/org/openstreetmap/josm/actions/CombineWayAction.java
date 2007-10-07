@@ -9,11 +9,15 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.HashSet;
 
 import javax.swing.Box;
 import javax.swing.JComboBox;
@@ -30,6 +34,8 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.NodePair;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -41,7 +47,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 
 	public CombineWayAction() {
 		super(tr("Combine Way"), "combineway", tr("Combine several ways into one."), KeyEvent.VK_C, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
-		DataSet.listeners.add(this);
+		DataSet.selListeners.add(this);
 	}
 
 	public void actionPerformed(ActionEvent event) {
@@ -66,13 +72,31 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 				props.get(e.getKey()).add(e.getValue());
 			}
 		}
-		
-		Way oldWay = selectedWays.poll();
-		Way newWay = new Way(oldWay);
-		LinkedList<Command> cmds = new LinkedList<Command>();
-		
-		for (Way w : selectedWays)
-			newWay.segments.addAll(w.segments);
+
+		List<Node> nodeList = null;
+		Object firstTry = actuallyCombineWays(selectedWays, false);
+		if (firstTry instanceof List) {
+			nodeList = (List<Node>) firstTry;
+		} else {
+			Object secondTry = actuallyCombineWays(selectedWays, true);
+			if (secondTry instanceof List) {
+				int option = JOptionPane.showConfirmDialog(Main.parent,
+					tr("The ways can not be combined in their current directions.  "
+					+ "Do you want to reverse some of them?"), tr("Change directions?"),
+					JOptionPane.YES_NO_OPTION);
+				if (option != JOptionPane.YES_OPTION) {
+					return;
+				}
+				nodeList = (List<Node>) secondTry;
+			} else {
+				JOptionPane.showMessageDialog(Main.parent, (String) secondTry);
+				return;
+			}
+		}
+
+		Way newWay = new Way(selectedWays.get(0));
+		newWay.nodes.clear();
+		newWay.nodes.addAll(nodeList);
 		
 		// display conflict dialog
 		Map<String, JComboBox> components = new HashMap<String, JComboBox>();
@@ -96,10 +120,83 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 				newWay.put(e.getKey(), e.getValue().getEditor().getItem().toString());
 		}
 
-		cmds.add(new DeleteCommand(selectedWays));
-		cmds.add(new ChangeCommand(oldWay, newWay));
+		LinkedList<Command> cmds = new LinkedList<Command>();
+		cmds.add(new DeleteCommand(selectedWays.subList(1, selectedWays.size())));
+		cmds.add(new ChangeCommand(selectedWays.peek(), newWay));
 		Main.main.undoRedo.add(new SequenceCommand(tr("Combine {0} ways", selectedWays.size()), cmds));
-		Main.ds.setSelected(oldWay);
+		Main.ds.setSelected(selectedWays.peek());
+	}
+
+	/**
+	 * @return a message if combining failed, else a list of nodes.
+	 */
+	private Object actuallyCombineWays(List<Way> ways, boolean ignoreDirection) {
+		// Battle plan:
+		//  1. Split the ways into small chunks of 2 nodes and weed out
+		//	   duplicates.
+		//  2. Take a chunk and see if others could be appended or prepended,
+		//	   if so, do it and remove it from the list of remaining chunks.
+		//	   Rather, rinse, repeat.
+		//  3. If this algorithm does not produce a single way,
+		//     complain to the user.
+		//  4. Profit!
+		
+		HashSet<NodePair> chunkSet = new HashSet<NodePair>();
+		for (Way w : ways) {
+			if (w.nodes.size() == 0) continue;
+			Node lastN = null;
+			for (Node n : w.nodes) {
+				if (lastN == null) {
+					lastN = n;
+					continue;
+				}
+
+				NodePair np = new NodePair(lastN, n);
+				if (ignoreDirection) {
+					np.sort();
+				}
+				chunkSet.add(np);
+
+				lastN = n;
+			}
+		}
+		LinkedList<NodePair> chunks = new LinkedList<NodePair>(chunkSet);
+
+		if (chunks.isEmpty()) {
+			return tr("All the ways were empty");
+		}
+
+		List<Node> nodeList = chunks.poll().toArrayList();
+		while (!chunks.isEmpty()) {
+			ListIterator<NodePair> it = chunks.listIterator();
+			boolean foundChunk = false;
+			while (it.hasNext()) {
+				NodePair curChunk = it.next();
+				if (curChunk.a == nodeList.get(nodeList.size() - 1)) { // append
+					nodeList.add(curChunk.b);
+				} else if (curChunk.b == nodeList.get(0)) { // prepend
+					nodeList.add(0, curChunk.a);
+				} else if (ignoreDirection && curChunk.b == nodeList.get(nodeList.size() - 1)) { // append
+					nodeList.add(curChunk.a);
+				} else if (ignoreDirection && curChunk.a == nodeList.get(0)) { // prepend
+					nodeList.add(0, curChunk.b);
+				} else {
+					continue;
+				}
+
+				foundChunk = true;
+				it.remove();
+				break;
+			}
+			if (!foundChunk) break;
+		}
+
+		if (!chunks.isEmpty()) {
+			return tr("Could not combine ways "
+				+ "(They could not be merged into a single string of nodes)");
+		} else {
+			return nodeList;
+		}
 	}
 
 	/**

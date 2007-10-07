@@ -32,9 +32,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ConflictResolveCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -87,7 +88,7 @@ public final class ConflictDialog extends ToggleDialog {
 
 		add(buttonPanel, BorderLayout.SOUTH);
 
-		DataSet.listeners.add(new SelectionChangedListener(){
+		DataSet.selListeners.add(new SelectionChangedListener(){
 			public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
 				displaylist.clearSelection();
 				for (OsmPrimitive osm : newSelection) {
@@ -129,9 +130,6 @@ public final class ConflictDialog extends ToggleDialog {
 			if (osm instanceof Node)
 				model.addElement(osm);
 		for (OsmPrimitive osm : this.conflicts.keySet())
-			if (osm instanceof Segment)
-				model.addElement(osm);
-		for (OsmPrimitive osm : this.conflicts.keySet())
 			if (osm instanceof Way)
 				model.addElement(osm);
 	}
@@ -154,16 +152,25 @@ public final class ConflictDialog extends ToggleDialog {
 				Point p = nc.getPoint(n.eastNorth);
 				g.drawRect(p.x-1, p.y-1, 2, 2);
 			}
-			public void visit(Segment ls) {
-				if (ls.incomplete)
-					return;
-				Point p1 = nc.getPoint(ls.from.eastNorth);
-				Point p2 = nc.getPoint(ls.to.eastNorth);
+			public void visit(Node n1, Node n2) {
+				Point p1 = nc.getPoint(n1.eastNorth);
+				Point p2 = nc.getPoint(n2.eastNorth);
 				g.drawLine(p1.x, p1.y, p2.x, p2.y);
 			}
 			public void visit(Way w) {
-				for (Segment ls : w.segments)
-					visit(ls);
+				Node lastN = null;
+				for (Node n : w.nodes) {
+					if (lastN == null) {
+						lastN = n;
+						continue;
+					}
+					visit(lastN, n);
+					lastN = n;
+				}
+			}
+			public void visit(Relation e) {
+				for (RelationMember em : e.members)
+					em.member.visit(this);
 			}
 		};
 		for (Object o : displaylist.getSelectedValues())

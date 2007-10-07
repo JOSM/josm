@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -89,6 +90,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public Date timestamp = null;
 
 	/**
+	 * If set to true, this object is incomplete, which means only the id
+	 * and type is known (type is the objects instance class)
+	 */
+	public boolean incomplete = false; 
+
+	/**
 	 * Implementation of the visitor scheme. Subclases have to call the correct
 	 * visitor function.
 	 * @param visitor The visitor from which the visit() function must be called.
@@ -124,11 +131,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		final int[] ret = new int[1];
 		Visitor v = new Visitor(){
 			public void visit(Node n) { ret[0] = 1; }
-			public void visit(Segment s) { ret[0] = 2; }
-			public void visit(Way w) { ret[0] = 3; }
+			public void visit(Way w) { ret[0] = 2; }
+			public void visit(Relation e) { ret[0] = 3; }
 		};
 		visit(v);
-		return id == 0 ? super.hashCode() : (int)(id<<3)+ret[0];
+		return id == 0 ? super.hashCode() : (int)(id<<2)+ret[0];
 	}
 
 	/**
@@ -204,4 +211,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public String getTimeStr() {
 		return timestamp == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestamp);
 	}
+	
+	
 }

@@ -16,9 +16,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Segment;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -95,22 +95,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	}
 
 	/**
-	 * Upload a segment (without the nodes).
-	 */
-	public void visit(Segment ls) {
-		if (ls.id == 0 && !ls.deleted && ls.get("created_by") == null) {
-			ls.put("created_by", "JOSM");
-			sendRequest("PUT", "segment", ls, true);
-		} else if (ls.deleted) {
-			sendRequest("DELETE", "segment", ls, false);
-		} else {
-			sendRequest("PUT", "segment", ls, true);
-		}
-		processed.add(ls);
-	}
-
-	/**
-	 * Upload a whole way with the complete segment id list.
+	 * Upload a whole way with the complete node id list.
 	 */
 	public void visit(Way w) {
 		if (w.id == 0 && !w.deleted && w.get("created_by") == null) {
@@ -124,6 +109,20 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 		processed.add(w);
 	}
 
+	/**
+	 * Upload an relation with all members.
+	 */
+	public void visit(Relation e) {
+		if (e.id == 0 && !e.deleted && e.get("created_by") == null) {
+			e.put("created_by", "JOSM");
+			sendRequest("PUT", "relation", e, true);
+		} else if (e.deleted) {
+			sendRequest("DELETE", "relation", e, false);
+		} else {
+			sendRequest("PUT", "relation", e, true);
+		}
+		processed.add(e);
+	}
 	/**
 	 * Read a long from the input stream and return it.
 	 */
@@ -153,12 +152,12 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	private void sendRequest(String requestMethod, String urlSuffix,
 			OsmPrimitive osm, boolean addBody) {
 		try {
-			String version = Main.pref.get("osm-server.version", "0.4");
+			String version = Main.pref.get("osm-server.version", "0.5");
 			URL url = new URL(
 					Main.pref.get("osm-server.url") +
 					"/" + version +
 					"/" + urlSuffix + 
-					"/" + ((version.equals("0.4") && osm.id==0) ? "create":osm.id));
+					"/" + (osm.id==0 ? "create" : osm.id));
 			System.out.println("upload to: "+url);
 			activeConnection = (HttpURLConnection)url.openConnection();
 			activeConnection.setConnectTimeout(15000);
