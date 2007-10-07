@@ -126,8 +126,10 @@ public class RelationListDialog extends ToggleDialog {
 		list.setSize(Main.ds.relations.size());
 		int i = 0;
 		for (Relation e : Main.ds.relations) {
-			list.setElementAt(e, i++);
+			if (!e.deleted)
+				list.setElementAt(e, i++);
 		}
+		list.setSize(i);
 	}
 	
 }
