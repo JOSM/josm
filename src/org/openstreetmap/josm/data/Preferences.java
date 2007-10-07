@@ -59,12 +59,10 @@ public class Preferences {
 	 */
 	protected static final SortedMap<String, String> override = new TreeMap<String, String>();
 	static {
-		override.put("osm-server.version", "0.5");
-		override.put("osm-server.additional-versions", "");
-		override.put("osm-server.url", "http://openstreetmap.gryph.de/api");
-		override.put("osm-server.username", "fred@remote.org");
-		override.put("osm-server.password", "fredfred");
-		override.put("plugins", null);
+		//override.put("osm-server.version", "0.5");
+		//override.put("osm-server.additional-versions", "");
+		//override.put("osm-server.url", "http://openstreetmap.gryph.de/api");
+		//override.put("plugins", null);
 	}
 
 	/**

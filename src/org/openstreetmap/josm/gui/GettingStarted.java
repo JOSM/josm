@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -47,12 +48,22 @@ public class GettingStarted extends JPanel implements ActionListener {
 		
 		panel = new JPanel(new GridBagLayout());
 		
-		panel.add(new JLabel("<html><h2>You are running a technology preview with support for <i>API 0.5</i>.</h2>" +
-				"<h3>API 0.5 supports object relationships, and segments have been removed.</h3>" +
-				"<h3>This version is hard-coded to use the API 0.5 running on <i>openstreetmap.gryph.de</i> which has data from a recent planet file."+
-				"<br>Please be gentle with that machine and request only moderate bounding boxes.<br>" +
-				"<br>Username and password are also hardcoded, so your real username and password are not transmitted.<br>" +
+		panel.add(new JLabel("<html><h2>You are running the new JOSM version compatible with the 0.5 API.</h2>" +
+				"<h3>You cannot load old OSM files with this version, but there are converter scripts to make your 0.4 files 0.5 compatible.</h3>"+
+                "<h3>The JOSM interface hasn't changed a lot: Segments are gone, and Relations have been added.<br>You will find general information about the changes on the OSM wiki,<br>and there's a page on working with relations in the JOSM online help." +
 		"</h3>"), GBC.eol());
+		
+		// remove these two keys from preferences if present
+		boolean changePrefs = ! (
+			"0.5".equals(Main.pref.get("osm-server.version", "0.5")) &&
+			"0.5".equals(Main.pref.get("osm-server.additionalVersions", "0.5"))
+		);
+		
+		if (changePrefs) {;
+			Main.pref.put("osm-server.version", null);
+			Main.pref.put("osm-server.additional-versions", null);
+			panel.add(new JLabel("<html><h3>Your preferences have been changed by removing <b>osm-server.version</b> and/or <b>osm-server.additional-versions</b> which were still to referring 0.4.</h3></html>"), GBC.eol());
+		}
 		
 		addLine("wiki", "Read the [Wiki page on API 0.5]");
 		addGettingStarted();
