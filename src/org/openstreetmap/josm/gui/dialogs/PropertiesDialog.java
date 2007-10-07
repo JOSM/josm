@@ -135,7 +135,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		p.add(Box.createHorizontalStrut(10), GBC.std());
 		p.add(keyField, GBC.eol().fill(GBC.HORIZONTAL));
 				
-		final JTextField valueField = new JTextField((String)propertyData.getValueAt(row, 1));
+		final JComboBox valueField = (JComboBox) propertyData.getValueAt(row, 1);
 		p.add(new JLabel(tr("Value")), GBC.std());
 		p.add(Box.createHorizontalStrut(10), GBC.std());
 		p.add(valueField, GBC.eol().fill(GBC.HORIZONTAL));
@@ -143,7 +143,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
 			@Override public void selectInitialValue() {
 				valueField.requestFocusInWindow();
-				valueField.selectAll();
+				valueField.getEditor().selectAll();
 			}
 		};
 		final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
@@ -153,15 +153,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 				dlg.setVisible(false);
 			}
 		});
+		String oldValue = valueField.getEditor().getItem().toString();
 		dlg.setVisible(true);
 
 		Object answer = optionPane.getValue();
 		if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE ||
 				(answer instanceof Integer && (Integer)answer != JOptionPane.OK_OPTION)) {
+			valueField.getEditor().setItem(oldValue);
 			return;
 		}
 
-		String value = valueField.getText();
+		String value = valueField.getEditor().getItem().toString();
 		if (value.equals(tr("<different>")))
 			return;
 		if (value.equals(""))
@@ -287,7 +289,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			return false;
 		}
 		@Override public Class<?> getColumnClass(int columnIndex) {
-			return String.class;
+			return columnIndex == 1 ? Relation.class : String.class;
 		}
 	};
 
@@ -299,7 +301,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			return false;
 		}
 		@Override public Class<?> getColumnClass(int columnIndex) {
-			return columnIndex == 1 ? Relation.class : String.class;
+			return String.class;
 		}
 	};
 	
@@ -348,7 +350,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			@Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
 				if (c instanceof JLabel) {
-					String str = (String) value;
+					String str = ((JComboBox) value).getEditor().getItem().toString();
 					((JLabel)c).setText(str);
 					if (str.equals(tr("<different>")))
 						c.setFont(c.getFont().deriveFont(Font.ITALIC));
@@ -458,8 +460,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		}
 		for (Entry<String, Collection<String>> e : props.entrySet()) {
-			String value=(e.getValue().size() > 1 || valueCount.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next());
-			propertyData.addRow(new Object[]{e.getKey(), value});
+            JComboBox value = new JComboBox(e.getValue().toArray());
+            value.setEditable(true);
+            value.getEditor().setItem(e.getValue().size() > 1 || valueCount.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next());
+            propertyData.addRow(new Object[]{e.getKey(), value});
 		}
 		
 		// re-load membership data
