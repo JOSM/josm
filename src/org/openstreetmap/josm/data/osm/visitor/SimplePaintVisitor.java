@@ -92,6 +92,8 @@ public class SimplePaintVisitor implements Visitor {
 	 * @param n The node to draw.
 	 */
 	public void visit(Node n) {
+		if (n.incomplete) return;
+
 		Color color = null;
 		if (inactive)
 			color = inactiveColor;
@@ -107,6 +109,8 @@ public class SimplePaintVisitor implements Visitor {
 	 * @param w The way to draw.
 	 */
 	public void visit(Way w) {
+		if (w.incomplete) return;
+
 		Color wayColor;
 		if (inactive)
 			wayColor = inactiveColor;

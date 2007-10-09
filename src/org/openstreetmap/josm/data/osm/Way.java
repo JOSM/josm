@@ -62,9 +62,9 @@ public final class Way extends OsmPrimitive {
 	public int compareTo(OsmPrimitive o) {
 	    return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
     }
-	
+
 	@Deprecated
 	public boolean isIncomplete() {
-		return false;
+		return incomplete;
 	}
 }

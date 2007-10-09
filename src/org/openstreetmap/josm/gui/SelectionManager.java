@@ -296,32 +296,32 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 		} else {
 			// nodes
 			for (Node n : Main.ds.nodes) {
-				if (!n.deleted && r.contains(nc.getPoint(n.eastNorth)))
+				if (!n.deleted && !n.incomplete && r.contains(nc.getPoint(n.eastNorth)))
 					selection.add(n);
 			}
 			
 			// ways
 			for (Way w : Main.ds.ways) {
-				if (w.deleted || w.nodes.isEmpty())
+				if (w.deleted || w.nodes.isEmpty() || w.incomplete)
 						continue;
 				if (alt) {
 					for (Node n : w.nodes) {
-						if (r.contains(nc.getPoint(n.eastNorth))) {
+						if (!n.incomplete && r.contains(nc.getPoint(n.eastNorth))) {
 							selection.add(w);
-						break;
+							break;
+						}
 					}
-				}
 				} else {
 					boolean allIn = true;
 					for (Node n : w.nodes) {
-						if (!r.contains(nc.getPoint(n.eastNorth))) {
+						if (!n.incomplete && !r.contains(nc.getPoint(n.eastNorth))) {
 							allIn = false;
 							break;
-			}
-		}
+						}
+					}
 					if (allIn) selection.add(w);
 				}
-	}
+			}
 		}
 		return selection;
 	}

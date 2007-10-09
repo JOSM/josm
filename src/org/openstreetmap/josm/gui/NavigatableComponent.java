@@ -131,7 +131,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 		double minDistanceSq = Double.MAX_VALUE;
 		Node minPrimitive = null;
 		for (Node n : Main.ds.nodes) {
-			if (n.deleted)
+			if (n.deleted || n.incomplete)
 				continue;
 			Point sp = getPoint(n.eastNorth);
 			double dist = p.distanceSq(sp);
