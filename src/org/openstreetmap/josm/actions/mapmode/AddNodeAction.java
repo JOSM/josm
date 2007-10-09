@@ -180,9 +180,9 @@ public class AddNodeAction extends MapMode {
 				/* Keep track of the way we change, it might be the same into
 				 * which we insert the node.
 				 */
-				Way newInsertInto = null;
+				Way wayInsertedInto = null;
 				if (insertInto != null)
-					newInsertInto = splitWaySegmentAtNode(insertInto, n, cmds);
+					wayInsertedInto = splitWaySegmentAtNode(insertInto, n, cmds);
 
 				Way way = getWayForNode(n1);
 				if (way == null) {
@@ -190,10 +190,8 @@ public class AddNodeAction extends MapMode {
 					way.nodes.add(n1);
 					cmds.add(new AddCommand(way));
 				} else {
-					if (insertInto != null) {
-						if (way == insertInto.way) {
-							way = newInsertInto;
-						}
+					if (insertInto != null && way == insertInto.way) {
+						way = wayInsertedInto;
 					} else {
 						Way wnew = new Way(way);
 						cmds.add(new ChangeCommand(way, wnew));
