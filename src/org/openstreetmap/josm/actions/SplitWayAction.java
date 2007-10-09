@@ -193,8 +193,21 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 				currentWayChunk = new ArrayList<Node>();
 				currentWayChunk.add(currentNode);
 				wayChunks.add(currentWayChunk);
-				}
 			}
+		}
+
+		// Handle circular ways specially.
+		// If you split at a circular way at two nodes, you just want to split
+		// it at these points, not also at the former endpoint.
+		// So if the last node is the same first node, join the last and the
+		// first way chunk.
+		List<Node> lastWayChunk = wayChunks.get(wayChunks.size() - 1);
+		if (wayChunks.size() >= 2 && wayChunks.get(0).get(0) == lastWayChunk.get(lastWayChunk.size() - 1)) {
+			lastWayChunk.remove(lastWayChunk.size() - 1);
+			lastWayChunk.addAll(wayChunks.get(0));
+			wayChunks.remove(wayChunks.size() - 1);
+			wayChunks.set(0, lastWayChunk);
+		}
 
 		if (wayChunks.size() < 2) {
 			JOptionPane.showMessageDialog(Main.parent, tr("The way cannot be split at the selected nodes. (Hint: Select nodes in the middle of the way.)"));
