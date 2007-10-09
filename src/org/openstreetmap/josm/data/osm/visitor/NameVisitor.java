@@ -61,7 +61,8 @@ public class NameVisitor implements Visitor {
 		if (name == null) name = w.get("ref");
 		if (name == null) {
 			String what = (w.get("highway") != null) ? "highway " : (w.get("railway") != null) ? "railway " : (w.get("waterway") != null) ? "waterway " : "";
-			name = what + trn("{0} node", "{0} nodes", w.nodes.size(), w.nodes.size());
+			int nodesNo = new HashSet(w.nodes).size();
+			name = what + trn("{0} node", "{0} nodes", nodesNo, nodesNo);
 		}
 		addId(w);
 		icon = ImageProvider.get("data", "way");
