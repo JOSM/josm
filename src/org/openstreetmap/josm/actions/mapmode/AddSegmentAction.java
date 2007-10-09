@@ -122,24 +122,6 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 	}
 
 	/**
-	 * @return If the node is the end of exactly one way, return this. 
-	 * 	<code>null</code> otherwise.
-	 */
-	private Way getWayForNode(Node n) {
-		Way way = null;
-		for (Way w : Main.ds.ways) {
-			int i = w.nodes.indexOf(n);
-			if (i == -1) continue;
-			if (i == 0 || i == w.nodes.size() - 1) {
-				if (way != null)
-					return null;
-				way = w;
-			}
-		}
-		return way;
-	}
-
-	/**
 	 * Create the segment if first and second are different and there is
 	 * not already a segment.
 	 */
@@ -154,7 +136,7 @@ public class AddSegmentAction extends MapMode implements MouseListener {
 
 		if (n1 == null || n2 == null || n1 == n2) return;
 
-		Way w = getWayForNode(n1);
+		Way w = AddNodeAction.getWayForNode(n1);
 		Way wnew;
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		

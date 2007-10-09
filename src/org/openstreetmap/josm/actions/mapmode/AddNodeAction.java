@@ -218,12 +218,13 @@ public class AddNodeAction extends MapMode {
 	 * @return If the node is the end of exactly one way, return this. 
 	 * 	<code>null</code> otherwise.
 	 */
-	private Way getWayForNode(Node n) {
+	public static Way getWayForNode(Node n) {
 		Way way = null;
 		for (Way w : Main.ds.ways) {
 			if (w.nodes.size() < 1) continue;
-			int i = w.nodes.indexOf(n);
-			if (w.nodes.get(0) == n || w.nodes.get(w.nodes.size() - 1) == n) {
+			Node firstNode = w.nodes.get(0);
+			Node lastNode = w.nodes.get(w.nodes.size() - 1);
+			if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
 				if (way != null)
 					return null;
 				way = w;
