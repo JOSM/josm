@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
@@ -50,6 +51,7 @@ public class SimplePaintVisitor implements Visitor {
 	protected Color selectedColor;
 	protected Color nodeColor;
 	protected Color dfltWayColor;
+	protected Color untaggedWayColor;
 	protected Color incompleteColor;
 	protected Color backgroundColor;
 	protected boolean showDirectionArrow;
@@ -67,18 +69,29 @@ public class SimplePaintVisitor implements Visitor {
 		selectedColor = getPreferencesColor("selected", Color.WHITE);
 		nodeColor = getPreferencesColor("node", Color.RED);
 		dfltWayColor = getPreferencesColor("way", darkblue);
+		untaggedWayColor = getPreferencesColor("untagged way", darkgreen);
 		incompleteColor = getPreferencesColor("incomplete way", darkerblue);
 		backgroundColor = getPreferencesColor("background", Color.BLACK);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
 		
+		// draw tagged ways first, then untagged ways. takes
+		// time to iterate through list twice, OTOH does not
+		// require changing the colour while painting...
 		for (final OsmPrimitive osm : data.ways)
-			if (!osm.deleted && !osm.selected)
+			if (!osm.deleted && !osm.selected && osm.tagged)
 				osm.visit(this);
 		displaySegments(null);
+
+	    for (final OsmPrimitive osm : data.ways)
+			if (!osm.deleted && !osm.selected && !osm.tagged)
+				osm.visit(this);
+		displaySegments(null);
+	    
 		for (final OsmPrimitive osm : data.nodes)
 			if (!osm.deleted && !osm.selected)
 				osm.visit(this);
+	
 		for (final OsmPrimitive osm : data.getSelected())
 			if (!osm.deleted)
 				osm.visit(this);
@@ -112,9 +125,12 @@ public class SimplePaintVisitor implements Visitor {
 		if (w.incomplete) return;
 
 		Color wayColor;
-		if (inactive)
+		
+		if (inactive) {
 			wayColor = inactiveColor;
-		else {
+		} else if (!w.tagged) {
+			wayColor = untaggedWayColor;
+		} else {
 			wayColor = dfltWayColor;
 		}
 
@@ -170,7 +186,12 @@ public class SimplePaintVisitor implements Visitor {
 		Rectangle screen = g.getClipBounds();
 
 		if (screen.contains(p.x, p.y))
-			g.drawRect(p.x-1, p.y-1, 2, 2);
+			if (n.tagged) {
+				g.drawRect(p.x, p.y, 0, 0);
+				g.drawRect(p.x-2, p.y-2, 4, 4);
+			} else {
+				g.drawRect(p.x-1, p.y-1, 2, 2);
+			}
 	}
 
 	/**
@@ -178,9 +199,7 @@ public class SimplePaintVisitor implements Visitor {
 	 */
 	protected void drawSegment(Node n1, Node n2, Color col, boolean showDirection) {
 
-		if (col != currentColor) {
-			displaySegments(col);
-		}
+		if (col != currentColor) displaySegments(col);
 		
 		Point p1 = nc.getPoint(n1.eastNorth);
 		Point p2 = nc.getPoint(n2.eastNorth);

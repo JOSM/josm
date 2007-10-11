@@ -87,6 +87,7 @@ public class OsmReader {
 			osm.timestamp = timestamp;
 			osm.user = user;
 			osm.visible = visible;
+			osm.checkTagged();
 		}
 	}
 

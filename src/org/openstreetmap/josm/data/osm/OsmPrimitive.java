@@ -4,10 +4,12 @@ package org.openstreetmap.josm.data.osm;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -80,6 +82,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public volatile boolean shown = false;
 
 	/**
+	 * true if this object is considered "tagged". To be "tagged", an object
+	 * must have one or more "non-standard" tags. "created_by" and "source"
+	 * are typically considered "standard" tags and do not make an object 
+	 * "tagged".
+	 */
+	public boolean tagged = false;
+	
+	/**
 	 * If set to true, this object is currently selected.
 	 */
 	public volatile boolean selected = false;
@@ -103,6 +113,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 */
 	public boolean incomplete = false; 
 
+	/**
+	 * Contains a list of "uninteresting" keys that do not make an object
+	 * "tagged".
+	 */
+	public static Collection<String> uninteresting = 
+		new HashSet<String>(Arrays.asList(new String[] {"source", "note", "created_by"}));
+	
 	/**
 	 * Implementation of the visitor scheme. Subclases have to call the correct
 	 * visitor function.
@@ -175,6 +192,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 				keys = new HashMap<String, String>();
 			keys.put(key, value);
 		}
+		checkTagged();
 	}
 	/**
 	 * Remove the given key from the list.
@@ -185,6 +203,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			if (keys.isEmpty())
 				keys = null;
 		}
+		checkTagged();
 	}
 
 	public final String get(String key) {
@@ -214,6 +233,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		deleted = osm.deleted;
 		selected = osm.selected;
 		timestamp = osm.timestamp;
+		tagged = osm.tagged;
 	}
 
 	/**
@@ -236,5 +256,20 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		return timestamp == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestamp);
 	}
 	
+	/**
+	 * Updates the "tagged" flag. "keys" property should probably be made private
+	 * to make sure this gets called when keys are set.
+	 */
+	public void checkTagged() {
+		tagged = false;
+		if (keys != null) {
+			for (Entry<String,String> e : keys.entrySet()) {
+				if (!uninteresting.contains(e.getKey())) {
+					tagged = true;
+					break;
+				}
+			}
+		}
+	}
 	
 }
