@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -149,7 +151,7 @@ public class OsmReader {
 				} else if (qName.equals("way")) {
 					current = new OsmPrimitiveData();
 					readCommon(atts, current);
-					ways.put((OsmPrimitiveData)current, new LinkedList<Long>());
+					ways.put((OsmPrimitiveData)current, new ArrayList<Long>());
 				} else if (qName.equals("nd")) {
 					Collection<Long> list = ways.get(current);
 					if (list == null)
@@ -223,12 +225,16 @@ public class OsmReader {
 
 		String time = atts.getValue("timestamp");
 		if (time != null && time.length() != 0) {
+			/* Do not parse the date here since it wastes a HUGE amount of time.
+			 * Moved into OsmPrimitive.
 			try {
 				current.timestamp = DateParser.parse(time);
 			} catch (ParseException e) {
 				e.printStackTrace();
 				throw new SAXException(tr("Couldn't read time format \"{0}\".",time));
 			}
+			*/
+			current.timestamp = time;
 		}
 		
 		// user attribute added in 0.4 API
@@ -289,6 +295,7 @@ public class OsmReader {
 			e.getKey().copyTo(w);
 			adder.visit(w);
 		}
+		
 	}
 
 	/**
@@ -392,10 +399,12 @@ public class OsmReader {
         	e1.printStackTrace(); // broken SAXException chaining
         	throw new SAXException(e1);
         }
-		if (pleaseWaitDlg != null) {
+
+        if (pleaseWaitDlg != null) {
 			pleaseWaitDlg.progress.setValue(0);
 			pleaseWaitDlg.currentAction.setText(tr("Preparing data..."));
 		}
+
 		for (Node n : osm.nodes.values())
 			osm.adder.visit(n);
 

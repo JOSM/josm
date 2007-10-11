@@ -287,8 +287,6 @@ public class MergeVisitor implements Visitor {
 	 */
 	private <P extends OsmPrimitive> boolean mergeAfterId(Map<P,P> merged, Collection<P> primitives, P other) {
 		for (P my : primitives) {
-			Date d1 = my.timestamp == null ? new Date(0) : my.timestamp;
-			Date d2 = other.timestamp == null ? new Date(0) : other.timestamp;
 			if (my.realEqual(other, false)) {
 				if (merged != null)
 					merged.put(other, my);
@@ -298,7 +296,7 @@ public class MergeVisitor implements Visitor {
 				// they differ in modified/timestamp combination only. Auto-resolve it.
 				if (merged != null)
 					merged.put(other, my);
-				if (d1.before(d2)) {
+				if (my.getTimestamp().before(other.getTimestamp())) {
 					my.modified = other.modified;
 					my.timestamp = other.timestamp;
 				}
@@ -310,13 +308,13 @@ public class MergeVisitor implements Visitor {
 					if (merged != null)
 						merged.put(other, my);
 				} else if (!my.modified && !other.modified) {
-					if (d1.before(d2)) {
+					if (my.getTimestamp().before(other.getTimestamp())) {
 						cloneFromExceptIncomplete(my, other);
 						if (merged != null)
 							merged.put(other, my);
 					}
 				} else if (other.modified) {
-					if (d1.after(d2)) {
+					if (my.getTimestamp().after(other.getTimestamp())) {
 						conflicts.put(my, other);
 						if (merged != null)
 							merged.put(other, my);
@@ -326,7 +324,7 @@ public class MergeVisitor implements Visitor {
 							merged.put(other, my);
 					}
 				} else if (my.modified) {
-					if (d2.after(d1)) {
+					if (my.getTimestamp().before(other.getTimestamp())) {
 						conflicts.put(my, other);
 						if (merged != null)
 							merged.put(other, my);

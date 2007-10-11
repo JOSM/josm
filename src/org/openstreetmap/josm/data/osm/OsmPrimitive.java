@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.DateParser;
 
 
 /**
@@ -87,8 +89,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 * read from the server and delivered back to the server unmodified. It is
 	 * used to check against edit conflicts.
 	 */
-	public Date timestamp = null;
-
+	public String timestamp = null;
+	
+	/**
+	 * The timestamp is only parsed when this is really necessary, and this 
+	 * is the cache for the result.
+	 */
+	public Date parsedTimestamp = null;
+	
 	/**
 	 * If set to true, this object is incomplete, which means only the id
 	 * and type is known (type is the objects instance class)
@@ -107,6 +115,22 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		selected = false;
 		modified = true;
 	}
+	
+	/**
+	 * Returns the timestamp for this object, or the current time if none is set.
+	 * Internally, parses the timestamp from XML into a Date object and caches it
+	 * for possible repeated calls.
+	 */
+	public Date getTimestamp() {
+		if (parsedTimestamp == null) {
+			try {
+				parsedTimestamp = DateParser.parse(timestamp);
+			} catch (ParseException ex) {
+				parsedTimestamp = new Date();
+			}
+		}
+		return parsedTimestamp;
+ 	}
 
 	/**
 	 * Equal, if the id (and class) is equal. If both ids are 0, use the super classes
