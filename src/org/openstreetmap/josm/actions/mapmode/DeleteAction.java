@@ -12,11 +12,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -24,6 +26,8 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -73,10 +77,17 @@ public class DeleteAction extends MapMode {
 	@Override public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-		if (ctrl)
-			deleteWithReferences(Main.ds.getSelected());
-		else
-			delete(Main.ds.getSelected(), false, false);
+
+		Command c;
+		if (ctrl) {
+			c = deleteWithReferences(Main.ds.getSelected());
+		} else {
+			c = delete(Main.ds.getSelected());
+		}
+		if (c != null) {
+			Main.main.undoRedo.add(c);
+		}
+
 		Main.map.repaint();
 	}
 
@@ -87,15 +98,21 @@ public class DeleteAction extends MapMode {
 	@Override public void mouseClicked(MouseEvent e) {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
+		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		
-		OsmPrimitive sel = Main.map.mapView.getNearest(e.getPoint());
-		if (sel == null)
-			return;
-
-		if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0)
-			deleteWithReferences(Collections.singleton(sel));
-		else
-			delete(Collections.singleton(sel), true, true);
+		OsmPrimitive sel = Main.map.mapView.getNearestNode(e.getPoint());
+		Command c;
+		if (sel == null) {
+			WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
+			c = deleteWaySegment(ws);
+		} else if (ctrl) {
+			c = deleteWithReferences(Collections.singleton(sel));
+		} else {
+			c = delete(Collections.singleton(sel));
+		}
+		if (c != null) {
+			Main.main.undoRedo.add(c);
+		}
 
 		Main.map.mapView.repaint();
 	}
@@ -111,85 +128,116 @@ public class DeleteAction extends MapMode {
 	 * If a way is deleted, only the way and no nodes are deleted.
 	 * 
 	 * @param selection The list of all object to be deleted.
+	 * @return command A command to perform the deletions, or null of there is
+	 * nothing to delete.
 	 */
-	private void deleteWithReferences(Collection<OsmPrimitive> selection) {
+	private Command deleteWithReferences(Collection<OsmPrimitive> selection) {
 		CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds);
 		for (OsmPrimitive osm : selection)
 			osm.visit(v);
 		v.data.addAll(selection);
-		if (!v.data.isEmpty())
-			Main.main.undoRedo.add(new DeleteCommand(v.data));
+		if (v.data.isEmpty()) {
+			return null;
+		} else {
+			return new DeleteCommand(v.data);
+		}
 	}
 
 	/**
-	 * Try to delete all given primitives. If a primitive is
-	 * used somewhere and that "somewhere" is not going to be deleted,
-	 * inform the user and do not delete.
-	 * 
-	 * If a node is to be deleted which is in the middle of exactly one way,
-	 * the node is removed from the way's node list and after that removed
-	 * itself.
+	 * Try to delete all given primitives.
+	 *
+	 * If a node is used by a way, it's removed from that way.  If a node or a
+	 * way is used by a relation, inform the user and do not delete.
+	 *
+	 * If this would cause ways with less than 2 nodes to be created, delete
+	 * these ways instead.  If they are part of a relation, inform the user
+	 * and do not delete.
 	 * 
 	 * @param selection The objects to delete.
-	 * @param msgBox Whether a message box for errors should be shown
+	 * @return command A command to perform the deletions, or null of there is
+	 * nothing to delete.
 	 */
-	private void delete(Collection<OsmPrimitive> selection, boolean msgBox, boolean joinIfPossible) {
-		Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>();
-		for (OsmPrimitive osm : selection) {
-			CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds);
+	private Command delete(Collection<OsmPrimitive> selection) {
+		if (selection.isEmpty()) return null;
+
+		Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>(selection);
+		Collection<Way> waysToBeChanged = new HashSet<Way>();
+		for (OsmPrimitive osm : del) {
+			CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
 			osm.visit(v);
-			if (!selection.containsAll(v.data)) {
-				if (osm instanceof Node && joinIfPossible) {
-					String reason = deleteNodeAndJoinWay((Node)osm);
-					if (reason != null && msgBox) {
-						JOptionPane.showMessageDialog(Main.parent,tr("Cannot delete node.")+" "+reason);
-						return;
-					}
-				} else if (msgBox) {
-					JOptionPane.showMessageDialog(Main.parent, tr("This object is in use."));
-					return;
+			for (OsmPrimitive ref : v.data) {
+				if (del.contains(ref)) continue;
+				if (ref instanceof Way) {
+					waysToBeChanged.add((Way) ref);
+				} else if (ref instanceof Relation) {
+					JOptionPane.showMessageDialog(Main.parent,
+						tr("Cannot delete: Selection is used by relation"));
+					return null;
+				} else {
+					return null;
 				}
-			} else {
-				del.addAll(v.data);
-				del.add(osm);
 			}
 		}
-		if (!del.isEmpty())
-			Main.main.undoRedo.add(new DeleteCommand(del));
+
+		Collection<Command> cmds = new LinkedList<Command>();
+		for (Way w : waysToBeChanged) {
+			Way wnew = new Way(w);
+			wnew.nodes.removeAll(del);
+			if (wnew.nodes.size() < 2) {
+				del.add(w);
+
+				CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
+				w.visit(v);
+				for (OsmPrimitive ref : v.data) {
+					if (del.contains(ref)) continue;
+					if (ref instanceof Relation) {
+						JOptionPane.showMessageDialog(Main.parent,
+							tr("Cannot delete: Selection is used by relation"));
+					} else {
+						return null;
+					}
+				}
+			} else {
+				cmds.add(new ChangeCommand(w, wnew));
+			}
+		}
+
+		if (!del.isEmpty()) cmds.add(new DeleteCommand(del));
+
+		return new SequenceCommand(tr("Delete"), cmds);
 	}
 
-	private String deleteNodeAndJoinWay(Node n) {
-		ArrayList<Way> ways = new ArrayList<Way>(1);
-		for (Way w : Main.ds.ways) {
-			if (!w.deleted && w.nodes.contains(n)) {
-				ways.add(w);
-		}
-		}
+	private Command deleteWaySegment(WaySegment ws) {
+		List<Node> n1 = new ArrayList<Node>(),
+			n2 = new ArrayList<Node>();
 
-		if (ways.size() > 1)
-			return tr("Used by more than one way.");
-		
-		if (ways.size() == 1) {
-			// node in way
-			Way w = ways.get(0);
+		n1.addAll(ws.way.nodes.subList(0, ws.lowerIndex + 1));
+		n2.addAll(ws.way.nodes.subList(ws.lowerIndex + 1, ws.way.nodes.size()));
 
-			int i = w.nodes.indexOf(n);
-			if (w.nodes.lastIndexOf(n) != i)
-				return tr("Occurs more than once in the same way.");
-			if (i == 0 || i == w.nodes.size() - 1)
-				return tr("Is at the end of a way");
-
-			Way wnew = new Way(w);
-			wnew.nodes.remove(i);
-
-			Collection<Command> cmds = new LinkedList<Command>();
-			cmds.add(new ChangeCommand(w, wnew));
-			cmds.add(new DeleteCommand(Collections.singleton(n)));
-			Main.main.undoRedo.add(new SequenceCommand(tr("Delete Node"), cmds));
+		if (n1.size() < 2 && n2.size() < 2) {
+			return new DeleteCommand(Collections.singleton(ws.way));
 		} else {
-			// unwayed node
-			Main.main.undoRedo.add(new DeleteCommand(Collections.singleton(n)));	
+			Way wnew = new Way(ws.way);
+			wnew.nodes.clear();
+
+			if (n1.size() < 2) {
+				wnew.nodes.addAll(n2);
+				return new ChangeCommand(ws.way, wnew);
+			} else if (n2.size() < 2) {
+				wnew.nodes.addAll(n1);
+				return new ChangeCommand(ws.way, wnew);
+			} else {
+				Collection<Command> cmds = new LinkedList<Command>();
+
+				wnew.nodes.addAll(n1);
+				cmds.add(new ChangeCommand(ws.way, wnew));
+
+				Way wnew2 = new Way();
+				wnew2.nodes.addAll(n2);
+				cmds.add(new AddCommand(wnew2));
+
+				return new SequenceCommand(tr("Split way segment"), cmds);
+			}
 		}
-		return null;
-    }
+	}
 }

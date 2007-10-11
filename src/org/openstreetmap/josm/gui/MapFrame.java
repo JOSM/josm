@@ -13,13 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.mapmode.AddSegmentAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
-import org.openstreetmap.josm.actions.mapmode.SelectionAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
-import org.openstreetmap.josm.actions.mapmode.AddNodeAction.AddNodeGroup;
-import org.openstreetmap.josm.actions.mapmode.MoveAction.MoveGroup;
+import org.openstreetmap.josm.actions.mapmode.SelectAction.SelectGroup;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
@@ -79,11 +77,8 @@ public class MapFrame extends JPanel implements Destroyable {
 		// toolbar
 		toolBarActions.setFloatable(false);
 		toolBarActions.add(new IconToggleButton(new ZoomAction(this)));
-		final Action selectionAction = new SelectionAction.Group(this);
-		toolBarActions.add(new IconToggleButton(selectionAction));
-		toolBarActions.add(new IconToggleButton(new MoveGroup(this)));
-		toolBarActions.add(new IconToggleButton(new AddNodeGroup(this)));
-		toolBarActions.add(new IconToggleButton(new AddSegmentAction(this)));
+		toolBarActions.add(new IconToggleButton(new SelectGroup(this)));
+		toolBarActions.add(new IconToggleButton(new DrawAction(this)));
 		toolBarActions.add(new IconToggleButton(new DeleteAction(this)));
 
 		for (Component c : toolBarActions.getComponents())

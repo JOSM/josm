@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.Way;
 public class CollectBackReferencesVisitor implements Visitor {
 
 	private final DataSet ds;
+	private final boolean indirectRefs;
 
 	/**
 	 * The result list of primitives stored here.
@@ -34,6 +35,12 @@ public class CollectBackReferencesVisitor implements Visitor {
 	 */
 	public CollectBackReferencesVisitor(DataSet ds) {
 		this.ds = ds;
+		this.indirectRefs = true;
+	}
+
+	public CollectBackReferencesVisitor(DataSet ds, boolean indirectRefs) {
+		this.ds = ds;
+		this.indirectRefs = indirectRefs;
 	}
 
 	public void visit(Node n) {
@@ -43,6 +50,9 @@ public class CollectBackReferencesVisitor implements Visitor {
 			for (Node n2 : w.nodes) {
 				if (n == n2) {
 					data.add(w);
+					if (indirectRefs) {
+						visit(w);
+					}
 				}
 			}
 		}
@@ -64,10 +74,14 @@ public class CollectBackReferencesVisitor implements Visitor {
 		for (Relation r : ds.relations) {
 			for (RelationMember m : r.members) {
 				if (m.member == p) {
-					data.add(r);
-					// move up the tree (there might be relations
-					// referring to this relation)
-					checkRelationMembership(r);
+					if (!data.contains(r)) {
+						data.add(r);
+						if (indirectRefs) {
+							// move up the tree (there might be relations
+							// referring to this relation)
+							checkRelationMembership(r);
+						}
+					}
 					break;
 				}
 			}
