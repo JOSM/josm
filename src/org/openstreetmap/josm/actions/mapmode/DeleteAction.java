@@ -101,10 +101,10 @@ public class DeleteAction extends MapMode {
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		
 		OsmPrimitive sel = Main.map.mapView.getNearestNode(e.getPoint());
-		Command c;
+		Command c = null;
 		if (sel == null) {
 			WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
-			c = deleteWaySegment(ws);
+			if (ws != null) c = deleteWaySegment(ws);
 		} else if (ctrl) {
 			c = deleteWithReferences(Collections.singleton(sel));
 		} else {
