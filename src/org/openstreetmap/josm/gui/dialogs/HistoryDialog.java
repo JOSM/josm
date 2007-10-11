@@ -64,7 +64,7 @@ public class HistoryDialog extends ToggleDialog implements SelectionChangedListe
 		boolean visible;
 
 		public int compareTo(HistoryItem o) {
-			return unifyDate(osm.timestamp).compareTo(unifyDate(o.osm.timestamp));
+			return unifyDate(osm.getTimestamp()).compareTo(unifyDate(o.osm.getTimestamp()));
 		}
 	}
 
