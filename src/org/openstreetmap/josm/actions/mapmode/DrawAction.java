@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -79,7 +82,8 @@ public class DrawAction extends MapMode {
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		Collection<Command> cmds = new LinkedList<Command>();
 
-		Way reuseWay = null, replacedWay = null;
+		ArrayList<Way> reuseWays = new ArrayList<Way>(),
+			replacedWays = new ArrayList<Way>();
 		boolean newNode = false;
 		Node n = Main.map.mapView.getNearestNode(e.getPoint());
 		if (n == null) {
@@ -93,10 +97,32 @@ public class DrawAction extends MapMode {
 
 			cmds.add(new AddCommand(n));
 
-			WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
-			if (ws != null) {
-				replacedWay = ws.way;
-				reuseWay = splitWaySegmentAtNode(ws, n, cmds);
+			// Insert the node into all the nearby way segments
+			List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint());
+			Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
+			for (WaySegment ws : wss) {
+				List<Integer> is;
+				if (insertPoints.containsKey(ws.way)) {
+					is = insertPoints.get(ws.way);
+				} else {
+					is = new ArrayList<Integer>();
+					insertPoints.put(ws.way, is);
+				}
+
+				is.add(ws.lowerIndex);
+			}
+			for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
+				Way w = insertPoint.getKey();
+				List<Integer> is = insertPoint.getValue();
+
+				Way wnew = new Way(w);
+
+				pruneSuccsAndReverse(is);
+				for (int i : is) wnew.nodes.add(i + 1, n);
+
+				cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
+				replacedWays.add(insertPoint.getKey());
+				reuseWays.add(wnew);
 			}
 		}
 
@@ -110,8 +136,9 @@ public class DrawAction extends MapMode {
 				way.nodes.add(n0);
 				cmds.add(new AddCommand(way));
 			} else {
-				if (way == replacedWay) {
-					way = reuseWay;
+				int i;
+				if ((i = replacedWays.indexOf(way)) != -1) {
+					way = reuseWays.get(i);
 				} else {
 					Way wnew = new Way(way);
 					cmds.add(new ChangeCommand(way, wnew));
@@ -132,14 +159,14 @@ public class DrawAction extends MapMode {
 		if (!extendedWay && !newNode) {
 			return; // We didn't do anything.
 		} else if (!extendedWay) {
-			if (reuseWay == null) {
+			if (reuseWays.isEmpty()) {
 				title = tr("Add node");
 			} else {
 				title = tr("Add node into way");
 			}
 		} else if (!newNode) {
 			title = tr("Connect existing way to node");
-		} else if (reuseWay == null) {
+		} else if (reuseWays.isEmpty()) {
 			title = tr("Add a new node to an existing way");
 		} else {
 			title = tr("Add node into way and connect");
@@ -170,11 +197,19 @@ public class DrawAction extends MapMode {
 		}
 		return way;
 	}
-	
-	private Way splitWaySegmentAtNode(WaySegment ws, Node n, Collection<Command> cmds) {
-		Way wnew = new Way(ws.way);
-		wnew.nodes.add(ws.lowerIndex + 1, n);
-		cmds.add(new ChangeCommand(ws.way, wnew));
-		return wnew;
+
+	private static void pruneSuccsAndReverse(List<Integer> is) {
+		//if (is.size() < 2) return;
+
+		HashSet<Integer> is2 = new HashSet<Integer>();
+		for (int i : is) {
+			if (!is2.contains(i - 1) && !is2.contains(i + 1)) {
+				is2.add(i);
+			}
+		}
+		is.clear();
+		is.addAll(is2);
+		Collections.sort(is);
+		Collections.reverse(is);
 	}
 }

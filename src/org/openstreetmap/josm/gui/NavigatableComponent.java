@@ -4,6 +4,9 @@ package org.openstreetmap.josm.gui;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 
@@ -144,17 +147,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	}
 
 	/**
-	 * @return the nearest way segment to the screen point given that is not 
-	 * in ignore.
+	 * @return all way segments within 10px of p, sorted by their
+	 * perpendicular distance.
 	 * 
 	 * @param p the point for which to search the nearest segment.
-	 * @param ignore a collection of segments which are not to be returned.
-	 * May be null.
 	 */
-	public final WaySegment getNearestWaySegment(Point p, Collection<WaySegment> ignore) {
-		Way minPrimitive = null;
-		int minI = 0;
-		double minDistanceSq = Double.MAX_VALUE;
+	public final List<WaySegment> getNearestWaySegments(Point p) {
+		TreeMap<Double, WaySegment> nearest = new TreeMap<Double, WaySegment>();
 		for (Way w : Main.ds.ways) {
 			if (w.deleted)
 				continue;
@@ -167,23 +166,35 @@ public class NavigatableComponent extends JComponent implements Helpful {
 					lastN = n;
 					continue;
 				}
-				if (ignore == null || !ignore.contains(new WaySegment(w, i))) {
-					Point A = getPoint(lastN.eastNorth);
-					Point B = getPoint(n.eastNorth);
-					double c = A.distanceSq(B);
-					double a = p.distanceSq(B);
-					double b = p.distanceSq(A);
-					double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
-					if (perDist < 100 && minDistanceSq > perDist && a < c+100 && b < c+100) {
-						minDistanceSq = perDist;
-						minPrimitive = w;
-						minI = i;
-					}
+
+				Point A = getPoint(lastN.eastNorth);
+				Point B = getPoint(n.eastNorth);
+				double c = A.distanceSq(B);
+				double a = p.distanceSq(B);
+				double b = p.distanceSq(A);
+				double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
+				if (perDist < 100 && a < c+100 && b < c+100) {
+					nearest.put(perDist, new WaySegment(w, i));
 				}
+
 				lastN = n;
 			}
 		}
-		return minPrimitive == null ? null : new WaySegment(minPrimitive, minI);
+		return new ArrayList<WaySegment>(nearest.values());
+	}
+
+	/**
+	 * @return the nearest way segment to the screen point given that is not 
+	 * in ignore.
+	 * 
+	 * @param p the point for which to search the nearest segment.
+	 * @param ignore a collection of segments which are not to be returned.
+	 * May be null.
+	 */
+	public final WaySegment getNearestWaySegment(Point p, Collection<WaySegment> ignore) {
+		List<WaySegment> nearest = getNearestWaySegments(p);
+		if (ignore != null) nearest.removeAll(ignore);
+		return nearest.isEmpty() ? null : nearest.get(0);
 	}
 
 	/**
