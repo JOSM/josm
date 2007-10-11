@@ -196,7 +196,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	}
 
 	public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
-		SelectionAction.selectEverythingInRectangle(selectionManager, r, alt, shift, ctrl);
+		selectEverythingInRectangle(selectionManager, r, alt, shift, ctrl);
 	}
 
 	public static void selectEverythingInRectangle(
