@@ -25,7 +25,7 @@ public class MergeVisitor implements Visitor {
 
 	/**
 	 * Map from primitives in the database to visited primitives. (Attention: The other way 
-	 * round than mergedNodes)
+	 * round than mergedPrims)
 	 */
 	public Map<OsmPrimitive, OsmPrimitive> conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
 
@@ -37,7 +37,8 @@ public class MergeVisitor implements Visitor {
 	 * Key is the node in the other's dataset and the value is the one that is now
 	 * in ds.nodes instead.
 	 */
-	private final Map<Node, Node> mergedNodes = new HashMap<Node, Node>();
+	private final Map<OsmPrimitive, OsmPrimitive> mergedPrims
+		= new HashMap<OsmPrimitive, OsmPrimitive>();
 
 	public MergeVisitor(DataSet ds, DataSet mergeds) {
 		this.ds = ds;
@@ -49,7 +50,7 @@ public class MergeVisitor implements Visitor {
 	 * either id is zero, merge if lat/lon matches.
 	 */
 	public void visit(Node other) {
-		if (mergeAfterId(mergedNodes, ds.nodes, other))
+		if (mergeAfterId(mergedPrims, ds.nodes, other))
 			return;
 
 		Node my = null;
@@ -62,7 +63,7 @@ public class MergeVisitor implements Visitor {
 		if (my == null)
 			ds.nodes.add(other);
 		else {
-			mergedNodes.put(other, my);
+			mergedPrims.put(other, my);
 			mergeCommon(my, other);
 			if (my.modified && !other.modified)
 				return;
@@ -74,13 +75,10 @@ public class MergeVisitor implements Visitor {
 		}
 	}
 
-	/**
-	 * Simply calls cloneFrom() for now.
-	 * Might be useful to keep around to facilitate merge with the relations
-	 * branch.
-	 */
 	private <T extends OsmPrimitive> void cloneFromExceptIncomplete(T myOsm, T otherOsm) {
-		myOsm.cloneFrom(otherOsm);
+		if (!otherOsm.incomplete) {
+			myOsm.cloneFrom(otherOsm);
+		}
     }
 
 	/**
@@ -88,7 +86,7 @@ public class MergeVisitor implements Visitor {
 	 * id is zero of either way.
 	 */
 	public void visit(Way other) {
-		if (mergeAfterId(null, ds.ways, other))
+		if (mergeAfterId(mergedPrims, ds.ways, other))
 			return;
 
 		Way my = null;
@@ -101,6 +99,7 @@ public class MergeVisitor implements Visitor {
 		if (my == null) {
 			ds.ways.add(other);
 		} else {
+			mergedPrims.put(other, my);
 			mergeCommon(my, other);
 			if (my.modified && !other.modified)
 				return;
@@ -150,6 +149,7 @@ public class MergeVisitor implements Visitor {
 				}
 			}*/
 		} else {
+			mergedPrims.put(other, my);
 			mergeCommon(my, other);
 			if (my.modified && !other.modified)
 				return;
@@ -190,18 +190,20 @@ public class MergeVisitor implements Visitor {
 	 * data.
 	 */
 	public void fixReferences() {
-		for (Way w : ds.ways)
-			fixWay(w);
+		for (Way w : ds.ways) fixWay(w);
+		for (Relation r : ds.relations) fixRelation(r);
 		for (OsmPrimitive osm : conflicts.values())
 			if (osm instanceof Way)
 				fixWay((Way)osm);
+			else if (osm instanceof Relation)
+				fixRelation((Relation) osm);
 	}
 
 	private void fixWay(Way w) {
 	    boolean replacedSomething = false;
 	    LinkedList<Node> newNodes = new LinkedList<Node>();
 	    for (Node n : w.nodes) {
-	    	Node otherN = mergedNodes.get(n);
+	    	Node otherN = (Node) mergedPrims.get(n);
 	    	newNodes.add(otherN == null ? n : otherN);
 	    	if (otherN != null)
 	    		replacedSomething = true;
@@ -209,8 +211,28 @@ public class MergeVisitor implements Visitor {
 	    if (replacedSomething) {
 	    	w.nodes.clear();
 	    	w.nodes.addAll(newNodes);
+		}
     }
-    }
+
+	private void fixRelation(Relation r) {
+	    boolean replacedSomething = false;
+	    LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
+	    for (RelationMember m : r.members) {
+	    	OsmPrimitive otherP = mergedPrims.get(m.member);
+			if (otherP == null) {
+				newMembers.add(m);
+			} else {
+				RelationMember mnew = new RelationMember(m);
+				mnew.member = otherP;
+				newMembers.add(mnew);
+	    		replacedSomething = true;
+			}
+	    }
+	    if (replacedSomething) {
+	    	r.members.clear();
+	    	r.members.addAll(newMembers);
+		}
+	}
 
 	/**
 	 * @return Whether the nodes match (in sense of "be mergable").
@@ -285,8 +307,10 @@ public class MergeVisitor implements Visitor {
 	/**
 	 * @return <code>true</code>, if no merge is needed or merge is performed already.
 	 */
-	private <P extends OsmPrimitive> boolean mergeAfterId(Map<P,P> merged, Collection<P> primitives, P other) {
+	private <P extends OsmPrimitive> boolean mergeAfterId(Map<OsmPrimitive,OsmPrimitive> merged, Collection<P> primitives, P other) {
 		for (P my : primitives) {
+			Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
+			Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();
 			if (my.realEqual(other, false)) {
 				if (merged != null)
 					merged.put(other, my);
@@ -296,40 +320,34 @@ public class MergeVisitor implements Visitor {
 				// they differ in modified/timestamp combination only. Auto-resolve it.
 				if (merged != null)
 					merged.put(other, my);
-				if (my.getTimestamp().before(other.getTimestamp())) {
+				if (myd.before(otherd)) {
 					my.modified = other.modified;
 					my.timestamp = other.timestamp;
 				}
 				return true; // merge done.
 			}
 			if (my.id == other.id && my.id != 0) {
-				if (my.modified && other.modified) {
+				if (my.incomplete) {
+					return false;
+				} else if (my.modified && other.modified) {
 					conflicts.put(my, other);
-					if (merged != null)
-						merged.put(other, my);
 				} else if (!my.modified && !other.modified) {
-					if (my.getTimestamp().before(other.getTimestamp())) {
+					if (myd.before(otherd)) {
 						cloneFromExceptIncomplete(my, other);
-						if (merged != null)
-							merged.put(other, my);
 					}
 				} else if (other.modified) {
-					if (my.getTimestamp().after(other.getTimestamp())) {
+					if (myd.after(otherd)) {
 						conflicts.put(my, other);
-						if (merged != null)
-							merged.put(other, my);
 					} else {
 						cloneFromExceptIncomplete(my, other);
-						if (merged != null)
-							merged.put(other, my);
 					}
 				} else if (my.modified) {
-					if (my.getTimestamp().before(other.getTimestamp())) {
+					if (myd.before(otherd)) {
 						conflicts.put(my, other);
-						if (merged != null)
-							merged.put(other, my);
 					}
 				}
+				if (merged != null)
+					merged.put(other, my);
 				return true;
 			}
 		}
