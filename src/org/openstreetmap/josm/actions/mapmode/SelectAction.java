@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -37,20 +38,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class SelectAction extends MapMode implements SelectionEnded {
-	
-	enum Mode {move, rotate}
-	private final Mode mode;
 
-	public static class SelectGroup extends GroupAction {
-		public SelectGroup(MapFrame mf) {
-			super(KeyEvent.VK_S,0);
-			putValue("help", "Action/Move");
-			actions.add(new SelectAction(mf, tr("Select/Move"), Mode.move, tr("Select and move around objects that are under the mouse or selected.")));
-			actions.add(new SelectAction(mf, tr("Rotate"), Mode.rotate, tr("Rotate selected nodes around centre")));
-			setCurrent(0);
-		}
-	}
-	
+	enum Mode { move, rotate, select }
+	private Mode mode = null;
+
 	/**
 	 * The old cursor before the user pressed the mouse button.
 	 */
@@ -60,26 +51,44 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	private Point mousePos;
 	private SelectionManager selectionManager;
-	private boolean selectionMode = false;
 
 	/**
 	 * Create a new MoveAction
 	 * @param mapFrame The MapFrame, this action belongs to.
 	 */
-	public SelectAction(MapFrame mapFrame, String name, Mode mode, String desc) {
-		super(name, "move/"+mode, desc, mapFrame, getCursor());
-		this.mode = mode;
-		putValue("help", "Action/Move/"+Character.toUpperCase(mode.toString().charAt(0))+mode.toString().substring(1));
+	public SelectAction(MapFrame mapFrame) {
+		super(tr("Select"), "move/move", tr("Select, move and rotate objects"),
+			KeyEvent.VK_S, mapFrame,
+			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
+		putValue("help", "Action/Move/Move");
 		selectionManager = new SelectionManager(this, false, mapFrame.mapView);
 	}
 
-	private static Cursor getCursor() {
+	private static Cursor getCursor(String name, String mod, int def) {
 		try {
-	        return ImageProvider.getCursor("crosshair", null);
+	        return ImageProvider.getCursor(name, mod);
         } catch (Exception e) {
         }
-	    return Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+	    return Cursor.getPredefinedCursor(def);
     }
+
+	private static Cursor getCursor(String name, int def) {
+		return getCursor(name, null, def);
+	}
+
+	private void setCursor(Cursor c) {
+		if (oldCursor == null) {
+			oldCursor = Main.map.mapView.getCursor();
+			Main.map.mapView.setCursor(c);
+		}
+	}
+
+	private void restoreCursor() {
+		if (oldCursor != null) {
+			Main.map.mapView.setCursor(oldCursor);
+			oldCursor = null;
+		}
+	}
 	
 	@Override public void enterMode() {
 		super.enterMode();
@@ -99,14 +108,18 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 * mouse (which will become selected).
 	 */
 	@Override public void mouseDragged(MouseEvent e) {
+		if (mode == Mode.select) return;
+
 		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
 			return;
 
-		if (selectionMode)
-			return;
+		if (mode == Mode.move) {
+			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+		}
 
-		if (mousePos == null)
+		if (mousePos == null) {
 			mousePos = e.getPoint();
+		}
 		
 		EastNorth mouseEN = Main.map.mapView.getEastNorth(e.getX(), e.getY());
 		EastNorth mouseStartEN = Main.map.mapView.getEastNorth(mousePos.x, mousePos.y);
@@ -126,11 +139,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		// check if any coordinate would be outside the world
 		for (OsmPrimitive osm : affectedNodes) {
 			if (osm instanceof Node && ((Node)osm).coor.isOutSideWorld()) {
-				JOptionPane.showMessageDialog(Main.parent,tr("Cannot move objects outside of the world."));
+				JOptionPane.showMessageDialog(Main.parent,
+					tr("Cannot move objects outside of the world."));
 				return;
 			}
 		}
-		Command c = !Main.main.undoRedo.commands.isEmpty() ? Main.main.undoRedo.commands.getLast() : null;
+		Command c = !Main.main.undoRedo.commands.isEmpty()
+			? Main.main.undoRedo.commands.getLast() : null;
 
 		if (mode == Mode.move) {
 			if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).objects))
@@ -160,21 +175,22 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	@Override public void mousePressed(MouseEvent e) {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
+		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint());
-		if (osm != null) {
-			if (!sel.contains(osm))
-				Main.ds.setSelected(osm);
-			oldCursor = Main.map.mapView.getCursor();
-			
-			if (mode == Mode.move) {
-				Main.map.mapView.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-			} else {
-				Main.map.mapView.setCursor(ImageProvider.getCursor("rotate", null));
-			}
+		if (ctrl) {
+			if (osm != null && !sel.contains(osm)) Main.ds.setSelected(osm);
+
+			mode = Mode.rotate;
+			setCursor(ImageProvider.getCursor("rotate", null));
+		} else if (osm != null) {
+			if (!sel.contains(osm)) Main.ds.setSelected(osm);
+
+			mode = Mode.move;
 		} else {
-			selectionMode = true;
+			mode = Mode.select;
+			oldCursor = Main.map.mapView.getCursor();
 			selectionManager.register(Main.map.mapView);
 			selectionManager.mousePressed(e);
 		}
@@ -188,20 +204,14 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 * Restore the old mouse cursor.
 	 */
 	@Override public void mouseReleased(MouseEvent e) {
-		if (selectionMode) {
+		if (mode == Mode.select) {
 			selectionManager.unregister(Main.map.mapView);
-			selectionMode = false;
-		} else
-			Main.map.mapView.setCursor(oldCursor);
+		}
+		restoreCursor();
+		mode = null;
 	}
 
 	public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
-		selectEverythingInRectangle(selectionManager, r, alt, shift, ctrl);
-	}
-
-	public static void selectEverythingInRectangle(
-			SelectionManager selectionManager, Rectangle r,
-			boolean alt, boolean shift, boolean ctrl) {
 	    if (shift && ctrl)
 			return; // not allowed together
 
