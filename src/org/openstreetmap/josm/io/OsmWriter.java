@@ -194,8 +194,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
 				out.print(" action='"+action+"'");
 		}
 		if (osm.timestamp != null) {
-			String time = osm.getTimeStr();
-			out.print(" timestamp='"+time+"'");
+			out.print(" timestamp='"+osm.timestamp+"'");
 		}
 		// user and visible added with 0.4 API
 		if (osm.user != null) {
