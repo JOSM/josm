@@ -33,8 +33,8 @@ public class MergeVisitor implements Visitor {
 	private final DataSet mergeds;
 
 	/**
-	 * A list of all nodes that got replaced with other nodes.
-	 * Key is the node in the other's dataset and the value is the one that is now
+	 * A list of all primitives that got replaced with other primitives.
+	 * Key is the primitives in the other's dataset and the value is the one that is now
 	 * in ds.nodes instead.
 	 */
 	private final Map<OsmPrimitive, OsmPrimitive> merged
@@ -75,61 +75,6 @@ public class MergeVisitor implements Visitor {
 		}
 	}
 
-	private <T extends OsmPrimitive> void cloneFromExceptIncomplete(T myOsm, T otherOsm) {
-		if (myOsm instanceof Way) {
-            Way my = (Way)myOsm;
-            Way other = (Way)otherOsm;
-            HashMap<Long, Node> copy = new HashMap<Long, Node>();
-            for (Node n : my.nodes)
-                copy.put(n.id, n);
-            my.cloneFrom(other);
-            my.nodes.clear();
-            for (Node n : other.nodes) {
-                Node myN = copy.get(n.id);
-                if (n.incomplete && myN != null && !myN.incomplete) {
-                    merged.put(n, myN);
-                    my.nodes.add(myN);
-                } else
-                    my.nodes.add(n);
-            }
-		} else if (myOsm instanceof Relation) {
-            Relation my = (Relation)myOsm;
-            Relation other = (Relation)otherOsm;
-
-			HashMap<Long, OsmPrimitive>[] copy =
-				(HashMap<Long, OsmPrimitive>[]) new HashMap[3];
-			for (int i = 0; i < 3; i++) copy[i] = new HashMap<Long, OsmPrimitive>();
-
-			for (RelationMember m : my.members) {
-				int i;
-				if (m.member instanceof Node) i = 0; else
-				if (m.member instanceof Way) i = 1; else
-				if (m.member instanceof Relation) i = 2; else i = 3;
-				copy[i].put(m.member.id, m.member);
-			}
-
-			my.cloneFrom(other);
-			my.members.clear();
-			for (RelationMember m : other.members) {
-				int i;
-				if (m.member instanceof Node) i = 0; else
-				if (m.member instanceof Way) i = 1; else
-				if (m.member instanceof Relation) i = 2; else i = 3;
-				OsmPrimitive myP = copy[i].get(m.member.id);
-				if (m.member.incomplete && myP != null && !myP.incomplete) {
-					RelationMember mnew = new RelationMember(m);
-					mnew.member = myP;
-					my.members.add(mnew);
-					merged.put(m.member, mnew.member);
-				} else {
-					my.members.add(m);
-				}
-			}
-		} else {
-			myOsm.cloneFrom(otherOsm);
-		}
-    }
-
 	/**
 	 * Merge the way if id matches or if all nodes match and the
 	 * id is zero of either way.
@@ -148,11 +93,6 @@ public class MergeVisitor implements Visitor {
 		}
 		if (my == null) {
 			ds.ways.add(other);
-		} else if (my.incomplete && !other.incomplete) {
-			merged.put(other, my);
-			my.cloneFrom(other);
-		} else if (other.incomplete && !my.incomplete) {
-			merged.put(other, my);
 		} else {
 			merged.put(other, my);
 			mergeCommon(my, other);
@@ -165,8 +105,6 @@ public class MergeVisitor implements Visitor {
 					same = false;
 			}
 			if (!same) {
-				my.nodes.clear();
-				my.nodes.addAll(other.nodes);
 				my.modified = other.modified;
 			}
 		}
@@ -190,34 +128,8 @@ public class MergeVisitor implements Visitor {
 		}
 
 		if (my == null) {
-			// Add the relation and replace any incomplete segments that we already have
+			// Add the relation
 			ds.relations.add(other);
-			/*for (RelationMember em : other.members) {
-				if (em.member.incomplete) {
-					if (em.member instanceof Node) {
-						for (Node ourN : ds.nodes) {
-							if (ourN.id == em.member.id) {
-								merged.put(em.member, ourN);
-								break;
-							}
-						}
-					} else if (em.member instanceof Way) {
-						for (Way ourW : ds.ways) {
-							if (ourW.id == em.member.id) {
-								merged.put(em.member, ourW);
-								break;
-							}
-						}
-					} else if (em.member instanceof Relation) {
-						for (Relation ourR : ds.relations) {
-							if (ourR.id == em.member.id) {
-								merged.put(em.member, ourR);
-								break;
-							}
-						}
-					}
-				}
-			}*/
 		} else {
 			merged.put(other, my);
 			mergeCommon(my, other);
@@ -235,35 +147,6 @@ public class MergeVisitor implements Visitor {
 				}
 			}
 			if (!same) {
-				/*HashMap<Long, OsmPrimitive>[] copy =
-					(HashMap<Long, OsmPrimitive>[]) new HashMap[3];
-				for (int i = 0; i < 3; i++) copy[i] = new HashMap<Long, OsmPrimitive>();
-
-				for (RelationMember m : my.members) {
-					int i;
-					if (m.member instanceof Node) i = 0; else
-					if (m.member instanceof Way) i = 1; else
-					if (m.member instanceof Relation) i = 2; else i = 3;
-					copy[i].put(m.member.id, m.member);
-				}
-
-				my.cloneFrom(other);
-				my.members.clear();
-				for (RelationMember m : other.members) {
-					int i;
-					if (m.member instanceof Node) i = 0; else
-					if (m.member instanceof Way) i = 1; else
-					if (m.member instanceof Relation) i = 2; else i = 3;
-					OsmPrimitive myP = copy[i].get(m.member.id);
-					if (m.member.incomplete && myP != null && !myP.incomplete) {
-						RelationMember mnew = new RelationMember(m);
-						mnew.member = myP;
-						my.members.add(mnew);
-						merged.put(m.member, mnew.member);
-					} else {
-						my.members.add(m);
-					}
-				}*/
 				my.modified = other.modified;
 			}
 		}
@@ -413,29 +296,24 @@ public class MergeVisitor implements Visitor {
 					if (my.incomplete) {
 						my.cloneFrom(other);
 					}
-					merged.put(other, my);
 				} else if (my.modified && other.modified) {
 					conflicts.put(my, other);
-					merged.put(other, my);
 				} else if (!my.modified && !other.modified) {
 					if (myd.before(otherd)) {
-						cloneFromExceptIncomplete(my, other);
-						merged.put(other, my);
+						my.cloneFrom(other);
 					}
 				} else if (other.modified) {
 					if (myd.after(otherd)) {
 						conflicts.put(my, other);
-						merged.put(other, my);
 					} else {
-						cloneFromExceptIncomplete(my, other);
-						merged.put(other, my);
+						my.cloneFrom(other);
 					}
 				} else if (my.modified) {
 					if (myd.before(otherd)) {
 						conflicts.put(my, other);
-						merged.put(other, my);
 					}
 				}
+				merged.put(other, my);
 				return true;
 			}
 		}
