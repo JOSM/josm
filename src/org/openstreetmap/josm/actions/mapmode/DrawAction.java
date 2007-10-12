@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.mapmode;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Cursor;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.GroupAction;
+import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -32,15 +34,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This mode adds a new node to the dataset. The user clicks on a place to add
- * and there is it. Nothing more, nothing less.
- *
- * FIXME: "nothing more, nothing less" is a bit out-of-date
- *
- * Newly created nodes are selected. Shift modifier does not cancel the old
- * selection as usual.
- *
- * @author imi
  *
  */
 public class DrawAction extends MapMode {
@@ -79,13 +72,18 @@ public class DrawAction extends MapMode {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 
+		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		Collection<Command> cmds = new LinkedList<Command>();
 
 		ArrayList<Way> reuseWays = new ArrayList<Way>(),
 			replacedWays = new ArrayList<Way>();
 		boolean newNode = false;
-		Node n = Main.map.mapView.getNearestNode(e.getPoint());
+		Node n = null;
+		if (!ctrl) n = Main.map.mapView.getNearestNode(e.getPoint());
 		if (n == null) {
 			n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
 			if (n.coor.isOutSideWorld()) {
@@ -97,37 +95,39 @@ public class DrawAction extends MapMode {
 
 			cmds.add(new AddCommand(n));
 
-			// Insert the node into all the nearby way segments
-			List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint());
-			Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
-			for (WaySegment ws : wss) {
-				List<Integer> is;
-				if (insertPoints.containsKey(ws.way)) {
-					is = insertPoints.get(ws.way);
-				} else {
-					is = new ArrayList<Integer>();
-					insertPoints.put(ws.way, is);
+			if (!ctrl) {
+				// Insert the node into all the nearby way segments
+				List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint());
+				Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
+				for (WaySegment ws : wss) {
+					List<Integer> is;
+					if (insertPoints.containsKey(ws.way)) {
+						is = insertPoints.get(ws.way);
+					} else {
+						is = new ArrayList<Integer>();
+						insertPoints.put(ws.way, is);
+					}
+
+					is.add(ws.lowerIndex);
 				}
+			
+				for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
+					Way w = insertPoint.getKey();
+					List<Integer> is = insertPoint.getValue();
 
-				is.add(ws.lowerIndex);
-			}
-			for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
-				Way w = insertPoint.getKey();
-				List<Integer> is = insertPoint.getValue();
+					Way wnew = new Way(w);
 
-				Way wnew = new Way(w);
+					pruneSuccsAndReverse(is);
+					for (int i : is) wnew.nodes.add(i + 1, n);
 
-				pruneSuccsAndReverse(is);
-				for (int i : is) wnew.nodes.add(i + 1, n);
-
-				cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
-				replacedWays.add(insertPoint.getKey());
-				reuseWays.add(wnew);
+					cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
+					replacedWays.add(insertPoint.getKey());
+					reuseWays.add(wnew);
+				}
 			}
 		}
-
 		boolean extendedWay = false;
-		if (selection.size() == 1 && selection.iterator().next() instanceof Node) {
+		if (!shift && selection.size() == 1 && selection.iterator().next() instanceof Node) {
 			Node n0 = (Node) selection.iterator().next();
 
 			Way way = getWayForNode(n0);
@@ -211,5 +211,9 @@ public class DrawAction extends MapMode {
 		is.addAll(is2);
 		Collections.sort(is);
 		Collections.reverse(is);
+	}
+	
+	@Override public String getModeHelpText() {
+		return "Click to add a new node. Ctrl to disable node re-use/auto-insert. Shift to disable auto-connect.";
 	}
 }

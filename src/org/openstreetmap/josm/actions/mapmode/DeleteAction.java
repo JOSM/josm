@@ -82,7 +82,7 @@ public class DeleteAction extends MapMode {
 		if (ctrl) {
 			c = deleteWithReferences(Main.ds.getSelected());
 		} else {
-			c = delete(Main.ds.getSelected());
+			c = delete(Main.ds.getSelected(), false);
 		}
 		if (c != null) {
 			Main.main.undoRedo.add(c);
@@ -99,16 +99,27 @@ public class DeleteAction extends MapMode {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+		System.out.println("meta="+alt);
 		
 		OsmPrimitive sel = Main.map.mapView.getNearestNode(e.getPoint());
 		Command c = null;
 		if (sel == null) {
 			WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
-			if (ws != null) c = deleteWaySegment(ws);
+			if (ws != null) {
+				if (shift) {
+					c = deleteWaySegment(ws); 
+				} else if (ctrl) {
+					c = deleteWithReferences(Collections.singleton((OsmPrimitive)ws.way));
+				} else {
+					c = delete(Collections.singleton((OsmPrimitive)ws.way), alt);
+				}
+			}
 		} else if (ctrl) {
 			c = deleteWithReferences(Collections.singleton(sel));
 		} else {
-			c = delete(Collections.singleton(sel));
+			c = delete(Collections.singleton(sel), alt);
 		}
 		if (c != null) {
 			Main.main.undoRedo.add(c);
@@ -154,14 +165,37 @@ public class DeleteAction extends MapMode {
 	 * and do not delete.
 	 * 
 	 * @param selection The objects to delete.
+	 * @param alsoDeleteNodesInWay true if nodes should be deleted as well
 	 * @return command A command to perform the deletions, or null of there is
 	 * nothing to delete.
 	 */
-	private Command delete(Collection<OsmPrimitive> selection) {
+	private Command delete(Collection<OsmPrimitive> selection, boolean alsoDeleteNodesInWay) {
 		if (selection.isEmpty()) return null;
 
 		Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>(selection);
 		Collection<Way> waysToBeChanged = new HashSet<Way>();
+		
+		// nodes belonging to a way will be deleted if
+		// 1. this has been requested (alt modifier)
+		// 2. the node is not tagged
+		// 3. the node is not used by anybody else (i.e. has only one backref)
+		if (alsoDeleteNodesInWay) {
+			for (OsmPrimitive osm : del) {
+				if (osm instanceof Way) {
+					for (Node n : ((Way)osm).nodes) {
+						if (!n.tagged) {
+							CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
+							n.visit(v);
+							if (v.data.size() == 1) {
+								del.add(n);
+							} else System.out.println("size="+v.data.size());
+						}
+						else System.out.println("tagged");
+					}
+				}
+			}
+		}
+		
 		for (OsmPrimitive osm : del) {
 			CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
 			osm.visit(v);
@@ -216,28 +250,32 @@ public class DeleteAction extends MapMode {
 
 		if (n1.size() < 2 && n2.size() < 2) {
 			return new DeleteCommand(Collections.singleton(ws.way));
-		} else {
-			Way wnew = new Way(ws.way);
-			wnew.nodes.clear();
-
-			if (n1.size() < 2) {
-				wnew.nodes.addAll(n2);
-				return new ChangeCommand(ws.way, wnew);
-			} else if (n2.size() < 2) {
-				wnew.nodes.addAll(n1);
-				return new ChangeCommand(ws.way, wnew);
-			} else {
-				Collection<Command> cmds = new LinkedList<Command>();
-
-				wnew.nodes.addAll(n1);
-				cmds.add(new ChangeCommand(ws.way, wnew));
-
-				Way wnew2 = new Way();
-				wnew2.nodes.addAll(n2);
-				cmds.add(new AddCommand(wnew2));
-
-				return new SequenceCommand(tr("Split way segment"), cmds);
-			}
 		}
+		
+		Way wnew = new Way(ws.way);
+		wnew.nodes.clear();
+
+		if (n1.size() < 2) {
+			wnew.nodes.addAll(n2);
+			return new ChangeCommand(ws.way, wnew);
+		} else if (n2.size() < 2) {
+			wnew.nodes.addAll(n1);
+			return new ChangeCommand(ws.way, wnew);
+		} else {
+			Collection<Command> cmds = new LinkedList<Command>();
+
+			wnew.nodes.addAll(n1);
+			cmds.add(new ChangeCommand(ws.way, wnew));
+
+			Way wnew2 = new Way();
+			wnew2.nodes.addAll(n2);
+			cmds.add(new AddCommand(wnew2));
+
+			return new SequenceCommand(tr("Split way segment"), cmds);
+		}
+	}
+	
+	@Override public String getModeHelpText() {
+		return "Click to delete. Shift: delete way segment. Alt: delete way+nodes. Ctrl: delete referring objects.";
 	}
 }

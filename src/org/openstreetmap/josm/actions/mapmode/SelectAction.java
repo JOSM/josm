@@ -198,6 +198,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			selectionManager.mousePressed(e);
 		}
 
+		updateStatusLine();
 		Main.map.mapView.repaint();
 
 		mousePos = e.getPoint();
@@ -211,7 +212,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			selectionManager.unregister(Main.map.mapView);
 		}
 		restoreCursor();
+		updateStatusLine();
 		mode = null;
+		updateStatusLine();
 	}
 
 	public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
@@ -236,4 +239,16 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		Main.ds.setSelected(curSel);
 		Main.map.mapView.repaint();
     }
+	
+	@Override public String getModeHelpText() {
+		if (mode == Mode.select) {
+			return "Release the mouse button to select the objects in the rectangle.";
+		} else if (mode == Mode.move) {
+			return "Release the mouse button to stop moving.";
+		} else if (mode == Mode.rotate) {
+			return "Release the mouse button to stop rotating.";
+		} else {
+			return "Move objects by dragging; Shift to add to selection; Shift-Ctrl to rotate selected; or change selection";
+		}
+	}
 }

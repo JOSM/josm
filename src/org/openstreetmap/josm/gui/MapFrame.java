@@ -53,7 +53,7 @@ public class MapFrame extends JPanel implements Destroyable {
 	/**
 	 * The status line below the map
 	 */
-	private MapStatus statusLine;
+	public MapStatus statusLine;
 
 	public ConflictDialog conflictDialog;
 	/**

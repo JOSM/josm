@@ -47,13 +47,20 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
 		putValue("active", true);
 		oldCursor = Main.map.mapView.getCursor();
 		Main.map.mapView.setCursor(cursor);
-		
+		updateStatusLine();
 	}
 	public void exitMode() {
 		putValue("active", false);
 		Main.map.mapView.setCursor(oldCursor);
 	}
 
+	protected void updateStatusLine() {
+		Main.map.statusLine.setHelpText(getModeHelpText());
+	}
+	
+	public String getModeHelpText() {
+		return "";
+	}
 	/**
 	 * Call selectMapMode(this) on the parent mapFrame.
 	 */

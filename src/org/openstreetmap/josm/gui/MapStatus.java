@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -16,6 +17,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Map.Entry;
@@ -57,12 +60,19 @@ public class MapStatus extends JPanel implements Helpful {
 	/**
 	 * The position of the mouse cursor.
 	 */
-	JTextField positionText = new JTextField("-000.00000000000000 -000.00000000000000".length());
+	DecimalFormat latlon = new DecimalFormat("###0.0000000");
+	JTextField positionText = new JTextField(25);
+	
 	/**
 	 * The field holding the name of the object under the mouse.
 	 */
 	JTextField nameText = new JTextField(30);
 
+	/**
+	 * The field holding information about what the user can do.
+	 */
+	JTextField helpText = new JTextField();
+	
 	/**
 	 * The collector class that waits for notification and then update
 	 * the display objects.
@@ -113,13 +123,15 @@ public class MapStatus extends JPanel implements Helpful {
 				// access to the data need to be restarted, if the main thread modifies
 				// the data.
 				try {
-					Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
+					// Popup Information
+					if ((ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0 ) {
+						Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
 
-					if (osms == null && osmStatus == null && ms.modifiers == oldModifiers)
-						continue;
-					if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers)
-						continue;
-
+						if (osms == null)
+							continue;
+						if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers)
+							continue;
+					/*
 					osmStatus = osms;
 					oldModifiers = ms.modifiers;
 
@@ -132,9 +144,9 @@ public class MapStatus extends JPanel implements Helpful {
 						nameText.setText(visitor.name);
 					} else
 						nameText.setText("");
+					*/
+					
 
-					// Popup Information
-					if ((ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0 && osms != null) {
 						if (popup != null) {
 							try {
 	                            EventQueue.invokeAndWait(new Runnable() {
@@ -234,20 +246,23 @@ public class MapStatus extends JPanel implements Helpful {
 				// Do not update the view, if ctrl is pressed.
 				if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
 					LatLon p = mv.getLatLon(e.getX(),e.getY());
-					positionText.setText(p.lat()+" "+p.lon());
+					positionText.setText(latlon.format(p.lat())+" "+latlon.format(p.lon()));
 				}
 			}
 		});
 
 		positionText.setEditable(false);
 		nameText.setEditable(false);
-		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		helpText.setEditable(false);
+		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		add(new JLabel(tr("Lat/Lon")+" "));
-		add(positionText);
-		add(new JLabel(" "+tr("Object")+" "));
-		add(nameText);
-
+		add(new JLabel(tr("Lat/Lon")+" "), GBC.std());
+		add(positionText, GBC.std());
+		//add(new JLabel(" "+tr("Object")+" "));
+		//add(nameText);
+		add(helpText, GBC.eol().fill(GBC.HORIZONTAL));
+		positionText.setMinimumSize(new Dimension(positionText.getMinimumSize().height, 200));
+		
 		// The background thread
 		final Collector collector = new Collector(mapFrame);
 		new Thread(collector).start();
@@ -269,4 +284,8 @@ public class MapStatus extends JPanel implements Helpful {
 	public String helpTopic() {
 	    return "Statusline";
     }
+	
+	public void setHelpText(String t) {
+		helpText.setText(t);
+	}
 }

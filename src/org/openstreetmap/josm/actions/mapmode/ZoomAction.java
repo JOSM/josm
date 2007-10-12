@@ -69,4 +69,8 @@ public class ZoomAction extends MapMode implements SelectionEnded {
 		super.exitMode();
 		selectionManager.unregister(mv);
 	}
+	
+	@Override public String getModeHelpText() {
+		return "Zoom in by dragging.";
+	}
 }
