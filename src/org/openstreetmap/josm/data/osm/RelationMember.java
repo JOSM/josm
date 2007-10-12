@@ -32,4 +32,7 @@ public class RelationMember {
 		return otherMember.role.equals(role) && otherMember.member.equals(member);
 	}
 
+	@Override public String toString() {
+		return '"' + role + "\"=" + member;
+	}
 }

@@ -25,7 +25,7 @@ public class MergeVisitor implements Visitor {
 
 	/**
 	 * Map from primitives in the database to visited primitives. (Attention: The other way 
-	 * round than mergedPrims)
+	 * round than merged)
 	 */
 	public Map<OsmPrimitive, OsmPrimitive> conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
 
@@ -37,7 +37,7 @@ public class MergeVisitor implements Visitor {
 	 * Key is the node in the other's dataset and the value is the one that is now
 	 * in ds.nodes instead.
 	 */
-	private final Map<OsmPrimitive, OsmPrimitive> mergedPrims
+	private final Map<OsmPrimitive, OsmPrimitive> merged
 		= new HashMap<OsmPrimitive, OsmPrimitive>();
 
 	public MergeVisitor(DataSet ds, DataSet mergeds) {
@@ -50,7 +50,7 @@ public class MergeVisitor implements Visitor {
 	 * either id is zero, merge if lat/lon matches.
 	 */
 	public void visit(Node other) {
-		if (mergeAfterId(mergedPrims, ds.nodes, other))
+		if (mergeAfterId(ds.nodes, other))
 			return;
 
 		Node my = null;
@@ -63,7 +63,7 @@ public class MergeVisitor implements Visitor {
 		if (my == null)
 			ds.nodes.add(other);
 		else {
-			mergedPrims.put(other, my);
+			merged.put(other, my);
 			mergeCommon(my, other);
 			if (my.modified && !other.modified)
 				return;
@@ -76,7 +76,56 @@ public class MergeVisitor implements Visitor {
 	}
 
 	private <T extends OsmPrimitive> void cloneFromExceptIncomplete(T myOsm, T otherOsm) {
-		if (!otherOsm.incomplete) {
+		if (myOsm instanceof Way) {
+            Way my = (Way)myOsm;
+            Way other = (Way)otherOsm;
+            HashMap<Long, Node> copy = new HashMap<Long, Node>();
+            for (Node n : my.nodes)
+                copy.put(n.id, n);
+            my.cloneFrom(other);
+            my.nodes.clear();
+            for (Node n : other.nodes) {
+                Node myN = copy.get(n.id);
+                if (n.incomplete && myN != null && !myN.incomplete) {
+                    merged.put(n, myN);
+                    my.nodes.add(myN);
+                } else
+                    my.nodes.add(n);
+            }
+		} else if (myOsm instanceof Relation) {
+            Relation my = (Relation)myOsm;
+            Relation other = (Relation)otherOsm;
+
+			HashMap<Long, OsmPrimitive>[] copy =
+				(HashMap<Long, OsmPrimitive>[]) new HashMap[3];
+			for (int i = 0; i < 3; i++) copy[i] = new HashMap<Long, OsmPrimitive>();
+
+			for (RelationMember m : my.members) {
+				int i;
+				if (m.member instanceof Node) i = 0; else
+				if (m.member instanceof Way) i = 1; else
+				if (m.member instanceof Relation) i = 2; else i = 3;
+				copy[i].put(m.member.id, m.member);
+			}
+
+			my.cloneFrom(other);
+			my.members.clear();
+			for (RelationMember m : other.members) {
+				int i;
+				if (m.member instanceof Node) i = 0; else
+				if (m.member instanceof Way) i = 1; else
+				if (m.member instanceof Relation) i = 2; else i = 3;
+				OsmPrimitive myP = copy[i].get(m.member.id);
+				if (m.member.incomplete && myP != null && !myP.incomplete) {
+					RelationMember mnew = new RelationMember(m);
+					mnew.member = myP;
+					my.members.add(mnew);
+					merged.put(m.member, mnew.member);
+				} else {
+					my.members.add(m);
+				}
+			}
+		} else {
 			myOsm.cloneFrom(otherOsm);
 		}
     }
@@ -86,7 +135,8 @@ public class MergeVisitor implements Visitor {
 	 * id is zero of either way.
 	 */
 	public void visit(Way other) {
-		if (mergeAfterId(mergedPrims, ds.ways, other))
+		fixWay(other);
+		if (mergeAfterId(ds.ways, other))
 			return;
 
 		Way my = null;
@@ -98,8 +148,13 @@ public class MergeVisitor implements Visitor {
 		}
 		if (my == null) {
 			ds.ways.add(other);
+		} else if (my.incomplete && !other.incomplete) {
+			merged.put(other, my);
+			my.cloneFrom(other);
+		} else if (other.incomplete && !my.incomplete) {
+			merged.put(other, my);
 		} else {
-			mergedPrims.put(other, my);
+			merged.put(other, my);
 			mergeCommon(my, other);
 			if (my.modified && !other.modified)
 				return;
@@ -122,7 +177,8 @@ public class MergeVisitor implements Visitor {
 	 * id of either relation is zero.
 	 */
 	public void visit(Relation other) {
-		if (mergeAfterId(null, ds.relations, other))
+		fixRelation(other);
+		if (mergeAfterId(ds.relations, other))
 			return;
 
 		Relation my = null;
@@ -132,24 +188,38 @@ public class MergeVisitor implements Visitor {
 				break;
 			}
 		}
-		
+
 		if (my == null) {
 			// Add the relation and replace any incomplete segments that we already have
 			ds.relations.add(other);
-			// FIXME unclear!
-			/*
-			for (RelationMember em : other.getMembers()) {
+			/*for (RelationMember em : other.members) {
 				if (em.member.incomplete) {
-					for (Segment ourSegment : ds.segments) {
-						if (ourSegment.id == s.id) {
-							mergedSegments.put(s, ourSegment);
-							break;
+					if (em.member instanceof Node) {
+						for (Node ourN : ds.nodes) {
+							if (ourN.id == em.member.id) {
+								merged.put(em.member, ourN);
+								break;
+							}
+						}
+					} else if (em.member instanceof Way) {
+						for (Way ourW : ds.ways) {
+							if (ourW.id == em.member.id) {
+								merged.put(em.member, ourW);
+								break;
+							}
+						}
+					} else if (em.member instanceof Relation) {
+						for (Relation ourR : ds.relations) {
+							if (ourR.id == em.member.id) {
+								merged.put(em.member, ourR);
+								break;
+							}
 						}
 					}
 				}
 			}*/
 		} else {
-			mergedPrims.put(other, my);
+			merged.put(other, my);
 			mergeCommon(my, other);
 			if (my.modified && !other.modified)
 				return;
@@ -164,24 +234,38 @@ public class MergeVisitor implements Visitor {
 					}
 				}
 			}
-			// FIXME Unclear
-			/*
 			if (!same) {
-				HashMap<Long, Segment> copy = new HashMap<Long, Segment>();
-				for (Segment s : my.segments)
-					copy.put(s.id, s);
-				my.segments.clear();
-				for (Segment s : other.segments) {
-					Segment myS = copy.get(s.id);
-					if (s.incomplete && myS != null && !myS.incomplete) {
-						mergedSegments.put(s, myS);
-						my.segments.add(myS);
-					} else
-						my.segments.add(s);
+				/*HashMap<Long, OsmPrimitive>[] copy =
+					(HashMap<Long, OsmPrimitive>[]) new HashMap[3];
+				for (int i = 0; i < 3; i++) copy[i] = new HashMap<Long, OsmPrimitive>();
+
+				for (RelationMember m : my.members) {
+					int i;
+					if (m.member instanceof Node) i = 0; else
+					if (m.member instanceof Way) i = 1; else
+					if (m.member instanceof Relation) i = 2; else i = 3;
+					copy[i].put(m.member.id, m.member);
 				}
+
+				my.cloneFrom(other);
+				my.members.clear();
+				for (RelationMember m : other.members) {
+					int i;
+					if (m.member instanceof Node) i = 0; else
+					if (m.member instanceof Way) i = 1; else
+					if (m.member instanceof Relation) i = 2; else i = 3;
+					OsmPrimitive myP = copy[i].get(m.member.id);
+					if (m.member.incomplete && myP != null && !myP.incomplete) {
+						RelationMember mnew = new RelationMember(m);
+						mnew.member = myP;
+						my.members.add(mnew);
+						merged.put(m.member, mnew.member);
+					} else {
+						my.members.add(m);
+					}
+				}*/
 				my.modified = other.modified;
 			}
-			*/
 		}
 	}
 
@@ -203,7 +287,7 @@ public class MergeVisitor implements Visitor {
 	    boolean replacedSomething = false;
 	    LinkedList<Node> newNodes = new LinkedList<Node>();
 	    for (Node n : w.nodes) {
-	    	Node otherN = (Node) mergedPrims.get(n);
+	    	Node otherN = (Node) merged.get(n);
 	    	newNodes.add(otherN == null ? n : otherN);
 	    	if (otherN != null)
 	    		replacedSomething = true;
@@ -218,7 +302,7 @@ public class MergeVisitor implements Visitor {
 	    boolean replacedSomething = false;
 	    LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
 	    for (RelationMember m : r.members) {
-	    	OsmPrimitive otherP = mergedPrims.get(m.member);
+	    	OsmPrimitive otherP = merged.get(m.member);
 			if (otherP == null) {
 				newMembers.add(m);
 			} else {
@@ -307,19 +391,17 @@ public class MergeVisitor implements Visitor {
 	/**
 	 * @return <code>true</code>, if no merge is needed or merge is performed already.
 	 */
-	private <P extends OsmPrimitive> boolean mergeAfterId(Map<OsmPrimitive,OsmPrimitive> merged, Collection<P> primitives, P other) {
+	private <P extends OsmPrimitive> boolean mergeAfterId(Collection<P> primitives, P other) {
 		for (P my : primitives) {
 			Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
 			Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();
 			if (my.realEqual(other, false)) {
-				if (merged != null)
-					merged.put(other, my);
+				merged.put(other, my);
 				return true; // no merge needed.
 			}
 			if (my.realEqual(other, true)) {
 				// they differ in modified/timestamp combination only. Auto-resolve it.
-				if (merged != null)
-					merged.put(other, my);
+				merged.put(other, my);
 				if (myd.before(otherd)) {
 					my.modified = other.modified;
 					my.timestamp = other.timestamp;
@@ -327,27 +409,33 @@ public class MergeVisitor implements Visitor {
 				return true; // merge done.
 			}
 			if (my.id == other.id && my.id != 0) {
-				if (my.incomplete) {
-					return false;
+				if (my.incomplete || other.incomplete) {
+					if (my.incomplete) {
+						my.cloneFrom(other);
+					}
+					merged.put(other, my);
 				} else if (my.modified && other.modified) {
 					conflicts.put(my, other);
+					merged.put(other, my);
 				} else if (!my.modified && !other.modified) {
 					if (myd.before(otherd)) {
 						cloneFromExceptIncomplete(my, other);
+						merged.put(other, my);
 					}
 				} else if (other.modified) {
 					if (myd.after(otherd)) {
 						conflicts.put(my, other);
+						merged.put(other, my);
 					} else {
 						cloneFromExceptIncomplete(my, other);
+						merged.put(other, my);
 					}
 				} else if (my.modified) {
 					if (myd.before(otherd)) {
 						conflicts.put(my, other);
+						merged.put(other, my);
 					}
 				}
-				if (merged != null)
-					merged.put(other, my);
 				return true;
 			}
 		}

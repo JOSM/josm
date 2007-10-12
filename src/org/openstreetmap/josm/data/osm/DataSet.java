@@ -78,6 +78,16 @@ public class DataSet implements Cloneable {
 		return o;
 	}
 
+	public void addPrimitive(OsmPrimitive osm) {
+		if (osm instanceof Node) {
+			nodes.add((Node) osm);
+		} else if (osm instanceof Way) {
+			ways.add((Way) osm);
+		} else if (osm instanceof Relation) { 
+			relations.add((Relation) osm);
+		}
+	}
+
 	/**
 	 * Remove the selection of the whole dataset.
 	 * @deprecated Use setSelected() instead.

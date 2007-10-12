@@ -173,6 +173,10 @@ public class OsmDataLayer extends Layer {
 		for (final OsmPrimitive osm : ((OsmDataLayer)from).data.allPrimitives())
 			osm.visit(visitor);
 		visitor.fixReferences();
+
+		for (Way w : data.ways) {
+			System.out.println("way after merge: " + w.incomplete + " " + w);
+		}
 		
 		// copy the merged layer's data source info
 		for (DataSource src : ((OsmDataLayer)from).data.dataSources) 

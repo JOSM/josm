@@ -234,6 +234,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		selected = osm.selected;
 		timestamp = osm.timestamp;
 		tagged = osm.tagged;
+		incomplete = osm.incomplete;
 	}
 
 	/**
@@ -243,7 +244,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 */
 	public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
 		return
-			id == osm.id && 
+			id == osm.id &&
+			incomplete == osm.incomplete &&
 			(semanticOnly || (modified == osm.modified)) && 
 			deleted == osm.deleted &&
 			(semanticOnly || (timestamp == null ? osm.timestamp==null : timestamp.equals(osm.timestamp))) &&
