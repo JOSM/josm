@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
@@ -176,17 +177,19 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint());
-		if (ctrl) {
-			if (osm != null && !sel.contains(osm)) Main.ds.setSelected(osm);
-
+		Collection osmColl = osm == null
+			? Collections.emptyList() : Collections.singleton(osm);
+		if (ctrl && shift) {
+			selectPrims(osmColl, true, false);
 			mode = Mode.rotate;
 			setCursor(ImageProvider.getCursor("rotate", null));
 		} else if (osm != null) {
-			if (!sel.contains(osm)) Main.ds.setSelected(osm);
-
+			selectPrims(osmColl, shift, ctrl);
 			mode = Mode.move;
 		} else {
 			mode = Mode.select;
@@ -212,6 +215,10 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	}
 
 	public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
+		selectPrims(selectionManager.getObjectsInRectangle(r, alt), shift, ctrl);
+	}
+
+	public void selectPrims(Collection<OsmPrimitive> selectionList, boolean shift, boolean ctrl) {
 	    if (shift && ctrl)
 			return; // not allowed together
 
@@ -221,7 +228,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		else
 			curSel = Main.ds.getSelected();
 
-		Collection<OsmPrimitive> selectionList = selectionManager.getObjectsInRectangle(r,alt);
 		for (OsmPrimitive osm : selectionList)
 			if (ctrl)
 				curSel.remove(osm);
