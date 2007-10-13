@@ -49,9 +49,15 @@ public class GettingStarted extends JPanel implements ActionListener {
 		
 		panel = new JPanel(new GridBagLayout());
 		
-		panel.add(new JLabel("<html><h2>You are running the new JOSM version compatible with the 0.5 API.</h2>" +
-				"<h3>You cannot load old OSM files with this version, but there are converter scripts to make your 0.4 files 0.5 compatible.</h3>"+
-                "<h3>The JOSM interface hasn't changed a lot: Segments are gone, and Relations have been added.<br>You will find general information about the changes on the OSM wiki,<br>and there's a page on working with relations in the JOSM online help." +
+		panel.add(new JLabel("<html><h2>You are running the latest \"modeless\" JOSM version.</h2>" +
+				"<h3>This version (almost) does away with the old edit modes, like \"add node and connect\"<br>" +
+				"etc.; instead, there are only four modes: zoom, select, edit, and delete." +
+				"<br>The edit mode will do what you want in most cases (also see the mini help about<br>" +
+				"modifier keys at the bottom of the screen).</h3>" +
+                "<h3>If this is the first time you use JOSM since 08 October, you will also find that with the<br>" +
+                "0.5 API, segments have gone and relations have been added. You will find general<br>" +
+                "information about the changes on the OSM wiki, and there's a page on using relations<br>"+
+                "in the JOSM online help." +
 		"</h3>"), GBC.eol());
 		
 		// remove these two keys from preferences if present
@@ -83,7 +89,6 @@ public class GettingStarted extends JPanel implements ActionListener {
 	public void addGettingHelp() {
 	    addCategory(tr("Getting Help"));
 		addLine("help",tr("Open the [online help] (english only)"));
-		addLine("tutorial",tr("Watch some [tutorial videos]"));
 		addLine("mailinglist",tr("Join the newbie [mailing list]"));
     }
 
