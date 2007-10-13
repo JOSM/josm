@@ -223,6 +223,8 @@ public class OsmDataLayer extends Layer {
 				cleanIterator(it, processedSet);
 			for (final Iterator<Way> it = data.ways.iterator(); it.hasNext();)
 				cleanIterator(it, processedSet);
+			for (final Iterator<Relation> it = data.relations.iterator(); it.hasNext();)
+				cleanIterator(it, processedSet);
 		}
 
 		// update the modified flag
