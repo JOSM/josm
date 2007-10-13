@@ -101,7 +101,6 @@ public class DeleteAction extends MapMode {
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-		System.out.println("meta="+alt);
 		
 		OsmPrimitive sel = Main.map.mapView.getNearestNode(e.getPoint());
 		Command c = null;
