@@ -132,7 +132,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
 	}
 
 	public void visit(Way w) {
-		if (n.incomplete) return;
+		if (w.incomplete) return;
 		addCommon(w, "way");
 		out.println(">");
 		for (Node n : w.nodes)
@@ -141,7 +141,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
 	}
 
 	public void visit(Relation e) {
-		if (n.incomplete) return;
+		if (e.incomplete) return;
 		addCommon(e, "relation");
 		out.println(">");
 		for (RelationMember em : e.members) {
