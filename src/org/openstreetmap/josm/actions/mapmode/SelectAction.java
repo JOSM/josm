@@ -182,8 +182,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint());
-		Collection osmColl = osm == null
-			? Collections.emptyList() : Collections.singleton(osm);
+		Collection<OsmPrimitive> osmColl;
+		if (osm == null) {
+			osmColl = Collections.emptySet();
+		} else {
+			osmColl = Collections.singleton(osm);
+		}
+
 		if (ctrl && shift) {
 			selectPrims(osmColl, true, false);
 			mode = Mode.rotate;

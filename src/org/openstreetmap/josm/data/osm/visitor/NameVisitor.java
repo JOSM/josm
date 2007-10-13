@@ -61,7 +61,7 @@ public class NameVisitor implements Visitor {
 		if (name == null) name = w.get("ref");
 		if (name == null) {
 			String what = (w.get("highway") != null) ? "highway " : (w.get("railway") != null) ? "railway " : (w.get("waterway") != null) ? "waterway " : "";
-			int nodesNo = new HashSet(w.nodes).size();
+			int nodesNo = new HashSet<Node>(w.nodes).size();
 			name = what + trn("{0} node", "{0} nodes", nodesNo, nodesNo);
 		}
 		addId(w);

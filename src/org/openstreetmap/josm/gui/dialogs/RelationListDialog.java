@@ -94,7 +94,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 			public void actionPerformed(ActionEvent e) {
 				Relation toDelete = (Relation) displaylist.getSelectedValue();
 				if (toDelete != null) {
-					Main.main.editLayer().add(new DeleteCommand(Collections.singleton(toDelete)));
+					Main.main.undoRedo.add(
+						new DeleteCommand(Collections.singleton(toDelete)));
 				}
 			}
 		}));

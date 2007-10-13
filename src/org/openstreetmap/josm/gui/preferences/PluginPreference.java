@@ -199,7 +199,7 @@ public class PluginPreference implements PreferenceSetting {
 		Collection<String> enabledPlugins = null;
 		String enabledProp = Main.pref.get("plugins");
 		if ((enabledProp == null) || ("".equals(enabledProp))) {
-			enabledPlugins = Collections.EMPTY_SET;
+			enabledPlugins = Collections.emptySet();
 		}
 		else
 		{
