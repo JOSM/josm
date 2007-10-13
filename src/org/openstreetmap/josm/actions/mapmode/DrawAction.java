@@ -127,10 +127,12 @@ public class DrawAction extends MapMode {
 			}
 		}
 		boolean extendedWay = false;
+		// shift modifier never connects, just makes new node
 		if (!shift && selection.size() == 1 && selection.iterator().next() instanceof Node) {
 			Node n0 = (Node) selection.iterator().next();
 
-			Way way = getWayForNode(n0);
+			// alt modifier makes connection to selected node but not existing way
+			Way way = alt ? null : getWayForNode(n0);
 			if (way == null) {
 				way = new Way();
 				way.nodes.add(n0);
@@ -214,6 +216,6 @@ public class DrawAction extends MapMode {
 	}
 	
 	@Override public String getModeHelpText() {
-		return "Click to add a new node. Ctrl to disable node re-use/auto-insert. Shift to disable auto-connect.";
+		return "Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way";
 	}
 }
