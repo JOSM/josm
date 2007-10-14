@@ -42,6 +42,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 	enum Mode { move, rotate, select }
 	private Mode mode = null;
+	private long mouseDownTime = 0;
 
 	/**
 	 * The old cursor before the user pressed the mouse button.
@@ -110,6 +111,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	@Override public void mouseDragged(MouseEvent e) {
 		if (mode == Mode.select) return;
+		
+		// do not count anything as a move if it lasts less than 100 milliseconds.
+		if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < 100)) return;
 
 		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
 			return;
@@ -179,8 +183,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		
+		mouseDownTime = System.currentTimeMillis();
 
-		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint());
 		Collection<OsmPrimitive> osmColl;
 		if (osm == null) {
