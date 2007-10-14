@@ -58,7 +58,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 	private JList displaylist = new JList(list);
 
 	public RelationListDialog() {
-		super(tr("Relations"), "relationlist", tr("Open a list of all relations."), KeyEvent.VK_N, 150);
+		super(tr("Relations"), "relationlist", tr("Open a list of all relations."), KeyEvent.VK_R, 150);
 		displaylist.setCellRenderer(new OsmPrimitivRenderer());
 		displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		displaylist.addMouseListener(new MouseAdapter(){
@@ -75,14 +75,14 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
 		JPanel buttonPanel = new JPanel(new GridLayout(1,3));
 
-		buttonPanel.add(createButton(marktr("Add Relation"), "addrelation", tr("Create a new relation"), KeyEvent.VK_A, new ActionListener() {
+		buttonPanel.add(createButton(marktr("Add Relation"), "addrelation", tr("Create a new relation"), -1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// call relation editor with null argument to create new relation
 				new RelationEditor(null).setVisible(true);
 			}
 		}));
 		
-		buttonPanel.add(createButton(marktr("Edit"), "edit", tr( "Open an editor for the selected relation"), KeyEvent.VK_E, new ActionListener() {
+		buttonPanel.add(createButton(marktr("Edit"), "edit", tr( "Open an editor for the selected relation"), -1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Relation toEdit = (Relation) displaylist.getSelectedValue();
 				if (toEdit != null)
@@ -90,7 +90,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 			}
 		}));
 		
-		buttonPanel.add(createButton(marktr("Delete"), "delete", tr("Delete the selected relation"), KeyEvent.VK_D, new ActionListener() {
+		buttonPanel.add(createButton(marktr("Delete"), "delete", tr("Delete the selected relation"), -1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Relation toDelete = (Relation) displaylist.getSelectedValue();
 				if (toDelete != null) {
@@ -108,7 +108,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 		b.setActionCommand(name);
 		b.addActionListener(actionListener);
 		b.setToolTipText(tooltip);
-		b.setMnemonic(mnemonic);
+		if (mnemonic >= 0) b.setMnemonic(mnemonic);
 		b.putClientProperty("help", "Dialog/Properties/"+name);
 		return b;
 	}
