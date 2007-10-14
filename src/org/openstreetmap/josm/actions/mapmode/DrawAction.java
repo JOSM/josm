@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.LinkedList;
@@ -223,13 +224,60 @@ public class DrawAction extends MapMode {
 		Collections.reverse(is);
 	}
 
+	/*
+	 * Adjusts the position of a node to lie on a segment (or a segment
+	 * intersection).
+	 * 
+	 * If one or more than two segments are passed, the node is adjusted
+	 * to lie on the first segment that is passed.
+	 * 
+	 * If two segments are passed, the node is adjusted to be at their
+	 * intersection.
+	 * 
+	 * No action is taken if no segments are passed.
+	 * 
+	 * @param segs the segments to use as a reference when adjusting
+	 * @param n the node to adjust
+	 */
 	private static void adjustNode(Collection<NodePair> segs, Node n) {
-		// FIXME: find intersection if more than one seg.
-		if (segs.size() >= 1) {
-			EastNorth P = n.eastNorth;
-			NodePair seg = segs.iterator().next();
+		
+		switch (segs.size()) {
+		case 0:
+			return;
+		case 2:
+			// algorithm used here is a bit clumsy, anyone's welcome to replace
+			// it by something else. All it does it compute the intersection between
+			// the two segments and adjust the node position. The code doesnt 
+			Iterator<NodePair> i = segs.iterator();
+			NodePair seg = i.next();
 			EastNorth A = seg.a.eastNorth;
 			EastNorth B = seg.b.eastNorth;
+			seg = i.next();
+			EastNorth C = seg.a.eastNorth;
+			EastNorth D = seg.b.eastNorth;
+
+			EastNorth intersection = new EastNorth(
+				det(det(A.east(), A.north(), B.east(), B.north()), A.east() - B.east(),
+					det(C.east(), C.north(), D.east(), D.north()), C.east() - D.east())/
+					det(A.east() - B.east(), A.north() - B.north(), C.east() - D.east(), C.north() - D.north()),
+				det(det(A.east(), A.north(), B.east(), B.north()), A.north() - B.north(),
+					det(C.east(), C.north(), D.east(), D.north()), C.north() - D.north())/
+					det(A.east() - B.east(), A.north() - B.north(), C.east() - D.east(), C.north() - D.north())
+			);
+			
+			// only adjust to intersection if within 10 pixel of mouse click; otherwise
+			// fall through to default action.
+			// (for semi-parallel lines, intersection might be miles away!)
+			if (Main.map.mapView.getPoint(n.eastNorth).distance(Main.map.mapView.getPoint(intersection)) < 10) {
+				n.eastNorth = intersection;
+				return;
+			}
+		
+		default:
+			EastNorth P = n.eastNorth;
+			seg = segs.iterator().next();
+			A = seg.a.eastNorth;
+			B = seg.b.eastNorth;
 			double a = P.distance(B);
 			double b = P.distance(A);
 			double c = A.distance(B);
@@ -239,6 +287,13 @@ public class DrawAction extends MapMode {
 				B.north() + q * (A.north() - B.north()));
 		}
 	}
+	
+	// helper for adjustNode
+	static double det(double a, double b, double c, double d)
+	{
+		return a * d - b * c;
+	}
+
 	
 	@Override public String getModeHelpText() {
 		return "Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way";
