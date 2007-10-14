@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.osm.visitor;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +39,10 @@ public class NameVisitor implements Visitor {
 	 */
 	public Icon icon;
 	
+	/** 
+	 * For formatting lat/lon
+	 */
+	public static NumberFormat latLonFormat = new DecimalFormat("###0.0000000");
 	
 	/**
 	 * If the node has a name-key or id-key, this is displayed. If not, (lat,lon)
@@ -45,7 +51,7 @@ public class NameVisitor implements Visitor {
 	public void visit(Node n) {
 		name = n.get("name");
 		if (name == null)
-			name = (n.id==0?"":""+n.id)+" ("+n.coor.lat()+","+n.coor.lon()+")";
+			name = (n.id==0?"":""+n.id)+" ("+latLonFormat.format(n.coor.lat())+", "+latLonFormat.format(n.coor.lon())+")";
 		addId(n);
 		icon = ImageProvider.get("data", "node");
 		trn("node", "nodes", 0); // no marktrn available
