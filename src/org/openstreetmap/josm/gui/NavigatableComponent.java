@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JComponent;
 
@@ -153,7 +154,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 * @param p the point for which to search the nearest segment.
 	 */
 	public final List<WaySegment> getNearestWaySegments(Point p) {
-		TreeMap<Double, WaySegment> nearest = new TreeMap<Double, WaySegment>();
+		TreeMap<Double, List<WaySegment>> nearest = new TreeMap<Double, List<WaySegment>>();
 		for (Way w : Main.ds.ways) {
 			if (w.deleted)
 				continue;
@@ -174,13 +175,24 @@ public class NavigatableComponent extends JComponent implements Helpful {
 				double b = p.distanceSq(A);
 				double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
 				if (perDist < 100 && a < c+100 && b < c+100) {
-					nearest.put(perDist, new WaySegment(w, i));
+					List<WaySegment> l;
+					if (nearest.containsKey(perDist)) {
+						l = nearest.get(perDist);
+					} else {
+						l = new LinkedList<WaySegment>();
+						nearest.put(perDist, l);
+					}
+					l.add(new WaySegment(w, i));
 				}
 
 				lastN = n;
 			}
 		}
-		return new ArrayList<WaySegment>(nearest.values());
+		ArrayList<WaySegment> nearestList = new ArrayList<WaySegment>();
+		for (List<WaySegment> wss : nearest.values()) {
+			nearestList.addAll(wss);
+		}
+		return nearestList;
 	}
 
 	/**
