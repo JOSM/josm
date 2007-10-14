@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.NodePair;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -110,7 +112,9 @@ public class DrawAction extends MapMode {
 
 					is.add(ws.lowerIndex);
 				}
-			
+
+				Set<NodePair> segSet = new HashSet<NodePair>();
+
 				for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
 					Way w = insertPoint.getKey();
 					List<Integer> is = insertPoint.getValue();
@@ -118,12 +122,16 @@ public class DrawAction extends MapMode {
 					Way wnew = new Way(w);
 
 					pruneSuccsAndReverse(is);
+					for (int i : is) segSet.add(
+						new NodePair(w.nodes.get(i), w.nodes.get(i+1)).sort());
 					for (int i : is) wnew.nodes.add(i + 1, n);
 
 					cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
 					replacedWays.add(insertPoint.getKey());
 					reuseWays.add(wnew);
 				}
+
+				adjustNode(segSet, n);
 			}
 		}
 		boolean extendedWay = false;
@@ -213,6 +221,23 @@ public class DrawAction extends MapMode {
 		is.addAll(is2);
 		Collections.sort(is);
 		Collections.reverse(is);
+	}
+
+	private static void adjustNode(Collection<NodePair> segs, Node n) {
+		// FIXME: find intersection if more than one seg.
+		if (segs.size() >= 1) {
+			EastNorth P = n.eastNorth;
+			NodePair seg = segs.iterator().next();
+			EastNorth A = seg.a.eastNorth;
+			EastNorth B = seg.b.eastNorth;
+			double a = P.distance(B);
+			double b = P.distance(A);
+			double c = A.distance(B);
+			double q = (a - b + c) / (2*c);
+			n.eastNorth = new EastNorth(
+				B.east() + q * (A.east() - B.east()),
+				B.north() + q * (A.north() - B.north()));
+		}
 	}
 	
 	@Override public String getModeHelpText() {

@@ -30,11 +30,12 @@ public final class NodePair {
 		return l;
 	}
 
-	public void sort() {
+	public NodePair sort() {
 		if (b.hashCode() < a.hashCode()) {
 			Node tmp = a;
 			a = b;
 			b = tmp;
 		}
+		return this;
 	}
 }
