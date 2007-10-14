@@ -98,7 +98,6 @@ public class DrawAction extends MapMode {
 			if (!ctrl) {
 				// Insert the node into all the nearby way segments
 				List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint());
-				System.out.println(wss);
 				Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
 				for (WaySegment ws : wss) {
 					List<Integer> is;
