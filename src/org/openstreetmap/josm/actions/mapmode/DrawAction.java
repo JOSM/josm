@@ -139,6 +139,9 @@ public class DrawAction extends MapMode {
 		// shift modifier never connects, just makes new node
 		if (!shift && selection.size() == 1 && selection.iterator().next() instanceof Node) {
 			Node n0 = (Node) selection.iterator().next();
+			if (n0 == n) {
+				return; // Don't create zero length way segments.
+			}
 
 			// alt modifier makes connection to selected node but not existing way
 			Way way = alt ? null : getWayForNode(n0);
