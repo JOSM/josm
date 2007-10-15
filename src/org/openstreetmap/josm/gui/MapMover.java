@@ -92,7 +92,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
 	/**
 	 * If the right (and only the right) mouse button is pressed, move the map
 	 */
-	@Override public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(MouseEvent e) {
 		int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
 		if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK) {
 			if (mousePosMove == null)
@@ -157,7 +157,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
 	 * Zoom the map by 1/5th of current zoom per wheel-delta.
 	 * @param e The wheel event.
 	 */
-	@Override public void mouseWheelMoved(MouseWheelEvent e) {
+	public void mouseWheelMoved(MouseWheelEvent e) {
 		int w = nc.getWidth();
 		int h = nc.getHeight();
 
@@ -176,5 +176,5 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
 	/**
 	 * Does nothing. Only to satisfy MouseMotionListener
 	 */
-	@Override public void mouseMoved(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {}
 }
