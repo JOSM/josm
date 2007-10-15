@@ -202,7 +202,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 		// So if the last node is the same first node, join the last and the
 		// first way chunk.
 		List<Node> lastWayChunk = wayChunks.get(wayChunks.size() - 1);
-		if (wayChunks.size() >= 2 && wayChunks.get(0).get(0) == lastWayChunk.get(lastWayChunk.size() - 1)) {
+		if (wayChunks.size() >= 2
+				&& wayChunks.get(0).get(0) == lastWayChunk.get(lastWayChunk.size() - 1)
+				&& !nodeSet.contains(wayChunks.get(0).get(0))) {
 			lastWayChunk.remove(lastWayChunk.size() - 1);
 			lastWayChunk.addAll(wayChunks.get(0));
 			wayChunks.remove(wayChunks.size() - 1);
