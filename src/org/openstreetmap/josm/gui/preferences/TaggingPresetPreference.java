@@ -120,12 +120,18 @@ public class TaggingPresetPreference implements PreferenceSetting {
 	 */
 	public static void initialize() {
 		taggingPresets = TaggingPreset.readFromPreferences();
-		for (final TaggingPreset p : taggingPresets) {
-			if (p.getValue(Action.NAME).equals(" ")) {
-				Main.main.menu.presetsMenu.add(new JSeparator());
-			} else {
-				Main.main.menu.presetsMenu.add(new JMenuItem(p));
-			}
-		}		
+		if (taggingPresets.isEmpty()) {
+			Main.main.menu.presetsMenu.setVisible(false);
+		}
+		else
+		{
+			for (final TaggingPreset p : taggingPresets) {
+				if (p.getValue(Action.NAME).equals(" ")) {
+					Main.main.menu.presetsMenu.add(new JSeparator());
+				} else {
+					Main.main.menu.presetsMenu.add(new JMenuItem(p));
+				}
+			}		
+		}
 	}
 }

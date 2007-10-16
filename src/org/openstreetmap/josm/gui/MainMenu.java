@@ -139,6 +139,7 @@ public class MainMenu extends JMenuBar {
 		layerMenu.setVisible(false);
 
 		add(presetsMenu);
+		presetsMenu.setMnemonic('P');
 		
 		JMenuItem check = new JMenuItem("DEBUG: Check Dataset");
 		check.addActionListener(new ActionListener(){
