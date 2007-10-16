@@ -228,7 +228,7 @@ public class TaggingPreset extends AbstractAction {
 		LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
 		String allTaggingPresets = Main.pref.get("taggingpreset.sources");
 		
-		if (Main.pref.getBoolean("taggingpreset.enable-defaults")) {
+		if (Main.pref.getBoolean("taggingpreset.enable-defaults", true)) {
 			InputStream in = Main.class.getResourceAsStream("/presets/presets.xml");
 			try {
 				allPresets.addAll(TaggingPreset.readAll(in));
