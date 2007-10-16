@@ -320,12 +320,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	public PropertiesDialog(MapFrame mapFrame) {
 		super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."), KeyEvent.VK_P, 150);
 
+		// ---------------------------------------
+		// This drop-down will probably be removed soon.
+		//
 		if (TaggingPresetPreference.taggingPresets.size() > 0) {
 			Vector<ActionListener> allPresets = new Vector<ActionListener>();
 			for (final TaggingPreset p : TaggingPresetPreference.taggingPresets)
 				allPresets.add(new ForwardActionListener(this, p));
 
-			allPresets.add(0, new ForwardActionListener(this, new TaggingPreset()));
+			TaggingPreset empty = new TaggingPreset();
+			// empty.setName("this drop-down will be removed soon");
+			allPresets.add(0, new ForwardActionListener(this, empty));
 			taggingPresets.setModel(new DefaultComboBoxModel(allPresets));
 			JPanel north = new JPanel(new GridBagLayout());
 			north.add(getComponent(0),GBC.eol().fill(GBC.HORIZONTAL));
@@ -340,6 +345,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		});
 		taggingPresets.setRenderer(new TaggingCellRenderer());
+		
+		// End of "will be removed soon".
+		// --------------------------------------------
 
 		// setting up the properties table
 		

@@ -3,13 +3,18 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
@@ -34,6 +39,11 @@ import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
+import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
+import org.openstreetmap.josm.gui.tagging.ForwardActionListener;
+import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide
@@ -74,6 +84,7 @@ public class MainMenu extends JMenuBar {
 	public final JMenu fileMenu = new JMenu(tr("Files"));
 	public final JMenu connectionMenu = new JMenu(tr("Connection"));
 	public final JMenu toolsMenu = new JMenu(tr("Tools"));
+	public final JMenu presetsMenu = new JMenu(tr("Presets"));
 
 	public final JMenu zoomToMenu = new JMenu(tr("Zoom To"));
 
@@ -127,6 +138,8 @@ public class MainMenu extends JMenuBar {
 		add(layerMenu);
 		layerMenu.setVisible(false);
 
+		add(presetsMenu);
+		
 		JMenuItem check = new JMenuItem("DEBUG: Check Dataset");
 		check.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -139,5 +152,6 @@ public class MainMenu extends JMenuBar {
 		helpMenu.add(help);
 		helpMenu.add(about);
 		add(helpMenu);
+		
     }
 }

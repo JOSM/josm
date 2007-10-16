@@ -1,0 +1,296 @@
+<!--
+Pics have been derived from
+http://commons.wikipedia.org (german street sign SVGs)
+http://www.kde.org
+http://openclipart.org/media/view/media/clip_art
+
+TODO:
+* Check leisure places
+-->
+
+<annotations>
+
+	<item name="Road" icon="presets/ways.png">
+    <label text="Roads" />
+		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,minor,residential,unclassified,service,byway,unsurfaced,bridleway,track,cycleway,pedestrian,footway,steps" delete_if_empty="true" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+  </item>
+
+	<item name="Road Point" icon="presets/waypoints.png">
+		<label text="Road Points" />
+		<combo key="highway" text="Type:" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,bridge,viaduct,stop,gate,bollard,bus_station,bus_halt,bus_stop,stile,cattle_grid,ford" default="" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+  </item>
+	
+	
+	
+	<!--
+	exit_nr,exit_name
+	-->
+	
+	
+	<item name="Road Attributes" icon="presets/roadattributes.png">
+		<label text="Road Attributes" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+		<text key="lanes" text="Lanes:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Restrictions" icon="presets/restrictions.png">
+		<label text="Restrictions" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<combo key="access" text="Access:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="foot" text="Foot:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="bicycle" text="Bicycle:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true"  />
+		<combo key="horse" text="Horse:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="motorcycle" text="Motorcycle:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="motorcar" text="Motorcar:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="toll" text="Toll:" values="yes,no" default="" delete_if_empty="true"  />
+		<combo key="goods" text="Goods:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="hgv" text="hgv:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="psv" text="psv:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="motorboat" text="Motorboat:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="boat" text="Boat:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="minspeed" text="Min. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="maxweight" text="Max. weight (tonnes):" default="" delete_if_empty="true" />
+		<text key="maxheight" text="Max. Height (metres):" default="" delete_if_empty="true" />
+		<text key="maxwidth" text="Max. Width (metres):" default="" delete_if_empty="true" />
+		<text key="maxlength" text="Max. Length (metres):" default="" delete_if_empty="true" />
+ </item>
+
+
+ 
+ <!--
+Routes are currently not well supported, so I disable them here
+
+ <item name="Routes" icon="presets/routes.png">
+	 <label text="Routes" />
+	 <combo key="waterway" text="Type:" values="bus,ferry,flight,ncn,subsea,ski,tour,pub_crawl" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+  </item>
+	-->
+
+	<item name="Railway" icon="presets/railway.png">
+		<label text="Railways" />
+		<combo key="railway" text="Type:" values="rail,tram,light_rail,subway,preserved,disused,abandoned,narrow_gauge" default="" delete_if_empty="true" />
+		<!-- <text key="name" text="Name:" default="" delete_if_empty="true"  />-->
+  </item>
+
+	<item name="Railway Point" icon="presets/railwaypoint.png">
+		<label text="Railway Points" />
+		<combo key="railway" text="Type:" values="station,halt,viaduct,crossing" default="" delete_if_empty="true" />
+		<text key="name" text="Name:" default="" delete_if_empty="true"  />
+  </item>
+
+	<item name="Waterway" icon="presets/waterway.png">
+		<label text="Waterways" />
+		<combo key="waterway" text="Type:" values="river,canal,drain,dock" default="" delete_if_empty="true" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+  </item>
+
+	<item name="Waterway Point" icon="presets/waterwaypoint.png">
+		<label text="Waterway Points" />
+		<combo key="waterway" text="Type:" values="lock_gate,water_point,turning_point,aqueduct,boatyard,waste_disposal,mooring,weir" default="" delete_if_empty="true" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+  </item>
+
+ <!--
+ <item name="...." icon="presets/divider.png"></item>
+ -->
+
+ <item name=" " icon="presets/empty.png"></item>
+
+
+
+ <item name="Places" icon="presets/places.png">
+	 <label text="Places" />
+	 <combo key="place" text="Type" values="continent,country,state,region,county,city,town,suburb,village,hamlet" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Boundaries" icon="presets/boundaries.png">
+		<label text="Boundaries" />
+		<combo key="boundary" text="Type:" values="national,administrative,civil,political,national_park" default="" delete_if_empty="true" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+	<item name="Landuse" icon="presets/landuse.png">
+		<label text="Landuse" />
+		<combo key="landuse" text="Type:" values="farm,quarry,landfill,basin,reservoir,forest,allotments,residential,retail,commercial,industrial,brownfield,greenfield,cemetary,plaza" default="" delete_if_empty="true" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Natural" icon="presets/natural.png">
+	 <label text="Natural locations" />
+	 <combo key="natural" text="Type:" values="spring,peak,cliff,scree,scrub,fell,heath,wood,marsh,water,coastline,mud,beach,bay" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+
+ <!--
+		 <item name="...." icon="presets/divider.png"></item>
+		 -->
+		 
+ <item name=" " icon="presets/empty.png"></item>
+
+ <item name="Amenities" icon="presets/pubinstitutes.png">
+	 <label text="Amenities" />
+	 <combo key="amenity" text="Type" values="telephone,toilets,public_building,police,post_office,post_box,recycling,fire_station,courthouse,prison,refuge" default="" delete_if_empty="true" />
+	 <!-- <text key="name" text="Name:" default="" delete_if_empty="true" /> -->
+ </item>
+
+
+ <item name="Car" icon="presets/car.png">
+	 <label text="Car" />
+	 <combo key="amenity" text="Type" values="fuel,parking" default="" delete_if_empty="true" />
+	 <!-- <text key="name" text="Name:" default="" delete_if_empty="true" /> -->
+ </item>
+
+
+ <item name="Health" icon="presets/health.png">
+	 <label text="Health" />
+	 <combo key="amenity" text="Type" values="pharmacy,hospital" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Education" icon="presets/school.png">
+	 <label text="Education" />
+	 <combo key="amenity" text="Type" values="kindergarten,school,university,college" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Shopping" icon="presets/shopping.png">
+	 <label text="Insert a shop etc." />
+	 <combo key="shop" text="Type" values="supermarket,bakery,butcher,chandler" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ 
+ <item name="Food + Drinks" icon="presets/restaurant.png">
+	 <label text="Food + Drinks" />
+	 <combo key="amenity" text="Type" values="fast_food,restaurant,biergarten,pub,cafe" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+
+ <item name="Culture" icon="presets/book.png">
+	 <label text="Insert a cultural location" />
+	 <combo key="amenity" text="Type" values="library,place_of_worship,grave_yard" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Sports" icon="presets/sports.png">
+	 <label text="Sports" />
+	 <combo key="sport" text="Type:" values="sports_centre,golf_course,multi,10pin,athletics,baseball,basketball,bowls,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,football,golf,gymnastics,hockey,horse_racing,motor,racquet,rugby,skating,skateboard,soccer,swimming,skiing,table_tennis,tennis" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+ 
+ <item name="Leisure" icon="presets/leisure.png">
+	 <label text="Leisure" />
+	 <combo key="leisure" text="Type:" values="stadium,marina,track,pitch,water_park,fishing,nature_reserve,park,garden,slipway,playground,common,park_bench" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Historic places" icon="presets/historic.png">
+	 <label text="Historic places" />
+	 <combo key="historic" text="Type" values="castle,monument,museum,archaeological_site,icon,ruins" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Man Made" icon="presets/manmade.png">
+	 <label text="Man Made" />
+	 <combo key="man_made" text="Type:" values="works,beacon,survey_point,power_wind,power_hydro,power_fossil,power_nuclear,tower,water_tower,gasometer,reservoir_covered,lighthouse" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+<!--
+ <item name="Military institutions" icon="presets/military.png">
+	 <label text="Military institutions" />
+	 <combo key="military" text="Type:" values="danger_area,range,airfield,bunker,barracks" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+</item>
+-->
+
+<item name="Tourism" icon="presets/suitcase.png">
+	<label text="Tourism" />
+	<combo key="tourism" text="Type:" values="information,camp_site,caravan_site,picnic_site,viewpoint,theme_park,hotel,motel,guest_house,hostel,attraction" default="" delete_if_empty="true" />
+	<text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+<!-- Shortcuts are very cool when added to the toolbar -->
+<!--
+		<item name="...." icon="presets/divider.png"></item>
+		-->
+		
+ <item name=" " icon="presets/empty.png"></item>
+
+ <item name="Post box" icon="presets/letter.png">
+	 <key key="amenity" value="post_box" />
+ </item>
+
+ <item name="Telephone" icon="presets/telephone.png">
+	 <key key="amenity" value="telephone" />
+ </item>
+
+ <item name="Toilet" icon="presets/toilet.png">
+	 <key key="amenity" value="toilets" />
+ </item>
+
+ <item name="Recycling" icon="presets/recycling.png">
+	 <key key="amenity" value="recycling" />
+ </item>
+ 
+<!--
+ <item name="Police" icon="presets/police.png">
+	 <key key="amenity" value="police" />
+ </item>
+-->
+
+ <item name="Parking" icon="presets/parking.png">
+	 <key key="amenity" value="parking" />
+ </item>
+
+ <item name="Fuel" icon="presets/fuel.png">
+	 <label text="Create a filling station" />
+	 <key key="amenity" value="fuel" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="School" icon="presets/school.png">
+	 <label text="Create a school" />
+	 <key key="amenity" value="school" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Place of worship" icon="presets/church.png">
+	 <label text="Create a place of worship" />
+	 <key key="amenity" value="place_of_worship" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Restaurant" icon="presets/restaurant.png">
+	 <label text="Create a restaurant" />
+	 <key key="amenity" value="restaurant" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+<!--
+ <item name=" " icon="presets/empty.png"></item>
+
+ <item name="Image attachment" icon="presets/image.png">
+	 <label text="Add source of an image" />
+	 <text key="image" text="URI:" default="" delete_if_empty="true" />
+ </item>
+ 
+ <item name="Source" icon="presets/source.png">
+	 <label text="Select a source of this data" />
+	 <combo key="source" text="Source:" values="extrapolation,knowledge,historical,image,survey,voice" default="" delete_if_empty="true"/>
+ </item>
+-->
+</annotations>

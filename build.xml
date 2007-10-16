@@ -24,6 +24,11 @@
 			<fileset dir="images" />
 		</copy>
 
+		<!-- presets -->
+		<copy todir="build/presets">
+			<fileset dir="presets" />
+		</copy>
+
 		<!-- create josm-custom.jar -->
 		<jar destfile="dist/josm-custom.jar" basedir="build">
 			<manifest>
@@ -35,8 +40,6 @@
 	<target name="compile" depends="init">
 		<javac srcdir="src" classpathref="classpath" destdir="build" />
 	</target>
-
-
 
 	<target name="init">
 		<mkdir dir="build" />

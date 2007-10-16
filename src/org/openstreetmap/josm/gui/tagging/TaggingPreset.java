@@ -166,13 +166,16 @@ public class TaggingPreset extends AbstractAction {
 
 	/**
 	 * Called from the XML parser to set the icon
+	 * 
+	 * FIXME for Java 1.6 - use 24x24 icons for LARGE_ICON_KEY (button bar)
+	 * and the 16x16 icons for SMALL_ICON.
 	 */
 	public void setIcon(String iconName) {
 		ImageIcon icon = ImageProvider.getIfAvailable(null, iconName);
 		if (icon == null)
 			icon = new ImageIcon(iconName);
-		if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 24)
-			icon = new ImageIcon(icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+		if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 16)
+			icon = new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 		putValue(Action.SMALL_ICON, icon);
 	}
 
@@ -224,6 +227,16 @@ public class TaggingPreset extends AbstractAction {
 	public static Collection<TaggingPreset> readFromPreferences() {
 		LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
 		String allTaggingPresets = Main.pref.get("taggingpreset.sources");
+		
+		if (Main.pref.getBoolean("taggingpreset.enable-defaults")) {
+			InputStream in = Main.class.getResourceAsStream("/presets/presets.xml");
+			try {
+				allPresets.addAll(TaggingPreset.readAll(in));
+			} catch (SAXException x) {
+				JOptionPane.showMessageDialog(Main.parent, tr("Error parsing presets.xml: ")+x.getMessage());
+			}
+		}
+		
 		StringTokenizer st = new StringTokenizer(allTaggingPresets, ";");
 		while (st.hasMoreTokens()) {
 			InputStream in = null;
@@ -231,7 +244,7 @@ public class TaggingPreset extends AbstractAction {
 			try {
 				if (source.startsWith("http") || source.startsWith("ftp") || source.startsWith("file"))
 					in = new URL(source).openStream();
-				else if (source.startsWith("resource://"))
+				else if (source.startsWith("resource://")) 
 					in = Main.class.getResourceAsStream(source.substring("resource:/".length()));
 				else
 					in = new FileInputStream(source);
@@ -247,7 +260,6 @@ public class TaggingPreset extends AbstractAction {
 		}
 		return allPresets;
 	}
-
 
 	public JPanel createPanel() {
 		if (data == null)

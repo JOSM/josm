@@ -3,8 +3,13 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
+import java.awt.GridBagLayout;
+
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -25,10 +30,14 @@ public class ProjectionPreference implements PreferenceSetting {
 			}
 		}
 		projectionCombo.addActionListener(gui.requireRestartAction);
-
-		gui.map.add(new JLabel(tr("Projection method")), GBC.std());
-		gui.map.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-		gui.map.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,0,0,5));
+		
+		JPanel projPanel = new JPanel();
+		projPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Map Projection")));
+		projPanel.setLayout(new GridBagLayout());
+		projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5,5,0,5));
+		projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+		projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
+		gui.map.add(projPanel, GBC.eol().insets(0,0,0,10).fill(GBC.HORIZONTAL));
     }
 
 	public void ok() {

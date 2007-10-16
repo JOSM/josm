@@ -3,20 +3,27 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.StringTokenizer;
 
+import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.border.BevelBorder;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -26,9 +33,14 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
 	public static Collection<TaggingPreset> taggingPresets;
 	private JList taggingPresetSources;
-
+	private JCheckBox enableDefault;
+	
 	public void addGui(final PreferenceDialog gui) {
+		
 		taggingPresetSources = new JList(new DefaultListModel());
+		enableDefault = new JCheckBox(tr("Enable built-in defaults"), 
+				Main.pref.getBoolean("taggingpreset.enable-defaults"));
+
 		String annos = Main.pref.get("taggingpreset.sources");
 		StringTokenizer st = new StringTokenizer(annos, ";");
 		while (st.hasMoreTokens())
@@ -77,17 +89,23 @@ public class TaggingPresetPreference implements PreferenceSetting {
 		addAnno.setToolTipText(tr("Add a new tagging preset source to the list."));
 		deleteAnno.setToolTipText(tr("Delete the selected source from the list."));
 
-		gui.map.add(new JLabel(tr("Tagging preset sources")), GBC.eol().insets(0,5,0,0));
-		gui.map.add(new JScrollPane(taggingPresetSources), GBC.eol().fill(GBC.BOTH));
+		JPanel tpPanel = new JPanel();
+		tpPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Tagging Presets")));
+		tpPanel.setLayout(new GridBagLayout());
+		tpPanel.add(enableDefault, GBC.eol().insets(5,5,5,0));
+		tpPanel.add(new JLabel(tr("Tagging preset sources")), GBC.eol().insets(5,5,5,0));
+		tpPanel.add(new JScrollPane(taggingPresetSources), GBC.eol().insets(5,0,5,0).fill(GBC.BOTH));
 		JPanel buttonPanel = new JPanel(new GridBagLayout());
-		gui.map.add(buttonPanel, GBC.eol().fill(GBC.HORIZONTAL));
+		tpPanel.add(buttonPanel, GBC.eol().insets(5,0,5,5).fill(GBC.HORIZONTAL));
 		buttonPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
 		buttonPanel.add(addAnno, GBC.std().insets(0,5,0,0));
 		buttonPanel.add(editAnno, GBC.std().insets(5,5,5,0));
 		buttonPanel.add(deleteAnno, GBC.std().insets(0,5,0,0));
+		gui.map.add(tpPanel, GBC.eol().fill(GBC.BOTH));
 	}
 
 	public void ok() {
+		Main.pref.put("taggingpreset.enable-defaults", enableDefault.getSelectedObjects() != null);
 		if (taggingPresetSources.getModel().getSize() > 0) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < taggingPresetSources.getModel().getSize(); ++i)
@@ -102,5 +120,12 @@ public class TaggingPresetPreference implements PreferenceSetting {
 	 */
 	public static void initialize() {
 		taggingPresets = TaggingPreset.readFromPreferences();
+		for (final TaggingPreset p : taggingPresets) {
+			if (p.getValue(Action.NAME).equals(" ")) {
+				Main.main.menu.presetsMenu.add(new JSeparator());
+			} else {
+				Main.main.menu.presetsMenu.add(new JMenuItem(p));
+			}
+		}		
 	}
 }
