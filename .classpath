@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="build/|dist/|src/|test/" including="images/|presets/" kind="src" path=""/>
+	<classpathentry excluding="build/|dist/|src/|test/" including="images/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/fred/src/eclipse-workspace/JOSM/lib/metadata-extractor-2.3.1-nosun.jar"/>
-	<classpathentry kind="lib" path="lib/gettext-commons-0.9.jar" sourcepath="C:/Download/gettext-commons-0.9-src.zip"/>
+	<classpathentry kind="lib" path="lib/metadata-extractor-2.3.1-nosun.jar"/>
+	<classpathentry kind="lib" path="lib/gettext-commons-0.9.jar" />
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/jfcunit.jar" sourcepath="/home/imi/programs/jfcunit/src"/>
+	<classpathentry kind="lib" path="lib/jfcunit.jar" />
 	<classpathentry kind="output" path="bin"/>
 </classpath>
