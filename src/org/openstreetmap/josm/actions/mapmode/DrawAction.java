@@ -7,6 +7,8 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +45,12 @@ public class DrawAction extends MapMode {
 
 	public DrawAction(MapFrame mapFrame) {
 		super(tr("Draw"), "node/autonode", tr("Draw nodes"),
-			KeyEvent.VK_N, mapFrame, getCursor());
+			KeyEvent.VK_A, mapFrame, getCursor());
+
+		// Add extra shortcut N
+		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), tr("Draw"));
+
 		//putValue("help", "Action/AddNode/Autnode");
 	}
 
