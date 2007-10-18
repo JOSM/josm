@@ -7,6 +7,8 @@ import static org.xnap.commons.i18n.I18n.marktr;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -36,8 +38,12 @@ public class AutoScaleAction extends JosmAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if (Main.map != null)
-			Main.map.mapView.recalculateCenterScale(getBoundingBox());
+		if (Main.map != null) {
+			BoundingXYVisitor bbox = getBoundingBox();
+			if (bbox != null) {
+				Main.map.mapView.recalculateCenterScale(bbox);
+			}
+		}
 		putValue("active", true);
 	}
 
@@ -50,6 +56,11 @@ public class AutoScaleAction extends JosmAction {
 			Main.map.mapView.getActiveLayer().visitBoundingBox(v);
 		else if (mode.equals("selection") || mode.equals("conflict")) {
 			Collection<OsmPrimitive> sel = mode.equals("selection") ? Main.ds.getSelected() : Main.map.conflictDialog.conflicts.keySet();
+			if (sel.isEmpty()) {
+	    		JOptionPane.showMessageDialog(Main.parent,
+	    				mode.equals("selection") ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"));
+	        		return null;
+			}
 			for (OsmPrimitive osm : sel)
 				osm.visit(v);
 			// special case to zoom nicely to one single node
