@@ -53,17 +53,26 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	private Point mousePos;
 	private SelectionManager selectionManager;
+	
+	/**
+	 * The time which needs to pass between click and release before something
+	 * counts as a move
+	 */
+	private int initialMoveDelay = 100;
 
 	/**
-	 * Create a new MoveAction
-	 * @param mapFrame The MapFrame, this action belongs to.
+	 * Create a new SelectAction
+	 * @param mapFrame The MapFrame this action belongs to.
 	 */
 	public SelectAction(MapFrame mapFrame) {
 		super(tr("Select"), "move/move", tr("Select, move and rotate objects"),
 			KeyEvent.VK_S, mapFrame,
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Move/Move");
-		selectionManager = new SelectionManager(this, false, mapFrame.mapView);
+		selectionManager = new SelectionManager(this, false, mapFrame.mapView);		
+		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","100")); } catch (NumberFormatException x) {};
+
+
 	}
 
 	private static Cursor getCursor(String name, String mod, int def) {
@@ -113,7 +122,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		if (mode == Mode.select) return;
 		
 		// do not count anything as a move if it lasts less than 100 milliseconds.
-		if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < 100)) return;
+		if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay)) return;
 
 		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
 			return;

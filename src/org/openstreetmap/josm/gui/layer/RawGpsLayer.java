@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.CheckboxGroup;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -11,7 +12,16 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -19,6 +29,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -27,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
@@ -42,6 +54,8 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.io.MultiPartFormOutputStream;
+import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.GBC;
@@ -78,6 +92,113 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 			}
 			Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", RawGpsLayer.this.name), null));
 			Main.main.removeLayer(RawGpsLayer.this);
+		}
+	}
+	
+	public class UploadTraceAction extends AbstractAction {
+		public UploadTraceAction() {
+			super(tr("Upload this trace..."), ImageProvider.get("uploadtrace"));
+		}
+		public void actionPerformed(ActionEvent e) {
+			JPanel msg = new JPanel(new GridBagLayout());
+			msg.add(new JLabel(tr("<html>This functionality has been added only recently. Please<br>"+
+					              "use with care and check if it works as expected.</html>")), GBC.eop());
+			ButtonGroup bg = new ButtonGroup();
+			JRadioButton c1 = null;
+			JRadioButton c2 = null;
+			
+			if (associatedFile != null) {
+				c1 = new JRadioButton(tr("Upload track filtered by JOSM"), false);
+				c2 = new JRadioButton(tr("Upload raw file: {0}", associatedFile.getName()), true);
+			}
+			else
+			{
+				c1 = new JRadioButton(tr("Upload track filtered by JOSM"), true);
+				c2 = new JRadioButton(tr("Upload raw file: "), false);
+				c2.setEnabled(false);
+			}
+			c1.setEnabled(false);
+			bg.add(c1);
+			bg.add(c2);
+
+			msg.add(c1, GBC.eol());
+			msg.add(c2, GBC.eop());
+
+			
+			JTextField description = new JTextField();
+			JTextField tags = new JTextField();
+			msg.add(new JLabel(tr("Description:")), GBC.std());
+			msg.add(description, GBC.eol().fill(GBC.HORIZONTAL));
+			msg.add(new JLabel(tr("Tags:")), GBC.std());
+			msg.add(tags, GBC.eol().fill(GBC.HORIZONTAL));
+			JCheckBox c3 = new JCheckBox("public");
+			msg.add(c3, GBC.eop());
+			msg.add(new JLabel("Please ensure that you don't upload your traces twice."), GBC.eop());
+			
+			int answer = JOptionPane.showConfirmDialog(Main.parent, msg, tr("GPX-Upload"), JOptionPane.OK_CANCEL_OPTION);
+			if (answer == JOptionPane.OK_OPTION)
+			{
+				try {
+					String version = Main.pref.get("osm-server.version", "0.5");
+					URL url = new URL(Main.pref.get("osm-server.url") +
+							"/" + version + "/gpx/create");
+
+					// create a boundary string
+					String boundary = MultiPartFormOutputStream.createBoundary();
+					URLConnection urlConn = MultiPartFormOutputStream.createConnection(url);
+					urlConn.setRequestProperty("Accept", "*/*");
+					urlConn.setRequestProperty("Content-Type", 
+						MultiPartFormOutputStream.getContentType(boundary));
+					// set some other request headers...
+					urlConn.setRequestProperty("Connection", "Keep-Alive");
+					urlConn.setRequestProperty("Cache-Control", "no-cache");
+					// no need to connect cuz getOutputStream() does it
+					MultiPartFormOutputStream out = 
+						new MultiPartFormOutputStream(urlConn.getOutputStream(), boundary);
+					out.writeField("description", description.getText());
+					out.writeField("tags", tags.getText());
+					out.writeField("public", (c3.getSelectedObjects() != null) ? "1" : "0");
+					// upload a file
+					out.writeFile("gpx_file", "text/xml", associatedFile);
+					// can also write bytes directly
+					// out.writeFile("myFile", "text/plain", "C:\\test.txt", 
+					// "This is some file text.".getBytes("ASCII"));
+					out.close();
+					// read response from server
+					BufferedReader in = new BufferedReader(
+						new InputStreamReader(urlConn.getInputStream()));
+					String line = "";
+					while((line = in.readLine()) != null) {
+						 System.out.println(line);
+					}
+					in.close();
+					
+					/*
+					int retCode = activeConnection.getResponseCode();
+					System.out.println("got return: "+retCode);
+					String retMsg = activeConnection.getResponseMessage();
+					activeConnection.disconnect();
+					if (retCode != 200) {
+						// Look for a detailed error message from the server
+						if (activeConnection.getHeaderField("Error") != null)
+							retMsg += "\n" + activeConnection.getHeaderField("Error");
+
+						// Report our error
+						ByteArrayOutputStream o = new ByteArrayOutputStream();
+						System.out.println(new String(o.toByteArray(), "UTF-8").toString());
+						throw new RuntimeException(retCode+" "+retMsg);
+					}
+					*/
+				} catch (UnknownHostException ex) {
+					throw new RuntimeException(tr("Unknown host")+": "+ex.getMessage(), ex);
+				} catch (Exception ex) {
+					//if (cancel)
+					//	return; // assume cancel
+					if (ex instanceof RuntimeException)
+						throw (RuntimeException)ex;
+					throw new RuntimeException(ex.getMessage(), ex);
+				}	
+			}
 		}
 	}
 
@@ -277,6 +398,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 				color,
 				line,
 				new JMenuItem(new ConvertToDataLayerAction()),
+				//new JMenuItem(new UploadTraceAction()),
 				new JSeparator(),
 				new JMenuItem(new RenameLayerAction(associatedFile, this)),
 				new JSeparator(),
@@ -290,6 +412,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 				line,
 				tagimage,
 				new JMenuItem(new ConvertToDataLayerAction()),
+				//new JMenuItem(new UploadTraceAction()),
 				new JSeparator(),
 				new JMenuItem(new RenameLayerAction(associatedFile, this)),
 				new JSeparator(),
