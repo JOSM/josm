@@ -418,7 +418,6 @@ abstract public class Main {
 		final StringTokenizer st = new StringTokenizer(s, ",");
 		if (st.countTokens() == 4) {
 			try {
-				//DownloadTask task = main.menu.download.downloadTasks.get(rawGps ? 1 : 0);
 				DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
 				task.download(main.menu.download, Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()));
 				return;
