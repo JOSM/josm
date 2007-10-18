@@ -82,6 +82,10 @@ abstract public class Main {
 	 */
 	public static DataSet ds = new DataSet();
 	/**
+	 * The global paste buffer.
+	 */
+	public static DataSet pasteBuffer = new DataSet();
+	/**
 	 * The projection method used.
 	 */
 	public static Projection proj;

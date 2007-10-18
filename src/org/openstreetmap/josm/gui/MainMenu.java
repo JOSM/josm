@@ -3,30 +3,28 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 
 import javax.swing.Action;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
+import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.DownloadAction;
+import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenAction;
+import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RedoAction;
 import org.openstreetmap.josm.actions.ReverseWayAction;
@@ -39,11 +37,6 @@ import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
-import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.tagging.ForwardActionListener;
-import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide
@@ -57,6 +50,9 @@ public class MainMenu extends JMenuBar {
 
 	public final UndoAction undo = new UndoAction();
 	public final RedoAction redo = new RedoAction();
+	public final Action copy = new CopyAction();
+	public final Action paste = new PasteAction();
+	public final Action duplicate = new DuplicateAction(); 
 	public final Action selectAll = new SelectAllAction();
 	public final Action unselectAll = new UnselectAllAction();
 	public final Action search = new SearchAction();
@@ -103,6 +99,13 @@ public class MainMenu extends JMenuBar {
 		editMenu.setMnemonic('E');
 		editMenu.add(undo);
 		editMenu.add(redo);
+		editMenu.addSeparator();
+		editMenu.add(copy);
+		editMenu.add(paste);
+		editMenu.add(duplicate);
+		editMenu.addSeparator();
+		editMenu.add(selectAll);
+		
 		editMenu.addSeparator();
 		editMenu.add(selectAll);
 		editMenu.add(unselectAll);
