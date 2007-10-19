@@ -33,6 +33,8 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePair;
@@ -61,6 +63,49 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		if (selectedWays.size() < 2) {
 			JOptionPane.showMessageDialog(Main.parent, tr("Please select at least two ways to combine."));
 			return;
+		}
+		
+		// Check whether all ways have identical relationship membership. More 
+		// specifically: If one of the selected ways is a member of relation X
+		// in role Y, then all selected ways must be members of X in role Y.
+		
+		// FIXME: In a later revision, we should display some sort of conflict 
+		// dialog like we do for tags, to let the user choose which relations
+		// should be kept.
+		
+		// Step 1, iterate over all relations and create counters indicating
+		// how many of the selected ways are part of relation X in role Y
+		// (hashMap backlinks contains keys formed like X@Y)
+		HashMap<String, Integer> backlinks = new HashMap<String, Integer>();
+		HashSet<Relation> relationsUsingWays = new HashSet<Relation>();
+		for (Relation r : Main.ds.relations) {
+			if (r.deleted) continue;
+			for (RelationMember rm : r.members) {
+				if (rm.member instanceof Way) {
+					for(Way w : selectedWays) {
+						if (rm.member == w) {
+							String hash = Long.toString(r.id) + "@" + rm.role;
+							System.out.println(hash);
+							if (backlinks.containsKey(hash)) {
+								backlinks.put(hash, new Integer(backlinks.get(hash)+1));
+							} else {
+								backlinks.put(hash, 1);
+							}
+							// this is just a cache for later use
+							relationsUsingWays.add(r);
+						}
+					}
+				}
+			}
+		}
+		
+		// Step 2, all values of the backlinks HashMap must now equal the size
+		// of the selection.
+		for (Integer i : backlinks.values()) {
+			if (i.intValue() != selectedWays.size()) {
+				JOptionPane.showMessageDialog(Main.parent, tr("The selected ways cannot be combined as they have differing relation memberships."));
+				return;				
+			}
 		}
 
 		// collect properties for later conflict resolving
@@ -112,6 +157,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 			} else
 				newWay.put(e.getKey(), e.getValue().iterator().next());
 		}
+		
 		if (!components.isEmpty()) {
 			int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Enter values for all conflicts."), JOptionPane.OK_CANCEL_OPTION);
 			if (answer != JOptionPane.OK_OPTION)
@@ -123,6 +169,20 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		LinkedList<Command> cmds = new LinkedList<Command>();
 		cmds.add(new DeleteCommand(selectedWays.subList(1, selectedWays.size())));
 		cmds.add(new ChangeCommand(selectedWays.peek(), newWay));
+		
+		// modify all relations containing the now-deleted ways
+		for (Relation r : relationsUsingWays) {
+			Relation newRel = new Relation(r);
+			newRel.members.clear();
+			for (RelationMember rm : r.members) {
+				// only copy member if it is either the first of all the selected
+				// ways (indexOf==0) or not one if the selected ways (indexOf==-1)
+				if (selectedWays.indexOf(rm.member) < 1) {
+					newRel.members.add(new RelationMember(rm));
+				}
+			}
+			cmds.add(new ChangeCommand(r, newRel));
+		}
 		Main.main.undoRedo.add(new SequenceCommand(tr("Combine {0} ways", selectedWays.size()), cmds));
 		Main.ds.setSelected(selectedWays.peek());
 	}
@@ -194,9 +254,9 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		if (!chunks.isEmpty()) {
 			return tr("Could not combine ways "
 				+ "(They could not be merged into a single string of nodes)");
-		} else {
-			return nodeList;
-		}
+		} 
+		
+		return nodeList;
 	}
 
 	/**
