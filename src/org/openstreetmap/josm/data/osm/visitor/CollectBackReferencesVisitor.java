@@ -45,8 +45,7 @@ public class CollectBackReferencesVisitor implements Visitor {
 
 	public void visit(Node n) {
 		for (Way w : ds.ways) {
-			if (w.deleted)
-				continue;
+			if (w.deleted || w.incomplete) continue;
 			for (Node n2 : w.nodes) {
 				if (n == n2) {
 					data.add(w);

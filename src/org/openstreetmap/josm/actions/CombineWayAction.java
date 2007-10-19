@@ -79,7 +79,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		HashMap<String, Integer> backlinks = new HashMap<String, Integer>();
 		HashSet<Relation> relationsUsingWays = new HashSet<Relation>();
 		for (Relation r : Main.ds.relations) {
-			if (r.deleted) continue;
+			if (r.deleted || r.incomplete) continue;
 			for (RelationMember rm : r.members) {
 				if (rm.member instanceof Way) {
 					for(Way w : selectedWays) {

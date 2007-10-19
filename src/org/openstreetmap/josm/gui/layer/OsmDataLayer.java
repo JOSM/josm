@@ -194,7 +194,7 @@ public class OsmDataLayer extends Layer {
 
 	@Override public void visitBoundingBox(final BoundingXYVisitor v) {
 		for (final Node n : data.nodes)
-			if (!n.deleted)
+			if (!n.deleted && !n.incomplete)
 				v.visit(n);
 	}
 

@@ -156,13 +156,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	public final List<WaySegment> getNearestWaySegments(Point p) {
 		TreeMap<Double, List<WaySegment>> nearest = new TreeMap<Double, List<WaySegment>>();
 		for (Way w : Main.ds.ways) {
-			if (w.deleted)
-				continue;
+			if (w.deleted || w.incomplete) continue;
 			Node lastN = null;
 			int i = -2;
 			for (Node n : w.nodes) {
 				i++;
-				if (n.deleted) continue;
+				if (n.deleted || n.incomplete) continue;
 				if (lastN == null) {
 					lastN = n;
 					continue;
@@ -260,10 +259,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	public Collection<OsmPrimitive> getAllNearest(Point p) {
 		Collection<OsmPrimitive> nearest = new HashSet<OsmPrimitive>();
 			for (Way w : Main.ds.ways) {
-			if (w.deleted) continue;
+			if (w.deleted || w.incomplete) continue;
 			Node lastN = null;
 			for (Node n : w.nodes) {
-				if (n.deleted) continue;
+				if (n.deleted || n.incomplete) continue;
 				if (lastN == null) {
 					lastN = n;
 					continue;
@@ -282,7 +281,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 				}
 			}
 		for (Node n : Main.ds.nodes) {
-			if (!n.deleted && getPoint(n.eastNorth).distanceSq(p) < 100) {
+			if (!n.deleted && !n.incomplete
+					&& getPoint(n.eastNorth).distanceSq(p) < 100) {
 				nearest.add(n);
 			}
 		}

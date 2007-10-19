@@ -483,7 +483,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		Map<Relation, Integer> valueCountM = new HashMap<Relation, Integer>();
 		TreeMap<Relation, Collection<String>> roles = new TreeMap<Relation, Collection<String>>();
 		for (Relation r : Main.ds.relations) {
-			if (!r.deleted) {
+			if (!r.deleted && !r.incomplete) {
 				for (RelationMember m : r.members) {
 					if (newSelection.contains(m.member)) {
 						Collection<String> value = roles.get(r);

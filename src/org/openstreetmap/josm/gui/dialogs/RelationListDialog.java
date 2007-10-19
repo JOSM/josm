@@ -122,7 +122,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 		list.setSize(Main.ds.relations.size());
 		int i = 0;
 		for (Relation e : Main.ds.relations) {
-			if (!e.deleted)
+			if (!e.deleted && !e.incomplete)
 				list.setElementAt(e, i++);
 		}
 		list.setSize(i);

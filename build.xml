@@ -30,6 +30,7 @@
 		</copy>
 
 		<!-- create josm-custom.jar -->
+		<delete file="dist/josm-custom.jar"/>
 		<jar destfile="dist/josm-custom.jar" basedir="build">
 			<manifest>
 				<attribute name="Main-class" value="org.openstreetmap.josm.gui.MainApplication" />
