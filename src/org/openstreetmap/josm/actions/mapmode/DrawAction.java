@@ -207,7 +207,7 @@ public class DrawAction extends MapMode {
 	public static Way getWayForNode(Node n) {
 		Way way = null;
 		for (Way w : Main.ds.ways) {
-			if (w.nodes.size() < 1) continue;
+			if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
 			Node firstNode = w.nodes.get(0);
 			Node lastNode = w.nodes.get(w.nodes.size() - 1);
 			if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
