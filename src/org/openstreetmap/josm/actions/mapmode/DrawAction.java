@@ -23,8 +23,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.GroupAction;
-import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -42,6 +40,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class DrawAction extends MapMode {
+	
+	private static Node lastUsedNode = null;
 
 	public DrawAction(MapFrame mapFrame) {
 		super(tr("Draw"), "node/autonode", tr("Draw nodes"),
@@ -51,6 +51,10 @@ public class DrawAction extends MapMode {
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), tr("Draw"));
 
+		// Add extra shortcut U
+		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(KeyEvent.VK_U, 0), tr("Unselect All"));
+		
 		//putValue("help", "Action/AddNode/Autnode");
 	}
 
@@ -93,8 +97,22 @@ public class DrawAction extends MapMode {
 			replacedWays = new ArrayList<Way>();
 		boolean newNode = false;
 		Node n = null;
-		if (!ctrl) n = Main.map.mapView.getNearestNode(e.getPoint());
-		if (n == null) {
+		if (!ctrl) {
+			n = Main.map.mapView.getNearestNode(e.getPoint());
+		}
+		
+		if (n != null) {
+			// user clicked on node
+			if (selection.isEmpty()) {
+				// select the clicked node and do nothing else
+				// (this is just a convenience option so that people don't
+				// have to switch modes)
+				Main.ds.setSelected(n);
+				return;
+			}
+			
+		} else {
+			// no node found in clicked area
 			n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
 			if (n.coor.isOutSideWorld()) {
 				JOptionPane.showMessageDialog(Main.parent,
@@ -142,16 +160,57 @@ public class DrawAction extends MapMode {
 				adjustNode(segSet, n);
 			}
 		}
+		
+		// This part decides whether or not a "segment" (i.e. a connection) is made to an
+		// existing node.
+		
+		// For a connection to be made, the user must either have a node selected (connection
+		// is made to that node), or he must have a way selected *and* one of the endpoints
+		// of that way must be the last used node (connection is made to last used node), or
+		// he must have a way and a node selected (connection is made to the selected node).
+		
 		boolean extendedWay = false;
-		// shift modifier never connects, just makes new node
-		if (!shift && selection.size() == 1 && selection.iterator().next() instanceof Node) {
-			Node n0 = (Node) selection.iterator().next();
-			if (n0 == n) {
+
+		if (!shift && selection.size() > 0 && selection.size() < 3) {
+			
+			Node selectedNode = null;
+			Way selectedWay = null;
+			
+			for (OsmPrimitive p : selection) {
+				if (p instanceof Node) {
+					if (selectedNode != null) return;
+					selectedNode = (Node) p;
+				} else if (p instanceof Way) {
+					if (selectedWay != null) return;
+					selectedWay = (Way) p;
+				}
+			}
+			
+			// the node from which we make a connection
+			Node n0 = null;
+			
+			if (selectedNode == null) {
+				if (selectedWay == null) return;
+				if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+					n0 = lastUsedNode;
+				}
+			} else if (selectedWay == null) {
+				n0 = selectedNode;
+			} else {
+				if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+					n0 = selectedNode;
+				}			
+			}
+			
+			if (n0 == null || n0 == n) {
 				return; // Don't create zero length way segments.
 			}
 
-			// alt modifier makes connection to selected node but not existing way
-			Way way = alt ? null : getWayForNode(n0);
+			// Ok we know now that we'll insert a line segment, but will it connect to an 
+			// existing way or make a new way of its own? The "alt" modifier means that the
+			// user wants a new way.
+			
+			Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
 			if (way == null) {
 				way = new Way();
 				way.nodes.add(n0);
@@ -174,6 +233,7 @@ public class DrawAction extends MapMode {
 			}
 
 			extendedWay = true;
+			Main.ds.setSelected(way);
 		}
 
 		String title;
@@ -185,6 +245,7 @@ public class DrawAction extends MapMode {
 			} else {
 				title = tr("Add node into way");
 			}
+			Main.ds.setSelected(n);
 		} else if (!newNode) {
 			title = tr("Connect existing way to node");
 		} else if (reuseWays.isEmpty()) {
@@ -196,7 +257,7 @@ public class DrawAction extends MapMode {
 		Command c = new SequenceCommand(title, cmds);
 	
 		Main.main.undoRedo.add(c);
-		Main.ds.setSelected(n);
+		lastUsedNode = n;
 		Main.map.mapView.repaint();
 	}
 	
