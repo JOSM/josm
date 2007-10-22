@@ -65,7 +65,7 @@ public class AutoScaleAction extends JosmAction {
 				osm.visit(v);
 			// special case to zoom nicely to one single node
 			if (v.min != null && v.max != null && v.min.north() == v.max.north() && v.min.east() == v.max.east()) {
-				EastNorth en = Main.proj.latlon2eastNorth(new LatLon(0.02, 0.02));
+				EastNorth en = Main.proj.latlon2eastNorth(new LatLon(0.001, 0.001));
 				v.min = new EastNorth(v.min.east()-en.east(), v.min.north()-en.north());
 				v.max = new EastNorth(v.max.east()+en.east(), v.max.north()+en.north());
 			}
