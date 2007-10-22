@@ -65,5 +65,8 @@ public class DownloadAction extends JosmAction {
         	if (!finish)
         		JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one task to download"));
         }
+
+		dialog = null;
+		dlg.dispose();
 	}
 }
