@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -244,11 +245,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		editor.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
             	String key = keys.getEditor().getItem().toString();
+				Collection<String> newItems;
             	if (allData.containsKey(key)) {
-					values.setPossibleItems(allData.get(key));
+					newItems = allData.get(key);
 				} else {
-					values.removeAllItems();
+					newItems = Collections.emptyList();
 				}
+				values.setPossibleItems(newItems);
             }
         });
 

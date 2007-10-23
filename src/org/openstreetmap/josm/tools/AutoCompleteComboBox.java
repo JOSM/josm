@@ -81,11 +81,11 @@ public class AutoCompleteComboBox extends JComboBox {
 	}
 
 	public void setPossibleItems(Collection<String> elems) {
-		Object oldValue = this.getSelectedItem();
 		DefaultComboBoxModel model = (DefaultComboBoxModel)this.getModel();
+		Object oldValue = this.getEditor().getItem();
 		model.removeAllElements();
 		for (String elem : elems) model.addElement(elem);
-		this.setSelectedItem(oldValue);
+		this.getEditor().setItem(oldValue);
 		this.getEditor().selectAll();
 	}
 }
