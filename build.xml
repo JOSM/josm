@@ -39,7 +39,8 @@
 	</target>
 
 	<target name="compile" depends="init">
-		<javac srcdir="src" classpathref="classpath" destdir="build" />
+		<javac srcdir="src" classpathref="classpath" destdir="build"
+			debug="on" />
 	</target>
 
 	<target name="init">
