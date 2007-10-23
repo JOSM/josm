@@ -178,7 +178,7 @@ public class MapView extends NavigatableComponent {
 			if (l.visible && l != getActiveLayer())
 				l.paint(g, this);
 		}
-		if (getActiveLayer().visible)
+		if (getActiveLayer() != null && getActiveLayer().visible)
 			getActiveLayer().paint(g, this);
 
 		// draw world borders
