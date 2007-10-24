@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -148,12 +149,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		};
 		final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
-		valueField.addActionListener(new ActionListener(){
+
+		valueField.getEditor().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				optionPane.setValue(JOptionPane.OK_OPTION);
 				dlg.setVisible(false);
+				optionPane.setValue(JOptionPane.OK_OPTION);
 			}
 		});
+
 		String oldValue = valueField.getEditor().getItem().toString();
 		dlg.setVisible(true);
 
