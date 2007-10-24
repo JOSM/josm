@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -98,6 +99,19 @@ public class BoundingBoxSelection implements DownloadSelection {
 		};
 		
 		osmUrl.addKeyListener(osmUrlRefresher);
+		
+		// select content on receiving focus. this seems to be the default in the
+		// windows look+feel but not for others. needs invokeLater to avoid strange
+		// side effects that will cancel out the newly made selection otherwise.
+		osmUrl.addFocusListener(new FocusAdapter() {
+			@Override public void focusGained(FocusEvent e) {
+		        SwingUtilities.invokeLater(new Runnable() {
+		                public void run() {
+		                	osmUrl.selectAll();
+		        		}
+				});
+			}
+		});
 		osmUrl.setLineWrap(true);
 		osmUrl.setBorder(latlon[0].getBorder());
 		
