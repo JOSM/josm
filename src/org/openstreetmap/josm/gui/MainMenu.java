@@ -103,8 +103,6 @@ public class MainMenu extends JMenuBar {
 		editMenu.add(copy);
 		editMenu.add(paste);
 		editMenu.add(duplicate);
-		editMenu.addSeparator();
-		editMenu.add(selectAll);
 		
 		editMenu.addSeparator();
 		editMenu.add(selectAll);
