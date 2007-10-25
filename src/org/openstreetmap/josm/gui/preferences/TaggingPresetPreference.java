@@ -39,7 +39,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 		
 		taggingPresetSources = new JList(new DefaultListModel());
 		enableDefault = new JCheckBox(tr("Enable built-in defaults"), 
-				Main.pref.getBoolean("taggingpreset.enable-defaults"));
+				Main.pref.getBoolean("taggingpreset.enable-defaults", true));
 
 		String annos = Main.pref.get("taggingpreset.sources");
 		StringTokenizer st = new StringTokenizer(annos, ";");
