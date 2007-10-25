@@ -30,7 +30,7 @@ public class OsmIdReader extends DefaultHandler {
 	private Reader in;
 
 	@Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-		if (qName.equals("node") || qName.equals("way")) {
+		if (qName.equals("node") || qName.equals("way") || qName.equals("relation")) {
 			try {
 				entries.put(Long.valueOf(atts.getValue("id")), qName);
 			} catch (Exception e) {
