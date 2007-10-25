@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.actions.MergeNodesAction;
 /**
  * Move is an action that can move all kind of OsmPrimitives (except Keys for now).
  *
@@ -231,6 +232,25 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			selectionManager.unregister(Main.map.mapView);
 		}
 		restoreCursor();
+    if (mode == Mode.move) {
+		  boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+      if (ctrl) {
+		    Collection<OsmPrimitive> selection = Main.ds.getSelected();
+		    Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
+		    Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);
+        if (nn != null) {
+          Node n = nn.iterator().next();
+          LinkedList<Node> selNodes = new LinkedList<Node>();
+          for (OsmPrimitive osm : selection)
+            if (osm instanceof Node)
+              selNodes.add((Node)osm);
+          if (selNodes.size() > 0) {
+            selNodes.add(n);
+            MergeNodesAction.mergeNodes(selNodes, n);
+          }
+        }
+      }
+    }
 		updateStatusLine();
 		mode = null;
 		updateStatusLine();
@@ -263,7 +283,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		if (mode == Mode.select) {
 			return "Release the mouse button to select the objects in the rectangle.";
 		} else if (mode == Mode.move) {
-			return "Release the mouse button to stop moving.";
+			return "Release the mouse button to stop moving. Ctrl to merge with nearest node.";
 		} else if (mode == Mode.rotate) {
 			return "Release the mouse button to stop rotating.";
 		} else {

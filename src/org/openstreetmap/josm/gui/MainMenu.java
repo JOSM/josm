@@ -22,6 +22,7 @@ import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
+import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenAction;
 import org.openstreetmap.josm.actions.PasteAction;
@@ -64,6 +65,7 @@ public class MainMenu extends JMenuBar {
 	public final Action combineWay = new CombineWayAction();
 	public final Action alignInCircle = new AlignInCircleAction();
 	public final Action alignInLine = new AlignInLineAction();
+	public final Action mergeNodes = new MergeNodesAction();
 	public final Action upload = new UploadAction();
 	public final Action save = new SaveAction(null);
 	public final Action saveAs = new SaveAsAction(null);
@@ -128,6 +130,8 @@ public class MainMenu extends JMenuBar {
 		toolsMenu.addSeparator();
 		toolsMenu.add(splitWay);
 		toolsMenu.add(combineWay);
+		toolsMenu.addSeparator();
+		toolsMenu.add(mergeNodes);
 		add(toolsMenu);
 
 		connectionMenu.setMnemonic('C');

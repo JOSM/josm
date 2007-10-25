@@ -290,6 +290,40 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	}
 
 	/**
+	 * @return A list of all nodes that are nearest to
+	 * the mouse.  Does a simple sequential scan on all the data.
+	 *
+	 * @return A collection of all nodes or <code>null</code>
+	 * 		if no node under or near the point. The returned
+	 * 		list is never empty.
+	 */
+	public Collection<Node> getNearestNodes(Point p) {
+		Collection<Node> nearest = new HashSet<Node>();
+		for (Node n : Main.ds.nodes) {
+			if (!n.deleted && !n.incomplete
+					&& getPoint(n.eastNorth).distanceSq(p) < 100) {
+				nearest.add(n);
+			}
+		}
+		return nearest.isEmpty() ? null : nearest;
+	}
+
+	/**
+	 * @return the nearest nodes to the screen point given that is not 
+	 * in ignore.
+	 * 
+	 * @param p the point for which to search the nearest segment.
+	 * @param ignore a collection of nodes which are not to be returned.
+	 * May be null.
+	 */
+	public final Collection<Node> getNearestNodes(Point p, Collection<Node> ignore) {
+		Collection<Node> nearest = getNearestNodes(p);
+                if (nearest == null) return null;
+		if (ignore != null) nearest.removeAll(ignore);
+		return nearest.isEmpty() ? null : nearest;
+	}
+
+	/**
 	 * @return The projection to be used in calculating stuff.
 	 */
 	protected Projection getProjection() {
