@@ -327,9 +327,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."), KeyEvent.VK_P, 150);
 
 		// ---------------------------------------
-		// This drop-down will probably be removed soon.
-		//
-		if (TaggingPresetPreference.taggingPresets.size() > 0) {
+		// This drop-down is really deprecated but we offer people a chance to 
+		// activate it if they really want. Presets should be used from the 
+		// menu.
+		if (TaggingPresetPreference.taggingPresets.size() > 0 && 
+				Main.pref.getBoolean("taggingpresets.in-properties-dialog", false)) {
 			Vector<ActionListener> allPresets = new Vector<ActionListener>();
 			for (final TaggingPreset p : TaggingPresetPreference.taggingPresets)
 				allPresets.add(new ForwardActionListener(this, p));
@@ -351,9 +353,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		});
 		taggingPresets.setRenderer(new TaggingCellRenderer());
-		
-		// End of "will be removed soon".
-		// --------------------------------------------
 
 		// setting up the properties table
 		
