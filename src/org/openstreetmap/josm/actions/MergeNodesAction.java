@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePair;
+import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.GBC;
 
 
@@ -95,38 +96,61 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 		mergeNodes(selectedNodes, useNode);
 	}
 
+	private static class RelationRolePair {
+		public Relation rel;
+		public String role;
+
+		public RelationRolePair(Relation rel, String role) {
+			this.rel = rel;
+			this.role = role;
+		}
+
+		@Override public boolean equals(Object o) {
+			return o instanceof RelationRolePair
+				&& rel == ((RelationRolePair) o).rel
+				&& role.equals(((RelationRolePair) o).role);
+		}
+
+		@Override public int hashCode() {
+			return rel.hashCode() ^ role.hashCode();
+		}
+	}
+
 	/**
 	 * really do the merging - returns the node that is left
 	 */
 	public static Node mergeNodes(LinkedList<Node> allNodes, Node dest) {
 		Node newNode = new Node(dest);
 
-		// Check whether all ways have identical relationship membership. More 
+		// Check whether all ways have identical relationship membership. More
 		// specifically: If one of the selected ways is a member of relation X
 		// in role Y, then all selected ways must be members of X in role Y.
 
-		// FIXME: In a later revision, we should display some sort of conflict 
+		// FIXME: In a later revision, we should display some sort of conflict
 		// dialog like we do for tags, to let the user choose which relations
 		// should be kept.
 
-		// Step 1, iterate over all relations and create counters indicating
-		// how many of the selected ways are part of relation X in role Y
-		// (hashMap backlinks contains keys formed like X@Y)
-		HashMap<String, Integer> backlinks = new HashMap<String, Integer>();
+		// Step 1, iterate over all relations and figure out which of our
+		// selected ways are members of a relation.
+		HashMap<RelationRolePair, HashSet<Node>> backlinks =
+			new HashMap<RelationRolePair, HashSet<Node>>();
 		HashSet<Relation> relationsUsingNodes = new HashSet<Relation>();
 		for (Relation r : Main.ds.relations) {
 			if (r.deleted || r.incomplete) continue;
 			for (RelationMember rm : r.members) {
 				if (rm.member instanceof Node) {
-					for(Node n : allNodes) {
+					for (Node n : allNodes) {
 						if (rm.member == n) {
-							String hash = Long.toString(r.id) + "@" + rm.role;
-							System.out.println(hash);
-							if (backlinks.containsKey(hash)) {
-								backlinks.put(hash, new Integer(backlinks.get(hash)+1));
+							RelationRolePair pair = new RelationRolePair(r, rm.role);
+							HashSet<Node> nodelinks = new HashSet<Node>();
+							if (backlinks.containsKey(pair)) {
+								nodelinks = backlinks.get(pair);
 							} else {
-								backlinks.put(hash, 1);
+								nodelinks = new HashSet<Node>();
+								backlinks.put(pair, nodelinks);
 							}
+							nodelinks.add(n);
+
 							// this is just a cache for later use
 							relationsUsingNodes.add(r);
 						}
@@ -135,12 +159,19 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 			}
 		}
 
-		// Step 2, all values of the backlinks HashMap must now equal the size
-		// of the selection.
-		for (Integer i : backlinks.values()) {
-			if (i.intValue() != allNodes.size()) {
-				JOptionPane.showMessageDialog(Main.parent, tr("The selected nodes cannot be merged as they have differing relation memberships."));
-				return null;
+		// Complain to the user if the ways don't have equal memberships.
+		for (HashSet<Node> nodelinks : backlinks.values()) {
+			if (!nodelinks.containsAll(allNodes)) {
+				int option = JOptionPane.showConfirmDialog(Main.parent,
+					tr("The selected nodes have differing relation memberships.  "
+						+ "Do you still want to merge them?"),
+					tr("Merge nodes with different memberships?"),
+					JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					break;
+				} else {
+					return null;
+				}
 			}
 		}
 
@@ -180,12 +211,6 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 		LinkedList<Command> cmds = new LinkedList<Command>();
 		cmds.add(new ChangeCommand(dest, newNode));
 
-		// OK, now to merge the nodes - this should be fairly
-		// straightforward:
-		//   for each node in allNodes that is not newNode, do:
-		//     search all existing ways and replace references of
-		//     current node with newNode, then delete current node
-
 		Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>();
 
 		for (Way w : Main.ds.ways) {
@@ -212,6 +237,15 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 				lastNode = pushNode;
 			}
 			if (nn.size() < 2) {
+				CollectBackReferencesVisitor backRefs =
+					new CollectBackReferencesVisitor(Main.ds, false);
+				w.visit(backRefs);
+				if (!backRefs.data.isEmpty()) {
+					JOptionPane.showMessageDialog(Main.parent,
+						tr("Cannot merge nodes: " +
+							"Would have to delete a way that is still used."));
+					return null;
+				}
 				del.add(w);
 			} else {
 				Way newWay = new Way(w);
@@ -222,23 +256,26 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 		}
 
 		// delete any merged nodes
-		for (Node n : allNodes) {
-			if (n != dest) {
-				del.add(n);
-			}
-		}
+		del.addAll(allNodes);
+		del.remove(dest);
 		if (!del.isEmpty()) cmds.add(new DeleteCommand(del));
 
 		// modify all relations containing the now-deleted nodes
 		for (Relation r : relationsUsingNodes) {
 			Relation newRel = new Relation(r);
 			newRel.members.clear();
+			HashSet<String> rolesToReAdd = new HashSet<String>();
 			for (RelationMember rm : r.members) {
-				// only copy member if it is either the first of all the selected
-				// nodes (indexOf==0) or not one of the selected nodes (indexOf==-1)
-				if (allNodes.indexOf(rm.member) < 1) {
-					newRel.members.add(new RelationMember(rm));
+				// Don't copy the member if it points to one of our nodes,
+				// just keep a note to re-add it later on.
+				if (allNodes.contains(rm.member)) {
+					rolesToReAdd.add(rm.role);
+				} else {
+					newRel.members.add(rm);
 				}
+			}
+			for (String role : rolesToReAdd) {
+				newRel.members.add(new RelationMember(role, dest));
 			}
 			cmds.add(new ChangeCommand(r, newRel));
 		}
