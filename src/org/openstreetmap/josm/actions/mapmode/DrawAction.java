@@ -29,7 +29,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.NodePair;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -139,7 +139,7 @@ public class DrawAction extends MapMode {
 					is.add(ws.lowerIndex);
 				}
 
-				Set<NodePair> segSet = new HashSet<NodePair>();
+				Set<Pair<Node,Node>> segSet = new HashSet<Pair<Node,Node>>();
 
 				for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
 					Way w = insertPoint.getKey();
@@ -149,7 +149,7 @@ public class DrawAction extends MapMode {
 
 					pruneSuccsAndReverse(is);
 					for (int i : is) segSet.add(
-						new NodePair(w.nodes.get(i), w.nodes.get(i+1)).sort());
+						Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
 					for (int i : is) wnew.nodes.add(i + 1, n);
 
 					cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
@@ -310,7 +310,7 @@ public class DrawAction extends MapMode {
 	 * @param segs the segments to use as a reference when adjusting
 	 * @param n the node to adjust
 	 */
-	private static void adjustNode(Collection<NodePair> segs, Node n) {
+	private static void adjustNode(Collection<Pair<Node,Node>> segs, Node n) {
 		
 		switch (segs.size()) {
 		case 0:
@@ -319,8 +319,8 @@ public class DrawAction extends MapMode {
 			// algorithm used here is a bit clumsy, anyone's welcome to replace
 			// it by something else. All it does it compute the intersection between
 			// the two segments and adjust the node position. The code doesnt 
-			Iterator<NodePair> i = segs.iterator();
-			NodePair seg = i.next();
+			Iterator<Pair<Node,Node>> i = segs.iterator();
+			Pair<Node,Node> seg = i.next();
 			EastNorth A = seg.a.eastNorth;
 			EastNorth B = seg.b.eastNorth;
 			seg = i.next();

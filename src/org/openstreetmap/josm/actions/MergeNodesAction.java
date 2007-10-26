@@ -37,7 +37,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.NodePair;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -96,26 +96,6 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 		mergeNodes(selectedNodes, useNode);
 	}
 
-	private static class RelationRolePair {
-		public Relation rel;
-		public String role;
-
-		public RelationRolePair(Relation rel, String role) {
-			this.rel = rel;
-			this.role = role;
-		}
-
-		@Override public boolean equals(Object o) {
-			return o instanceof RelationRolePair
-				&& rel == ((RelationRolePair) o).rel
-				&& role.equals(((RelationRolePair) o).role);
-		}
-
-		@Override public int hashCode() {
-			return rel.hashCode() ^ role.hashCode();
-		}
-	}
-
 	/**
 	 * really do the merging - returns the node that is left
 	 */
@@ -132,8 +112,8 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 
 		// Step 1, iterate over all relations and figure out which of our
 		// selected ways are members of a relation.
-		HashMap<RelationRolePair, HashSet<Node>> backlinks =
-			new HashMap<RelationRolePair, HashSet<Node>>();
+		HashMap<Pair<Relation,String>, HashSet<Node>> backlinks =
+			new HashMap<Pair<Relation,String>, HashSet<Node>>();
 		HashSet<Relation> relationsUsingNodes = new HashSet<Relation>();
 		for (Relation r : Main.ds.relations) {
 			if (r.deleted || r.incomplete) continue;
@@ -141,7 +121,7 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 				if (rm.member instanceof Node) {
 					for (Node n : allNodes) {
 						if (rm.member == n) {
-							RelationRolePair pair = new RelationRolePair(r, rm.role);
+							Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.role);
 							HashSet<Node> nodelinks = new HashSet<Node>();
 							if (backlinks.containsKey(pair)) {
 								nodelinks = backlinks.get(pair);

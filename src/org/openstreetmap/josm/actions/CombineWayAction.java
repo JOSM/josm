@@ -37,7 +37,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.NodePair;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -50,26 +50,6 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 	public CombineWayAction() {
 		super(tr("Combine Way"), "combineway", tr("Combine several ways into one."), KeyEvent.VK_C, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
 		DataSet.selListeners.add(this);
-	}
-
-	private static class RelationRolePair {
-		public Relation rel;
-		public String role;
-
-		public RelationRolePair(Relation rel, String role) {
-			this.rel = rel;
-			this.role = role;
-		}
-
-		@Override public boolean equals(Object o) {
-			return o instanceof RelationRolePair
-				&& rel == ((RelationRolePair) o).rel
-				&& role.equals(((RelationRolePair) o).role);
-		}
-
-		@Override public int hashCode() {
-			return rel.hashCode() ^ role.hashCode();
-		}
 	}
 
 	public void actionPerformed(ActionEvent event) {
@@ -95,8 +75,8 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 
 		// Step 1, iterate over all relations and figure out which of our
 		// selected ways are members of a relation.
-		HashMap<RelationRolePair, HashSet<Way>> backlinks =
-			new HashMap<RelationRolePair, HashSet<Way>>();
+		HashMap<Pair<Relation,String>, HashSet<Way>> backlinks =
+			new HashMap<Pair<Relation,String>, HashSet<Way>>();
 		HashSet<Relation> relationsUsingWays = new HashSet<Relation>();
 		for (Relation r : Main.ds.relations) {
 			if (r.deleted || r.incomplete) continue;
@@ -104,7 +84,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 				if (rm.member instanceof Way) {
 					for(Way w : selectedWays) {
 						if (rm.member == w) {
-							RelationRolePair pair = new RelationRolePair(r, rm.role);
+							Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.role);
 							HashSet<Way> waylinks = new HashSet<Way>();
 							if (backlinks.containsKey(pair)) {
 								waylinks = backlinks.get(pair);
@@ -237,7 +217,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		//     complain to the user.
 		//  4. Profit!
 
-		HashSet<NodePair> chunkSet = new HashSet<NodePair>();
+		HashSet<Pair<Node,Node>> chunkSet = new HashSet<Pair<Node,Node>>();
 		for (Way w : ways) {
 			if (w.nodes.size() == 0) continue;
 			Node lastN = null;
@@ -247,27 +227,27 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 					continue;
 				}
 
-				NodePair np = new NodePair(lastN, n);
+				Pair<Node,Node> np = new Pair<Node,Node>(lastN, n);
 				if (ignoreDirection) {
-					np.sort();
+					Pair.sort(np);
 				}
 				chunkSet.add(np);
 
 				lastN = n;
 			}
 		}
-		LinkedList<NodePair> chunks = new LinkedList<NodePair>(chunkSet);
+		LinkedList<Pair<Node,Node>> chunks = new LinkedList<Pair<Node,Node>>(chunkSet);
 
 		if (chunks.isEmpty()) {
 			return tr("All the ways were empty");
 		}
 
-		List<Node> nodeList = chunks.poll().toArrayList();
+		List<Node> nodeList = Pair.toArrayList(chunks.poll());
 		while (!chunks.isEmpty()) {
-			ListIterator<NodePair> it = chunks.listIterator();
+			ListIterator<Pair<Node,Node>> it = chunks.listIterator();
 			boolean foundChunk = false;
 			while (it.hasNext()) {
-				NodePair curChunk = it.next();
+				Pair<Node,Node> curChunk = it.next();
 				if (curChunk.a == nodeList.get(nodeList.size() - 1)) { // append
 					nodeList.add(curChunk.b);
 				} else if (curChunk.b == nodeList.get(0)) { // prepend
