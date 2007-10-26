@@ -75,7 +75,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 	public void actionPerformed(ActionEvent event) {
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		LinkedList<Way> selectedWays = new LinkedList<Way>();
-		
+
 		for (OsmPrimitive osm : selection)
 			if (osm instanceof Way)
 				selectedWays.add((Way)osm);
@@ -84,15 +84,15 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 			JOptionPane.showMessageDialog(Main.parent, tr("Please select at least two ways to combine."));
 			return;
 		}
-		
-		// Check whether all ways have identical relationship membership. More 
+
+		// Check whether all ways have identical relationship membership. More
 		// specifically: If one of the selected ways is a member of relation X
 		// in role Y, then all selected ways must be members of X in role Y.
-		
-		// FIXME: In a later revision, we should display some sort of conflict 
+
+		// FIXME: In a later revision, we should display some sort of conflict
 		// dialog like we do for tags, to let the user choose which relations
 		// should be kept.
-		
+
 		// Step 1, iterate over all relations and figure out which of our
 		// selected ways are members of a relation.
 		HashMap<RelationRolePair, HashSet<Way>> backlinks =
@@ -121,13 +121,20 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 				}
 			}
 		}
-		
-		// Step 2, all values of the backlinks HashMap must now equal the size
-		// of the selection.
+
+		// Complain to the user if the ways don't have equal memberships.
 		for (HashSet<Way> waylinks : backlinks.values()) {
-			if (!selectedWays.equals(waylinks)) {
-				JOptionPane.showMessageDialog(Main.parent, tr("The selected ways cannot be combined as they have differing relation memberships."));
-				return;
+			if (!waylinks.containsAll(selectedWays)) {
+				int option = JOptionPane.showConfirmDialog(Main.parent,
+					tr("The selected ways have differing relation memberships.  "
+						+ "Do you still want to combine them?"),
+					tr("Combine ways with different memberships?"),
+					JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					break;
+				} else {
+					return;
+				}
 			}
 		}
 
@@ -165,7 +172,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		Way newWay = new Way(selectedWays.get(0));
 		newWay.nodes.clear();
 		newWay.nodes.addAll(nodeList);
-		
+
 		// display conflict dialog
 		Map<String, JComboBox> components = new HashMap<String, JComboBox>();
 		JPanel p = new JPanel(new GridBagLayout());
@@ -180,7 +187,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 			} else
 				newWay.put(e.getKey(), e.getValue().iterator().next());
 		}
-		
+
 		if (!components.isEmpty()) {
 			int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Enter values for all conflicts."), JOptionPane.OK_CANCEL_OPTION);
 			if (answer != JOptionPane.OK_OPTION)
@@ -192,17 +199,23 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		LinkedList<Command> cmds = new LinkedList<Command>();
 		cmds.add(new DeleteCommand(selectedWays.subList(1, selectedWays.size())));
 		cmds.add(new ChangeCommand(selectedWays.peek(), newWay));
-		
+
 		// modify all relations containing the now-deleted ways
 		for (Relation r : relationsUsingWays) {
 			Relation newRel = new Relation(r);
 			newRel.members.clear();
+			HashSet<String> rolesToReAdd = new HashSet<String>();
 			for (RelationMember rm : r.members) {
-				// only copy member if it is either the first of all the selected
-				// ways (indexOf==0) or not one if the selected ways (indexOf==-1)
-				if (selectedWays.indexOf(rm.member) < 1) {
-					newRel.members.add(new RelationMember(rm));
+				// Don't copy the member if it to one of our ways, just keep a
+				// note to re-add it later on.
+				if (selectedWays.contains(rm.member)) {
+					rolesToReAdd.add(rm.role);
+				} else {
+					newRel.members.add(rm);
 				}
+			}
+			for (String role : rolesToReAdd) {
+				newRel.members.add(new RelationMember(role, selectedWays.peek()));
 			}
 			cmds.add(new ChangeCommand(r, newRel));
 		}
@@ -223,7 +236,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		//  3. If this algorithm does not produce a single way,
 		//     complain to the user.
 		//  4. Profit!
-		
+
 		HashSet<NodePair> chunkSet = new HashSet<NodePair>();
 		for (Way w : ways) {
 			if (w.nodes.size() == 0) continue;
@@ -277,8 +290,8 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		if (!chunks.isEmpty()) {
 			return tr("Could not combine ways "
 				+ "(They could not be merged into a single string of nodes)");
-		} 
-		
+		}
+
 		return nodeList;
 	}
 
