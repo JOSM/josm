@@ -71,6 +71,7 @@ public class CollectBackReferencesVisitor implements Visitor {
 		// if OSM primitives are made to hold a list of back
 		// references.
 		for (Relation r : ds.relations) {
+			if (r.incomplete || r.deleted) continue;
 			for (RelationMember m : r.members) {
 				if (m.member == p) {
 					if (!data.contains(r)) {
