@@ -16,6 +16,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -269,16 +271,45 @@ public class MapStatus extends JPanel implements Helpful {
 
 		// Listen to keyboard/mouse events for pressing/releasing alt key and
 		// inform the collector.
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener(){
-        	public void eventDispatched(AWTEvent event) {
-        		synchronized (collector) {
-        			mouseState.modifiers = ((InputEvent)event).getModifiersEx();
-        			if (event instanceof MouseEvent)
-        				mouseState.mousePos = ((MouseEvent)event).getPoint();
-        			collector.notify();
-        		}
-        	}
-        }, AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+		try {
+			Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener(){
+				public void eventDispatched(AWTEvent event) {
+					synchronized (collector) {
+						mouseState.modifiers = ((InputEvent)event).getModifiersEx();
+						if (event instanceof MouseEvent)
+							mouseState.mousePos = ((MouseEvent)event).getPoint();
+						collector.notify();
+					}
+				}
+			}, AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+		} catch (SecurityException ex) {
+			mapFrame.mapView.addMouseMotionListener(new MouseMotionListener() {
+				public void mouseMoved(MouseEvent e) {
+					synchronized (collector) {
+						mouseState.modifiers = e.getModifiersEx();
+						mouseState.mousePos = e.getPoint();
+						collector.notify();
+					}
+				}
+
+				public void mouseDragged(MouseEvent e) {
+					mouseMoved(e);
+				}
+			});
+
+			mapFrame.mapView.addKeyListener(new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					synchronized (collector) {
+						mouseState.modifiers = e.getModifiersEx();
+						collector.notify();
+					}
+				}
+
+				public void keyReleased(KeyEvent e) {
+					keyReleased(e);
+				}
+			});
+		}
 	}
 
 	public String helpTopic() {

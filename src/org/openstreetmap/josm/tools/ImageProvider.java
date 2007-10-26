@@ -166,6 +166,10 @@ public class ImageProvider {
 	}
 
 	static {
-		sources.add(ClassLoader.getSystemClassLoader());
+		try {
+			sources.add(ClassLoader.getSystemClassLoader());
+		} catch (SecurityException ex) {
+			sources.add(ImageProvider.class.getClassLoader());
+		}
 	}
 }

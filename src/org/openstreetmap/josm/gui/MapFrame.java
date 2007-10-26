@@ -100,8 +100,7 @@ public class MapFrame extends JPanel implements Destroyable {
 		addToggleDialog(new RelationListDialog());
 
 		// status line below the map
-		if (!Main.applet)
-	        statusLine = new MapStatus(this);
+		statusLine = new MapStatus(this);
 	}
 
 	/**

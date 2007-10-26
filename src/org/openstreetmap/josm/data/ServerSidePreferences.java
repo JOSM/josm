@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -45,8 +46,8 @@ public class ServerSidePreferences extends Preferences {
 		public String download() {
 			try {
 				System.out.println("reading preferences from "+serverUrl);
-				HttpURLConnection con = (HttpURLConnection)serverUrl.openConnection();
-				addAuth(con);
+				URLConnection con = serverUrl.openConnection();
+				if (con instanceof HttpURLConnection) addAuth((HttpURLConnection) con);
 				con.connect();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 				StringBuilder b = new StringBuilder();
@@ -54,7 +55,7 @@ public class ServerSidePreferences extends Preferences {
 					b.append(line);
 					b.append("\n");
 				}
-				con.disconnect();
+				if (con instanceof HttpURLConnection) ((HttpURLConnection) con).disconnect();
 				return b.toString();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -121,7 +122,9 @@ public class ServerSidePreferences extends Preferences {
 			properties.put("osm-server.username", userName);
 		if (!properties.containsKey("osm-server.password") && password != null)
 			properties.put("osm-server.password", password);
-		Reader in = new StringReader(connection.download());
+		String cont = connection.download();
+		if (cont == null) return;
+		Reader in = new StringReader(cont);
 		try {
 			XmlObjectParser.Uniform<Prop> parser = new XmlObjectParser.Uniform<Prop>(in, "tag", Prop.class);
 			for (Prop p : parser)
@@ -174,6 +177,8 @@ public class ServerSidePreferences extends Preferences {
 			in.close();
 			return bookmarks;
 		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();

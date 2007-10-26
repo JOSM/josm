@@ -3,9 +3,13 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.applet.AppletStub;
+import java.applet.AppletContext;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +17,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.JApplet;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -54,7 +59,6 @@ public class MainApplet extends JApplet {
 	};
 
 	private Map<String, Collection<String>> args = new HashMap<String, Collection<String>>();
-	private UploadPreferencesAction uploadPreferences = new UploadPreferencesAction(); 
 
 	@Override public String[][] getParameterInfo() {
 		return paramInfo;
@@ -100,7 +104,7 @@ public class MainApplet extends JApplet {
 
 		// remove offending stuff from JOSM (that would break the SecurityManager)
 		m.remove(m.fileMenu);
-		m.editMenu.add(uploadPreferences);
+		m.editMenu.add(new UploadPreferencesAction());
 		m.open.setEnabled(false);
 		m.exit.setEnabled(false);
 		m.save.setEnabled(false);
@@ -116,5 +120,44 @@ public class MainApplet extends JApplet {
 			v.addAll(Arrays.asList(param.split(";")));
 		}
 		return v;
+	}
+
+	public static void main(String[] args) {
+		final JFrame frame = new JFrame("Java OpenStreetMap Applet");
+		MainApplet applet = new MainApplet();
+		applet.setStub(new AppletStub() {
+			public void appletResize(int w, int h) {
+				frame.resize(w, h);
+			}
+
+			public AppletContext getAppletContext() {
+				return null;
+			}
+
+			public URL getCodeBase() {
+				try {
+					return new File(".").toURI().toURL();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+
+			public URL getDocumentBase() {
+				return getCodeBase();
+			}
+
+			public String getParameter(String k) {
+				return null;
+			}
+
+			public boolean isActive() {
+				return true;
+			}
+		});
+		applet.init();
+		applet.start();
+		frame.setContentPane(applet);
+		frame.setVisible(true);
 	}
 }
