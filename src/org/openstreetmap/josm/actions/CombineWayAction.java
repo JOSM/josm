@@ -52,6 +52,26 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		DataSet.selListeners.add(this);
 	}
 
+	private static class RelationRolePair {
+		public Relation rel;
+		public String role;
+
+		public RelationRolePair(Relation rel, String role) {
+			this.rel = rel;
+			this.role = role;
+		}
+
+		@Override public boolean equals(Object o) {
+			return o instanceof RelationRolePair
+				&& rel == ((RelationRolePair) o).rel
+				&& role.equals(((RelationRolePair) o).role);
+		}
+
+		@Override public int hashCode() {
+			return rel.hashCode() ^ role.hashCode();
+		}
+	}
+
 	public void actionPerformed(ActionEvent event) {
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		LinkedList<Way> selectedWays = new LinkedList<Way>();
@@ -73,10 +93,10 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		// dialog like we do for tags, to let the user choose which relations
 		// should be kept.
 		
-		// Step 1, iterate over all relations and create counters indicating
-		// how many of the selected ways are part of relation X in role Y
-		// (hashMap backlinks contains keys formed like X@Y)
-		HashMap<String, Integer> backlinks = new HashMap<String, Integer>();
+		// Step 1, iterate over all relations and figure out which of our
+		// selected ways are members of a relation.
+		HashMap<RelationRolePair, HashSet<Way>> backlinks =
+			new HashMap<RelationRolePair, HashSet<Way>>();
 		HashSet<Relation> relationsUsingWays = new HashSet<Relation>();
 		for (Relation r : Main.ds.relations) {
 			if (r.deleted || r.incomplete) continue;
@@ -84,13 +104,16 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 				if (rm.member instanceof Way) {
 					for(Way w : selectedWays) {
 						if (rm.member == w) {
-							String hash = Long.toString(r.id) + "@" + rm.role;
-							System.out.println(hash);
-							if (backlinks.containsKey(hash)) {
-								backlinks.put(hash, new Integer(backlinks.get(hash)+1));
+							RelationRolePair pair = new RelationRolePair(r, rm.role);
+							HashSet<Way> waylinks = new HashSet<Way>();
+							if (backlinks.containsKey(pair)) {
+								waylinks = backlinks.get(pair);
 							} else {
-								backlinks.put(hash, 1);
+								waylinks = new HashSet<Way>();
+								backlinks.put(pair, waylinks);
 							}
+							waylinks.add(w);
+
 							// this is just a cache for later use
 							relationsUsingWays.add(r);
 						}
@@ -101,10 +124,10 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		
 		// Step 2, all values of the backlinks HashMap must now equal the size
 		// of the selection.
-		for (Integer i : backlinks.values()) {
-			if (i.intValue() != selectedWays.size()) {
+		for (HashSet<Way> waylinks : backlinks.values()) {
+			if (!selectedWays.equals(waylinks)) {
 				JOptionPane.showMessageDialog(Main.parent, tr("The selected ways cannot be combined as they have differing relation memberships."));
-				return;				
+				return;
 			}
 		}
 
