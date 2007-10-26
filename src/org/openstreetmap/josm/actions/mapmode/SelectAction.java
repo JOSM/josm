@@ -232,25 +232,27 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			selectionManager.unregister(Main.map.mapView);
 		}
 		restoreCursor();
-    if (mode == Mode.move) {
-		  boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-      if (ctrl) {
-		    Collection<OsmPrimitive> selection = Main.ds.getSelected();
-		    Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
-		    Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);
-        if (nn != null) {
-          Node n = nn.iterator().next();
-          LinkedList<Node> selNodes = new LinkedList<Node>();
-          for (OsmPrimitive osm : selection)
-            if (osm instanceof Node)
-              selNodes.add((Node)osm);
-          if (selNodes.size() > 0) {
-            selNodes.add(n);
-            MergeNodesAction.mergeNodes(selNodes, n);
-          }
-        }
-      }
-    }
+
+		if (mode == Mode.move) {
+			boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+			if (ctrl) {
+				Collection<OsmPrimitive> selection = Main.ds.getSelected();
+				Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
+				Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);
+				if (nn != null) {
+					Node n = nn.iterator().next();
+				    LinkedList<Node> selNodes = new LinkedList<Node>();
+				    for (OsmPrimitive osm : selection)
+						if (osm instanceof Node)
+							selNodes.add((Node)osm);
+					if (selNodes.size() > 0) {
+						selNodes.add(n);
+						MergeNodesAction.mergeNodes(selNodes, n);
+					}
+				}
+			}
+		}
+
 		updateStatusLine();
 		mode = null;
 		updateStatusLine();
