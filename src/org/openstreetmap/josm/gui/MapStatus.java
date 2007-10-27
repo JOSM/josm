@@ -298,14 +298,14 @@ public class MapStatus extends JPanel implements Helpful {
 			});
 
 			mapFrame.mapView.addKeyListener(new KeyAdapter() {
-				public void keyPressed(KeyEvent e) {
+				@Override public void keyPressed(KeyEvent e) {
 					synchronized (collector) {
 						mouseState.modifiers = e.getModifiersEx();
 						collector.notify();
 					}
 				}
 
-				public void keyReleased(KeyEvent e) {
+				@Override public void keyReleased(KeyEvent e) {
 					keyReleased(e);
 				}
 			});
