@@ -53,12 +53,12 @@ public class AutoCompleteComboBox extends JComboBox {
 
 			}
 			
+			setSelectedItem(item);
+			
 			// select the completed part
 			JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
 			editor.setSelectionStart(offs + str.length());
 			editor.setSelectionEnd(getLength());
-			
-			setSelectedItem(item);
 		}
 
 		private void setSelectedItem(Object item) {
