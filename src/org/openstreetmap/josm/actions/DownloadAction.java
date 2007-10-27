@@ -41,6 +41,7 @@ public class DownloadAction extends JosmAction {
 
 		JOptionPane pane = new JOptionPane(downPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 		JDialog dlg = pane.createDialog(Main.parent, tr("Download"));
+		dialog.setOptionPane(pane);
 
 		if (dlg.getWidth() > 1000)
 			dlg.setSize(1000, dlg.getHeight());

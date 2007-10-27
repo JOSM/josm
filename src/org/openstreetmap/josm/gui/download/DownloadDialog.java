@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -32,7 +33,9 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class DownloadDialog extends JPanel {
 	
-
+	// the JOptionPane that contains this dialog. required for the closeDialog() method.
+	private JOptionPane optionPane;
+	
 	public interface DownloadTask {
 		/**
 		 * Execute the download.
@@ -137,4 +140,22 @@ public class DownloadDialog extends JPanel {
 	public int getSelectedTab() {
 		return tabpane.getSelectedIndex();
 	}
+	
+	/**
+	 * Closes the download dialog. This is intended to be called by one of
+	 * the various download area selection "plugins".
+	 * 
+	 * @param download true to download selected data, false to cancel download
+	 */
+	public void closeDownloadDialog(boolean download) {
+		optionPane.setValue(download ? JOptionPane.OK_OPTION : JOptionPane.CANCEL_OPTION);
+	}
+
+	/**
+	 * Has to be called after this dialog has been added to a JOptionPane.
+	 * @param optionPane
+	 */
+	public void setOptionPane(JOptionPane optionPane) {
+    	this.optionPane = optionPane;
+    }
 }

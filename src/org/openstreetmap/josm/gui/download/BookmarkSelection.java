@@ -7,6 +7,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -32,7 +35,7 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class BookmarkSelection implements DownloadSelection {
 
-	private Preferences.Bookmark tempBookmark= null;
+	private Preferences.Bookmark tempBookmark = null;
 	private BookmarkList bookmarks; 
 	
 	public void addGui(final DownloadDialog gui) {
@@ -41,6 +44,18 @@ public class BookmarkSelection implements DownloadSelection {
 		gui.tabpane.addTab("Bookmarks", dlg);
 
 		bookmarks = new BookmarkList();
+		
+		/* add a handler for "double click" mouse events */
+		MouseListener mouseListener = new MouseAdapter() {
+			@Override public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int index = bookmarks.locationToIndex(e.getPoint());
+					gui.closeDownloadDialog(true);
+				}
+			}
+		};
+ 		bookmarks.addMouseListener(mouseListener);
+		
 		bookmarks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				Preferences.Bookmark b = (Preferences.Bookmark)bookmarks.getSelectedValue();
