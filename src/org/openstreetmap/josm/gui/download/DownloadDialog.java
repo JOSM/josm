@@ -119,7 +119,7 @@ public class DownloadDialog extends JPanel {
 	}
 	
 	/**
-	 * Distributes a "bounding box changed" from ohne DownloadSelection 
+	 * Distributes a "bounding box changed" from one DownloadSelection 
 	 * object to the others, so they may update or clear their input 
 	 * fields.
 	 * 
