@@ -50,11 +50,14 @@ public class AutoCompleteComboBox extends JComboBox {
 				// remove all text and insert the completed string
 				super.remove(0, getLength());
 				super.insertString(0, item.toString(), a);
-				// select the completed part
-				JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
-				editor.setSelectionStart(offs + str.length());
-				editor.setSelectionEnd(getLength());
+
 			}
+			
+			// select the completed part
+			JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
+			editor.setSelectionStart(offs + str.length());
+			editor.setSelectionEnd(getLength());
+			
 			setSelectedItem(item);
 		}
 
