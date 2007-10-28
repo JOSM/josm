@@ -245,6 +245,7 @@ public class DrawAction extends MapMode {
 			} else {
 				title = tr("Add node into way");
 			}
+			for (Way w : reuseWays) w.selected = false;
 			Main.ds.setSelected(n);
 		} else if (!newNode) {
 			title = tr("Connect existing way to node");
