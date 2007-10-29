@@ -118,7 +118,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 * "tagged".
 	 */
 	public static Collection<String> uninteresting = 
-		new HashSet<String>(Arrays.asList(new String[] {"source", "note", "created_by"}));
+		new HashSet<String>(Arrays.asList(new String[] {"source", "created_by"}));
 	
 	/**
 	 * Implementation of the visitor scheme. Subclases have to call the correct
