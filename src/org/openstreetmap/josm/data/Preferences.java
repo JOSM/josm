@@ -169,7 +169,7 @@ public class Preferences {
 	 * Called after every put. In case of a problem, do nothing but output the error
 	 * in log.
 	 */
-	protected void save() {
+	public void save() {
 		try {
 			final PrintWriter out = new PrintWriter(new FileWriter(getPreferencesDir() + "preferences"), false);
 			for (final Entry<String, String> e : properties.entrySet()) {
@@ -188,11 +188,17 @@ public class Preferences {
 		properties.clear();
 		final BufferedReader in = new BufferedReader(new FileReader(getPreferencesDir()+"preferences"));
 		int lineNumber = 0;
+		ArrayList<Integer> errLines = new ArrayList<Integer>();
 		for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
 			final int i = line.indexOf('=');
-			if (i == -1 || i == 0)
-				throw new IOException("Malformed config file at line "+lineNumber);
+			if (i == -1 || i == 0) {
+				errLines.add(lineNumber);
+				continue;
+			}
 			properties.put(line.substring(0,i), line.substring(i+1));
+		}
+		if (!errLines.isEmpty()) {
+			throw new IOException("Malformed config file at lines " + errLines);
 		}
 	}
 

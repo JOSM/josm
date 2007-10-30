@@ -100,6 +100,11 @@ public class MainApplication extends Main {
 		}
 		if (!prefDir.exists())
 			prefDir.mkdirs();
+
+		if (!new File(Main.pref.getPreferencesDir()+"preferences").exists()) {
+			Main.pref.resetToDefault();
+		}
+
 		try {
 			if (args.containsKey("reset-preferences")) {
 				Main.pref.resetToDefault();
@@ -108,8 +113,10 @@ public class MainApplication extends Main {
 			}
 		} catch (final IOException e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Preferences could not be loaded. Writing default preference file to "+pref.getPreferencesDir()+"preferences");
-			Main.pref.resetToDefault();
+			String backup = Main.pref.getPreferencesDir() + "preferences.bak";
+			JOptionPane.showMessageDialog(null, "Preferences file had errors.  Making backup of old one to " + backup);
+			new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
+			Main.pref.save();
 		}
 
 		// load the early plugins
