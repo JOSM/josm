@@ -3,8 +3,6 @@ package org.openstreetmap.josm.data;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Properties;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -173,13 +170,13 @@ public class Preferences {
 	 * in log.
 	 */
 	protected void save() {
-		final Properties props = new Properties();
-		for (Map.Entry<String, String> e : properties.entrySet()) {
-			props.setProperty(e.getKey(), e.getValue());
-		}
-
 		try {
-			props.store(new FileOutputStream(getPreferencesDir() + "preferences"), null);
+			final PrintWriter out = new PrintWriter(new FileWriter(getPreferencesDir() + "preferences"), false);
+			for (final Entry<String, String> e : properties.entrySet()) {
+				if (!e.getValue().equals(""))
+					out.println(e.getKey() + "=" + e.getValue());
+			}
+			out.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
 			// do not message anything, since this can be called from strange
@@ -188,12 +185,14 @@ public class Preferences {
 	}
 
 	public void load() throws IOException {
-		final Properties props = new Properties();
-		props.load(new FileInputStream(getPreferencesDir()+"preferences"));
-
 		properties.clear();
-		for (String key : props.stringPropertyNames()) {
-			properties.put(key, props.getProperty(key));
+		final BufferedReader in = new BufferedReader(new FileReader(getPreferencesDir()+"preferences"));
+		int lineNumber = 0;
+		for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
+			final int i = line.indexOf('=');
+			if (i == -1 || i == 0)
+				throw new IOException("Malformed config file at line "+lineNumber);
+			properties.put(line.substring(0,i), line.substring(i+1));
 		}
 	}
 
