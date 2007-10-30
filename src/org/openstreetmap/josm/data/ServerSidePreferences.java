@@ -108,7 +108,7 @@ public class ServerSidePreferences extends Preferences {
 	/**
 	 * Do nothing on save. Preferences are uploaded using upload().
 	 */
-	@Override protected void save() {
+	@Override public void save() {
 	}
 
 	public static class Prop {
