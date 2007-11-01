@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ShortCutLabel;
  */
 abstract public class JosmAction extends AbstractAction implements Destroyable {
 
-	private KeyStroke shortCut;
+	public KeyStroke shortCut;
 
 	public JosmAction(String name, String iconName, String tooltip, int shortCut, int modifier, boolean register) {
 		super(name, ImageProvider.get(iconName));

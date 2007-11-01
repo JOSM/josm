@@ -207,7 +207,7 @@ public class ToolbarPreferences implements PreferenceSetting {
 	}
 
 	private String[] getToolString() {
-		String s = Main.pref.get("toolbar", "download;upload;|;new;open;save;exportgpx;|;undo;redo;|;preference");
+		String s = Main.pref.get("toolbar", "open;save;exportgpx;|;download;upload;|;undo;redo;|;preference");
 		if (s == null || s.equals("null") || s.equals(""))
 			return new String[0];
 		return s.split(";");

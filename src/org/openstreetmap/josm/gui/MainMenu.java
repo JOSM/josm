@@ -5,12 +5,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
@@ -49,95 +53,127 @@ import org.openstreetmap.josm.data.DataSetChecker;
  */
 public class MainMenu extends JMenuBar {
 
-	public final UndoAction undo = new UndoAction();
-	public final RedoAction redo = new RedoAction();
-	public final Action copy = new CopyAction();
-	public final Action paste = new PasteAction();
-	public final Action duplicate = new DuplicateAction(); 
-	public final Action selectAll = new SelectAllAction();
-	public final Action unselectAll = new UnselectAllAction();
-	public final Action search = new SearchAction();
+	/* File menu */
 	public final NewAction newAction = new NewAction();
 	public final OpenAction open = new OpenAction();
+	public final JosmAction save = new SaveAction(null);
+	public final JosmAction saveAs = new SaveAsAction(null);
+	public final JosmAction gpxExport = new GpxExportAction(null);
 	public final DownloadAction download = new DownloadAction();
-	public final Action reverseWay = new ReverseWayAction();
-	public final Action splitWay = new SplitWayAction();
-	public final Action combineWay = new CombineWayAction();
-	public final Action alignInCircle = new AlignInCircleAction();
-	public final Action alignInLine = new AlignInLineAction();
-	public final Action mergeNodes = new MergeNodesAction();
-	public final Action upload = new UploadAction();
-	public final Action save = new SaveAction(null);
-	public final Action saveAs = new SaveAsAction(null);
-	public final Action gpxExport = new GpxExportAction(null);
-	public final Action exit = new ExitAction();
-	public final Action preferences = new PreferencesAction();
+	public final JosmAction upload = new UploadAction();
+	public final JosmAction exit = new ExitAction();
+    
+	/* Edit menu */
+	public final UndoAction undo = new UndoAction();
+	public final RedoAction redo = new RedoAction();
+	public final JosmAction copy = new CopyAction();
+	public final JosmAction paste = new PasteAction();
+	public final JosmAction duplicate = new DuplicateAction(); 
+	public final JosmAction selectAll = new SelectAllAction();
+	public final JosmAction unselectAll = new UnselectAllAction();
+    /* crashes when loading data, if using JosmAction for search */
+	public final JosmAction search = new SearchAction();
+	public final JosmAction preferences = new PreferencesAction();
+        
+	/* View menu */
+    
+	/* Tools menu */
+	public final JosmAction splitWay = new SplitWayAction();
+	public final JosmAction combineWay = new CombineWayAction();
+	public final JosmAction reverseWay = new ReverseWayAction();
+	public final JosmAction alignInCircle = new AlignInCircleAction();
+	public final JosmAction alignInLine = new AlignInLineAction();
+	public final JosmAction mergeNodes = new MergeNodesAction();
+
+	/* Help menu */
 	public final HelpAction help = new HelpAction();
-	public final Action about = new AboutAction();
+	public final JosmAction about = new AboutAction();
 	
-	public final JMenu layerMenu = new JMenu(tr("Layer"));
+	public final JMenu fileMenu = new JMenu(tr("File"));
 	public final JMenu editMenu = new JMenu(tr("Edit"));
 	public final JMenu viewMenu = new JMenu(tr("View"));
-	public final JMenu helpMenu = new JMenu(tr("Help"));
-	public final JMenu fileMenu = new JMenu(tr("Files"));
-	public final JMenu connectionMenu = new JMenu(tr("Connection"));
 	public final JMenu toolsMenu = new JMenu(tr("Tools"));
 	public final JMenu presetsMenu = new JMenu(tr("Presets"));
-
-	public final JMenu zoomToMenu = new JMenu(tr("Zoom To"));
+	public final JMenu helpMenu = new JMenu(tr("Help"));
+        
+    /* not used */
+	public final JMenu layerMenu = new JMenu(tr("Layer"));
 
 
 	public MainMenu() {
+        JMenuItem current;
+        
 		fileMenu.setMnemonic('F');
-		fileMenu.add(newAction);
-		fileMenu.add(open);
-		fileMenu.add(save);
-		fileMenu.add(saveAs);
-		fileMenu.add(gpxExport);
+		current = fileMenu.add(newAction);
+		current.setAccelerator(newAction.shortCut);
+		current = fileMenu.add(open);
+		current.setAccelerator(open.shortCut);
+		current = fileMenu.add(save);
+		current.setAccelerator(save.shortCut);
+		current = fileMenu.add(saveAs);
+		current.setAccelerator(saveAs.shortCut);
+		current = fileMenu.add(gpxExport);
+		current.setAccelerator(gpxExport.shortCut);
 		fileMenu.addSeparator();
-		fileMenu.add(exit);
+		current = fileMenu.add(download);
+		current.setAccelerator(download.shortCut);
+		current = fileMenu.add(upload);
+		current.setAccelerator(upload.shortCut);
+		fileMenu.addSeparator();
+		current = fileMenu.add(exit);
+		current.setAccelerator(exit.shortCut);
 		add(fileMenu);
 
 		editMenu.setMnemonic('E');
-		editMenu.add(undo);
-		editMenu.add(redo);
+		current = editMenu.add(undo);
+		current.setAccelerator(undo.shortCut);
+		current = editMenu.add(redo);
+		current.setAccelerator(redo.shortCut);
 		editMenu.addSeparator();
-		editMenu.add(copy);
-		editMenu.add(paste);
-		editMenu.add(duplicate);
-		
+		current = editMenu.add(copy);
+		current.setAccelerator(copy.shortCut);
+		current = editMenu.add(paste);
+		current.setAccelerator(paste.shortCut);
+		current = editMenu.add(duplicate);
+		current.setAccelerator(duplicate.shortCut);
 		editMenu.addSeparator();
-		editMenu.add(selectAll);
-		editMenu.add(unselectAll);
+		current = editMenu.add(selectAll);
+		current.setAccelerator(selectAll.shortCut);
+		current = editMenu.add(unselectAll);
+		current.setAccelerator(unselectAll.shortCut);
 		editMenu.addSeparator();
-		editMenu.add(search);
+		current = editMenu.add(search);
+		current.setAccelerator(search.shortCut);
 		editMenu.addSeparator();
-		editMenu.add(preferences);
+		current = editMenu.add(preferences);
+		current.setAccelerator(preferences.shortCut);
 		add(editMenu);
 		
 		viewMenu.setMnemonic('V');
-		viewMenu.setVisible(false);
-		viewMenu.add(zoomToMenu);
-		for (String mode : AutoScaleAction.modes)
-			zoomToMenu.add(new AutoScaleAction(mode));
+        for (String mode : AutoScaleAction.modes) {
+            JosmAction autoScaleAction = new AutoScaleAction(mode);
+			current = viewMenu.add(autoScaleAction);
+		    current.setAccelerator(autoScaleAction.shortCut);
+        }
 		add(viewMenu);
 
 		toolsMenu.setMnemonic('T');
-		toolsMenu.add(alignInCircle);
-		toolsMenu.add(alignInLine);
+		current = toolsMenu.add(splitWay);
+		current.setAccelerator(splitWay.shortCut);
+		current = toolsMenu.add(combineWay);
+		current.setAccelerator(combineWay.shortCut);
 		toolsMenu.addSeparator();
-		toolsMenu.add(reverseWay);
+		current = toolsMenu.add(reverseWay);
+		current.setAccelerator(reverseWay.shortCut);
 		toolsMenu.addSeparator();
-		toolsMenu.add(splitWay);
-		toolsMenu.add(combineWay);
+		current = toolsMenu.add(alignInCircle);
+		current.setAccelerator(alignInCircle.shortCut);
+		current = toolsMenu.add(alignInLine);
+		current.setAccelerator(alignInLine.shortCut);
 		toolsMenu.addSeparator();
-		toolsMenu.add(mergeNodes);
+		current = toolsMenu.add(mergeNodes);
+		current.setAccelerator(mergeNodes.shortCut);
 		add(toolsMenu);
-
-		connectionMenu.setMnemonic('C');
-		connectionMenu.add(download);
-		connectionMenu.add(upload);
-		add(connectionMenu);
 
 		layerMenu.setMnemonic('L');
 		add(layerMenu);
@@ -146,18 +182,18 @@ public class MainMenu extends JMenuBar {
 		add(presetsMenu);
 		presetsMenu.setMnemonic('P');
 		
+		helpMenu.setMnemonic('H');
 		JMenuItem check = new JMenuItem("DEBUG: Check Dataset");
 		check.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				DataSetChecker.check();
             }
 		});
-		helpMenu.add(check);
-
-		helpMenu.setMnemonic('H');
-		helpMenu.add(help);
-		helpMenu.add(about);
+		current = helpMenu.add(check);
+		current = helpMenu.add(help);
+		//current.setAccelerator(help.shortCut);
+		current = helpMenu.add(about);
+		current.setAccelerator(about.shortCut);
 		add(helpMenu);
-		
     }
 }

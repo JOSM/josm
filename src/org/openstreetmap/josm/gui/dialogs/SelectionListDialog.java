@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.actions.JosmAction;
 
 /**
  * A small tool dialog for displaying the current selection. The selection manager
@@ -74,7 +75,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             }
 		}));
 
-		buttonPanel.add(createButton("Search", "dialogs/search", "Search for objects.", Main.main.menu.search));
+		buttonPanel.add(createButton("Search", "dialogs/search", "Search for objects.", (JosmAction) Main.main.menu.search));
 
 		add(buttonPanel, BorderLayout.SOUTH);
 		selectionChanged(Main.ds.getSelected());
