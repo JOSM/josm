@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Map;
 
@@ -99,7 +100,7 @@ public class GpxReader {
 				if (qName.equals("trkseg")) {
 					states.push(currentState);
 					currentState = state.trkseg;
-					currentTrackSeg = new LinkedList<WayPoint>();
+					currentTrackSeg = new ArrayList<WayPoint>();
 				}
 				if (qName.equals("link")) {
 					states.push(currentState);

@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class WithAttributes {
 	
-	public Map<String, Object> attr = new HashMap<String, Object>();
+	public Map<String, Object> attr = new HashMap<String, Object>(0);
 	
 	public String getString(String key) {
 		Object value = attr.get(key);
