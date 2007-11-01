@@ -101,17 +101,22 @@ public class GpxReader {
 					states.push(currentState);
 					currentState = state.trkseg;
 					currentTrackSeg = new ArrayList<WayPoint>();
-				}
-				if (qName.equals("link")) {
+				} else if (qName.equals("link")) {
 					states.push(currentState);
 					currentState = state.link;
 					currentLink = new GpxLink(atts.getValue("href"));
+				} else if (qName.equals("extensions")) {
+					states.push(currentState);
+					currentState = state.ext;
 				}
 				break;
 			case metadata:
 				if (qName.equals("author")) {
 					states.push(currentState);
 					currentState = state.author;
+				} else if (qName.equals("extensions")) {
+					states.push(currentState);
+					currentState = state.ext;
 				}
 				break;
 			case trkseg:
@@ -127,6 +132,9 @@ public class GpxReader {
 					states.push(currentState);
 					currentState = state.link;
 					currentLink = new GpxLink(atts.getValue("href"));
+				} else if (qName.equals("extensions")) {
+					states.push(currentState);
+					currentState = state.ext;
 				}
 				break;
 			case rte:
@@ -134,12 +142,14 @@ public class GpxReader {
 					states.push(currentState);
 					currentState = state.link;
 					currentLink = new GpxLink(atts.getValue("href"));
-				}
-				if (qName.equals("rtept")) {
+				} else if (qName.equals("rtept")) {
 					LatLon ll = new LatLon(Double.parseDouble(atts.getValue("lat")), Double.parseDouble(atts.getValue("lon")));
 					states.push(currentState);
 					currentState = state.wpt;
 					currentWayPoint = new WayPoint(ll);
+				} else if (qName.equals("extensions")) {
+					states.push(currentState);
+					currentState = state.ext;
 				}
 				break;
 			default:
@@ -231,14 +241,18 @@ public class GpxReader {
 						|| qName.equals("type") || qName.equals("number")) {
 					currentTrack.attr.put(qName, accumulator.toString());
 				}
+				break;
+			case ext:
+				if (qName.equals("extensions")) {
+					currentState = states.pop();
+				}
+				break;
 			default:
 				if (qName.equals("wpt")) {
 					currentState = states.pop();
 				} else if (qName.equals("rte")) {
 					currentState = states.pop();
 					currentData.routes.add(currentRoute);
-				} else if (qName.equals("extensions")) {
-					currentState = states.pop();
 				}
 			}
 		}
