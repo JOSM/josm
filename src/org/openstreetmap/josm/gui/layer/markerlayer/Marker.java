@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -17,6 +18,8 @@ import javax.swing.Icon;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxLink;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -71,21 +74,29 @@ public class Marker implements ActionListener {
 	// Add one Maker specifying the default behaviour.
 	static {
 		Marker.markerProducers.add(new MarkerProducers() {
-			public Marker createMarker(LatLon ll, Map<String,String> data, File relativePath) {
-				String link = data.get("link");
+			public Marker createMarker(WayPoint wpt, File relativePath) {
+				String uri = null;
+				// cheapest way to check whether "link" object exists and is a non-empty
+				// collection of GpxLink objects...
+				try {
+					for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
+						uri = oneLink.uri;
+						break;
+					}
+				} catch (Exception ex) {};
 
 				// Try a relative file:// url, if the link is not in an URL-compatible form
-				if (relativePath != null && link != null && !isWellFormedAddress(link))
-					link = new File(relativePath, link).toURI().toString();
+				if (relativePath != null && uri != null && !isWellFormedAddress(uri))
+					uri = new File(relativePath, uri).toURI().toString();
 
-				if (link == null)
-					return new Marker(ll, data.get("name"), data.get("symbol"));
-				if (link.endsWith(".wav"))
-					return AudioMarker.create(ll, link);
-				else if (link.endsWith(".png") || link.endsWith(".jpg") || link.endsWith(".jpeg") || link.endsWith(".gif"))
-					return ImageMarker.create(ll, link);
+				if (uri == null)
+					return new Marker(wpt.latlon, wpt.getString("name"), wpt.getString("symbol"));
+				if (uri.endsWith(".wav"))
+					return AudioMarker.create(wpt.latlon, uri);
+				else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
+					return ImageMarker.create(wpt.latlon, uri);
 				else
-					return WebMarker.create(ll, link);
+					return WebMarker.create(wpt.latlon, uri);
 			}
 
 			private boolean isWellFormedAddress(String link) {
@@ -159,9 +170,9 @@ public class Marker implements ActionListener {
 	 *        <code>null</code> for no relative URLs
 	 * @return a new Marker object
 	 */
-	public static Marker createMarker(LatLon ll, HashMap<String,String> data, File relativePath) {
+	public static Marker createMarker(WayPoint wpt, File relativePath) {
 		for (MarkerProducers maker : Marker.markerProducers) {
-			Marker marker = maker.createMarker(ll, data, relativePath);
+			Marker marker = maker.createMarker(wpt, relativePath);
 			if (marker != null)
 				return marker;
 		}

@@ -2,16 +2,17 @@
 package org.openstreetmap.josm.io;
 
 import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.RawGpsLayer.GpsPoint;
+
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxRoute;
+import org.openstreetmap.josm.data.gpx.GpxLink;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 
 /**
  * Exports a dataset to GPX data. All information available are tried to store in
@@ -21,6 +22,8 @@ import org.openstreetmap.josm.gui.layer.RawGpsLayer.GpsPoint;
  * GPX-Way segments are stored as 2-node-pairs, so no &lt;trkseg&gt; with more
  * or less than 2 &lt;trkpt&gt; are exported.
  * 
+ * TODO: to export OSM data as gpx do a transformation into a GpxData instance first
+ *
  * @author imi
  */
 public class GpxWriter extends XmlWriter {
@@ -29,184 +32,183 @@ public class GpxWriter extends XmlWriter {
 		super(out);
 	}
 
-	/**
-	 * Export the dataset to gpx.  The ways are converted to trksegs, each in
-	 * a seperate trk.  Finally, all remaining nodes are added as wpt.
-	 */
-	public static final class All implements XmlWriter.OsmWriterInterface {
-		private final DataSet data;
-		private final String name;
-		private final String desc;
-		private final String author;
-		private final String email;
-		private final String copyright;
-		private final String year;
-		private final String keywords;
-		private boolean metadataClosed = false;
+	public GpxWriter(OutputStream out) {
+		super(new PrintWriter(out));
+	}
 
-		public All(DataSet data, String name, String desc, String author, String email, String copyright, String year, String keywords) {
-			this.data = data;
-			this.name = name;
-			this.desc = desc;
-			this.author = author;
-			this.email = email;
-			this.copyright = copyright;
-			this.year = year;
-			this.keywords = keywords;
-		}
+	public GpxWriter() {
+		super(null);
+		//sorry for this one here, this will be cleaned up once the new scheme works
+	}
 
-		public void header(PrintWriter out) {
-			out.println("<gpx version='1.1' creator='JOSM' xmlns='http://www.topografix.com/GPX/1/1'>");
-			out.println("  <metadata>");
-			if (!name.equals(""))
-				out.println("    <name>"+XmlWriter.encode(name)+"</name>");
-			if (!desc.equals(""))
-				out.println("    <desc>"+XmlWriter.encode(desc)+"</desc>");
-			if (!author.equals("")) {
-				out.println("    <author>");
-				out.println("      <name>"+XmlWriter.encode(author)+"</name>");
-				if (!email.equals(""))
-					out.println("      <email>"+XmlWriter.encode(email)+"</email>");
-				out.println("    </author>");
-				if (!copyright.equals("")) {
-					out.println("    <copyright author='"+XmlWriter.encode(author)+"'>");
-					if (!year.equals(""))
-						out.println("      <year>"+XmlWriter.encode(year)+"</year>");
-					out.println("      <license>"+XmlWriter.encode(copyright)+"</license>");
-					out.println("    </copyright>");
+	private GpxData data;
+	private String indent = "";
+
+	private final static int WAY_POINT = 0;
+	private final static int ROUTE_POINT = 1;
+	private final static int TRACK_POINT = 2;
+
+	public void write(GpxData data) {
+		this.data = data;
+		out.println("<?xml version='1.0' encoding='UTF-8'?>");
+		out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\">");
+		indent = "  ";
+		writeMetaData();
+		writeWayPoints();
+		writeRoutes();
+		writeTracks();
+		out.print("</gpx>");
+		out.flush();
+		out.close();
+	}
+
+	private void writeAttr(Map<String, Object> attr) {
+		boolean hasAuthor = false;
+		for (Map.Entry<String, Object> ent : attr.entrySet()) {
+			String k = ent.getKey();
+			if (k.indexOf("author") == 0) {
+				hasAuthor = true;
+			} else if (k.equals("link")) {
+				for (GpxLink link : (Collection<GpxLink>) ent.getValue()) {
+					gpxLink(link);
 				}
+			} else {
+				simpleTag(k, (String) ent.getValue());
 			}
-			if (!keywords.equals("")) {
-				out.println("    <keywords>"+XmlWriter.encode(keywords)+"</keywords>");
-			}
-			// don't finish here, to give output functions the chance to add <bounds>
 		}
 
-		public void write(PrintWriter out) {
-			Collection<OsmPrimitive> all = data.allNonDeletedPrimitives();
-			if (all.isEmpty())
-				return;
-			GpxWriter writer = new GpxWriter(out);
-			// calculate bounds
-			Bounds b = new Bounds(new LatLon(Double.MAX_VALUE, Double.MAX_VALUE), new LatLon(-Double.MAX_VALUE, -Double.MAX_VALUE));
-			for (Node n : data.nodes)
-				if (!n.deleted)
-					b.extend(n.coor);
-			out.println("    <bounds minlat='"+b.min.lat()+"' minlon='"+b.min.lon()+"' maxlat='"+b.max.lat()+"' maxlon='"+b.max.lon()+"' />");
-			out.println("  </metadata>");
-			metadataClosed = true;
-
-			// add ways
-			for (Way w : data.ways) {
-				if (w.deleted)
-					continue;
-				out.println("  <trk>");
-						out.println("    <trkseg>");
-				for (Node n : w.nodes) {
-					writer.outputNode(n, false);
-					all.remove(n);
-			}
-					out.println("    </trkseg>");
-				out.println("  </trk>");
-				all.remove(w);
-			}
-
-			// finally add the remaining nodes
-			for (OsmPrimitive osm : all)
-				if (osm instanceof Node)
-					writer.outputNode((Node)osm, true);
+		if (hasAuthor) {
+			open("author");
+			simpleTag("name", (String) attr.get("authorname"));
+			simpleTag("email", (String) attr.get("authoremail"));
+			gpxLink((GpxLink) attr.get("authorlink"));
+			closeln("author");
 		}
 
-		public void footer(PrintWriter out) {
-			if (!metadataClosed)
-				out.println("  </metadata>");
-			out.println("</gpx>");
+		// TODO: copyright
+	}
+
+	private void writeMetaData() {
+		openln("metadata");
+		writeAttr(data.attr);
+
+		data.recalculateBounds();
+		Bounds bounds = data.bounds;
+		String b = "minlat=\"" + bounds.min.lat() + "\" minlon=\"" + bounds.min.lon() +
+			"\" maxlat=\"" + bounds.max.lat() + "\" maxlon=\"" + bounds.max.lon() + "\"" ;
+		inline("bounds", b);
+
+		closeln("metadata");
+	}
+
+	private void writeWayPoints() {
+		for (WayPoint pnt : data.waypoints) {
+			wayPoint(pnt, WAY_POINT);
+		}        
+	}
+	
+	private void writeRoutes() {
+		for (GpxRoute rte : data.routes) {
+			openln("rte");
+			writeAttr(rte.attr);
+			for (WayPoint pnt : rte.routePoints) {
+				wayPoint(pnt, ROUTE_POINT);
+			}
+			closeln("rte");
+		}
+	}
+	
+	private void writeTracks() {
+		for (GpxTrack trk : data.tracks) {
+			open("trk");
+			writeAttr(trk.attr);
+			for (Collection<WayPoint> seg : trk.trackSegs) {
+				openln("trkseg");
+				for (WayPoint pnt : seg) {
+					wayPoint(pnt, TRACK_POINT);
+				}
+				closeln("trkseg");
+			}
+			closeln("trk");
 		}
 	}
 
-
-	/**
-	 * Export the collection structure to gpx. The gpx will consists of only one
-	 * trk with as many trkseg as there are collections in the outer collection.
-	 */
-	public static final class Trk implements XmlWriter.OsmWriterInterface {
-		private final Collection<Collection<GpsPoint>> data;
-		public Trk(Collection<Collection<GpsPoint>> data) {
-			this.data = data;
-		}
-
-		public void header(PrintWriter out) {
-			out.println("<gpx version='1.1' creator='JOSM' xmlns='http://www.topografix.com/GPX/1/1'>");
-		}
-
-		public void write(PrintWriter out) {
-			if (data.size() == 0)
-				return;
-			// calculate bounds
-			Bounds b = new Bounds(new LatLon(Double.MAX_VALUE, Double.MAX_VALUE), new LatLon(Double.MIN_VALUE, Double.MIN_VALUE));
-			for (Collection<GpsPoint> c : data)
-				for (GpsPoint p : c)
-					b.extend(p.latlon);
-			out.println("  <metadata>");
-			out.println("    <bounds minlat='"+b.min.lat()+"' minlon='"+b.min.lon()+"' maxlat='"+b.max.lat()+"' maxlon='"+b.max.lon()+"' />");
-			out.println("  </metadata>");
-
-			out.println("  <trk>");
-			for (Collection<GpsPoint> c : data) {
-				out.println("    <trkseg>");
-				LatLon last = null;
-				for (GpsPoint p : c) {
-					// skip double entries
-					if (p.latlon.equals(last))
-						continue;
-					last =  p.latlon;
-					LatLon ll = p.latlon;
-					out.print("      <trkpt lat='"+ll.lat()+"' lon='"+ll.lon()+"'");
-					if (p.time != null && p.time.length()!=0) {
-						out.println(">");
-						out.println("        <time>"+p.time+"</time>");
-						out.println("      </trkpt>");
-					} else
-						out.println(" />");
-				}
-				out.println("    </trkseg>");
-			}
-			out.println("  </trk>");
-		}
-
-		public void footer(PrintWriter out) {
-			out.println("</gpx>");
-        }
+	private void openln(String tag) {
+		open(tag);
+		out.print("\n");
 	}
 
-	private void outputNode(Node n, boolean wpt) {
-		out.print((wpt?"  <wpt":"      <trkpt")+" lat='"+n.coor.lat()+"' lon='"+n.coor.lon()+"'");
-		if (n.keys == null) {
-			out.println(" />");
-			return;
+	private void open(String tag) {
+		out.print(indent + "<" + tag + ">");
+		indent += "  ";
+	}
+
+	private void openAtt(String tag, String attributes) {
+		out.println(indent + "<" + tag + " " + attributes + ">");
+		indent += "  ";
+	}
+	
+	private void inline(String tag, String attributes) {
+		out.println(indent + "<" + tag + " " + attributes + " />");
+	}
+
+	private void close(String tag) {
+		indent = indent.substring(2);
+		out.print(indent + "</" + tag + ">");
+	}
+
+	private void closeln(String tag) {
+		close(tag);
+		out.print("\n");
+	}
+
+	/**       
+	 * if content not null, open tag, write encoded content, and close tag
+	 * else do nothing.
+	 */
+	private void simpleTag(String tag, String content) {
+		if (content != null && content.length() > 0) {
+			open(tag);
+			out.print(encode(content));
+			out.println("</" + tag + ">");
+			indent = indent.substring(2);
 		}
-		boolean found = false;
-		String[] possibleKeys = {"ele", "time", "magvar", "geoidheight", "name",
-				"cmt", "desc", "src", "link", "sym", "type", "fix", "sat",
-				"hdop", "vdop", "pdop", "ageofgpsdata", "dgpsid"};
-		Collection<String> keys = n.keySet();
-		for (String k : possibleKeys) {
-			if (keys.contains(k)) {
-				if (!found) {
-					found = true;
-					out.println(">");
-				}
-				if (k.equals("link")) {
-					out.println("        <link>");
-					out.println("          <text>"+XmlWriter.encode(n.get(k))+"</text>");
-					out.println("        </link>");
-				} else
-					out.println("        <"+k+">"+XmlWriter.encode(n.get(k))+"</"+k+">");
-			}
+	}
+
+	/**       
+	 * output link
+	 */
+	private void gpxLink(GpxLink link) {
+		if (link != null) {
+			openAtt("link", "href=\"" + link.uri + "\"");
+			simpleTag("text", link.text);
+			simpleTag("type", link.type);
+			closeln("link");
 		}
-		if (found)
-			out.println(wpt?"  </wpt>":"      </trkpt>");
-		else
-			out.println(" />");
+	}
+
+	/**       
+	 * output a point
+	 */
+	private void wayPoint(WayPoint pnt, int mode) {
+		String type;
+		switch(mode) {
+		case WAY_POINT:
+			type = "wpt";
+			break;
+		case ROUTE_POINT:
+			type = "rtept";
+			break;
+		case TRACK_POINT:
+			type = "trkpt";
+			break;
+		default:
+			throw new RuntimeException("Bug detected. Please report this!");
+		}
+		if (pnt != null) {
+			openAtt(type, "lat=\"" + pnt.latlon.lat() + "\" lon=\"" + pnt.latlon.lon() + "\"");
+			writeAttr(pnt.attr);
+			closeln(type);
+		}
 	}
 }

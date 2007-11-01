@@ -57,11 +57,13 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.layer.RawGpsLayer.GpsPoint;
 import org.openstreetmap.josm.tools.DateParser;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
@@ -89,29 +91,32 @@ public class GeoImageLayer extends Layer {
 		boolean cancelled = false;
 		private GeoImageLayer layer;
 		private final Collection<File> files;
-		private final RawGpsLayer gpsLayer;
-		public Loader(Collection<File> files, RawGpsLayer gpsLayer) {
-			super(tr("Images for {0}", gpsLayer.name));
+		private final GpxLayer gpxLayer;
+		public Loader(Collection<File> files, GpxLayer gpxLayer) {
+			super(tr("Images for {0}", gpxLayer.name));
 			this.files = files;
-			this.gpsLayer = gpsLayer;
+			this.gpxLayer = gpxLayer;
 		}
 		@Override protected void realRun() throws IOException {
-			Main.pleaseWaitDlg.currentAction.setText(tr("Read GPS..."));
+			Main.pleaseWaitDlg.currentAction.setText(tr("Read GPX..."));
 			LinkedList<TimedPoint> gps = new LinkedList<TimedPoint>();
 
-			// Extract dates and locations from GPS input
-			for (Collection<GpsPoint> c : gpsLayer.data) {
-				for (GpsPoint p : c) {
-					if (p.time == null)
+			// Extract dates and locations from GPX input
+
+			for (GpxTrack trk : gpxLayer.data.tracks) {
+				for (Collection<WayPoint> segment : trk.trackSegs) {
+					for (WayPoint p : segment) {
+					if (!p.attr.containsKey("time"))
 						throw new IOException(tr("No time for point {0} x {1}",p.latlon.lat(),p.latlon.lon()));
 					Date d = null;
 					try {
-						d = DateParser.parse(p.time);
+						d = DateParser.parse((String) p.attr.get("time"));
 					} catch (ParseException e) {
-						throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.time,p.latlon.lat(),p.latlon.lon()));
+						throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.attr.get("time"),p.latlon.lat(),p.latlon.lon()));
 					}
 					gps.add(new TimedPoint(d, p.eastNorth));
 				}
+			}
 			}
 
 			if (gps.isEmpty()) {
@@ -187,8 +192,8 @@ public class GeoImageLayer extends Layer {
 		}
 	}
 
-	public static void create(Collection<File> files, RawGpsLayer gpsLayer) {
-		Loader loader = new Loader(files, gpsLayer);
+	public static void create(Collection<File> files, GpxLayer gpxLayer) {
+		Loader loader = new Loader(files, gpxLayer);
 		Main.worker.execute(loader);
 	}
 

@@ -16,7 +16,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -41,6 +43,9 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -308,6 +313,7 @@ public class OsmDataLayer extends Layer {
 				new JMenuItem(new SaveAction(this)),
 				new JMenuItem(new SaveAsAction(this)),
 				new JMenuItem(new GpxExportAction(this)),
+				new JMenuItem(new ConvertToGpxLayerAction()),
 				new JSeparator(),
 				new JMenuItem(new RenameLayerAction(associatedFile, this)),
 				new JSeparator(),
@@ -322,6 +328,53 @@ public class OsmDataLayer extends Layer {
 	public void fireDataChange() {
 		for (DataChangeListener dcl : listenerDataChanged) {
 			dcl.dataChanged(this);
+		}
+	}
+
+	public static GpxData toGpxData(DataSet data) {
+		GpxData gpxData = new GpxData();
+		HashSet<Node> doneNodes = new HashSet<Node>();
+		for (Way w : data.ways) {
+			if (w.incomplete || w.deleted) continue;
+			GpxTrack trk = new GpxTrack();
+			gpxData.tracks.add(trk);
+			ArrayList<WayPoint> trkseg = null;
+			for (Node n : w.nodes) {
+				if (n.incomplete || n.deleted) {
+					trkseg = null;
+					continue;
+				}
+				if (trkseg == null) {
+					trkseg = new ArrayList<WayPoint>();
+					trk.trackSegs.add(trkseg);
+				}
+				if (!n.tagged) {
+					doneNodes.add(n);
+				}
+				trkseg.add(new WayPoint(n.coor));
+			}
+		}
+		for (Node n : data.nodes) {
+			if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;
+			WayPoint wpt = new WayPoint(n.coor);
+			if (n.keys.containsKey("name")) {
+				wpt.attr.put("name", n.keys.get("name"));
+			}
+		}
+		return gpxData;
+	}
+
+	public GpxData toGpxData() {
+		return toGpxData(data);
+	}
+
+	public class ConvertToGpxLayerAction extends AbstractAction {
+		public ConvertToGpxLayerAction() {
+			super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
+		}
+		public void actionPerformed(ActionEvent e) {
+			Main.main.addLayer(new GpxLayer(toGpxData(), tr("Converted from: {0}", name)));
+			Main.main.removeLayer(OsmDataLayer.this);
 		}
 	}
 }

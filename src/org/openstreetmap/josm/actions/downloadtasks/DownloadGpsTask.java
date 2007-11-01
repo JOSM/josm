@@ -13,8 +13,9 @@ import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.RawGpsLayer;
-import org.openstreetmap.josm.gui.layer.RawGpsLayer.GpsPoint;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.xml.sax.SAXException;
 
@@ -23,7 +24,7 @@ public class DownloadGpsTask implements DownloadTask {
 	private static class Task extends PleaseWaitRunnable {
 		private BoundingBoxDownloader reader;
 		private DownloadAction action;
-		private Collection<Collection<GpsPoint>> rawData;
+		private GpxData rawData;
 		private final boolean newLayer;
 
 		public Task(boolean newLayer, BoundingBoxDownloader reader, DownloadAction action) {
@@ -40,8 +41,10 @@ public class DownloadGpsTask implements DownloadTask {
 		@Override protected void finish() {
 			if (rawData == null)
 				return;
-			String name = action.dialog.minlat + " " + action.dialog.minlon + " x " + action.dialog.maxlat + " " + action.dialog.maxlon;
-			RawGpsLayer layer = new RawGpsLayer(true, rawData, name, null);
+                        rawData.recalculateBounds();
+                        Bounds b = rawData.bounds;
+						String name = b.min.lat() + " " + b.min.lon() + " x " + b.max.lat() + " " + b.max.lon();
+						GpxLayer layer = new GpxLayer(rawData, name);
 			if (newLayer || findMergeLayer() == null)
 	            Main.main.addLayer(layer);
 			else
@@ -52,10 +55,10 @@ public class DownloadGpsTask implements DownloadTask {
 			if (Main.map == null)
 				return null;
 	        Layer active = Main.map.mapView.getActiveLayer();
-	        if (active != null && active instanceof RawGpsLayer)
+	        if (active != null && active instanceof GpxLayer)
 	        	return active;
 	        for (Layer l : Main.map.mapView.getAllLayers())
-	        	if (l instanceof RawGpsLayer && ((RawGpsLayer)l).fromServer)
+				if (l instanceof GpxLayer)
 	        		return l;
 	        return null;
         }

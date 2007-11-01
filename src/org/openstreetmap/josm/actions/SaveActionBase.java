@@ -17,21 +17,25 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.OsmWriter;
+import org.openstreetmap.josm.io.GpxWriter;
 
 public abstract class SaveActionBase extends DiskAccessAction {
 
-	private OsmDataLayer layer;
+	private Layer layer;
 
-	public SaveActionBase(String name, String iconName, String tooltip, int shortCut, int modifiers, OsmDataLayer layer) {
+	public SaveActionBase(String name, String iconName, String tooltip, int shortCut, int modifiers, Layer layer) {
 		super(name, iconName, tooltip, shortCut, modifiers);
 		this.layer = layer;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		OsmDataLayer layer = this.layer;
-		if (layer == null && Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer)
-			layer = (OsmDataLayer)Main.map.mapView.getActiveLayer();
+		Layer layer = this.layer;
+		if (layer == null && Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
+				|| Main.map.mapView.getActiveLayer() instanceof GpxLayer))
+			layer = Main.map.mapView.getActiveLayer();
 		if (layer == null)
 			layer = Main.main.editLayer();
 
@@ -50,20 +54,29 @@ public abstract class SaveActionBase extends DiskAccessAction {
 		Main.parent.repaint();
 	}
 
-	protected abstract File getFile(OsmDataLayer layer);
+	protected abstract File getFile(Layer layer);
 
 	/**
 	 * Checks whether it is ok to launch a save (whether we have data,
 	 * there is no conflict etc...)
 	 * @return <code>true</code>, if it is save to save.
 	 */
-	public boolean checkSaveConditions(OsmDataLayer layer) {
+	public boolean checkSaveConditions(Layer layer) {
+		if (layer == null) {
+			JOptionPane.showMessageDialog(Main.parent, tr("Internal Error: cannot check conditions for no layer. Please report this as a bug."));
+			return false;
+		}
 		if (Main.map == null) {
 			JOptionPane.showMessageDialog(Main.parent, tr("No document open so nothing to save."));
 			return false;
 		}
-		if (isDataSetEmpty(layer) && JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(Main.parent,tr("The document contains no data. Save anyway?"), tr("Empty document"), JOptionPane.YES_NO_OPTION))
+
+		if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer) && JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(Main.parent,tr("The document contains no data. Save anyway?"), tr("Empty document"), JOptionPane.YES_NO_OPTION)) {
 			return false;
+		}
+		if (layer instanceof GpxLayer && ((GpxLayer)layer).data == null) {
+			return false;
+		}
 		if (!Main.map.conflictDialog.conflicts.isEmpty()) {
 			int answer = JOptionPane.showConfirmDialog(Main.parent, 
 					tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"),tr("Conflicts"), JOptionPane.YES_NO_OPTION);
@@ -111,6 +124,15 @@ public abstract class SaveActionBase extends DiskAccessAction {
 		dstStream.close();
 	}
 
+	public static void save(File file, Layer layer) {
+		if (layer instanceof GpxLayer) {
+			save(file, (GpxLayer)layer);
+			((GpxLayer)layer).data.storageFile = file;
+		} else if (layer instanceof OsmDataLayer) {
+			save(file, (OsmDataLayer)layer);
+		}
+	}
+
 	public static void save(File file, OsmDataLayer layer) {
 		File tmpFile = null;
 		try {
@@ -135,6 +157,46 @@ public abstract class SaveActionBase extends DiskAccessAction {
 				return;
 			}
 			layer.cleanData(null, false);
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while saving.")+"\n"+e.getMessage());
+		}
+		try {
+			// if the file save failed, then the tempfile will not
+			// be deleted.  So, restore the backup if we made one.
+			if (tmpFile != null && tmpFile.exists()) {
+				copy(tmpFile, file);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while restoring backup file.")+"\n"+e.getMessage());
+		}
+	}
+
+	public static void save(File file, GpxLayer layer) {
+		File tmpFile = null;
+		try {
+			if (ExtensionFileFilter.filters[ExtensionFileFilter.GPX].acceptName(file.getPath())) {
+
+				// use a tmp file because if something errors out in the
+				// process of writing the file, we might just end up with
+				// a truncated file.  That can destroy lots of work.
+				if (file.exists()) {
+					tmpFile = new File(file.getPath() + "~");
+					copy(file, tmpFile);
+				}
+
+				new GpxWriter(new FileOutputStream(file)).write(layer.data);
+				if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null)) {
+					tmpFile.delete();
+				}
+			} else if (ExtensionFileFilter.filters[ExtensionFileFilter.CSV].acceptName(file.getPath())) {
+				JOptionPane.showMessageDialog(Main.parent, tr("CSV output not supported yet."));
+				return;
+			} else {
+				JOptionPane.showMessageDialog(Main.parent, tr("Unknown file extension."));
+				return;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while saving.")+"\n"+e.getMessage());

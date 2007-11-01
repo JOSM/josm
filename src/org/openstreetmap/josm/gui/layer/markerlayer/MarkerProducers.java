@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 
 /**
  * This interface has to be implemented by anyone who wants to create markers.
@@ -25,5 +26,5 @@ public interface MarkerProducers {
 	 *        <code>null</code> for no relative URLs
 	 * @return A Marker object, or <code>null</code>.
 	 */
-	public Marker createMarker(LatLon ll, Map<String,String> data, File relativePath);
+	public Marker createMarker(WayPoint wp, File relativePath);
 }

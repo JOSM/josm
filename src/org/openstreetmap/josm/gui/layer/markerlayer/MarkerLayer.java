@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.Icon;
@@ -24,6 +25,8 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -51,10 +54,17 @@ public class MarkerLayer extends Layer {
 	public final Collection<Marker> data;
 	private boolean mousePressed = false;
 	
-	public MarkerLayer(Collection<Marker> indata, String name, File associatedFile) {
+	public MarkerLayer(GpxData indata, String name, File associatedFile) {
+		
 		super(name);
 		this.associatedFile = associatedFile;
-		this.data = indata;
+		this.data = new ArrayList<Marker>();
+		
+		for (WayPoint wpt : indata.waypoints) {
+            Marker m = Marker.createMarker(wpt, indata.storageFile);
+            if (m != null)
+            	data.add(m);
+		}
 		
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run() {

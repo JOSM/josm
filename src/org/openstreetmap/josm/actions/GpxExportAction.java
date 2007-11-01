@@ -28,10 +28,12 @@ import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.RawGpsLayer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.data.gpx.GpxData;
 
 /**
  * Exports data to gpx.
@@ -117,16 +119,17 @@ public class GpxExportAction extends DiskAccessAction {
 			Main.pref.put("lastAuthorName", authorName.getText());
 		if (copyright.getText().length() != 0)
 			Main.pref.put("lastCopyright", copyright.getText());
-		
-		XmlWriter.OsmWriterInterface w;
-		if (layer instanceof RawGpsLayer)
-			w = new GpxWriter.Trk(((RawGpsLayer)layer).data);
+
+		GpxData gpxData;
+		if (layer instanceof OsmDataLayer)
+			gpxData = ((OsmDataLayer)layer).toGpxData();
+		else if (layer instanceof GpxLayer)
+			gpxData = ((GpxLayer)layer).data;
 		else
-			w = new GpxWriter.All(Main.ds, layer.name, desc.getText(),
-					authorName.getText(), email.getText(), copyright.getText(),
-					copyrightYear.getText(), keywords.getText());
+			gpxData = OsmDataLayer.toGpxData(Main.ds);
+		// TODO: add copyright, etc.
 		try {
-			XmlWriter.output(new FileOutputStream(file), w);
+			new GpxWriter(new FileOutputStream(file)).write(gpxData);
 		} catch (IOException x) {
 			x.printStackTrace();
 			JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}", fn)+":\n"+x.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);

@@ -5,15 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.LinkedList;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.gui.layer.RawGpsLayer.GpsPoint;
+import org.openstreetmap.josm.data.gpx.GpxData;
 import org.xml.sax.SAXException;
 
 
@@ -40,36 +38,31 @@ public class BoundingBoxDownloader extends OsmServerReader {
      * 		contain only one list, since the server cannot distinguish between
      * 		ways.
      */
-    public Collection<Collection<GpsPoint>> parseRawGps() throws IOException, SAXException {
+	public GpxData parseRawGps() throws IOException, SAXException {
 		Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
     	try {
     		String url = "trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=";
-    		Collection<Collection<GpsPoint>> data = new LinkedList<Collection<GpsPoint>>();
-    		Collection<GpsPoint> list = new LinkedList<GpsPoint>();
 
-    		for (int i = 0;;++i) {
+			boolean done = false;
+			GpxData result = null;
+			for (int i = 0;!done;++i) {
     			Main.pleaseWaitDlg.currentAction.setText(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
     			InputStream in = getInputStream(url+i, Main.pleaseWaitDlg);
     			if (in == null)
     				break;
-    			// Use only track points, since the server mix everything together 
-    			Collection<Collection<GpsPoint>> allWays = new RawGpsReader(in, null).trackData;
-
-    			boolean foundSomething = false;
-    			for (Collection<GpsPoint> t : allWays) {
-    				if (!t.isEmpty()) {
-    					foundSomething = true;
-    					list.addAll(t);
-    				}
+				GpxData currentGpx = new GpxReader(in, null).data;
+				if (result == null) {
+					result = currentGpx;
+				} else if (currentGpx.hasTrackPoints()) {
+					result.mergeFrom(currentGpx);
+				} else{
+					done = true;
     			}
-    			if (!foundSomething)
-    				break;
     			in.close();
     			activeConnection = null;
     		}
-    		if (!list.isEmpty())
-    			data.add(list);
-    		return data;
+			result.fromServer = true;
+			return result;
     	} catch (IllegalArgumentException e) {
     		// caused by HttpUrlConnection in case of illegal stuff in the response
     		if (cancel)
