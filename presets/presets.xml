@@ -122,7 +122,7 @@ Routes are currently not well supported, so I disable them here
 
 	<item name="Landuse" icon="presets/landuse.png">
 		<label text="Landuse" />
-		<combo key="landuse" text="Type:" values="farm,quarry,landfill,basin,reservoir,forest,allotments,residential,retail,commercial,industrial,brownfield,greenfield,cemetary,plaza" default="" delete_if_empty="true" />
+		<combo key="landuse" text="Type:" values="farm,quarry,landfill,basin,reservoir,forest,allotments,residential,retail,commercial,industrial,brownfield,greenfield,cemetery,plaza" default="" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
