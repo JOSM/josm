@@ -72,8 +72,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		putValue("help", "Action/Move/Move");
 		selectionManager = new SelectionManager(this, false, mapFrame.mapView);		
 		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","100")); } catch (NumberFormatException x) {};
-
-
 	}
 
 	private static Cursor getCursor(String name, String mod, int def) {
@@ -196,20 +194,25 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		
 		mouseDownTime = System.currentTimeMillis();
 
+		// find the object that was clicked on.
+		// if the object is not part of the current selection, clear current
+		// selection before proceeding.
+		Collection<OsmPrimitive> osmColl = null;
 		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint());
-		Collection<OsmPrimitive> osmColl;
 		if (osm == null) {
 			osmColl = Collections.emptySet();
+			Main.ds.setSelected();
 		} else {
 			osmColl = Collections.singleton(osm);
+			if (!Main.ds.getSelected().contains(osm)) Main.ds.setSelected();
 		}
-
+		
 		if (ctrl && shift) {
-			selectPrims(osmColl, true, false);
+			if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, true, false);
 			mode = Mode.rotate;
 			setCursor(ImageProvider.getCursor("rotate", null));
-		} else if (osm != null) {
-			selectPrims(osmColl, shift, ctrl);
+		} else if (!osmColl.isEmpty()) {
+			if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, shift, ctrl);
 			mode = Mode.move;
 		} else {
 			mode = Mode.select;
