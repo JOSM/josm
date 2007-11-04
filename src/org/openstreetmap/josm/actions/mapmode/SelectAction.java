@@ -206,9 +206,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			mode = Mode.rotate;
 			setCursor(ImageProvider.getCursor("rotate", null));
 		} else if (!osmColl.isEmpty()) {
-			// Only add to selection for now, we only do replace and remove in
-			// mouseReleased if the user didn't try to move.
-			selectPrims(osmColl, true, ctrl);
+			// Don't replace the selection now if the user clicked on a
+			// selected object (this would break moving of selected groups).
+			// We'll do that later in mouseReleased if the user didn't try to
+			// move.
+			selectPrims(osmColl,
+				shift || Main.ds.getSelected().containsAll(osmColl),
+				ctrl);
 			mode = Mode.move;
 		} else {
 			mode = Mode.select;
