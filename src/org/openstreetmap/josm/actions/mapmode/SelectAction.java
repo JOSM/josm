@@ -44,6 +44,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	enum Mode { move, rotate, select }
 	private Mode mode = null;
 	private long mouseDownTime = 0;
+	private boolean didMove = false;
 
 	/**
 	 * The old cursor before the user pressed the mouse button.
@@ -174,6 +175,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 		Main.map.mapView.repaint();
 		mousePos = e.getPoint();
+
+		didMove = true;
 	}
 
 	/**
@@ -193,26 +196,19 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 		
 		mouseDownTime = System.currentTimeMillis();
+		didMove = false;
 
-		// find the object that was clicked on.
-		// if the object is not part of the current selection, clear current
-		// selection before proceeding.
-		Collection<OsmPrimitive> osmColl = null;
-		OsmPrimitive osm = Main.map.mapView.getNearest(e.getPoint());
-		if (osm == null) {
-			osmColl = Collections.emptySet();
-			Main.ds.setSelected();
-		} else {
-			osmColl = Collections.singleton(osm);
-			if (!Main.ds.getSelected().contains(osm)) Main.ds.setSelected();
-		}
-		
+		Collection<OsmPrimitive> osmColl =
+			Main.map.mapView.getNearestCollection(e.getPoint());
+
 		if (ctrl && shift) {
 			if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, true, false);
 			mode = Mode.rotate;
 			setCursor(ImageProvider.getCursor("rotate", null));
 		} else if (!osmColl.isEmpty()) {
-			if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, shift, ctrl);
+			// Only add to selection for now, we only do replace and remove in
+			// mouseReleased if the user didn't try to move.
+			selectPrims(osmColl, true, ctrl);
 			mode = Mode.move;
 		} else {
 			mode = Mode.select;
@@ -238,7 +234,12 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 		if (mode == Mode.move) {
 			boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-			if (ctrl) {
+			boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+			if (!didMove) {
+				selectPrims(
+					Main.map.mapView.getNearestCollection(e.getPoint()),
+					shift, ctrl);
+			} else if (ctrl) {
 				Collection<OsmPrimitive> selection = Main.ds.getSelected();
 				Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 				Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);

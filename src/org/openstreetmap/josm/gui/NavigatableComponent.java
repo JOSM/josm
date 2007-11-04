@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.Point;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.List;
@@ -241,6 +242,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
 		if (osm == null)
 			osm = getNearestWay(p);
 		return osm;
+	}
+
+	/**
+	 * Returns a singleton of the nearest object, or else an empty collection.
+	 */
+	public Collection<OsmPrimitive> getNearestCollection(Point p) {
+		OsmPrimitive osm = getNearest(p);
+		if (osm == null) {
+			return Collections.emptySet();
+		} else {
+			return Collections.singleton(osm);
+		}
 	}
 
 	@Deprecated
