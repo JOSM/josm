@@ -15,16 +15,7 @@ import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 
 /**
- * Exports a dataset to GPX data. All information available are tried to store in
- * the gpx. If no corresponding tag is available in GPX, use 
- * <code>&lt;extensions&gt;</code> instead.
- * 
- * GPX-Way segments are stored as 2-node-pairs, so no &lt;trkseg&gt; with more
- * or less than 2 &lt;trkpt&gt; are exported.
- * 
- * TODO: to export OSM data as gpx do a transformation into a GpxData instance first
- *
- * @author imi
+ * Writes GPX files from GPX data or OSM data.
  */
 public class GpxWriter extends XmlWriter {
 
