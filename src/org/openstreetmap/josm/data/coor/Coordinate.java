@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
+import java.io.Serializable;
+
 
 
 
@@ -15,7 +17,7 @@ package org.openstreetmap.josm.data.coor;
  *
  * @author imi
  */ 
-abstract class Coordinate {
+abstract class Coordinate implements Serializable {
 
 	/**
 	 * Either easting or latitude
