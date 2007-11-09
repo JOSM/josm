@@ -21,7 +21,7 @@ public class SaveAsAction extends SaveActionBase {
 	 * @param layer Save this layer.
 	 */
 	public SaveAsAction(Layer layer) {
-		super(tr("Save as"), "save_as", tr("Save the current data to a new file."), KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, layer);
+		super(tr("Save as ..."), "save_as", tr("Save the current data to a new file."), KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, layer);
 	}
 	
 	@Override protected File getFile(Layer layer) {

@@ -59,7 +59,7 @@ public class UploadAction extends JosmAction {
 	public final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
 
 	public UploadAction() {
-		super(tr("Upload to OSM"), "upload", tr("Upload all changes to the OSM server."), KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true);
+		super(tr("Upload to OSM ..."), "upload", tr("Upload all changes to the OSM server."), KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true);
 
 		/**
 		 * Displays a screen where the actions that would be taken are displayed and

@@ -27,7 +27,7 @@ public class SearchAction extends JosmAction {
     private String lastSearch = "";
 
     public SearchAction() {
-    	super(tr("Search"), "dialogs/search", tr("Search for objects."), KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK, true);
+    	super(tr("Search ..."), "dialogs/search", tr("Search for objects."), KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK, true);
     }
 
     public void actionPerformed(ActionEvent e) {

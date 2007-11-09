@@ -108,6 +108,7 @@ public class MainMenu extends JMenuBar {
 		current.setAccelerator(newAction.shortCut);
 		current = fileMenu.add(open);
 		current.setAccelerator(open.shortCut);
+		fileMenu.addSeparator();
 		current = fileMenu.add(save);
 		current.setAccelerator(save.shortCut);
 		current = fileMenu.add(saveAs);

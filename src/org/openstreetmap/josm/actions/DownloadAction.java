@@ -30,7 +30,7 @@ public class DownloadAction extends JosmAction {
 	public DownloadDialog dialog;
 	
 	public DownloadAction() {
-		super(tr("Download from OSM"), "download", tr("Download map data from the OSM server."), KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true);
+		super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."), KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

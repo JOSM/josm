@@ -45,7 +45,7 @@ public class GpxExportAction extends DiskAccessAction {
 	private final Layer layer;
 
 	public GpxExportAction(Layer layer) {
-		super(tr("Export to GPX"), "exportgpx", tr("Export the data to GPX file."), KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK);
+		super(tr("Export to GPX ..."), "exportgpx", tr("Export the data to GPX file."), KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK);
 		this.layer = layer;
 	}
 
