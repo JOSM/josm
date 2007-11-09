@@ -96,9 +96,6 @@ public class MainMenu extends JMenuBar {
 	public final JMenu presetsMenu = new JMenu(tr("Presets"));
 	public final JMenu helpMenu = new JMenu(tr("Help"));
         
-    /* not used */
-	public final JMenu layerMenu = new JMenu(tr("Layer"));
-
 
 	public MainMenu() {
         JMenuItem current;
@@ -175,10 +172,6 @@ public class MainMenu extends JMenuBar {
 		current = toolsMenu.add(mergeNodes);
 		current.setAccelerator(mergeNodes.shortCut);
 		add(toolsMenu);
-
-		layerMenu.setMnemonic('L');
-		add(layerMenu);
-		layerMenu.setVisible(false);
 
 		add(presetsMenu);
 		presetsMenu.setMnemonic('P');
