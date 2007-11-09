@@ -79,7 +79,10 @@ public class DownloadDialog extends JPanel {
 		add(new JLabel(tr("Data Sources and Types")), GBC.eol().insets(0,5,0,0));
 		for (DownloadTask task : downloadTasks) {
 			add(task.getCheckBox(), GBC.eol().insets(20,0,0,0));
-			task.getCheckBox().setSelected(Main.pref.getBoolean("download."+task.getPreferencesSuffix()));
+			// don't override defaults, if we (initially) don't have any preferences
+			if(Main.pref.hasKey("download."+task.getPreferencesSuffix())) {
+				task.getCheckBox().setSelected(Main.pref.getBoolean("download."+task.getPreferencesSuffix()));
+			}
 		}
 		
 		// predefined download selections

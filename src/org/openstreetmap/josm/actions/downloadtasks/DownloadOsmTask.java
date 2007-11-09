@@ -54,7 +54,7 @@ public class DownloadOsmTask implements DownloadTask {
 				reader.cancel();
 		}
 	}
-	private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"));
+	private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"), true);
 
 	public void download(DownloadAction action, double minlat, double minlon, double maxlat, double maxlon) {
 		Task task = new Task(action.dialog.newLayer.isSelected(), new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon));
