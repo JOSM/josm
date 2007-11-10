@@ -12,13 +12,13 @@ TODO:
 
 	<item name="Road" icon="presets/ways.png">
     <label text="Roads" />
-		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,residential,unclassified,service,byway,unsurfaced,bridleway,track,cycleway,pedestrian,footway,steps" delete_if_empty="true" />
+		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,minor,residential,unclassified,service,byway,unsurfaced,bridleway,track,cycleway,pedestrian,footway,steps" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
   </item>
 
 	<item name="Road Point" icon="presets/waypoints.png">
 		<label text="Road Points" />
-		<combo key="highway" text="Type:" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,bridge,viaduct,stop,gate,bollard,bus_station,bus_halt,bus_stop,stile,cattle_grid,ford" default="" />
+		<combo key="highway" text="Type:" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,bridge,viaduct,stop,gate,bus_station,bus_halt,bus_stop,stile,cattle_grid,ford" default="" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
   </item>
 	
@@ -193,7 +193,7 @@ Routes are currently not well supported, so I disable them here
  
  <item name="Leisure" icon="presets/leisure.png">
 	 <label text="Leisure" />
-	 <combo key="leisure" text="Type:" values="stadium,marina,track,pitch,water_park,fishing,nature_reserve,park,garden,slipway,playground,common,park_bench" default="" delete_if_empty="true" />
+	 <combo key="leisure" text="Type:" values="stadium,marina,track,pitch,water_park,fishing,nature_reserve,park,garden,slipway,playground,common" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
@@ -245,12 +245,6 @@ Routes are currently not well supported, so I disable them here
  <item name="Recycling" icon="presets/recycling.png">
 	 <key key="amenity" value="recycling" />
  </item>
- 
-<!--
- <item name="Police" icon="presets/police.png">
-	 <key key="amenity" value="police" />
- </item>
--->
 
  <item name="Parking" icon="presets/parking.png">
 	 <key key="amenity" value="parking" />
@@ -272,6 +266,8 @@ Routes are currently not well supported, so I disable them here
 	 <label text="Create a place of worship" />
 	 <key key="amenity" value="place_of_worship" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+	 <combo key="religion" text="Religion:" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+	 <combo key="denomination" text="Denomination:" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,quaker,shia,sunni" default="" delete_if_empty="true" />
  </item>
 
  <item name="Restaurant" icon="presets/restaurant.png">
