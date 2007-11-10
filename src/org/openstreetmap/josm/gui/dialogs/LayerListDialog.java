@@ -199,6 +199,17 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 				if (e.isPopupTrigger())
 					openPopup(e);
 			}
+			@Override public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int index = instance.locationToIndex(e.getPoint());
+					Layer layer = (Layer)instance.getModel().getElementAt(index);
+					String current = Main.pref.get("marker.show "+layer.name,"show");
+					Main.pref.put("marker.show "+layer.name, current.equalsIgnoreCase("show") ? "hide" : "show");
+					layer.visible = !layer.visible;
+					Main.map.mapView.repaint();
+					instance.repaint();
+				}
+			}
 		});
 
 
