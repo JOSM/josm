@@ -148,14 +148,14 @@ abstract public class Main {
 	 * Set the layer menu (changed when active layer changes).
 	 */
 	public final void setLayerMenu(Component[] entries) {
-		if (entries == null || entries.length == 0)
-			menu.layerMenu.setVisible(false);
-		else {
-			menu.layerMenu.removeAll();
-			for (Component c : entries)
-				menu.layerMenu.add(c);
-			menu.layerMenu.setVisible(true);
-		}
+		//if (entries == null || entries.length == 0)
+			//menu.layerMenu.setVisible(false);
+		//else {
+			//menu.layerMenu.removeAll();
+			//for (Component c : entries)
+				//menu.layerMenu.add(c);
+			//menu.layerMenu.setVisible(true);
+		//}
 	}
 
 	/**

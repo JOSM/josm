@@ -21,7 +21,7 @@ public class RedoAction extends JosmAction {
 	 * Construct the action with "Undo" as label.
 	 */
 	public RedoAction() {
-		super(tr("Redo"), "redo", tr("Redo the last undone action."), KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true);
+		super(tr("Redo"), "redo", tr("Redo the last undone action."), KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK, true);
 		setEnabled(false);
 	}
 
