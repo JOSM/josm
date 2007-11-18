@@ -50,8 +50,13 @@ public class NameVisitor implements Visitor {
 	 */
 	public void visit(Node n) {
 		name = n.get("name");
-		if (name == null)
-			name = (n.id==0?"":""+n.id)+" ("+latLonFormat.format(n.coor.lat())+", "+latLonFormat.format(n.coor.lon())+")";
+		if (name == null) {
+			if (n.incomplete) {
+				name = "incomplete" + (n.id==0?"":" "+n.id);
+			} else {
+				name = (n.id==0?"":""+n.id)+" ("+latLonFormat.format(n.coor.lat())+", "+latLonFormat.format(n.coor.lon())+")";
+			}
+		}
 		addId(n);
 		icon = ImageProvider.get("data", "node");
 		trn("node", "nodes", 0); // no marktrn available
