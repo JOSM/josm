@@ -50,10 +50,6 @@ public class DrawAction extends MapMode {
 		// Add extra shortcut N
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), tr("Draw"));
-
-		// Add extra shortcut U
-		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(KeyEvent.VK_U, 0), tr("Unselect All"));
 		
 		//putValue("help", "Action/AddNode/Autnode");
 	}

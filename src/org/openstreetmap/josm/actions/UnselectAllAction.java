@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 
@@ -12,6 +14,10 @@ public class UnselectAllAction extends JosmAction {
 
 	public UnselectAllAction() {
 		super(tr("Unselect All"),"unselectall", tr("Unselect all objects."), KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, true);
+
+		// Add extra shortcut U
+		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+			KeyStroke.getKeyStroke(KeyEvent.VK_U, 0), tr("Unselect All"));
     }
 
 	public void actionPerformed(ActionEvent e) {
