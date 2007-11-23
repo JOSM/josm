@@ -26,7 +26,7 @@ public final class ReverseWayAction extends JosmAction {
     public ReverseWayAction() {
     	super(tr("Reverse ways"), "wayflip",
 			tr("Reverse the direction of all selected ways."),
-			KeyEvent.VK_R, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
+			KeyEvent.VK_R, 0, true);
     }
 
 	public void actionPerformed(ActionEvent e) {

@@ -52,7 +52,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class MergeNodesAction extends JosmAction implements SelectionChangedListener {
 
 	public MergeNodesAction() {
-		super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into one."), KeyEvent.VK_M, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
+		super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into one."), KeyEvent.VK_M, 0, true);
 		DataSet.selListeners.add(this);
 	}
 

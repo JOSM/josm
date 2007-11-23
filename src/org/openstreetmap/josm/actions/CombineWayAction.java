@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class CombineWayAction extends JosmAction implements SelectionChangedListener {
 
 	public CombineWayAction() {
-		super(tr("Combine Way"), "combineway", tr("Combine several ways into one."), KeyEvent.VK_C, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
+		super(tr("Combine Way"), "combineway", tr("Combine several ways into one."), KeyEvent.VK_C, 0, true);
 		DataSet.selListeners.add(this);
 	}
 

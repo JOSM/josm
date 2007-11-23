@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public final class AlignInCircleAction extends JosmAction {
 
 	public AlignInCircleAction() {
-		super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."), KeyEvent.VK_O, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
+		super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."), KeyEvent.VK_O, 0, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

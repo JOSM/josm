@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public final class AlignInLineAction extends JosmAction {
 
 	public AlignInLineAction() {
-		super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes onto a line."), KeyEvent.VK_L, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
+		super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes onto a line."), KeyEvent.VK_L, 0, true);
 	}
 
 	/**

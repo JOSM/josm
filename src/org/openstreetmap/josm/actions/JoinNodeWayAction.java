@@ -34,7 +34,7 @@ import javax.swing.AbstractAction;
 public class JoinNodeWayAction extends JosmAction {
 	public JoinNodeWayAction() {
 	    super(tr("Join node to way"), "joinnodeway",
-			tr("Join a node into the nearest way segments"), KeyEvent.VK_J, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
+			tr("Join a node into the nearest way segments"), KeyEvent.VK_J, 0, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
