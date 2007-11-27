@@ -12,7 +12,7 @@ TODO:
 
 	<item name="Road" icon="presets/ways.png">
     <label text="Roads" />
-		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,minor,residential,unclassified,service,byway,unsurfaced,bridleway,track,cycleway,pedestrian,footway,steps" delete_if_empty="true" />
+		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,residential,unclassified,service,byway,unsurfaced,bridleway,track,cycleway,pedestrian,footway,steps" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
   </item>
 
