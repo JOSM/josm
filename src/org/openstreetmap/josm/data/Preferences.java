@@ -208,6 +208,11 @@ public class Preferences {
 		properties.put("projection", "org.openstreetmap.josm.data.projection.Epsg4326");
 		properties.put("propertiesdialog.visible", "true");
 		properties.put("osm-server.url", "http://www.openstreetmap.org/api");
+		if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
+			properties.put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
+		} else {
+			properties.put("laf", "javax.swing.plaf.windows.WindowsLookAndFeel");
+		}
 		save();
 	}
 
