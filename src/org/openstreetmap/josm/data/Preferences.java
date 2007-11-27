@@ -211,7 +211,7 @@ public class Preferences {
 		if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
 			properties.put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
 		} else {
-			properties.put("laf", "javax.swing.plaf.windows.WindowsLookAndFeel");
+			properties.put("laf", "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		}
 		save();
 	}
