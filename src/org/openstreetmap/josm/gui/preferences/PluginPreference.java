@@ -79,7 +79,7 @@ public class PluginPreference implements PreferenceSetting {
 		pluginPane.setBorder(null);
 		plugin.add(pluginPane, GBC.eol().fill(GBC.BOTH));
 		plugin.add(GBC.glue(0,10), GBC.eol());
-		JButton morePlugins = new JButton(tr("Check for plugins"));
+		JButton morePlugins = new JButton(tr("Download List"));
 		morePlugins.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				int count = PluginDownloader.downloadDescription();
@@ -94,7 +94,7 @@ public class PluginPreference implements PreferenceSetting {
 		});
 		plugin.add(morePlugins, GBC.std().insets(0,0,10,0));
 
-		JButton update = new JButton(tr("Update current"));
+		JButton update = new JButton(tr("Update"));
 		update.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				update();
@@ -103,7 +103,7 @@ public class PluginPreference implements PreferenceSetting {
 		});
 		plugin.add(update, GBC.std().insets(0,0,10,0));
 
-		JButton configureSites = new JButton(tr("Configure Plugin Sites"));
+		JButton configureSites = new JButton(tr("Configure Sites ..."));
 		configureSites.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				configureSites();
