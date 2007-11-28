@@ -204,9 +204,12 @@ public class Preferences {
 
 	public final void resetToDefault() {
 		properties.clear();
-		properties.put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
 		properties.put("projection", "org.openstreetmap.josm.data.projection.Epsg4326");
+		properties.put("draw.segment.direction", "true");
+		properties.put("layerlist.visible", "true");
 		properties.put("propertiesdialog.visible", "true");
+		properties.put("selectionlist.visible", "true");
+		properties.put("commandstack.visible", "true");
 		properties.put("osm-server.url", "http://www.openstreetmap.org/api");
 		if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
 			properties.put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
