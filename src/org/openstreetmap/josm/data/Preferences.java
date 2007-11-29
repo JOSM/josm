@@ -204,7 +204,7 @@ public class Preferences {
 
 	public final void resetToDefault() {
 		properties.clear();
-		properties.put("projection", "org.openstreetmap.josm.data.projection.Epsg4326");
+		properties.put("projection", "org.openstreetmap.josm.data.projection.Mercator");
 		properties.put("draw.segment.direction", "true");
 		properties.put("layerlist.visible", "true");
 		properties.put("propertiesdialog.visible", "true");
