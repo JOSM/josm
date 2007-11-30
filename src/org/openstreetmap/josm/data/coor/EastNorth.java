@@ -21,6 +21,10 @@ public class EastNorth extends Coordinate {
 	public double north() {
 		return y;
 	}
+
+	public EastNorth add(double dx, double dy) {
+		return new EastNorth(x+dx, y+dy);
+	}
 	
 	@Override public String toString() {
 		return "EastNorth[e="+x+", n="+y+"]";
