@@ -38,4 +38,12 @@ public class Mercator implements Projection {
 	public double scaleFactor() {
 	    return 1/Math.PI/2;
     }
+
+	@Override public boolean equals(Object o) {
+		return o instanceof Mercator;
+	}
+
+	@Override public int hashCode() {
+		return Mercator.class.hashCode();
+	}
 }

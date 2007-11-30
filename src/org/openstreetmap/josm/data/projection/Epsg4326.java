@@ -30,4 +30,12 @@ public class Epsg4326 implements Projection {
 	public double scaleFactor() {
 	    return 1.0/360;
     }
+
+	@Override public boolean equals(Object o) {
+		return o instanceof Epsg4326;
+	}
+
+	@Override public int hashCode() {
+		return Epsg4326.class.hashCode();
+	}
 }
