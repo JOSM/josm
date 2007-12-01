@@ -53,111 +53,42 @@ public class MergeVisitor implements Visitor {
 		for (Relation r : ds.relations) if (r.id != 0) relshash.put(r.id, r);
 	}
 
-	/**
-	 * Merge the node if the id matches with any of the internal set or if
-	 * either id is zero, merge if lat/lon matches.
-	 */
-	public void visit(Node other) {
-		if (mergeAfterId(ds.nodes, nodeshash, other))
+	private <P extends OsmPrimitive> void genMerge(P other,
+			Collection<P> myprims, Collection<P> mergeprims,
+			HashMap<Long, P> primhash) {
+		// 1. Try to find an identical prim with the same id.
+		if (mergeAfterId(myprims, primhash, other))
 			return;
 
-		Node my = null;
-		for (Node n : ds.nodes) {
-			if (match(n, other) && ((mergeds == null) || (!mergeds.nodes.contains(n)))) {
-				my = n;
-				break;
+		// 2. Try to find a prim we can merge with the prim from the other ds.
+		for (P my : myprims) {
+			if (!mergeprims.contains(my)) { // This checks for id equality.
+				continue;
 			}
-		}
-		if (my == null)
-			ds.nodes.add(other);
-		else {
-			merged.put(other, my);
-			mergeCommon(my, other);
-			if (my.modified && !other.modified)
+
+			if (match(my, other)) {
+				merged.put(other, my);
+				mergeCommon(my, other);
 				return;
-			if (!my.coor.equalsEpsilon(other.coor)) {
-				my.coor = other.coor;
-				my.eastNorth = other.eastNorth;
-				my.modified = other.modified;
 			}
 		}
+
+		// 3. No idea how to merge that.  Simply add it unchanged.
+		myprims.add(other);
 	}
 
-	/**
-	 * Merge the way if id matches or if all nodes match and the
-	 * id is zero of either way.
-	 */
+	public void visit(Node other) {
+		genMerge(other, ds.nodes, mergeds.nodes, nodeshash);
+	}
+
 	public void visit(Way other) {
 		fixWay(other);
-		if (mergeAfterId(ds.ways, wayshash, other))
-			return;
-
-		Way my = null;
-		for (Way w : ds.ways) {
-			if (match(other, w) && ((mergeds == null) || (!mergeds.ways.contains(w)))) {
-				my = w;
-				break;
-			}
-		}
-		if (my == null) {
-			ds.ways.add(other);
-		} else {
-			merged.put(other, my);
-			mergeCommon(my, other);
-			if (my.modified && !other.modified)
-				return;
-			boolean same = true;
-			Iterator<Node> it = other.nodes.iterator();
-			for (Node n : my.nodes) {
-				if (!match(n, it.next()))
-					same = false;
-			}
-			if (!same) {
-				my.modified = other.modified;
-			}
-		}
+		genMerge(other, ds.ways, mergeds.ways, wayshash);
 	}
 
-	/**
-	 * Merge the relation if id matches or if all members match and the
-	 * id of either relation is zero.
-	 */
 	public void visit(Relation other) {
 		fixRelation(other);
-		if (mergeAfterId(ds.relations, relshash, other))
-			return;
-
-		Relation my = null;
-		for (Relation e : ds.relations) {
-			if (match(other, e) && ((mergeds == null) || (!mergeds.relations.contains(e)))) {
-				my = e;
-				break;
-			}
-		}
-
-		if (my == null) {
-			// Add the relation
-			ds.relations.add(other);
-		} else {
-			merged.put(other, my);
-			mergeCommon(my, other);
-			if (my.modified && !other.modified)
-				return;
-			boolean same = true;
-			if (other.members.size() != my.members.size()) {
-					same = false;
-			} else {
-				for (RelationMember em : my.members) {
-					if (!other.members.contains(em)) {
-						same = false;
-						break;
-					}
-				}
-			}
-			if (!same) {
-				my.modified = other.modified;
-			}
-		}
+		genMerge(other, ds.relations, mergeds.relations, relshash);
 	}
 
 	/**
@@ -209,48 +140,54 @@ public class MergeVisitor implements Visitor {
 		}
 	}
 
-	/**
-	 * @return Whether the nodes match (in sense of "be mergable").
-	 */
-	private boolean match(Node n1, Node n2) {
-		if (n1.id == 0 || n2.id == 0)
-			return n1.coor.equalsEpsilon(n2.coor);
-		return n1.id == n2.id;
+	private static <P extends OsmPrimitive> boolean match(P p1, P p2) {
+		if (p1.id == 0 || p2.id == 0) {
+			return realMatch(p1, p2);
+		}
+		return p1.id == p2.id;
 	}
 
-	/**
-	 * @return Whether the ways match (in sense of "be mergable").
+	/** @return true if the prims have pretty much the same data, i.e. the
+	 * same position, the same members, ...
 	 */
-	private boolean match(Way w1, Way w2) {
-		if (w1.id == 0 || w2.id == 0) {
-			if (w1.nodes.size() != w2.nodes.size())
+	// Java cannot dispatch on generics...
+	private static boolean realMatch(OsmPrimitive p1, OsmPrimitive p2) {
+		if (p1 instanceof Node && p2 instanceof Node) {
+			return realMatch((Node) p1, (Node) p2);
+		} else if (p1 instanceof Way && p2 instanceof Way) {
+			return realMatch((Way) p1, (Way) p2);
+		} else if (p1 instanceof Relation && p2 instanceof Relation) {
+			return realMatch((Relation) p1, (Relation) p2);
+		} else {
+			throw new RuntimeException("arguments have unknown type");
+		}
+	}
+
+	private static boolean realMatch(Node n1, Node n2) {
+		return n1.coor.equalsEpsilon(n2.coor);
+	}
+
+	private static boolean realMatch(Way w1, Way w2) {
+		if (w1.nodes.size() != w2.nodes.size())
 			return false;
-			Iterator<Node> it = w1.nodes.iterator();
-			for (Node n : w2.nodes)
-				if (!match(n, it.next()))
-					return false;
-			return true;
-		}
-		return w1.id == w2.id;
-	}
-	/**
-	 * @return Whether the relations match (in sense of "be mergable").
-	 */
-	private boolean match(Relation w1, Relation w2) {
-		// FIXME this is not perfect yet...
-		if (w1.id == 0 || w2.id == 0) {
-			if (w1.members.size() != w2.members.size())
+		Iterator<Node> it = w1.nodes.iterator();
+		for (Node n : w2.nodes)
+			if (!match(n, it.next()))
 				return false;
-			for (RelationMember em : w1.members) {
-				if (!w2.members.contains(em)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return w1.id == w2.id;
+		return true;
 	}
 
+	private static boolean realMatch(Relation w1, Relation w2) {
+		// FIXME this is not perfect yet...
+		if (w1.members.size() != w2.members.size())
+			return false;
+		for (RelationMember em : w1.members) {
+			if (!w2.members.contains(em)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Merge the common parts of an osm primitive.
