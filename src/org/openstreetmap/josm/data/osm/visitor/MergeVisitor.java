@@ -32,6 +32,10 @@ public class MergeVisitor implements Visitor {
 	private final DataSet ds;
 	private final DataSet mergeds;
 
+	private final HashMap<Long, Node> nodeshash = new HashMap<Long, Node>();
+	private final HashMap<Long, Way> wayshash = new HashMap<Long, Way>();
+	private final HashMap<Long, Relation> relshash = new HashMap<Long, Relation>();
+
 	/**
 	 * A list of all primitives that got replaced with other primitives.
 	 * Key is the primitives in the other's dataset and the value is the one that is now
@@ -43,6 +47,10 @@ public class MergeVisitor implements Visitor {
 	public MergeVisitor(DataSet ds, DataSet mergeds) {
 		this.ds = ds;
 		this.mergeds = mergeds;
+
+		for (Node n : ds.nodes) if (n.id != 0) nodeshash.put(n.id, n);
+		for (Way w : ds.ways) if (w.id != 0) wayshash.put(w.id, w);
+		for (Relation r : ds.relations) if (r.id != 0) relshash.put(r.id, r);
 	}
 
 	/**
@@ -50,7 +58,7 @@ public class MergeVisitor implements Visitor {
 	 * either id is zero, merge if lat/lon matches.
 	 */
 	public void visit(Node other) {
-		if (mergeAfterId(ds.nodes, other))
+		if (mergeAfterId(ds.nodes, nodeshash, other))
 			return;
 
 		Node my = null;
@@ -81,7 +89,7 @@ public class MergeVisitor implements Visitor {
 	 */
 	public void visit(Way other) {
 		fixWay(other);
-		if (mergeAfterId(ds.ways, other))
+		if (mergeAfterId(ds.ways, wayshash, other))
 			return;
 
 		Way my = null;
@@ -116,7 +124,7 @@ public class MergeVisitor implements Visitor {
 	 */
 	public void visit(Relation other) {
 		fixRelation(other);
-		if (mergeAfterId(ds.relations, other))
+		if (mergeAfterId(ds.relations, relshash, other))
 			return;
 
 		Relation my = null;
@@ -274,7 +282,17 @@ public class MergeVisitor implements Visitor {
 	/**
 	 * @return <code>true</code>, if no merge is needed or merge is performed already.
 	 */
-	private <P extends OsmPrimitive> boolean mergeAfterId(Collection<P> primitives, P other) {
+	private <P extends OsmPrimitive> boolean mergeAfterId(
+			Collection<P> primitives, HashMap<Long, P> hash, P other) {
+		// Fast-path merging of identical objects
+		if (hash.containsKey(other.id)) {
+			P my = hash.get(other.id);
+			if (my.realEqual(other, true)) {
+				merged.put(other, my);
+				return true;
+			}
+		}
+
 		for (P my : primitives) {
 			Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
 			Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();

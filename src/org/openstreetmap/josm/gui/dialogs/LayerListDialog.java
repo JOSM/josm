@@ -250,14 +250,15 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		deleteButton.setText("");
 		buttonPanel.add(deleteButton);
 
-		mergeButton.setToolTipText(tr("Merge the selected layer into the layer directly below."));
+		mergeButton.setToolTipText(tr("Merge the layer directly below into the selected layer."));
 		mergeButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				Layer lFrom = (Layer)instance.getSelectedValue();
-				Layer lTo = (Layer)model.get(instance.getSelectedIndex()+1);
+				Layer lTo = (Layer)instance.getSelectedValue();
+				Layer lFrom = (Layer)model.get(instance.getSelectedIndex()+1);
 				lTo.mergeFrom(lFrom);
-				instance.setSelectedValue(lTo, true);
 				mapView.removeLayer(lFrom);
+				updateButtonEnabled();
+				mapView.repaint();
 			}
 		});
 		mergeButton.putClientProperty("help", "Dialog/LayerList/Merge");
@@ -276,7 +277,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		Layer l = (Layer)instance.getSelectedValue();
 		boolean enable = model.getSize() > 1;
 		enable = enable && sel < model.getSize()-1;
-		enable = enable && l.isMergable((Layer)model.get(sel+1));
+		enable = enable && ((Layer)model.get(sel+1)).isMergable(l);
 		mergeButton.setEnabled(enable);
 		upButton.setEnabled(sel > 0);
 		downButton.setEnabled(sel < model.getSize()-1);
