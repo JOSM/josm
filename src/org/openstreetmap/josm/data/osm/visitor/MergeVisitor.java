@@ -62,11 +62,9 @@ public class MergeVisitor implements Visitor {
 
 		// 2. Try to find a prim we can merge with the prim from the other ds.
 		for (P my : myprims) {
-			if (!mergeprims.contains(my)) { // This checks for id equality.
-				continue;
-			}
-
-			if (match(my, other)) {
+			// LinkedList.contains calls equal, and OsmPrimitive.equal
+			// compares just the id.
+			if (match(my, other) && !mergeprims.contains(my)) {
 				merged.put(other, my);
 				mergeCommon(my, other);
 				return;
