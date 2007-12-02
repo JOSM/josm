@@ -93,7 +93,10 @@ public class OpenAction extends DiskAccessAction {
 			}
 			r.data.storageFile = file;
 			Main.main.addLayer(new GpxLayer(r.data, fn));
-            Main.main.addLayer(new MarkerLayer(r.data, tr("Markers from {0}", fn), file));
+            MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file);
+            if (ml.data.size() > 0) {
+            	Main.main.addLayer(ml);
+            }
 
 		} else {
 			throw new IllegalStateException();
