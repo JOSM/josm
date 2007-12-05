@@ -357,7 +357,7 @@ public class OsmDataLayer extends Layer {
 		for (Node n : data.nodes) {
 			if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;
 			WayPoint wpt = new WayPoint(n.coor);
-			if (n.keys.containsKey("name")) {
+			if (n.keys != null && n.keys.containsKey("name")) {
 				wpt.attr.put("name", n.keys.get("name"));
 			}
 		}
