@@ -364,6 +364,6 @@ public class DrawAction extends MapMode {
 
 	
 	@Override public String getModeHelpText() {
-		return "Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way";
+		return tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way");
 	}
 }

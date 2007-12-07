@@ -280,6 +280,6 @@ public class DeleteAction extends MapMode {
 	}
 	
 	@Override public String getModeHelpText() {
-		return "Click to delete. Shift: delete way segment. Alt: delete way+nodes. Ctrl: delete referring objects.";
+		return tr("Click to delete. Shift: delete way segment. Alt: delete way+nodes. Ctrl: delete referring objects.");
 	}
 }

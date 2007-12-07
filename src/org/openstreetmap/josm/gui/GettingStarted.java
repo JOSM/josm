@@ -49,7 +49,7 @@ public class GettingStarted extends JPanel implements ActionListener {
 		
 		panel = new JPanel(new GridBagLayout());
 		
-		panel.add(new JLabel("<html><h2>You are running the latest \"modeless\" JOSM version.</h2>" +
+		panel.add(new JLabel(tr("<html><h2>You are running the latest \"modeless\" JOSM version.</h2>" +
 				"<h3>This version (almost) does away with the old edit modes, like \"add node and connect\"<br>" +
 				"etc.; instead, there are only four modes: zoom, select, edit, and delete." +
 				"<br>The edit mode will do what you want in most cases (also see the mini help about<br>" +
@@ -58,7 +58,7 @@ public class GettingStarted extends JPanel implements ActionListener {
                 "0.5 API, segments have gone and relations have been added. You will find general<br>" +
                 "information about the changes on the OSM wiki, and there's a page on using relations<br>"+
                 "in the JOSM online help." +
-		"</h3>"), GBC.eol());
+		"</h3>")), GBC.eol());
 		
 		// remove these two keys from preferences if present
 		boolean changePrefs = ! (
@@ -69,10 +69,10 @@ public class GettingStarted extends JPanel implements ActionListener {
 		if (changePrefs) {
 			Main.pref.put("osm-server.version", null);
 			Main.pref.put("osm-server.additional-versions", null);
-			panel.add(new JLabel("<html><h3>Your preferences have been changed by removing <b>osm-server.version</b> and/or <b>osm-server.additional-versions</b> which were still referring to 0.4.</h3></html>"), GBC.eol());
+			panel.add(new JLabel(tr("<html><h3>Your preferences have been changed by removing <b>osm-server.version</b> and/or <b>osm-server.additional-versions</b> which were still referring to 0.4.</h3></html>")), GBC.eol());
 		}
 		
-		addLine("wiki", "Read the [Wiki page on API 0.5]");
+		addLine("wiki", tr("Read the [Wiki page on API 0.5]"));
 		addGettingStarted();
 		addGettingHelp();
 		

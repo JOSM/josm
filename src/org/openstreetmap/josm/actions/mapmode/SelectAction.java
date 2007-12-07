@@ -291,13 +291,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	
 	@Override public String getModeHelpText() {
 		if (mode == Mode.select) {
-			return "Release the mouse button to select the objects in the rectangle.";
+			return tr("Release the mouse button to select the objects in the rectangle.");
 		} else if (mode == Mode.move) {
-			return "Release the mouse button to stop moving. Ctrl to merge with nearest node.";
+			return tr("Release the mouse button to stop moving. Ctrl to merge with nearest node.");
 		} else if (mode == Mode.rotate) {
-			return "Release the mouse button to stop rotating.";
+			return tr("Release the mouse button to stop rotating.");
 		} else {
-			return "Move objects by dragging; Shift to add to selection; Shift-Ctrl to rotate selected; or change selection";
+			return tr("Move objects by dragging; Shift to add to selection; Shift-Ctrl to rotate selected; or change selection");
 		}
 	}
 }
