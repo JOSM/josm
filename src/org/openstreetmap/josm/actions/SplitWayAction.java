@@ -95,6 +95,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 			HashMap<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
 			for (Node n : selectedNodes) {
 				for (Way w : Main.ds.ways) {
+					if (w.deleted || w.incomplete) continue;
 					for (Node wn : w.nodes) {
 						if (n.equals(wn)) {
 							Integer old = wayOccurenceCounter.get(w);
