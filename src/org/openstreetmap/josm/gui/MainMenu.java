@@ -163,7 +163,7 @@ public class MainMenu extends JMenuBar {
         // TODO move code to an "action" like the others?
         final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe view"));
         wireframe.setSelected(Main.pref.getBoolean("draw.wireframe", true));     
-        wireframe.setAccelerator(KeyStroke.getKeyStroke("alt W"));
+        wireframe.setAccelerator(KeyStroke.getKeyStroke("ctrl W"));
         wireframe.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent ev) {
         		Main.pref.put("draw.wireframe", wireframe.isSelected());
