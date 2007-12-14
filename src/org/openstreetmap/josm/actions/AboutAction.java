@@ -113,7 +113,7 @@ public class AboutAction extends JosmAction {
 			label.setMaximumSize(new Dimension(450,1000));
 			pluginTab.add(label, GBC.eop().fill(GBC.HORIZONTAL));
 		}
-		about.addTab(tr("Plugins"), pluginTab);
+		about.addTab(tr("Plugins"), new JScrollPane(pluginTab));
 
 		about.setPreferredSize(new Dimension(500,300));
 
