@@ -29,6 +29,11 @@
 			<fileset dir="presets" />
 		</copy>
 
+		<!-- styles -->
+		<copy todir="build/styles">
+			<fileset dir="styles" />
+		</copy>
+
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>
 		<jar destfile="dist/josm-custom.jar" basedir="build">

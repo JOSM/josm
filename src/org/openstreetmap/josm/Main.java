@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
+import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -121,8 +122,6 @@ abstract public class Main {
 	public final MainMenu menu;
 
 
-
-
 	/**
 	 * Set or clear (if passed <code>null</code>) the map.
 	 */
@@ -185,6 +184,7 @@ abstract public class Main {
 		contentPane.getActionMap().put("Help", menu.help);
 
 		TaggingPresetPreference.initialize();
+		MapPaintPreference.initialize();
 
 		toolbar.refreshToolbarControl();
 
@@ -202,6 +202,14 @@ abstract public class Main {
 			plugins.addAll(Arrays.asList(Main.pref.get("plugins").split(",")));
 		if (System.getProperty("josm.plugins") != null)
 			plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
+		
+		// we remove mappaint from the preferences on startup but this is just
+		// in case it crept in through the properties:
+		if (plugins.contains("mappaint")) {
+			plugins.remove("mappaint");
+			System.out.println("Warning - loading of mappaint plugin was requested. This JOSM version has built-in mappaint support. The plugin is not required.");
+		}
+		
 		if (plugins.isEmpty())
 			return;
 		SortedMap<Integer, Collection<PluginInformation>> p = new TreeMap<Integer, Collection<PluginInformation>>();

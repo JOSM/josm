@@ -135,6 +135,7 @@ public class Preferences {
 					all.put(e.getKey(), e.getValue());
 		return all;
 	}
+	
 	synchronized public boolean getBoolean(final String key) {
 		return getBoolean(key, false);
 	}
@@ -143,7 +144,6 @@ public class Preferences {
 			return override.get(key) == null ? def : Boolean.parseBoolean(override.get(key));
 		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
 	}
-
 
 	synchronized public void put(final String key, final String value) {
 		if (value == null)
@@ -158,7 +158,6 @@ public class Preferences {
 		save();
 		firePreferenceChanged(key, Boolean.toString(value));
 	}
-
 
 	private final void firePreferenceChanged(final String key, final String value) {
 		for (final PreferenceChangedListener l : listener)
@@ -206,6 +205,7 @@ public class Preferences {
 		properties.clear();
 		properties.put("projection", "org.openstreetmap.josm.data.projection.Epsg4326");
 		properties.put("draw.segment.direction", "true");
+		properties.put("draw.wireframe", "false");
 		properties.put("layerlist.visible", "true");
 		properties.put("propertiesdialog.visible", "true");
 		properties.put("selectionlist.visible", "true");

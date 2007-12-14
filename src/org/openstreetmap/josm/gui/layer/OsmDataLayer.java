@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -115,8 +116,9 @@ public class OsmDataLayer extends Layer {
 	public final LinkedList<ModifiedChangedListener> listenerModified = new LinkedList<ModifiedChangedListener>();
 	public final LinkedList<DataChangeListener> listenerDataChanged = new LinkedList<DataChangeListener>();
 	
-	private SimplePaintVisitor mapPainter = new SimplePaintVisitor();
-
+	private SimplePaintVisitor wireframeMapPainter = new SimplePaintVisitor();
+	private MapPaintVisitor standardMapPainter = new MapPaintVisitor();
+	
 	/**
 	 * Construct a OsmDataLayer.
 	 */
@@ -157,10 +159,20 @@ public class OsmDataLayer extends Layer {
 				}
 			}
 		}
-		mapPainter.setGraphics(g);
-		mapPainter.setNavigatableComponent(mv);
-		mapPainter.inactive = inactive;
-		mapPainter.visitAll(data);
+		
+		if (Main.pref.getBoolean("draw.wireframe")) {
+			wireframeMapPainter.setGraphics(g);
+			wireframeMapPainter.setNavigatableComponent(mv);
+			wireframeMapPainter.inactive = inactive;
+			wireframeMapPainter.visitAll(data);
+		}
+		else
+		{
+			standardMapPainter.setGraphics(g);
+			standardMapPainter.setNavigatableComponent(mv);
+			standardMapPainter.inactive = inactive;
+			standardMapPainter.visitAll(data);
+		}
 		Main.map.conflictDialog.paintConflicts(g, mv);
 	}
 
@@ -320,11 +332,6 @@ public class OsmDataLayer extends Layer {
 				new JMenuItem(new LayerListPopup.InfoAction(this))};
 	}
 
-
-	public void setMapPainter(SimplePaintVisitor mapPainter) {
-    	this.mapPainter = mapPainter;
-    }
-	
 	public void fireDataChange() {
 		for (DataChangeListener dcl : listenerDataChanged) {
 			dcl.dataChanged(this);

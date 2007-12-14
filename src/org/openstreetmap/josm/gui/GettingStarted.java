@@ -49,15 +49,14 @@ public class GettingStarted extends JPanel implements ActionListener {
 		
 		panel = new JPanel(new GridBagLayout());
 		
-		panel.add(new JLabel(tr("<html><h2>You are running the latest \"modeless\" JOSM version.</h2>" +
-				"<h3>This version (almost) does away with the old edit modes, like \"add node and connect\"<br>" +
-				"etc.; instead, there are only four modes: zoom, select, edit, and delete." +
-				"<br>The edit mode will do what you want in most cases (also see the mini help about<br>" +
-				"modifier keys at the bottom of the screen).</h3>" +
-                "<h3>If this is the first time you use JOSM since 08 October, you will also find that with the<br>" +
-                "0.5 API, segments have gone and relations have been added. You will find general<br>" +
-                "information about the changes on the OSM wiki, and there's a page on using relations<br>"+
-                "in the JOSM online help." +
+		panel.add(new JLabel(tr("<html><h2>You are running the latest JOSM version with built-in mappaint support.</h2>" +
+                "<h3>The mappaint plugin is no longer necessary and has been removed from your configuration<br>" +
+                "file (if it was present). You can now switch between the \"classic\" display and the mappaint<br>" +
+                "style by toggling the \"Wireframe\" option in the \"View\" menu.</h3>" +
+                "<h3>If you have not used new JOSM versions for a while, you will also discover that this JOSM<br>" +
+                "is \"modeless\". It (almost) does away with the old edit modes, like \"add node and connect\" etc.;<br>"+
+                "instead, there are only four modes: zoom, select, edit, and delete. The edit mode will do what<br>"+
+                "you want in most cases (also see the mini help about modifier keys at the bottom of the screen)." +
 		"</h3>")), GBC.eol());
 		
 		// remove these two keys from preferences if present

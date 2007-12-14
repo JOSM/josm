@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.ColorHelper;
 
 /**
- * A visitor that paint a simple scheme of every primitive it visits to a 
+ * A visitor that paints a simple scheme of every primitive it visits to a 
  * previous set graphic environment.
  * 
  * @author imi

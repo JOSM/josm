@@ -3,9 +3,6 @@ package org.openstreetmap.josm.data.coor;
 
 import java.io.Serializable;
 
-
-
-
 /**
  * Base class of points of both coordinate system.
  * 

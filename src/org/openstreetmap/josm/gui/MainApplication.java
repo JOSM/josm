@@ -110,6 +110,22 @@ public class MainApplication extends Main {
 				Main.pref.resetToDefault();
 			} else {
 				Main.pref.load();
+				
+				// this is temporary code to ease the transition to built-in mappaint
+				List<String> plugins = new LinkedList<String>();
+				if (Main.pref.hasKey("plugins"))
+					plugins.addAll(Arrays.asList(Main.pref.get("plugins").split(",")));
+								
+				if (plugins.contains("mappaint")) {
+					plugins.remove("mappaint");
+					// XXX is there really no "public static String.join" or something?
+					StringBuilder tmp = new StringBuilder();
+					for (String p : plugins) { if (tmp.length()>0) tmp.append(","); tmp.append(p); }
+					Main.pref.put("plugins", tmp.toString());
+					Main.pref.put("draw.wireframe", false);
+				} else if (!Main.pref.hasKey("draw.wireframe")) {
+					Main.pref.put("draw.wireframe", true);
+				}
 			}
 		} catch (final IOException e1) {
 			e1.printStackTrace();

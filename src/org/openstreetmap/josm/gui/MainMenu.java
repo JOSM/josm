@@ -9,11 +9,13 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
@@ -43,6 +45,7 @@ import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
+import org.openstreetmap.josm.data.Preferences;
 
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide
@@ -155,6 +158,20 @@ public class MainMenu extends JMenuBar {
 			current = viewMenu.add(autoScaleAction);
 		    current.setAccelerator(autoScaleAction.shortCut);
         }
+        viewMenu.addSeparator();
+
+        // TODO move code to an "action" like the others?
+        final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe view"));
+        wireframe.setSelected(Main.pref.getBoolean("draw.wireframe", true));     
+        wireframe.setAccelerator(KeyStroke.getKeyStroke("alt W"));
+        wireframe.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent ev) {
+        		Main.pref.put("draw.wireframe", wireframe.isSelected());
+        		Main.map.mapView.repaint();
+        	}
+        });
+        viewMenu.add(wireframe);
+        
 		add(viewMenu);
 
 		toolsMenu.setMnemonic('T');
