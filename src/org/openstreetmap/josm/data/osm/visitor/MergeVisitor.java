@@ -139,7 +139,7 @@ public class MergeVisitor implements Visitor {
 	}
 
 	private static <P extends OsmPrimitive> boolean match(P p1, P p2) {
-		if (p1.id == 0 || p2.id == 0) {
+		if ((p1.id == 0 || p2.id == 0) && !p1.incomplete && !p2.incomplete) {
 			return realMatch(p1, p2);
 		}
 		return p1.id == p2.id;
