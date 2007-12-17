@@ -6,10 +6,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 
+import java.util.Iterator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -63,8 +62,10 @@ public class SimplePaintVisitor implements Visitor {
 	protected Color currentColor = null;
 	protected GeneralPath currentPath = new GeneralPath();
 
+	private Rectangle screen;
+	Rectangle bbox = new Rectangle();
+
 	public void visitAll(DataSet data) {
-		
 		inactiveColor = getPreferencesColor("inactive", Color.DARK_GRAY);
 		selectedColor = getPreferencesColor("selected", Color.WHITE);
 		nodeColor = getPreferencesColor("node", Color.RED);
@@ -96,7 +97,7 @@ public class SimplePaintVisitor implements Visitor {
 			if (!osm.deleted)
 				osm.visit(this);
 		displaySegments(null);
-	}
+        }
 
 	/**
 	 * Draw a small rectangle. 
@@ -134,18 +135,17 @@ public class SimplePaintVisitor implements Visitor {
 			wayColor = dfltWayColor;
 		}
 
-		int orderNumber = 0;
-		Node lastN = null;
-		for (Node n : w.nodes) {
-			if (lastN == null) {
-				lastN = n;
-				continue;
+		Iterator<Node> it = w.nodes.iterator();
+		if (it.hasNext()) {
+			Point lastP = nc.getPoint(it.next().eastNorth);
+			for (int orderNumber = 0; it.hasNext(); orderNumber++) {
+				Point p = nc.getPoint(it.next().eastNorth);
+				orderNumber++;
+				drawSegment(lastP, p, w.selected && !inactive ? selectedColor : wayColor, showDirectionArrow || w.selected);
+				if (showOrderNumber)
+					drawOrderNumber(lastP, p, orderNumber);
+				lastP = p;
 			}
-			orderNumber++;
-			drawSegment(lastN, n, w.selected && !inactive ? selectedColor : wayColor, showDirectionArrow);
-			if (showOrderNumber)
-				drawOrderNumber(lastN, n, orderNumber);
-			lastN = n;
 		}
 	}
 
@@ -157,14 +157,11 @@ public class SimplePaintVisitor implements Visitor {
 	 * Draw an number of the order of the two consecutive nodes within the
 	 * parents way
 	 */
-	protected void drawOrderNumber(Node n1, Node n2, int orderNumber) {
+	protected void drawOrderNumber(Point p1, Point p2, int orderNumber) {
 		int strlen = (""+orderNumber).length();
-		Point p1 = nc.getPoint(n1.eastNorth);
-		Point p2 = nc.getPoint(n2.eastNorth);
 		int x = (p1.x+p2.x)/2 - 4*strlen;
 		int y = (p1.y+p2.y)/2 + 4;
 
-		Rectangle screen = g.getClipBounds();
 		if (screen.contains(x,y)) {
 			Color c = g.getColor();
 			g.setColor(backgroundColor);
@@ -183,7 +180,6 @@ public class SimplePaintVisitor implements Visitor {
 	public void drawNode(Node n, Color color) {
 		Point p = nc.getPoint(n.eastNorth);
 		g.setColor(color);
-		Rectangle screen = g.getClipBounds();
 
 		if (screen.contains(p.x, p.y))
 			if (n.tagged) {
@@ -197,17 +193,11 @@ public class SimplePaintVisitor implements Visitor {
 	/**
 	 * Draw a line with the given color.
 	 */
-	protected void drawSegment(Node n1, Node n2, Color col, boolean showDirection) {
+	protected void drawSegment(Point p1, Point p2, Color col, boolean showDirection) {
 
 		if (col != currentColor) displaySegments(col);
 		
-		Point p1 = nc.getPoint(n1.eastNorth);
-		Point p2 = nc.getPoint(n2.eastNorth);
-		
-		Rectangle screen = g.getClipBounds();
-		Line2D line = new Line2D.Double(p1.x, p1.y, p2.x, p2.y);
-		if (screen.contains(p1.x, p1.y, p2.x, p2.y) || screen.intersectsLine(line))
-		{
+		if (onScreen(p1, p2)) {
 			currentPath.moveTo(p1.x, p1.y);
 			currentPath.lineTo(p2.x, p2.y);
 			
@@ -219,6 +209,15 @@ public class SimplePaintVisitor implements Visitor {
 			}
 		}
 	}
+        
+	private boolean onScreen(Point p1, Point p2) {
+		bbox.setBounds(p1.x, p1.y, 0, 0);
+		bbox.add(p2);
+		if (bbox.height + bbox.width < 1) return false;
+		bbox.width++;
+		bbox.height++;
+		return screen.intersects(bbox);
+        }
 
 	public static Color getPreferencesColor(String colName, Color def) {
 		String colStr = Main.pref.get("color."+colName);
@@ -230,8 +229,9 @@ public class SimplePaintVisitor implements Visitor {
 	}
 	
 	public void setGraphics(Graphics g) {
-    	this.g = g;
-    }
+		this.g = g;
+		screen = g.getClipBounds();
+	}
 
 	public void setNavigatableComponent(NavigatableComponent nc) {
     	this.nc = nc;
