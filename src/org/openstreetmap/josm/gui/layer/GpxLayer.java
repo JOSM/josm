@@ -80,7 +80,7 @@ public class GpxLayer extends Layer {
 	}
 
 	@Override public Object getInfoComponent() {
-		return "<html>" + data.attr.get("name") + ":" + "<br />" + data.attr.get("desc") + "</html>";
+		return getToolTipText();
 	}
 
 	@Override public Component[] getMenuEntries() {
@@ -199,7 +199,25 @@ public class GpxLayer extends Layer {
 	}
 
 	@Override public String getToolTipText() {
-		return "<html>" + data.attr.get("name") + ":" + "<br />" + data.attr.get("desc") + "</html>";
+		StringBuilder info = new StringBuilder().append("<html>");
+
+		info.append(trn("{0} track, ", "{0} tracks, ",
+				data.tracks.size(), data.tracks.size()))
+			.append(trn("{0} route, ", "{0} routes, ",
+				data.routes.size(), data.routes.size()))
+			.append(trn("{0} waypoint", "{0} waypoints",
+				data.waypoints.size(), data.waypoints.size()))
+			.append("<br />");
+
+		if (data.attr.containsKey("name"))
+			info.append(tr("Name: {0}", data.attr.get("name")))
+				.append("<br />");
+
+		if (data.attr.containsKey("desc"))
+			info.append(tr("Description: {0}", data.attr.get("desc")))
+				.append("<br />");
+
+		return info.append("</html>").toString();
 	}
 
 	@Override public boolean isMergable(Layer other) {
