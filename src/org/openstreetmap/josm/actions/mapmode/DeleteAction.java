@@ -78,12 +78,13 @@ public class DeleteAction extends MapMode {
 	@Override public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 
 		Command c;
 		if (ctrl) {
 			c = deleteWithReferences(Main.ds.getSelected());
 		} else {
-			c = delete(Main.ds.getSelected(), false);
+			c = delete(Main.ds.getSelected(), !alt);
 		}
 		if (c != null) {
 			Main.main.undoRedo.add(c);
@@ -113,13 +114,13 @@ public class DeleteAction extends MapMode {
 				} else if (ctrl) {
 					c = deleteWithReferences(Collections.singleton((OsmPrimitive)ws.way));
 				} else {
-					c = delete(Collections.singleton((OsmPrimitive)ws.way), alt);
+					c = delete(Collections.singleton((OsmPrimitive)ws.way), !alt);
 				}
 			}
 		} else if (ctrl) {
 			c = deleteWithReferences(Collections.singleton(sel));
 		} else {
-			c = delete(Collections.singleton(sel), alt);
+			c = delete(Collections.singleton(sel), !alt);
 		}
 		if (c != null) {
 			Main.main.undoRedo.add(c);
@@ -280,6 +281,6 @@ public class DeleteAction extends MapMode {
 	}
 	
 	@Override public String getModeHelpText() {
-		return tr("Click to delete. Shift: delete way segment. Alt: delete way+nodes. Ctrl: delete referring objects.");
+		return tr("Click to delete. Shift: delete way segment. Alt: don't delete unused nodes when deleting a way. Ctrl: delete referring objects.");
 	}
 }
