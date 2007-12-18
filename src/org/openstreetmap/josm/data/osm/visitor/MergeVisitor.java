@@ -229,13 +229,14 @@ public class MergeVisitor implements Visitor {
 		}
 
 		for (P my : primitives) {
-			Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
-			Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();
 			if (my.realEqual(other, false)) {
 				merged.put(other, my);
 				return true; // no merge needed.
 			}
 			if (my.realEqual(other, true)) {
+				Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
+				Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();
+
 				// they differ in modified/timestamp combination only. Auto-resolve it.
 				merged.put(other, my);
 				if (myd.before(otherd)) {
@@ -245,6 +246,9 @@ public class MergeVisitor implements Visitor {
 				return true; // merge done.
 			}
 			if (my.id == other.id && my.id != 0) {
+				Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
+				Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();
+
 				if (my.incomplete || other.incomplete) {
 					if (my.incomplete) {
 						my.cloneFrom(other);
