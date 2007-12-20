@@ -167,7 +167,9 @@ public class MainMenu extends JMenuBar {
         wireframe.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent ev) {
         		Main.pref.put("draw.wireframe", wireframe.isSelected());
-        		Main.map.mapView.repaint();
+        		if (Main.map != null) {
+					Main.map.mapView.repaint();
+				}
         	}
         });
         viewMenu.add(wireframe);
