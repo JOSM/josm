@@ -386,7 +386,6 @@ public class MapPaintVisitor implements Visitor {
 
 		for (final OsmPrimitive osm : data.getSelected())
 			if (!osm.incomplete && !osm.deleted){
-				osm.shown=false; //to be sure it will be drawn
 				osm.visit(this);
 			}
 		displaySegments();

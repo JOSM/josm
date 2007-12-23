@@ -75,13 +75,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public User user = null;
 	
 	/**
-	 * <code>true</code>, if the object has been shown. This property is not used
-	 * internally by JOSM, but can be used by plugins that take over the object
-	 * rendering.
-	 */
-	public volatile boolean shown = false;
-
-	/**
 	 * true if this object is considered "tagged". To be "tagged", an object
 	 * must have one or more "non-standard" tags. "created_by" and "source"
 	 * are typically considered "standard" tags and do not make an object 
