@@ -138,9 +138,8 @@ public class SimplePaintVisitor implements Visitor {
 		Iterator<Node> it = w.nodes.iterator();
 		if (it.hasNext()) {
 			Point lastP = nc.getPoint(it.next().eastNorth);
-			for (int orderNumber = 0; it.hasNext(); orderNumber++) {
+			for (int orderNumber = 1; it.hasNext(); orderNumber++) {
 				Point p = nc.getPoint(it.next().eastNorth);
-				orderNumber++;
 				drawSegment(lastP, p, w.selected && !inactive ? selectedColor : wayColor, showDirectionArrow || w.selected);
 				if (showOrderNumber)
 					drawOrderNumber(lastP, p, orderNumber);
