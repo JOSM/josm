@@ -175,12 +175,10 @@ public class DeleteAction extends MapMode {
 
 		Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>(selection);
 		Collection<Way> waysToBeChanged = new HashSet<Way>();
-		
-		// nodes belonging to a way will be deleted if
-		// 1. this has been requested (alt modifier)
-		// 2. the node is not tagged
-		// 3. the node is not used by anybody else (i.e. has only one backref)
+
 		if (alsoDeleteNodesInWay) {
+			// Delete untagged nodes that are to be unreferenced.
+			Collection<OsmPrimitive> delNodes = new HashSet<OsmPrimitive>();
 			for (OsmPrimitive osm : del) {
 				if (osm instanceof Way) {
 					for (Node n : ((Way)osm).nodes) {
@@ -188,13 +186,13 @@ public class DeleteAction extends MapMode {
 							CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
 							n.visit(v);
 							if (v.data.size() == 1) {
-								del.add(n);
-							} else System.out.println("size="+v.data.size());
+								delNodes.add(n);
+							}
 						}
-						else System.out.println("tagged");
 					}
 				}
 			}
+			del.addAll(delNodes);
 		}
 		
 		for (OsmPrimitive osm : del) {
