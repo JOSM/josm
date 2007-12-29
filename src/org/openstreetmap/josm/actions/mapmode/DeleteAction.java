@@ -185,7 +185,8 @@ public class DeleteAction extends MapMode {
 						if (!n.tagged) {
 							CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
 							n.visit(v);
-							if (v.data.size() == 1) {
+							v.data.removeAll(del);
+							if (v.data.isEmpty()) {
 								delNodes.add(n);
 							}
 						}
