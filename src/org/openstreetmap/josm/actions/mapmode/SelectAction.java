@@ -148,16 +148,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		// when rotating, having only one node makes no sense - quit silently
 		if (mode == Mode.rotate && affectedNodes.size() < 2) 
 			return;
-		
 
-		// check if any coordinate would be outside the world
-		for (OsmPrimitive osm : affectedNodes) {
-			if (osm instanceof Node && ((Node)osm).coor.isOutSideWorld()) {
-				JOptionPane.showMessageDialog(Main.parent,
-					tr("Cannot move objects outside of the world."));
-				return;
-			}
-		}
 		Command c = !Main.main.undoRedo.commands.isEmpty()
 			? Main.main.undoRedo.commands.getLast() : null;
 
@@ -165,7 +156,19 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).objects))
 				((MoveCommand)c).moveAgain(dx,dy);
 			else
-				Main.main.undoRedo.add(new MoveCommand(selection, dx, dy));
+				Main.main.undoRedo.add(
+					c = new MoveCommand(selection, dx, dy));
+
+			for (Node n : affectedNodes) {
+				if (n.coor.isOutSideWorld()) {
+					// Revert move
+					((MoveCommand) c).moveAgain(-dx, -dy);
+
+					JOptionPane.showMessageDialog(Main.parent,
+						tr("Cannot move objects outside of the world."));
+					return;
+				}
+			}
 		} else if (mode == Mode.rotate) {
 			if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand)c).objects))
 				((RotateCommand)c).rotateAgain(mouseStartEN, mouseEN);
