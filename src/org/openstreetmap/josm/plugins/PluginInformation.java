@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -83,20 +84,15 @@ public class PluginInformation {
 
 				String classPath = attr.getValue(Attributes.Name.CLASS_PATH);
 				if (classPath != null) {
-					String[] cp = classPath.split(" ");
-					StringBuilder entry = new StringBuilder();
-					for (String s : cp) {
-						entry.append(s);
-						if (s.endsWith("\\")) {
-							entry.setLength(entry.length()-1);
-							entry.append("%20"); // append the split character " " as html-encode
-							continue;
+					for (String entry : classPath.split(" ")) {
+						File entryFile;
+						if (new File(entry).isAbsolute()) {
+							entryFile = new File(entry);
+						} else {
+							entryFile = new File(file.getParent(), entry);
 						}
-						s = entry.toString();
-						entry = new StringBuilder();
-						if (!s.startsWith("/") && !s.startsWith("\\") && !s.matches("^.\\:") && file != null)
-							s = file.getParent() + File.separator + s;
-						libraries.add(new URL(getURLString(s)));
+
+						libraries.add(fileToURL(entryFile));
 					}
 				}
 				for (Object o : attr.keySet())
@@ -111,7 +107,7 @@ public class PluginInformation {
 				author = null;
 			}
 			if (file != null)
-				libraries.add(0, new URL(getURLString(file.getAbsolutePath())));
+				libraries.add(0, fileToURL(file));
 
 			if (jar != null)
 				jar.close();
@@ -146,10 +142,12 @@ public class PluginInformation {
 		}
 	}
 
-	public static String getURLString(String fileName) {
-		if (System.getProperty("os.name").startsWith("Windows"))
-			return "file:/"+fileName;
-		return "file://"+fileName;
+	public static URL fileToURL(File f) {
+		try {
+			return f.toURI().toURL();
+		} catch (MalformedURLException ex) {
+			return null;
+		}
 	}
 
 	/**

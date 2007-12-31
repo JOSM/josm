@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -55,9 +56,9 @@ public class PluginPreference implements PreferenceSetting {
 	public static class PluginDescription {
 		public String name;
 		public String description;
-		public String resource;
+		public URL resource;
 		public String version;
-		public PluginDescription(String name, String description, String resource, String version) {
+		public PluginDescription(String name, String description, URL resource, String version) {
 			this.name = name;
 			this.description = description;
 			this.resource = resource;
@@ -211,7 +212,7 @@ public class PluginPreference implements PreferenceSetting {
 			final JCheckBox pluginCheck = new JCheckBox(plugin.name+(plugin.version != null && !plugin.version.equals("") ? " Version: "+plugin.version : ""), enabled);
 			pluginPanel.add(pluginCheck);
 
-			pluginCheck.setToolTipText(plugin.resource != null ? plugin.resource : tr("Plugin bundled with JOSM"));
+			pluginCheck.setToolTipText(plugin.resource != null ? ""+plugin.resource : tr("Plugin bundled with JOSM"));
 			JLabel label = new JLabel("<html><i>"+(plugin.description==null?tr("no description available"):plugin.description)+"</i></html>");
 			label.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
 			label.setMaximumSize(new Dimension(450,1000));
@@ -245,7 +246,11 @@ public class PluginPreference implements PreferenceSetting {
 						try {
 							PluginInformation info = new PluginInformation(f);
 							if (!availablePlugins.containsKey(info.name))
-								availablePlugins.put(info.name, new PluginDescription(info.name, info.description, PluginInformation.getURLString(f.getPath()), info.version));
+								availablePlugins.put(info.name, new PluginDescription(
+									info.name,
+									info.description,
+									PluginInformation.fileToURL(f),
+									info.version));
 						} catch (PluginException x) {
 						}
 					} else if (f.getName().matches("^[0-9]+-site.*\\.xml$")) {
@@ -267,8 +272,8 @@ public class PluginPreference implements PreferenceSetting {
 				availablePlugins.put(proxy.info.name, new PluginDescription(
 						proxy.info.name, 
 						proxy.info.description, 
-						proxy.info.file == null ? null : PluginInformation.getURLString(proxy.info.file.getPath()),
-								proxy.info.version));
+						proxy.info.file == null ? null : PluginInformation.fileToURL(proxy.info.file),
+						proxy.info.version));
 		return availablePlugins.values();
 	}
 
