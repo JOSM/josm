@@ -1918,6 +1918,13 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 
 	<rule>
+		<condition k="place" v="locality" />
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="place" v="island" />
 		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
