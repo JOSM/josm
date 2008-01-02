@@ -49,13 +49,14 @@ public class NameVisitor implements Visitor {
 	 * is displayed.
 	 */
 	public void visit(Node n) {
-		name = n.get("name");
-		if (name == null) {
-			if (n.incomplete) {
-				name = "incomplete" + (n.id==0?"":" "+n.id);
-			} else {
-				name = (n.id==0?"":""+n.id)+" ("+latLonFormat.format(n.coor.lat())+", "+latLonFormat.format(n.coor.lon())+")";
+		if (n.incomplete) {
+			name = tr("incomplete");
+		} else {
+			name = n.get("name");
+			if (name == null) {
+				name = n.id == 0 ? "" : ""+n.id;
 			}
+			name += " ("+latLonFormat.format(n.coor.lat())+", "+latLonFormat.format(n.coor.lon())+")";
 		}
 		addId(n);
 		icon = ImageProvider.get("data", "node");
@@ -68,12 +69,20 @@ public class NameVisitor implements Visitor {
 	 * is displayed with x being the number of nodes in the way.
 	 */
 	public void visit(Way w) {
-		name = w.get("name");
-		if (name == null) name = w.get("ref");
-		if (name == null) {
-			String what = (w.get("highway") != null) ? "highway " : (w.get("railway") != null) ? "railway " : (w.get("waterway") != null) ? "waterway " : "";
+		if (w.incomplete) {
+			name = tr("incomplete");
+		} else {
+			name = w.get("name");
+			if (name == null) name = w.get("ref");
+			if (name == null) {
+				name = 
+					(w.get("highway") != null) ? "highway" :
+					(w.get("railway") != null) ? "railway" :
+					(w.get("waterway") != null) ? "waterway" : "";
+			}
+
 			int nodesNo = new HashSet<Node>(w.nodes).size();
-			name = what + trn("{0} node", "{0} nodes", nodesNo, nodesNo);
+			name += trn(" ({0} node)", " ({0} nodes)", nodesNo, nodesNo);
 		}
 		addId(w);
 		icon = ImageProvider.get("data", "way");
@@ -84,10 +93,14 @@ public class NameVisitor implements Visitor {
 	/**
 	 */
 	public void visit(Relation e) {
-		name = e.get("type");
-		// FIXME add names of members
-		if (name == null)
-			name = "relation";
+		if (e.incomplete) {
+			name = tr("incomplete");
+		} else {
+			name = e.get("type");
+			// FIXME add names of members
+			if (name == null)
+				name = "relation";
+		}
 		addId(e);
 		icon = ImageProvider.get("data", "relation");
 		trn("relation", "relations", 0); // no marktrn available
