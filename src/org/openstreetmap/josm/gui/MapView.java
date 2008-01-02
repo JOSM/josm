@@ -76,12 +76,21 @@ public class MapView extends NavigatableComponent {
 	public MapView() {
 		addComponentListener(new ComponentAdapter(){
 			@Override public void componentResized(ComponentEvent e) {
-				new AutoScaleAction("data").actionPerformed(null);
 				removeComponentListener(this);
+
+				new AutoScaleAction("data").actionPerformed(null);
+
+				new MapMover(MapView.this, Main.contentPane);
+
+				MapSlider zoomSlider = new MapSlider(MapView.this);
+				add(zoomSlider);
+				zoomSlider.setBounds(3, 0, 114, 30);
+
+				MapScaler scaler = new MapScaler(MapView.this, Main.proj);
+				add(scaler);
+				scaler.setLocation(10,30);
 			}
 		});
-
-		new MapMover(this, Main.contentPane);
 
 		// listend to selection changes to redraw the map
 		DataSet.selListeners.add(new SelectionChangedListener(){
@@ -89,14 +98,6 @@ public class MapView extends NavigatableComponent {
 				repaint();
 			}
 		});
-
-		MapSlider zoomSlider = new MapSlider(this);
-		add(zoomSlider);
-		zoomSlider.setBounds(3, 0, 114, 30);
-
-		MapScaler scaler = new MapScaler(this, Main.proj);
-		add(scaler);
-		scaler.setLocation(10,30);
 	}
 
 	/**
