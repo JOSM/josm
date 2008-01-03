@@ -160,16 +160,17 @@ public abstract class SaveActionBase extends DiskAccessAction {
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while saving.")+"\n"+e.getMessage());
-		}
-		try {
-			// if the file save failed, then the tempfile will not
-			// be deleted.  So, restore the backup if we made one.
-			if (tmpFile != null && tmpFile.exists()) {
-				copy(tmpFile, file);
+
+			try {
+				// if the file save failed, then the tempfile will not
+				// be deleted.  So, restore the backup if we made one.
+				if (tmpFile != null && tmpFile.exists()) {
+					copy(tmpFile, file);
+				}
+			} catch (IOException e2) {
+				e2.printStackTrace();
+				JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while restoring backup file.")+"\n"+e2.getMessage());
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while restoring backup file.")+"\n"+e.getMessage());
 		}
 	}
 
