@@ -345,6 +345,10 @@ public class OsmDataLayer extends Layer {
 			if (w.incomplete || w.deleted) continue;
 			GpxTrack trk = new GpxTrack();
 			gpxData.tracks.add(trk);
+
+			if (w.get("name") != null)
+				trk.attr.put("name", w.get("name"));
+
 			ArrayList<WayPoint> trkseg = null;
 			for (Node n : w.nodes) {
 				if (n.incomplete || n.deleted) {
