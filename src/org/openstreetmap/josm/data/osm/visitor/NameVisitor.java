@@ -100,6 +100,13 @@ public class NameVisitor implements Visitor {
 			// FIXME add names of members
 			if (name == null)
 				name = "relation";
+			
+			name += " (";
+			String nameTag = e.get("name");
+			if (nameTag == null) nameTag = e.get("ref");
+			if (nameTag != null) name += "\"" + nameTag + "\", ";
+			int mbno = e.members.size();
+			name += trn("{0} member", "{0} members", mbno, mbno) + ")";
 		}
 		addId(e);
 		icon = ImageProvider.get("data", "relation");
