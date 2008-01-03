@@ -54,11 +54,14 @@ public class PluginPreference implements PreferenceSetting {
 	 * @author imi
 	 */
 	public static class PluginDescription {
+		// Note: All the following need to be public instance variables of
+		// type String.  (Plugin description XMLs from the server are parsed
+		// with tools.XmlObjectParser, which uses reflection to access them.)
 		public String name;
 		public String description;
-		public URL resource;
+		public String resource;
 		public String version;
-		public PluginDescription(String name, String description, URL resource, String version) {
+		public PluginDescription(String name, String description, String resource, String version) {
 			this.name = name;
 			this.description = description;
 			this.resource = resource;
@@ -249,7 +252,7 @@ public class PluginPreference implements PreferenceSetting {
 								availablePlugins.put(info.name, new PluginDescription(
 									info.name,
 									info.description,
-									PluginInformation.fileToURL(f),
+									PluginInformation.fileToURL(f).toString(),
 									info.version));
 						} catch (PluginException x) {
 						}
@@ -272,7 +275,8 @@ public class PluginPreference implements PreferenceSetting {
 				availablePlugins.put(proxy.info.name, new PluginDescription(
 						proxy.info.name, 
 						proxy.info.description, 
-						proxy.info.file == null ? null : PluginInformation.fileToURL(proxy.info.file),
+						proxy.info.file == null ? null :
+							PluginInformation.fileToURL(proxy.info.file).toString(),
 						proxy.info.version));
 		return availablePlugins.values();
 	}

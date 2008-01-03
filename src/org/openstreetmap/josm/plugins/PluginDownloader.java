@@ -139,9 +139,9 @@ public class PluginDownloader {
 		return false;
 	}
 
-	private static boolean download(URL url, File file) {
+	private static boolean download(String url, File file) {
 		try {
-			InputStream in = url.openStream();
+			InputStream in = new URL(url).openStream();
 			OutputStream out = new FileOutputStream(file);
 			byte[] buffer = new byte[8192];
 			for (int read = in.read(buffer); read != -1; read = in.read(buffer))
