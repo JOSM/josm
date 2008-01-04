@@ -253,6 +253,8 @@ public class GpxLayer extends Layer {
 			}
 			for (Collection<WayPoint> segment : trk.trackSegs) {
 				for (WayPoint trkPnt : segment) {
+					if (Double.isNaN(trkPnt.latlon.lat()) || Double.isNaN(trkPnt.latlon.lon()))
+						continue;
 					Point screen = mv.getPoint(trkPnt.eastNorth);
 					if (lines && old != null) {
 						g.drawLine(old.x, old.y, screen.x, screen.y);

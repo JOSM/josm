@@ -65,6 +65,20 @@ public class GpxReader {
 			currentData = new GpxData();
 		}		
 
+		private double parseCoord(String s) {
+			try {
+				return Double.parseDouble(s);
+			} catch (NumberFormatException ex) {
+				return Double.NaN;
+			}
+		}
+
+		private LatLon parseLatLon(Attributes atts) {
+			return new LatLon(
+				parseCoord(atts.getValue("lat")),
+				parseCoord(atts.getValue("lon")));
+		}
+
 		@Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 			switch(currentState) {
 			case init:
@@ -72,10 +86,9 @@ public class GpxReader {
 					states.push(currentState);
 					currentState = state.metadata;
 				} else if (qName.equals("wpt")) {
-					LatLon ll = new LatLon(Double.parseDouble(atts.getValue("lat")), Double.parseDouble(atts.getValue("lon")));
 					states.push(currentState);
 					currentState = state.wpt;
-					currentWayPoint = new WayPoint(ll);
+					currentWayPoint = new WayPoint(parseLatLon(atts));
 				} else if (qName.equals("rte")) {
 					states.push(currentState);
 					currentState = state.rte;
@@ -121,10 +134,9 @@ public class GpxReader {
 				break;
 			case trkseg:
 				if (qName.equals("trkpt")) {
-					LatLon ll = new LatLon(Double.parseDouble(atts.getValue("lat")), Double.parseDouble(atts.getValue("lon")));
 					states.push(currentState);
 					currentState = state.wpt;
-					currentWayPoint = new WayPoint(ll);
+					currentWayPoint = new WayPoint(parseLatLon(atts));
 				}
 				break;
 			case wpt:
@@ -143,10 +155,9 @@ public class GpxReader {
 					currentState = state.link;
 					currentLink = new GpxLink(atts.getValue("href"));
 				} else if (qName.equals("rtept")) {
-					LatLon ll = new LatLon(Double.parseDouble(atts.getValue("lat")), Double.parseDouble(atts.getValue("lon")));
 					states.push(currentState);
 					currentState = state.wpt;
-					currentWayPoint = new WayPoint(ll);
+					currentWayPoint = new WayPoint(parseLatLon(atts));
 				} else if (qName.equals("extensions")) {
 					states.push(currentState);
 					currentState = state.ext;
@@ -197,6 +208,10 @@ public class GpxReader {
 				} else if (qName.equals("type")) {
 					currentLink.type = accumulator.toString();
 				} else if (qName.equals("link")) {
+					// <link>URL</link>
+					if (currentLink.uri == null)
+						currentLink.uri = accumulator.toString();
+
 					currentState = states.pop();
 				}
 				if (currentState == state.author) {
