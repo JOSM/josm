@@ -150,8 +150,7 @@ public class SearchCompiler {
 
 	private static class Incomplete extends Match {
 		@Override public boolean match(OsmPrimitive osm) {
-			// return osm instanceof Way && ((Way)osm).isIncomplete();
-            return false;
+            return osm.incomplete;
 		}
 		@Override public String toString() {return "incomplete";}
 	}
