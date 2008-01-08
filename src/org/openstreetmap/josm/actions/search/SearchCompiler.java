@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -17,7 +19,13 @@ import org.openstreetmap.josm.data.osm.Relation;
  */
 public class SearchCompiler {
 
-	boolean caseSensitive = false;
+	private boolean caseSensitive = false;
+	private PushbackTokenizer tokenizer;
+
+	public SearchCompiler(boolean caseSensitive, PushbackTokenizer tokenizer) {
+		this.caseSensitive = caseSensitive;
+		this.tokenizer = tokenizer;
+	}
 	
 	abstract public static class Match {
 		abstract public boolean match(OsmPrimitive osm);
@@ -70,8 +78,7 @@ public class SearchCompiler {
 	private class KeyValue extends Match {
 		private String key;
 		private String value;
-		boolean notValue;
-		public KeyValue(String key, String value, boolean notValue) {this.key = key; this.value = value; this.notValue = notValue;}
+		public KeyValue(String key, String value) {this.key = key; this.value = value; }
 		@Override public boolean match(OsmPrimitive osm) {
 			String value = null;
 			if (key.equals("timestamp"))
@@ -79,12 +86,12 @@ public class SearchCompiler {
 			else
 				value = osm.get(key);
 			if (value == null)
-				return notValue;
+				return false;
 			String v1 = caseSensitive ? value : value.toLowerCase();
 			String v2 = caseSensitive ? this.value : this.value.toLowerCase();
-			return (v1.indexOf(v2) != -1) != notValue;
+			return v1.indexOf(v2) != -1;
 		}
-		@Override public String toString() {return key+"="+(notValue?"!":"")+value;}
+		@Override public String toString() {return key+"="+value;}
 	}
 
 	private class Any extends Match {
@@ -150,151 +157,99 @@ public class SearchCompiler {
 	}
 	
 	public static Match compile(String searchStr, boolean caseSensitive) {
-		SearchCompiler searchCompiler = new SearchCompiler();
-		searchCompiler.caseSensitive = caseSensitive;
-		return searchCompiler.parse(new PushbackReader(new StringReader(searchStr)));
+		return new SearchCompiler(caseSensitive,
+				new PushbackTokenizer(
+					new PushbackReader(new StringReader(searchStr))))
+			.parse();
 	}
 
-
-	/**
-	 * The token returned is <code>null</code> or starts with an identifier character:
-	 * - for an '-'. This will be the only character
-	 * : for an key. The value is the next token
-	 * | for "OR"
-	 * ' ' for anything else.
-	 * @return The next token in the stream.
-	 */
-	private String nextToken(PushbackReader search) {
-		try {
-			int next;
-			char c = ' ';
-			while (c == ' ' || c == '\t' || c == '\n') {
-				next = search.read();
-				if (next == -1)
-					return null;
-				c = (char)next;
-			}
-			StringBuilder s;
-			switch (c) {
-			case '-':
-				return "-";
-			case '"':
-				s = new StringBuilder(" ");
-				for (int nc = search.read(); nc != -1 && nc != '"'; nc = search.read())
-					s.append((char)nc);
-				int nc = search.read();
-				if (nc != -1 && (char)nc == ':')
-					return ":"+s.toString();
-				if (nc != -1)
-					search.unread(nc);
-				return s.toString();
-			default:
-				s = new StringBuilder();
-			for (;;) {
-				s.append(c);
-				next = search.read();
-				if (next == -1) {
-					if (s.toString().equals("OR"))
-						return "|";
-					return " "+s.toString();
-				}
-				c = (char)next;
-				if (c == ' ' || c == '\t' || c == ':' || c == '"') {
-					if (c == ':')
-						return ":"+s.toString();
-					search.unread(next);
-					if (s.toString().equals("OR"))
-						return "|";
-					return " "+s.toString();
-				}
-			}
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}		
-	}
-
-
-	private boolean notKey = false;
-	private boolean notValue = false;
-	private boolean or = false;
-	private String key = null;
-	String token = null;
-	private Match build() {
-		String value = token.substring(1);
-		if (key == null) {
-			Match c = null;
-			if (value.equals("modified"))
-				c = new Modified();
-			else if (value.equals("incomplete"))
-				c = new Incomplete();
-			else if (value.equals("selected"))
-				c = new Selected();
-			else
-				c = new Any(value);
-			return notValue ? new Not(c) : c;
+	public Match parse() {
+		Match m = parseJuxta();
+		if (!tokenizer.readIfEqual(null)) {
+			throw new RuntimeException("Unexpected token: " + tokenizer.nextToken());
 		}
-		Match c;
-		if (key.equals("type"))
-			c = new ExactType(value);
-		else if (key.equals("property")) {
-			String realKey = "", realValue = value;
-			int eqPos = value.indexOf("=");
-			if (eqPos != -1) {
-				realKey = value.substring(0,eqPos);
-				realValue = value.substring(eqPos+1);
+		return m;
+	}
+
+	private Match parseJuxta() {
+		Match juxta = new Always();
+
+		Match m;
+		while ((m = parseOr()) != null) {
+			juxta = new And(m, juxta);
+		}
+
+		return juxta;
+	}
+
+	private Match parseOr() {
+		Match a = parseNot();
+		if (tokenizer.readIfEqual("|")) {
+			Match b = parseNot();
+			if (a == null || b == null) {
+				throw new RuntimeException("Missing arguments for or.");
 			}
-			c = new KeyValue(realKey, realValue, notValue);
+			return new Or(a, b);
+		}
+		return a;
+	}
+
+	private Match parseNot() {
+		if (tokenizer.readIfEqual("-")) {
+			Match m = parseParens();
+			if (m == null) {
+				throw new RuntimeException("Missing argument for not.");
+			}
+			return new Not(m);
+		}
+		return parseParens();
+	}
+
+	private Match parseParens() {
+		if (tokenizer.readIfEqual("(")) {
+			Match m = parseJuxta();
+			if (!tokenizer.readIfEqual(")")) {
+				throw new RuntimeException("Expected closing paren");
+			}
+			return m;
+		}
+		return parsePat();
+	}
+
+	private Match parsePat() {
+		String tok = tokenizer.readText();
+
+		if (tokenizer.readIfEqual(":")) {
+			String tok2 = tokenizer.readText();
+			if (tok == null) tok = "";
+			if (tok2 == null) tok2 = "";
+			return parseKV(tok, tok2);
+		}
+
+		if (tok == null) {
+			return null;
+		} else if (tok.equals("modified")) {
+			return new Modified();
+		} else if (tok.equals("incomplete")) {
+			return new Incomplete();
+		} else if (tok.equals("selected")) {
+			return new Selected();
+		} else {
+			return new Any(tok);
+		}
+	}
+
+	private Match parseKV(String key, String value) {
+		if (key.equals("type")) {
+			return new ExactType(value);
 		} else if (key.equals("id")) {
 			try {
-				c = new Id(Long.parseLong(value));
+				return new Id(Long.parseLong(value));
 			} catch (NumberFormatException x) {
-				c = new Id(0);
+				return new Id(0);
 			}
-			if (notValue)
-				c = new Not(c);
-		} else
-			c = new KeyValue(key, value, notValue);
-		if (notKey)
-			return new Not(c);
-		return c;
-	}
-
-	private Match parse(PushbackReader search) {
-		Match result = null;
-		for (token = nextToken(search); token != null; token = nextToken(search)) {
-			if (token.equals("-"))
-				notValue = true;
-			else if (token.equals("|")) {
-				if (result == null)
-					continue;
-				or = true;
-				notValue = false;
-			} else if (token.startsWith(":")) {
-				if (key == null) {
-					key = token.substring(1);
-					notKey = notValue;
-					notValue = false;
-				} else
-					key += token.substring(1);
-			} else {
-				Match current = build();
-				if (result == null)
-					result = current;
-				else
-					result = or ? new Or(result, current) : new And(result, current);
-					key = null;
-					notKey = false;
-					notValue = false;
-					or = false;
-			}
+		} else {
+			return new KeyValue(key, value);
 		}
-		// if "key:" was the last search
-		if (key != null) {
-			token = " ";
-			Match current = build();
-			result = (result == null) ? current : new And(result, current);
-		}
-		return result == null ? new Always() : result;
 	}
 }
