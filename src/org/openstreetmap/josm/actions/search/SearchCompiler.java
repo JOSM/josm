@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.User;
 
 /**
  * Implements a google-like search.
@@ -134,6 +135,15 @@ public class SearchCompiler {
 		@Override public String toString() {return "type="+type;}
 	}
 
+	private static class UserMatch extends Match {
+		private User user;
+		public UserMatch(String user) { this.user = User.get(user); }
+		@Override public boolean match(OsmPrimitive osm) {
+			return osm.user == user;
+		}
+		@Override public String toString() { return "user=" + user.name; }
+	}
+
 	private static class Modified extends Match {
 		@Override public boolean match(OsmPrimitive osm) {
 			return osm.modified;
@@ -241,6 +251,8 @@ public class SearchCompiler {
 	private Match parseKV(String key, String value) {
 		if (key.equals("type")) {
 			return new ExactType(value);
+		} else if (key.equals("user")) {
+			return new UserMatch(value);
 		} else if (key.equals("id")) {
 			try {
 				return new Id(Long.parseLong(value));
