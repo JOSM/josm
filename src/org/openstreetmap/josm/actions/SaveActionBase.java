@@ -97,7 +97,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 		if (fn.indexOf('.') == -1) {
 			FileFilter ff = fc.getFileFilter();
 			if (ff instanceof ExtensionFileFilter)
-				fn = "." + ((ExtensionFileFilter)ff).defaultExtension;
+				fn += "." + ((ExtensionFileFilter)ff).defaultExtension;
 			else
 				fn += ".osm";
 			file = new File(fn);
