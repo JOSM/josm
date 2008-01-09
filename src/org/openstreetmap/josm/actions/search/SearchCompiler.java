@@ -164,23 +164,30 @@ public class SearchCompiler {
 		}
 		@Override public String toString() {return "incomplete";}
 	}
+
+	public static class ParseError extends Exception {
+		public ParseError(String msg) {
+			super(msg);
+		}
+	}
 	
-	public static Match compile(String searchStr, boolean caseSensitive) {
+	public static Match compile(String searchStr, boolean caseSensitive)
+			throws ParseError {
 		return new SearchCompiler(caseSensitive,
 				new PushbackTokenizer(
 					new PushbackReader(new StringReader(searchStr))))
 			.parse();
 	}
 
-	public Match parse() {
+	public Match parse() throws ParseError {
 		Match m = parseJuxta();
 		if (!tokenizer.readIfEqual(null)) {
-			throw new RuntimeException("Unexpected token: " + tokenizer.nextToken());
+			throw new ParseError("Unexpected token: " + tokenizer.nextToken());
 		}
 		return m;
 	}
 
-	private Match parseJuxta() {
+	private Match parseJuxta() throws ParseError {
 		Match juxta = new Always();
 
 		Match m;
@@ -191,34 +198,34 @@ public class SearchCompiler {
 		return juxta;
 	}
 
-	private Match parseOr() {
+	private Match parseOr() throws ParseError {
 		Match a = parseNot();
 		if (tokenizer.readIfEqual("|")) {
 			Match b = parseNot();
 			if (a == null || b == null) {
-				throw new RuntimeException("Missing arguments for or.");
+				throw new ParseError("Missing arguments for or.");
 			}
 			return new Or(a, b);
 		}
 		return a;
 	}
 
-	private Match parseNot() {
+	private Match parseNot() throws ParseError {
 		if (tokenizer.readIfEqual("-")) {
 			Match m = parseParens();
 			if (m == null) {
-				throw new RuntimeException("Missing argument for not.");
+				throw new ParseError("Missing argument for not.");
 			}
 			return new Not(m);
 		}
 		return parseParens();
 	}
 
-	private Match parseParens() {
+	private Match parseParens() throws ParseError {
 		if (tokenizer.readIfEqual("(")) {
 			Match m = parseJuxta();
 			if (!tokenizer.readIfEqual(")")) {
-				throw new RuntimeException("Expected closing paren");
+				throw new ParseError("Expected closing paren");
 			}
 			return m;
 		}

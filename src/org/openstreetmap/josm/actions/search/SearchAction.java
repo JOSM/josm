@@ -84,19 +84,23 @@ public class SearchAction extends JosmAction {
     			return;
     		}
     	}
-    	Collection<OsmPrimitive> sel = Main.ds.getSelected();
-    	SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive);
-    	for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
-    		if (mode == SearchMode.replace) {
-    			if (matcher.match(osm))
-    				sel.add(osm);
-    			else
-    				sel.remove(osm);
-    		} else if (mode == SearchMode.add && !osm.selected && matcher.match(osm))
-    			sel.add(osm);
-    		else if (mode == SearchMode.remove && osm.selected && matcher.match(osm))
-    			sel.remove(osm);
-    	}
-    	Main.ds.setSelected(sel);
+		try {
+			Collection<OsmPrimitive> sel = Main.ds.getSelected();
+			SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive);
+			for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
+				if (mode == SearchMode.replace) {
+					if (matcher.match(osm))
+						sel.add(osm);
+					else
+						sel.remove(osm);
+				} else if (mode == SearchMode.add && !osm.selected && matcher.match(osm))
+					sel.add(osm);
+				else if (mode == SearchMode.remove && osm.selected && matcher.match(osm))
+					sel.remove(osm);
+			}
+			Main.ds.setSelected(sel);
+		} catch (SearchCompiler.ParseError e) {
+			JOptionPane.showMessageDialog(Main.parent, e.getMessage());
+		}
     }
 }
