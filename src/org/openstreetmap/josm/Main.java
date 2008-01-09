@@ -250,17 +250,26 @@ abstract public class Main {
 					}
 				} catch (Throwable e) {
 					e.printStackTrace();
+					boolean remove = true;
 					if (early)
 						System.out.println("Could not load plugin: "+info.name+" - deleted from preferences"); // do not translate
-					else
-						JOptionPane.showMessageDialog(Main.parent, tr("Could not load plugin {0}. Deleted from preferences.", info.name));
-					plugins.remove(info.name);
-					String plist = null;
-					for (String pn : plugins) { 
-						if (plist==null) plist=""; else plist=plist+",";
-						plist=plist+pn;
+					else {
+						int answer = JOptionPane.showConfirmDialog(Main.parent,
+							tr("Could not load plugin {0}. Delete from preferences?", info.name,
+							JOptionPane.YES_NO_OPTION));
+						if (answer != JOptionPane.OK_OPTION) {
+							remove = false;
+						}
 					}
-					Main.pref.put("plugins", plist);
+					if (remove) {
+						plugins.remove(info.name);
+						String plist = null;
+						for (String pn : plugins) { 
+							if (plist==null) plist=""; else plist=plist+",";
+							plist=plist+pn;
+						}
+						Main.pref.put("plugins", plist);
+					}
 				}
 			}
 		}
