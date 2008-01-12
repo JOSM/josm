@@ -132,9 +132,10 @@ public class OsmReader {
 				} else if (qName.equals("bound")) {
 					String bbox = atts.getValue("box");
 					String origin = atts.getValue("origin");
+					if (origin == null) origin = "";
 					if (bbox != null) {
 						String[] b = bbox.split(",");
-						Bounds bounds = null;
+						Bounds bounds = new Bounds();
 						if (b.length == 4)
 							bounds = new Bounds(
 									new LatLon(Double.parseDouble(b[0]),Double.parseDouble(b[1])),
