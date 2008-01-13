@@ -144,6 +144,15 @@ public class SearchCompiler {
 		@Override public String toString() { return "user=" + user.name; }
 	}
 
+	private static class NodeCount extends Match {
+		private int count;
+		public NodeCount(int count) {this.count = count;}
+		@Override public boolean match(OsmPrimitive osm) {
+			return osm instanceof Way && ((Way) osm).nodes.size() == count;
+		}
+		@Override public String toString() {return "nodes="+count;}
+	}
+
 	private static class Modified extends Match {
 		@Override public boolean match(OsmPrimitive osm) {
 			return osm.modified;
@@ -260,6 +269,8 @@ public class SearchCompiler {
 			return new ExactType(value);
 		} else if (key.equals("user")) {
 			return new UserMatch(value);
+		} else if (key.equals("nodes")) {
+			return new NodeCount(Integer.parseInt(value));
 		} else if (key.equals("id")) {
 			try {
 				return new Id(Long.parseLong(value));
