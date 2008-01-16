@@ -207,14 +207,14 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	
 	<rule>
 		<condition k="highway" v="incline" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="vehicle/restrictions/incline.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="highway" v="incline_steep" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="vehicle/restrictions/incline.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1466,7 +1466,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 <!--military tags -->
 	<rule>
 		<condition k="military" v="airfield" />
-		<icon src="misc/no_icon.png" />
+		<icon src="transport/airport/airfield.png" />
 		<area colour="#b62c2c"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
