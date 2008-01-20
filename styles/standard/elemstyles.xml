@@ -700,7 +700,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="man_made" v="pier" />
         <line width="2" colour="#660000" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="misc/landmark/pier.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -715,7 +715,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="man_made" v="wastewater_plant" />
         <area colour="#D8D8D8" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="misc/landmark/wastewater_plant.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1200,7 +1200,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="tourism" v="guest_house" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="accommodation/guest_house.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1474,7 +1474,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="military" v="bunker" />
-		<icon src="misc/no_icon.png" />
+		<icon src="misc/landmark/bunker.png" />
 		<area colour="#b62c2c"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -1498,7 +1498,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="military" v="range" />
-		<icon src="misc/no_icon.png" />
+		<icon src="misc/landmark/range.png" />
 		<area colour="#b62c2c"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2058,7 +2058,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="place" v="locality" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="places/locality.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
