@@ -58,10 +58,16 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	
 	/**
 	 * The time which needs to pass between click and release before something
-	 * counts as a move
+	 * counts as a move, in milliseconds
 	 */
-	private int initialMoveDelay = 100;
+	private int initialMoveDelay = 200;
 
+	/**
+	 * The screen distance which needs to be travelled before something
+	 * counts as a move, in pixels
+	 */
+	private int initialMoveThreshold = 15;
+	private boolean initialMoveThresholdExceeded = false;
 	/**
 	 * Create a new SelectAction
 	 * @param mapFrame The MapFrame this action belongs to.
@@ -72,7 +78,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Move/Move");
 		selectionManager = new SelectionManager(this, false, mapFrame.mapView);		
-		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","100")); } catch (NumberFormatException x) {};
+		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {};
+		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","15")); } catch (NumberFormatException x) {};
+		
 	}
 
 	private static Cursor getCursor(String name, String mod, int def) {
@@ -133,6 +141,15 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 		if (mousePos == null) {
 			mousePos = e.getPoint();
+			return;
+		}
+		
+		if (!initialMoveThresholdExceeded) {
+			int dxp = mousePos.x - e.getX();
+			int dyp = mousePos.y - e.getY();
+			int dp = (int) Math.sqrt(dxp*dxp+dyp*dyp);
+			if (dp < initialMoveThreshold) return;
+			initialMoveThresholdExceeded = true;
 		}
 		
 		EastNorth mouseEN = Main.map.mapView.getEastNorth(e.getX(), e.getY());
@@ -200,6 +217,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		
 		mouseDownTime = System.currentTimeMillis();
 		didMove = false;
+		initialMoveThresholdExceeded = false;
 
 		Collection<OsmPrimitive> osmColl =
 			Main.map.mapView.getNearestCollection(e.getPoint());

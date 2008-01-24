@@ -8,15 +8,19 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -29,6 +33,8 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.ModifiedChangedListener;
+
+import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 /**
  * This is a component used in the MapFrame for browsing the map. It use is to
@@ -81,6 +87,16 @@ public class MapView extends NavigatableComponent {
 				new AutoScaleAction("data").actionPerformed(null);
 
 				new MapMover(MapView.this, Main.contentPane);
+				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, java.awt.event.InputEvent.SHIFT_MASK), "UP");
+				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, java.awt.event.InputEvent.SHIFT_MASK), "DOWN");
+				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, java.awt.event.InputEvent.SHIFT_MASK), "LEFT");
+				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, java.awt.event.InputEvent.SHIFT_MASK), "RIGHT");
+
+				Main.contentPane.getActionMap().put("UP", new MoveAction(MoveAction.Direction.UP));
+				Main.contentPane.getActionMap().put("DOWN", new MoveAction(MoveAction.Direction.DOWN));
+				Main.contentPane.getActionMap().put("LEFT", new MoveAction(MoveAction.Direction.LEFT));
+				Main.contentPane.getActionMap().put("RIGHT", new MoveAction(MoveAction.Direction.RIGHT));
+				
 
 				MapSlider zoomSlider = new MapSlider(MapView.this);
 				add(zoomSlider);

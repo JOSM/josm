@@ -9,10 +9,12 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;

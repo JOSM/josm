@@ -25,7 +25,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 	public KeyStroke shortCut;
 
 	public JosmAction(String name, String iconName, String tooltip, int shortCut, int modifier, boolean register) {
-		super(name, ImageProvider.get(iconName));
+		super(name, iconName == null ? null : ImageProvider.get(iconName));
 		setHelpId();
 		String scl = ShortCutLabel.name(shortCut, modifier);
 		putValue(SHORT_DESCRIPTION, "<html>"+tooltip+" <font size='-2'>"+scl+"</font>"+(scl.equals("")?"":"&nbsp;")+"</html>");
