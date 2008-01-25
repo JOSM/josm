@@ -34,8 +34,6 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.ModifiedChangedListener;
 
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
-
 /**
  * This is a component used in the MapFrame for browsing the map. It use is to
  * provide the MapMode's enough capabilities to operate.
