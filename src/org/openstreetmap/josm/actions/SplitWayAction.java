@@ -216,6 +216,8 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 			JOptionPane.showMessageDialog(Main.parent, tr("The way cannot be split at the selected nodes. (Hint: Select nodes in the middle of the way.)"));
 			return;
 		}
+		Main.debug("wayChunks.size(): " + wayChunks.size());
+		Main.debug("way id: " + selectedWay.id);
 
 		// build a list of commands, and also a new selection list
 		Collection<Command> commandList = new ArrayList<Command>(wayChunks.size());
@@ -239,6 +241,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 			}
 			wayToAdd.nodes.addAll(chunkIt.next());
 			commandList.add(new AddCommand(wayToAdd));
+			Main.debug("wayToAdd: " + wayToAdd);
 			newSelection.add(wayToAdd);
 		}
 

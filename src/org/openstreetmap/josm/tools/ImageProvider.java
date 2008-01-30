@@ -38,7 +38,7 @@ public class ImageProvider {
 	/**
 	 * The icon cache
 	 */
-	private static Map<URL, Image> cache = new HashMap<URL, Image>();
+	private static Map<String, Image> cache = new HashMap<String, Image>();
 
 	/**
 	 * Add here all ClassLoader whose ressource should be searched.
@@ -74,16 +74,22 @@ public class ImageProvider {
 		else if (!subdir.equals(""))
 			subdir += "/";
 		String ext = name.indexOf('.') != -1 ? "" : ".png";
+		String full_name = subdir+name+ext;
 
-		URL path = getImageUrl(subdir+name+ext);
-		if (path == null)
-			return null;
-		
-		Image img = cache.get(path);
+		Image img = cache.get(full_name);
 		if (img == null) {
+			// getImageUrl() does a ton of "stat()" calls and gets expensive
+			// and redundant when you have a whole ton of objects.  So,
+			// index the cache by the name of the icon we're looking for
+			// and don't bother to create a URL unless we're actually
+			// creating the image.
+			URL path = getImageUrl(full_name);
+			if (path == null)
+				return null;
 			img = Toolkit.getDefaultToolkit().createImage(path);
-			cache.put(path, img);
+			cache.put(full_name, img);
 		}
+	
 		return new ImageIcon(img);
 	}
 

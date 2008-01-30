@@ -22,8 +22,7 @@ public class BoundingXYVisitor implements Visitor {
 	}
 
 	public void visit(Way w) {
-		for (Node n : w.nodes)
-			visit(n);
+		w.visitNodes(this);
 	}
 
 	public void visit(Relation e) {

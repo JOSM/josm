@@ -9,10 +9,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.JFileChooser;
@@ -22,7 +19,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.GpxReader;

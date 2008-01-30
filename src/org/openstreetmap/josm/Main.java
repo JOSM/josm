@@ -121,6 +121,15 @@ abstract public class Main {
 	 */
 	public final MainMenu menu;
 
+	/**
+	 * Print a debug message if debugging is on.
+	 */
+	static public int debug_level = 1;
+	static public final void debug(String msg) {
+		if (debug_level <= 0)
+			return;
+		System.out.println(msg);
+	}
 
 	/**
 	 * Set or clear (if passed <code>null</code>) the map.

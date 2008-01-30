@@ -127,7 +127,7 @@ public class MainApplet extends JApplet {
 		MainApplet applet = new MainApplet();
 		applet.setStub(new AppletStub() {
 			public void appletResize(int w, int h) {
-				frame.resize(w, h);
+				frame.setSize(w, h);
 			}
 
 			public AppletContext getAppletContext() {

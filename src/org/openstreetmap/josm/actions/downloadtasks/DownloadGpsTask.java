@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.swing.JCheckBox;
 

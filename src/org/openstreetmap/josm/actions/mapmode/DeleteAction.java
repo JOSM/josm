@@ -7,23 +7,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
-import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.DeleteCommand;
-import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.command.*;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -31,7 +25,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.*;
 
 /**
  * An action that enables the user to delete nodes and other objects.

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * One full way, consisting of a list of way nodes.
@@ -18,6 +19,30 @@ public final class Way extends OsmPrimitive {
 	 * All way nodes in this way
 	 */
 	public final List<Node> nodes = new ArrayList<Node>();
+
+	public void visitNodes(Visitor v) {
+		for (Node n : this.nodes)
+			v.visit(n);
+	}
+
+	public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
+		ArrayList<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
+		Node lastN = null;
+		for (Node n : this.nodes) {
+            if (lastN == null) {
+        	    lastN = n;
+           		continue;
+	   	    }
+			Pair<Node,Node> np = new Pair<Node,Node>(lastN, n);
+           	if (sort) {
+           		Pair.sort(np);
+           	}
+           	chunkSet.add(np);
+	        lastN = n;
+		}
+		return chunkSet;
+	}
+
 
 	@Override public void visit(Visitor visitor) {
 		visitor.visit(this);

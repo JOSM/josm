@@ -5,10 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 
-import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -45,7 +42,6 @@ import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
-import org.openstreetmap.josm.data.Preferences;
 
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide

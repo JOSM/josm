@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -157,7 +158,10 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		Map<String, JComboBox> components = new HashMap<String, JComboBox>();
 		JPanel p = new JPanel(new GridBagLayout());
 		for (Entry<String, Set<String>> e : props.entrySet()) {
-			if (e.getValue().size() > 1) {
+			if (TigerUtils.isTigerTag(e.getKey())) {
+				String combined = TigerUtils.combineTags(e.getKey(), e.getValue());
+				newWay.put(e.getKey(), combined);
+			} else if (e.getValue().size() > 1) {
 				JComboBox c = new JComboBox(e.getValue().toArray());
 				c.setEditable(true);
 				p.add(new JLabel(e.getKey()), GBC.std());
@@ -218,24 +222,9 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		//  4. Profit!
 
 		HashSet<Pair<Node,Node>> chunkSet = new HashSet<Pair<Node,Node>>();
-		for (Way w : ways) {
-			if (w.nodes.size() == 0) continue;
-			Node lastN = null;
-			for (Node n : w.nodes) {
-				if (lastN == null) {
-					lastN = n;
-					continue;
-				}
+		for (Way w : ways)
+			chunkSet.addAll(w.getNodePairs(ignoreDirection));
 
-				Pair<Node,Node> np = new Pair<Node,Node>(lastN, n);
-				if (ignoreDirection) {
-					Pair.sort(np);
-				}
-				chunkSet.add(np);
-
-				lastN = n;
-			}
-		}
 		LinkedList<Pair<Node,Node>> chunks = new LinkedList<Pair<Node,Node>>(chunkSet);
 
 		if (chunks.isEmpty()) {

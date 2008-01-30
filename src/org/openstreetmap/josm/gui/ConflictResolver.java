@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -34,7 +33,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictItem;
 import org.openstreetmap.josm.data.conflict.DeleteConflict;
 import org.openstreetmap.josm.data.conflict.PositionConflict;

@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.GBC;
@@ -169,7 +170,10 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 		Map<String, JComboBox> components = new HashMap<String, JComboBox>();
 		JPanel p = new JPanel(new GridBagLayout());
 		for (Entry<String, Set<String>> e : props.entrySet()) {
-			if (e.getValue().size() > 1) {
+			if (TigerUtils.isTigerTag(e.getKey())) {
+				String combined = TigerUtils.combineTags(e.getKey(), e.getValue());
+				newNode.put(e.getKey(), combined);
+			} else if (e.getValue().size() > 1) {
 				JComboBox c = new JComboBox(e.getValue().toArray());
 				c.setEditable(true);
 				p.add(new JLabel(e.getKey()), GBC.std());

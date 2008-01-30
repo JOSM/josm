@@ -58,4 +58,14 @@ public class Bounds {
 		if (ll.lat() > max.lat() || ll.lon() > max.lon())
 			max = new LatLon(Math.max(ll.lat(), max.lat()), Math.max(ll.lon(), max.lon()));
 	}
+	/**
+	 * Is the given point within this bounds?
+	 */
+	public boolean contains(LatLon ll) {
+		if (ll.lat() < min.lat() || ll.lon() < min.lon())
+			return false;
+		if (ll.lat() > max.lat() || ll.lon() > max.lon())
+			return false;
+		return true;
+	}
 }

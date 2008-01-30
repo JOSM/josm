@@ -44,7 +44,9 @@
 	</target>
 
 	<target name="compile" depends="init">
-		<javac srcdir="src" classpathref="classpath" destdir="build" target="1.5" debug="on" />
+		<javac srcdir="src" classpathref="classpath" destdir="build" target="1.5" debug="on">
+			<compilerarg value="-Xlint:deprecation"/>
+		</javac>
 	</target>
 
 	<target name="init">

@@ -33,8 +33,7 @@ public class AllNodesVisitor implements Visitor {
 	 * Ways have their way nodes.
 	 */
 	public void visit(Way w) {
-		for (Node n : w.nodes)
-			visit(n);
+		w.visitNodes(this);
 	}
 
 	/**
