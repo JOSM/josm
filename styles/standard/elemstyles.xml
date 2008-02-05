@@ -2125,6 +2125,14 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
 	</rule>
 
+	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
+	<rule>
+		<condition k="leisure" v="zoo" />
+		<icon annotate="true" src="vehicle/caution.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
 <!--"work in progress" tags -->
 	<rule>
 		<condition k="amenity" v="sheltered_housing" />
