@@ -263,7 +263,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	
 	<rule>
 		<condition k="highway" v="turning_circle" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="vehicle/turning_circle.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -551,7 +551,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     
     <rule>
         <condition k="railway" v="turntable"/>
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="transport/turntable.png" />
         <area colour="#202020" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
