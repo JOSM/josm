@@ -1184,6 +1184,13 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 
 	<rule>
+		<condition k="shop" v="laundry" />
+		<icon annotate="true" src="shopping/laundry.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="shop" v="outdoor" />
 		<icon annotate="true" src="shopping/sports/outdoor.png" />
         <scale_min>1</scale_min>
@@ -1335,7 +1342,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="historic" v="battlefield" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="sightseeing/battlefield.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
