@@ -742,6 +742,14 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="man_made" v="crane" />
+        <area colour="#D8D8D8" />
+		<icon annotate="true" src="misc/landmark/crane.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
 <!--leisure tags -->
 	<rule>
 		<condition k="leisure" v="sports_centre" />
