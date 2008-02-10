@@ -93,6 +93,13 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>20000</scale_max>
 	</rule>
 
+    <rule>
+       <condition k="highway" v="minor"/>
+       <line width="2" realwidth="5" colour="#c0c0c0"/>
+       <scale_min>1</scale_min>
+       <scale_max>40000</scale_max>
+     </rule>
+
 	<rule>
 		<condition k="highway" v="residential"/>
 		<line width="2" realwidth="5" colour="#c0c0c0"/> 
