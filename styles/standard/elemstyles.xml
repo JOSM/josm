@@ -986,9 +986,38 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
 	</rule>
 
+	<!--the religion rules must be placed before the place_of_worship rule! -->
+	<rule>
+		<condition k="religion" v="christian" />
+		<icon annotate="true" src="religion/church.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="jewish" />
+		<icon annotate="true" src="religion/church/synagogue.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="muslim" />
+		<icon annotate="true" src="religion/church/mosque.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="sikh" />
+		<icon annotate="true" src="religion/church/gurdwara.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
 	<rule>
 		<condition k="amenity" v="place_of_worship" />
-		<icon annotate="true" src="religion/church.png" />
+		<icon annotate="true" src="religion.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
