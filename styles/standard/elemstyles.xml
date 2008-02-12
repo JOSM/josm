@@ -988,8 +988,36 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<!--the religion rules must be placed before the place_of_worship rule! -->
 	<rule>
+		<condition k="religion" v="bahai" />
+		<icon annotate="true" src="religion/church/bahai.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="buddhist" />
+		<icon annotate="true" src="religion/church/buddhism.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="religion" v="christian" />
 		<icon annotate="true" src="religion/church.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="hindu" />
+		<icon annotate="true" src="religion/church/hinduism.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="jain" />
+		<icon annotate="true" src="religion/church/jainism.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1010,7 +1038,21 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="religion" v="sikh" />
-		<icon annotate="true" src="religion/church/gurdwara.png" />
+		<icon annotate="true" src="religion/church/sikhism.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="shinto" />
+		<icon annotate="true" src="religion/church/shinto.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="taoist" />
+		<icon annotate="true" src="religion/church/taoism.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>

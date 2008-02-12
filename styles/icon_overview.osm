@@ -834,43 +834,73 @@
     <tag k='railway' v='turntable' />
     <tag k='name' v='turntable' />
   </node>
-  <node id='-209' action='modify' visible='true' lat='9.884529472092545' lon='-55.872711730120685'>
-    <tag k='name' v='religion' />
-    <tag k='tourism' v='attraction' />
+  <node id='-209' action='modify' visible='true' lat='9.874809316392758' lon='-55.85327141872111'>
+    <tag k='religion' v='jain' />
+    <tag k='name' v='jain' />
+    <tag k='amenity' v='place_of_worship' />
   </node>
-  <node id='-210' visible='true' lat='8.727830943817821' lon='-60.36828374127245' />
-  <node id='-211' visible='true' lat='8.727830943817821' lon='-59.43514879409284' />
-  <node id='-212' action='modify' visible='true' lat='8.718110788118034' lon='-59.075503033200704'>
+  <node id='-210' action='modify' visible='true' lat='9.077756549010175' lon='-55.843551263021325'>
+    <tag k='religion' v='shinto' />
+    <tag k='name' v='shinto' />
+    <tag k='amenity' v='place_of_worship' />
+  </node>
+  <node id='-211' action='modify' visible='true' lat='8.718110788118034' lon='-59.075503033200704'>
     <tag k='name' v='highway=minor' />
     <tag k='tourism' v='attraction' />
   </node>
-  <node id='-213' action='modify' visible='true' lat='10.341376789982563' lon='-61.52984234739707'>
-    <tag k='name' v='crane' />
-    <tag k='man_made' v='crane' />
-  </node>
-  <node id='-214' action='modify' visible='true' lat='9.22355888450699' lon='-55.872711730120685'>
-    <tag k='religion' v='muslim' />
-    <tag k='name' v='muslim' />
+  <node id='-212' action='modify' visible='true' lat='10.730183017974065' lon='-55.85327141872111'>
+    <tag k='religion' v='bahai' />
+    <tag k='name' v='bahai' />
     <tag k='amenity' v='place_of_worship' />
   </node>
-  <node id='-215' action='modify' visible='true' lat='9.009715459111662' lon='-55.86785165227079'>
-    <tag k='religion' v='sikh' />
-    <tag k='name' v='sikh' />
+  <node id='-213' action='modify' visible='true' lat='10.506619436878951' lon='-55.843551263021325'>
+    <tag k='religion' v='buddhist' />
+    <tag k='name' v='buddhist' />
     <tag k='amenity' v='place_of_worship' />
   </node>
-  <node id='-216' action='modify' visible='true' lat='9.651245735297643' lon='-55.872711730120685'>
+  <node id='-214' action='modify' visible='true' lat='10.06921243038851' lon='-55.843551263021325'>
+    <tag k='religion' v='hindu' />
+    <tag k='name' v='hindu' />
+    <tag k='amenity' v='place_of_worship' />
+  </node>
+  <node id='-215' action='modify' visible='true' lat='10.27333570008405' lon='-55.843551263021325'>
     <tag k='religion' v='christian' />
     <tag k='name' v='christian' />
     <tag k='amenity' v='place_of_worship' />
   </node>
-  <node id='-217' action='modify' visible='true' lat='9.447122465602103' lon='-55.872711730120685'>
+  <node id='-216' action='modify' visible='true' lat='10.944026443369392' lon='-55.85327141872111'>
+    <tag k='name' v='religion' />
+    <tag k='tourism' v='attraction' />
+  </node>
+  <node id='-217' visible='true' lat='8.727830943817821' lon='-60.36828374127245' />
+  <node id='-218' visible='true' lat='8.727830943817821' lon='-59.43514879409284' />
+  <node id='-219' action='modify' visible='true' lat='9.670686046697218' lon='-55.85327141872111'>
     <tag k='religion' v='jewish' />
     <tag k='name' v='jewish' />
     <tag k='amenity' v='place_of_worship' />
   </node>
-  <way id='-218' action='modify' visible='true'>
-    <nd ref='-210' />
-    <nd ref='-211' />
+  <node id='-220' action='modify' visible='true' lat='10.341376789982563' lon='-61.52984234739707'>
+    <tag k='name' v='crane' />
+    <tag k='man_made' v='crane' />
+  </node>
+  <node id='-221' action='modify' visible='true' lat='9.466562777001679' lon='-55.85327141872111'>
+    <tag k='religion' v='muslim' />
+    <tag k='name' v='muslim' />
+    <tag k='amenity' v='place_of_worship' />
+  </node>
+  <node id='-222' action='modify' visible='true' lat='9.272159663005928' lon='-55.848411340871216'>
+    <tag k='religion' v='sikh' />
+    <tag k='name' v='sikh' />
+    <tag k='amenity' v='place_of_worship' />
+  </node>
+  <node id='-223' action='modify' visible='true' lat='8.873633279314635' lon='-55.85327141872111'>
+    <tag k='religion' v='taoist' />
+    <tag k='name' v='taoist' />
+    <tag k='amenity' v='place_of_worship' />
+  </node>
+  <way id='-224' action='modify' visible='true'>
+    <nd ref='-217' />
+    <nd ref='-218' />
     <tag k='highway' v='minor' />
   </way>
 </osm>
