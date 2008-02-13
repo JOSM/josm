@@ -99,7 +99,9 @@ public class RelationEditor extends JFrame {
 	 */
 	public RelationEditor(Relation relation)
 	{
-		super(tr("Edit Relation"));
+		super(relation == null ? tr("Create new relation") : 
+			relation.id == 0 ? tr ("Edit new relation") :
+			tr("Edit relation #{0}", relation.id));
 		this.relation = relation;
 		
 		if (relation == null) {
