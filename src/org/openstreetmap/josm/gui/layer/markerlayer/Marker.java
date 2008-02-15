@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. Copyright 2008 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
 import java.awt.Graphics;
@@ -86,14 +86,22 @@ public class Marker implements ActionListener {
 				} catch (Exception ex) {};
 
 				// Try a relative file:// url, if the link is not in an URL-compatible form
-				if (relativePath != null && uri != null && !isWellFormedAddress(uri))
-					uri = new File(relativePath, uri).toURI().toString();
+                if (relativePath != null && uri != null && !isWellFormedAddress(uri))
+                    uri = new File(relativePath, uri).toURI().toString();
 
-				if (uri == null)
-					return new Marker(wpt.latlon, wpt.getString("name"), wpt.getString("symbol"));
-				if (uri.endsWith(".wav"))
-					return AudioMarker.create(wpt.latlon, uri);
-				else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
+                if (uri == null) {
+                    String name_desc = "";
+                    if (wpt.attr.containsKey("name")) {
+                        name_desc = wpt.getString("name");
+                    } else if (wpt.attr.containsKey("desc")) {
+                        name_desc = wpt.getString("desc");
+                    }
+                    return new Marker(wpt.latlon, name_desc, wpt.getString("symbol"));
+                }
+
+                if (uri.endsWith(".wav"))
+                    return AudioMarker.create(wpt.latlon, uri);
+                else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
 					return ImageMarker.create(wpt.latlon, uri);
 				else
 					return WebMarker.create(wpt.latlon, uri);

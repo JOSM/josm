@@ -236,6 +236,9 @@ public class GpxReader {
 				} else if (qName.equals("trkpt")) {
 					currentState = states.pop();
 					currentTrackSeg.add(currentWayPoint);
+					if (currentWayPoint.attr.containsKey("name") || currentWayPoint.attr.containsKey("desc")) {
+						currentData.waypoints.add(currentWayPoint);
+					}
 				} else if (qName.equals("wpt")) {
 					currentState = states.pop();
 					currentData.waypoints.add(currentWayPoint);
