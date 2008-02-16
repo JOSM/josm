@@ -1876,7 +1876,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="australian_football" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/football.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1891,6 +1891,14 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="sport" v="basketball" />
+		<area colour="#bde3cb"/>
+		<icon src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="boules" />
 		<area colour="#bde3cb"/>
 		<icon src="misc/no_icon.png" />
         <scale_min>1</scale_min>
@@ -1940,7 +1948,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="cycling" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/cycling.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1954,9 +1962,9 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 
 	<rule>
-		<condition k="sport" v="equestrain" />
+		<condition k="sport" v="equestrian" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/riding.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1964,7 +1972,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="football" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/football.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1972,7 +1980,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="golf" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/golf.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1996,7 +2004,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="horse_racing" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/riding.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2034,9 +2042,9 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 
 	<rule>
-		<condition k="sport" v="rubgy" />
+		<condition k="sport" v="rugby" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/football.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2076,7 +2084,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="skiing" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/skiing.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2092,7 +2100,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="tennis" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/tennis.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
