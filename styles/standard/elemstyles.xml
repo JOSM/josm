@@ -2214,7 +2214,15 @@ Using both area and line attributes for the same key/value pair doesn't work!
 <!--"deprecated" tags -->
 	<rule>
 		<condition k="historic" v="museum" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<!-- was never approved anyway, shop=laundry was approved instead -->
+	<rule>
+		<condition k="shop" v="laundromat" />
+		<icon annotate="true" src="misc/deprecated.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2229,7 +2237,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
 	<rule>
 		<condition k="leisure" v="zoo" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/deprecated.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2237,90 +2245,83 @@ Using both area and line attributes for the same key/value pair doesn't work!
 <!--"work in progress" tags -->
 	<rule>
 		<condition k="amenity" v="sheltered_housing" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="amenity" v="nursery" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="amenity" v="shelter" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	
 	<rule>
-		<condition k="shop" v="laundromat" />
-		<icon annotate="true" src="vehicle/caution.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="shop" v="beverages" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="shop" v="bakery" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="shop" v="chemist" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="shop" v="motorcycle" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="shop" v="car_repair" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="shop" v="mall" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="historic" v="church" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="barrier" v="bollard" />
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="yes"/>
-		<icon annotate="true" src="vehicle/caution.png" />
+		<icon annotate="true" src="misc/proposed.png" />
 		<area colour="#bde3cb"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
