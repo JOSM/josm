@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
@@ -236,7 +237,12 @@ public class GpxReader {
 				} else if (qName.equals("trkpt")) {
 					currentState = states.pop();
 					currentTrackSeg.add(currentWayPoint);
-					if (currentWayPoint.attr.containsKey("name") || currentWayPoint.attr.containsKey("desc")) {
+					String option = "marker.namedtrackpoints";
+					if (Main.pref.hasKey(option) && 
+						Main.pref.getBoolean(option) && 
+						(currentWayPoint.attr.containsKey("name") || 
+							currentWayPoint.attr.containsKey("desc"))) 
+					{
 						currentData.waypoints.add(currentWayPoint);
 					}
 				} else if (qName.equals("wpt")) {
