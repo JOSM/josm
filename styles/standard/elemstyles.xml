@@ -1509,7 +1509,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="landuse" v="industrial"/>
 		<area colour="#ecd8ff"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="misc/landmark/works.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1892,7 +1892,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="basketball" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/basketball.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
