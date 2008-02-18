@@ -348,11 +348,12 @@ public class MarkerLayer extends Layer {
 							((AudioMarker)previousMarker).play();
 							break;
 						}
-					} else if (nextTime) {
+					} else if (nextTime && marker.getClass() == AudioMarker.class) {
 						((AudioMarker)marker).play();
 						return;
 					}
-					previousMarker = marker;
+					if (marker.getClass() == AudioMarker.class)
+						previousMarker = marker;
 				}
 			}
 		}
