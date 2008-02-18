@@ -28,7 +28,7 @@ public class AudioPlayer extends Thread {
 
 	private enum State { INITIALIZING, NOTPLAYING, PLAYING, PAUSED, INTERRUPTED } 
 	private State state;
-    private enum Command { PLAY, PAUSE, JUMP }
+    private enum Command { PLAY, PAUSE }
     private enum Result { WAITING, OK, FAILED }
     private URL playingUrl;
     private double leadIn; // seconds
@@ -57,11 +57,6 @@ public class AudioPlayer extends Thread {
 		}
 		protected void pause() throws Exception {
 			command = Command.PAUSE;
-			send();
-		}
-		protected void jump(double offset) throws Exception {
-			this.offset = offset;
-			command = Command.JUMP;
 			send();
 		}
 		private void send() throws Exception {
@@ -114,17 +109,6 @@ public class AudioPlayer extends Thread {
 	 */
 	public static void play(URL url, double seconds) throws Exception {
 		AudioPlayer.get().command.play(url, seconds);
-	}
-	
-	/**
-	 * Fast Forward or Rewind the audio stream by the given number of seconds. 
-	 * Terminates playing if would jump after the end
-	 * Starts from the beginning if would jump before start 
-	 * @param seconds fast forwards (positive) or rewinds (negative) by this number of seconds
-	 * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
-	 */
-	public static void jump(double seconds) throws Exception {
-		AudioPlayer.get().command.jump(seconds);
 	}
 	
 	/**
@@ -290,9 +274,6 @@ public class AudioPlayer extends Thread {
 						break;
 					case PAUSE:
 						stateChange = state.PAUSED;
-						break;
-					case JUMP:
-						stateChange = state.PAUSED; // for now
 						break;
 					}
 					command.ok(stateChange);
