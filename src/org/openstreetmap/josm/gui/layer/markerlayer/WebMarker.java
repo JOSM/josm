@@ -22,16 +22,16 @@ public class WebMarker extends ButtonMarker {
 
 	public URL webUrl;
 
-	public static WebMarker create (LatLon ll, String url) {
+	public static WebMarker create (LatLon ll, String url, double offset) {
 		try {
-			return new WebMarker(ll, new URL(url));
+			return new WebMarker(ll, new URL(url), offset);
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
-	private WebMarker(LatLon ll, URL webUrl) {
-		super(ll, "web.png");
+	private WebMarker(LatLon ll, URL webUrl, double offset) {
+		super(ll, "web.png", offset);
 		this.webUrl = webUrl;
 	}
 

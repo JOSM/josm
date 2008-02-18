@@ -63,6 +63,8 @@ public class Marker implements ActionListener {
 	public final EastNorth eastNorth;
 	public final String text;
 	public final Icon symbol;
+	public double offset; /* time offset in seconds from the gpx point from which it was derived,
+							 may be adjusted later to sync with other data, so not final */
 
 	/**
 	 * Plugins can add their Marker creation stuff at the bottom or top of this list
@@ -75,6 +77,10 @@ public class Marker implements ActionListener {
 	static {
 		Marker.markerProducers.add(new MarkerProducers() {
 			public Marker createMarker(WayPoint wpt, File relativePath) {
+				return createMarker(wpt, relativePath, 0.0);
+			}
+			
+			public Marker createMarker(WayPoint wpt, File relativePath, double offset) {
 				String uri = null;
 				// cheapest way to check whether "link" object exists and is a non-empty
 				// collection of GpxLink objects...
@@ -89,22 +95,21 @@ public class Marker implements ActionListener {
                 if (relativePath != null && uri != null && !isWellFormedAddress(uri))
                     uri = new File(relativePath, uri).toURI().toString();
 
-                if (uri == null) {
-                    String name_desc = "";
-                    if (wpt.attr.containsKey("name")) {
-                        name_desc = wpt.getString("name");
-                    } else if (wpt.attr.containsKey("desc")) {
-                        name_desc = wpt.getString("desc");
-                    }
-                    return new Marker(wpt.latlon, name_desc, wpt.getString("symbol"));
+                String name_desc = "";
+                if (wpt.attr.containsKey("name")) {
+                	name_desc = wpt.getString("name");
+                } else if (wpt.attr.containsKey("desc")) {
+                    name_desc = wpt.getString("desc");
                 }
-
-                if (uri.endsWith(".wav"))
-                    return AudioMarker.create(wpt.latlon, uri);
+                
+                if (uri == null)
+                    return new Marker(wpt.latlon, name_desc, wpt.getString("symbol"), offset);
+                else if (uri.endsWith(".wav"))
+                    return AudioMarker.create(wpt.latlon, name_desc, uri, offset);
                 else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
-					return ImageMarker.create(wpt.latlon, uri);
+					return ImageMarker.create(wpt.latlon, uri, offset);
 				else
-					return WebMarker.create(wpt.latlon, uri);
+					return WebMarker.create(wpt.latlon, uri, offset);
 			}
 
 			private boolean isWellFormedAddress(String link) {
@@ -118,9 +123,10 @@ public class Marker implements ActionListener {
 		});
 	}
 
-	public Marker(LatLon ll, String text, String iconName) {
+	public Marker(LatLon ll, String text, String iconName, double offset) {
 		eastNorth = Main.proj.latlon2eastNorth(ll); 
 		this.text = text;
+		this.offset = offset;
 		Icon symbol = ImageProvider.getIfAvailable("markers",iconName);
 		if (symbol == null)
 			symbol = ImageProvider.getIfAvailable("symbols",iconName);
@@ -176,14 +182,31 @@ public class Marker implements ActionListener {
 	 * @param data hash containing keys and values from the GPX waypoint structure
 	 * @param relativePath An path to use for constructing relative URLs or 
 	 *        <code>null</code> for no relative URLs
+	 * @param offset double in seconds as the time offset of this marker from 
+	 * 		  the GPX file from which it was derived (if any).  
 	 * @return a new Marker object
 	 */
-	public static Marker createMarker(WayPoint wpt, File relativePath) {
+	public static Marker createMarker(WayPoint wpt, File relativePath, double offset) {
 		for (MarkerProducers maker : Marker.markerProducers) {
-			Marker marker = maker.createMarker(wpt, relativePath);
+			Marker marker = maker.createMarker(wpt, relativePath, offset);
 			if (marker != null)
 				return marker;
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns an AudioMarker derived from this Marker and the provided uri
+	 * Subclasses of specific marker types override this to return null as they can't
+	 * be turned into AudioMarkers. This includes AudioMarkers themselves, as they 
+	 * already have audio.  
+	 * 
+	 * @param uri uri of wave file
+	 * @return AudioMarker
+	 */
+	
+	public AudioMarker audioMarkerFromMarker(String uri) {
+		AudioMarker audioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(this.eastNorth), this.text, uri, this.offset);
+		return audioMarker;
 	}
 }

@@ -33,16 +33,16 @@ public class ImageMarker extends ButtonMarker {
 
 	public URL imageUrl;
 
-	public static ImageMarker create(LatLon ll, String url) {
+	public static ImageMarker create(LatLon ll, String url, double offset) {
 		try {
-			return new ImageMarker(ll, new URL(url));
+			return new ImageMarker(ll, new URL(url), offset);
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
-	private ImageMarker(LatLon ll, URL imageUrl) {
-		super(ll, "photo.png");
+	private ImageMarker(LatLon ll, URL imageUrl, double offset) {
+		super(ll, "photo.png", offset);
 		this.imageUrl = imageUrl;
 	}
 

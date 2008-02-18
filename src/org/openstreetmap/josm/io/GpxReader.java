@@ -237,9 +237,7 @@ public class GpxReader {
 				} else if (qName.equals("trkpt")) {
 					currentState = states.pop();
 					currentTrackSeg.add(currentWayPoint);
-					String option = "marker.namedtrackpoints";
-					if (Main.pref.hasKey(option) && 
-						Main.pref.getBoolean(option) && 
+					if (Main.pref.getBoolean("marker.namedtrackpoints") && 
 						(currentWayPoint.attr.containsKey("name") || 
 							currentWayPoint.attr.containsKey("desc"))) 
 					{

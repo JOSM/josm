@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.AudioPlayer;
 
 /**
  * Marker class with audio playback capability.
@@ -26,66 +27,54 @@ import org.openstreetmap.josm.data.coor.LatLon;
 public class AudioMarker extends ButtonMarker {
 
 	private URL audioUrl;
+	private double syncOffset;
+	private static AudioMarker recentlyPlayedMarker = null;
 
 	/**
 	 * Verifies the parameter whether a new AudioMarker can be created and return
 	 * one or return <code>null</code>.
 	 */
-	public static AudioMarker create(LatLon ll, String url) {
+	public static AudioMarker create(LatLon ll, String text, String url, double offset) {
 		try {
-			return new AudioMarker(ll, new URL(url));
+			return new AudioMarker(ll, text, new URL(url), offset);
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
-	private AudioMarker(LatLon ll, URL audioUrl) {
-		super(ll, "speech.png");
+	private AudioMarker(LatLon ll, String text, URL audioUrl, double offset) {
+		super(ll, text, "speech.png", offset);
 		this.audioUrl = audioUrl;
+		this.syncOffset = 0.0;
 	}
 
 	@Override public void actionPerformed(ActionEvent ev) {
-		AudioInputStream audioInputStream = null;
-		try {
-			audioInputStream = AudioSystem.getAudioInputStream(audioUrl);
-		} catch (Exception e) {
-			audioMalfunction(e);
-			return;
-		}
-		AudioFormat	audioFormat = audioInputStream.getFormat();
-		SourceDataLine line = null;
-		DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-		try {
-			line = (SourceDataLine) AudioSystem.getLine(info);
-			line.open(audioFormat);
-		} catch (Exception e)	{
-			audioMalfunction(e);
-			return;
-		}
-		line.start();
-
-		int	nBytesRead = 0;
-		byte[]	abData = new byte[16384];
-		while (nBytesRead != -1) {
-			try {
-				nBytesRead = audioInputStream.read(abData, 0, abData.length);
-			} catch (IOException e) {
-				audioMalfunction(e);
-				return;
-			}
-			if (nBytesRead >= 0) {
-				/* int	nBytesWritten = */ line.write(abData, 0, nBytesRead);
-			}
-		}
-		line.drain();
-		line.close();
+		play();
 	}
 
-	void audioMalfunction(Exception ex) {
-		JOptionPane.showMessageDialog(Main.parent, 
-				"<html><b>" + 
-				tr("There was an error while trying to play the sound file for this marker.") +
-				"</b><br>" + ex.getClass().getName() + ":<br><i>" + ex.getMessage() + "</i></html>",
-				tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
+	public static AudioMarker recentlyPlayedMarker() {
+		return recentlyPlayedMarker;
+	}
+	
+	public URL url() {
+		return audioUrl;
+	}
+	
+	/**
+	 * Starts playing the audio associated with the marker: used in response to pressing
+	 * the marker as well as indirectly 
+	 *
+	 */
+	public void play() {
+		try {
+			AudioPlayer.play(audioUrl, offset + syncOffset);
+			recentlyPlayedMarker = this;
+		} catch (Exception e) {
+			AudioPlayer.audioMalfunction(e);
+		}
+	}
+	
+	public void adjustOffset(double adjustment) {
+		syncOffset = adjustment; // added to offset may turn out negative, but that's ok
 	}
 }

@@ -40,6 +40,11 @@ import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.actions.UndoAction;
 import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UploadAction;
+import org.openstreetmap.josm.actions.audio.AudioBackAction;
+import org.openstreetmap.josm.actions.audio.AudioFwdAction;
+import org.openstreetmap.josm.actions.audio.AudioNextAction;
+import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
+import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
 
@@ -86,6 +91,13 @@ public class MainMenu extends JMenuBar {
 	public final JosmAction mergeNodes = new MergeNodesAction();
 	public final JosmAction joinNodeWay = new JoinNodeWayAction();
 
+	/* Audio menu */
+	public final JosmAction audioPlayPause = new AudioPlayPauseAction();
+	public final JosmAction audioNext = new AudioNextAction();
+	public final JosmAction audioPrev = new AudioPrevAction();
+	public final JosmAction audioFwd = new AudioFwdAction();
+	public final JosmAction audioBack = new AudioBackAction();
+
 	/* Help menu */
 	public final HelpAction help = new HelpAction();
 	public final JosmAction about = new AboutAction();
@@ -94,6 +106,7 @@ public class MainMenu extends JMenuBar {
 	public final JMenu editMenu = new JMenu(tr("Edit"));
 	public final JMenu viewMenu = new JMenu(tr("View"));
 	public final JMenu toolsMenu = new JMenu(tr("Tools"));
+	public final JMenu audioMenu = new JMenu(tr("Audio"));
 	public final JMenu presetsMenu = new JMenu(tr("Presets"));
 	public final JMenu helpMenu = new JMenu(tr("Help"));
         
@@ -191,6 +204,21 @@ public class MainMenu extends JMenuBar {
 		current = toolsMenu.add(joinNodeWay);
 		current.setAccelerator(joinNodeWay.shortCut);
 		add(toolsMenu);
+
+		if (! Main.pref.getBoolean("audio.menuinvisible")) {
+			audioMenu.setMnemonic('A');
+			current = audioMenu.add(audioPlayPause);
+			current.setAccelerator(audioPlayPause.shortCut);
+			current = audioMenu.add(audioNext);
+			current.setAccelerator(audioNext.shortCut);
+			current = audioMenu.add(audioPrev);
+			current.setAccelerator(audioPrev.shortCut);
+			current = audioMenu.add(audioFwd);
+			current.setAccelerator(audioFwd.shortCut);
+			current = audioMenu.add(audioBack);
+			current.setAccelerator(audioBack.shortCut);
+			add(audioMenu);
+		}
 
 		add(presetsMenu);
 		presetsMenu.setMnemonic('P');

@@ -56,6 +56,8 @@ import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.GBC;
@@ -134,6 +136,28 @@ public class GpxLayer extends Layer {
 			}
 		});
 
+		JMenuItem markersFromNamedTrackpoints = new JMenuItem(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
+		markersFromNamedTrackpoints.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+/*
+				public Collection<GpxTrack> tracks = new LinkedList<GpxTrack>();
+				public Collection<Collection<WayPoint>> trackSegs
+				= new LinkedList<Collection<WayPoint>>();
+				*/
+				GpxData namedTrackPoints = new GpxData();
+				for (GpxTrack track : data.tracks)
+					for (Collection<WayPoint> seg : track.trackSegs)
+						for (WayPoint point : seg)
+							if (point.attr.containsKey("name") || point.attr.containsKey("desc")) 
+								namedTrackPoints.waypoints.add(point);
+
+	            MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name), associatedFile);
+	            if (ml.data.size() > 0) {
+	            	Main.main.addLayer(ml);
+	            }
+			}
+		});
+
 		JMenuItem tagimage = new JMenuItem(tr("Import images"), ImageProvider.get("tagimages"));
 		tagimage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -191,6 +215,7 @@ public class GpxLayer extends Layer {
 				color,
 				line,
 				tagimage,
+				markersFromNamedTrackpoints,
 				new JMenuItem(new ConvertToDataLayerAction()),
 				new JSeparator(),
 				new JMenuItem(new RenameLayerAction(associatedFile, this)),
