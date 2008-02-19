@@ -287,7 +287,7 @@ public class MarkerLayer extends Layer {
 			return;
 		}
 		// apply adjustment to all subsequent audio markers in the layer
-		double adjustment = AudioPlayer.position(); // in seconds
+		double adjustment = AudioPlayer.position() - startMarker.offset; // in seconds
 		boolean seenStart = false;
 		URL url = ((AudioMarker)startMarker).url();
 		for (Marker m : data) {
