@@ -345,6 +345,8 @@ public class MarkerLayer extends Layer {
 						if (next) {
 							nextTime = true;
 						} else {
+							if (previousMarker == null)
+								previousMarker = startMarker; // if no previous one, play the first one again
 							((AudioMarker)previousMarker).play();
 							break;
 						}
@@ -354,6 +356,11 @@ public class MarkerLayer extends Layer {
 					}
 					if (marker.getClass() == AudioMarker.class)
 						previousMarker = marker;
+				}
+				if (nextTime) {
+					// there was no next marker in that layer, so play the last one again
+					((AudioMarker)startMarker).play();
+					return;
 				}
 			}
 		}
