@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.awt.event.ActionEvent;
@@ -56,6 +57,7 @@ import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -139,11 +141,6 @@ public class GpxLayer extends Layer {
 		JMenuItem markersFromNamedTrackpoints = new JMenuItem(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
 		markersFromNamedTrackpoints.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-/*
-				public Collection<GpxTrack> tracks = new LinkedList<GpxTrack>();
-				public Collection<Collection<WayPoint>> trackSegs
-				= new LinkedList<Collection<WayPoint>>();
-				*/
 				GpxData namedTrackPoints = new GpxData();
 				for (GpxTrack track : data.tracks)
 					for (Collection<WayPoint> seg : track.trackSegs)
@@ -155,6 +152,29 @@ public class GpxLayer extends Layer {
 	            if (ml.data.size() > 0) {
 	            	Main.main.addLayer(ml);
 	            }
+			}
+		});
+
+		JMenuItem applyAudio = new JMenuItem(tr("Make Sampled Audio Layer"), ImageProvider.get("applyaudio"));
+		applyAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser(Main.pref.get("tagimages.lastdirectory"));
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(new FileFilter(){
+					@Override public boolean accept(File f) {
+						return f.isDirectory() || f.getName().toLowerCase().endsWith(".wav");
+					}
+					@Override public String getDescription() {
+						return tr("Wave Audio files (*.wav)");
+					}
+				});
+				fc.showOpenDialog(Main.parent);
+				File sel = fc.getSelectedFile();
+				if (sel == null)
+					return;
+				applyAudio(sel);
+				Main.map.repaint();
 			}
 		});
 
@@ -215,6 +235,7 @@ public class GpxLayer extends Layer {
 				color,
 				line,
 				tagimage,
+				applyAudio,
 				markersFromNamedTrackpoints,
 				new JMenuItem(new ConvertToDataLayerAction()),
 				new JSeparator(),
@@ -455,4 +476,61 @@ public class GpxLayer extends Layer {
 		}
 	}
 
+	/**
+	 * 
+	 *
+	 */
+	private void applyAudio(File wavFile) {
+		String uri = "file:".concat(wavFile.getAbsolutePath());
+	    double audioGapSecs = 15.0; 
+		try {
+			audioGapSecs = Double.parseDouble(Main.pref.get("marker.audiosampleminsecs", Double.toString(audioGapSecs)));
+		} catch (NumberFormatException e) {
+		}
+	    double audioGapMetres = 75.0; 
+		try {
+			audioGapMetres = Double.parseDouble(Main.pref.get("marker.audiosampleminmetres", Double.toString(audioGapMetres)));
+		} catch (NumberFormatException e) {
+		}
+		double audioGapRadians = (audioGapMetres / 40041455.0 /* circumference of Earth in metres */) * 2.0 * Math.PI;
+		double audioGapRadiansSquared = audioGapRadians * audioGapRadians;
+		double firstTime = -1.0;
+	    double prevOffset = - (audioGapSecs + 1.0); // first point always exceeds time difference
+	    WayPoint prevPoint = null;
+
+	    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Sampled audio markers from {0}", name), associatedFile);
+	    
+		for (GpxTrack track : data.tracks) {
+			for (Collection<WayPoint> seg : track.trackSegs) {
+				for (WayPoint point : seg) {
+					double time = point.time();
+					if (firstTime < 0.0)
+						firstTime = time;
+					double offset = time - firstTime;
+					if (prevPoint == null ||
+						(offset - prevOffset > audioGapSecs &&
+						/* note: distance is misleading: it actually gives distance _squared_ */
+						point.eastNorth.distance(prevPoint.eastNorth) > audioGapRadiansSquared))
+					{
+						String markerName;
+						int wholeSeconds = (int)(offset + 0.5);
+						if (wholeSeconds < 60)
+							markerName = Integer.toString(wholeSeconds);
+						else if (wholeSeconds < 3600)
+							markerName = String.format("%d:%02d", wholeSeconds / 60, wholeSeconds % 60);
+						else
+							markerName = String.format("%d:%02d:%02d", wholeSeconds / 3600, (wholeSeconds % 3600)/60, wholeSeconds % 60);
+						AudioMarker am = AudioMarker.create(point.latlon, markerName, uri, offset);
+						ml.data.add(am);
+						prevPoint = point;
+						prevOffset = offset;
+					}
+				}
+			}
+		}
+
+        if (ml.data.size() > 0) {
+        	Main.main.addLayer(ml);
+        }
+	}
 }

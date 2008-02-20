@@ -60,7 +60,7 @@ public class ButtonMarker extends Marker {
 			r.grow((inset.top+inset.bottom)/2, (inset.left+inset.right)/2);
 			b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
 		}
-		if ((text != null) && (show.equalsIgnoreCase("show")) && Main.pref.getBoolean("marker.buttonlabels"))
+		if ((text != null) && (show.equalsIgnoreCase("show")) && Main.pref.getBoolean("marker.buttonlabels", true))
 			g.drawString(text, screen.x+4, screen.y+2);
 	}
 }

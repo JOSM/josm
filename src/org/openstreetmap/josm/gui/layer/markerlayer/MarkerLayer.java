@@ -16,10 +16,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.text.ParsePosition;
-import java.text.ParseException;
 import java.net.URL;
 
 import javax.swing.Icon;
@@ -69,25 +65,14 @@ public class MarkerLayer extends Layer {
 		super(name);
 		this.associatedFile = associatedFile;
 		this.data = new ArrayList<Marker>();
-		double offset = 0.0;
-		Date firstDate = null;
+		double firstTime = -1.0;
 
 		for (WayPoint wpt : indata.waypoints) {
 			/* calculate time differences in waypoints */
-			if (wpt.attr.containsKey("time")) {
-				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ignore timezone, as it is all relative
-				Date d = f.parse(wpt.attr.get("time").toString(), new ParsePosition(0));
-				if (d == null /* failed to parse */) {
-					offset = 0.0;
-				} else if (firstDate == null) {
-					firstDate = d;
-					offset = 0.0;
-				} else {
-					offset = (d.getTime() - firstDate.getTime()) / 1000.0; /* ms => seconds */
-				}
-			}
-			
-            Marker m = Marker.createMarker(wpt, indata.storageFile, offset);
+			double time = wpt.time();
+			if (firstTime < 0)
+				firstTime = time;
+            Marker m = Marker.createMarker(wpt, indata.storageFile, time - firstTime);
             if (m != null)
             	data.add(m);
 		}
