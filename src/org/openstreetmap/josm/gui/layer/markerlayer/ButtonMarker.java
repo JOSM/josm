@@ -24,14 +24,15 @@ import org.openstreetmap.josm.gui.layer.Layer;
 public class ButtonMarker extends Marker {
 
 	private Rectangle buttonRectangle;
+	protected Graphics graphicsContext = null;
 	
-	public ButtonMarker(LatLon ll, String buttonImage, double offset) {
-		super(ll, null, buttonImage, offset);
+	public ButtonMarker(LatLon ll, String buttonImage, MarkerLayer parentLayer, double time, double offset) {
+		super(ll, null, buttonImage, parentLayer, time, offset);
 		buttonRectangle = new Rectangle(0, 0, symbol.getIconWidth(), symbol.getIconHeight());
 	}
 	
-	public ButtonMarker(LatLon ll, String text, String buttonImage, double offset) {
-		super(ll, text, buttonImage, offset);
+	public ButtonMarker(LatLon ll, String text, String buttonImage, MarkerLayer parentLayer, double time, double offset) {
+		super(ll, text, buttonImage, parentLayer, time, offset);
 		buttonRectangle = new Rectangle(0, 0, symbol.getIconWidth(), symbol.getIconHeight());
 	}
 	
@@ -42,6 +43,7 @@ public class ButtonMarker extends Marker {
 	}
 	
 	@Override public void paint(Graphics g, MapView mv, boolean mousePressed, String show) {
+		graphicsContext = g;
 		Point screen = mv.getPoint(eastNorth);
 		buttonRectangle.setLocation(screen.x+4, screen.y+2);
 		symbol.paintIcon(mv, g, screen.x+4, screen.y+2);

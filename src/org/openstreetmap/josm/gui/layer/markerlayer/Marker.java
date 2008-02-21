@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -63,6 +64,8 @@ public class Marker implements ActionListener {
 	public final EastNorth eastNorth;
 	public final String text;
 	public final Icon symbol;
+	public final MarkerLayer parentLayer;
+	public double time; /* avbsolute time of marker since epocj */
 	public double offset; /* time offset in seconds from the gpx point from which it was derived,
 							 may be adjusted later to sync with other data, so not final */
 
@@ -77,10 +80,10 @@ public class Marker implements ActionListener {
 	static {
 		Marker.markerProducers.add(new MarkerProducers() {
 			public Marker createMarker(WayPoint wpt, File relativePath) {
-				return createMarker(wpt, relativePath, 0.0);
+				return createMarker(wpt, relativePath, null, 0.0, 0.0);
 			}
 			
-			public Marker createMarker(WayPoint wpt, File relativePath, double offset) {
+			public Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
 				String uri = null;
 				// cheapest way to check whether "link" object exists and is a non-empty
 				// collection of GpxLink objects...
@@ -103,13 +106,13 @@ public class Marker implements ActionListener {
                 }
                 
                 if (uri == null)
-                    return new Marker(wpt.latlon, name_desc, wpt.getString("symbol"), offset);
+                    return new Marker(wpt.latlon, name_desc, wpt.getString("symbol"), parentLayer, time, offset);
                 else if (uri.endsWith(".wav"))
-                    return AudioMarker.create(wpt.latlon, name_desc, uri, offset);
+                    return AudioMarker.create(wpt.latlon, name_desc, uri, parentLayer, time, offset);
                 else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
-					return ImageMarker.create(wpt.latlon, uri, offset);
+					return ImageMarker.create(wpt.latlon, uri, parentLayer, time, offset);
 				else
-					return WebMarker.create(wpt.latlon, uri, offset);
+					return WebMarker.create(wpt.latlon, uri, parentLayer, time, offset);
 			}
 
 			private boolean isWellFormedAddress(String link) {
@@ -123,16 +126,18 @@ public class Marker implements ActionListener {
 		});
 	}
 
-	public Marker(LatLon ll, String text, String iconName, double offset) {
+	public Marker(LatLon ll, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
 		eastNorth = Main.proj.latlon2eastNorth(ll); 
 		this.text = text;
 		this.offset = offset;
+		this.time = time;
 		Icon symbol = ImageProvider.getIfAvailable("markers",iconName);
 		if (symbol == null)
 			symbol = ImageProvider.getIfAvailable("symbols",iconName);
 		if (symbol == null)
 			symbol = ImageProvider.getIfAvailable("nodes",iconName);
 		this.symbol = symbol;
+		this.parentLayer = parentLayer;
 	}
 
 	/**
@@ -186,9 +191,9 @@ public class Marker implements ActionListener {
 	 * 		  the GPX file from which it was derived (if any).  
 	 * @return a new Marker object
 	 */
-	public static Marker createMarker(WayPoint wpt, File relativePath, double offset) {
+	public static Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
 		for (MarkerProducers maker : Marker.markerProducers) {
-			Marker marker = maker.createMarker(wpt, relativePath, offset);
+			Marker marker = maker.createMarker(wpt, relativePath, parentLayer, time, offset);
 			if (marker != null)
 				return marker;
 		}
@@ -206,7 +211,7 @@ public class Marker implements ActionListener {
 	 */
 	
 	public AudioMarker audioMarkerFromMarker(String uri) {
-		AudioMarker audioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(this.eastNorth), this.text, uri, this.offset);
+		AudioMarker audioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(this.eastNorth), this.text, uri, this.parentLayer, this.time, this.offset);
 		return audioMarker;
 	}
 }

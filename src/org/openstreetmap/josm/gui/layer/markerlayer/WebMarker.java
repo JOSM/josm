@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
  * Marker class with Web URL activation.
@@ -22,16 +23,16 @@ public class WebMarker extends ButtonMarker {
 
 	public URL webUrl;
 
-	public static WebMarker create (LatLon ll, String url, double offset) {
+	public static WebMarker create (LatLon ll, String url, MarkerLayer parentLayer, double time, double offset) {
 		try {
-			return new WebMarker(ll, new URL(url), offset);
+			return new WebMarker(ll, new URL(url), parentLayer, time, offset);
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
-	private WebMarker(LatLon ll, URL webUrl, double offset) {
-		super(ll, "web.png", offset);
+	private WebMarker(LatLon ll, URL webUrl, MarkerLayer parentLayer, double time, double offset) {
+		super(ll, "web.png", parentLayer, time, offset);
 		this.webUrl = webUrl;
 	}
 

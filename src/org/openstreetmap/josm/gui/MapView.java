@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -71,6 +73,7 @@ public class MapView extends NavigatableComponent {
 	 * The layer from the layers list that is currently active.
 	 */
 	private Layer activeLayer;
+	
 	/**
 	 * The listener of the active layer changes.
 	 * @deprecated Use Layer.listener instead.

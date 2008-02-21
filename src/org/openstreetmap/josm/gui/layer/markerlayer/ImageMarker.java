@@ -21,6 +21,7 @@ import javax.swing.JViewport;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
  * Marker representing an image. Uses a special icon, and when clicked,
@@ -33,16 +34,16 @@ public class ImageMarker extends ButtonMarker {
 
 	public URL imageUrl;
 
-	public static ImageMarker create(LatLon ll, String url, double offset) {
+	public static ImageMarker create(LatLon ll, String url, MarkerLayer parentLayer, double time, double offset) {
 		try {
-			return new ImageMarker(ll, new URL(url), offset);
+			return new ImageMarker(ll, new URL(url), parentLayer, time, offset);
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
-	private ImageMarker(LatLon ll, URL imageUrl, double offset) {
-		super(ll, "photo.png", offset);
+	private ImageMarker(LatLon ll, URL imageUrl, MarkerLayer parentLayer, double time, double offset) {
+		super(ll, "photo.png", parentLayer, time, offset);
 		this.imageUrl = imageUrl;
 	}
 

@@ -34,7 +34,7 @@ public class AudioPlayer extends Thread {
     private double leadIn; // seconds
 	private double position; // seconds
 	private double bytesPerSecond; 
-	
+
 	/**
 	 * Passes information from the control thread to the playing thread 
 	 */

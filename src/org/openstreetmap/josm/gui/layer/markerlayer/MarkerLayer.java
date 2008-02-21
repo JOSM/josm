@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -25,17 +26,22 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -59,20 +65,28 @@ public class MarkerLayer extends Layer {
 	 */
 	public final Collection<Marker> data;
 	private boolean mousePressed = false;
-	
-	public MarkerLayer(GpxData indata, String name, File associatedFile) {
+	public GpxLayer fromLayer = null;
+	private Rectangle audioTracer = null;
+	private Icon audioTracerIcon = null;
+	private EastNorth audioTracerPosition = null;
+	private static Timer timer = null;
+	private static double audioAnimationInterval = 0.0; // seconds
+	private static double previousTime = -1.0;
+
+	public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
 		
 		super(name);
 		this.associatedFile = associatedFile;
 		this.data = new ArrayList<Marker>();
+		this.fromLayer = fromLayer;
 		double firstTime = -1.0;
 
 		for (WayPoint wpt : indata.waypoints) {
 			/* calculate time differences in waypoints */
-			double time = wpt.time();
+			double time = wpt.time;
 			if (firstTime < 0)
 				firstTime = time;
-            Marker m = Marker.createMarker(wpt, indata.storageFile, time - firstTime);
+            Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, time - firstTime);
             if (m != null)
             	data.add(m);
 		}
@@ -146,6 +160,76 @@ public class MarkerLayer extends Layer {
 				mkr.paint(g, mv, false, mkrTextShow);
 			}
 		}
+
+		if (audioTracer != null) {
+			Point screen = Main.map.mapView.getPoint(audioTracerPosition);
+			audioTracer.setLocation(screen.x, screen.y);
+			audioTracerIcon.paintIcon(Main.map.mapView, g, screen.x, screen.y);
+		}
+	}
+
+	protected void traceAudio() {
+		if (timer == null) {
+			audioAnimationInterval = Double.parseDouble(Main.pref.get("marker.audioanimationinterval", "1")); //milliseconds
+			timer = new Timer((int)(audioAnimationInterval * 1000.0), new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					timerAction();
+				}
+			});
+			timer.start();
+		}
+	}
+	
+	/**
+	 * callback for AudioPlayer when position changes 
+	 * @param position seconds into the audio stream
+	 */
+	public void timerAction() {
+		AudioMarker recentlyPlayedMarker = AudioMarker.recentlyPlayedMarker();
+		if (recentlyPlayedMarker == null)
+			return;
+		double audioTime = recentlyPlayedMarker.time + 
+			AudioPlayer.position() - 
+			recentlyPlayedMarker.offset -
+			recentlyPlayedMarker.syncOffset;
+		if (Math.abs(audioTime- previousTime) < audioAnimationInterval)
+			return;
+		if (fromLayer == null)
+			return;
+		/* find the pair of track points for this position (adjusted by the syncOffset)
+		 * and interpolate between them 
+		 */
+		WayPoint w1 = null;
+		WayPoint w2 = null;
+
+		for (GpxTrack track : fromLayer.data.tracks) {
+			for (Collection<WayPoint> trackseg : track.trackSegs) {
+				for (Iterator<WayPoint> it = trackseg.iterator(); it.hasNext();) {
+					WayPoint w = it.next();
+					if (audioTime < w.time) {
+						w2 = w;
+						break;
+					}
+					w1 = w;
+				}
+				if (w2 != null) break;
+			}
+			if (w2 != null) break;
+		}
+		
+		if (w1 == null)
+			return;
+		audioTracerPosition = w2 == null ? 
+			w1.eastNorth : 
+			w1.eastNorth.interpolate(w2.eastNorth, 
+					(audioTime - w1.time)/(w2.time - w1.time));
+		
+		if (audioTracer == null) {
+			audioTracerIcon = ImageProvider.getIfAvailable("markers",Main.pref.get("marker.audiotracericon", "audio-tracer"));
+			audioTracer = new Rectangle(0, 0, audioTracerIcon.getIconWidth(), audioTracerIcon.getIconHeight());			
+		}
+		previousTime = audioTime;
+		Main.map.mapView.repaint();
 	}
 
 	@Override public String getToolTipText() {

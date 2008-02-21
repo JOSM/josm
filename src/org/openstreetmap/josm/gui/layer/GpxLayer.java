@@ -68,10 +68,12 @@ import org.openstreetmap.josm.tools.UrlLabel;
 
 public class GpxLayer extends Layer {
 	public GpxData data;
-
+	private final GpxLayer me;
+	
 	public GpxLayer(GpxData d) {
 		super((String) d.attr.get("name"));
-		data = d;		
+		data = d;
+		me = this;
 	}
 
 	public GpxLayer(GpxData d, String name) {
@@ -148,7 +150,7 @@ public class GpxLayer extends Layer {
 							if (point.attr.containsKey("name") || point.attr.containsKey("desc")) 
 								namedTrackPoints.waypoints.add(point);
 
-	            MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name), associatedFile);
+	            MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name), associatedFile, me);
 	            if (ml.data.size() > 0) {
 	            	Main.main.addLayer(ml);
 	            }
@@ -498,12 +500,12 @@ public class GpxLayer extends Layer {
 	    double prevOffset = - (audioGapSecs + 1.0); // first point always exceeds time difference
 	    WayPoint prevPoint = null;
 
-	    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Sampled audio markers from {0}", name), associatedFile);
+	    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Sampled audio markers from {0}", name), associatedFile, me);
 	    
 		for (GpxTrack track : data.tracks) {
 			for (Collection<WayPoint> seg : track.trackSegs) {
 				for (WayPoint point : seg) {
-					double time = point.time();
+					double time = point.time;
 					if (firstTime < 0.0)
 						firstTime = time;
 					double offset = time - firstTime;
@@ -520,7 +522,7 @@ public class GpxLayer extends Layer {
 							markerName = String.format("%d:%02d", wholeSeconds / 60, wholeSeconds % 60);
 						else
 							markerName = String.format("%d:%02d:%02d", wholeSeconds / 3600, (wholeSeconds % 3600)/60, wholeSeconds % 60);
-						AudioMarker am = AudioMarker.create(point.latlon, markerName, uri, offset);
+						AudioMarker am = AudioMarker.create(point.latlon, markerName, uri, ml, time, offset);
 						ml.data.add(am);
 						prevPoint = point;
 						prevOffset = offset;

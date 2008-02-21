@@ -88,8 +88,9 @@ public class OpenAction extends DiskAccessAction {
 				r = new GpxReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
 			}
 			r.data.storageFile = file;
-			Main.main.addLayer(new GpxLayer(r.data, fn));
-            MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file);
+			GpxLayer gpxLayer = new GpxLayer(r.data, fn);
+			Main.main.addLayer(gpxLayer);
+            MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
             if (ml.data.size() > 0) {
             	Main.main.addLayer(ml);
             }

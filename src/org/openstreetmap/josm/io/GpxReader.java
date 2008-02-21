@@ -233,9 +233,11 @@ public class GpxReader {
 					currentWayPoint.attr.put(qName, accumulator.toString());
 				} else if (qName.equals("rtept")) {
 					currentState = states.pop();
+					currentWayPoint.setTime();
 					currentRoute.routePoints.add(currentWayPoint);
 				} else if (qName.equals("trkpt")) {
 					currentState = states.pop();
+					currentWayPoint.setTime();
 					currentTrackSeg.add(currentWayPoint);
 					if (Main.pref.getBoolean("marker.namedtrackpoints") && 
 						(currentWayPoint.attr.containsKey("name") || 
@@ -245,6 +247,7 @@ public class GpxReader {
 					}
 				} else if (qName.equals("wpt")) {
 					currentState = states.pop();
+					currentWayPoint.setTime();
 					currentData.waypoints.add(currentWayPoint);
 				}
 				break;
