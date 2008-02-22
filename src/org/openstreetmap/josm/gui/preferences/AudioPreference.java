@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -60,7 +61,7 @@ public class AudioPreference implements PreferenceSetting {
 				markerAudioTraceVisible.setEnabled(markerAudioTraceVisible.isSelected());
 			}
 		});
-		markerAudioTraceVisible.setSelected(Main.pref.getBoolean("marker.traceaudio"));
+		markerAudioTraceVisible.setSelected(Main.pref.getBoolean("marker.traceaudio", true));
 		markerAudioTraceVisible.setToolTipText(tr("Display a moving icon representing the point on the synchronized track where the audio currently playing was recorded."));
 		gui.audio.add(markerAudioTraceVisible, GBC.eol().insets(0,0,0,0));
 		
@@ -84,7 +85,7 @@ public class AudioPreference implements PreferenceSetting {
 				markersNamedTrackpoints.setEnabled(markersNamedTrackpoints.isSelected());
 			}
 		});
-		markersNamedTrackpoints.setSelected(Main.pref.getBoolean("markers.namedtrackpoints"));
+		markersNamedTrackpoints.setSelected(Main.pref.getBoolean("marker.namedtrackpoints"));
 		markersNamedTrackpoints.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
 		gui.audio.add(markersNamedTrackpoints, GBC.eol().insets(0,0,0,0));
 		
@@ -107,13 +108,15 @@ public class AudioPreference implements PreferenceSetting {
 		audioLeadIn.setToolTipText(tr("Playback starts this number of seconds before (or after, if negative) the audio track position requested"));
 		gui.audio.add(new JLabel(tr("Lead-in time (seconds)")), GBC.std());
 		gui.audio.add(audioLeadIn, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+
+		gui.audio.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
 
 	public void ok() {
 		Main.pref.put("audio.menuinvisible", ! audioMenuVisible.isSelected());
 		Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());
 		Main.pref.put("marker.buttonlabels", markerButtonLabels.isSelected());
-		Main.pref.put("markers.namedtrackpoints", markersNamedTrackpoints.isSelected());
+		Main.pref.put("marker.namedtrackpoints", markersNamedTrackpoints.isSelected());
 		Main.pref.put("marker.audiosampleminsecs", audioSampleMinSecs.getText());		
 		Main.pref.put("marker.audiosampleminmetres", audioSampleMinMetres.getText());		
 		Main.pref.put("audio.forwardbackamount", audioForwardBackAmount.getText());		

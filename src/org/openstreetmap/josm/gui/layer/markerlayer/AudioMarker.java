@@ -74,7 +74,7 @@ public class AudioMarker extends ButtonMarker {
 	public void play() {
 		try {
 			// first enable tracing the audio along the track
-			if (Main.pref.getBoolean("marker.traceaudio") && parentLayer != null) {
+			if (Main.pref.getBoolean("marker.traceaudio", true) && parentLayer != null) {
 				parentLayer.traceAudio();
 			}
 
@@ -87,5 +87,19 @@ public class AudioMarker extends ButtonMarker {
 
 	public void adjustOffset(double adjustment) {
 		syncOffset = adjustment; // added to offset may turn out negative, but that's ok
+	}
+
+	public double syncOffset() {
+		return syncOffset;
+	}
+	
+	public static String inventName (double offset) {
+		int wholeSeconds = (int)(offset + 0.5);
+		if (wholeSeconds < 60)
+			return Integer.toString(wholeSeconds);
+		else if (wholeSeconds < 3600)
+			return String.format("%d:%02d", wholeSeconds / 60, wholeSeconds % 60);
+		else
+			return String.format("%d:%02d:%02d", wholeSeconds / 3600, (wholeSeconds % 3600)/60, wholeSeconds % 60);
 	}
 }

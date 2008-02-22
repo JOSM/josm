@@ -514,15 +514,9 @@ public class GpxLayer extends Layer {
 						/* note: distance is misleading: it actually gives distance _squared_ */
 						point.eastNorth.distance(prevPoint.eastNorth) > audioGapRadiansSquared))
 					{
-						String markerName;
-						int wholeSeconds = (int)(offset + 0.5);
-						if (wholeSeconds < 60)
-							markerName = Integer.toString(wholeSeconds);
-						else if (wholeSeconds < 3600)
-							markerName = String.format("%d:%02d", wholeSeconds / 60, wholeSeconds % 60);
-						else
-							markerName = String.format("%d:%02d:%02d", wholeSeconds / 3600, (wholeSeconds % 3600)/60, wholeSeconds % 60);
-						AudioMarker am = AudioMarker.create(point.latlon, markerName, uri, ml, time, offset);
+						
+						AudioMarker am = AudioMarker.create(point.latlon, 
+								AudioMarker.inventName(offset), uri, ml, time, offset);
 						ml.data.add(am);
 						prevPoint = point;
 						prevOffset = offset;
