@@ -1079,7 +1079,15 @@
     <tag k='name' v='laundromat' />
     <tag k='note' v='replaced by shop=laundry!' />
   </node>
-  <way id='-269' action='modify' visible='true'>
+  <node id='-269' action='modify' visible='true' lat='12.485965628502756' lon='-55.863809157610596'>
+    <tag k='name' v='restrictions' />
+    <tag k='tourism' v='attraction' />
+  </node>
+  <node id='-270' action='modify' visible='true' lat='12.26214087499982' lon='-55.863809157610596'>
+    <tag k='name' v='motorcycle=no' />
+    <tag k='motorcycle' v='no' />
+  </node>
+  <way id='-271' action='modify' visible='true'>
     <nd ref='-224' />
     <nd ref='-217' />
     <tag k='highway' v='minor' />
