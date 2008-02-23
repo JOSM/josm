@@ -34,6 +34,7 @@ public class AudioPlayer extends Thread {
     private double leadIn; // seconds
 	private double position; // seconds
 	private double bytesPerSecond; 
+	private static long chunk = 8000; /* bytes */
 
 	/**
 	 * Passes information from the control thread to the playing thread 
@@ -191,7 +192,7 @@ public class AudioPlayer extends Thread {
 		int nBytesRead = 0;
 		SourceDataLine audioOutputLine = null;
 		AudioFormat	audioFormat = null;
-		byte[] abData = new byte[8192];
+		byte[] abData = new byte[(int)chunk];
 		
 		for (;;) {
 			try {
@@ -256,12 +257,11 @@ public class AudioPlayer extends Thread {
 								 * reduce it to smaller ones 
 								 */
 								// audioInputStream.skip(bytesToSkip);
-								int skipsize = 8192;
-								while (bytesToSkip > skipsize) {
-									audioInputStream.skip(skipsize);
-									bytesToSkip -= skipsize;
+								while (bytesToSkip > chunk) {
+									bytesToSkip -= audioInputStream.skip(chunk);
 								}
-								audioInputStream.skip(bytesToSkip);
+								if (bytesToSkip > 0)
+									audioInputStream.skip(bytesToSkip);
 								position = adjustedOffset;
 							}
 							if (audioOutputLine == null) {
