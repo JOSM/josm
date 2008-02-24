@@ -39,6 +39,7 @@ public class AudioPreference implements PreferenceSetting {
 	private JTextField audioSampleMinMetres = new JTextField(8);
 	private JTextField audioLeadIn = new JTextField(8);
 	private JTextField audioForwardBackAmount = new JTextField(8);
+	private JTextField audioCalibration = new JTextField(8);
 
 	public void addGui(PreferenceDialog gui) {
 		// audioMenuVisible
@@ -109,6 +110,11 @@ public class AudioPreference implements PreferenceSetting {
 		gui.audio.add(new JLabel(tr("Lead-in time (seconds)")), GBC.std());
 		gui.audio.add(audioLeadIn, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
+		audioCalibration.setText(Main.pref.get("audio.calibration", "1.0"));
+		audioCalibration.setToolTipText(tr("The ratio of voice recorder elapsed time to true elapsed time"));
+		gui.audio.add(new JLabel(tr("Voice recorder calibration")), GBC.std());
+		gui.audio.add(audioCalibration, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+
 		gui.audio.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 	}
 
@@ -121,5 +127,6 @@ public class AudioPreference implements PreferenceSetting {
 		Main.pref.put("marker.audiosampleminmetres", audioSampleMinMetres.getText());		
 		Main.pref.put("audio.forwardbackamount", audioForwardBackAmount.getText());		
 		Main.pref.put("audio.leadin", audioLeadIn.getText());		
+		Main.pref.put("audio.calibration", audioCalibration.getText());		
     }
 }

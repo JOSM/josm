@@ -32,6 +32,7 @@ public class AudioPlayer extends Thread {
     private enum Result { WAITING, OK, FAILED }
     private URL playingUrl;
     private double leadIn; // seconds
+    private double calibration; // ratio of purported duration of samples to true duration
 	private double position; // seconds
 	private double bytesPerSecond; 
 	private static long chunk = 8000; /* bytes */
@@ -176,6 +177,11 @@ public class AudioPlayer extends Thread {
 		} catch (NumberFormatException e) {
 			leadIn = 1.0; // failed to parse
 		}
+		try {
+			calibration = Double.parseDouble(Main.pref.get("audio.calibration", "1.0" /* default, ratio */));
+		} catch (NumberFormatException e) {
+			calibration = 1.0; // failed to parse
+		}
 		start();
 		while (state == State.INITIALIZING) { yield(); }
 	}
@@ -247,7 +253,7 @@ public class AudioPlayer extends Thread {
 							DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 							nBytesRead = 0;
 							position = 0.0;
-							double adjustedOffset = offset - leadIn;
+							double adjustedOffset = (offset - leadIn) * calibration;
 							bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
 								* audioFormat.getFrameSize() /* bytes per frame */;
 							if (offset != 0.0 && adjustedOffset > 0.0) {
