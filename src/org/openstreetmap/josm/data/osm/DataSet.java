@@ -112,6 +112,27 @@ public class DataSet implements Cloneable {
 		return sel;
 	}
 
+	/**
+	 * Return selected nodes.
+	 */
+	public Collection<OsmPrimitive> getSelectedNodes() {
+		return getSelected(nodes);
+	}
+
+	/**
+	 * Return selected ways.
+	 */
+	public Collection<OsmPrimitive> getSelectedWays() {
+		return getSelected(ways);
+	}
+
+	/**
+	 * Return selected relations.
+	 */
+	public Collection<OsmPrimitive> getSelectedRelations() {
+		return getSelected(relations);
+	}
+
 	public void setSelected(Collection<? extends OsmPrimitive> selection) {
 		clearSelection(nodes);
 		clearSelection(ways);

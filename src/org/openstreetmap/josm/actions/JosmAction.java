@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ShortCutLabel;
@@ -50,7 +51,20 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 		setHelpId();
 	}
 
-
+	/**
+	 * needs to be overridden to be useful
+	 */
+	public void pasteBufferChanged(DataSet newPasteBuffer) {
+		return;
+	}
+	
+	/**
+	 * needs to be overridden to be useful
+	 */
+	public void addListener(JosmAction a) {
+		return;
+	}
+	
 	private void setHelpId() {
 		String helpId = "Action/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
 		if (helpId.endsWith("Action"))

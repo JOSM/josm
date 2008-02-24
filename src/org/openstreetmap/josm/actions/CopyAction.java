@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Collection;
 
 import javax.swing.JOptionPane;
@@ -25,14 +26,21 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
 public final class CopyAction extends JosmAction implements SelectionChangedListener {
 
+	private LinkedList<JosmAction> listeners;
+	
 	public CopyAction() {
 		super(tr("Copy"), "copy",
 				tr("Copy selected objects to paste buffer."),
 				KeyEvent.VK_C, KeyEvent.CTRL_MASK, true);
 		setEnabled(false);
 		DataSet.selListeners.add(this);
+		listeners = new LinkedList<JosmAction>();
 	}
 
+	@Override public void addListener(JosmAction a) {
+		listeners.add(a);
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		if (sel.isEmpty()) { 
@@ -98,6 +106,10 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 
 		Main.pasteBuffer = pasteBuffer;
 		Main.main.menu.paste.setEnabled(true); /* now we have a paste buffer we can make paste available */
+		
+		for(JosmAction a : listeners) {
+			a.pasteBufferChanged(Main.pasteBuffer);
+		}
 	}
 
 	public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
