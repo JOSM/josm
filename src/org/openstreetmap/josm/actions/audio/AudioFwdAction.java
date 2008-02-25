@@ -19,7 +19,7 @@ public class AudioFwdAction extends JosmAction {
 	private double amount;
 	
 	public AudioFwdAction() {
-		super(tr("Forward"), "audio-fwd", tr("Jump forward"), 0, 0, true);
+		super(tr("Forward"), "audio-fwd", tr("Jump forward"), KeyEvent.VK_F7, 0, true);
 		try {
 			amount = Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
 		} catch (NumberFormatException e) {

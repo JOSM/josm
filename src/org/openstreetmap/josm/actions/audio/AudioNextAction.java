@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 public class AudioNextAction extends JosmAction {
 
 	public AudioNextAction() {
-		super(tr("Next Marker"), "audio-next", tr("Play next marker."), 0, 0, true);
+		super(tr("Next Marker"), "audio-next", tr("Play next marker."), KeyEvent.VK_F8, 0, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

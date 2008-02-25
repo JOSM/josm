@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 public class AudioPrevAction extends JosmAction {
 
 	public AudioPrevAction() {
-		super(tr("Previous Marker"), "audio-prev", tr("Play previous marker."), 0, 0, true);
+		super(tr("Previous Marker"), "audio-prev", tr("Play previous marker."), KeyEvent.VK_F5, 0, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
