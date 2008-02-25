@@ -294,7 +294,8 @@ public class MarkerLayer extends Layer {
 		JMenuItem applyaudio = new JMenuItem(tr("Apply Audio"), ImageProvider.get("applyaudio"));
 		applyaudio.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser(Main.pref.get("tagimages.lastdirectory"));
+				String dir = Main.pref.get("markers.lastaudiodirectory");
+				JFileChooser fc = new JFileChooser(dir);
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fc.setAcceptAllFileFilterUsed(false);
 				fc.setFileFilter(new FileFilter(){
@@ -307,6 +308,8 @@ public class MarkerLayer extends Layer {
 				});
 				fc.showOpenDialog(Main.parent);
 				File sel = fc.getSelectedFile();
+				if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
+					Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
 				if (sel == null)
 					return;
 				applyAudio(sel);

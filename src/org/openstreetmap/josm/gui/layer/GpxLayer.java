@@ -160,7 +160,8 @@ public class GpxLayer extends Layer {
 		JMenuItem applyAudio = new JMenuItem(tr("Make Sampled Audio Layer"), ImageProvider.get("applyaudio"));
 		applyAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser(Main.pref.get("tagimages.lastdirectory"));
+				String dir = Main.pref.get("markers.lastaudiodirectory");
+				JFileChooser fc = new JFileChooser(dir);
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fc.setAcceptAllFileFilterUsed(false);
 				fc.setFileFilter(new FileFilter(){
@@ -173,6 +174,8 @@ public class GpxLayer extends Layer {
 				});
 				fc.showOpenDialog(Main.parent);
 				File sel = fc.getSelectedFile();
+				if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
+					Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
 				if (sel == null)
 					return;
 				applyAudio(sel);
