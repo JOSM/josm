@@ -168,7 +168,7 @@ public class Marker implements ActionListener {
 	 */
 	public void paint(Graphics g, MapView mv, boolean mousePressed, String show) {
 		Point screen = mv.getPoint(eastNorth);
-		if (symbol != null) {
+		if (symbol != null && show.equalsIgnoreCase("show")) {
 			symbol.paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
 		} else {
 			g.drawLine(screen.x-2, screen.y-2, screen.x+2, screen.y+2);
