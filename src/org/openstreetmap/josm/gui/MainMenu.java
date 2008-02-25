@@ -46,6 +46,8 @@ import org.openstreetmap.josm.actions.audio.AudioFwdAction;
 import org.openstreetmap.josm.actions.audio.AudioNextAction;
 import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
+import org.openstreetmap.josm.actions.audio.AudioFasterAction;
+import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
 
@@ -99,6 +101,8 @@ public class MainMenu extends JMenuBar {
 	public final JosmAction audioPrev = new AudioPrevAction();
 	public final JosmAction audioFwd = new AudioFwdAction();
 	public final JosmAction audioBack = new AudioBackAction();
+	public final JosmAction audioFaster = new AudioFasterAction();
+	public final JosmAction audioSlower = new AudioSlowerAction();
 
 	/* Help menu */
 	public final HelpAction help = new HelpAction();
@@ -221,6 +225,10 @@ public class MainMenu extends JMenuBar {
 			current.setAccelerator(audioFwd.shortCut);
 			current = audioMenu.add(audioBack);
 			current.setAccelerator(audioBack.shortCut);
+			current = audioMenu.add(audioSlower);
+			current.setAccelerator(audioSlower.shortCut);
+			current = audioMenu.add(audioFaster);
+			current.setAccelerator(audioFaster.shortCut);
 			add(audioMenu);
 		}
 

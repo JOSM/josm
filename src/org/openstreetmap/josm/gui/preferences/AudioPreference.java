@@ -1,4 +1,3 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -39,6 +38,7 @@ public class AudioPreference implements PreferenceSetting {
 	private JTextField audioSampleMinMetres = new JTextField(8);
 	private JTextField audioLeadIn = new JTextField(8);
 	private JTextField audioForwardBackAmount = new JTextField(8);
+	private JTextField audioFastForwardMultiplier = new JTextField(8);
 	private JTextField audioCalibration = new JTextField(8);
 
 	public void addGui(PreferenceDialog gui) {
@@ -105,6 +105,11 @@ public class AudioPreference implements PreferenceSetting {
 		gui.audio.add(new JLabel(tr("Forward/back time (seconds)")), GBC.std());
 		gui.audio.add(audioForwardBackAmount, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
+		audioFastForwardMultiplier.setText(Main.pref.get("audio.fastfwdmultiplier", "1.3"));
+		audioFastForwardMultiplier.setToolTipText(tr("The amount by which the speed is multiplied for fast forwarding"));
+		gui.audio.add(new JLabel(tr("Fast forward multiplier")), GBC.std());
+		gui.audio.add(audioFastForwardMultiplier, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+
 		audioLeadIn.setText(Main.pref.get("audio.leadin", "1"));
 		audioLeadIn.setToolTipText(tr("Playback starts this number of seconds before (or after, if negative) the audio track position requested"));
 		gui.audio.add(new JLabel(tr("Lead-in time (seconds)")), GBC.std());
@@ -126,6 +131,7 @@ public class AudioPreference implements PreferenceSetting {
 		Main.pref.put("marker.audiosampleminsecs", audioSampleMinSecs.getText());		
 		Main.pref.put("marker.audiosampleminmetres", audioSampleMinMetres.getText());		
 		Main.pref.put("audio.forwardbackamount", audioForwardBackAmount.getText());		
+		Main.pref.put("audio.fastfwdmultiplier", audioFastForwardMultiplier.getText());		
 		Main.pref.put("audio.leadin", audioLeadIn.getText());		
 		Main.pref.put("audio.calibration", audioCalibration.getText());		
     }

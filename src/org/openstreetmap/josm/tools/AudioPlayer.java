@@ -37,6 +37,7 @@ public class AudioPlayer extends Thread {
 	private double position; // seconds
 	private double bytesPerSecond; 
 	private static long chunk = 8000; /* bytes */
+	private double speed = 1.0;
 
 	/**
 	 * Passes information from the control thread to the playing thread 
@@ -47,13 +48,15 @@ public class AudioPlayer extends Thread {
 		private Exception exception;
 		private URL url;
 		private double offset; // seconds
-
+		private double speed; // ratio
+		
 		/*
 		 * Called to execute the commands in the other thread 
 		 */
-		protected void play(URL url, double offset) throws Exception {
+		protected void play(URL url, double offset, double speed) throws Exception {
 			this.url = url;
 			this.offset = offset;
+			this.speed = speed; 
 			command = Command.PLAY;
 			result = Result.WAITING;
 			send();
@@ -84,6 +87,9 @@ public class AudioPlayer extends Thread {
 		protected double offset() {
 			return offset;
 		}
+		protected double speed() {
+			return speed;
+		}
 		protected URL url() {
 			return url;
 		}
@@ -101,7 +107,7 @@ public class AudioPlayer extends Thread {
 	 * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
 	 */
 	public static void play(URL url) throws Exception {
-		AudioPlayer.play(url, 0.0);
+		AudioPlayer.get().command.play(url, 0.0, 1.0);
 	}
 	
 	/**
@@ -111,7 +117,18 @@ public class AudioPlayer extends Thread {
 	 * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
 	 */
 	public static void play(URL url, double seconds) throws Exception {
-		AudioPlayer.get().command.play(url, seconds);
+		AudioPlayer.get().command.play(url, seconds, 1.0);
+	}
+	
+	/**
+	 * Plays a WAV audio file from a specified position at variable speed.
+	 * @param url The resource to play, which must be a WAV file or stream
+	 * @param seconds The number of seconds into the audio to start playing
+	 * @param speed Rate at which audio playes (1.0 = real time, > 1 is faster)
+	 * @throws audio fault exception, e.g. can't open stream,  unhandleable audio format
+	 */
+	public static void play(URL url, double seconds, double speed) throws Exception {
+		AudioPlayer.get().command.play(url, seconds, speed);
 	}
 	
 	/**
@@ -154,6 +171,14 @@ public class AudioPlayer extends Thread {
 		return AudioPlayer.get().position;
 	}
 	
+	/**
+	 * Speed at which we will play.
+	 * @returns double, speed multiplier
+	 */
+	public static double speed() {
+		return AudioPlayer.get().speed;
+	}
+
 	/**
 	 *  gets the singleton object, and if this is the first time, creates it along with 
 	 *  the thread to support audio
@@ -240,6 +265,7 @@ public class AudioPlayer extends Thread {
 					switch (command.command()) {
 					case PLAY:	
 						double offset = command.offset();
+						speed = command.speed();
 						if (playingUrl != command.url() || 
 							stateChange != State.PAUSED || 
 							offset != 0.0) 
@@ -251,12 +277,13 @@ public class AudioPlayer extends Thread {
 							playingUrl = command.url();
 							audioInputStream = AudioSystem.getAudioInputStream(playingUrl);
 							audioFormat = audioInputStream.getFormat();
-							DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 							long nBytesRead = 0;
 							position = 0.0;
 							double adjustedOffset = (offset - leadIn) * calibration;
 							bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
 								* audioFormat.getFrameSize() /* bytes per frame */;
+							if (speed * bytesPerSecond > 256000.0)
+								speed = 256000 / bytesPerSecond;
 							if (offset != 0.0 && adjustedOffset > 0.0) {
 								long bytesToSkip = (long)(
 									adjustedOffset /* seconds (double) */ * bytesPerSecond);
@@ -274,11 +301,19 @@ public class AudioPlayer extends Thread {
 									audioInputStream.skip(bytesToSkip);
 								position = adjustedOffset;
 							}
-							if (audioOutputLine == null) {
-								audioOutputLine = (SourceDataLine) AudioSystem.getLine(info);
-								audioOutputLine.open(audioFormat);
-								audioOutputLine.start();
-							}
+							if (audioOutputLine != null)
+								audioOutputLine.close();
+							audioFormat = new AudioFormat(audioFormat.getEncoding(), 
+										audioFormat.getSampleRate() * (float) speed, 
+										audioFormat.getSampleSizeInBits(), 
+										audioFormat.getChannels(), 
+										audioFormat.getFrameSize(), 
+										audioFormat.getFrameRate() * (float) speed, 
+										audioFormat.isBigEndian());
+							DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+							audioOutputLine = (SourceDataLine) AudioSystem.getLine(info);
+							audioOutputLine.open(audioFormat);
+							audioOutputLine.start();
 						}
 						stateChange = State.PLAYING;
 						break;

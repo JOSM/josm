@@ -25,7 +25,10 @@ public class AudioPlayPauseAction extends JosmAction {
 			if (AudioPlayer.paused() && url != null) {
 				AudioPlayer.play(url);
 			} else if (AudioPlayer.playing()){
-				AudioPlayer.pause();
+				if (AudioPlayer.speed() != 1.0)
+					AudioPlayer.play(url, AudioPlayer.position());
+				else
+					AudioPlayer.pause();
 			} else {
 				// find first audio marker to play
 				MarkerLayer.playAudio();
