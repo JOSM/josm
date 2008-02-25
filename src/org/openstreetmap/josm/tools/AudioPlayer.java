@@ -11,6 +11,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
+import java.io.IOException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -195,7 +196,6 @@ public class AudioPlayer extends Thread {
 
 		playingUrl = null;
 		AudioInputStream audioInputStream = null;
-		int nBytesRead = 0;
 		SourceDataLine audioOutputLine = null;
 		AudioFormat	audioFormat = null;
 		byte[] abData = new byte[(int)chunk];
@@ -213,6 +213,7 @@ public class AudioPlayer extends Thread {
 					break;
 				case PLAYING:
 					for(;;) {
+						int nBytesRead = 0;
 						nBytesRead = audioInputStream.read(abData, 0, abData.length);
 						position += nBytesRead / bytesPerSecond;
 						command.possiblyInterrupt();
@@ -251,7 +252,7 @@ public class AudioPlayer extends Thread {
 							audioInputStream = AudioSystem.getAudioInputStream(playingUrl);
 							audioFormat = audioInputStream.getFormat();
 							DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-							nBytesRead = 0;
+							long nBytesRead = 0;
 							position = 0.0;
 							double adjustedOffset = (offset - leadIn) * calibration;
 							bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
@@ -264,7 +265,10 @@ public class AudioPlayer extends Thread {
 								 */
 								// audioInputStream.skip(bytesToSkip);
 								while (bytesToSkip > chunk) {
-									bytesToSkip -= audioInputStream.skip(chunk);
+									nBytesRead = audioInputStream.skip(chunk);
+									if (nBytesRead <= 0)
+										throw new IOException(tr("This is after the end of the recording"));
+									bytesToSkip -= nBytesRead;
 								}
 								if (bytesToSkip > 0)
 									audioInputStream.skip(bytesToSkip);
@@ -294,9 +298,7 @@ public class AudioPlayer extends Thread {
 
 	public static void audioMalfunction(Exception ex) {
 		JOptionPane.showMessageDialog(Main.parent, 
-				"<html><b>" + 
-				tr("There was an error while trying to play the sound file for this marker.") +
-				"</b><br>" + ex.getClass().getName() + ":<br><i>" + ex.getMessage() + "</i></html>",
+				"<html><p>" + ex.getMessage() + "</p></html>",
 				tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
 	}
 }
