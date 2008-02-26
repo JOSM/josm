@@ -61,7 +61,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		public DeleteLayerAction(Layer layer) {
 			super(tr("Delete"), ImageProvider.get("dialogs", "delete"));
 			putValue(SHORT_DESCRIPTION, tr("Delete the selected layer."));
-			putValue("help", "Dialog/LayerList/Delete");
+			putValue("help", "Action/LayerDelete");
 			this.layer = layer;
 		}
 
@@ -86,7 +86,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		public ShowHideLayerAction(Layer layer) {
 			super(tr("Show/Hide"), ImageProvider.get("dialogs", "showhide"));
 			putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
-			putValue("help", "Dialog/LayerList/ShowHide");
+			putValue("help", "Action/LayerShowHide");
 			this.layer = layer;
 		}
 
@@ -104,7 +104,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		public ShowHideMarkerText(Layer layer) {
 			super(tr("Show/Hide Text/Icons"), ImageProvider.get("dialogs", "showhide"));
 			putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the marker text and icons."));
-			putValue("help", "Dialog/LayerList/ShowHideMarkerText");
+			putValue("help", "Action/ShowHideTextIcons");
 			this.layer = layer;
 		}
 
