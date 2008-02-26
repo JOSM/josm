@@ -52,18 +52,28 @@ public final class AlignInCircleAction extends JosmAction {
 		// Node "avn" now is central to all selected nodes.
 
 		// Now calculate the average distance to each node from the
-		// centre.
-		double avdist = 0;
-		for (Node n : nodes)
-			avdist += Math.sqrt(avn.eastNorth.distance(n.eastNorth));
+		// centre.  This method is ok as long as distances are short 
+		// relative to the distance from the N or S poles.
+		double distances[] = new double[nodes.size()];
+		double avdist = 0, latd, lond;
+		double lonscale = Math.cos(avn.coor.lat() * Math.PI/180.0);
+		lonscale = lonscale * lonscale;
+		int i = 0;
+		for (Node n : nodes) {
+			latd = n.coor.lat() - avn.coor.lat();
+			lond = n.coor.lon() - avn.coor.lon();
+			distances[i] = Math.sqrt(latd * latd + lonscale * lond * lond);
+			avdist += distances[i++];
+		}
 		avdist = avdist / nodes.size();
 
 		Collection<Command> cmds = new LinkedList<Command>();
 		// Move each node to that distance from the centre.
+		i = 0;
 		for (Node n : nodes) {
 			double dx = n.eastNorth.east() - avn.eastNorth.east();
 			double dy = n.eastNorth.north() - avn.eastNorth.north();
-			double dist = Math.sqrt(avn.eastNorth.distance(n.eastNorth));
+			double dist = distances[i++];
 			cmds.add(new MoveCommand(n, (dx * (avdist / dist)) - dx, (dy * (avdist / dist)) - dy));
 		}
 
