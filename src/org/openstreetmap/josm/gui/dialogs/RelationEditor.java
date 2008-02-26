@@ -219,11 +219,13 @@ public class RelationEditor extends JFrame {
 
 		buttonPanel.add(createButton(marktr("Delete"),"delete", tr("Remove the member in the current table row from this relation"), KeyEvent.VK_D, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int row = memberTable.getSelectedRow();
+				int[] rows = memberTable.getSelectedRows();
 				RelationMember mem = new RelationMember();
-				mem.role = memberTable.getValueAt(row, 0).toString();
-				mem.member = (OsmPrimitive) memberTable.getValueAt(row, 1);
-				clone.members.remove(mem);
+				for (int row : rows) {
+					mem.role = memberTable.getValueAt(row, 0).toString();
+					mem.member = (OsmPrimitive) memberTable.getValueAt(row, 1);
+					clone.members.remove(mem);
+				}
 				refreshTables();
 			}
 		}));
