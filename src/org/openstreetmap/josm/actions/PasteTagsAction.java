@@ -39,7 +39,7 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
     private void pasteKeys(Collection<Command> clist, Collection<? extends OsmPrimitive> pasteBufferSubset, Collection<OsmPrimitive> selectionSubset) {
 		/* scan the paste buffer, and add tags to each of the selected objects. 
 		 * If a tag already exists, it is overwritten */
-		if (! selectionSubset.isEmpty()) {
+		if (selectionSubset != null && ! selectionSubset.isEmpty()) {
 			for (Iterator<? extends OsmPrimitive> it = pasteBufferSubset.iterator(); it.hasNext();) {
 				OsmPrimitive osm = it.next();
 				for (String key : osm.keys.keySet()) {
@@ -64,7 +64,7 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
 		Map<String,String> kvSeen = new HashMap<String,String>();
 		for (Iterator<? extends OsmPrimitive> it = osms.iterator(); it.hasNext();) {
 			OsmPrimitive osm = it.next();
-			if (osm.keys.isEmpty())
+			if (osm.keys == null || osm.keys.isEmpty())
 				continue;
 			for (String key : osm.keys.keySet()) {
 				if (key.equals("created_by")) // we ignore created_by
@@ -87,7 +87,8 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
 	private void possiblyEnable(Collection<? extends OsmPrimitive> selection, DataSet pasteBuffer) {
 		/* only enable if there is something selected to paste into and 
 			if we don't have conflicting keys in the pastebuffer */
-		setEnabled(! selection.isEmpty() &&
+		setEnabled(selection != null &&
+				! selection.isEmpty() &&
 				! pasteBuffer.allPrimitives().isEmpty() && 
 				(Main.ds.getSelectedNodes().isEmpty() ||
 					! containsSameKeysWithDifferentValues(pasteBuffer.nodes)) && 
