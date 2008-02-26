@@ -271,6 +271,7 @@ public class MarkerLayer extends Layer {
 
 	@Override public Component[] getMenuEntries() {
 		JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
+		color.putClientProperty("help", "Action/LayerCustomizeColor");
 		color.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String col = Main.pref.get("color.layer "+name, Main.pref.get("color.gps marker", ColorHelper.color2html(Color.gray)));
@@ -292,6 +293,7 @@ public class MarkerLayer extends Layer {
 		});
 
 		JMenuItem applyaudio = new JMenuItem(tr("Apply Audio"), ImageProvider.get("applyaudio"));
+		applyaudio.putClientProperty("help", "Action/ApplyAudio");
 		applyaudio.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String dir = Main.pref.get("markers.lastaudiodirectory");
@@ -318,6 +320,7 @@ public class MarkerLayer extends Layer {
 		});
 
 		JMenuItem syncaudio = new JMenuItem(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
+		syncaudio.putClientProperty("help", "Action/SynchronizeAudio");
 		syncaudio.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				adjustOffsetsOnAudioMarkers();
@@ -325,6 +328,7 @@ public class MarkerLayer extends Layer {
 		});
 
 		JMenuItem moveaudio = new JMenuItem(tr("Make Audio Marker At Play Head"), ImageProvider.get("addmarkers"));
+		moveaudio.putClientProperty("help", "Action/MakeAudioMarkerAtPlayHead");
 		moveaudio.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				makeAudioMarkerAtPlayHead();

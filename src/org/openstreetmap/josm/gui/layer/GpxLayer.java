@@ -120,6 +120,7 @@ public class GpxLayer extends Layer {
 		});
 
 		JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
+		color.putClientProperty("help", "Action/LayerCustomizeColor");
 		color.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String col = Main.pref.get("color.layer "+name, Main.pref.get("color.gps point", ColorHelper.color2html(Color.gray)));
@@ -141,6 +142,7 @@ public class GpxLayer extends Layer {
 		});
 
 		JMenuItem markersFromNamedTrackpoints = new JMenuItem(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
+		markersFromNamedTrackpoints.putClientProperty("help", "Action/MarkersFromNamedPoints");
 		markersFromNamedTrackpoints.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GpxData namedTrackPoints = new GpxData();
@@ -158,6 +160,7 @@ public class GpxLayer extends Layer {
 		});
 
 		JMenuItem applyAudio = new JMenuItem(tr("Make Sampled Audio Layer"), ImageProvider.get("applyaudio"));
+		applyAudio.putClientProperty("help", "Action/MakeSampledAudioLayer");
 		applyAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String dir = Main.pref.get("markers.lastaudiodirectory");
@@ -184,6 +187,7 @@ public class GpxLayer extends Layer {
 		});
 
 		JMenuItem tagimage = new JMenuItem(tr("Import images"), ImageProvider.get("tagimages"));
+		tagimage.putClientProperty("help", "Action/ImportImages");
 		tagimage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser(Main.pref.get("tagimages.lastdirectory"));
