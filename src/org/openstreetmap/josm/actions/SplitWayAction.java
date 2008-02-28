@@ -206,6 +206,10 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 		if (wayChunks.size() >= 2
 				&& wayChunks.get(0).get(0) == lastWayChunk.get(lastWayChunk.size() - 1)
 				&& !nodeSet.contains(wayChunks.get(0).get(0))) {
+			if (wayChunks.size() == 2) {
+				JOptionPane.showMessageDialog(Main.parent, tr("You must select two or more nodes to split a circular way."));
+				return;
+			}
 			lastWayChunk.remove(lastWayChunk.size() - 1);
 			lastWayChunk.addAll(wayChunks.get(0));
 			wayChunks.remove(wayChunks.size() - 1);
