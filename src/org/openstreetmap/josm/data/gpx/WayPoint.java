@@ -32,13 +32,17 @@ public class WayPoint extends WithAttributes {
 	 * @return seconds
 	 */
 	public void setTime () {
-		if (! attr.containsKey("time"))
+		if (! attr.containsKey("time")) {
 			time = 0.0;
+			return;
+		}
 		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ignore timezone
 		Date d = f.parse(attr.get("time").toString(), new ParsePosition(0));
-		if (d == null /* failed to parse */)
+		if (d == null /* failed to parse */) {
 			time = 0.0;
-		time = d.getTime() / 1000.0; /* ms => seconds */
+		} else {
+			time = d.getTime() / 1000.0; /* ms => seconds */
+		}
 	}
 
 }
