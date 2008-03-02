@@ -58,7 +58,7 @@ public class GettingStarted extends JPanel implements ActionListener {
                 "instead, there are only four modes: zoom, select, edit, and delete. The edit mode will do what<br>"+
                 "you want in most cases (also see the mini help about modifier keys at the bottom of the screen)." +
 		"</h3>")), GBC.eol());
-		
+
 		// remove these two keys from preferences if present
 		boolean changePrefs = ! (
 			"0.5".equals(Main.pref.get("osm-server.version", "0.5")) &&
@@ -72,9 +72,12 @@ public class GettingStarted extends JPanel implements ActionListener {
 		}
 		
 		addLine("wiki", tr("Read the [Wiki page on API 0.5]"));
+
+		addLine("audio", tr("This version also has built-in support for [Audio Mapping] with continuously recorded sound tracks."));
+
 		addGettingStarted();
 		addGettingHelp();
-		
+				
 		panel.add(GBC.glue(0,70), GBC.eol());
 		//panel.setMinimumSize(new Dimension(400, 600));
 		add(panel);
@@ -110,6 +113,8 @@ public class GettingStarted extends JPanel implements ActionListener {
 			Main.main.menu.download.actionPerformed(e);
 		else if (e.getActionCommand().equals("help"))
 			Main.main.menu.help.actionPerformed(e);
+		else if (e.getActionCommand().equals("audio"))
+			OpenBrowser.displayUrl("http://josm.openstreetmap.de/wiki/Help/HowTo/AudioMapping");
 		else if (e.getActionCommand().equals("wiki"))
 			OpenBrowser.displayUrl("http://wiki.openstreetmap.org/index.php?title=OSM_Protocol_Version_0.5");
 		else if (e.getActionCommand().equals("tutorial"))
