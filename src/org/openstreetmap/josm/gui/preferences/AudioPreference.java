@@ -139,7 +139,7 @@ public class AudioPreference implements PreferenceSetting {
 		Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());
 		Main.pref.put("marker.buttonlabels", markerButtonLabels.isSelected());
 		Main.pref.put("marker.namedtrackpoints", markersNamedTrackpoints.isSelected());
-		Main.pref.put("marker.suppressautomarkers", makeAutoMarkers.isSelected());
+		Main.pref.put("marker.makeautomarkers", makeAutoMarkers.isSelected());
 		Main.pref.put("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());
 		Main.pref.put("audio.forwardbackamount", audioForwardBackAmount.getText());		
 		Main.pref.put("audio.fastfwdmultiplier", audioFastForwardMultiplier.getText());		
