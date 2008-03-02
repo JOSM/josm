@@ -90,10 +90,12 @@ public class OpenAction extends DiskAccessAction {
 			r.data.storageFile = file;
 			GpxLayer gpxLayer = new GpxLayer(r.data, fn);
 			Main.main.addLayer(gpxLayer);
-            MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
-            if (ml.data.size() > 0) {
-            	Main.main.addLayer(ml);
-            }
+			if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+				MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
+				if (ml.data.size() > 0) {
+					Main.main.addLayer(ml);
+				}
+			}
 
 		} else {
 			throw new IllegalStateException();

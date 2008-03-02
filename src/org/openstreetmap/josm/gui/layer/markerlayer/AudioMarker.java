@@ -67,23 +67,27 @@ public class AudioMarker extends ButtonMarker {
 	}
 		
 	/**
-	 * Starts playing the audio associated with the marker: used in response to pressing
-	 * the marker as well as indirectly 
-	 *
+	 * Starts playing the audio associated with the marker offset by the given amount 
+	 * @param after : seconds after marker where playing should start
 	 */
-	public void play() {
+	public void play(double after) {
 		try {
 			// first enable tracing the audio along the track
-			if (Main.pref.getBoolean("marker.traceaudio", true) && parentLayer != null) {
-				parentLayer.traceAudio();
-			}
+			Main.map.mapView.playHeadMarker.animate();
 
-			AudioPlayer.play(audioUrl, offset + syncOffset);
+			AudioPlayer.play(audioUrl, offset + syncOffset + after);
 			recentlyPlayedMarker = this;
 		} catch (Exception e) {
 			AudioPlayer.audioMalfunction(e);
 		}
 	}
+
+	/**
+	 * Starts playing the audio associated with the marker: used in response to pressing
+	 * the marker as well as indirectly 
+	 *
+	 */
+	public void play() { play(0.0); }
 
 	public void adjustOffset(double adjustment) {
 		syncOffset = adjustment; // added to offset may turn out negative, but that's ok

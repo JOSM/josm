@@ -25,6 +25,7 @@ public class AudioBackAction extends JosmAction {
 		} catch (NumberFormatException e) {
 			amount = 10.0;
 		}
+		this.putValue("help", "Action/Back");
 	}
 
 	public void actionPerformed(ActionEvent e) {

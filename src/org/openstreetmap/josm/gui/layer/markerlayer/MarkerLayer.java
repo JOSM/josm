@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
+import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.AudioPlayer;
@@ -66,13 +67,14 @@ public class MarkerLayer extends Layer {
 	public final Collection<Marker> data;
 	private boolean mousePressed = false;
 	public GpxLayer fromLayer = null;
-	private Rectangle audioTracer = null;
+	
+	/*
 	private Icon audioTracerIcon = null;
 	private EastNorth playheadPosition = null;
 	private static Timer timer = null;
 	private static double audioAnimationInterval = 0.0; // seconds
 	private static double playheadTime = -1.0;
-
+	 */
 	public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
 		
 		super(name);
@@ -160,76 +162,6 @@ public class MarkerLayer extends Layer {
 				mkr.paint(g, mv, false, mkrTextShow);
 			}
 		}
-
-		if (audioTracer != null) {
-			Point screen = Main.map.mapView.getPoint(playheadPosition);
-			audioTracer.setLocation(screen.x, screen.y);
-			audioTracerIcon.paintIcon(Main.map.mapView, g, screen.x, screen.y);
-		}
-	}
-
-	protected void traceAudio() {
-		if (timer == null) {
-			audioAnimationInterval = Double.parseDouble(Main.pref.get("marker.audioanimationinterval", "1")); //milliseconds
-			timer = new Timer((int)(audioAnimationInterval * 1000.0), new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					timerAction();
-				}
-			});
-			timer.start();
-		}
-	}
-	
-	/**
-	 * callback for AudioPlayer when position changes 
-	 * @param position seconds into the audio stream
-	 */
-	public void timerAction() {
-		AudioMarker recentlyPlayedMarker = AudioMarker.recentlyPlayedMarker();
-		if (recentlyPlayedMarker == null)
-			return;
-		double audioTime = recentlyPlayedMarker.time + 
-			AudioPlayer.position() - 
-			recentlyPlayedMarker.offset -
-			recentlyPlayedMarker.syncOffset;
-		if (Math.abs(audioTime- playheadTime) < audioAnimationInterval)
-			return;
-		if (fromLayer == null)
-			return;
-		/* find the pair of track points for this position (adjusted by the syncOffset)
-		 * and interpolate between them 
-		 */
-		WayPoint w1 = null;
-		WayPoint w2 = null;
-
-		for (GpxTrack track : fromLayer.data.tracks) {
-			for (Collection<WayPoint> trackseg : track.trackSegs) {
-				for (Iterator<WayPoint> it = trackseg.iterator(); it.hasNext();) {
-					WayPoint w = it.next();
-					if (audioTime < w.time) {
-						w2 = w;
-						break;
-					}
-					w1 = w;
-				}
-				if (w2 != null) break;
-			}
-			if (w2 != null) break;
-		}
-		
-		if (w1 == null)
-			return;
-		playheadPosition = w2 == null ? 
-			w1.eastNorth : 
-			w1.eastNorth.interpolate(w2.eastNorth, 
-					(audioTime - w1.time)/(w2.time - w1.time));
-		
-		if (audioTracer == null) {
-			audioTracerIcon = ImageProvider.getIfAvailable("markers",Main.pref.get("marker.audiotracericon", "audio-tracer"));
-			audioTracer = new Rectangle(0, 0, audioTracerIcon.getIconWidth(), audioTracerIcon.getIconHeight());			
-		}
-		playheadTime = audioTime;
-		Main.map.mapView.repaint();
 	}
 
 	@Override public String getToolTipText() {
@@ -248,21 +180,6 @@ public class MarkerLayer extends Layer {
 	@Override public void visitBoundingBox(BoundingXYVisitor v) {
 		for (Marker mkr : data)
 			v.visit(mkr.eastNorth);
-	}
-
-	public void applyAudio(File wavFile) {
-		String uri = "file:".concat(wavFile.getAbsolutePath());
-		Collection<Marker> markers = new ArrayList<Marker>();
-	    for (Marker mkr : data) {
-	    	AudioMarker audioMarker = mkr.audioMarkerFromMarker(uri);
-	    	if (audioMarker == null) {
-	    		markers.add(mkr);
-	    	} else { 
-	            markers.add(audioMarker);
-	    	}
-	    }
-	    data.clear();
-	    data.addAll(markers);
 	}
 
 	@Override public Object getInfoComponent() {
@@ -292,38 +209,20 @@ public class MarkerLayer extends Layer {
 			}
 		});
 
-		JMenuItem applyaudio = new JMenuItem(tr("Apply Audio"), ImageProvider.get("applyaudio"));
-		applyaudio.putClientProperty("help", "Action/ApplyAudio");
-		applyaudio.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				String dir = Main.pref.get("markers.lastaudiodirectory");
-				JFileChooser fc = new JFileChooser(dir);
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(new FileFilter(){
-					@Override public boolean accept(File f) {
-						return f.isDirectory() || f.getName().toLowerCase().endsWith(".wav");
-					}
-					@Override public String getDescription() {
-						return tr("Wave Audio files (*.wav)");
-					}
-				});
-				fc.showOpenDialog(Main.parent);
-				File sel = fc.getSelectedFile();
-				if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
-					Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
-				if (sel == null)
-					return;
-				applyAudio(sel);
-				Main.map.repaint();
-			}
-		});
-
 		JMenuItem syncaudio = new JMenuItem(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
 		syncaudio.putClientProperty("help", "Action/SynchronizeAudio");
 		syncaudio.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				adjustOffsetsOnAudioMarkers();
+				if (! AudioPlayer.paused()) {
+					JOptionPane.showMessageDialog(Main.parent,tr("You need to pause audio at the moment when you hear your synchronization cue."));
+					return;
+				}
+				AudioMarker recent = AudioMarker.recentlyPlayedMarker();
+				if (synchronizeAudioMarkers(recent)) {
+					JOptionPane.showMessageDialog(Main.parent, tr("Audio synchronized at point " + recent.text));
+				} else {
+					JOptionPane.showMessageDialog(Main.parent,tr("Unable to synchronize in layer being played."));
+				}
 			}
 		});
 
@@ -331,7 +230,15 @@ public class MarkerLayer extends Layer {
 		moveaudio.putClientProperty("help", "Action/MakeAudioMarkerAtPlayHead");
 		moveaudio.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				makeAudioMarkerAtPlayHead();
+				if (! AudioPlayer.paused()) {
+					JOptionPane.showMessageDialog(Main.parent,tr("You need to have paused audio at the point on the track where you want the marker."));
+					return;
+				}
+				PlayHeadMarker playHeadMarker = Main.map.mapView.playHeadMarker;
+				if (playHeadMarker == null)
+					return;
+				addAudioMarker(playHeadMarker.time, playHeadMarker.eastNorth);
+				Main.map.mapView.repaint();
 			}
 		});
 
@@ -343,7 +250,6 @@ public class MarkerLayer extends Layer {
 		components.add(color);
 		components.add(new JSeparator());
 		components.add(syncaudio);
-		components.add(applyaudio);
 		if (Main.pref.getBoolean("marker.traceaudio", true)) {
 			components.add (moveaudio);
 		}		
@@ -353,35 +259,26 @@ public class MarkerLayer extends Layer {
 		return components.toArray(new Component[0]);
 	}
 
-	private void adjustOffsetsOnAudioMarkers() {
-		if (! AudioPlayer.paused()) {
-			JOptionPane.showMessageDialog(Main.parent,tr("You need to pause audio at the moment when you hear your synchronization cue."));
-			return;
-		}
-		Marker startMarker = AudioMarker.recentlyPlayedMarker();
-		boolean explicitMarker = true;
+	public boolean synchronizeAudioMarkers(AudioMarker startMarker) {
 		if (startMarker != null && ! data.contains(startMarker)) {
-			explicitMarker = false;
 			startMarker = null;
 		}
 		if (startMarker == null) {
 			// find the first audioMarker in this layer
 			for (Marker m : data) {
-				if (m.getClass() == AudioMarker.class) {
-					startMarker = m;
+				if (m instanceof AudioMarker) {
+					startMarker = (AudioMarker) m;
 					break;
 				}
 			}
 		}
-		if (startMarker == null) {
-			// still no marker to work from - message?
-			JOptionPane.showMessageDialog(Main.parent,tr("No audio marker found in the layer to synchronize with."));
-			return;
-		}
+		if (startMarker == null)
+			return false;
+			
 		// apply adjustment to all subsequent audio markers in the layer
 		double adjustment = AudioPlayer.position() - startMarker.offset; // in seconds
 		boolean seenStart = false;
-		URL url = ((AudioMarker)startMarker).url();
+		URL url = startMarker.url();
 		for (Marker m : data) {
 			if (m == startMarker)
 				seenStart = true;
@@ -391,35 +288,28 @@ public class MarkerLayer extends Layer {
 					ma.adjustOffset(adjustment);
 			}
 		}
-		
-		JOptionPane.showMessageDialog(Main.parent, explicitMarker ? 
-			tr("Audio synchronized with most recently played marker and subsequent ones (that have the same sound track).") :
-			tr("Audio synchronized with audio markers in the layer (that have the same sound track as the first one)."));
+		return true;
 	}
 	
-	private void makeAudioMarkerAtPlayHead() {
-		if (! AudioPlayer.paused()) {
-			JOptionPane.showMessageDialog(Main.parent,tr("You need to pause audio at the point on the track where you want the marker."));
-			return;
-		}
+	public AudioMarker addAudioMarker(double time, EastNorth en) {
 		// find first audio marker to get absolute start time
 		double offset = 0.0;
 		AudioMarker am = null; 
 		for (Marker m : data) {
 			if (m.getClass() == AudioMarker.class) {
 				am = (AudioMarker)m;
-				offset = playheadTime - am.time;
+				offset = time - am.time;
 				break;
 			}
 		}
 		if (am == null) {
 			JOptionPane.showMessageDialog(Main.parent,tr("No existing audio markers in this layer to offset from."));
-			return;
+			return null;
 		}
 
 		// make our new marker
-		AudioMarker newAudioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(playheadPosition), 
-			AudioMarker.inventName(offset), AudioPlayer.url().toString(), this, playheadTime, offset);
+		AudioMarker newAudioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(en), 
+			AudioMarker.inventName(offset), AudioPlayer.url().toString(), this, time, offset);
 		
 		// insert it at the right place in a copy the collection
 		Collection<Marker> newData = new ArrayList<Marker>();
@@ -439,13 +329,12 @@ public class MarkerLayer extends Layer {
 			if (am != null)
 				newAudioMarker.adjustOffset(am.syncOffset()); // i.e. same as predecessor				
 			newData.add(newAudioMarker); // insert at end
-			newAudioMarker = null;
 		}
 		
 		// replace the collection
 		data.clear();
 		data.addAll(newData);
-		Main.map.mapView.repaint();
+		return newAudioMarker;
 	}
 	
 	public static void playAudio() {

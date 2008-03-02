@@ -304,11 +304,11 @@ public class AudioPlayer extends Thread {
 							if (audioOutputLine != null)
 								audioOutputLine.close();
 							audioFormat = new AudioFormat(audioFormat.getEncoding(), 
-										audioFormat.getSampleRate() * (float) speed, 
+										audioFormat.getSampleRate() * (float) (speed * calibration), 
 										audioFormat.getSampleSizeInBits(), 
 										audioFormat.getChannels(), 
 										audioFormat.getFrameSize(), 
-										audioFormat.getFrameRate() * (float) speed, 
+										audioFormat.getFrameRate() * (float) (speed * calibration), 
 										audioFormat.isBigEndian());
 							DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 							audioOutputLine = (SourceDataLine) AudioSystem.getLine(info);

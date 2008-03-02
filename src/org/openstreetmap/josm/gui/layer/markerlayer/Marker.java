@@ -61,7 +61,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class Marker implements ActionListener {
 
-	public final EastNorth eastNorth;
+	public EastNorth eastNorth;
 	public final String text;
 	public final Icon symbol;
 	public final MarkerLayer parentLayer;

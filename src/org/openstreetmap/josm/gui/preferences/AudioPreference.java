@@ -27,15 +27,12 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class AudioPreference implements PreferenceSetting {
 	private JCheckBox audioMenuVisible = new JCheckBox(tr("Display the Audio menu."));
-	/*
-	private JCheckBox audioToolbarVisible = new JCheckBox(tr("Display Audio control buttons on toolbar."));
-	*/
 	private JCheckBox markerButtonLabels = new JCheckBox(tr("Label audio (and image and web) markers."));
 	private JCheckBox markerAudioTraceVisible = new JCheckBox(tr("Display live audio trace."));
 	private JCheckBox markersNamedTrackpoints = new JCheckBox(tr("Create audio markers from named trackpoints."));
+	private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create non-audio markers when reading GPX."));
+	private JCheckBox audioMarkersFromExplicitWaypoints = new JCheckBox(tr("Import audio uses explicit waypoints."));
 
-	private JTextField audioSampleMinSecs = new JTextField(8);
-	private JTextField audioSampleMinMetres = new JTextField(8);
 	private JTextField audioLeadIn = new JTextField(8);
 	private JTextField audioForwardBackAmount = new JTextField(8);
 	private JTextField audioFastForwardMultiplier = new JTextField(8);
@@ -90,16 +87,30 @@ public class AudioPreference implements PreferenceSetting {
 		markersNamedTrackpoints.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
 		gui.audio.add(markersNamedTrackpoints, GBC.eol().insets(0,0,0,0));
 		
-		audioSampleMinSecs.setText(Main.pref.get("marker.audiosampleminsecs", "15"));
-		audioSampleMinSecs.setToolTipText(tr("Minimum time in seconds between audio samples when creating sampled audio markers from waypoints"));
-		gui.audio.add(new JLabel(tr("Min audio marker sample rate (seconds)")), GBC.std());
-		gui.audio.add(audioSampleMinSecs, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-
-		audioSampleMinMetres.setText(Main.pref.get("marker.audiosampleminmetres", "75"));
-		audioSampleMinMetres.setToolTipText(tr("Minimum distance in metres between audio samples when creating sampled audio markers from waypoints"));
-		gui.audio.add(new JLabel(tr("Min audio marker sample rate (metres)")), GBC.std());
-		gui.audio.add(audioSampleMinMetres, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-
+		// makeAutoMarkers
+		makeAutoMarkers.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if (!makeAutoMarkers.isSelected())
+					makeAutoMarkers.setSelected(false);
+				makeAutoMarkers.setEnabled(makeAutoMarkers.isSelected());
+			}
+		});
+		makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
+		makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
+		gui.audio.add(makeAutoMarkers, GBC.eol().insets(0,0,0,0));
+		
+		// audioMarkersFromExplicitWaypoints
+		audioMarkersFromExplicitWaypoints.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if (!audioMarkersFromExplicitWaypoints.isSelected())
+					audioMarkersFromExplicitWaypoints.setSelected(false);
+				audioMarkersFromExplicitWaypoints.setEnabled(audioMarkersFromExplicitWaypoints.isSelected());
+			}
+		});
+		audioMarkersFromExplicitWaypoints.setSelected(Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true));
+		audioMarkersFromExplicitWaypoints.setToolTipText(tr("When importing audio, apply it to any waypoints in the GPX layer."));
+		gui.audio.add(audioMarkersFromExplicitWaypoints, GBC.eol().insets(0,0,0,0));
+		
 		audioForwardBackAmount.setText(Main.pref.get("audio.forwardbackamount", "10"));
 		audioForwardBackAmount.setToolTipText(tr("The number of seconds to jump forward or back when the relevant button is pressed"));
 		gui.audio.add(new JLabel(tr("Forward/back time (seconds)")), GBC.std());
@@ -128,8 +139,8 @@ public class AudioPreference implements PreferenceSetting {
 		Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());
 		Main.pref.put("marker.buttonlabels", markerButtonLabels.isSelected());
 		Main.pref.put("marker.namedtrackpoints", markersNamedTrackpoints.isSelected());
-		Main.pref.put("marker.audiosampleminsecs", audioSampleMinSecs.getText());		
-		Main.pref.put("marker.audiosampleminmetres", audioSampleMinMetres.getText());		
+		Main.pref.put("marker.suppressautomarkers", makeAutoMarkers.isSelected());
+		Main.pref.put("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());
 		Main.pref.put("audio.forwardbackamount", audioForwardBackAmount.getText());		
 		Main.pref.put("audio.fastfwdmultiplier", audioFastForwardMultiplier.getText());		
 		Main.pref.put("audio.leadin", audioLeadIn.getText());		

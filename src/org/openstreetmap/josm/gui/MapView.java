@@ -35,6 +35,8 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.ModifiedChangedListener;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 
 /**
  * This is a component used in the MapFrame for browsing the map. It use is to
@@ -65,6 +67,10 @@ public class MapView extends NavigatableComponent {
 	 * A list of all layers currently loaded.
 	 */
 	private ArrayList<Layer> layers = new ArrayList<Layer>();
+	/**
+	 * The play head marker: there is only one of these so it isn't in any specific layer
+	 */
+	public PlayHeadMarker playHeadMarker = null;
 	/**
 	 * Direct link to the edit layer (if any) in the layers list.
 	 */
@@ -131,7 +137,9 @@ public class MapView extends NavigatableComponent {
 				}
 			});
 		}
-
+		if (layer instanceof MarkerLayer && playHeadMarker == null)
+			playHeadMarker = PlayHeadMarker.create();
+		
 		layers.add(layers.size(), layer);
 
 		// TODO: Deprecated
@@ -210,6 +218,10 @@ public class MapView extends NavigatableComponent {
 		int y2 = Math.max(min.y, max.y);
 		if (x1 > 0 || y1 > 0 || x2 < getWidth() || y2 < getHeight())
 			g.drawRect(x1, y1, x2-x1+1, y2-y1+1);
+		
+		if (playHeadMarker != null)
+			playHeadMarker.paint(g, this);
+
 		super.paint(g);
 	}
 

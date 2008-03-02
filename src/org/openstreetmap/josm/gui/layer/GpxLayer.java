@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -159,9 +160,9 @@ public class GpxLayer extends Layer {
 			}
 		});
 
-		JMenuItem applyAudio = new JMenuItem(tr("Make Sampled Audio Layer"), ImageProvider.get("applyaudio"));
-		applyAudio.putClientProperty("help", "Action/MakeSampledAudioLayer");
-		applyAudio.addActionListener(new ActionListener() {
+		JMenuItem importAudio = new JMenuItem(tr("Import Audio"), ImageProvider.get("importaudio"));
+		importAudio.putClientProperty("help", "ImportAudio");
+		importAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String dir = Main.pref.get("markers.lastaudiodirectory");
 				JFileChooser fc = new JFileChooser(dir);
@@ -181,7 +182,7 @@ public class GpxLayer extends Layer {
 					Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
 				if (sel == null)
 					return;
-				applyAudio(sel);
+				importAudio(sel);
 				Main.map.repaint();
 			}
 		});
@@ -244,7 +245,7 @@ public class GpxLayer extends Layer {
 				color,
 				line,
 				tagimage,
-				applyAudio,
+				importAudio,
 				markersFromNamedTrackpoints,
 				new JMenuItem(new ConvertToDataLayerAction()),
 				new JSeparator(),
@@ -457,7 +458,6 @@ public class GpxLayer extends Layer {
 		}
 	}
 
-
 	public class ConvertToDataLayerAction extends AbstractAction {
 		public ConvertToDataLayerAction() {
 			super(tr("Convert to data layer"), ImageProvider.get("converttoosm"));
@@ -484,56 +484,91 @@ public class GpxLayer extends Layer {
 			Main.main.removeLayer(GpxLayer.this);
 		}
 	}
-
+	
 	/**
-	 * 
-	 *
+	 * Makes a new marker layer derived from this GpxLayer containing at least one 
+	 * audio marker which the given audio file is associated with.
+	 * Markers are derived from the following
+	 * (a) explict waypoints in the GPX layer, or
+	 * (b) named trackpoints in the GPX layer, or
+	 * (c) (in future) voice recognised markers in the sound recording
+	 * (d) a single marker at the beginning of the track
+	 * @param wavFile : the file to be associated with the markers in the new marker layer
 	 */
-	private void applyAudio(File wavFile) {
+	private void importAudio(File wavFile) {
 		String uri = "file:".concat(wavFile.getAbsolutePath());
-	    double audioGapSecs = 15.0; 
-		try {
-			audioGapSecs = Double.parseDouble(Main.pref.get("marker.audiosampleminsecs", Double.toString(audioGapSecs)));
-		} catch (NumberFormatException e) {
-		}
-	    double audioGapMetres = 75.0; 
-		try {
-			audioGapMetres = Double.parseDouble(Main.pref.get("marker.audiosampleminmetres", Double.toString(audioGapMetres)));
-		} catch (NumberFormatException e) {
-		}
-		double audioGapRadians = (audioGapMetres / 40041455.0 /* circumference of Earth in metres */) * 2.0 * Math.PI;
-		double audioGapRadiansSquared = audioGapRadians * audioGapRadians;
-		double firstTime = -1.0;
-	    double prevOffset = - (audioGapSecs + 1.0); // first point always exceeds time difference
-	    WayPoint prevPoint = null;
+	    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
 
-	    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Sampled audio markers from {0}", name), associatedFile, me);
+	    // (a) try explicit waypoints - unless suppressed
+	    if (Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true) && 
+	    	data.waypoints != null && 
+	    	! data.waypoints.isEmpty())
+	    {
+	    	double firstTime = -1.0;
+	    	for (WayPoint w : data.waypoints) {
+	    		if (firstTime < 0.0) firstTime = w.time;
+	    		double offset = w.time - firstTime;
+	    		String name = w.attr.containsKey("name") ? w.getString("name") :
+	    			w.attr.containsKey("desc") ? w.getString("desc") :
+	    			AudioMarker.inventName(offset);
+	    			AudioMarker am = AudioMarker.create(w.latlon, 
+						name, uri, ml, w.time, offset);
+				ml.data.add(am);	    		
+	    	}
+	    }
+
+	    // (b) use explicitly named track points, again unless suppressed
+	    if (ml.data.isEmpty() && 
+	    	Main.pref.getBoolean("marker.namedtrackpoints") && 
+	    	data.tracks != null && 
+	    	! data.tracks.isEmpty())
+	    {
+	    	double firstTime = -1.0;
+	    	for (GpxTrack track : data.tracks) {
+	    		for (Collection<WayPoint> seg : track.trackSegs) {
+	    			for (WayPoint w : seg) {
+	    				String name;
+	    				if (w.attr.containsKey("name"))
+	    					name = w.getString("name");
+	    				else if (w.attr.containsKey("desc"))
+	    					name = w.getString("desc");
+	    				else
+	    					continue;
+	    	    		if (firstTime < 0.0) firstTime = w.time;
+	    	    		double offset = w.time - firstTime;
+	    				AudioMarker am = AudioMarker.create(w.latlon, 
+	    						name, uri, ml, w.time, offset);
+	    				ml.data.add(am);	    		
+	    			}
+	    		}
+	    	}
+	    }
+
+	    // (c) analyse audio for spoken markers here, in due course
 	    
-		for (GpxTrack track : data.tracks) {
-			for (Collection<WayPoint> seg : track.trackSegs) {
-				for (WayPoint point : seg) {
-					double time = point.time;
-					if (firstTime < 0.0)
-						firstTime = time;
-					double offset = time - firstTime;
-					if (prevPoint == null ||
-						(offset - prevOffset > audioGapSecs &&
-						/* note: distance is misleading: it actually gives distance _squared_ */
-						point.eastNorth.distance(prevPoint.eastNorth) > audioGapRadiansSquared))
-					{
-						
-						AudioMarker am = AudioMarker.create(point.latlon, 
-								AudioMarker.inventName(offset), uri, ml, time, offset);
-						ml.data.add(am);
-						prevPoint = point;
-						prevOffset = offset;
-					}
-				}
-			}
+	    // (d) simply add a single marker at the start of the track
+	    if (ml.data.isEmpty() && 
+	    	data.tracks != null && 
+		    ! data.tracks.isEmpty())
+		{
+	    	for (GpxTrack track : data.tracks) {
+	    		for (Collection<WayPoint> seg : track.trackSegs) {
+	    			for (WayPoint w : seg) {
+	    	    		AudioMarker am = AudioMarker.create(w.latlon, 
+	    						tr("start"), uri, ml, w.time, 0.0);
+	    				ml.data.add(am);	    		
+	    				break;
+	    			}
+	    			break;
+	    		}
+	    		break;
+	    	}
 		}
-
-        if (ml.data.size() > 0) {
+	    
+        if (! ml.data.isEmpty()) {
         	Main.main.addLayer(ml);
+        } else {
+			JOptionPane.showMessageDialog(Main.parent, tr("Nothing available to associate audio with."));
         }
 	}
 }
