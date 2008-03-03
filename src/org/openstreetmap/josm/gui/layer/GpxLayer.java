@@ -559,9 +559,9 @@ public class GpxLayer extends Layer {
 	    				ml.data.add(am);	    		
 	    				break;
 	    			}
-	    			break;
+	    			if (! ml.data.isEmpty()) break;
 	    		}
-	    		break;
+	    		if (! ml.data.isEmpty()) break;
 	    	}
 		}
 	    
