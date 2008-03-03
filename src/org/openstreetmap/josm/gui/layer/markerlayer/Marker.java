@@ -96,7 +96,7 @@ public class Marker implements ActionListener {
 
 				// Try a relative file:// url, if the link is not in an URL-compatible form
                 if (relativePath != null && uri != null && !isWellFormedAddress(uri))
-                    uri = new File(relativePath, uri).toURI().toString();
+                    uri = new File(relativePath.getParentFile(), uri).toURI().toString();
 
                 String name_desc = "";
                 if (wpt.attr.containsKey("name")) {
