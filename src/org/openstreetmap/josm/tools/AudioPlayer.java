@@ -36,7 +36,7 @@ public class AudioPlayer extends Thread {
     private double calibration; // ratio of purported duration of samples to true duration
 	private double position; // seconds
 	private double bytesPerSecond; 
-	private static long chunk = 8000; /* bytes */
+	private static long chunk = 4000; /* bytes */
 	private double speed = 1.0;
 
 	/**
@@ -237,6 +237,7 @@ public class AudioPlayer extends Thread {
 					sleep(200);
 					break;
 				case PLAYING:
+					command.possiblyInterrupt();
 					for(;;) {
 						int nBytesRead = 0;
 						nBytesRead = audioInputStream.read(abData, 0, abData.length);
@@ -279,14 +280,15 @@ public class AudioPlayer extends Thread {
 							audioFormat = audioInputStream.getFormat();
 							long nBytesRead = 0;
 							position = 0.0;
-							double adjustedOffset = (offset - leadIn) * calibration;
+							offset -= leadIn;
+							double calibratedOffset = offset * calibration;
 							bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
 								* audioFormat.getFrameSize() /* bytes per frame */;
 							if (speed * bytesPerSecond > 256000.0)
 								speed = 256000 / bytesPerSecond;
-							if (offset != 0.0 && adjustedOffset > 0.0) {
+							if (calibratedOffset > 0.0) {
 								long bytesToSkip = (long)(
-									adjustedOffset /* seconds (double) */ * bytesPerSecond);
+										calibratedOffset /* seconds (double) */ * bytesPerSecond);
 								/* skip doesn't seem to want to skip big chunks, so 
 								 * reduce it to smaller ones 
 								 */
@@ -299,7 +301,7 @@ public class AudioPlayer extends Thread {
 								}
 								if (bytesToSkip > 0)
 									audioInputStream.skip(bytesToSkip);
-								position = adjustedOffset;
+								position = offset;
 							}
 							if (audioOutputLine != null)
 								audioOutputLine.close();

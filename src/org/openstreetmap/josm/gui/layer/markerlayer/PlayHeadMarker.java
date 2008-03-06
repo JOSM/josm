@@ -56,6 +56,7 @@ public class PlayHeadMarker extends Marker {
 	private EastNorth oldEastNorth;
 	private boolean enabled;
 	private boolean wasPlaying = false;
+	private int dropTolerance = 50; /* pixels */
 	
 	public static PlayHeadMarker create() {
 		if (playHead == null) {
@@ -74,6 +75,8 @@ public class PlayHeadMarker extends Marker {
 			  null, -1.0, 0.0);
 		enabled = Main.pref.getBoolean("marker.traceaudio", true);
 		if (! enabled) return;
+		try { dropTolerance = Integer.parseInt(Main.pref.get("marker.playHeadDropTolerance", "50")); }
+		catch(NumberFormatException x) { dropTolerance = 50; }
 		Main.map.mapView.addMouseListener(new MouseAdapter() {
 			@Override public void mousePressed(MouseEvent ev) {
 				Point p = ev.getPoint();
@@ -116,13 +119,13 @@ public class PlayHeadMarker extends Marker {
 	 * reinstate the old map mode after swuitching temporarily to do a play head drag 
 	 */
 	private void endDrag(boolean reset) {
+		if (! wasPlaying || reset) 
+			try { AudioPlayer.pause(); }
+			catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
 		if (reset)
 			eastNorth = oldEastNorth;
 		Main.map.selectMapMode(oldMode);
 		Main.map.mapView.repaint();
-		if (! wasPlaying) 
-			try { AudioPlayer.pause(); }
-			catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
 		timer.start();
 	}
 	
@@ -176,15 +179,21 @@ public class PlayHeadMarker extends Marker {
 	 * @param en the position to start looking from
 	 */
 	public void reposition(EastNorth en) {
-		eastNorth = en;
-		WayPoint cw = getClosestTrackPoint(Main.map.mapView.getPoint(en), 25.0);
-		AudioMarker ca = null; 
+		// eastNorth = en;
+		WayPoint cw = null;
+		AudioMarker recent = AudioMarker.recentlyPlayedMarker();
+		if (recent != null && recent.parentLayer != null && recent.parentLayer.fromLayer != null) {
+			/* work out EastNorth equivalent of 50 (default) pixels tolerance */ 
+			Point p = Main.map.mapView.getPoint(en);
+			EastNorth enPlus25px = Main.map.mapView.getEastNorth(p.x+dropTolerance, p.y);
+			cw = recent.parentLayer.fromLayer.nearestPointOnTrack(en, enPlus25px.east() - en.east());
+		}
 		
+		AudioMarker ca = null; 
 		/* Find the prior audio marker (there should always be one in the 
 		 * layer, even if it is only one at the start of the track) to 
 		 * offset the audio from */ 
 		if (cw != null) {
-			AudioMarker recent = AudioMarker.recentlyPlayedMarker(); 		
 			if (recent != null || recent.parentLayer != null) {
 				for (Marker m : recent.parentLayer.data) {
 					if (m instanceof AudioMarker) {
@@ -238,9 +247,12 @@ public class PlayHeadMarker extends Marker {
 		/* We found the closest marker: did we actually hit it? */
 		if (ca != null && ! ca.containsPoint(startPoint)) ca = null;
 		
-		/* If we didn't hit an audio marker, we need to create one at the nearest track point */
-		if (ca == null) {
-			WayPoint cw = getClosestTrackPoint(startPoint, 10.0);
+		/* If we didn't hit an audio marker, we need to create one at the nearest point on the track */
+		if (ca == null && recent != null) {
+			/* work out EastNorth equivalent of 50 (default) pixels tolerance */ 
+			Point p = Main.map.mapView.getPoint(en);
+			EastNorth enPlus25px = Main.map.mapView.getEastNorth(p.x+dropTolerance, p.y);
+			WayPoint cw = recent.parentLayer.fromLayer.nearestPointOnTrack(en, enPlus25px.east() - en.east());
 			if (cw == null) {
 				JOptionPane.showMessageDialog(Main.parent, tr("You need to SHIFT-Drag the play head onto an audio marker or onto the track point where you want to synchronize."));
 				endDrag(true);
@@ -263,7 +275,6 @@ public class PlayHeadMarker extends Marker {
 	public void paint(Graphics g, MapView mv /*, boolean mousePressed */) {
 		if (time < 0.0) return;
 		Point screen = mv.getPoint(eastNorth);
-		// buttonRectangle.setLocation(screen.x+4, screen.y+2);
 		symbol.paintIcon(mv, g, screen.x, screen.y);
 	}
 

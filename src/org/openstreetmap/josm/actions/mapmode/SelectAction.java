@@ -117,6 +117,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 	@Override public void exitMode() {
 		super.exitMode();
+		selectionManager.unregister(Main.map.mapView);
 		Main.map.mapView.removeMouseListener(this);
 		Main.map.mapView.removeMouseMotionListener(this);
 	}
@@ -209,6 +210,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 * cursor to movement.
 	 */
 	@Override public void mousePressed(MouseEvent e) {
+		if (! (Boolean)this.getValue("active")) return;
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
