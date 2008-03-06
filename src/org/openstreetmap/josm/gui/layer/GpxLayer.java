@@ -24,6 +24,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.Iterator;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -45,6 +47,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
@@ -498,77 +501,251 @@ public class GpxLayer extends Layer {
 	private void importAudio(File wavFile) {
 		String uri = "file:".concat(wavFile.getAbsolutePath());
 	    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
-
-	    // (a) try explicit waypoints - unless suppressed
+	    
+	    Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
+	    boolean timedMarkersOmitted = false;
+	    boolean untimedMarkersOmitted = false;
+	    
+	    // determine time of first point in track
+	    double firstTime = -1.0;
+    	if (data.tracks != null && ! data.tracks.isEmpty()) {
+    		for (GpxTrack track : data.tracks) {
+    			if (track.trackSegs == null) continue;
+    			for (Collection<WayPoint> seg : track.trackSegs) {
+    				for (WayPoint w : seg) {
+    					firstTime = w.time;
+    					break;
+    				}
+        			if (firstTime >= 0.0) break;
+    			}
+    			if (firstTime >= 0.0) break;
+    		}
+    	}
+    	if (firstTime < 0.0) {
+			JOptionPane.showMessageDialog(Main.parent, tr("No GPX track available in layer to associate audio with."));
+			return;
+    	}
+	    
+	    // (a) try explicit timestamped waypoints - unless suppressed
 	    if (Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true) && 
-	    	data.waypoints != null && 
-	    	! data.waypoints.isEmpty())
+	    	data.waypoints != null && ! data.waypoints.isEmpty())
 	    {
-	    	double firstTime = -1.0;
 	    	for (WayPoint w : data.waypoints) {
-	    		if (firstTime < 0.0) firstTime = w.time;
-	    		double offset = w.time - firstTime;
-	    		String name = w.attr.containsKey("name") ? w.getString("name") :
-	    			w.attr.containsKey("desc") ? w.getString("desc") :
-	    			AudioMarker.inventName(offset);
-	    			AudioMarker am = AudioMarker.create(w.latlon, 
-						name, uri, ml, w.time, offset);
-				ml.data.add(am);	    		
+	    		if (w.time > firstTime) {
+	    			waypoints.add(w);
+	    		} else if (w.time > 0.0) {
+	    			timedMarkersOmitted = true;
+	    		}
 	    	}
 	    }
 
-	    // (b) use explicitly named track points, again unless suppressed
-	    if (ml.data.isEmpty() && 
-	    	Main.pref.getBoolean("marker.namedtrackpoints") && 
-	    	data.tracks != null && 
-	    	! data.tracks.isEmpty())
+	    // (b) try explicit waypoints without timestamps - unless suppressed
+	    if (Main.pref.getBoolean("marker.audiofromuntimedwaypoints", true) && 
+	    	data.waypoints != null && ! data.waypoints.isEmpty())
 	    {
-	    	double firstTime = -1.0;
+	    	for (WayPoint w : data.waypoints) {
+	    		if (waypoints.contains(w)) { continue; }
+    			WayPoint wNear = nearestPointOnTrack(w.eastNorth, 10.0e-7 /* about 25m */);
+    			if (wNear != null) {
+    				WayPoint wc = new WayPoint(w.latlon);
+    				wc.time = wNear.time;
+    				if (w.attr.containsKey("name")) wc.attr.put("name", w.getString("name"));
+    				waypoints.add(wc);
+    			} else {
+    				untimedMarkersOmitted = true;
+    			}
+	    	}
+	    }
+	    
+	    // (c) use explicitly named track points, again unless suppressed
+	    if ((Main.pref.getBoolean("marker.audiofromnamedtrackpoints", Main.pref.getBoolean("marker.namedtrackpoints") /* old name */)) && 
+	    	data.tracks != null && ! data.tracks.isEmpty())
+	    {
 	    	for (GpxTrack track : data.tracks) {
+	    		if (track.trackSegs == null) continue;
 	    		for (Collection<WayPoint> seg : track.trackSegs) {
 	    			for (WayPoint w : seg) {
-	    				String name;
-	    				if (w.attr.containsKey("name"))
-	    					name = w.getString("name");
-	    				else if (w.attr.containsKey("desc"))
-	    					name = w.getString("desc");
-	    				else
-	    					continue;
-	    	    		if (firstTime < 0.0) firstTime = w.time;
-	    	    		double offset = w.time - firstTime;
-	    				AudioMarker am = AudioMarker.create(w.latlon, 
-	    						name, uri, ml, w.time, offset);
-	    				ml.data.add(am);	    		
+	    				if (w.attr.containsKey("name") || w.attr.containsKey("desc")) {
+	    					waypoints.add(w);
+	    				}
 	    			}
 	    		}
 	    	}
 	    }
 
-	    // (c) analyse audio for spoken markers here, in due course
+	    // (d) analyse audio for spoken markers here, in due course
 	    
-	    // (d) simply add a single marker at the start of the track
-	    if (ml.data.isEmpty() && 
-	    	data.tracks != null && 
-		    ! data.tracks.isEmpty())
+	    // (e) simply add a single marker at the start of the track
+	    if ((Main.pref.getBoolean("marker.audiofromstart") || waypoints.isEmpty()) &&
+	    	data.tracks != null && ! data.tracks.isEmpty())
 		{
+	    	boolean gotOne = false;
 	    	for (GpxTrack track : data.tracks) {
+	    		if (track.trackSegs == null) continue;
 	    		for (Collection<WayPoint> seg : track.trackSegs) {
 	    			for (WayPoint w : seg) {
-	    	    		AudioMarker am = AudioMarker.create(w.latlon, 
-	    						tr("start"), uri, ml, w.time, 0.0);
-	    				ml.data.add(am);	    		
+	    				WayPoint wStart = new WayPoint(w.latlon);
+	    				wStart.attr.put("name", "start");
+	    				wStart.time = w.time;
+	    				waypoints.add(wStart);
+	    				gotOne = true;
 	    				break;
 	    			}
-	    			if (! ml.data.isEmpty()) break;
+	    			if (gotOne) break;
 	    		}
-	    		if (! ml.data.isEmpty()) break;
+	    		if (gotOne) break;
 	    	}
 		}
+
+	    /* we must have got at least one waypoint now */
 	    
-        if (! ml.data.isEmpty()) {
-        	Main.main.addLayer(ml);
-        } else {
-			JOptionPane.showMessageDialog(Main.parent, tr("Nothing available to associate audio with."));
-        }
+	    Collections.sort((ArrayList<WayPoint>) waypoints, new Comparator<WayPoint>() {
+	    	public int compare(WayPoint a, WayPoint b) {
+	    		return a.time <= b.time ? -1 : 1;
+	    	}
+	    });
+
+	    firstTime = -1.0; /* this time of the first waypoint, not first trackpoint */
+	    for (WayPoint w : waypoints) {
+	    	if (firstTime < 0.0) firstTime = w.time;
+	    	double offset = w.time - firstTime;
+			String name;
+			if (w.attr.containsKey("name"))
+				name = w.getString("name");
+			else if (w.attr.containsKey("desc"))
+				name = w.getString("desc");
+			else
+				name = AudioMarker.inventName(offset);
+			AudioMarker am = AudioMarker.create(w.latlon, 
+					name, uri, ml, w.time, offset);
+			ml.data.add(am);	    			    	
+	    }
+	    Main.main.addLayer(ml);
+	    
+	    if (timedMarkersOmitted) {
+			JOptionPane.showMessageDialog(Main.parent, tr("Some waypoints with timestamps from before the start of the track were omitted."));
+	    }
+	    if (untimedMarkersOmitted) {
+			JOptionPane.showMessageDialog(Main.parent, tr("Some waypoints which were too far from the track to sensibly estimate their time were omitted."));
+	    }
+	}
+
+	/**
+	 * Makes a WayPoint at the projection of point P onto the track providing P is 
+	 * less than tolerance away from the track 
+
+	 * @param P : the point to determine the projection for
+	 * @param tolerance : must be no further than this from the track
+	 * @return the closest point on the track to P, which may be the 
+	 * first or last point if off the end of a segment, or may be null if 
+	 * nothing close enough
+	 */
+	public WayPoint nearestPointOnTrack(EastNorth P, double tolerance) {
+		/*
+		 * assume the coordinates of P are xp,yp, and those of a section of track 
+		 * between two trackpoints are R=xr,yr and S=xs,ys. Let N be the projected point.
+		 * 
+		 * The equation of RS is Ax + By + C = 0 where
+		 * A = ys - yr
+		 * B = xr - xs
+		 * C = - Axr - Byr
+		 * 
+		 * Also, note that the distance RS^2 is A^2 + B^2
+		 * 
+		 * If RS^2 == 0.0 ignore the degenerate section of track
+		 * 
+		 * PN^2 = (Axp + Byp + C)^2 / RS^2
+		 * that is the distance from P to the line
+		 * 
+		 * so if PN^2 is less than PNmin^2 (initialized to tolerance) we can reject 
+		 * the line; otherwise...
+		 * determine if the projected poijnt lies within the bounds of the line:
+		 * PR^2 - PN^2 <= RS^2 and PS^2 - PN^2 <= RS^2
+		 * 
+		 * where PR^2 = (xp - xr)^2 + (yp-yr)^2
+		 * and   PS^2 = (xp - xs)^2 + (yp-ys)^2
+		 * 
+		 * If so, calculate N as
+		 * xn = xr + (RN/RS) B
+		 * yn = y1 + (RN/RS) A
+		 * 
+		 * where RN = sqrt(PR^2 - PN^2)
+		 */
+		
+		double PNminsq = tolerance * tolerance;
+		EastNorth bestEN = null;
+		double bestTime = 0.0;
+		double px = P.east();
+		double py = P.north();
+		double rx = 0.0, ry = 0.0, sx, sy, x, y;
+		if (data.tracks == null) return null;
+		for (GpxTrack track : data.tracks) {
+			if (track.trackSegs == null) continue;			
+			for (Collection<WayPoint> seg : track.trackSegs) {
+				WayPoint R = null;
+				for (WayPoint S : seg) {
+					if (R == null) {
+						R = S;
+						rx = R.eastNorth.east();
+						ry = R.eastNorth.north();
+						x = px - rx;
+						y = py - ry;
+						double PRsq = x * x + y * y;
+						if (PRsq < PNminsq) {
+							PNminsq = PRsq;
+							bestEN = R.eastNorth;
+							bestTime = R.time;
+						}
+					} else {
+						sx = S.eastNorth.east();
+						sy = S.eastNorth.north();
+						double A = sy - ry;
+						double B = rx - sx;
+						double C = - A * rx - B * ry;
+						double RSsq = A * A + B * B;
+						if (RSsq == 0.0) continue;
+						double PNsq = A * px + B * py + C;
+						PNsq = PNsq * PNsq / RSsq;
+						if (PNsq < PNminsq) {
+							x = px - rx;
+							y = py - ry;
+							double PRsq = x * x + y * y;
+							x = px - sx;
+							y = py - sy;
+							double PSsq = x * x + y * y;
+							if (PRsq - PNsq <= RSsq && PSsq - PNsq <= RSsq) {
+								double RNoverRS = Math.sqrt((PRsq - PNsq)/RSsq);
+								double nx = rx - RNoverRS * B;
+								double ny = ry + RNoverRS * A;
+								bestEN = new EastNorth(nx, ny);
+								bestTime = R.time + RNoverRS * (S.time - R.time);
+								PNminsq = PNsq;
+							}
+						}
+						R = S;
+						rx = sx;
+						ry = sy;
+					}
+				}
+				if (R != null) {
+					/* if there is only one point in the seg, it will do this twice, but no matter */
+					rx = R.eastNorth.east();
+					ry = R.eastNorth.north();
+					x = px - rx;
+					y = py - ry;
+					double PRsq = x * x + y * y;
+					if (PRsq < PNminsq) {
+						PNminsq = PRsq;
+						bestEN = R.eastNorth;
+						bestTime = R.time;
+					}
+					
+				}
+			}
+		}
+		if (bestEN == null) return null;
+		WayPoint best = new WayPoint(Main.proj.eastNorth2latlon(bestEN));
+		best.time = bestTime;
+		return best;
 	}
 }
