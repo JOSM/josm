@@ -3,57 +3,51 @@ Pics have been derived from
 http://commons.wikipedia.org (german street sign SVGs)
 http://www.kde.org
 http://openclipart.org/media/view/media/clip_art
-
-TODO:
-* Check leisure places
 -->
 
 <annotations>
 
 	<item name="Road" icon="presets/ways.png">
-    <label text="Roads" />
-		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,residential,unclassified,service,byway,unsurfaced,bridleway,track,cycleway,pedestrian,footway,steps" delete_if_empty="true" />
+    <label text="Road" />
+		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,unsurfaced,track,residential,living_street,service,bridleway,cycleway,footway,pedestrian,steps,bus_guideway,construction" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
-  </item>
-
-	<item name="Road Point" icon="presets/waypoints.png">
-		<label text="Road Points" />
-		<combo key="highway" text="Type:" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,bridge,viaduct,stop,gate,bus_station,bus_halt,bus_stop,stile,cattle_grid,ford" default="" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-  </item>
-	
-	
-	
-	<!--
-	exit_nr,exit_name
-	-->
-	
-	
-	<item name="Road Attributes" icon="presets/roadattributes.png">
-		<label text="Road Attributes" />
+		<label text=" " />
+		<label text="Attributes" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
 		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
 		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
 		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
 		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
 		<combo key="surface" text="Surface:" values="paved,unpaved" default="" delete_if_empty="true" />
+		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
 		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-		<text key="lanes" text="Lanes:" default="" delete_if_empty="true" />
-	</item>
+  </item>
 
+	<item name="Road Point" icon="presets/waypoints.png">
+		<label text="Road Points" />
+		<combo key="highway" text="Type:" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,viaduct,stop,gate,bus_stop,stile,cattle_grid,ford,turning_circle" default="" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="mountain_pass" text="Mountain Pass" default="off" delete_if_empty="true" />
+  </item>
+	
+	
 	<item name="Restrictions" icon="presets/restrictions.png">
 		<label text="Restrictions" />
 		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<check key="toll" text="Toll" default="off" delete_if_empty="true"  />
+		<check key="noexit" text="No exit (cul-de-sac)" default="off" delete_if_empty="true"  />
 		<combo key="access" text="Access:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
-		<combo key="foot" text="Foot:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
 		<combo key="bicycle" text="Bicycle:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true"  />
+		<combo key="foot" text="Foot:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="goods" text="Goods:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="hgv" text="Heavy Goods Vehicles (hgv):" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
 		<combo key="horse" text="Horse:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
 		<combo key="motorcycle" text="Motorcycle:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
 		<combo key="motorcar" text="Motorcar:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
-		<combo key="toll" text="Toll:" values="yes,no" default="" delete_if_empty="true"  />
-		<combo key="goods" text="Goods:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
-		<combo key="hgv" text="hgv:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
-		<combo key="psv" text="psv:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
+		<combo key="psv" text="Public Service Vehicles (psv):" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
 		<combo key="motorboat" text="Motorboat:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
 		<combo key="boat" text="Boat:" values="yes,private,permissive,unknown,no" default="" delete_if_empty="true" />
 		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
@@ -64,7 +58,10 @@ TODO:
 		<text key="maxlength" text="Max. Length (metres):" default="" delete_if_empty="true" />
  </item>
 
-
+	
+	<!--
+	exit_nr,exit_name
+	-->
  
  <!--
 Routes are currently not well supported, so I disable them here
@@ -76,27 +73,31 @@ Routes are currently not well supported, so I disable them here
   </item>
 	-->
 
+ <item name=" " icon="presets/empty.png"></item>
+ 
 	<item name="Railway" icon="presets/railway.png">
 		<label text="Railways" />
-		<combo key="railway" text="Type:" values="rail,tram,light_rail,subway,preserved,disused,abandoned,narrow_gauge" default="" delete_if_empty="true" />
+		<combo key="railway" text="Type:" values="rail,tram,light_rail,subway,preserved,disused,abandoned,narrow_gauge,monorail" default="" delete_if_empty="true" />
 		<!-- <text key="name" text="Name:" default="" delete_if_empty="true"  />-->
   </item>
 
 	<item name="Railway Point" icon="presets/railwaypoint.png">
 		<label text="Railway Points" />
-		<combo key="railway" text="Type:" values="station,halt,viaduct,crossing" default="" delete_if_empty="true" />
+		<combo key="railway" text="Type:" values="station,halt,tram_stop,subway_entrance,crossing,level_crossing,turntable,viaduct" default="" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true"  />
   </item>
 
+ <item name=" " icon="presets/empty.png"></item>
+ 
 	<item name="Waterway" icon="presets/waterway.png">
 		<label text="Waterways" />
-		<combo key="waterway" text="Type:" values="river,canal,drain,dock" default="" delete_if_empty="true" />
+		<combo key="waterway" text="Type:" values="river,canal,stream,drain,dock,weir,dam" default="" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
   </item>
 
 	<item name="Waterway Point" icon="presets/waterwaypoint.png">
 		<label text="Waterway Points" />
-		<combo key="waterway" text="Type:" values="lock_gate,water_point,turning_point,aqueduct,boatyard,waste_disposal,mooring,weir" default="" delete_if_empty="true" />
+		<combo key="waterway" text="Type:" values="lock_gate,turning_point,aqueduct,boatyard,water_point,waste_disposal,mooring,weir" default="" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
   </item>
 
@@ -105,12 +106,14 @@ Routes are currently not well supported, so I disable them here
  -->
 
  <item name=" " icon="presets/empty.png"></item>
+ <item name=" " icon="presets/empty.png"></item>
+ <item name=" " icon="presets/empty.png"></item>
 
 
 
  <item name="Places" icon="presets/places.png">
 	 <label text="Places" />
-	 <combo key="place" text="Type" values="continent,country,state,region,county,city,town,suburb,village,hamlet" default="" delete_if_empty="true" />
+	 <combo key="place" text="Type" values="continent,country,state,region,county,city,town,suburb,village,hamlet,locality,island" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
@@ -122,13 +125,13 @@ Routes are currently not well supported, so I disable them here
 
 	<item name="Landuse" icon="presets/landuse.png">
 		<label text="Landuse" />
-		<combo key="landuse" text="Type:" values="farm,quarry,landfill,basin,reservoir,forest,allotments,residential,retail,commercial,industrial,brownfield,greenfield,cemetery,plaza" default="" delete_if_empty="true" />
+		<combo key="landuse" text="Type:" values="farm,quarry,landfill,basin,reservoir,forest,allotments,residential,retail,commercial,industrial,brownfield,greenfield,railway,construction,military,cemetery,village_green,recreation_ground" default="" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
  <item name="Natural" icon="presets/natural.png">
 	 <label text="Natural locations" />
-	 <combo key="natural" text="Type:" values="spring,peak,cliff,scree,scrub,fell,heath,wood,marsh,water,coastline,mud,beach,bay" default="" delete_if_empty="true" />
+	 <combo key="natural" text="Type:" values="spring,peak,glacier,volcano,cliff,scree,scrub,fell,heath,wood,marsh,water,coastline,mud,beach,bay,land,cave_entrance" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
@@ -141,15 +144,22 @@ Routes are currently not well supported, so I disable them here
 
  <item name="Amenities" icon="presets/pubinstitutes.png">
 	 <label text="Amenities" />
-	 <combo key="amenity" text="Type" values="telephone,toilets,public_building,police,post_office,post_box,recycling,fire_station,courthouse,prison,refuge" default="" delete_if_empty="true" />
+	 <combo key="amenity" text="Type" values="telephone,toilets,bus_station,public_building,townhall,police,post_office,post_box,recycling,fire_station,courthouse,prison,taxi" default="" delete_if_empty="true" />
 	 <!-- <text key="name" text="Name:" default="" delete_if_empty="true" /> -->
  </item>
 
 
- <item name="Car" icon="presets/car.png">
+ <item name="Bicycle" icon="presets/cycling.png">
+	 <label text="Bicycle" />
+	 <combo key="amenity" text="Facility:" values="bicycle_parking,bicycle_rental" default="" delete_if_empty="true" />
+	 <combo key="shop" text="Shop:" values="bicycle" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+ 
+<item name="Car" icon="presets/car.png">
 	 <label text="Car" />
-	 <combo key="amenity" text="Type" values="fuel,parking" default="" delete_if_empty="true" />
-	 <!-- <text key="name" text="Name:" default="" delete_if_empty="true" /> -->
+	 <combo key="amenity" text="Facility" values="fuel,parking,car_rental,car_sharing" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
 
@@ -167,45 +177,52 @@ Routes are currently not well supported, so I disable them here
 
  <item name="Shopping" icon="presets/shopping.png">
 	 <label text="Insert a shop etc." />
-	 <combo key="shop" text="Type" values="supermarket,bakery,butcher,chandler" default="" delete_if_empty="true" />
+	 <combo key="shop" text="Type" values="supermarket,convenience,butcher,bicycle,doityourself,dry_cleaning,laundry,outdoor,kiosk" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
  
  <item name="Food + Drinks" icon="presets/restaurant.png">
 	 <label text="Food + Drinks" />
-	 <combo key="amenity" text="Type" values="fast_food,restaurant,biergarten,pub,cafe" default="" delete_if_empty="true" />
+	 <combo key="amenity" text="Type" values="pub,biergarten,nightclub,cafe,restaurant,fast_food" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
 
  <item name="Culture" icon="presets/book.png">
 	 <label text="Insert a cultural location" />
-	 <combo key="amenity" text="Type" values="library,place_of_worship,grave_yard" default="" delete_if_empty="true" />
+	 <combo key="amenity" text="Type" values="library,place_of_worship,grave_yard,theatre,cinema,arts_centre" default="" delete_if_empty="true" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Money" icon="presets/money.png">
+	 <label text="Money" />
+	 <combo key="amenity" text="Money:" values="bank,bureau_de_change,atm" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
  <item name="Sports" icon="presets/sports.png">
 	 <label text="Sports" />
-	 <combo key="sport" text="Type:" values="sports_centre,golf_course,multi,10pin,athletics,baseball,basketball,bowls,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,football,golf,gymnastics,hockey,horse_racing,motor,racquet,rugby,skating,skateboard,soccer,swimming,skiing,table_tennis,tennis" default="" delete_if_empty="true" />
+	 <combo key="leisure" text="Facility:" values="sports_centre,golf_course,stadium,track,pitch" default="" delete_if_empty="true" />
+	 <combo key="sport" text="Sport:" values="multi,10pin,athletics,australian_football,baseball,basketball,boules,bowls,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,skating,skateboard,soccer,swimming,skiing,table_tennis,tennis" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
  
  <item name="Leisure" icon="presets/leisure.png">
 	 <label text="Leisure" />
-	 <combo key="leisure" text="Type:" values="stadium,marina,track,pitch,water_park,fishing,nature_reserve,park,garden,slipway,playground,common" default="" delete_if_empty="true" />
+	 <combo key="leisure" text="Type:" values="water_park,marina,slipway,fishing,nature_reserve,park,playground,garden,common" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
- <item name="Historic places" icon="presets/historic.png">
+ <item name="Historic Places" icon="presets/historic.png">
 	 <label text="Historic places" />
-	 <combo key="historic" text="Type" values="castle,monument,museum,archaeological_site,icon,ruins" default="" delete_if_empty="true" />
+	 <combo key="historic" text="Type" values="castle,monument,memorial,archaeological_site,ruins,battlefield" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
  <item name="Man Made" icon="presets/manmade.png">
 	 <label text="Man Made" />
-	 <combo key="man_made" text="Type:" values="works,beacon,survey_point,power_wind,power_hydro,power_fossil,power_nuclear,tower,water_tower,gasometer,reservoir_covered,lighthouse" default="" delete_if_empty="true" />
+	 <combo key="man_made" text="Type:" values="works,beacon,survey_point,power_wind,power_hydro,power_fossil,power_nuclear,tower,water_tower,gasometer,reservoir_covered,lighthouse,windmill,pier,pipeline,wastewater_plant,crane" default="" delete_if_empty="true" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
@@ -219,7 +236,8 @@ Routes are currently not well supported, so I disable them here
 
 <item name="Tourism" icon="presets/suitcase.png">
 	<label text="Tourism" />
-	<combo key="tourism" text="Type:" values="information,camp_site,caravan_site,picnic_site,viewpoint,theme_park,hotel,motel,guest_house,hostel,attraction" default="" delete_if_empty="true" />
+	<combo key="tourism" text="Accomodation:" values="hotel,motel,guest_house,hostel,camp_site,caravan_site" default="" delete_if_empty="true" />
+	<combo key="tourism" text="Activities:" values="artwork,attraction,information,museum,picnic_site,theme_park,viewpoint,zoo" default="" delete_if_empty="true" />
 	<text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
@@ -228,6 +246,8 @@ Routes are currently not well supported, so I disable them here
 		<item name="...." icon="presets/divider.png"></item>
 		-->
 		
+ <item name=" " icon="presets/empty.png"></item>
+ <item name=" " icon="presets/empty.png"></item>
  <item name=" " icon="presets/empty.png"></item>
 
  <item name="Post box" icon="presets/letter.png">
@@ -251,7 +271,7 @@ Routes are currently not well supported, so I disable them here
  </item>
 
  <item name="Fuel" icon="presets/fuel.png">
-	 <label text="Create a filling station" />
+	 <label text="Create a fuel station" />
 	 <key key="amenity" value="fuel" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
@@ -262,7 +282,7 @@ Routes are currently not well supported, so I disable them here
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
 
- <item name="Place of worship" icon="presets/church.png">
+ <item name="Place of Worship" icon="presets/church.png">
 	 <label text="Create a place of worship" />
 	 <key key="amenity" value="place_of_worship" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
@@ -274,6 +294,13 @@ Routes are currently not well supported, so I disable them here
 	 <label text="Create a restaurant" />
 	 <key key="amenity" value="restaurant" />
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+ </item>
+
+ <item name="Residential Road" icon="presets/ways.png">
+	 <label text="Create a residential road" />
+	 <key key="highway" value="residential" />
+	 <text key="name" text="Name:" default="" delete_if_empty="true" />
+	 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
  </item>
 
 <!--
