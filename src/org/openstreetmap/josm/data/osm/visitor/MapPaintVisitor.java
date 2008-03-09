@@ -352,7 +352,7 @@ public class MapPaintVisitor implements Visitor {
 		textColor = getPreferencesColor ("text", Color.WHITE);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
-		useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",true);
+		useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
 		zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
 		fillAreas = Main.pref.getBoolean("mappaint.fillareas", true);
 
