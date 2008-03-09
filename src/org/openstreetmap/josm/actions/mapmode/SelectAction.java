@@ -79,7 +79,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		putValue("help", "Action/Move/Move");
 		selectionManager = new SelectionManager(this, false, mapFrame.mapView);		
 		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {};
-		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","15")); } catch (NumberFormatException x) {};
+		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","5")); } catch (NumberFormatException x) {};
 		
 	}
 
