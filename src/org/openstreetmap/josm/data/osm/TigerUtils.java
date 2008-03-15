@@ -11,24 +11,28 @@ import java.util.TreeSet;
  *
  */
 public class TigerUtils {
+	
 	public static boolean isTigerTag(String tag)
 	{	
 		if (tag.indexOf("tiger:") == -1)
 			return false;
 		return true;
 	}
+	
 	public static boolean tagIsInt(String name) {
 		if (name.equals("tiger:tlid"))
 			return true;
 		return false;
 	}
+	
 	public static Object tagObj(String name) {
 		if (tagIsInt(name))
 			return new Integer(name);
 		return name;
 	}
+	
 	public static String combineTags(String name, Set<String> values) {
-        TreeSet resultSet = new TreeSet();
+        TreeSet<Object> resultSet = new TreeSet<Object>();
         for (String value: values) {
         	for (String part: value.split(":")) {
                resultSet.add(tagObj(part));
@@ -42,6 +46,7 @@ public class TigerUtils {
         }
 		return combined;
 	}
+	
 	public static String combineTags(String name, String t1, String t2) {
 		Set<String> set = new TreeSet<String>();
 		set.add(t1);

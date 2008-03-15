@@ -6,18 +6,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
-import java.util.HashSet;
 
 import javax.swing.Box;
 import javax.swing.JComboBox;
@@ -32,15 +30,15 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.TigerUtils;
-import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Pair;
 
 
 /**
@@ -148,11 +146,9 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 						+ "Do you still want to merge them?"),
 					tr("Merge nodes with different memberships?"),
 					JOptionPane.YES_NO_OPTION);
-				if (option == JOptionPane.YES_OPTION) {
+				if (option == JOptionPane.YES_OPTION)
 					break;
-				} else {
-					return null;
-				}
+				return null;
 			}
 		}
 

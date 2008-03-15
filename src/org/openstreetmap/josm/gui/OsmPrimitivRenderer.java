@@ -64,7 +64,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
 	 */
 	private Component renderer(Component def, OsmPrimitive value) {
 		if (def != null && value != null && def instanceof JLabel) {
-			((OsmPrimitive)value).visit(visitor);
+			(value).visit(visitor);
 			((JLabel)def).setText(visitor.name);
 			((JLabel)def).setIcon(visitor.icon);
 		}

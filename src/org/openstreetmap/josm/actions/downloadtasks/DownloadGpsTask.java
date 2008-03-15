@@ -22,14 +22,12 @@ public class DownloadGpsTask implements DownloadTask {
 
 	private static class Task extends PleaseWaitRunnable {
 		private BoundingBoxDownloader reader;
-		private DownloadAction action;
 		private GpxData rawData;
 		private final boolean newLayer;
 
 		public Task(boolean newLayer, BoundingBoxDownloader reader, DownloadAction action) {
 			super(tr("Downloading GPS data"));
 			this.reader = reader;
-			this.action = action;
 			this.newLayer = newLayer;
 		}
 

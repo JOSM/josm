@@ -2,14 +2,12 @@
 
 package org.openstreetmap.josm.data.gpx;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.HashMap;
+
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
-import java.lang.Math;
-import java.io.File;
 
 /**
  * objects of this class represent a gpx file with tracks, waypoints and routes

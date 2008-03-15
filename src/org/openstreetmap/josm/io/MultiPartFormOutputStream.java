@@ -344,10 +344,8 @@ public class MultiPartFormOutputStream extends OsmConnection {
 	/**
 	 * Flushes the stream.  Actually, this method does nothing, as the only 
 	 * write methods are highly specialized and automatically flush.  
-	 * 
-	 * @throws  java.io.IOException  on input/output errors
 	 */
-	public void flush() throws java.io.IOException {
+	public void flush() {
 		// out.flush();
 	}
 

@@ -1,18 +1,15 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.search;
 
-import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.osm.Way;
 
 /**
  * Implements a google-like search.

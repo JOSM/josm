@@ -15,7 +15,7 @@ public class RelationMember {
 	/**
 	 * Default constructor. Does nothing.
 	 */
-	public RelationMember() { };
+	public RelationMember() { }
 
 	public RelationMember(String role, OsmPrimitive member) {
 		this.role = role;

@@ -142,11 +142,9 @@ public class DeleteAction extends MapMode {
 		for (OsmPrimitive osm : selection)
 			osm.visit(v);
 		v.data.addAll(selection);
-		if (v.data.isEmpty()) {
+		if (v.data.isEmpty()) 
 			return null;
-		} else {
-			return new DeleteCommand(v.data);
-		}
+		return new DeleteCommand(v.data);
 	}
 
 	/**

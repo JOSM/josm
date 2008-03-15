@@ -24,7 +24,7 @@ import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
  */
 public class MoveAction extends JosmAction {
 
-	public enum Direction { UP, LEFT, RIGHT, DOWN };
+	public enum Direction { UP, LEFT, RIGHT, DOWN }
 	private Direction myDirection;
 	
 	public MoveAction(Direction dir) {

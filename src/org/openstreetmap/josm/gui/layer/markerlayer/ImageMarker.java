@@ -21,7 +21,6 @@ import javax.swing.JViewport;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
  * Marker representing an image. Uses a special icon, and when clicked,

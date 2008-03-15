@@ -13,7 +13,6 @@ import javax.swing.border.Border;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
  * Marker class with button look-and-feel.

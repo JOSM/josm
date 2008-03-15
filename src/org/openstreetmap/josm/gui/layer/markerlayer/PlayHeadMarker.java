@@ -2,42 +2,29 @@ package org.openstreetmap.josm.gui.layer.markerlayer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Cursor;
 import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.PlayHeadDragMode;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
-
-import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.AudioPlayer;
 
 /**
  * Singleton marker class to track position of audio.
@@ -143,27 +130,29 @@ public class PlayHeadMarker extends Marker {
 	 * @param pNear : the point in screen coordinates near which to find a track point 
 	 * @param pixelTolerance : only accept the point if within this number of pixels of en
 	 * @return the nearest trackpoint or null if nothing nearby
-	 */
+	 * 
+	 * XXX seems unused, F.R. 2008-03-15
 	private WayPoint getClosestTrackPoint(Point pNear, double pixelTolerance) {
 		WayPoint cw = null;
 		AudioMarker recentlyPlayedMarker = AudioMarker.recentlyPlayedMarker();
 		if (recentlyPlayedMarker != null) {
-			/* Find the track point closest to letting go of the play head */ 
+			// Find the track point closest to letting go of the play head 
 			double minDistance = pixelTolerance;
 			GpxLayer trackLayer = recentlyPlayedMarker.parentLayer.fromLayer;
-			if (trackLayer.data.tracks != null) {
-				for (GpxTrack track : trackLayer.data.tracks) {
-					if (track.trackSegs != null) {
-						for (Collection<WayPoint> trackseg : track.trackSegs) {
-							for (Iterator<WayPoint> it = trackseg.iterator(); it.hasNext();) {
-								WayPoint w = it.next();
-								Point p = Main.map.mapView.getPoint(w.eastNorth);
-								double distance = p.distance(pNear);
-								if (distance <= minDistance) {
-									cw = w;
-									minDistance = distance;
-								}
-							}
+			if (trackLayer.data.tracks == null) 
+				return null;
+			
+			for (GpxTrack track : trackLayer.data.tracks) {
+				if (track.trackSegs == null) 
+					continue;
+
+				for (Collection<WayPoint> trackseg : track.trackSegs) {
+					for (WayPoint w : trackseg) {
+						Point p = Main.map.mapView.getPoint(w.eastNorth);
+						double distance = p.distance(pNear);
+						if (distance <= minDistance) {
+							cw = w;
+							minDistance = distance;
 						}
 					}
 				}
@@ -171,6 +160,7 @@ public class PlayHeadMarker extends Marker {
 		}
 		return cw;
 	}
+	*/
 	
 	/**
 	 * reposition the play head at the point on the track nearest position given,

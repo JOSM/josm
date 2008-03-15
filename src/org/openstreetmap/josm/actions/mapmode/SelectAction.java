@@ -6,17 +6,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.GroupAction;
+import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.RotateCommand;
@@ -28,7 +27,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.actions.MergeNodesAction;
 /**
  * Move is an action that can move all kind of OsmPrimitives (except Keys for now).
  *
@@ -78,8 +76,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Move/Move");
 		selectionManager = new SelectionManager(this, false, mapFrame.mapView);		
-		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {};
-		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","5")); } catch (NumberFormatException x) {};
+		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {}
+		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","5")); } catch (NumberFormatException x) {}
 		
 	}
 
@@ -90,10 +88,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
         }
 	    return Cursor.getPredefinedCursor(def);
     }
-
-	private static Cursor getCursor(String name, int def) {
-		return getCursor(name, null, def);
-	}
 
 	private void setCursor(Cursor c) {
 		if (oldCursor == null) {
@@ -214,7 +208,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+		// boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 		
 		mouseDownTime = System.currentTimeMillis();

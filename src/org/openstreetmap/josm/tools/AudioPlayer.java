@@ -3,7 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.lang.Thread;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.sound.sampled.AudioFormat;
@@ -11,11 +11,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
-import java.io.IOException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 
 /**
  * Creates and controls a separate audio player thread.
@@ -320,7 +318,7 @@ public class AudioPlayer extends Thread {
 						stateChange = State.PLAYING;
 						break;
 					case PAUSE:
-						stateChange = state.PAUSED;
+						stateChange = State.PAUSED;
 						break;
 					}
 					command.ok(stateChange);

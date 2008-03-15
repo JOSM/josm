@@ -49,7 +49,7 @@ public class BookmarkSelection implements DownloadSelection {
 		MouseListener mouseListener = new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					int index = bookmarks.locationToIndex(e.getPoint());
+					//int index = bookmarks.locationToIndex(e.getPoint());
 					gui.closeDownloadDialog(true);
 				}
 			}

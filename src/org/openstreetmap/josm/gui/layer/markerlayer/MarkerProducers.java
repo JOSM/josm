@@ -2,11 +2,8 @@
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
 import java.io.File;
-import java.util.Map;
 
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
  * This interface has to be implemented by anyone who wants to create markers.

@@ -9,9 +9,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import javax.swing.Icon;
 
@@ -21,7 +19,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -79,10 +76,6 @@ public class Marker implements ActionListener {
 	// Add one Maker specifying the default behaviour.
 	static {
 		Marker.markerProducers.add(new MarkerProducers() {
-			public Marker createMarker(WayPoint wpt, File relativePath) {
-				return createMarker(wpt, relativePath, null, 0.0, 0.0);
-			}
-			
 			public Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
 				String uri = null;
 				// cheapest way to check whether "link" object exists and is a non-empty
@@ -92,7 +85,7 @@ public class Marker implements ActionListener {
 						uri = oneLink.uri;
 						break;
 					}
-				} catch (Exception ex) {};
+				} catch (Exception ex) {}
 
 				// Try a relative file:// url, if the link is not in an URL-compatible form
                 if (relativePath != null && uri != null && !isWellFormedAddress(uri))

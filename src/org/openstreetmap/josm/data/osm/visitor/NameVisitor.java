@@ -7,15 +7,14 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.ImageProvider;
 

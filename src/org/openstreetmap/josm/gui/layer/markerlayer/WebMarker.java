@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
  * Marker class with Web URL activation.

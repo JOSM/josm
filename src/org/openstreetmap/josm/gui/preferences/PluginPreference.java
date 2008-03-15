@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
-import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;

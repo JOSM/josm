@@ -249,11 +249,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 */
 	public Collection<OsmPrimitive> getNearestCollection(Point p) {
 		OsmPrimitive osm = getNearest(p);
-		if (osm == null) {
+		if (osm == null) 
 			return Collections.emptySet();
-		} else {
-			return Collections.singleton(osm);
-		}
+		return Collections.singleton(osm);
 	}
 
 	@Deprecated

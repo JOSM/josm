@@ -1,14 +1,13 @@
 package org.openstreetmap.josm.gui.mappaint;
 
-import java.io.File;
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.io.File;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.tools.ColorHelper;
-import org.openstreetmap.josm.plugins.Plugin;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 

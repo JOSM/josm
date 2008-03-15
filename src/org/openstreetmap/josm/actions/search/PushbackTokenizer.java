@@ -84,22 +84,18 @@ public class PushbackTokenizer {
 
 	public boolean readIfEqual(String tok) {
 		String nextTok = nextToken();
-		if (nextTok == null ? tok == null : nextTok.equals(tok)) {
+		if (nextTok == null ? tok == null : nextTok.equals(tok)) 
 			return true;
-		} else {
-			pushBack(nextTok);
-			return false;
-		}
+		pushBack(nextTok);
+		return false;
 	}
 
 	public String readText() {
 		String nextTok = nextToken();
-		if (nextTok != null && nextTok.startsWith(" ")) {
+		if (nextTok != null && nextTok.startsWith(" "))
 			return nextTok.substring(1);
-		} else {
-			pushBack(nextTok);
-			return null;
-		}
+		pushBack(nextTok);
+		return null;
 	}
 
 	public void pushBack(String tok) {

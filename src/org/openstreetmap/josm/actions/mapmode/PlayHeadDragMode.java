@@ -4,42 +4,13 @@ package org.openstreetmap.josm.actions.mapmode;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import javax.swing.Timer;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.AudioPlayer;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
-
-import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Singleton marker class to track position of audio.
