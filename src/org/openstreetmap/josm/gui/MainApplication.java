@@ -147,7 +147,7 @@ public class MainApplication extends Main {
 					"\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
 					"\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
 					"\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
-					"\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx or .csv)")+"\n"+
+					"\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
 					"\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
 					"\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
 					"\t--no-fullscreen                           "+tr("Don't launch in fullscreen mode")+"\n"+

@@ -103,7 +103,6 @@ public class PreferenceDialog extends JTabbedPane {
 		settings.add(new ColorPreference());
 		settings.add(new MapPaintPreference());
 		settings.add(new ServerAccessPreference());
-		settings.add(new CsvPreference());
 		settings.add(new FilePreferences());
 		settings.add(new ProjectionPreference());
 		settings.add(new TaggingPresetPreference());

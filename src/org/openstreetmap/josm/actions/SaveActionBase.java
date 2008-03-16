@@ -149,9 +149,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
 				OsmWriter.output(new FileOutputStream(file), new OsmWriter.All(layer.data, false));
 				if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null))
 					tmpFile.delete();
-			} else if (ExtensionFileFilter.filters[ExtensionFileFilter.CSV].acceptName(file.getPath())) {
-				JOptionPane.showMessageDialog(Main.parent, tr("CSV output not supported yet."));
-				return;
 			} else {
 				JOptionPane.showMessageDialog(Main.parent, tr("Unknown file extension."));
 				return;
@@ -191,9 +188,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
 				if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null)) {
 					tmpFile.delete();
 				}
-			} else if (ExtensionFileFilter.filters[ExtensionFileFilter.CSV].acceptName(file.getPath())) {
-				JOptionPane.showMessageDialog(Main.parent, tr("CSV output not supported yet."));
-				return;
 			} else {
 				JOptionPane.showMessageDialog(Main.parent, tr("Unknown file extension."));
 				return;

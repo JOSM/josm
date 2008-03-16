@@ -72,8 +72,7 @@ public class OpenAction extends DiskAccessAction {
 	    	DataSet dataSet = OsmReader.parseDataSet(new FileInputStream(file), null, Main.pleaseWaitDlg);
 	    	OsmDataLayer layer = new OsmDataLayer(dataSet, file.getName(), file);
             Main.main.addLayer(layer);
-	    } else if (ExtensionFileFilter.filters[ExtensionFileFilter.CSV].acceptName(fn))
-	    	JOptionPane.showMessageDialog(Main.parent, fn+": "+tr("CSV Data import for non-GPS data is not implemented yet."));
+	    }
 	    else
 	    	JOptionPane.showMessageDialog(Main.parent, fn+": "+tr("Unknown file extension: {0}", fn.substring(file.getName().lastIndexOf('.')+1)));
     }
@@ -84,7 +83,7 @@ public class OpenAction extends DiskAccessAction {
 			GpxReader r = null;
 			if (file.getName().endsWith(".gpx.gz")) {
 				r = new GpxReader(new GZIPInputStream(new FileInputStream(file)), file.getAbsoluteFile().getParentFile());
-			} else{
+			} else {
 				r = new GpxReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
 			}
 			r.data.storageFile = file;
