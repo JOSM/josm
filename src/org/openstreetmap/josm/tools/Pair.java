@@ -19,7 +19,7 @@ public final class Pair<A,B> {
 
 	@Override public boolean equals(Object o) {
 		return o == null ? o == null : o instanceof Pair
-			&& a.equals(((Pair) o).a) && b.equals(((Pair) o).b);
+			&& a.equals(((Pair<?,?>) o).a) && b.equals(((Pair<?,?>) o).b);
 	}
 
 	public static <T> ArrayList<T> toArrayList(Pair<T, T> p) {
