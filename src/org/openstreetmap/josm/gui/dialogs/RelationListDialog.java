@@ -4,6 +4,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.xnap.commons.i18n.I18n.marktr;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +29,7 @@ import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -66,14 +69,21 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
 		add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
-		JPanel buttonPanel = new JPanel(new GridLayout(1,3));
-
-		buttonPanel.add(createButton(marktr("Add Relation"), "addrelation", tr("Create a new relation"), -1, new ActionListener() {
+		JPanel buttonPanel = new JPanel(new GridBagLayout());
+		
+		buttonPanel.add(createButton(marktr("New"), "addrelation", tr("Create a new relation"), -1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// call relation editor with null argument to create new relation
 				new RelationEditor(null).setVisible(true);
 			}
-		}));
+		}), GBC.std());
+		
+		buttonPanel.add(createButton(marktr("Select"), "select", tr("Select this relation"), -1, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// replace selection with the relation from the list
+				Main.ds.setSelected((Relation)displaylist.getSelectedValue());
+			}
+		}), GBC.std());
 		
 		buttonPanel.add(createButton(marktr("Edit"), "edit", tr( "Open an editor for the selected relation"), -1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -81,9 +91,9 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 				if (toEdit != null)
 					new RelationEditor(toEdit).setVisible(true);				
 			}
-		}));
+		}), GBC.std());
 		
-		buttonPanel.add(createButton(marktr("Delete"), "delete", tr("Delete the selected relation"), -1, new ActionListener() {
+		buttonPanel.add(createButton("", "delete", tr("Delete the selected relation"), -1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Relation toDelete = (Relation) displaylist.getSelectedValue();
 				if (toDelete != null) {
@@ -91,7 +101,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 						new DeleteCommand(Collections.singleton(toDelete)));
 				}
 			}
-		}));
+		}), GBC.eol());
 		Layer.listeners.add(this);
 		add(buttonPanel, BorderLayout.SOUTH);
 	}
