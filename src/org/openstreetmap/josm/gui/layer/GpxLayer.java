@@ -71,6 +71,7 @@ import org.openstreetmap.josm.tools.UrlLabel;
 public class GpxLayer extends Layer {
 	public GpxData data;
 	private final GpxLayer me;
+	protected static final double PHI = Math.toRadians(15);
 	
 	public GpxLayer(GpxData d) {
 		super((String) d.attr.get("name"));
@@ -297,6 +298,8 @@ public class GpxLayer extends Layer {
 		}
 		
 		boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");
+		boolean direction = Main.pref.getBoolean("draw.rawgps.direction");
+		int maxLineLength = Integer.parseInt(Main.pref.get("draw.rawgps.max-line-length", "-1"));
 		boolean lines = Main.pref.getBoolean("draw.rawgps.lines");
 		String linesKey = "draw.rawgps.lines.layer "+name;
 		if (Main.pref.hasKey(linesKey))
@@ -304,6 +307,7 @@ public class GpxLayer extends Layer {
 		boolean large = Main.pref.getBoolean("draw.rawgps.large");
 
 		Point old = null;
+		WayPoint oldWp = null;
 		for (GpxTrack trk : data.tracks) {
 			if (!forceLines) {
 				old = null;
@@ -314,13 +318,25 @@ public class GpxLayer extends Layer {
 						continue;
 					Point screen = mv.getPoint(trkPnt.eastNorth);
 					if (lines && old != null) {
+						
+						// break out if a maxLineLength is set and the line is longer.
+						if (maxLineLength > -1) 
+							if (trkPnt.latlon.distance(oldWp.latlon) > maxLineLength) continue;
 						g.drawLine(old.x, old.y, screen.x, screen.y);
+
+						if (direction) {
+							double t = Math.atan2(screen.y-old.y, screen.x-old.x) + Math.PI;
+							g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t-PHI)), (int)(screen.y + 10*Math.sin(t-PHI)));
+							g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t+PHI)), (int)(screen.y + 10*Math.sin(t+PHI)));
+						}
+						
 					} else if (!large) {
 						g.drawRect(screen.x, screen.y, 0, 0);
 					}
 					if (large)
 						g.fillRect(screen.x-1, screen.y-1, 3, 3);
 					old = screen;
+					oldWp = trkPnt;
 				}
 			}
 		}

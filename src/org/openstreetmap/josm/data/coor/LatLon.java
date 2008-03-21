@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Projection;
 import java.text.NumberFormat;
@@ -49,6 +50,19 @@ public class LatLon extends Coordinate {
 	 */
 	public boolean isWithin(Bounds b) {
 		return lat() >= b.min.lat() && lat() <= b.max.lat() && lon() > b.min.lon() && lon() < b.max.lon();
+	}
+	
+	/**
+	 * Computes the distance between this lat/lon and another point on the earth.
+	 * Uses spherical law of cosines formula, not Haversine.
+	 * @param other the other point.
+	 * @return distance in metres.
+	 */
+	public int distance(LatLon other) {
+		return (int) (Math.acos(
+			Math.sin(Math.toRadians(lat())) * Math.sin(Math.toRadians(other.lat())) + 
+		    Math.cos(Math.toRadians(lat()))*Math.cos(Math.toRadians(other.lat())) *
+		                  Math.cos(Math.toRadians(other.lon()-lon()))) * 6378135);
 	}
 
 	/**
