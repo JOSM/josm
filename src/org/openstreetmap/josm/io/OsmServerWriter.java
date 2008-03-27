@@ -26,7 +26,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.xml.sax.SAXException;
 
 /**
- * Class that uploades all changes to the osm server.
+ * Class that uploads all changes to the osm server.
  *
  * This is done like this: - All objects with id = 0 are uploaded as new, except
  * those in deleted, which are ignored - All objects in deleted list are
@@ -40,10 +40,10 @@ import org.xml.sax.SAXException;
 public class OsmServerWriter extends OsmConnection implements Visitor {
 
 	/**
-	 * This list contain all sucessfull processed objects. The caller of
+	 * This list contain all successful processed objects. The caller of
 	 * upload* has to check this after the call and update its dataset.
 	 *
-	 * If a server connection error occours, this may contain fewer entries
+	 * If a server connection error occurs, this may contain fewer entries
 	 * than where passed in the list to upload*.
 	 */
 	public Collection<OsmPrimitive> processed;
@@ -191,15 +191,15 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			activeConnection = (HttpURLConnection)url.openConnection();
 			activeConnection.setConnectTimeout(15000);
 			activeConnection.setRequestMethod(requestMethod);
-			if (addBody)
-				activeConnection.setDoOutput(true);
-			activeConnection.connect();
-			System.out.println("connected");
+            addAuth(activeConnection);
 			if (addBody) {
+				activeConnection.setDoOutput(true);
 				OutputStream out = activeConnection.getOutputStream();
 				OsmWriter.output(out, new OsmWriter.Single(osm, true));
 				out.close();
-			}
+            }
+			activeConnection.connect();
+			System.out.println("connected");
 
 			int retCode = activeConnection.getResponseCode();
 			if (retCode == 200 && osm.id == 0)
