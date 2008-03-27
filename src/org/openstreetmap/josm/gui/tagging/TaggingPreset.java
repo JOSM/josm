@@ -15,15 +15,18 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -34,6 +37,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -51,26 +55,82 @@ public class TaggingPreset extends AbstractAction {
 
 	public static abstract class Item {
 		public boolean focus = false;
-		abstract void addToPanel(JPanel p);
+		abstract void addToPanel(JPanel p, Collection<OsmPrimitive> sel);
 		abstract void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds);
 		boolean requestFocusInWindow() {return false;}
 	}
+	
+	public static class Usage {
+		Set<String> values;
+	}
+	
+	public static final String DIFFERENT = tr("<different>");
+	
+	static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
+		Usage returnValue = new Usage();
+		returnValue.values = new HashSet<String>();
+		for (OsmPrimitive s : sel) {
+			returnValue.values.add(s.get(key));
+		}
+		return returnValue;
+	}
 
+	static Usage determineBooleanUsage(Collection<OsmPrimitive> sel, String key) {
+
+		Usage returnValue = new Usage();
+		returnValue.values = new HashSet<String>();
+		for (OsmPrimitive s : sel) {
+			String v = s.get(key);
+			if ("true".equalsIgnoreCase(v)) v = "true";
+			else if ("yes".equalsIgnoreCase(v)) v = "true";
+			else if ("1".equals(v)) v = "true";
+			else if ("false".equalsIgnoreCase(v)) v = "false";
+			else if ("no".equalsIgnoreCase(v)) v = "false";
+			else if ("0".equals(v)) v = "false";			
+			returnValue.values.add(v);
+		}
+		return returnValue;
+	}
+	
 	public static class Text extends Item {
 		public String key;
 		public String text;
 		public String default_;
+		public String originalValue;
 		public boolean delete_if_empty = false;
 
-		private JTextField value = new JTextField();
-
-		@Override public void addToPanel(JPanel p) {
-			value.setText(default_ == null ? "" : default_);
+		private JComponent value;
+		
+		@Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+			
+			// find out if our key is already used in the selection.
+			Usage usage = determineTextUsage(sel, key);
+			
+			if (usage.values.size() == 1) {
+				// all objects use the same value
+				value = new JTextField();
+				for (String s : usage.values) ((JTextField) value).setText(s);
+				originalValue = ((JTextField)value).getText();
+			} else {
+				// the objects have different values
+				value = new JComboBox(usage.values.toArray());
+				((JComboBox)value).setEditable(true);
+	            ((JComboBox)value).getEditor().setItem(DIFFERENT);
+	            originalValue = DIFFERENT;
+			}
 			p.add(new JLabel(text), GBC.std().insets(0,0,10,0));
 			p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
 		}
+		
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
-			String v = value.getText();
+			
+			// return if unchanged
+			String v = (value instanceof JComboBox) ? 
+				((JComboBox)value).getEditor().getItem().toString() : 
+				((JTextField)value).getText();
+
+			if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) return;
+
 			if (delete_if_empty && v.length() == 0)
 				v = null;
 			cmds.add(new ChangePropertyCommand(sel, key, v));
@@ -79,24 +139,64 @@ public class TaggingPreset extends AbstractAction {
 	}
 
 	public static class Check extends Item {
+
 		public String key;
 		public String text;
-		public boolean default_ = false;
+		public boolean default_ = false; // not used!
 
-		private JCheckBox check = new JCheckBox();
+		private QuadStateCheckBox check;
+		private QuadStateCheckBox.State initialState;
+		
+		@Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+			
+			// find out if our key is already used in the selection.
+			Usage usage = determineBooleanUsage(sel, key);
 
-		@Override public void addToPanel(JPanel p) {
-			check.setSelected(default_);
-			check.setText(text);
+			String oneValue = null;
+			for (String s : usage.values) oneValue = s;
+			if (usage.values.size() < 2 && (oneValue == null || "true".equals(oneValue) || "false".equals(oneValue))) {
+				// all selected objects share the same value which is either true or false or unset, 
+				// we can display a standard check box.
+				initialState = "true".equals(oneValue) ? 
+							QuadStateCheckBox.State.SELECTED :
+							"false".equals(oneValue) ? 
+							QuadStateCheckBox.State.NOT_SELECTED :
+							QuadStateCheckBox.State.UNSET;
+				check = new QuadStateCheckBox(text, initialState, 
+						new QuadStateCheckBox.State[] { 
+						QuadStateCheckBox.State.NOT_SELECTED,
+						QuadStateCheckBox.State.SELECTED,
+						QuadStateCheckBox.State.UNSET });
+			} else {
+				// the objects have different values, or one or more objects have something
+				// else than true/false. we display a quad-state check box
+				// in "partial" state.
+				initialState = QuadStateCheckBox.State.PARTIAL;
+				check = new QuadStateCheckBox(text, QuadStateCheckBox.State.PARTIAL, 
+						new QuadStateCheckBox.State[] { 
+						QuadStateCheckBox.State.NOT_SELECTED,
+						QuadStateCheckBox.State.PARTIAL,
+						QuadStateCheckBox.State.SELECTED,
+						QuadStateCheckBox.State.UNSET });
+			}
 			p.add(check, GBC.eol().fill(GBC.HORIZONTAL));
 		}
+		
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
-			cmds.add(new ChangePropertyCommand(sel, key, check.isSelected() ? "true" : null));
+			// if the user hasn't changed anything, don't create a command.
+			if (check.getState() == initialState) return;
+			
+			// otherwise change things according to the selected value.
+			cmds.add(new ChangePropertyCommand(sel, key, 
+					check.getState() == QuadStateCheckBox.State.SELECTED ? "true" :
+					check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? "false" :
+					null));
 		}
 		@Override boolean requestFocusInWindow() {return check.requestFocusInWindow();}
 	}
 
 	public static class Combo extends Item {
+		
 		public String key;
 		public String text;
 		public String values;
@@ -106,17 +206,53 @@ public class TaggingPreset extends AbstractAction {
 		public boolean editable = true;
 
 		private JComboBox combo;
+		private LinkedHashMap<String,String> lhm;
+		private Usage usage;
+		private String originalValue;
+		
+		@Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+			
+			// find out if our key is already used in the selection.
+			usage = determineTextUsage(sel, key);
+			
+			String[] value_array = values.split(",");
+			String[] display_array = (display_values == null) ? value_array : display_values.split(",");
 
-		@Override public void addToPanel(JPanel p) {
-			combo = new JComboBox((display_values != null ? display_values : values).split(","));
+			lhm = new LinkedHashMap<String,String>();
+			if (usage.values.size() > 1) {
+				lhm.put(DIFFERENT, DIFFERENT);
+			}
+			for (int i=0; i<value_array.length; i++) {
+				lhm.put(value_array[i], display_array[i]);
+			}
+			for (String s : usage.values) {
+				if (!lhm.containsKey(s)) lhm.put(s, s);
+			}
+			if ((default_ != null) && (!lhm.containsKey(default_))) lhm.put(default_, default_);
+			
+			combo = new JComboBox(lhm.values().toArray());
 			combo.setEditable(editable);
-			combo.setSelectedItem(default_);
+			if (usage.values.size() == 1) {
+				for (String s : usage.values) { combo.setSelectedItem(lhm.get(s)); originalValue=s; }
+			} else {
+				combo.setSelectedItem(DIFFERENT); originalValue=DIFFERENT;
+			}
 			p.add(new JLabel(text), GBC.std().insets(0,0,10,0));
 			p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
 		}
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
-			String v = combo.getSelectedIndex() == -1 ? null : values.split(",")[combo.getSelectedIndex()];
-			String str = combo.isEditable()?combo.getEditor().getItem().toString() : v;
+			Object display = combo.getSelectedItem();
+			String value = null;
+			if (display != null) 
+				for (String key : lhm.keySet()) { 
+					String k = lhm.get(key);
+					if (k != null && k.equals(display)) value=key; 
+				}
+			String str = combo.isEditable() ? combo.getEditor().getItem().toString() : value;
+			
+			// no change if same as before
+			if (str.equals(originalValue) || (originalValue == null && str.length() == 0)) return;
+			
 			if (delete_if_empty && str != null && str.length() == 0)
 				str = null;
 			cmds.add(new ChangePropertyCommand(sel, key, str));
@@ -127,7 +263,7 @@ public class TaggingPreset extends AbstractAction {
 	public static class Label extends Item {
 		public String text;
 
-		@Override public void addToPanel(JPanel p) {
+		@Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 			p.add(new JLabel(text), GBC.eol());
 		}
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
@@ -137,7 +273,7 @@ public class TaggingPreset extends AbstractAction {
 		public String key;
 		public String value;
 
-		@Override public void addToPanel(JPanel p) {}
+		@Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) { }
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
 			cmds.add(new ChangePropertyCommand(sel, key, value != null && !value.equals("") ? value : null));
 		}
@@ -180,7 +316,7 @@ public class TaggingPreset extends AbstractAction {
 	}
 
 	/**
-	 * Called from the XML parser to set the types, this preset affects
+	 * Called from the XML parser to set the types this preset affects
 	 */
 	public void setType(String types) throws SAXException {
 		try {
@@ -261,18 +397,19 @@ public class TaggingPreset extends AbstractAction {
 		return allPresets;
 	}
 
-	public JPanel createPanel() {
+	public JPanel createPanel(Collection<OsmPrimitive> selected) {
 		if (data == null)
 			return null;
 		JPanel p = new JPanel(new GridBagLayout());
+
 		for (Item i : data)
-			i.addToPanel(p);
+			i.addToPanel(p, selected);
 		return p;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
-		JPanel p = createPanel();
+		JPanel p = createPanel(sel);
 		if (p == null)
 			return;
 		int answer = JOptionPane.OK_OPTION;
