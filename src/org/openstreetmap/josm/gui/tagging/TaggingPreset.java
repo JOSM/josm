@@ -164,8 +164,8 @@ public class TaggingPreset extends AbstractAction {
 							QuadStateCheckBox.State.UNSET;
 				check = new QuadStateCheckBox(text, initialState, 
 						new QuadStateCheckBox.State[] { 
-						QuadStateCheckBox.State.NOT_SELECTED,
 						QuadStateCheckBox.State.SELECTED,
+						QuadStateCheckBox.State.NOT_SELECTED,
 						QuadStateCheckBox.State.UNSET });
 			} else {
 				// the objects have different values, or one or more objects have something
@@ -174,9 +174,9 @@ public class TaggingPreset extends AbstractAction {
 				initialState = QuadStateCheckBox.State.PARTIAL;
 				check = new QuadStateCheckBox(text, QuadStateCheckBox.State.PARTIAL, 
 						new QuadStateCheckBox.State[] { 
-						QuadStateCheckBox.State.NOT_SELECTED,
 						QuadStateCheckBox.State.PARTIAL,
 						QuadStateCheckBox.State.SELECTED,
+						QuadStateCheckBox.State.NOT_SELECTED,
 						QuadStateCheckBox.State.UNSET });
 			}
 			p.add(check, GBC.eol().fill(GBC.HORIZONTAL));
