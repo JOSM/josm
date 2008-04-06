@@ -265,15 +265,15 @@ public class GpxLayer extends Layer {
 				data.routes.size(), data.routes.size()))
 			.append(trn("{0} waypoint", "{0} waypoints",
 				data.waypoints.size(), data.waypoints.size()))
-			.append("<br />");
+			.append("<br>");
 
 		if (data.attr.containsKey("name"))
 			info.append(tr("Name: {0}", data.attr.get("name")))
-				.append("<br />");
+				.append("<br>");
 
 		if (data.attr.containsKey("desc"))
 			info.append(tr("Description: {0}", data.attr.get("desc")))
-				.append("<br />");
+				.append("<br>");
 
 		return info.append("</html>").toString();
 	}
