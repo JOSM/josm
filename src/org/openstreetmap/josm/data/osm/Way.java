@@ -52,7 +52,7 @@ public final class Way extends OsmPrimitive {
 	 * Create an identical clone of the argument (including the id)
 	 */
 	public Way(Way clone) {
-		cloneFrom(clone);
+            cloneFrom(clone);            
 	}
 	
 	/**
@@ -74,6 +74,7 @@ public final class Way extends OsmPrimitive {
 		super.cloneFrom(osm);
 		nodes.clear();
 		nodes.addAll(((Way)osm).nodes);
+                checkDirectionTagged();
 	}
 
     @Override public String toString() {

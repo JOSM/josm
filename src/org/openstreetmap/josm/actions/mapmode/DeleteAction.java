@@ -263,6 +263,7 @@ public class DeleteAction extends MapMode {
 			if (wnew.keys != null) {
 				wnew2.keys = new HashMap<String, String>(wnew.keys);
 				wnew2.checkTagged();
+                                wnew2.checkDirectionTagged();
 			}
 			wnew2.nodes.addAll(n2);
 			cmds.add(new AddCommand(wnew2));

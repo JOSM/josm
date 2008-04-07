@@ -82,6 +82,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public boolean tagged = false;
 	
 	/**
+	 * true if this object has direction dependant tags (e.g. oneway)
+	 */
+	public boolean hasDirectionKeys = false;
+	
+	/**
 	 * If set to true, this object is currently selected.
 	 */
 	public volatile boolean selected = false;
@@ -111,6 +116,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 */
 	public static Collection<String> uninteresting = 
 		new HashSet<String>(Arrays.asList(new String[] {"source", "note", "created_by"}));
+	
+	/**
+	 * Contains a list of direction-dependent keys that do not make an object
+	 * direction dependent.
+	 */
+	public static Collection<String> directionKeys = 
+		new HashSet<String>(Arrays.asList(new String[] {"oneway", "incline", "incline_steep", "aerialway"}));
 	
 	/**
 	 * Implementation of the visitor scheme. Subclases have to call the correct
@@ -185,6 +197,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			keys.put(key, value);
 		}
 		checkTagged();
+                checkDirectionTagged();
 	}
 	/**
 	 * Remove the given key from the list.
@@ -196,6 +209,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 				keys = null;
 		}
 		checkTagged();
+                checkDirectionTagged();
 	}
 
 	public final String get(String key) {
@@ -265,5 +279,21 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			}
 		}
 	}
+    /**
+     * Updates the "hasDirectionKeys" flag. "keys" property should probably be made private
+     * to make sure this gets called when keys are set.
+     */
+    public void checkDirectionTagged() {
+        hasDirectionKeys = false;
+        if (keys != null) {
+            for (Entry<String,String> e : keys.entrySet()) {
+                if (directionKeys.contains(e.getKey())) {
+                    hasDirectionKeys = true;
+                    break;
+                }
+            }
+        }
+
+    }
 	
 }

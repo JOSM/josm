@@ -74,6 +74,7 @@ public class MapPaintVisitor implements Visitor {
 	protected Color incompleteColor;
 	protected Color backgroundColor;
 	protected boolean showDirectionArrow;
+    protected boolean showRelevantDirectionsOnly;
 	protected boolean showOrderNumber;
 	
 	public final static Color darkerblue = new Color(0,0,96);
@@ -135,13 +136,17 @@ public class MapPaintVisitor implements Visitor {
 	 */
 	public void visit(Way w) {
 		double circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
-		boolean showDirection = showDirectionArrow && w.selected;
-		if (useRealWidth && showDirection) showDirection = false;
+                // show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
+                // (even if the tag is negated as in oneway=false) or the way is selected
+		boolean showDirection = (!useRealWidth)
+                                        && (w.selected || (showDirectionArrow
+                                                           && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
+
 		Color colour = untaggedColor;
 		int width = 2;
 		int realWidth = 0; //the real width of the element in meters 
 		boolean dashed = false;
-		boolean area=false;
+		boolean area = false;
 		ElemStyle wayStyle = MapPaintStyles.getStyle(w);
 
 		if(!isZoomOk(wayStyle)) {
@@ -351,6 +356,7 @@ public class MapPaintVisitor implements Visitor {
 		untaggedColor = getPreferencesColor("untagged",Color.GRAY);
 		textColor = getPreferencesColor ("text", Color.WHITE);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
+		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
 		useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
 		zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);

@@ -53,7 +53,8 @@ public class SimplePaintVisitor implements Visitor {
 	protected Color untaggedWayColor;
 	protected Color incompleteColor;
 	protected Color backgroundColor;
-	protected boolean showDirectionArrow;
+    protected boolean showDirectionArrow;
+    protected boolean showRelevantDirectionsOnly;
 	protected boolean showOrderNumber;
 	
 	/**
@@ -74,6 +75,7 @@ public class SimplePaintVisitor implements Visitor {
 		incompleteColor = getPreferencesColor("incomplete way", darkerblue);
 		backgroundColor = getPreferencesColor("background", Color.BLACK);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
+		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
 		
 		// draw tagged ways first, then untagged ways. takes
@@ -125,6 +127,12 @@ public class SimplePaintVisitor implements Visitor {
 	public void visit(Way w) {
 		if (w.incomplete) return;
 
+                // show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
+                // (even if the tag is negated as in oneway=false) or the way is selected
+
+                boolean showThisDirectionArrow = w.selected
+                                                 || (showDirectionArrow
+                                                     && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
 		Color wayColor;
 		
 		if (inactive) {
@@ -140,7 +148,7 @@ public class SimplePaintVisitor implements Visitor {
 			Point lastP = nc.getPoint(it.next().eastNorth);
 			for (int orderNumber = 1; it.hasNext(); orderNumber++) {
 				Point p = nc.getPoint(it.next().eastNorth);
-				drawSegment(lastP, p, w.selected && !inactive ? selectedColor : wayColor, showDirectionArrow || w.selected);
+				drawSegment(lastP, p, w.selected && !inactive ? selectedColor : wayColor, showThisDirectionArrow);
 				if (showOrderNumber)
 					drawOrderNumber(lastP, p, orderNumber);
 				lastP = p;

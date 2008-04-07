@@ -17,6 +17,7 @@ public class DrawingPreference implements PreferenceSetting {
 	private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
 	private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
 	private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
+	private JCheckBox interestingDirections = new JCheckBox(tr("Only interesting direction hints (e.g. with oneway tag)."));
 	private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
 	private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
 	private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
@@ -46,9 +47,25 @@ public class DrawingPreference implements PreferenceSetting {
 		gui.display.add(largeGpsPoints, GBC.eop().insets(20,0,0,0));
 		
 		// directionHint
-		directionHint.setToolTipText(tr("Draw direction hints for all segments."));
+		directionHint.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+                            if (directionHint.isSelected()){
+                                interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only"));
+                            }else{
+                                interestingDirections.setSelected(false);
+                            }
+                            interestingDirections.setEnabled(directionHint.isSelected());
+			}
+		});
+		directionHint.setToolTipText(tr("Draw direction hints for segments."));
 		directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction"));
 		gui.display.add(directionHint, GBC.eop().insets(20,0,0,0));
+
+		// only interesting directions
+		interestingDirections.setToolTipText(tr("Only interesting direction hints (e.g. with oneway tag)."));
+		interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only"));
+		interestingDirections.setEnabled(directionHint.isSelected());
+		gui.display.add(interestingDirections, GBC.eop().insets(40,0,0,0));
 		
 		// segment order number
 		segmentOrderNumber.setToolTipText(tr("Draw the order numbers of all segments within their way."));
@@ -71,6 +88,7 @@ public class DrawingPreference implements PreferenceSetting {
 		Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());
 		Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
 		Main.pref.put("draw.segment.direction", directionHint.isSelected());
+		Main.pref.put("draw.segment.relevant_directions_only", interestingDirections.isSelected());
 		Main.pref.put("draw.segment.order_number", segmentOrderNumber.isSelected());
 		Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
 		Main.pref.put("draw.data.inactive_color", inactive.isSelected());
