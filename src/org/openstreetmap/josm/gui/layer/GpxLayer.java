@@ -320,15 +320,19 @@ public class GpxLayer extends Layer {
 					if (lines && old != null) {
 						
 						// break out if a maxLineLength is set and the line is longer.
-						if (maxLineLength > -1) 
-							if (trkPnt.latlon.distance(oldWp.latlon) > maxLineLength) continue;
-						g.drawLine(old.x, old.y, screen.x, screen.y);
+                                            if (maxLineLength > -1){
+                                                if (trkPnt.latlon.distance(oldWp.latlon) < maxLineLength){
+                                                    g.drawLine(old.x, old.y, screen.x, screen.y);
 
-						if (direction) {
+                                                    if (direction) {
 							double t = Math.atan2(screen.y-old.y, screen.x-old.x) + Math.PI;
 							g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t-PHI)), (int)(screen.y + 10*Math.sin(t-PHI)));
 							g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t+PHI)), (int)(screen.y + 10*Math.sin(t+PHI)));
-						}
+                                                    }
+                                                }else{
+                                                    g.drawRect(screen.x, screen.y, 0, 0);
+                                                }
+                                            }
 						
 					} else if (!large) {
 						g.drawRect(screen.x, screen.y, 0, 0);
