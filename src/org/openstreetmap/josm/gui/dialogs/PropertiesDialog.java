@@ -36,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -128,50 +127,69 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JLabel(msg), BorderLayout.NORTH);
 
+		final TreeMap<String, TreeSet<String>> allData = createAutoCompletionInfo(true);
+
 		JPanel p = new JPanel(new GridBagLayout());
 		panel.add(p, BorderLayout.CENTER);
-		
-		final JTextField keyField = new JTextField(key);
+
+		final AutoCompleteComboBox keys = new AutoCompleteComboBox();
+		keys.setPossibleItems(allData.keySet());
+		keys.setEditable(true);
+		keys.setSelectedItem(key);
+
 		p.add(new JLabel(tr("Key")), GBC.std());
 		p.add(Box.createHorizontalStrut(10), GBC.std());
-		p.add(keyField, GBC.eol().fill(GBC.HORIZONTAL));
-				
-		final JComboBox valueField = (JComboBox) propertyData.getValueAt(row, 1);
+		p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
+
+		final AutoCompleteComboBox values = new AutoCompleteComboBox();
+		values.setEditable(true);
+		Collection<String> newItems;
+		if (allData.containsKey(key)) {
+			newItems = allData.get(key);
+		} else {
+			newItems = Collections.emptyList();
+		}
+		values.setPossibleItems(newItems);
+		values.setSelectedItem(null);
+		final String selection= ((JComboBox)propertyData.getValueAt(row, 1)).getEditor().getItem().toString(); 
+		values.setSelectedItem(selection);
+		values.getEditor().setItem(selection);
 		p.add(new JLabel(tr("Value")), GBC.std());
 		p.add(Box.createHorizontalStrut(10), GBC.std());
-		p.add(valueField, GBC.eol().fill(GBC.HORIZONTAL));
+		p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
+		addFocusAdapter(allData, keys, values);
 
-		final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
+		final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
 			@Override public void selectInitialValue() {
-				valueField.requestFocusInWindow();
-				valueField.getEditor().selectAll();
+				values.requestFocusInWindow();
+				values.getEditor().selectAll();
 			}
 		};
 		final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
 
-		valueField.getEditor().addActionListener(new ActionListener() {
+		values.getEditor().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dlg.setVisible(false);
 				optionPane.setValue(JOptionPane.OK_OPTION);
 			}
 		});
 
-		String oldValue = valueField.getEditor().getItem().toString();
+		String oldValue = values.getEditor().getItem().toString();
 		dlg.setVisible(true);
 
 		Object answer = optionPane.getValue();
 		if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE ||
 				(answer instanceof Integer && (Integer)answer != JOptionPane.OK_OPTION)) {
-			valueField.getEditor().setItem(oldValue);
+			values.getEditor().setItem(oldValue);
 			return;
 		}
 
-		String value = valueField.getEditor().getItem().toString();
+		String value = values.getEditor().getItem().toString();
 		if (value.equals(tr("<different>")))
 			return;
 		if (value.equals(""))
 			value = null; // delete the key
-		String newkey = keyField.getText();
+		String newkey = keys.getEditor().getItem().toString();
 		if (newkey.equals("")) {
 			newkey = key;
 			value = null; // delete the key instead
@@ -213,21 +231,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(new JLabel("<html>"+trn("This will change {0} object.","This will change {0} objects.", sel.size(),sel.size())+"<br><br>"+tr("Please select a key")),
 				BorderLayout.NORTH);
-		final TreeMap<String,TreeSet<String>> allData = new TreeMap<String,TreeSet<String>>();
-		for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
-			for (String key : osm.keySet()) {
-				TreeSet<String> values = null;
-				if (allData.containsKey(key))
-					values = allData.get(key);
-				else {
-					values = new TreeSet<String>();
-					allData.put(key, values);
-				}
-				values.add(osm.get(key));
-			}
-		}
-		for (int i = 0; i < propertyData.getRowCount(); ++i)
-			allData.remove(propertyData.getValueAt(i, 0));
+		final TreeMap<String, TreeSet<String>> allData = createAutoCompletionInfo(false);
 		final AutoCompleteComboBox keys = new AutoCompleteComboBox();
 		keys.setPossibleItems(allData.keySet());
 		keys.setEditable(true);
@@ -240,22 +244,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		final AutoCompleteComboBox values = new AutoCompleteComboBox();
 		values.setEditable(true);
 		p2.add(values, BorderLayout.CENTER);
-	    
-		// get the combo box' editor component
-		JTextComponent editor = (JTextComponent) values.getEditor().getEditorComponent();
-		// Refresh the values model when focus is gained 
-		editor.addFocusListener(new FocusAdapter() {
-            @Override public void focusGained(FocusEvent e) {
-            	String key = keys.getEditor().getItem().toString();
-				Collection<String> newItems;
-            	if (allData.containsKey(key)) {
-					newItems = allData.get(key);
-				} else {
-					newItems = Collections.emptyList();
-				}
-				values.setPossibleItems(newItems);
-            }
-        });
 
 		JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
 			@Override public void selectInitialValue() {
@@ -273,6 +261,57 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
 		selectionChanged(sel); // update table
 		Main.parent.repaint(); // repaint all - drawing could have been changed
+	}
+
+	/**
+	 * @param allData
+	 * @param keys
+	 * @param values
+	 */
+	private void addFocusAdapter(
+	        final TreeMap<String, TreeSet<String>> allData,
+	        final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
+		// get the combo box' editor component
+		JTextComponent editor = (JTextComponent)values.getEditor()
+		        .getEditorComponent();
+		// Refresh the values model when focus is gained
+		editor.addFocusListener(new FocusAdapter() {
+			@Override public void focusGained(FocusEvent e) {
+				String key = keys.getEditor().getItem().toString();
+				Collection<String> newItems;
+				if (allData.containsKey(key)) {
+					newItems = allData.get(key);
+				} else {
+					newItems = Collections.emptyList();
+				}
+				values.setPossibleItems(newItems);
+			}
+		});
+	}
+
+	/**
+	 * @return
+	 */
+	private TreeMap<String, TreeSet<String>> createAutoCompletionInfo(
+	        boolean edit) {
+		final TreeMap<String, TreeSet<String>> allData = new TreeMap<String, TreeSet<String>>();
+		for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
+			for (String key : osm.keySet()) {
+				TreeSet<String> values = null;
+				if (allData.containsKey(key))
+					values = allData.get(key);
+				else {
+					values = new TreeSet<String>();
+					allData.put(key, values);
+				}
+				values.add(osm.get(key));
+			}
+		}
+		if (!edit) {
+			for (int i = 0; i < propertyData.getRowCount(); ++i)
+				allData.remove(propertyData.getValueAt(i, 0));
+		}
+		return allData;
 	}
 
 	/**
