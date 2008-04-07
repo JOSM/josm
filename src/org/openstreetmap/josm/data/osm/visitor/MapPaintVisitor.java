@@ -135,8 +135,8 @@ public class MapPaintVisitor implements Visitor {
 	 */
 	public void visit(Way w) {
 		double circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
-		boolean showDirection = showDirectionArrow;
-		if (useRealWidth && showDirection && !w.selected) showDirection = false;
+		boolean showDirection = showDirectionArrow && w.selected;
+		if (useRealWidth && showDirection) showDirection = false;
 		Color colour = untaggedColor;
 		int width = 2;
 		int realWidth = 0; //the real width of the element in meters 
