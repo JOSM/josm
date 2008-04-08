@@ -138,9 +138,9 @@ public class MapPaintVisitor implements Visitor {
 		double circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
                 // show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
                 // (even if the tag is negated as in oneway=false) or the way is selected
-		boolean showDirection = (!useRealWidth)
-                                        && (w.selected || (showDirectionArrow
-                                                           && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
+		boolean showDirection = w.selected ||
+                                        ((!useRealWidth) && (showDirectionArrow
+                                                             && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
 
 		Color colour = untaggedColor;
 		int width = 2;
