@@ -91,7 +91,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 			}
 		}), GBC.std());
 		
-		buttonPanel.add(createButton("", "delete", tr("Delete the selected relation"), -1, new ActionListener() {
+		buttonPanel.add(createButton(" ", "delete", tr("Delete the selected relation"), -1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Relation toDelete = (Relation) displaylist.getSelectedValue();
 				if (toDelete != null) {
