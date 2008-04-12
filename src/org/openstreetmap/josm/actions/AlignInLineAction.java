@@ -68,7 +68,7 @@ public final class AlignInLineAction extends JosmAction {
 		for (Node n : nodes) {
 			itnodes.remove(n);
 			for (Node m : itnodes) {
-				double dist = Math.sqrt(n.eastNorth.distanceSq(m.eastNorth));
+				double dist = Math.sqrt(n.eastNorth.distance(m.eastNorth));
 				if (dist > distance) {
 					nodea = n;
 					nodeb = m;
