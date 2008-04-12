@@ -17,6 +17,7 @@ public class DrawingPreference implements PreferenceSetting {
 	private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
 	private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
 	private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
+	private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
 	private JCheckBox interestingDirections = new JCheckBox(tr("Only interesting direction hints (e.g. with oneway tag)."));
 	private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
 	private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
@@ -26,9 +27,12 @@ public class DrawingPreference implements PreferenceSetting {
 		// drawRawGpsLines
 		drawRawGpsLines.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				if (!drawRawGpsLines.isSelected())
-					forceRawGpsLines.setSelected(false);
-				forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
+                            if (!drawRawGpsLines.isSelected()){
+                                forceRawGpsLines.setSelected(false);
+                                drawGpsArrows.setSelected(false);
+                            }
+                            forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
+                            drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
 			}
 		});
 		drawRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines"));
@@ -40,6 +44,12 @@ public class DrawingPreference implements PreferenceSetting {
 		forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force"));
 		forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
 		gui.display.add(forceRawGpsLines, GBC.eop().insets(40,0,0,0));
+		
+		// drawGpsArrows
+		drawGpsArrows.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
+		drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction"));
+		drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
+		gui.display.add(drawGpsArrows, GBC.eop().insets(40,0,0,0));
 		
 		// largeGpsPoints
 		largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large"));
@@ -86,6 +96,7 @@ public class DrawingPreference implements PreferenceSetting {
 	public void ok() {
 		Main.pref.put("draw.rawgps.lines", drawRawGpsLines.isSelected());
 		Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());
+		Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
 		Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
 		Main.pref.put("draw.segment.direction", directionHint.isSelected());
 		Main.pref.put("draw.segment.relevant_directions_only", interestingDirections.isSelected());
