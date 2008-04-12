@@ -16,6 +16,7 @@ import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 
 /**
  * Aligns all selected nodes into a straight line (useful for
@@ -44,6 +45,14 @@ public final class AlignInLineAction extends JosmAction {
 				nodes.add((Node)osm);
 				itnodes.add((Node)osm);
 			}
+		// special case if no single nodes are selected and exactly one way is: 
+		// then use the way's nodes
+		if ((nodes.size() == 0) && (sel.size() == 1))
+			for (OsmPrimitive osm : sel)
+				if (osm instanceof Way) {
+					nodes.addAll(((Way)osm).nodes);
+					itnodes.addAll(((Way)osm).nodes);
+				}
 		if (nodes.size() < 3) {
 			JOptionPane.showMessageDialog(Main.parent, tr("Please select at least three nodes."));
 			return;
@@ -59,7 +68,7 @@ public final class AlignInLineAction extends JosmAction {
 		for (Node n : nodes) {
 			itnodes.remove(n);
 			for (Node m : itnodes) {
-				double dist = Math.sqrt(n.eastNorth.distance(m.eastNorth));
+				double dist = Math.sqrt(n.eastNorth.distanceSq(m.eastNorth));
 				if (dist > distance) {
 					nodea = n;
 					nodeb = m;
