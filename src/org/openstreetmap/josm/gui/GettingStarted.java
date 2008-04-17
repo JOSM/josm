@@ -49,11 +49,10 @@ public class GettingStarted extends JPanel implements ActionListener {
 		panel = new JPanel(new GridBagLayout());
 		
 		panel.add(new JLabel(tr("<html><h2>You are running the latest JOSM version with some geometry extensions.</h2>" +
-                "<h3>New elements in the status bar will inform you about the orientation and size<br>" +
-                "of the object being drawn. There is a new \"extrude\" mode that you can use to create<br>" +
-                "rectangular shapes (see below for a short video on this).</h3>" +
+                "<h3>New elements in the status bar will inform you about the orientation and size of the object<br />" +
+                "being drawn. There is a new \"extrude\" mode that you can use to create rectangular shapes.</h3>" +
                 "<h3>There is also a new option in the tools menu that will make existing shapes into proper<br>" +
-                "rectangles. Note that all this is dependend on the projection you're using; you must use<br>"+
+                "rectangles. Note that all this is dependent on the projection you're using; you must use<br>"+
                 "a projection in which rectangles look rectangular and not skewed. Try it out.</h3>"+
                 "<h3>If you dislike the helper line dangling from the mouse cursor, set the \"draw.helper-line\"<br>"+
                 "preference to \"false\"."+
@@ -72,7 +71,6 @@ public class GettingStarted extends JPanel implements ActionListener {
 		}
         */
 		
-		addLine("wiki", tr("Read the [Wiki page on API 0.5]"));
 		addLine("extrudevideo", tr("Short (sound-less) [video] demonstrating the new \"extrude\" feature"));
 
 		addLine("audio", tr("This version also has built-in support for [Audio Mapping] with continuously recorded sound tracks."));
@@ -117,8 +115,6 @@ public class GettingStarted extends JPanel implements ActionListener {
 			Main.main.menu.help.actionPerformed(e);
 		else if (e.getActionCommand().equals("audio"))
 			OpenBrowser.displayUrl("http://josm.openstreetmap.de/wiki/Help/HowTo/AudioMapping");
-		else if (e.getActionCommand().equals("wiki"))
-			OpenBrowser.displayUrl("http://wiki.openstreetmap.org/index.php?title=OSM_Protocol_Version_0.5");
 		else if (e.getActionCommand().equals("tutorial"))
 			OpenBrowser.displayUrl("http://josm.openstreetmap.de/wiki/TutorialVideos");
 		else if (e.getActionCommand().equals("mailinglist"))

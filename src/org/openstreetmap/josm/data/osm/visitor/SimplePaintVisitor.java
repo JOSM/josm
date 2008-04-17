@@ -244,4 +244,12 @@ public class SimplePaintVisitor implements Visitor {
 			currentColor = newColor;
 		}
 	}
+	
+	/**
+	 * Provided for backwards compatibility only.
+	 * FIXME: remove this once not used by plugins any longer.
+	 */
+	public static Color getPreferencesColor(String name, Color dflt) {
+		return Preferences.getPreferencesColor(name, dflt);
+	}
 }
