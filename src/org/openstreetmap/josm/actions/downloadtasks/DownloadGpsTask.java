@@ -25,7 +25,7 @@ public class DownloadGpsTask implements DownloadTask {
 		private GpxData rawData;
 		private final boolean newLayer;
 
-		public Task(boolean newLayer, BoundingBoxDownloader reader, DownloadAction action) {
+		public Task(boolean newLayer, BoundingBoxDownloader reader) {
 			super(tr("Downloading GPS data"));
 			this.reader = reader;
 			this.newLayer = newLayer;
@@ -69,7 +69,7 @@ public class DownloadGpsTask implements DownloadTask {
 	private JCheckBox checkBox = new JCheckBox(tr("Raw GPS data"));
 
 	public void download(DownloadAction action, double minlat, double minlon, double maxlat, double maxlon) {
-		Task task = new Task(action.dialog.newLayer.isSelected(), new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon), action);
+		Task task = new Task(action.dialog.newLayer.isSelected(), new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon));
 		Main.worker.execute(task);
 	}
 

@@ -126,15 +126,6 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 		eventSource.addMouseListener(this);
 		eventSource.addMouseMotionListener(this);
 		selectionEndedListener.addPropertyChangeListener(this);
-		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "SelectionManager");
-        Main.contentPane.getActionMap().put("SelectionManager", new AbstractAction(){
-			public void actionPerformed(ActionEvent e) {
-				if (mousePos != null && mousePosStart != null)
-					paintRect();
-				mousePosStart = null;
-				mousePos = null;
-            }
-        });
         eventSource.addPropertyChangeListener("scale", new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (mousePosStart != null) {
@@ -154,8 +145,6 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 		eventSource.removeMouseListener(this);
 		eventSource.removeMouseMotionListener(this);
 		selectionEndedListener.removePropertyChangeListener(this);
-		Main.contentPane.getInputMap().remove(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
-		Main.contentPane.getActionMap().remove("SelectionManager");
 	}
 
 	/**
