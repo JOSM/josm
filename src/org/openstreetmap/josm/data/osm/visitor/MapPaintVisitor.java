@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -334,27 +335,18 @@ public class MapPaintVisitor implements Visitor {
 			g.drawRect(p.x-1, p.y-1, 2, 2);
 		}
 	}
-	
-	public static Color getPreferencesColor(String colName, Color def) {
-		String colStr = Main.pref.get("color."+colName);
-		if (colStr.equals("")) {
-			Main.pref.put("color."+colName, ColorHelper.color2html(def));
-			return def;
-		}
-		return ColorHelper.html2color(colStr);
-	}
 
 	// NW 111106 Overridden from SimplePaintVisitor in josm-1.4-nw1
 	// Shows areas before non-areas
 	public void visitAll(DataSet data) {
-		inactiveColor = getPreferencesColor("inactive", Color.DARK_GRAY);
-		selectedColor = getPreferencesColor("selected", Color.YELLOW);
-		nodeColor = getPreferencesColor("node", Color.RED);
-		dfltWayColor = getPreferencesColor("way", darkblue);
-		incompleteColor = getPreferencesColor("incomplete way", darkerblue);
-		backgroundColor = getPreferencesColor("background", Color.BLACK);
-		untaggedColor = getPreferencesColor("untagged",Color.GRAY);
-		textColor = getPreferencesColor ("text", Color.WHITE);
+		inactiveColor = Preferences.getPreferencesColor("inactive", Color.DARK_GRAY);
+		selectedColor = Preferences.getPreferencesColor("selected", Color.YELLOW);
+		nodeColor = Preferences.getPreferencesColor("node", Color.RED);
+		dfltWayColor = Preferences.getPreferencesColor("way", darkblue);
+		incompleteColor = Preferences.getPreferencesColor("incomplete way", darkerblue);
+		backgroundColor = Preferences.getPreferencesColor("background", Color.BLACK);
+		untaggedColor = Preferences.getPreferencesColor("untagged",Color.GRAY);
+		textColor = Preferences.getPreferencesColor ("text", Color.WHITE);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
 		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");

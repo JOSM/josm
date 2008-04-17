@@ -1,4 +1,5 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui;
 
 import java.awt.BorderLayout;
@@ -15,6 +16,7 @@ import javax.swing.JToolBar;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
+import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
@@ -80,7 +82,8 @@ public class MapFrame extends JPanel implements Destroyable {
 		toolBarActions.add(new IconToggleButton(new SelectAction(this)));
 		toolBarActions.add(new IconToggleButton(new DrawAction(this)));
 		toolBarActions.add(new IconToggleButton(new DeleteAction(this)));
-
+		toolBarActions.add(new IconToggleButton(new ExtrudeAction(this)));
+		
 		for (Component c : toolBarActions.getComponents())
 			toolGroup.add((AbstractButton)c);
 		toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);

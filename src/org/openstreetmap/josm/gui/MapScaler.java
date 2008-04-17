@@ -1,4 +1,5 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui;
 
 import java.awt.Graphics;
@@ -27,8 +28,8 @@ public class MapScaler extends JComponent implements Helpful {
 	@Override public void paint(Graphics g) {
 		LatLon ll1 = mv.getLatLon(0,0);
 		LatLon ll2 = mv.getLatLon(100,0);
-		int dist = ll1.distance(ll2);
-		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+"km" : dist+"m";
+		double dist = ll1.greatCircleDistance(ll2);
+		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+"km" : Math.round(dist*10)/10+"m";
 		Rectangle2D bound = g.getFontMetrics().getStringBounds(text, g);
 		g.setColor(ColorHelper.html2color(Main.pref.get("color.scale", "#ffffff")));
 		g.drawLine(0, 5, 99, 5);

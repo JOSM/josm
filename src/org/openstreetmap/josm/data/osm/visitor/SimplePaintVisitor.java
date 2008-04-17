@@ -10,6 +10,7 @@ import java.awt.geom.GeneralPath;
 
 import java.util.Iterator;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
@@ -67,13 +68,13 @@ public class SimplePaintVisitor implements Visitor {
 	Rectangle bbox = new Rectangle();
 
 	public void visitAll(DataSet data) {
-		inactiveColor = getPreferencesColor("inactive", Color.DARK_GRAY);
-		selectedColor = getPreferencesColor("selected", Color.WHITE);
-		nodeColor = getPreferencesColor("node", Color.RED);
-		dfltWayColor = getPreferencesColor("way", darkblue);
-		untaggedWayColor = getPreferencesColor("untagged way", darkgreen);
-		incompleteColor = getPreferencesColor("incomplete way", darkerblue);
-		backgroundColor = getPreferencesColor("background", Color.BLACK);
+		inactiveColor = Preferences.getPreferencesColor("inactive", Color.DARK_GRAY);
+		selectedColor = Preferences.getPreferencesColor("selected", Color.WHITE);
+		nodeColor = Preferences.getPreferencesColor("node", Color.RED);
+		dfltWayColor = Preferences.getPreferencesColor("way", darkblue);
+		untaggedWayColor = Preferences.getPreferencesColor("untagged way", darkgreen);
+		incompleteColor = Preferences.getPreferencesColor("incomplete way", darkerblue);
+		backgroundColor = Preferences.getPreferencesColor("background", Color.BLACK);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
 		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
@@ -225,15 +226,6 @@ public class SimplePaintVisitor implements Visitor {
 		bbox.height++;
 		return screen.intersects(bbox);
         }
-
-	public static Color getPreferencesColor(String colName, Color def) {
-		String colStr = Main.pref.get("color."+colName);
-		if (colStr.equals("")) {
-			Main.pref.put("color."+colName, ColorHelper.color2html(def));
-			return def;
-		}
-		return ColorHelper.html2color(colStr);
-	}
 	
 	public void setGraphics(Graphics g) {
 		this.g = g;

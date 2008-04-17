@@ -1,48 +1,76 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.AWTEvent;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import javax.swing.KeyStroke;
-import javax.swing.JComponent;
+import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  *
- */
-public class DrawAction extends MapMode {
-	
+ */ 
+public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
+		
 	private static Node lastUsedNode = null;
+	private double PHI=Math.toRadians(90);
 
+	private boolean ctrl;
+	private boolean alt;
+	private boolean shift;
+	private boolean mouseOnExistingNode;
+	private boolean drawHelperLine;
+	private Point mousePos;
+	private Color selectedColor;
+	
+	private Node currentBaseNode;
+	private EastNorth currentMouseEastNorth;
+	
 	public DrawAction(MapFrame mapFrame) {
 		super(tr("Draw"), "node/autonode", tr("Draw nodes"),
 			KeyEvent.VK_A, mapFrame, getCursor());
@@ -52,6 +80,9 @@ public class DrawAction extends MapMode {
 			KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), tr("Draw"));
 		
 		//putValue("help", "Action/AddNode/Autnode");
+		selectedColor = Preferences.getPreferencesColor("selected", Color.YELLOW);
+		
+		drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
 	}
 
 	private static Cursor getCursor() {
@@ -65,11 +96,43 @@ public class DrawAction extends MapMode {
 	@Override public void enterMode() {
 		super.enterMode();
 		Main.map.mapView.addMouseListener(this);
+		Main.map.mapView.addMouseMotionListener(this);
+		Main.map.mapView.addTemporaryLayer(this);
+		DataSet.selListeners.add(this);
+		try {
+			Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
+		} catch (SecurityException ex) {
+		}
+		// would like to but haven't got mouse position yet:
+		// computeHelperLine(false, false, false);
 	}
-
 	@Override public void exitMode() {
 		super.exitMode();
 		Main.map.mapView.removeMouseListener(this);
+		Main.map.mapView.removeMouseMotionListener(this);
+		Main.map.mapView.removeTemporaryLayer(this);
+		DataSet.selListeners.remove(this);
+		try {
+			Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+		} catch (SecurityException ex) {
+		}
+	}
+	
+	/**
+	 * redraw to (possibly) get rid of helper line if selection changes.
+	 */
+	public void eventDispatched(AWTEvent event) {
+		InputEvent e = (InputEvent) event;
+		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		computeHelperLine();
+	}
+	/**
+	 * redraw to (possibly) get rid of helper line if selection changes.
+	 */
+	public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+		computeHelperLine();
 	}
 
 	/**
@@ -79,12 +142,17 @@ public class DrawAction extends MapMode {
 	 * If in nodeway mode, insert the node into the way. 
 	 */
 	@Override public void mouseClicked(MouseEvent e) {
+
 		if (e.getButton() != MouseEvent.BUTTON1)
 			return;
 
-		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		// we copy ctrl/alt/shift from the event just in case our global
+		// AWTEvent didn't make it through the security manager. Unclear
+		// if that can ever happen but better be safe.
+		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		mousePos = e.getPoint();
 		
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		Collection<Command> cmds = new LinkedList<Command>();
@@ -93,8 +161,9 @@ public class DrawAction extends MapMode {
 			replacedWays = new ArrayList<Way>();
 		boolean newNode = false;
 		Node n = null;
+		
 		if (!ctrl) {
-			n = Main.map.mapView.getNearestNode(e.getPoint());
+			n = Main.map.mapView.getNearestNode(mousePos);
 		}
 		
 		if (n != null) {
@@ -255,6 +324,114 @@ public class DrawAction extends MapMode {
 	
 		Main.main.undoRedo.add(c);
 		lastUsedNode = n;
+		computeHelperLine();
+		Main.map.mapView.repaint();
+	}
+	
+	@Override public void mouseMoved(MouseEvent e) {
+
+		// we copy ctrl/alt/shift from the event just in case our global
+		// AWTEvent didn't make it through the security manager. Unclear
+		// if that can ever happen but better be safe.
+		
+		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+		mousePos = e.getPoint();
+		
+		computeHelperLine();
+	}
+	
+	/**
+	 * This method prepares data required for painting the "helper line" from
+	 * the last used position to the mouse cursor. It duplicates some code from
+	 * mouseClicked() (FIXME).
+	 */
+	private void computeHelperLine() {
+		
+		double distance = -1;
+		double angle = -1;
+
+		Collection<OsmPrimitive> selection = Main.ds.getSelected();
+
+		Node selectedNode = null;
+		Way selectedWay = null;
+		Node currentMouseNode = null;
+		mouseOnExistingNode = false;
+
+		Main.map.statusLine.setAngle(-1);
+		Main.map.statusLine.setHeading(-1);
+		Main.map.statusLine.setDist(-1);
+
+		if (!ctrl && mousePos != null) {
+			currentMouseNode = Main.map.mapView.getNearestNode(mousePos);
+		}
+		
+		if (currentMouseNode != null) {
+			// user clicked on node
+			if (selection.isEmpty()) return;
+			currentMouseEastNorth = currentMouseNode.eastNorth;
+			mouseOnExistingNode = true;
+		} else {
+			// no node found in clicked area
+			currentMouseEastNorth = Main.map.mapView.getEastNorth(mousePos.x, mousePos.y);
+		}
+		
+		for (OsmPrimitive p : selection) {
+			if (p instanceof Node) {
+				if (selectedNode != null) return;
+				selectedNode = (Node) p;
+			} else if (p instanceof Way) {
+				if (selectedWay != null) return;
+				selectedWay = (Way) p;
+			}
+		}
+		
+		// the node from which we make a connection
+		currentBaseNode = null;
+		Node previousNode = null;
+		
+		if (selectedNode == null) {
+			if (selectedWay == null) return;
+			if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+				currentBaseNode = lastUsedNode;
+				if (lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1) && selectedWay.nodes.size() > 1) {
+					previousNode = selectedWay.nodes.get(selectedWay.nodes.size()-2);
+				}
+			}
+		} else if (selectedWay == null) {
+			currentBaseNode = selectedNode;
+		} else {
+			if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+				currentBaseNode = selectedNode;
+			}			
+		}
+		
+		if (currentBaseNode == null || currentBaseNode == currentMouseNode) {
+			return; // Don't create zero length way segments.
+		}
+		
+		Main.map.mapView.repaint();
+		
+		// find out the distance, in metres, between the base point and the mouse cursor
+		LatLon mouseLatLon = Main.proj.eastNorth2latlon(currentMouseEastNorth);
+		distance = currentBaseNode.coor.greatCircleDistance(mouseLatLon);
+		double hdg = Math.toDegrees(currentBaseNode.coor.heading(mouseLatLon));
+		if (previousNode != null) {
+			angle = hdg - Math.toDegrees(previousNode.coor.heading(currentBaseNode.coor));
+			if (angle < 0) angle += 360;
+		}
+		Main.map.statusLine.setAngle(angle);
+		Main.map.statusLine.setHeading(hdg);
+		Main.map.statusLine.setDist(distance);
+		updateStatusLine();
+	}
+	
+	/**
+	 * Repaint on mouse exit so that the helper line goes away.
+	 */
+	@Override public void mouseExited(MouseEvent e) {
+		mousePos = e.getPoint();
 		Main.map.mapView.repaint();
 	}
 	
@@ -346,9 +523,9 @@ public class DrawAction extends MapMode {
 			seg = segs.iterator().next();
 			A = seg.a.eastNorth;
 			B = seg.b.eastNorth;
-			double a = P.distance(B);
-			double b = P.distance(A);
-			double c = A.distance(B);
+			double a = P.distanceSq(B);
+			double b = P.distanceSq(A);
+			double c = A.distanceSq(B);
 			double q = (a - b + c) / (2*c);
 			n.eastNorth = new EastNorth(
 				B.east() + q * (A.east() - B.east()),
@@ -361,9 +538,70 @@ public class DrawAction extends MapMode {
 	{
 		return a * d - b * c;
 	}
+	
+	public void paint(Graphics g, MapView mv) {
 
+		// don't draw line if disabled in prefs
+		if (!drawHelperLine) return;
+		
+		// sanity checks
+		if (Main.map.mapView == null) return;
+		if (mousePos == null) return;
+		
+		// if shift key is held ("no auto-connect"), don't draw a line
+		if (shift) return;
+		
+		// don't draw line if we don't know where from or where to
+		if (currentBaseNode == null) return;
+		if (currentMouseEastNorth == null) return;
+		
+		// don't draw line if mouse is outside window
+		if (!Main.map.mapView.getBounds().contains(mousePos)) return;
+		
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(selectedColor);
+		g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		GeneralPath b = new GeneralPath();
+		Point p1=mv.getPoint(currentBaseNode.eastNorth);
+		Point p2=mv.getPoint(currentMouseEastNorth);
+
+		double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
+		
+		b.moveTo(p1.x,p1.y); b.lineTo(p2.x, p2.y);
+		
+		// if alt key is held ("start new way"), draw a little perpendicular line
+		if (alt) {
+			b.moveTo((int)(p1.x + 8*Math.cos(t+PHI)), (int)(p1.y + 8*Math.sin(t+PHI)));
+			b.lineTo((int)(p1.x + 8*Math.cos(t-PHI)), (int)(p1.y + 8*Math.sin(t-PHI)));
+		}
+		
+		g2.draw(b);
+		g2.setStroke(new BasicStroke(1));	
+
+	}
 	
 	@Override public String getModeHelpText() {
-		return tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way");
+		String rv;
+		
+		if (currentBaseNode != null && !shift) {
+			if (mouseOnExistingNode) {
+				if (alt && /* FIXME: way exists */true)
+				    rv = tr("Click to create a new way to the existing node.");
+				else	
+					rv =tr("Click to make a connection to the existing node.");
+			} else {
+				if (alt && /* FIXME: way exists */true)
+				    rv = tr("Click to insert a nose and create a new way.");
+				else	
+					rv = tr("Click to insert a new node and make a connection.");
+			}
+		}
+		else {
+			rv = tr("Click to insert a new node.");
+		}
+
+		//rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
+		//rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
+		return rv.toString();
 	}
 }

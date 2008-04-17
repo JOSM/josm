@@ -57,11 +57,30 @@ public class LatLon extends Coordinate {
 	 * @param other the other point.
 	 * @return distance in metres.
 	 */
-	public int distance(LatLon other) {
-		return (int) (Math.acos(
+	public double greatCircleDistance(LatLon other) {
+		return (Math.acos(
 			Math.sin(Math.toRadians(lat())) * Math.sin(Math.toRadians(other.lat())) + 
 		    Math.cos(Math.toRadians(lat()))*Math.cos(Math.toRadians(other.lat())) *
 		                  Math.cos(Math.toRadians(other.lon()-lon()))) * 6378135);
+	}
+	
+	/**
+	 * Returns the heading, in radians, that you have to use to get from 
+	 * this lat/lon to another.
+	 * 
+	 * @param other the "destination" position
+	 * @return heading 
+	 */
+	public double heading(LatLon other) {
+		double rv;
+		if (other.lat() == lat()) {
+			rv = (other.lon()>lon() ? Math.PI / 2 : Math.PI * 3 / 2);
+		} else {
+			rv = Math.atan((other.lon()-lon())/(other.lat()-lat()));
+			if (rv < 0) rv += Math.PI;
+			if (other.lon() < lon()) rv += Math.PI;
+		}
+		return rv;
 	}
 
 	/**

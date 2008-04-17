@@ -40,13 +40,31 @@ abstract class Coordinate implements Serializable {
 	/**
 	 * Return the squared distance of the northing/easting values between 
 	 * this and the argument.
+	 * 
+	 * This method does NOT compute a great circle distance between two 
+	 * locations!
 	 *
 	 * @param other The other point to calculate the distance to.
 	 * @return The square of the distance between this and the other point,
 	 * 		regarding to the x/y values.
 	 */
-	public double distance(Coordinate other) {
+	public double distanceSq(Coordinate other) {
 		return (x-other.x)*(x-other.x)+(y-other.y)*(y-other.y);
+	}
+	
+	/** 
+	 * Return the distance of the northing/easting values between this and
+	 * the argument.
+	 * 
+	 * This method does NOT compute a great circle distance between two 
+	 * locations!
+	 * 
+	 * @param other The other point to calculate the distance to.
+	 * @return The square of the distance between this and the other point,
+	 * 		regarding to the x/y values.
+	 */
+	public double distance(Coordinate other) {
+		return Math.sqrt(distanceSq(other));
 	}
 
 	@Override public boolean equals(Object obj) {

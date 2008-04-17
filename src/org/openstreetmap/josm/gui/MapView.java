@@ -1,4 +1,5 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -22,15 +23,16 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.ModifiedChangedListener;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -77,6 +79,8 @@ public class MapView extends NavigatableComponent {
 	 * The layer from the layers list that is currently active.
 	 */
 	private Layer activeLayer;
+	
+	private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 	
 	/**
 	 * The listener of the active layer changes.
@@ -194,7 +198,7 @@ public class MapView extends NavigatableComponent {
 	@Override public void paint(Graphics g) {
 		if (center == null)
 			return; // no data loaded yet.
-		g.setColor(SimplePaintVisitor.getPreferencesColor("background", Color.BLACK));
+		g.setColor(Preferences.getPreferencesColor("background", Color.BLACK));
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		for (int i = layers.size()-1; i >= 0; --i) {
@@ -202,9 +206,14 @@ public class MapView extends NavigatableComponent {
 			if (l.visible && l != getActiveLayer())
 				l.paint(g, this);
 		}
+		
 		if (getActiveLayer() != null && getActiveLayer().visible)
 			getActiveLayer().paint(g, this);
 
+		for (MapViewPaintable mvp : temporaryLayers) {
+			mvp.paint(g, this);
+		}
+		
 		// draw world borders
 		g.setColor(Color.WHITE);
 		Bounds b = new Bounds();
@@ -328,5 +337,14 @@ public class MapView extends NavigatableComponent {
 			firePropertyChange("center", oldCenter, center);
 		if (oldScale != scale)
 			firePropertyChange("scale", oldScale, scale);
+	}
+	
+	public boolean addTemporaryLayer(MapViewPaintable mvp) {
+		if (temporaryLayers.contains(mvp)) return false;
+		return temporaryLayers.add(mvp);
+	}
+	
+	public boolean removeTemporaryLayer(MapViewPaintable mvp) {
+		return temporaryLayers.remove(mvp);
 	}
 }

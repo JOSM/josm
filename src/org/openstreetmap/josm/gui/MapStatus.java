@@ -1,9 +1,11 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -37,6 +39,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * A component that manages some status information display about the map.
@@ -46,7 +49,7 @@ import org.openstreetmap.josm.tools.GBC;
  * All this is done in background to not disturb other processes.
  *
  * The background thread does not alter any data of the map (read only thread).
- * Also it is rather fail safe. In case of some error in the data, it just do
+ * Also it is rather fail safe. In case of some error in the data, it just does
  * nothing instead of whining and complaining.
  *
  * @author imi
@@ -54,25 +57,47 @@ import org.openstreetmap.josm.tools.GBC;
 public class MapStatus extends JPanel implements Helpful {
 
 	/**
-	 * The MapView this status belongs.
+	 * The MapView this status belongs to.
 	 */
 	final MapView mv;
-	/**
-	 * The position of the mouse cursor.
-	 */
-	DecimalFormat latlon = new DecimalFormat("###0.0000000");
-	JTextField positionText = new JTextField(25);
 	
-	/**
-	 * The field holding the name of the object under the mouse.
+	/** 
+	 * A small user interface component that consists of an image label and
+	 * a fixed text content to the right of the image.
 	 */
-	JTextField nameText = new JTextField(30);
+	class ImageLabel extends JPanel {
+		private JLabel tf; 
+		private JLabel lbl;
+		private int chars;
+		public ImageLabel(String img, String tooltip, int chars) {
+			super();
+			setLayout(new GridBagLayout());
+			setBackground(Color.decode("#b8cfe5"));
+			add(lbl = new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
+			add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2,1,1,0));
+			setToolTipText(tooltip);
+			this.chars = chars;
+		}
+		public void setText(String t) {
+			tf.setText(t);
+		}
+		@Override public Dimension getPreferredSize() {
+			return new Dimension(25 + chars*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getPreferredSize().height);
+		}
+		@Override public Dimension getMinimumSize() {
+			return new Dimension(25 + chars*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getMinimumSize().height);	
+		}
+	}
 
-	/**
-	 * The field holding information about what the user can do.
-	 */
-	JTextField helpText = new JTextField();
-	
+    DecimalFormat latlon = new DecimalFormat("###0.0000");
+    ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 8);
+    ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
+    JTextField helpText = new JTextField();
+    ImageLabel latText = new ImageLabel("lat", tr("The geograpgic latitude at the mouse pointer."), 7);
+    ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
+    ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
+    ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 8);
+
 	/**
 	 * The collector class that waits for notification and then update
 	 * the display objects.
@@ -118,6 +143,16 @@ public class MapStatus extends JPanel implements Helpful {
 				if (mv.center == null)
 					continue;
 
+				OsmPrimitive osmNearest = null;
+				// Set the text label in the bottom status bar
+				osmNearest = mv.getNearest(ms.mousePos);
+				if (osmNearest != null) {
+					NameVisitor visitor = new NameVisitor();
+					osmNearest.visit(visitor);
+					nameText.setText(visitor.name);
+				} else
+					nameText.setText("(no object)");				
+
 				// This try/catch is a hack to stop the flooding bug reports about this.
 				// The exception needed to handle with in the first place, means that this
 				// access to the data need to be restarted, if the main thread modifies
@@ -131,21 +166,6 @@ public class MapStatus extends JPanel implements Helpful {
 							continue;
 						if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers)
 							continue;
-					/*
-					osmStatus = osms;
-					oldModifiers = ms.modifiers;
-
-					OsmPrimitive osmNearest = null;
-					// Set the text label in the bottom status bar
-					osmNearest = mv.getNearest(ms.mousePos);
-					if (osmNearest != null) {
-						NameVisitor visitor = new NameVisitor();
-						osmNearest.visit(visitor);
-						nameText.setText(visitor.name);
-					} else
-						nameText.setText("");
-					*/
-					
 
 						if (popup != null) {
 							try {
@@ -246,22 +266,24 @@ public class MapStatus extends JPanel implements Helpful {
 				// Do not update the view, if ctrl is pressed.
 				if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
 					LatLon p = mv.getLatLon(e.getX(),e.getY());
-					positionText.setText(latlon.format(p.lat())+" "+latlon.format(p.lon()));
+					latText.setText(latlon.format(p.lat()));
+					lonText.setText(latlon.format(p.lon()));
 				}
 			}
 		});
 
-		positionText.setEditable(false);
-		nameText.setEditable(false);
-		helpText.setEditable(false);
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		add(new JLabel(tr("Lat/Lon")+" "), GBC.std());
-		add(positionText, GBC.std());
-		//add(new JLabel(" "+tr("Object")+" "));
-		//add(nameText);
-		add(helpText, GBC.eol().fill(GBC.HORIZONTAL));
-		positionText.setMinimumSize(new Dimension(positionText.getMinimumSize().height, 200));
+
+        add(latText, GBC.std());
+        add(lonText, GBC.std().insets(3,0,0,0));
+        add(headingText, GBC.std().insets(3,0,0,0));
+        add(angleText, GBC.std().insets(3,0,0,0));
+        add(distText, GBC.std().insets(3,0,0,0));
+
+		helpText.setEditable(false);
+		add(nameText, GBC.std().insets(3,0,0,0));
+		add(helpText, GBC.eol().insets(3,0,0,0).fill(GBC.HORIZONTAL));
 		
 		// The background thread
 		final Collector collector = new Collector(mapFrame);
@@ -316,5 +338,17 @@ public class MapStatus extends JPanel implements Helpful {
 	
 	public void setHelpText(String t) {
 		helpText.setText(t);
+		helpText.setToolTipText(t);
 	}
+	public void setAngle(double a) {
+		angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + "°");
+	}
+	public void setHeading(double h) {
+		headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + "°");
+	}
+	public void setDist(double dist) {
+		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+"km" : Math.round(dist*10)/10 +"m";
+		distText.setText(dist < 0 ? "--" : text);
+	}
+	
 }

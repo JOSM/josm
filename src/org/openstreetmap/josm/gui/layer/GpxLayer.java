@@ -1,4 +1,4 @@
-//License: GPL. Copyright 2007 by Immanuel Scholz, Raphael Mack and others
+// License: GPL. See LICENSE file for details.
 
 package org.openstreetmap.josm.gui.layer;
 
@@ -320,7 +320,7 @@ public class GpxLayer extends Layer {
 					if (lines && old != null) {
 						
                                             // draw line, if no maxLineLength is set or the line is shorter.
-                                            if (maxLineLength == -1 || trkPnt.latlon.distance(oldWp.latlon) <= maxLineLength){
+                                            if (maxLineLength == -1 || trkPnt.latlon.greatCircleDistance(oldWp.latlon) <= maxLineLength){
                                                 g.drawLine(old.x, old.y, screen.x, screen.y);
 
                                                 if (direction) {

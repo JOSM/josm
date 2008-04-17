@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -17,6 +18,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ColorHelper;
 
 
 /**
@@ -257,5 +259,21 @@ public class Preferences {
 			out.println();
 		}
 		out.close();
+	}
+	
+	/**
+	 * Convenience method for accessing colour preferences.
+	 * 
+	 * @param colName name of the colour
+	 * @param def default value
+	 * @return a Color object for the configured colour, or the default value if none configured.
+	 */
+	public static Color getPreferencesColor(String colName, Color def) {
+		String colStr = Main.pref.get("color."+colName);
+		if (colStr.equals("")) {
+			Main.pref.put("color."+colName, ColorHelper.color2html(def));
+			return def;
+		}
+		return ColorHelper.html2color(colStr);
 	}
 }

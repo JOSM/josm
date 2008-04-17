@@ -1,4 +1,5 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui;
 
 import java.awt.Point;
@@ -97,10 +98,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 * 		on the screen.
 	 */
 	public LatLon getLatLon(int x, int y) {
-		EastNorth eastNorth = new EastNorth(
-				center.east() + (x - getWidth()/2.0)*scale,
-				center.north() - (y - getHeight()/2.0)*scale);
-		return getProjection().eastNorth2latlon(eastNorth);
+
+		return getProjection().eastNorth2latlon(getEastNorth(x, y));
 	}
 
 	/**

@@ -1,3 +1,5 @@
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -225,7 +227,7 @@ public class PlayHeadMarker extends Marker {
 			double closestAudioMarkerDistanceSquared = 1.0E100;
 			for (Marker m : AudioMarker.recentlyPlayedMarker().parentLayer.data) {
 				if (m instanceof AudioMarker) {
-					double distanceSquared = m.eastNorth.distance(en);
+					double distanceSquared = m.eastNorth.distanceSq(en);
 					if (distanceSquared < closestAudioMarkerDistanceSquared) {
 						ca = (AudioMarker) m;
 						closestAudioMarkerDistanceSquared = distanceSquared;

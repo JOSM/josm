@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -30,6 +30,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ConflictResolveCommand;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -37,7 +38,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.ConflictResolver;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -143,7 +143,7 @@ public final class ConflictDialog extends ToggleDialog {
 	 * Paint all conflicts that can be expressed on the main window.
 	 */
 	public void paintConflicts(final Graphics g, final NavigatableComponent nc) {
-		Color preferencesColor = SimplePaintVisitor.getPreferencesColor("conflict", Color.gray);
+		Color preferencesColor = Preferences.getPreferencesColor("conflict", Color.gray);
 		if (preferencesColor.equals(Color.BLACK))
 			return;
 		g.setColor(preferencesColor);

@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.mapmode;
 
 import java.awt.Cursor;
@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * As example scrolling the map is a MapMode, connecting Nodes to new Ways
  * is another.
  * 
- * MapModes should register/deregister all necessary listener on the map's view
+ * MapModes should register/deregister all necessary listeners on the map's view
  * control. 
  */
 abstract public class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
@@ -56,6 +56,7 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
 
 	protected void updateStatusLine() {
 		Main.map.statusLine.setHelpText(getModeHelpText());
+		Main.map.statusLine.repaint();
 	}
 	
 	public String getModeHelpText() {

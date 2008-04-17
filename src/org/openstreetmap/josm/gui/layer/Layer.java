@@ -1,4 +1,5 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui.layer;
 
 import java.awt.Component;
@@ -28,7 +29,7 @@ import org.openstreetmap.josm.tools.Destroyable;
  * 
  * @author imi
  */
-abstract public class Layer implements Destroyable {
+abstract public class Layer implements Destroyable, MapViewPaintable {
 
 	/**
 	 * Interface to notify listeners of the change of the active layer.

@@ -1,4 +1,5 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -152,8 +154,8 @@ public class OsmDataLayer extends Layer {
 					EastNorth en2 = Main.proj.latlon2eastNorth(src.bounds.max);
 					Point p1 = mv.getPoint(en1);
 					Point p2 = mv.getPoint(en2);
-					Color color = inactive ? SimplePaintVisitor.getPreferencesColor("inactive", Color.DARK_GRAY) :
-							SimplePaintVisitor.getPreferencesColor("downloaded Area", Color.YELLOW);
+					Color color = inactive ? Preferences.getPreferencesColor("inactive", Color.DARK_GRAY) :
+							Preferences.getPreferencesColor("downloaded Area", Color.YELLOW);
 					g.setColor(color);
 					g.drawRect(Math.min(p1.x,p2.x), Math.min(p1.y, p2.y), Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y));
 				}

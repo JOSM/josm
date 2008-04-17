@@ -1,4 +1,5 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. See LICENSE file for details.
+
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -13,6 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AlignInRectangleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
@@ -92,6 +94,7 @@ public class MainMenu extends JMenuBar {
 	public final JosmAction reverseWay = new ReverseWayAction();
 	public final JosmAction alignInCircle = new AlignInCircleAction();
 	public final JosmAction alignInLine = new AlignInLineAction();
+	public final JosmAction alignInRect = new AlignInRectangleAction();
 	public final JosmAction mergeNodes = new MergeNodesAction();
 	public final JosmAction joinNodeWay = new JoinNodeWayAction();
 
@@ -206,6 +209,8 @@ public class MainMenu extends JMenuBar {
 		current.setAccelerator(alignInCircle.shortCut);
 		current = toolsMenu.add(alignInLine);
 		current.setAccelerator(alignInLine.shortCut);
+		current = toolsMenu.add(alignInRect);
+		current.setAccelerator(alignInRect.shortCut);
 		toolsMenu.addSeparator();
 		current = toolsMenu.add(mergeNodes);
 		current.setAccelerator(mergeNodes.shortCut);
