@@ -40,7 +40,7 @@ import org.openstreetmap.josm.data.osm.Way;
 public final class AlignInRectangleAction extends JosmAction {
 
 	public AlignInRectangleAction() {
-		super(tr("Align Nodes in Rectangle"), "aligncircle", tr("Move the selected nodes into a rectangle."), KeyEvent.VK_Q, 0, true);
+		super(tr("Align Nodes in Rectangle"), "alignrect", tr("Move the selected nodes into a rectangle."), KeyEvent.VK_Q, 0, true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

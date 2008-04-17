@@ -347,7 +347,7 @@ public class MapStatus extends JPanel implements Helpful {
 		headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + "°");
 	}
 	public void setDist(double dist) {
-		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+"km" : Math.round(dist*10)/10 +"m";
+		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+"km" : Math.round(dist*10)/10.0 +"m";
 		distText.setText(dist < 0 ? "--" : text);
 	}
 	
