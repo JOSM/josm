@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -43,7 +44,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
-
 /**
  * This class read encapsulate one tagging preset. A class method can
  * read in all predefined presets, either shipped with JOSM or that are
@@ -52,7 +52,7 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  */
 public class TaggingPreset extends AbstractAction {
-
+	
 	public static abstract class Item {
 		public boolean focus = false;
 		abstract void addToPanel(JPanel p, Collection<OsmPrimitive> sel);
@@ -70,7 +70,8 @@ public class TaggingPreset extends AbstractAction {
 		Usage returnValue = new Usage();
 		returnValue.values = new HashSet<String>();
 		for (OsmPrimitive s : sel) {
-			returnValue.values.add(s.get(key));
+			String v = s.get(key);
+			/* if (v != null) */ returnValue.values.add(v);
 		}
 		return returnValue;
 	}
@@ -93,10 +94,12 @@ public class TaggingPreset extends AbstractAction {
 	}
 	
 	public static class Text extends Item {
+		
 		public String key;
 		public String text;
 		public String default_;
 		public String originalValue;
+		public boolean use_last_as_default = false;
 		public boolean delete_if_empty = false;
 
 		private JComponent value;
@@ -105,8 +108,14 @@ public class TaggingPreset extends AbstractAction {
 			
 			// find out if our key is already used in the selection.
 			Usage usage = determineTextUsage(sel, key);
-			
-			if (usage.values.size() == 1) {
+			if (usage.values.size() == 1 && usage.values.toArray()[0] == null) {
+				value = new JTextField();
+				if (use_last_as_default && lastValue.containsKey(key)) {
+					((JTextField)value).setText(lastValue.get(key));
+				} else {
+					((JTextField)value).setText(default_);
+				}
+			} else if (usage.values.size() == 1) {
 				// all objects use the same value
 				value = new JTextField();
 				for (String s : usage.values) ((JTextField) value).setText(s);
@@ -129,6 +138,7 @@ public class TaggingPreset extends AbstractAction {
 				((JComboBox)value).getEditor().getItem().toString() : 
 				((JTextField)value).getText();
 
+			if (use_last_as_default) lastValue.put(key, v);
 			if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) return;
 
 			if (delete_if_empty && v.length() == 0)
@@ -143,6 +153,7 @@ public class TaggingPreset extends AbstractAction {
 		public String key;
 		public String text;
 		public boolean default_ = false; // not used!
+		public boolean use_last_as_default = false;
 
 		private QuadStateCheckBox check;
 		private QuadStateCheckBox.State initialState;
@@ -204,6 +215,7 @@ public class TaggingPreset extends AbstractAction {
 		public String default_;
 		public boolean delete_if_empty = false;
 		public boolean editable = true;
+		public boolean use_last_as_default = false;
 
 		private JComboBox combo;
 		private LinkedHashMap<String,String> lhm;
@@ -284,6 +296,7 @@ public class TaggingPreset extends AbstractAction {
 	 */
 	public Collection<Class<?>> types;
 	private List<Item> data = new LinkedList<Item>();
+	private static HashMap<String,String> lastValue = new HashMap<String,String>();
 
 	/**
 	 * Create an empty tagging preset. This will not have any items and

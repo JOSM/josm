@@ -6,7 +6,6 @@ http://openclipart.org/media/view/media/clip_art
 -->
 
 <annotations>
-
 	<item name="Road" icon="presets/ways.png">
     <label text="Road" />
 		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,unsurfaced,track,residential,living_street,service,bridleway,cycleway,footway,pedestrian,steps,bus_guideway,construction" delete_if_empty="true" />
@@ -117,11 +116,25 @@ Routes are currently not well supported, so I disable them here
 	 <text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
+    <item name="Addresses" icon="presets/addresses.png">
+    <label text="These attributes are used for nodes:" />
+       <text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
+       <text key="addr:housenumber" text="House number" default="" delete_if_empty="true" />
+       <text key="addr:housename" text="House name" default="" delete_if_empty="true" />
+       <text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
+       <text key="addr:city" text="City" use_last_as_default="true" delete_if_empty="true" />
+    <label text=" " />
+    <label text="These attributes are used for ways:" />
+       <combo key="addr:interpolation" text="Numbering scheme:" values="odd,even,all" default="odd" />
+    </item>   
+    
 	<item name="Boundaries" icon="presets/boundaries.png">
 		<label text="Boundaries" />
 		<combo key="boundary" text="Type:" values="national,administrative,civil,political,national_park" default="" delete_if_empty="true" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
  </item>
+ 
+ 
 
 	<item name="Landuse" icon="presets/landuse.png">
 		<label text="Landuse" />
