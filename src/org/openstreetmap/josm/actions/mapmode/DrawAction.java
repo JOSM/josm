@@ -591,7 +591,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 					rv =tr("Click to make a connection to the existing node.");
 			} else {
 				if (alt && /* FIXME: way exists */true)
-				    rv = tr("Click to insert a nose and create a new way.");
+				    rv = tr("Click to insert a node and create a new way.");
 				else	
 					rv = tr("Click to insert a new node and make a connection.");
 			}
