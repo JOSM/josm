@@ -143,21 +143,21 @@ public class MapStatus extends JPanel implements Helpful {
 				if (mv.center == null)
 					continue;
 
-				OsmPrimitive osmNearest = null;
-				// Set the text label in the bottom status bar
-				osmNearest = mv.getNearest(ms.mousePos);
-				if (osmNearest != null) {
-					NameVisitor visitor = new NameVisitor();
-					osmNearest.visit(visitor);
-					nameText.setText(visitor.name);
-				} else
-					nameText.setText("(no object)");				
-
 				// This try/catch is a hack to stop the flooding bug reports about this.
 				// The exception needed to handle with in the first place, means that this
 				// access to the data need to be restarted, if the main thread modifies
 				// the data.
 				try {
+					OsmPrimitive osmNearest = null;
+					// Set the text label in the bottom status bar
+					osmNearest = mv.getNearest(ms.mousePos);
+					if (osmNearest != null) {
+						NameVisitor visitor = new NameVisitor();
+						osmNearest.visit(visitor);
+						nameText.setText(visitor.name);
+					} else
+						nameText.setText("(no object)");
+
 					// Popup Information
 					if ((ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0 ) {
 						Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
