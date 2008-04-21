@@ -149,7 +149,7 @@ public class OsmDataLayer extends Layer {
 			// FIXME this is inefficient; instead a proper polygon has to be built, and instead
 			// of drawing the outline, the outlying areas should perhaps be shaded.
 			for (DataSource src : data.dataSources) {
-				if (src.bounds != null) {
+				if (src.bounds != null && !src.bounds.min.equals(src.bounds.max)) {
 					EastNorth en1 = Main.proj.latlon2eastNorth(src.bounds.min);
 					EastNorth en2 = Main.proj.latlon2eastNorth(src.bounds.max);
 					Point p1 = mv.getPoint(en1);
