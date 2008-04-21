@@ -341,10 +341,10 @@ public class MapStatus extends JPanel implements Helpful {
 		helpText.setToolTipText(t);
 	}
 	public void setAngle(double a) {
-		angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + "°");
+		angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + "Â°");
 	}
 	public void setHeading(double h) {
-		headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + "°");
+		headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + "Â°");
 	}
 	public void setDist(double dist) {
 		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+"km" : Math.round(dist*10)/10.0 +"m";
