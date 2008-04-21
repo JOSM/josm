@@ -348,6 +348,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	 * mouseClicked() (FIXME).
 	 */
 	private void computeHelperLine() {
+		if (mousePos == null) {
+			// Don't draw the line.
+			currentMouseEastNorth = null;
+			currentBaseNode = null;
+			return;
+		}
 		
 		double distance = -1;
 		double angle = -1;
