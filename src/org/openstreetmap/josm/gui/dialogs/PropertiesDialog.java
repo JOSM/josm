@@ -46,6 +46,7 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -202,8 +203,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		}
 
 		String value = values.getEditor().getItem().toString();
-		if (value.equals(tr("<different>")))
-			return;
 		if (value.equals(""))
 			value = null; // delete the key
 		String newkey = keys.getEditor().getItem().toString();
@@ -214,9 +213,27 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		if (key.equals(newkey) || value == null)
 			Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
 		else {
-			Main.main.undoRedo.add(new SequenceCommand(trn("Change properties of {0} object", "Change properties of {0} objects", sel.size(), sel.size()),
-					new ChangePropertyCommand(sel, key, null),
-					new ChangePropertyCommand(sel, newkey, value)));
+			Collection<Command> commands=new Vector<Command>();
+			commands.add(new ChangePropertyCommand(sel, key, null));
+			if (value.equals(tr("<different>"))) {
+				HashMap<String, Vector<OsmPrimitive>> map=new HashMap<String, Vector<OsmPrimitive>>();
+				for (OsmPrimitive osm: sel) {
+					String val=osm.keys.get(key);
+					if (map.containsKey(val)) {
+						map.get(val).add(osm);
+					} else {
+						Vector<OsmPrimitive> v = new Vector<OsmPrimitive>();
+						v.add(osm);
+						map.put(val, v);
+					}
+				}
+				for (Entry<String, Vector<OsmPrimitive>> e: map.entrySet()) {
+					commands.add(new ChangePropertyCommand(e.getValue(), newkey, e.getKey()));
+				}
+			} else {
+				commands.add(new ChangePropertyCommand(sel, newkey, value));
+			}
+			Main.main.undoRedo.add(new SequenceCommand(trn("Change properties of {0} objects", "Change properties of {0} objects", sel.size(), sel.size()), commands));
 		}
 
 		selectionChanged(sel); // update whole table
@@ -554,7 +571,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		for (Entry<String, Map<String, Integer>> e : valueCount.entrySet()) {
 			int count=0;
 			for (Entry<String, Integer> e1: e.getValue().entrySet()) {
-//				System.out.println(e.getKey()+" Entry "+e1.getKey()+" value "+e1.getValue());
 				count+=e1.getValue();
 			}
 			if (count < newSelection.size()) {
