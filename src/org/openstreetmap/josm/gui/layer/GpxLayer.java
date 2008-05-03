@@ -286,6 +286,13 @@ public class GpxLayer extends Layer {
 		data.mergeFrom(((GpxLayer)from).data);
 	}
 
+	private static Color[] colors = new Color[256];
+	static {
+		for (int i = 0; i < colors.length; i++) {
+			colors[i] = Color.getHSBColor(i/300.0f, 1, 1);
+		}
+	}
+
 	@Override public void paint(Graphics g, MapView mv) {
 		String gpsCol = Main.pref.get("color.gps point");
 		String gpsColSpecial = Main.pref.get("color.layer "+name);
@@ -305,6 +312,7 @@ public class GpxLayer extends Layer {
 		if (Main.pref.hasKey(linesKey))
 			lines = Main.pref.getBoolean(linesKey);
 		boolean large = Main.pref.getBoolean("draw.rawgps.large");
+		boolean colored = Main.pref.getBoolean("draw.rawgps.colors");
 
 		Point old = null;
 		WayPoint oldWp = null;
@@ -318,9 +326,21 @@ public class GpxLayer extends Layer {
 						continue;
 					Point screen = mv.getPoint(trkPnt.eastNorth);
 					if (lines && old != null) {
+						double dist = trkPnt.latlon.greatCircleDistance(oldWp.latlon);
+						double dtime = trkPnt.time - oldWp.time;
+						double vel = dist/dtime;
+
+						if (colored && dtime > 0) {
+							// scale linearly until 130km/h = 36.1m/s
+							if (vel < 0 || vel > 36) {
+								g.setColor(colors[255]);
+							} else {
+								g.setColor(colors[(int) (7*vel)]);
+							}
+						}
 						
                                             // draw line, if no maxLineLength is set or the line is shorter.
-                                            if (maxLineLength == -1 || trkPnt.latlon.greatCircleDistance(oldWp.latlon) <= maxLineLength){
+                                            if (maxLineLength == -1 || dist <= maxLineLength){
                                                 g.drawLine(old.x, old.y, screen.x, screen.y);
 
                                                 if (direction) {

@@ -16,6 +16,7 @@ public class DrawingPreference implements PreferenceSetting {
 	private JCheckBox drawRawGpsLines = new JCheckBox(tr("Draw lines between raw gps points."));
 	private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
 	private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
+	private JCheckBox colorTracks = new JCheckBox(tr("Color tracks by velocity."));
 	private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
 	private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
 	private JCheckBox interestingDirections = new JCheckBox(tr("Only interesting direction hints (e.g. with oneway tag)."));
@@ -33,6 +34,7 @@ public class DrawingPreference implements PreferenceSetting {
                             }
                             forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
                             drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
+                            colorTracks.setEnabled(drawRawGpsLines.isSelected());
 			}
 		});
 		drawRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines"));
@@ -50,6 +52,12 @@ public class DrawingPreference implements PreferenceSetting {
 		drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction"));
 		drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
 		gui.display.add(drawGpsArrows, GBC.eop().insets(40,0,0,0));
+
+		// colorTracks
+		colorTracks.setSelected(Main.pref.getBoolean("draw.rawgps.colors"));
+		colorTracks.setToolTipText(tr("Choose the hue for the track color by the velocity at that point."));
+		colorTracks.setEnabled(drawRawGpsLines.isSelected());
+		gui.display.add(colorTracks, GBC.eop().insets(40,0,0,0));
 		
 		// largeGpsPoints
 		largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large"));
@@ -97,6 +105,7 @@ public class DrawingPreference implements PreferenceSetting {
 		Main.pref.put("draw.rawgps.lines", drawRawGpsLines.isSelected());
 		Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());
 		Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
+		Main.pref.put("draw.rawgps.colors", colorTracks.isSelected());
 		Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
 		Main.pref.put("draw.segment.direction", directionHint.isSelected());
 		Main.pref.put("draw.segment.relevant_directions_only", interestingDirections.isSelected());
