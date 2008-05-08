@@ -4,122 +4,125 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.swing.JButton;
+import java.awt.BorderLayout;
+
+import javax.swing.JScrollPane;
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.border.EmptyBorder;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.WikiReader;
+import org.openstreetmap.josm.actions.AboutAction;
 
-public class GettingStarted extends JPanel implements ActionListener {
+public class GettingStarted extends JPanel {
 
 	private JPanel panel;
+	static private String content = "";	
 
-	public class LinkLabel extends JEditorPane implements HyperlinkListener {
+	public class LinkGeneral extends JEditorPane implements HyperlinkListener {
 		private String action;
-		public LinkLabel(String text, String action) {
-			this.action = action;
-			String normalized = text.replaceAll("\\[([^\\]]*)\\]", "$1");
-			String link = "<html><h3>"+text.replaceAll("\\[([^\\]]*)\\]", "<a href='"+action+"'>$1</a>")+"</h3></html>";
+		public LinkGeneral(String text) {
 			setContentType("text/html");
-			setText(link);
-			setToolTipText(normalized);
+			setText(text);
 			setEditable(false);
 			setOpaque(false);
 			addHyperlinkListener(this);
         }
 		public void hyperlinkUpdate(HyperlinkEvent e) {
-			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-				actionPerformed(new ActionEvent(e.getSource(), 0, action));
+			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+				OpenBrowser.displayUrl(e.getDescription());
+			}
         }
     }
 
-	public GettingStarted() {
-		super(new GridBagLayout());
-		
-		panel = new JPanel(new GridBagLayout());
-		
-		panel.add(new JLabel(tr("<html><h2>You are running the latest JOSM version with some geometry extensions.</h2>" +
-                "<h3>New elements in the status bar will inform you about the orientation and size of the object<br />" +
-                "being drawn. There is a new \"extrude\" mode that you can use to create rectangular shapes.</h3>" +
-                "<h3>There is also a new option in the tools menu that will make existing shapes into proper<br>" +
-                "rectangles. Note that all this is dependent on the projection you're using; you must use<br>"+
-                "a projection in which rectangles look rectangular and not skewed. Try it out.</h3>"+
-                "<h3>If you dislike the helper line dangling from the mouse cursor, set the \"draw.helper-line\"<br>"+
-                "preference to \"false\"."+
-		"</h3>")), GBC.eol());
+	private void assignContent() {
+		if (content.length() == 0) {
+			String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
+			WikiReader wr = new WikiReader(baseurl);
+			String motdcontent = "";
+			try {
+				motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay");
+			} catch (IOException ioe) {
+				motdcontent = tr("<h2>(Message of the day not available)</h2>");			
+			}
 
-        /*
-		boolean changePrefs = ! (
-			"0.5".equals(Main.pref.get("osm-server.version", "0.5")) &&
-			"0.5".equals(Main.pref.get("osm-server.additionalVersions", "0.5"))
-		);
-		
-		if (changePrefs) {
-			Main.pref.put("osm-server.version", null);
-			Main.pref.put("osm-server.additional-versions", null);
-			panel.add(new JLabel(tr("<html><h3>Your preferences have been changed by removing <b>osm-server.version</b> and/or <b>osm-server.additional-versions</b> which were still referring to 0.4.</h3></html>")), GBC.eol());
+			int myVersion;
+			try {
+				myVersion = Integer.parseInt(AboutAction.getVersion());
+			} catch (NumberFormatException e) {
+				myVersion = 0;
+			}
+
+			Pattern commentPattern = Pattern.compile("\\<p\\>\\s*\\/\\*[^\\*]*\\*\\/\\s*\\<\\/p\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
+			Matcher matcherComment = commentPattern.matcher(motdcontent);
+			motdcontent = matcherComment.replaceAll("");
+
+			/* look for hrefs of the form wiki/MessageOfTheDay>123 where > can also be <,<=,>= and the number is the revision number */
+			int start = 0;
+			boolean nothingIncluded = true;
+			Pattern versionPattern = Pattern.compile("\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
+			Matcher matcher = versionPattern.matcher(motdcontent);
+			matcher.reset();
+			while (matcher.find()) {
+				int targetVersion = Integer.parseInt(matcher.group(3));
+				String condition = matcher.group(2);
+				boolean included = false;
+				if (condition.equals("%3E")) {
+					if ((myVersion == 0 || myVersion > targetVersion) && ! Main.pref.getBoolean("motd.gt."+targetVersion)) {
+						Main.pref.put("motd.gt."+targetVersion, true);
+						included = true;
+					}
+				} else if (condition.equals("%3E%3D")) {
+					if ((myVersion == 0 || myVersion > targetVersion) && ! Main.pref.getBoolean("motd.ge."+targetVersion)) {
+						Main.pref.put("motd.ge."+targetVersion, true);
+						included = true;
+					}
+				} else if (condition.equals("%3C")) {
+					included = myVersion < targetVersion;
+				} else {
+					 included = myVersion <= targetVersion;
+				}
+				if (matcher.start() > start) {
+					content += motdcontent.substring(start, matcher.start() - 1);
+				}
+				start = matcher.end();
+				if (included) {
+					try {
+						content += wr.read(matcher.group(1)).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
+						nothingIncluded = false;
+					} catch (IOException ioe) {
+						// do nothing
+					}			
+				}
+			}
+			if (nothingIncluded) {
+				content += "<div align=\"center\">Watch this space for announcements</div>";
+				content += "<div align=\"center\" style=\"font-weight: normal\">(remove the \"motd\" entries in Advanced Preferences to see any available announcements next time)</div>";
+			}
+			content += motdcontent.substring(start);
+			content = content.replace("<html>", "<html><style>\nbody { font-family: sans-serif; font-weight: bold; }\n</style>");
+			content = content.replace("<h1", "<h1 align=\"center\"");
 		}
-        */
-		
-		addLine("extrudevideo", tr("Short (sound-less) [video] demonstrating the new \"extrude\" feature"));
 
-		addLine("audio", tr("This version also has built-in support for [Audio Mapping] with continuously recorded sound tracks."));
-
-		addGettingStarted();
-		addGettingHelp();
-				
-		panel.add(GBC.glue(0,70), GBC.eol());
-		//panel.setMinimumSize(new Dimension(400, 600));
-		add(panel);
-    }
-
-	public void addGettingStarted() {
-		addCategory(tr("Getting Started"));
-		addLine("download",tr("[Download] some data from the OSM server"));
 	}
 	
-	public void addGettingHelp() {
-	    addCategory(tr("Getting Help"));
-		addLine("help",tr("Open the [online help] (english only)"));
-		addLine("mailinglist",tr("Join the newbie [mailing list]"));
-    }
-
-	public void addCategory(String category) {
-	    panel.add(new JLabel("<html><h2>"+category+"</h2></html>"), GBC.eol().fill(GBC.HORIZONTAL).insets(0,20,0,0));
-    }
-
-	public void addLine(String action, String text) {
-	    JButton button = new JButton(ImageProvider.get("getting_started"));
-        button.setBorder(null);
-        button.addActionListener(this);
-        button.setActionCommand(action);
-		panel.add(button, GBC.std().insets(20,0,5,0));
-		panel.add(new LinkLabel(text,action),GBC.eol());
-    }
-
-
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("download"))
-			Main.main.menu.download.actionPerformed(e);
-		else if (e.getActionCommand().equals("help"))
-			Main.main.menu.help.actionPerformed(e);
-		else if (e.getActionCommand().equals("audio"))
-			OpenBrowser.displayUrl("http://josm.openstreetmap.de/wiki/Help/HowTo/AudioMapping");
-		else if (e.getActionCommand().equals("tutorial"))
-			OpenBrowser.displayUrl("http://josm.openstreetmap.de/wiki/TutorialVideos");
-		else if (e.getActionCommand().equals("mailinglist"))
-			OpenBrowser.displayUrl("mailto:newbies-subscribe@openstreetmap.org?subject=subscribe");
-		else if (e.getActionCommand().equals("extrudevideo"))
-			OpenBrowser.displayUrl("http://josm.openstreetmap.de/download/tutorials/josm-extrude-feature.mpeg");
+	public GettingStarted() {
+		super(new BorderLayout());
+		assignContent();
+								
+		// panel.add(GBC.glue(0,1), GBC.eol());
+		//panel.setMinimumSize(new Dimension(400, 600));
+		JScrollPane scroller = new JScrollPane(new LinkGeneral(content));
+		scroller.setViewportBorder(new EmptyBorder(100,100,10,100));
+		add(scroller, BorderLayout.CENTER);
     }
 }

@@ -61,6 +61,10 @@ public class AboutAction extends JosmAction {
 		time = match.matches() ? match.group(1) : "UNKNOWN";
 	}
 
+	static public String getVersion() {
+		return version;
+	}
+	
 	public AboutAction() {
 		super(tr("About"), "about",tr("Display the about screen."), KeyEvent.VK_F1, KeyEvent.SHIFT_DOWN_MASK, true);
 	}
