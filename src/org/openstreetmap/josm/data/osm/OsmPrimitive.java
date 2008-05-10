@@ -160,16 +160,17 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
  	}
 
 	/**
-	 * Equal, if the id (and class) is equal. If both ids are 0, use the super classes
-	 * equal instead.
+	 * Equal, if the id (and class) is equal. 
 	 * 
 	 * An primitive is equal to its incomplete counter part.
 	 */
-	@Override public final boolean equals(Object obj) {
-		if (obj == null || getClass() != obj.getClass() || id == 0 || ((OsmPrimitive)obj).id == 0)
-			return super.equals(obj);
-		return id == ((OsmPrimitive)obj).id;
-	}
+    @Override public boolean equals(Object obj) {
+        if (id == 0) return obj == this;
+        if (obj instanceof OsmPrimitive) { // not null too
+            return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
+        }
+        return false;
+    }
 
 	/**
 	 * Return the id plus the class type encoded as hashcode or supers hashcode if id is 0.
