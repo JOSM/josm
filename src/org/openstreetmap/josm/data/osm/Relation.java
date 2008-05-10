@@ -56,7 +56,7 @@ public final class Relation extends OsmPrimitive {
 	}
 
     @Override public String toString() {
-        return "{Relation id="+id+" members="+Arrays.toString(members.toArray())+"}";
+        return "{Relation id="+id+" version="+version+" members="+Arrays.toString(members.toArray())+"}";
     }
 
 	@Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {

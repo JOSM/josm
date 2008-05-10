@@ -78,7 +78,7 @@ public final class Way extends OsmPrimitive {
 	}
 
     @Override public String toString() {
-        return "{Way id="+id+" nodes="+Arrays.toString(nodes.toArray())+"}";
+        return "{Way id="+id+" version="+version+" nodes="+Arrays.toString(nodes.toArray())+"}";
     }
 
 	@Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {

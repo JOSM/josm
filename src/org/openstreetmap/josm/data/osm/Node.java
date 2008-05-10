@@ -49,7 +49,7 @@ public final class Node extends OsmPrimitive {
 
 	@Override public String toString() {
 		if (coor == null) return "{Node id="+id+"}";
-		return "{Node id="+id+",lat="+coor.lat()+",lon="+coor.lon()+"}";
+		return "{Node id="+id+",version="+version+",lat="+coor.lat()+",lon="+coor.lon()+"}";
 	}
 
 	@Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {

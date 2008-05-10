@@ -110,6 +110,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 */
 	public boolean incomplete = false; 
 
+	/** 
+	 * Contains the version number as returned by the API. Needed to
+	 * ensure update consistancy
+	 */
+	public int version = -1;
+	 
 	/**
 	 * Contains a list of "uninteresting" keys that do not make an object
 	 * "tagged".
@@ -239,6 +245,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		deleted = osm.deleted;
 		selected = osm.selected;
 		timestamp = osm.timestamp;
+		version = osm.version;
 		tagged = osm.tagged;
 		incomplete = osm.incomplete;
 	}
@@ -255,6 +262,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			(semanticOnly || (modified == osm.modified)) && 
 			deleted == osm.deleted &&
 			(semanticOnly || (timestamp == null ? osm.timestamp==null : timestamp.equals(osm.timestamp))) &&
+			(semanticOnly || (version==osm.version)) &&
 			(semanticOnly || (user == null ? osm.user==null : user==osm.user)) &&
 			(semanticOnly || (visible == osm.visible)) &&
 			(keys == null ? osm.keys==null : keys.equals(osm.keys));

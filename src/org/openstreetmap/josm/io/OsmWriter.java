@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
@@ -33,6 +34,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
 	private HashMap<OsmPrimitive, Long> usedNewIds = new HashMap<OsmPrimitive, Long>();
 
 	private final boolean osmConform;
+	private final Changeset changeset;
 
 	public abstract static class Osm implements OsmWriterInterface {
 		public void header(PrintWriter out) {
@@ -72,7 +74,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
 		}
 
 		public void write(PrintWriter out) {
-			Visitor writer = new OsmWriter(out, osmConform);
+			Visitor writer = new OsmWriter(out, osmConform, null);
 			for (Node n : ds.nodes)
 				if (shouldWrite(n))
 					writer.visit(n);
@@ -108,20 +110,23 @@ public class OsmWriter extends XmlWriter implements Visitor {
 	public static final class Single extends Osm {
 		private final OsmPrimitive osm;
 		private final boolean osmConform;
+		private final Changeset changeset;
 
-		public Single(OsmPrimitive osm, boolean osmConform) {
+		public Single(OsmPrimitive osm, boolean osmConform, Changeset changeset) {
 			this.osm = osm;
 			this.osmConform = osmConform;
+			this.changeset = changeset;
 		}
 
 		public void write(PrintWriter out) {
-			osm.visit(new OsmWriter(out, osmConform));
+			osm.visit(new OsmWriter(out, osmConform, changeset));
         }
 	}
 
-	private OsmWriter(PrintWriter out, boolean osmConform) {
+	private OsmWriter(PrintWriter out, boolean osmConform, Changeset changeset) {
 		super(out);
 		this.osmConform = osmConform;
+		this.changeset = changeset;
 	}
 
 	public void visit(Node n) {
@@ -204,6 +209,9 @@ public class OsmWriter extends XmlWriter implements Visitor {
 			out.print(" user='"+XmlWriter.encode(osm.user.name)+"'");
 		}
 		out.print(" visible='"+osm.visible+"'");
-		
+		if( osm.version != -1 )
+			out.print( " old_version='"+osm.version+"'");
+		if( this.changeset != null && this.changeset.id != 0)
+			out.print( " changeset='"+this.changeset.id+"'" );
 	}
 }
