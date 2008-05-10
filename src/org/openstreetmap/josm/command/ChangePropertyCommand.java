@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +41,12 @@ public class ChangePropertyCommand extends Command {
 	
 	public ChangePropertyCommand(Collection<OsmPrimitive> objects, String key, String value) {
 		this.objects = new LinkedList<OsmPrimitive>(objects);
+		this.key = key;
+		this.value = value;
+	}
+
+	public ChangePropertyCommand(OsmPrimitive object, String key, String value) {
+		this.objects = new LinkedList<OsmPrimitive>(Collections.singleton(object));
 		this.key = key;
 		this.value = value;
 	}

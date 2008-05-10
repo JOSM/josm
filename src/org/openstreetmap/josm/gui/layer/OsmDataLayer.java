@@ -35,6 +35,7 @@ import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -390,4 +391,21 @@ public class OsmDataLayer extends Layer {
 			Main.main.removeLayer(OsmDataLayer.this);
 		}
 	}
+
+    public boolean containsPoint(LatLon coor)
+    {
+        // we'll assume that if this has no data sources
+        // that it also has no borders
+        if (this.data.dataSources.isEmpty())
+            return true;
+
+        boolean layer_bounds_point = false;
+        for (DataSource src : this.data.dataSources) {
+            if (src.bounds.contains(coor)) {
+                layer_bounds_point = true;
+                break;
+            }
+        }
+        return layer_bounds_point;
+    }
 }
