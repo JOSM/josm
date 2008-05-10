@@ -51,7 +51,7 @@ public class ChangePropertyCommand extends Command {
 		this.value = value;
 	}
 	
-	@Override public void executeCommand() {
+	@Override public boolean executeCommand() {
 		super.executeCommand(); // save old
 		if (value == null) {
 			for (OsmPrimitive osm : objects) {
@@ -64,6 +64,7 @@ public class ChangePropertyCommand extends Command {
 				osm.put(key, value);
 			}
 		}
+		return true;
 	}
 
 	@Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {

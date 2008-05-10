@@ -112,8 +112,9 @@ public class RotateCommand extends Command {
 		}
 	}
 	
-	@Override public void executeCommand() {
+	@Override public boolean executeCommand() {
 		rotateNodes(true);
+		return true;
 	}
 
 	@Override public void undoCommand() {

@@ -28,10 +28,11 @@ public class ChangeCommand extends Command {
 		this.newOsm = newOsm;
     }
 
-	@Override public void executeCommand() {
+	@Override public boolean executeCommand() {
 	    super.executeCommand();
 	    osm.cloneFrom(newOsm);
 	    osm.modified = true;
+		return true;
     }
 
 	@Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {

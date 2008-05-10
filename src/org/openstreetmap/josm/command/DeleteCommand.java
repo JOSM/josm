@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -25,15 +26,26 @@ public class DeleteCommand extends Command {
 	 */
 	private final Collection<? extends OsmPrimitive> data;
 
+    /** 
+     * Constructor for a collection of data
+     */
 	public DeleteCommand(Collection<? extends OsmPrimitive> data) {
 		this.data = data;
 	}
+    /** 
+     * Constructor for a single data item. Use the collection 
+     * constructor to delete multiple objects.
+     */
+    public DeleteCommand(OsmPrimitive data) {
+        this.data = Collections.singleton(data);
+    }
 
-	@Override public void executeCommand() {
+	@Override public boolean executeCommand() {
 		super.executeCommand();
 		for (OsmPrimitive osm : data) {
 			osm.delete(true);
 		}
+		return true;
 	}
 	
 	@Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {

@@ -35,7 +35,7 @@ public class ConflictResolveCommand extends Command {
 		conflictDialog = Main.map.conflictDialog;
 	}
 
-	@Override public void executeCommand() {
+	@Override public boolean executeCommand() {
 		super.executeCommand();
 
 		origAllConflicts = new HashMap<OsmPrimitive, OsmPrimitive>(conflictDialog.conflicts);
@@ -56,6 +56,7 @@ public class ConflictResolveCommand extends Command {
 				conflictDialog.conflicts.remove(k);
 			conflictDialog.rebuildList();
  		}
+		return true;
 	}
 
 	@Override public void undoCommand() {

@@ -9,6 +9,7 @@ import java.util.Collection;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
@@ -22,7 +23,9 @@ public class SequenceCommand extends Command {
 	 * The command sequenz to be executed.
 	 */
 	private Command[] sequence;
+	private boolean sequence_complete;
 	private final String name;
+	public boolean continueOnError = false;
 
 	/**
 	 * Create the command by specifying the list of commands to execute.
@@ -41,14 +44,34 @@ public class SequenceCommand extends Command {
 		this(name, Arrays.asList(sequenz));
 	}
 	
-	@Override public void executeCommand() {
-		for (Command c : sequence)
-			c.executeCommand();
+	public int executed_commands = 0;
+	@Override public boolean executeCommand() {
+		for (int i=0; i < sequence.length; i++) {
+			Command c = sequence[i];
+			boolean result = c.executeCommand();
+			if (!result)
+				Main.debug("SequenceCommand, executing command[" + i + "] " +  c + " result: " + result);
+			if (!result && !continueOnError) {
+				this.undoCommands(i-1);
+				return false;
+			}
+		}
+		sequence_complete = true;
+		return true;
+	}
+
+	private void undoCommands(int start) {
+		// We probably aborted this halfway though the
+		// execution sequence because of a sub-command
+		// error.  We already undid the sub-commands.
+		if (!sequence_complete)
+			return;
+		for (int i = start; i >= 0; --i)
+			sequence[i].undoCommand();
 	}
 
 	@Override public void undoCommand() {
-		for (int i = sequence.length-1; i >= 0; --i)
-			sequence[i].undoCommand();
+		this.undoCommands(sequence.length-1);
 	}
 
 	@Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {

@@ -43,8 +43,9 @@ public class AddCommand extends Command {
 		this.ds = Main.main.editLayer().data;
 	}
 
-	@Override public void executeCommand() {
+	@Override public boolean executeCommand() {
 		osm.visit(new AddVisitor(ds));
+		return true;
 	}
 
 	@Override public void undoCommand() {

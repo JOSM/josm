@@ -94,12 +94,13 @@ public class MoveCommand extends Command {
 		this.y += y;
 	}
 	
-	@Override public void executeCommand() {
+	@Override public boolean executeCommand() {
 		for (Node n : objects) {
 			n.eastNorth = new EastNorth(n.eastNorth.east()+x, n.eastNorth.north()+y);
 			n.coor = Main.proj.eastNorth2latlon(n.eastNorth);
 			n.modified = true;
 		}
+		return true;
 	}
 
 	@Override public void undoCommand() {
