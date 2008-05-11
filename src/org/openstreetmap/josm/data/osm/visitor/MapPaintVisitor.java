@@ -181,19 +181,21 @@ public class MapPaintVisitor implements Visitor {
 				continue;
 			}
 			orderNumber++;
-			//  drawSegment(lastN, n, w.selected && !inactive ? selectedColor : wayColor, showDirectionArrow);
 
-			if (area && fillAreas)
-				//Draw segments in a different colour so direction arrows show against the fill
-				drawSeg(lastN, n, w.selected ? selectedColor : untaggedColor, showDirection, width, true);
-			else
-				if (area)
+			if (area && fillAreas) {
+                // hack to make direction arrows visible against filled background
+				if (showDirection)
+				    drawSeg(lastN, n, w.selected ? selectedColor : untaggedColor, showDirection, width, true);
+			} else {
+				if (area) {
 					drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, true);
-				else
-					if (realWidth > 0 && useRealWidth && !showDirection){
+				} else {
+					if (realWidth > 0 && useRealWidth && !showDirection) {
 						int tmpWidth = (int) (100 /  (float) (circum / realWidth));
 						if (tmpWidth > width) width = tmpWidth;
 					}
+                }
+            }
 
 			drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed);
 
