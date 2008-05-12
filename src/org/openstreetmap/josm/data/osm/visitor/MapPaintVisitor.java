@@ -403,7 +403,7 @@ public class MapPaintVisitor implements Visitor {
 		int y = (p1.y+p2.y)/2 + 4;
 
 		Rectangle screen = g.getClipBounds();
-		if (screen.contains(x,y)) {
+		if ((screen != null) && screen.contains(x,y)) {
 			Color c = g.getColor();
 			g.setColor(backgroundColor);
 			g.fillRect(x-1, y-12, 8*strlen+1, 14);
