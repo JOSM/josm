@@ -64,7 +64,6 @@ public class SimplePaintVisitor implements Visitor {
 	protected Color currentColor = null;
 	protected GeneralPath currentPath = new GeneralPath();
 
-	private Rectangle screen;
 	Rectangle bbox = new Rectangle();
 
 	public void visitAll(DataSet data) {
@@ -170,7 +169,7 @@ public class SimplePaintVisitor implements Visitor {
 		int x = (p1.x+p2.x)/2 - 4*strlen;
 		int y = (p1.y+p2.y)/2 + 4;
 
-		if (screen.contains(x,y)) {
+		if (isSegmentVisible(p1, p2)) {
 			Color c = g.getColor();
 			g.setColor(backgroundColor);
 			g.fillRect(x-1, y-12, 8*strlen+1, 14);
@@ -187,15 +186,16 @@ public class SimplePaintVisitor implements Visitor {
 	 */
 	public void drawNode(Node n, Color color) {
 		Point p = nc.getPoint(n.eastNorth);
-		g.setColor(color);
+        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
-		if (screen.contains(p.x, p.y))
-			if (n.tagged) {
-				g.drawRect(p.x, p.y, 0, 0);
-				g.drawRect(p.x-2, p.y-2, 4, 4);
-			} else {
-				g.drawRect(p.x-1, p.y-1, 2, 2);
-			}
+        g.setColor(color);
+
+        if (n.tagged) {
+            g.drawRect(p.x, p.y, 0, 0);
+            g.drawRect(p.x-2, p.y-2, 4, 4);
+        } else {
+            g.drawRect(p.x-1, p.y-1, 2, 2);
+        }
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class SimplePaintVisitor implements Visitor {
 
 		if (col != currentColor) displaySegments(col);
 		
-		if (onScreen(p1, p2)) {
+		if (isSegmentVisible(p1, p2)) {
 			currentPath.moveTo(p1.x, p1.y);
 			currentPath.lineTo(p2.x, p2.y);
 			
@@ -218,18 +218,16 @@ public class SimplePaintVisitor implements Visitor {
 		}
 	}
         
-	private boolean onScreen(Point p1, Point p2) {
-		bbox.setBounds(p1.x, p1.y, 0, 0);
-		bbox.add(p2);
-		if (bbox.height + bbox.width < 1) return false;
-		bbox.width++;
-		bbox.height++;
-		return screen.intersects(bbox);
-        }
+    private boolean isSegmentVisible(Point p1, Point p2) {
+        if ((p1.x < 0) && (p2.x < 0)) return false;
+        if ((p1.y < 0) && (p2.y < 0)) return false;
+        if ((p1.x > nc.getWidth()) && (p2.x > nc.getWidth())) return false;
+        if ((p1.y > nc.getHeight()) && (p2.y > nc.getHeight())) return false;
+        return true;
+    }
 	
 	public void setGraphics(Graphics g) {
 		this.g = g;
-		screen = g.getClipBounds();
 	}
 
 	public void setNavigatableComponent(NavigatableComponent nc) {
