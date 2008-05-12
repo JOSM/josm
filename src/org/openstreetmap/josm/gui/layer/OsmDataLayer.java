@@ -9,11 +9,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
-import java.awt.image.BufferedImage;
 import java.awt.Point;
-import java.awt.Transparency;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
@@ -174,14 +171,10 @@ public class OsmDataLayer extends Layer {
 		}
 		else
 		{
-            // MapPaintVisitor paints calls fillPolygon() with an alpha
-            // channel -- this is slow, speed it up by rendering to a BufferedImage:
-            BufferedImage bim = new BufferedImage(mv.getWidth(), mv.getHeight(), Transparency.OPAQUE);
-            standardMapPainter.setGraphics(bim.createGraphics());
-            standardMapPainter.setNavigatableComponent(mv);
-            standardMapPainter.inactive = inactive;
-            standardMapPainter.visitAll(data);
-            g.drawImage(bim, 0, 0, null);
+			standardMapPainter.setGraphics(g);
+			standardMapPainter.setNavigatableComponent(mv);
+			standardMapPainter.inactive = inactive;
+			standardMapPainter.visitAll(data);
 		}
 		Main.map.conflictDialog.paintConflicts(g, mv);
 	}
