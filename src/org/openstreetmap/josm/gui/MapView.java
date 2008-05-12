@@ -6,10 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Transparency;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -198,24 +201,27 @@ public class MapView extends NavigatableComponent {
 	@Override public void paint(Graphics g) {
 		if (center == null)
 			return; // no data loaded yet.
-		g.setColor(Preferences.getPreferencesColor("background", Color.BLACK));
-		g.fillRect(0, 0, getWidth(), getHeight());
+		
+		BufferedImage bim = new BufferedImage(getWidth(), getHeight(), Transparency.OPAQUE);
+		Graphics2D tempG = bim.createGraphics();
+		tempG.setColor(Preferences.getPreferencesColor("background", Color.BLACK));
+		tempG.fillRect(0, 0, getWidth(), getHeight());
 
 		for (int i = layers.size()-1; i >= 0; --i) {
 			Layer l = layers.get(i);
 			if (l.visible && l != getActiveLayer())
-				l.paint(g, this);
+				l.paint(tempG, this);
 		}
 		
 		if (getActiveLayer() != null && getActiveLayer().visible)
-			getActiveLayer().paint(g, this);
+			getActiveLayer().paint(tempG, this);
 
 		for (MapViewPaintable mvp : temporaryLayers) {
-			mvp.paint(g, this);
+			mvp.paint(tempG, this);
 		}
 		
 		// draw world borders
-		g.setColor(Color.WHITE);
+		tempG.setColor(Color.WHITE);
 		Bounds b = new Bounds();
 		Point min = getPoint(getProjection().latlon2eastNorth(b.min));
 		Point max = getPoint(getProjection().latlon2eastNorth(b.max));
@@ -224,11 +230,12 @@ public class MapView extends NavigatableComponent {
 		int x2 = Math.max(min.x, max.x);
 		int y2 = Math.max(min.y, max.y);
 		if (x1 > 0 || y1 > 0 || x2 < getWidth() || y2 < getHeight())
-			g.drawRect(x1, y1, x2-x1+1, y2-y1+1);
+			tempG.drawRect(x1, y1, x2-x1+1, y2-y1+1);
 		
 		if (playHeadMarker != null)
-			playHeadMarker.paint(g, this);
+			playHeadMarker.paint(tempG, this);
 
+		g.drawImage(bim, 0, 0, null);
 		super.paint(g);
 	}
 
