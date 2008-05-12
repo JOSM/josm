@@ -84,6 +84,7 @@ public class OsmReader {
 			osm.timestamp = timestamp;
 			osm.user = user;
 			osm.visible = visible;
+			osm.version = version;
 			osm.checkTagged();
                         osm.checkDirectionTagged();
 		}
@@ -248,6 +249,22 @@ public class OsmReader {
 		String visible = atts.getValue("visible");
 		if (visible != null) {
 			current.visible = Boolean.parseBoolean(visible);
+		}
+
+		// oldversion attribute added in 0.6 API
+
+		// Note there is an asymmetry here: the server will send
+		// the version as "version" the client sends it as
+		// "oldversion". So we take both since which we receive will
+		// depend on reading from a file or reading from the server
+
+		String version = atts.getValue("version");
+		if (version != null) {
+			current.version = Integer.parseInt(version);
+		}
+		version = atts.getValue("old_version");
+		if (version != null) {
+			current.version = Integer.parseInt(version);
 		}
 
 		String action = atts.getValue("action");

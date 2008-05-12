@@ -148,7 +148,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	private boolean startChangeset(int retries, String comment) {
 		Main.pleaseWaitDlg.currentAction.setText(tr("Opening changeset..."));
 		changeset = new Changeset();
-		changeset.put( "created_by", "josm" );
+		changeset.put( "created_by", "JOSM" );
 		changeset.put( "comment", comment );
 		try {
 			if (cancel)
@@ -302,10 +302,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	 * Upload a single node.
 	 */
 	public void visit(Node n) {
-		if (n.id == 0 && !n.deleted && n.get("created_by") == null) {
-			n.put("created_by", "JOSM");
-			sendRequest("PUT", "node", n, true);
-		} else if (n.deleted) {
+		if (n.deleted) {
 			sendRequest("DELETE", "node", n, true);
 		} else {
 			sendRequest("PUT", "node", n, true);
@@ -317,10 +314,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	 * Upload a whole way with the complete node id list.
 	 */
 	public void visit(Way w) {
-		if (w.id == 0 && !w.deleted && w.get("created_by") == null) {
-			w.put("created_by", "JOSM");
-			sendRequest("PUT", "way", w, true);
-		} else if (w.deleted) {
+		if (w.deleted) {
 			sendRequest("DELETE", "way", w, true);
 		} else {
 			sendRequest("PUT", "way", w, true);
@@ -332,10 +326,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	 * Upload an relation with all members.
 	 */
 	public void visit(Relation e) {
-		if (e.id == 0 && !e.deleted && e.get("created_by") == null) {
-			e.put("created_by", "JOSM");
-			sendRequest("PUT", "relation", e, true);
-		} else if (e.deleted) {
+		if (e.deleted) {
 			sendRequest("DELETE", "relation", e, true);
 		} else {
 			sendRequest("PUT", "relation", e, true);
@@ -397,7 +388,10 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			/* When creating new, the returned value is the new id, otherwise it is the new version */
 			if (retCode == 200)
 				if(osm.id == 0)
+				{
 					osm.id = readId(activeConnection.getInputStream());
+					osm.version = 1;
+				}
 				else
 				{
 					int read_version = (int)readId(activeConnection.getInputStream());
