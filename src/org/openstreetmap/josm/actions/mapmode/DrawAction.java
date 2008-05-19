@@ -416,9 +416,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		if (currentBaseNode == null || currentBaseNode == currentMouseNode) {
 			return; // Don't create zero length way segments.
 		}
-		
-		Main.map.mapView.repaint();
-		
+
 		// find out the distance, in metres, between the base point and the mouse cursor
 		LatLon mouseLatLon = Main.proj.eastNorth2latlon(currentMouseEastNorth);
 		distance = currentBaseNode.coor.greatCircleDistance(mouseLatLon);
@@ -431,6 +429,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		Main.map.statusLine.setHeading(hdg);
 		Main.map.statusLine.setDist(distance);
 		updateStatusLine();
+
+		if (!drawHelperLine) return;
+
+		Main.map.mapView.repaint();
 	}
 	
 	/**
