@@ -53,7 +53,15 @@ public final class Node extends OsmPrimitive {
 	}
 
 	@Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-		return osm instanceof Node ? super.realEqual(osm, semanticOnly) && coor.equals(((Node)osm).coor) : false;
+		if (osm instanceof Node) {
+            if (super.realEqual(osm, semanticOnly)) {
+                if ((coor == null) && ((Node)osm).coor == null)
+                    return true;
+                if (coor != null)
+                    return coor.equals(((Node)osm).coor);
+            }
+        }
+        return false;
     }
 
 	public int compareTo(OsmPrimitive o) {
