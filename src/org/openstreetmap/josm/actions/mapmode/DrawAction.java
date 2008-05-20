@@ -168,7 +168,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		
 		if (n != null) {
 			// user clicked on node
-			if (selection.isEmpty()) {
+			if (shift || selection.isEmpty()) {
 				// select the clicked node and do nothing else
 				// (this is just a convenience option so that people don't
 				// have to switch modes)
