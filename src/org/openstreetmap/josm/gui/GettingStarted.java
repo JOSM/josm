@@ -52,7 +52,7 @@ public class GettingStarted extends JPanel {
 			try {
 				motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay");
 			} catch (IOException ioe) {
-				motdcontent = tr("<h2>(Message of the day not available)</h2>");			
+				motdcontent = tr("<html>\n<h1>JOSM, the Java OpenStreetMap editor</h1>\n<h2>(Message of the day not available)</h2>");			
 			}
 
 			int myVersion;
@@ -82,7 +82,7 @@ public class GettingStarted extends JPanel {
 						included = true;
 					}
 				} else if (condition.equals("%3E%3D")) {
-					if ((myVersion == 0 || myVersion > targetVersion) && ! Main.pref.getBoolean("motd.ge."+targetVersion)) {
+					if ((myVersion == 0 || myVersion >= targetVersion) && ! Main.pref.getBoolean("motd.ge."+targetVersion)) {
 						Main.pref.put("motd.ge."+targetVersion, true);
 						included = true;
 					}
