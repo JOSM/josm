@@ -6,6 +6,7 @@ package org.openstreetmap.josm.data.gpx;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.awt.Color;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -16,6 +17,9 @@ public class WayPoint extends WithAttributes {
 	public final LatLon latlon;
 	public final EastNorth eastNorth;
 	public double time;
+	public Color speedLineColor;
+	public boolean drawLine;
+	public int dir;
 
 	public WayPoint(LatLon ll) {
 		latlon = ll; 

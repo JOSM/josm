@@ -72,11 +72,14 @@ public class GpxLayer extends Layer {
 	public GpxData data;
 	private final GpxLayer me;
 	protected static final double PHI = Math.toRadians(15);
+	private boolean computeCacheInSync;
+	private int computeCacheMaxLineLingthUsed;
 	
 	public GpxLayer(GpxData d) {
 		super((String) d.attr.get("name"));
 		data = d;
 		me = this;
+		computeCacheInSync = false;
 	}
 
 	public GpxLayer(GpxData d, String name) {
@@ -284,6 +287,7 @@ public class GpxLayer extends Layer {
 
 	@Override public void mergeFrom(Layer from) {
 		data.mergeFrom(((GpxLayer)from).data);
+		computeCacheInSync = false;
 	}
 
 	private static Color[] colors = new Color[256];
@@ -293,72 +297,134 @@ public class GpxLayer extends Layer {
 		}
 	}
 
+	// lookup array to draw arrows without doing any math
+	private static int ll0 = 9;
+	private static int sl4 = 5;
+	private static int sl9 = 3;
+	private static int[][] dir = {
+		{+sl4,+ll0,+ll0,+sl4},
+		{-sl9,+ll0,+sl9,+ll0},
+		{-ll0,+sl4,-sl4,+ll0},
+		{-ll0,-sl9,-ll0,+sl9},
+		{-sl4,-ll0,-ll0,-sl4},
+		{+sl9,-ll0,-sl9,-ll0},
+		{+ll0,-sl4,+sl4,-ll0},
+		{+ll0,+sl9,+ll0,-sl9},
+		{+sl4,+ll0,+ll0,+sl4},
+		{-sl9,+ll0,+sl9,+ll0},
+		{-ll0,+sl4,-sl4,+ll0},
+		{-ll0,-sl9,-ll0,+sl9}
+	};
+
 	@Override public void paint(Graphics g, MapView mv) {
 		String gpsCol = Main.pref.get("color.gps point");
 		String gpsColSpecial = Main.pref.get("color.layer "+name);
+		Color neutralColor;
 		if (!gpsColSpecial.equals("")) {
-			g.setColor(ColorHelper.html2color(gpsColSpecial));
+			neutralColor = ColorHelper.html2color(gpsColSpecial);
 		} else if (!gpsCol.equals("")) {
-			g.setColor(ColorHelper.html2color(gpsCol));
+			neutralColor = ColorHelper.html2color(gpsCol);
 		} else{
-			g.setColor(Color.GRAY);
+			neutralColor = Color.GRAY;
 		}
+		g.setColor(neutralColor);
 		
-		boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");
-		boolean direction = Main.pref.getBoolean("draw.rawgps.direction");
-		int maxLineLength = Integer.parseInt(Main.pref.get("draw.rawgps.max-line-length", "-1"));
-		boolean lines = Main.pref.getBoolean("draw.rawgps.lines");
+		boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");                     // also draw lines between points belonging to different segments
+		boolean direction = Main.pref.getBoolean("draw.rawgps.direction");                        // draw direction arrows on the lines
+		int maxLineLength = Integer.parseInt(Main.pref.get("draw.rawgps.max-line-length", "-1")); // don't draw lines if longer than x meters
+		boolean lines = Main.pref.getBoolean("draw.rawgps.lines");                                // draw line between points, global setting
 		String linesKey = "draw.rawgps.lines.layer "+name;
 		if (Main.pref.hasKey(linesKey))
-			lines = Main.pref.getBoolean(linesKey);
-		boolean large = Main.pref.getBoolean("draw.rawgps.large");
-		boolean colored = Main.pref.getBoolean("draw.rawgps.colors");
+			lines = Main.pref.getBoolean(linesKey);                                                 // draw lines, per-layer setting
+		boolean large = Main.pref.getBoolean("draw.rawgps.large");                                // paint large dots for points
+		boolean colored = Main.pref.getBoolean("draw.rawgps.colors");                             // color the lines
+		boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");      // paint direction arrow with alternate math. may be faster
+		boolean trianglelines = Main.pref.getBoolean("draw.rawgps.trianglelines");                // paint lines as 2 lines
 
-		Point old = null;
+		if (computeCacheInSync && computeCacheMaxLineLingthUsed != maxLineLength) {
+			computeCacheInSync = false;
+		}
+
+		if (!computeCacheInSync && lines) { // don't compute if the cache is good or if there are no lines to draw at all
+			//System.out.println("(re-)computing gpx line styles, reason: CCIS=" + computeCacheInSync + " L=" + lines);
 		WayPoint oldWp = null;
 		for (GpxTrack trk : data.tracks) {
-			if (!forceLines) {
-				old = null;
+				if (!forceLines) { // don't draw lines between segments, unless forced to
+					oldWp = null;
 			}
+			for (Collection<WayPoint> segment : trk.trackSegs) {
+				for (WayPoint trkPnt : segment) {
+						if (Double.isNaN(trkPnt.latlon.lat()) || Double.isNaN(trkPnt.latlon.lon())) {
+						continue;
+						}
+						if (oldWp != null) {
+						double dist = trkPnt.latlon.greatCircleDistance(oldWp.latlon);
+						double dtime = trkPnt.time - oldWp.time;
+						double vel = dist/dtime;
+
+							if (dtime <= 0 || vel < 0 || vel > 36) { // attn: bad case first
+								trkPnt.speedLineColor = colors[255];
+							} else {
+								trkPnt.speedLineColor = colors[(int) (7*vel)];
+							}
+							if (maxLineLength == -1 || dist <= maxLineLength) {
+								trkPnt.drawLine = true;
+								trkPnt.dir = (int)(Math.atan2(-trkPnt.eastNorth.north()+oldWp.eastNorth.north(), trkPnt.eastNorth.east()-oldWp.eastNorth.east()) / Math.PI * 4 + 3.5); // crude but works
+							} else {
+								trkPnt.drawLine = false;
+						}
+						} else { // make sure we reset outdated data
+							trkPnt.speedLineColor = colors[255];
+							trkPnt.drawLine = false;
+						}
+						oldWp = trkPnt;
+					}
+				}
+			}
+			computeCacheInSync = true;
+			computeCacheMaxLineLingthUsed = maxLineLength;
+		}
+						
+		Point old = null;
+		for (GpxTrack trk : data.tracks) {
 			for (Collection<WayPoint> segment : trk.trackSegs) {
 				for (WayPoint trkPnt : segment) {
 					if (Double.isNaN(trkPnt.latlon.lat()) || Double.isNaN(trkPnt.latlon.lon()))
 						continue;
 					Point screen = mv.getPoint(trkPnt.eastNorth);
-					if (lines && old != null) {
-						double dist = trkPnt.latlon.greatCircleDistance(oldWp.latlon);
-						double dtime = trkPnt.time - oldWp.time;
-						double vel = dist/dtime;
-
-						if (colored && dtime > 0) {
-							// scale linearly until 130km/h = 36.1m/s
-							if (vel < 0 || vel > 36) {
-								g.setColor(colors[255]);
-							} else {
-								g.setColor(colors[(int) (7*vel)]);
+					if (lines && trkPnt.drawLine) {
+						if ((old.x != screen.x) || (old.y != screen.y)) { // skip points that are on the same screenposition
+							if (colored) {
+								g.setColor(trkPnt.speedLineColor);
 							}
-						}
-						
-                                            // draw line, if no maxLineLength is set or the line is shorter.
-                                            if (maxLineLength == -1 || dist <= maxLineLength){
+							if (trianglelines) { // fast
+								g.drawLine(screen.x, screen.y, old.x + dir[trkPnt.dir][0], old.y + dir[trkPnt.dir][1]);
+								g.drawLine(screen.x, screen.y, old.x + dir[trkPnt.dir][2], old.y + dir[trkPnt.dir][3]);
+							} else { // slow
                                                 g.drawLine(old.x, old.y, screen.x, screen.y);
-
+							}
                                                 if (direction) {
+								if (alternatedirection) { // a little bit faster
+									g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y + dir[trkPnt.dir][1]);
+									g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][2], screen.y + dir[trkPnt.dir][3]);
+								} else { // a tiny bit slower, may not make a difference at all
                                                     double t = Math.atan2(screen.y-old.y, screen.x-old.x) + Math.PI;
                                                     g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t-PHI)), (int)(screen.y + 10*Math.sin(t-PHI)));
                                                     g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t+PHI)), (int)(screen.y + 10*Math.sin(t+PHI)));
                                                 }
+							}
+						}
                                             }else{
-                                                g.drawRect(screen.x, screen.y, 0, 0);
+						if (colored) { // reset color for non-line drawing if lines are variable colored
+							g.setColor(neutralColor);
                                             }
-						
-					} else if (!large) {
+						if (large) {
+							g.fillRect(screen.x-1, screen.y-1, 3, 3);
+						} else {
 						g.drawRect(screen.x, screen.y, 0, 0);
 					}
-					if (large)
-						g.fillRect(screen.x-1, screen.y-1, 3, 3);
+					}
 					old = screen;
-					oldWp = trkPnt;
 				}
 			}
 		}
