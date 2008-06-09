@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -278,6 +281,35 @@ public class GpxLayer extends Layer {
 			info.append(tr("Description: {0}", data.attr.get("desc")))
 				.append("<br>");
 
+                if(data.tracks.size() > 0){
+                    boolean first = true;
+                    WayPoint earliest = null, latest = null;
+
+                    for(GpxTrack trk: data.tracks){
+                        for(Collection<WayPoint> seg:trk.trackSegs){
+                            for(WayPoint pnt:seg){
+                                if(first){
+                                    latest = earliest = pnt;
+                                    first = false;
+                                }else{
+                                    if(pnt.compareTo(earliest) < 0){
+                                        earliest = pnt;
+                                    }else{
+                                        latest = pnt;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+                    info.append(tr("Timespan: ") + df.format(new Date((long)(earliest.time * 1000))) + " - " + df.format(new Date((long)(latest.time * 1000))));
+                    int diff = (int)(latest.time - earliest.time);
+                    info.append(" (" + (diff / 3600) + ":" + ((diff % 3600)/60) + ")");
+                    info.append("<br>");
+                }
+                info.append(tr("Length: ") + new DecimalFormat("#0.00").format(data.length() / 1000) + "km");
+                info.append("<br>");
+                
 		return info.append("</html>").toString();
 	}
 

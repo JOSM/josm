@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * objects of this class represent a gpx file with tracks, waypoints and routes
@@ -98,4 +99,46 @@ public class GpxData extends WithAttributes {
 			bounds = new Bounds();
 		}
 	}
+    
+    /**
+     * calculates the sum of the lengths of all track segments
+     */
+    public double length(){
+        double result = 0.0; // in meters
+        WayPoint last = null;
+		
+        for (GpxTrack trk : tracks) {
+            for (Collection<WayPoint> trkseg : trk.trackSegs) {
+                for (WayPoint tpt : trkseg) {
+                    if(last != null){
+                        result += calcDistance(last.latlon, tpt.latlon);
+                    }
+                    last = tpt;
+                }
+                last = null; // restart for each track segment
+            }
+        }
+        return result;
+    }
+
+    /**
+     * returns the distance in meters between two LatLons
+     */
+    public static double calcDistance(LatLon p1, LatLon p2){
+        double lat1, lon1, lat2, lon2;
+        double dlon, dlat;
+	    
+        lat1 = p1.lat() * Math.PI / 180.0;
+        lon1 = p1.lon() * Math.PI / 180.0;
+        lat2 = p2.lat() * Math.PI / 180.0;
+        lon2 = p2.lon() * Math.PI / 180.0;
+
+        dlon = lon2 - lon1;
+        dlat = lat2 - lat1;
+
+        double a = (Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2));
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return 6367000 * c;
+    }
+
 }
