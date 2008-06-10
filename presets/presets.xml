@@ -81,7 +81,18 @@
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 	</item>
 
-	<item name="Streets/Primary" icon="presets/ways.png">
+	<item name="Streets/Exit" icon="presets/motorway_exit.png">
+		<label text="Edit an Exit" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="exit_nr" text="Exit Number:" default="" delete_if_empty="true" />
+		<text key="exit_name" text="Exit Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Streets/ " icon="presets/empty.png"></item>
+
+	<item name="Streets/Primary" icon="presets/way_primary.png">
 		<label text="Edit a Primary Road" />
 		<label text=" " />
 		<key key="highway" value="primary" />
@@ -100,7 +111,7 @@
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 	</item>
 
-	<item name="Streets/Primary Link" icon="presets/ways.png">
+	<item name="Streets/Primary Link" icon="presets/way_primary.png">
 		<label text="Edit a Primary Link" />
 		<label text=" " />
 		<key key="highway" value="primary_link" />
@@ -116,29 +127,8 @@
 		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 	</item>
-	
-	<item name="Streets/Exits" icon="presets/motorway_exit.png">
-		<label text="Edit an Exit" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="exit_nr" text="Exit Number:" default="" delete_if_empty="true" />
-		<text key="exit_name" text="Exit Name:" default="" delete_if_empty="true" />
-	</item>
 
-	<item name="Streets/Ferry" icon="presets/ferry.png">
-		<label text="Edit a Ferry" />
-		<label text=" " />
-		<key key="route" value="ferry" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Streets/ " icon="presets/empty.png"></item>
-
-	<item name="Streets/Secondary" icon="presets/ways.png">
+	<item name="Streets/Secondary" icon="presets/way_secondary.png">
 		<label text="Edit a Secondary Road" />
 		<label text=" " />
 		<key key="highway" value="secondary" />
@@ -157,7 +147,7 @@
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 	</item>
 	
-	<item name="Streets/Tertiary" icon="presets/ways.png">
+	<item name="Streets/Tertiary" icon="presets/way_tertiary.png">
 		<label text="Edit a Tertiary Road" />
 		<label text=" " />
 		<key key="highway" value="tertiary" />
@@ -167,7 +157,6 @@
 		<label text=" " />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
 		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
 		<check key="oneway" text="Oneway:" default="off" delete_if_empty="true" />
 		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
@@ -175,8 +164,27 @@
 		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 	</item>
-	
-	<item name="Streets/Unclassified" icon="presets/ways.png">
+
+	<item name="Streets/Road (Unknown Type)" icon="presets/way_unknown.png">
+		<label text="Edit a Road of unknown type" />
+		<label text=" " />
+		<key key="highway" value="road" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway:" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel:" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+
+	<item name="Streets/Unclassified" icon="presets/way_unclassified.png">
 		<label text="Edit a Unclassified Road" />
 		<label text=" " />
 		<key key="highway" value="unclassified" />
@@ -190,12 +198,11 @@
 		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
 		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
 		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Streets/Residential" icon="presets/ways.png">
+	<item name="Streets/Residential" icon="presets/residential.png">
 		<label text="Edit a Residential Street" />
 		<label text=" " />
 		<key key="highway" value="residential" />
@@ -209,7 +216,6 @@
 		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
 		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
 		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
 	</item>
@@ -228,7 +234,6 @@
 		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
 		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
 		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
 	</item>
@@ -247,293 +252,12 @@
 		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
 		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
 		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
 		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
 	</item>
 
 	<item name="Streets/ " icon="presets/empty.png"></item>
 
-	<item name="Streets/Service" icon="presets/ways.png">
-		<label text="Edit a Serviceway" />
-		<label text=" " />
-		<key key="highway" value="service" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway:" default="off" delete_if_empty="true" />
-		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel:" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
-		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Streets/Junction" icon="presets/ways.png">
-		<label text="Edit a Junction" />
-		<label text=" " />
-		<key key="junction" value="roundabout" />
-		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" delete_if_empty="true" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway:" default="on" delete_if_empty="true" />
-		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel:" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Streets/Bus Guideway" icon="presets/busway.png">
-		<label text="Edit a Bus Guideway" />
-		<label text=" " />
-		<key key="highway" value="bus_guideway" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway:" default="off" delete_if_empty="true" />
-		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel:" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
-		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Streets/ " icon="presets/empty.png"></item>
-
-	<item name="Streets/Track" icon="presets/tractor.png">
-		<label text="Edit a Track" />
-		<label text=" " />
-		<key key="highway" value="track" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Track Grade 1" icon="presets/tractor.png">
-		<label text="Edit a Track of grade 1" />
-		<label text=" " />
-		<key key="highway" value="track" />
-		<key key="tracktype" value="grade1" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Track Grade 2" icon="presets/tractor.png">
-		<label text="Edit a Track of grade 2" />
-		<label text=" " />
-		<key key="highway" value="track" />
-		<key key="tracktype" value="grade2" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Track Grade 3" icon="presets/tractor.png">
-		<label text="Edit a Track of grade 3" />
-		<label text=" " />
-		<key key="highway" value="track" />
-		<key key="tracktype" value="grade3" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Track Grade 4" icon="presets/tractor.png">
-		<label text="Edit a Track of grade 4" />
-		<label text=" " />
-		<key key="highway" value="track" />
-		<key key="tracktype" value="grade4" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Track Grade 5" icon="presets/tractor.png">
-		<label text="Edit a Track of grade 5" />
-		<label text=" " />
-		<key key="highway" value="track" />
-		<key key="tracktype" value="grade5" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Streets/Construction" icon="presets/construction.png">
-		<label text="Edit a highway under construction" />
-		<label text=" " />
-		<key key="highway" value="construction" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
-		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Streets/ " icon="presets/empty.png"></item>
-
-	<item name="Streets/Bridleway" icon="presets/equestrian.png">
-		<label text="Edit a Bridleway" />
-		<label text=" " />
-		<key key="highway" value="bridleway" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
-		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Cycleway" icon="presets/cycleway.png">
-		<label text="Edit a Cycleway" />
-		<label text=" " />
-		<key key="highway" value="cycleway" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
-		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Footway" icon="presets/footway.png">
-		<label text="Edit a Footway" />
-		<label text=" " />
-		<key key="highway" value="footway" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
-		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Streets/Steps" icon="presets/steps.png">
-		<label text="Edit a flight of Steps" />
-		<label text=" " />
-		<key key="highway" value="steps" />
-		<label text=" " />
-		<label text="Optional Attributes:" />
-		<label text=" " />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
-		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
-		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
-		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Streets/ " icon="presets/empty.png"></item>
-	
-	<item name="Streets/Points" icon="presets/waypoints.png">
-		<label text="Road Points" />
-		<combo key="highway" text="Type:" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,viaduct,stop,gate,bus_stop,stile,cattle_grid,ford,turning_circle" default="" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<check key="mountain_pass" text="Mountain Pass" default="off" delete_if_empty="true" />
-	</item>
-	
 	<item name="Streets/Restrictions" icon="presets/restrictions.png">
 		<label text="Restrictions" />
 		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
@@ -557,38 +281,374 @@
 		<text key="maxwidth" text="Max. Width (metres):" default="" delete_if_empty="true" />
 		<text key="maxlength" text="Max. Length (metres):" default="" delete_if_empty="true" />
 	</item>
+
+	<item name="Streets/Roundabout" icon="presets/roundabout.png">
+		<label text="Edit a Junction" />
+		<label text=" " />
+		<key key="junction" value="roundabout" />
+		<combo key="highway" text="Type:" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" delete_if_empty="true" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway:" default="on" delete_if_empty="true" />
+		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel:" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="lanes" text="Lanes:" values="1,2,3,4,5" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+
+	<item name="Ways/Service" icon="presets/way_service.png">
+		<label text="Edit a Serviceway" />
+		<label text=" " />
+		<key key="highway" value="service" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway:" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel:" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Ways/Ferry" icon="presets/ferry.png">
+		<label text="Edit a Ferry" />
+		<label text=" " />
+		<key key="route" value="ferry" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Ways/Bus Guideway" icon="presets/busway.png">
+		<label text="Edit a Bus Guideway" />
+		<label text=" " />
+		<key key="highway" value="bus_guideway" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway:" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge:" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel:" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting:" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment:" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Ways/Construction" icon="presets/construction.png">
+		<label text="Edit a highway under construction" />
+		<label text=" " />
+		<key key="highway" value="construction" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<combo key="junction" text="Junction:" values="roundabout" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Ways/ " icon="presets/empty.png"></item>
+
+	<item name="Ways/Bridleway" icon="presets/equestrian.png">
+		<label text="Edit a Bridleway" />
+		<label text=" " />
+		<key key="highway" value="bridleway" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Ways/Cycleway" icon="presets/cycleway.png">
+		<label text="Edit a Cycleway" />
+		<label text=" " />
+		<key key="highway" value="cycleway" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
 	
+	<item name="Ways/Footway" icon="presets/footway.png">
+		<label text="Edit a Footway" />
+		<label text=" " />
+		<key key="highway" value="footway" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
 	
+	<item name="Ways/Steps" icon="presets/steps.png">
+		<label text="Edit a flight of Steps" />
+		<label text=" " />
+		<key key="highway" value="steps" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Ways/Paths" icon="presets/empty.png">
+		<label text="Edit Paths" />
+		<label text=" " />
+		<key key="highway" value="path" />
+		<label text=" " />
+		<label text="Type:" />
+		<combo key="motorcar" text="Motorcar:" values="yes,designated,no" default="" delete_if_empty="true" />
+		<combo key="snowmobile" text="Snowmobile:" values="yes,designated,no" default="" delete_if_empty="true" />
+		<combo key="horse" text="Horse:" values="yes,designated,no" default="" delete_if_empty="true" />
+		<combo key="bicycle" text="Bicycle:" values="yes,designated,no" default="" delete_if_empty="true" />
+		<combo key="ski" text="Ski:" values="yes,designated,no" default="" delete_if_empty="true" />
+		<combo key="foot" text="Foot:" values="yes,designated,no" default="" delete_if_empty="true" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		<text key="maxspeed" text="Max. speed (km/h):" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+
+	<item name="Ways/ " icon="presets/empty.png"></item>
+	
+	<item name="Ways/Points" icon="presets/waypoints.png">
+		<label text="Road Points" />
+		<combo key="highway" text="Type:" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,viaduct,stop,gate,bus_stop,stile,cattle_grid,ford,turning_circle" default="" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="mountain_pass" text="Mountain Pass" default="off" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/ " icon="presets/empty.png"></item>
+	
+	<item name="Ways/Track" icon="presets/track.png">
+		<label text="Edit a Track" />
+		<label text=" " />
+		<key key="highway" value="track" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="copperstone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Track Grade 1" icon="presets/track1.png">
+		<label text="Edit a Track of grade 1" />
+		<label text=" " />
+		<key key="highway" value="track" />
+		<key key="tracktype" value="grade1" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="copperstone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Track Grade 2" icon="presets/track2.png">
+		<label text="Edit a Track of grade 2" />
+		<label text=" " />
+		<key key="highway" value="track" />
+		<key key="tracktype" value="grade2" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="copperstone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Track Grade 3" icon="presets/track3.png">
+		<label text="Edit a Track of grade 3" />
+		<label text=" " />
+		<key key="highway" value="track" />
+		<key key="tracktype" value="grade3" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="copperstone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Track Grade 4" icon="presets/track4.png">
+		<label text="Edit a Track of grade 4" />
+		<label text=" " />
+		<key key="highway" value="track" />
+		<key key="tracktype" value="grade4" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="copperstone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Track Grade 5" icon="presets/track5.png">
+		<label text="Edit a Track of grade 5" />
+		<label text=" " />
+		<key key="highway" value="track" />
+		<key key="tracktype" value="grade5" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+		<combo key="surface" text="Surface:" values="copperstone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer:" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres):" default="" delete_if_empty="true" />
+	</item>
+
+
 	<item name="Railway/Rail" icon="presets/railway.png">
+		<label text="Edit a Rail" />
+		<label text=" " />
 		<key key="railway" value="rail"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
 	</item>
 	
 	<item name="Railway/Narrow Gauge Rail" icon="presets/railway.png">
+		<label text="Edit a Narrow Gauge Rail" />
+		<label text=" " />
 		<key key="railway" value="narrow_gauge"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
 	</item>
-	
+
 	<item name="Railway/Monorail" icon="presets/railway.png">
+		<label text="Edit a Monorail" />
+		<label text=" " />
 		<key key="railway" value="monorail"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
 	</item>
-	
+
 	<item name="Railway/Light Rail" icon="presets/rail_light.png">
+		<label text="Edit a Light Rail" />
+		<label text=" " />
 		<key key="railway" value="light_rail"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Railway/Tram" icon="presets/tram.png">
-		<key key="railway" value="tram"/>
-	</item>
-	
-	<item name="Railway/Preserved" icon="presets/rail_preserved.png">
-		<key key="railway" value="preserved"/>
-	</item>
-	
+
 	<item name="Railway/Subway" icon="presets/rail_light.png">
+		<label text="Edit a Subway" />
+		<label text=" " />
 		<key key="railway" value="subway"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Railway/Tram" icon="presets/tram.png">
+		<label text="Edit a Tram" />
+		<label text=" " />
+		<key key="railway" value="tram"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Railway/Preserved" icon="presets/rail_preserved.png">
+		<label text="Edit a Preserved Railway" />
+		<label text=" " />
+		<key key="railway" value="preserved"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
 	</item>
 	
 	<item name="Railway/Disused Rail" icon="presets/railway.png">
+		<label text="Edit a Disused Railway" />
+		<label text=" " />
 		<key key="railway" value="disused"/>
+		<combo key="service" text="Optional Types:" values="yard,siding,spur" default="" delete_if_empty="true" />
 	</item>
 	
 	<item name="Railway/Abandoned Rail" icon="presets/railway.png">
@@ -610,51 +670,51 @@
 		<key key="waterway" value="river" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Waterway/Canal" icon="presets/waterway.png">
-		<label text="Edit a Canal" />
-		<label text=" " />
-		<key key="waterway" value="canal" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Waterway/Stream" icon="presets/waterway.png">
-		<label text="Edit a Stream" />
-		<label text=" " />
-		<key key="waterway" value="stream" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Waterway/Drain" icon="presets/waterway.png">
-		<label text="Edit a Drain" />
-		<label text=" " />
-		<key key="waterway" value="drain" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
+
 	<item name="Waterway/Dock" icon="presets/waterway.png">
 		<label text="Edit a Dock" />
 		<label text=" " />
 		<key key="waterway" value="dock" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Waterway/Weir" icon="presets/waterway.png">
+
+	<item name="Waterway/Canal" icon="presets/waterway.png">
+		<label text="Edit a Canal" />
+		<label text=" " />
+		<key key="waterway" value="canal" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waterway/Drain" icon="presets/waterway.png">
+		<label text="Edit a Drain" />
+		<label text=" " />
+		<key key="waterway" value="drain" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waterway/Stream" icon="presets/waterway.png">
+		<label text="Edit a Stream" />
+		<label text=" " />
+		<key key="waterway" value="stream" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waterway/ " icon="presets/empty.png"></item>
+
+	<item name="Waterway/Weir" icon="presets/empty.png">
 		<label text="Edit a Weir" />
 		<label text=" " />
 		<key key="waterway" value="weir" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Waterway/Dam" icon="presets/waterway.png">
+	<item name="Waterway/Dam" icon="presets/empty.png">
 		<label text="Edit a Dam" />
 		<label text=" " />
 		<key key="waterway" value="dam" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Waterway/ " icon="presets/empty.png"></item>
-	
+
 	<item name="Waterway/Waterway Point" icon="presets/waterwaypoint.png">
 		<label text="Edit Waterway Points" />
 		<label text=" " />
@@ -665,20 +725,20 @@
 	
 	
 	<item name=" " icon="presets/empty.png"></item>
-	
-	<item name="Car/Parking" icon="presets/parking.png">
-		<label text="Edit Parking" />
-		<key key="amenity" value="parking" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
+
 	<item name="Car/Fuel" icon="presets/fuel.png">
 		<label text="Edit Fuel" />
 		<key key="amenity" value="fuel" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 		<text key="operator" text="Operator:" default="" delete_if_empty="true" />
 	</item>
-	
+
+	<item name="Car/Car Parking" icon="presets/parking.png">
+		<label text="Edit Parking" />
+		<key key="amenity" value="parking" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
 	<item name="Car/Car Rental" icon="presets/car.png">
 		<label text="Edit Car Rental" />
 		<key key="amenity" value="car_rental" />
@@ -713,9 +773,9 @@
 		<key key="shop" value="bicycle" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	
-	
+
+	<item name=" " icon="presets/empty.png"></item>
+
 	<item name="Accomodation/Hotel" icon="presets/bed.png">
 		<label text="Edit Hotel" />
 		<key key="tourism" value="hotel" />
@@ -739,44 +799,85 @@
 		<key key="tourism" value="hostel" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Accomodation/Camping Site" icon="presets/camping_site.png">
-		<label text="Edit Camping Site" />
-		<key key="tourism" value="camp_site" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Accomodation/Caravan Site" icon="presets/caravan_site.png">
+
+	<item name="Accomodation/Caravan Site" icon="presets/caravan2.png">
 		<label text="Edit Caravan Site" />
 		<key key="tourism" value="caravan_site" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	
-	<item name=" " icon="presets/empty.png"></item>
-	
-	
-	<item name="Tourism/Artwork" icon="presets/empty.png">
-		<label text="Edit Artwork" />
-		<key key="tourism" value="artwork" />
+
+	<item name="Accomodation/Camping Site" icon="presets/tent.png">
+		<label text="Edit Camping Site" />
+		<key key="tourism" value="camp_site" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Food+Drinks/Restaurant" icon="presets/restaurant.png">
+		<label text="Edit Restaurant" />
+		<key key="amenity" value="restaurant" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Tourism/Attraction" icon="presets/empty.png">
-		<label text="Edit Attraction" />
-		<key key="tourism" value="attraction" />
+	<item name="Food+Drinks/Biergarten" icon="presets/empty.png">
+		<label text="Edit Biergarten" />
+		<key key="amenity" value="biergarten" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
+	<item name="Food+Drinks/Fast Food" icon="presets/empty.png">
+		<label text="Edit Fast Food Restaurant" />
+		<key key="amenity" value="fast_food" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Food+Drinks/Cafe" icon="presets/cafe.png">
+		<label text="Edit Cafe" />
+		<key key="amenity" value="cafe" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Food+Drinks/Pub" icon="presets/empty.png">
+		<label text="Edit Pub" />
+		<key key="amenity" value="pub" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Food+Drinks/Nightclub" icon="presets/bar.png">
+		<label text="Edit Nightclub" />
+		<key key="amenity" value="nightclub" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+
+
+
 	<item name="Tourism/Information" icon="presets/information.png">
 		<label text="Edit Tourist Information" />
 		<key key="tourism" value="information" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Tourism/Museum" icon="presets/historic.png">
+	<item name="Tourism/Museum" icon="presets/museum.png">
 		<label text="Edit Museum" />
 		<key key="tourism" value="museum" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Tourism/Zoo" icon="presets/empty.png">
+		<label text="Edit Zoo" />
+		<key key="tourism" value="zoo" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Tourism/Viewpoint" icon="presets/empty.png">
+		<label text="Edit Viewpoint" />
+		<key key="tourism" value="viewpoint" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Tourism/Attraction" icon="presets/empty.png">
+		<label text="Edit Attraction" />
+		<key key="tourism" value="attraction" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
@@ -791,16 +892,10 @@
 		<key key="tourism" value="theme_park" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Tourism/Viewpoint" icon="presets/empty.png">
-		<label text="Edit Viewpoint" />
-		<key key="tourism" value="viewpoint" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Tourism/Zoo" icon="presets/empty.png">
-		<label text="Edit Zoo" />
-		<key key="tourism" value="zoo" />
+
+	<item name="Tourism/Artwork" icon="presets/empty.png">
+		<label text="Edit Artwork" />
+		<key key="tourism" value="artwork" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
@@ -812,7 +907,19 @@
 		<key key="historic" value="castle" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
+
+	<item name="Historic Places/Ruins" icon="presets/empty.png">
+		<label text="Edit Ruins" />
+		<key key="historic" value="ruins" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
 	
+	<item name="Historic Places/Archaeological Site" icon="presets/historic.png">
+		<label text="Edit Archaeological Site" />
+		<key key="historic" value="archaeological_site" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
 	<item name="Historic Places/Monument" icon="presets/empty.png">
 		<label text="Edit Monument" />
 		<key key="historic" value="monument" />
@@ -824,19 +931,7 @@
 		<key key="historic" value="memorial" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Historic Places/Archaeological Site" icon="presets/empty.png">
-		<label text="Edit Archaeological Site" />
-		<key key="historic" value="archaeological_site" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Historic Places/Ruins" icon="presets/empty.png">
-		<label text="Edit Ruins" />
-		<key key="historic" value="ruins" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
+
 	<item name="Historic Places/Battlefield" icon="presets/empty.png">
 		<label text="Edit Battlefield" />
 		<key key="historic" value="battlefield" />
@@ -901,20 +996,56 @@
 	</item>
 	
 	
-	
+
 	<item name="Sport/Stadium" icon="presets/stadium.png">
 		<label text="Edit Stadium" />
 		<key key="leisure" value="stadium" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
+
 	<item name="Sport/Sports Centre" icon="presets/sports_centre.png">
 		<label text="Edit Sports Centre" />
 		<key key="leisure" value="sports_centre" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
+
+	<item name="Sport/Pitch" icon="presets/pitch.png">
+		<label text="Edit Pitch" />
+		<key key="leisure" value="pitch" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Sport/Soccer" icon="presets/soccer.png">
+		<label text="Edit Soccer" />
+		<key key="sport" value="soccer" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Sport/Football" icon="presets/empty.png">
+		<label text="Edit Football" />
+		<key key="sport" value="football" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Sport/Australian Football" icon="presets/empty.png">
+		<label text="Edit Australian Football" />
+		<key key="sport" value="australian_football" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
 	
-	<item name="Sport/Golf Course" icon="presets/empty.png">
+	<item name="Sport/Baseball" icon="presets/empty.png">
+		<label text="Edit Baseball" />
+		<key key="sport" value="baseball" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport/Basketball" icon="presets/empty.png">
+		<label text="Edit Basketball" />
+		<key key="sport" value="basketball" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport/Golf Course" icon="presets/golf.png">
 		<label text="Edit Golf Course" />
 		<key key="leisure" value="golf_course" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
@@ -923,12 +1054,6 @@
 	<item name="Sport/Track" icon="presets/empty.png">
 		<label text="Edit Track" />
 		<key key="leisure" value="track" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Pitch" icon="presets/pitch.png">
-		<label text="Edit Pitch" />
-		<key key="leisure" value="pitch" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
@@ -947,24 +1072,6 @@
 	<item name="Sport/Athletics" icon="presets/empty.png">
 		<label text="Edit Athletics" />
 		<key key="sport" value="athletics" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Australian Football" icon="presets/empty.png">
-		<label text="Edit Australian Football" />
-		<key key="sport" value="australian_football" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Baseball" icon="presets/empty.png">
-		<label text="Edit Baseball" />
-		<key key="sport" value="baseball" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Basketball" icon="presets/empty.png">
-		<label text="Edit Basketball" />
-		<key key="sport" value="basketball" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
@@ -1021,10 +1128,10 @@
 		<key key="sport" value="equestrian" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Sport/Football" icon="presets/empty.png">
-		<label text="Edit Football" />
-		<key key="sport" value="football" />
+
+	<item name="Sport/Horse Racing" icon="presets/equestrian.png">
+		<label text="Edit Horse Racing" />
+		<key key="sport" value="horse_racing" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
@@ -1043,12 +1150,6 @@
 	<item name="Sport/Hockey" icon="presets/empty.png">
 		<label text="Edit Hockey" />
 		<key key="sport" value="hockey" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Horse Racing" icon="presets/equestrian.png">
-		<label text="Edit Horse Racing" />
-		<key key="sport" value="horse_racing" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
@@ -1088,13 +1189,7 @@
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Sport/Soccer" icon="presets/empty.png">
-		<label text="Edit Soccer" />
-		<key key="sport" value="soccer" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Swimming" icon="presets/empty.png">
+	<item name="Sport/Swimming" icon="presets/swimming.png">
 		<label text="Edit Swimming" />
 		<key key="sport" value="swimming" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
@@ -1118,45 +1213,137 @@
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-
-
-
-
 	<item name=" " icon="presets/empty.png"></item>
 
-
-	
-	<item name="Amenities/Toilets" icon="presets/toilet.png">
-		<key key="amenity" value="toilets" />
-	</item>
-	
-	<item name="Amenities/Bus Station" icon="presets/bus.png">
-		<label text="Edit Bus Station" />
-		<key key="amenity" value="bus_station" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Amenities/Public Building" icon="presets/empty.png">
+	<item name="Buildings/Public Building" icon="presets/empty.png">
 		<label text="Edit Public Building" />
 		<key key="amenity" value="public_building" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Amenities/Townhall" icon="presets/empty.png">
+	<item name="Buildings/Townhall" icon="presets/townhall.png">
 		<label text="Edit Townhall" />
 		<key key="amenity" value="townhall" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
+
+	<item name="Buildings/Fire Station" icon="presets/empty.png">
+		<label text="Edit Fire Station" />
+		<key key="amenity" value="fire_station" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
 	
-	<item name="Amenities/Police" icon="presets/police.png">
+	<item name="Buildings/Courthouse" icon="presets/JusticeScales.png">
+		<label text="Edit Courthouse" />
+		<key key="amenity" value="courthouse" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Buildings/Prison" icon="presets/empty.png">
+		<label text="Edit Prison" />
+		<key key="amenity" value="prison" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/Police" icon="presets/police.png">
 		<label text="Edit Police" />
 		<key key="amenity" value="police" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Amenities/Post Office" icon="presets/letter.png">
+	<item name="Buildings/Post Office" icon="presets/letter.png">
 		<label text="Edit Post Office" />
 		<key key="amenity" value="post_office" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/ " icon="presets/empty.png"></item>
+
+	<item name="Buildings/Pharmacy" icon="presets/pharmacy.png">
+		<label text="Edit Pharmacy" />
+		<key key="amenity" value="pharmacy" />
+		<combo key="dispensing" text="Dispensing:" values="yes,no" default="no" delete_if_empty="true" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Buildings/Hospital" icon="presets/hospital.png">
+		<label text="Edit Hospital" />
+		<key key="amenity" value="hospital" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/ " icon="presets/empty.png"></item>
+
+	<item name="Buildings/Kindergarten" icon="presets/kindergarten.png">
+		<label text="Edit Kindergarten" />
+		<key key="amenity" value="kindergarten" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Buildings/School" icon="presets/school.png">
+		<label text="Edit School" />
+		<key key="amenity" value="school" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Buildings/University" icon="presets/empty.png">
+		<label text="Edit University" />
+		<key key="amenity" value="university" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Buildings/College" icon="presets/empty.png">
+		<label text="Edit College" />
+		<key key="amenity" value="college" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/ " icon="presets/empty.png"></item>
+
+	<item name="Buildings/Cinema" icon="presets/empty.png">
+		<label text="Edit Cinema" />
+		<key key="amenity" value="cinema" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/Library" icon="presets/library.png">
+		<label text="Edit Library" />
+		<key key="amenity" value="library" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/Arts Centre" icon="presets/empty.png">
+		<label text="Edit Arts Centre" />
+		<key key="amenity" value="arts_centre" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/Theatre" icon="presets/theater.png">
+		<label text="Edit Theatre" />
+		<key key="amenity" value="theatre" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Buildings/Place of Worship" icon="presets/church.png">
+		<label text="Edit Place of Worship" />
+		<key key="amenity" value="place_of_worship" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<combo key="religion" text="Religion:" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+		<combo key="denomination" text="Denomination:" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,quaker,shia,sunni" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Buildings/Shelter" icon="presets/shelter.png">
+		<key key="amenity" value="shelter" />
+	</item>
+
+
+	<item name="Amenities/Toilets" icon="presets/toilet.png">
+		<key key="amenity" value="toilets" />
+	</item>
+
+	<item name="Amenities/Bus Station" icon="presets/bus.png">
+		<label text="Edit a Bus Station" />
+		<key key="amenity" value="bus_station" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
@@ -1169,341 +1356,105 @@
 	</item>
 	
 	<item name="Amenities/Recycling" icon="presets/recycling.png">
-		<label text="Edit Recycling" />
+		<label text="Edit a Recycling station" />
 		<key key="amenity" value="recycling" />
 		<check key="recycling:glass" text="Glass:" default="off" delete_if_empty="true" />
 		<check key="recycling:clothes" text="Clothes:" default="off" delete_if_empty="true" />
 		<check key="recycling:batteries" text="Batteries:" default="off" delete_if_empty="true" />
 	</item>
-	
-	<item name="Amenities/Fire Station" icon="presets/empty.png">
-		<label text="Edit Fire Station" />
-		<key key="amenity" value="fire_station" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Amenities/Courthouse" icon="presets/empty.png">
-		<label text="Edit Courthouse" />
-		<key key="amenity" value="courthouse" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Amenities/Prison" icon="presets/empty.png">
-		<label text="Edit Prison" />
-		<key key="amenity" value="prison" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
+
 	<item name="Amenities/Taxi" icon="presets/taxi.png">
-		<label text="Edit Taxi" />
+		<label text="Edit a Taxi station" />
 		<key key="amenity" value="taxi" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
-
-
-
-	<item name="Food+Drinks/Restaurant" icon="presets/restaurant.png">
-		<label text="Edit Restaurant" />
-		<key key="amenity" value="restaurant" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Food+Drinks/Biergarten" icon="presets/empty.png">
-		<label text="Edit Biergarten" />
-		<key key="amenity" value="biergarten" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Food+Drinks/Fast Food" icon="presets/empty.png">
-		<label text="Edit Fast Food Restaurant" />
-		<key key="amenity" value="fast_food" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Food+Drinks/Cafe" icon="presets/cafe.png">
-		<label text="Edit Cafe" />
-		<key key="amenity" value="cafe" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Food+Drinks/Pub" icon="presets/empty.png">
-		<label text="Edit Pub" />
-		<key key="amenity" value="pub" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Food+Drinks/Nightclub" icon="presets/empty.png">
-		<label text="Edit Nightclub" />
-		<key key="amenity" value="nightclub" />
+	<item name="Amenities/Fountain" icon="presets/empty.png">
+		<label text="Edit a Fountain" />
+		<key key="amenity" value="fountain" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
+	<item name="Amenities/Drinking Water" icon="presets/empty.png">
+		<label text="Edit Drinking Water" />
+		<key key="amenity" value="drinking_water" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
 
-
-
-
-
-	<item name="Money/Bank" icon="presets/cash.png">
+	<item name="Cash/Bank" icon="presets/dollar.png">
 		<label text="Edit Bank" />
 		<key key="amenity" value="bank" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<check key="atm" text="Automated Teller Machine:" default="on" delete_if_empty="true" />
 	</item>
 	
-	<item name="Money/Money Exchange" icon="presets/cash.png">
+	<item name="Cash/Money Exchange" icon="presets/coins.png">
 		<label text="Edit Money Exchange" />
 		<key key="amenity" value="bureau_de_change" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Money/Automated Teller Machine" icon="presets/cash.png">
+	<item name="Cash/Automated Teller Machine" icon="presets/cash.png">
 		<label text="Edit Automated Teller Machine" />
 		<key key="amenity" value="atm" />
 		<text key="name" text="Provider:" default="" delete_if_empty="true" />
 	</item>
 	
 	
-	<item name="Shopping/Supermarket" icon="presets/shopping.png">
+	<item name="Shops/Supermarket" icon="presets/shopping.png">
 		<label text="Edit Supermarket" />
 		<key key="shop" value="supermarket" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Convenience Store" icon="presets/empty.png">
+	<item name="Shops/Convenience Store" icon="presets/empty.png">
 		<label text="Edit Convenience Store" />
 		<key key="shop" value="convenience" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Kiosk" icon="presets/empty.png">
+	<item name="Shops/Kiosk" icon="presets/empty.png">
 		<label text="Edit Kiosk" />
 		<key key="shop" value="kiosk" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Butcher" icon="presets/cow.png">
+	<item name="Shops/Butcher" icon="presets/cow.png">
 		<label text="Edit Butcher" />
 		<key key="shop" value="butcher" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Baker" icon="presets/empty.png">
+	<item name="Shops/Baker" icon="presets/empty.png">
 		<label text="Edit Baker" />
 		<key key="shop" value="baker" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Do-it-yourself-store" icon="presets/empty.png">
+	<item name="Shops/Do-it-yourself-store" icon="presets/empty.png">
 		<label text="Edit Do-it-yourself-store" />
 		<key key="shop" value="doityourself" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Dry Cleaning" icon="presets/empty.png">
+	<item name="Shops/Dry Cleaning" icon="presets/empty.png">
 		<label text="Edit Dry Cleaning" />
 		<key key="shop" value="dry_cleaning" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Laundry" icon="presets/empty.png">
+	<item name="Shops/Laundry" icon="presets/empty.png">
 		<label text="Edit Laundry" />
 		<key key="shop" value="laundry" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Shopping/Outdoor" icon="presets/empty.png">
+	<item name="Shops/Outdoor" icon="presets/empty.png">
 		<label text="Edit Outdoor Shop" />
 		<key key="shop" value="outdoor" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
-
-	<item name=" " icon="presets/empty.png"></item>
-
-
-	<item name="Health/Pharmacy" icon="presets/pharmacy.png">
-		<label text="Edit Pharmacy" />
-		<key key="amenity" value="pharmacy" />
-		<combo key="dispensing" text="Dispensing:" values="yes,no" default="no" delete_if_empty="true" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Health/Hospital" icon="presets/hospital.png">
-		<label text="Edit Hospital" />
-		<key key="amenity" value="hospital" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-
-
-	
-	<item name="Education/Kindergarten" icon="presets/kindergarten.png">
-		<label text="Edit Kindergarten" />
-		<key key="amenity" value="kindergarten" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Education/School" icon="presets/school.png">
-		<label text="Edit School" />
-		<key key="amenity" value="school" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Education/University" icon="presets/empty.png">
-		<label text="Edit University" />
-		<key key="amenity" value="university" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Education/College" icon="presets/empty.png">
-		<label text="Edit College" />
-		<key key="amenity" value="college" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-
-
-
-	<item name="Culture/Library" icon="presets/empty.png">
-		<label text="Edit Library" />
-		<key key="amenity" value="library" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Culture/Place of Worship" icon="presets/church.png">
-		<label text="Edit Place of Worship" />
-		<key key="amenity" value="place_of_worship" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-		<combo key="religion" text="Religion:" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
-		<combo key="denomination" text="Denomination:" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,quaker,shia,sunni" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Culture/Grave Yard" icon="presets/empty.png">
-		<label text="Edit Grave Yard" />
-		<key key="amenity" value="grave_yard" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Culture/Theatre" icon="presets/empty.png">
-		<label text="Edit Theatre" />
-		<key key="amenity" value="theatre" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Culture/Cinema" icon="presets/empty.png">
-		<label text="Edit Cinema" />
-		<key key="amenity" value="cinema" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Culture/Arts Centre" icon="presets/empty.png">
-		<label text="Edit Arts Centre" />
-		<key key="amenity" value="arts_centre" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-
-
-	
-	<item name="Man Made/Works" icon="presets/empty.png">
-		<label text="Edit Works" />
-		<key key="man_made" value="works" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Beacon" icon="presets/empty.png">
-		<label text="Edit Beacon" />
-		<key key="man_made" value="beacon" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Survey Point" icon="presets/empty.png">
-		<label text="Edit Survey Point" />
-		<key key="man_made" value="survey_point" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Power Wind" icon="presets/empty.png">
-		<label text="Edit Power Wind" />
-		<key key="man_made" value="Power wind" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Power Hydro" icon="presets/empty.png">
-		<label text="Edit Power Hydro" />
-		<key key="man_made" value="power_hydro" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Power Fossil" icon="presets/empty.png">
-		<label text="Edit Power Fossil" />
-		<key key="man_made" value="power_fossil" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Power Nuclear" icon="presets/empty.png">
-		<label text="Edit Power Nuclear" />
-		<key key="man_made" value="power_nuclear" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Tower" icon="presets/empty.png">
-		<label text="Edit Tower" />
-		<key key="man_made" value="tower" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Water Tower" icon="presets/empty.png">
-		<label text="Edit Water Tower" />
-		<key key="man_made" value="water_tower" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Gasometer" icon="presets/empty.png">
-		<label text="Edit Gasometer" />
-		<key key="man_made" value="gasometer" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Covered Reservoir" icon="presets/empty.png">
-		<label text="Edit Covered Reservoir" />
-		<key key="man_made" value="reservoir_covered" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Lighthouse" icon="presets/empty.png">
-		<label text="Edit Lighthouse" />
-		<key key="man_made" value="lighthouse" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Windmill" icon="presets/empty.png">
-		<label text="Edit Windmill" />
-		<key key="man_made" value="windmill" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Pier" icon="presets/empty.png">
-		<label text="Edit Pier" />
-		<key key="man_made" value="pier" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Pipeline" icon="presets/empty.png">
-		<label text="Edit Pipeline" />
-		<key key="man_made" value="pipeline" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Wastewater Plant" icon="presets/empty.png">
-		<label text="Edit Wastewater Plant" />
-		<key key="man_made" value="wastewater_plant" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Man Made/Crane" icon="presets/empty.png">
-		<label text="Edit Crane" />
-		<key key="man_made" value="crane" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
 
 	<item name=" " icon="presets/empty.png"></item>
 	
@@ -1650,13 +1601,26 @@
 	
 	
 	
+	<item name="Landuse/Grave Yard" icon="presets/empty.png">
+		<label text="Edit Grave Yard" />
+		<key key="amenity" value="grave_yard" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
 	<item name="Landuse/Farm" icon="presets/landuse.png">
 		<label text="Edit Farm Landuse" />
 		<label text=" " />
 		<key key="landuse" value="farm" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
-	
+
+	<item name="Landuse/Vineyard" icon="presets/landuse.png">
+		<label text="Edit Vineyard Landuse" />
+		<label text=" " />
+		<key key="landuse" value="vineyard" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
 	<item name="Landuse/Quarry" icon="presets/landuse.png">
 		<label text="Edit Quarry Landuse" />
 		<label text=" " />
@@ -1690,6 +1654,7 @@
 		<label text=" " />
 		<key key="landuse" value="forest" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<combo key="wood" text="Type:" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
 	</item>
 	
 	<item name="Landuse/Allotments" icon="presets/landuse.png">
@@ -1776,6 +1741,13 @@
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
+	<item name="Landuse/Grass" icon="presets/landuse.png">
+		<label text="Edit Grass Landuse" />
+		<label text=" " />
+		<key key="landuse" value="grass" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
 	<item name="Landuse/Recreation Ground" icon="presets/landuse.png">
 		<label text="Edit Recreation Ground Landuse" />
 		<label text=" " />
@@ -1784,15 +1756,26 @@
 	</item>
 	
 	
+
+	<item name="Natural/Water" icon="presets/water.png">
+		<label text="Edit Water" />
+		<key key="natural" value="water" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
 	
-	
+	<item name="Natural/Land" icon="presets/empty.png">
+		<label text="Edit Land" />
+		<key key="natural" value="land" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
 	<item name="Natural/Spring" icon="presets/empty.png">
 		<label text="Edit Spring" />
 		<key key="natural" value="spring" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Natural/Peak" icon="presets/empty.png">
+	<item name="Natural/Peak" icon="presets/peak.png">
 		<label text="Edit Peak" />
 		<key key="natural" value="peak" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
@@ -1844,17 +1827,12 @@
 		<label text="Edit Wood" />
 		<key key="natural" value="wood" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
+		<combo key="wood" text="Type:" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
 	</item>
 	
 	<item name="Natural/Marsh" icon="presets/empty.png">
 		<label text="Edit Marsh" />
 		<key key="natural" value="marsh" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Natural/Water" icon="presets/empty.png">
-		<label text="Edit Water" />
-		<key key="natural" value="water" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
@@ -1882,12 +1860,6 @@
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Natural/Land" icon="presets/empty.png">
-		<label text="Edit Land" />
-		<key key="natural" value="land" />
-		<text key="name" text="Name:" default="" delete_if_empty="true" />
-	</item>
-	
 	<item name="Natural/Cave Entrance" icon="presets/empty.png">
 		<label text="Edit Cave Entrance" />
 		<key key="natural" value="cave_entrance" />
@@ -1896,6 +1868,107 @@
 	
 	
 
+	
+	<item name="Man Made/Works" icon="presets/works.png">
+		<label text="Edit Works" />
+		<key key="man_made" value="works" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Power Wind" icon="presets/power_wind.png">
+		<label text="Edit Power Wind" />
+		<key key="man_made" value="power_wind" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Power Hydro" icon="presets/power_tower.png">
+		<label text="Edit Power Hydro" />
+		<key key="man_made" value="power_hydro" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Power Fossil" icon="presets/power_tower.png">
+		<label text="Edit Power Fossil" />
+		<key key="man_made" value="power_fossil" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Power Nuclear" icon="presets/power_tower.png">
+		<label text="Edit Power Nuclear" />
+		<key key="man_made" value="power_nuclear" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Tower" icon="presets/tower.png">
+		<label text="Edit Tower" />
+		<key key="man_made" value="tower" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Water Tower" icon="presets/water_tower.png">
+		<label text="Edit Water Tower" />
+		<key key="man_made" value="water_tower" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Gasometer" icon="presets/gasometer.png">
+		<label text="Edit Gasometer" />
+		<key key="man_made" value="gasometer" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Covered Reservoir" icon="presets/empty.png">
+		<label text="Edit Covered Reservoir" />
+		<key key="man_made" value="reservoir_covered" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Lighthouse" icon="presets/lighthouse.png">
+		<label text="Edit Lighthouse" />
+		<key key="man_made" value="lighthouse" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Windmill" icon="presets/windmill.png">
+		<label text="Edit Windmill" />
+		<key key="man_made" value="windmill" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Pier" icon="presets/empty.png">
+		<label text="Edit Pier" />
+		<key key="man_made" value="pier" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Pipeline" icon="presets/empty.png">
+		<label text="Edit Pipeline" />
+		<key key="man_made" value="pipeline" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Wastewater Plant" icon="presets/empty.png">
+		<label text="Edit Wastewater Plant" />
+		<key key="man_made" value="wastewater_plant" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Crane" icon="presets/empty.png">
+		<label text="Edit Crane" />
+		<key key="man_made" value="crane" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
 
+	<item name="Man Made/Beacon" icon="presets/empty.png">
+		<label text="Edit Beacon" />
+		<key key="man_made" value="beacon" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Man Made/Survey Point" icon="presets/empty.png">
+		<label text="Edit Survey Point" />
+		<key key="man_made" value="survey_point" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
 
 </annotations>
