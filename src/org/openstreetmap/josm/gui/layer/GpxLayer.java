@@ -301,11 +301,13 @@ public class GpxLayer extends Layer {
                             }
                         }
                     }
-                    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-                    info.append(tr("Timespan: ") + df.format(new Date((long)(earliest.time * 1000))) + " - " + df.format(new Date((long)(latest.time * 1000))));
-                    int diff = (int)(latest.time - earliest.time);
-                    info.append(" (" + (diff / 3600) + ":" + ((diff % 3600)/60) + ")");
-                    info.append("<br>");
+                    if(earliest != null && latest != null){
+                        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+                        info.append(tr("Timespan: ") + df.format(new Date((long)(earliest.time * 1000))) + " - " + df.format(new Date((long)(latest.time * 1000))));
+                        int diff = (int)(latest.time - earliest.time);
+                        info.append(" (" + (diff / 3600) + ":" + ((diff % 3600)/60) + ")");
+                        info.append("<br>");
+                    }
                 }
                 info.append(tr("Length: ") + new DecimalFormat("#0.00").format(data.length() / 1000) + "km");
                 info.append("<br>");
