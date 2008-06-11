@@ -1375,7 +1375,7 @@
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Amenities/Drinking Water" icon="presets/empty.png">
+	<item name="Amenities/Drinking Water" icon="presets/drinking_water.png">
 		<label text="Edit Drinking Water" />
 		<key key="amenity" value="drinking_water" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
