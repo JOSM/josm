@@ -103,8 +103,19 @@ public class GettingStarted extends JPanel {
                     String languageCode = tr("En:");
                     String url = matcher.group(1) + languageCode + matcher.group(2);
                     try {
-                        content += wr.read(url).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
-                        nothingIncluded = false;
+                        String message = wr.read(url);
+                        // a return containing the article name indicates that the page didn't
+                        // exist in the Wiki.
+                        String emptyIndicator = "Describe \"" + languageCode + "MessageOfTheDay";
+                        if (message.indexOf(emptyIndicator) >= 0) {
+                            url = matcher.group(1) + matcher.group(2);
+                            message = wr.read(url);
+                            emptyIndicator = "Describe \"MessageOfTheDay";
+                        }
+                        if (message.indexOf(emptyIndicator) == -1) {
+                            content += message.replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
+                            nothingIncluded = false;
+                        }
                     } catch (IOException ioe) {
                         url = matcher.group(1) + matcher.group(2);
                         try {
