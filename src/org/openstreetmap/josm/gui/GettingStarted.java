@@ -25,104 +25,115 @@ import org.openstreetmap.josm.actions.AboutAction;
 
 public class GettingStarted extends JPanel {
 
-	private JPanel panel;
-	static private String content = "";	
+    private JPanel panel;
+    static private String content = "";    
 
-	public class LinkGeneral extends JEditorPane implements HyperlinkListener {
-		private String action;
-		public LinkGeneral(String text) {
-			setContentType("text/html");
-			setText(text);
-			setEditable(false);
-			setOpaque(false);
-			addHyperlinkListener(this);
+    public class LinkGeneral extends JEditorPane implements HyperlinkListener {
+        private String action;
+        public LinkGeneral(String text) {
+            setContentType("text/html");
+            setText(text);
+            setEditable(false);
+            setOpaque(false);
+            addHyperlinkListener(this);
         }
-		public void hyperlinkUpdate(HyperlinkEvent e) {
-			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-				OpenBrowser.displayUrl(e.getDescription());
-			}
+        public void hyperlinkUpdate(HyperlinkEvent e) {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                OpenBrowser.displayUrl(e.getDescription());
+            }
         }
     }
 
-	private void assignContent() {
-		if (content.length() == 0) {
-			String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
-			WikiReader wr = new WikiReader(baseurl);
-			String motdcontent = "";
-			try {
-				motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay");
-			} catch (IOException ioe) {
-				motdcontent = tr("<html>\n<h1>JOSM, the Java OpenStreetMap editor</h1>\n<h2>(Message of the day not available)</h2>");			
-			}
+    private void assignContent() {
+        if (content.length() == 0) {
+            String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
+            WikiReader wr = new WikiReader(baseurl);
+            String motdcontent = "";
+            try {
+                motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay");
+            } catch (IOException ioe) {
+                motdcontent = tr("<html>\n<h1>JOSM, the Java OpenStreetMap editor</h1>\n<h2>(Message of the day not available)</h2>");            
+            }
 
-			int myVersion;
-			try {
-				myVersion = Integer.parseInt(AboutAction.getVersion());
-			} catch (NumberFormatException e) {
-				myVersion = 0;
-			}
+            int myVersion;
+            try {
+                myVersion = Integer.parseInt(AboutAction.getVersion());
+            } catch (NumberFormatException e) {
+                myVersion = 0;
+            }
 
-			Pattern commentPattern = Pattern.compile("\\<p\\>\\s*\\/\\*[^\\*]*\\*\\/\\s*\\<\\/p\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
-			Matcher matcherComment = commentPattern.matcher(motdcontent);
-			motdcontent = matcherComment.replaceAll("");
+            Pattern commentPattern = Pattern.compile("\\<p\\>\\s*\\/\\*[^\\*]*\\*\\/\\s*\\<\\/p\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
+            Matcher matcherComment = commentPattern.matcher(motdcontent);
+            motdcontent = matcherComment.replaceAll("");
 
-			/* look for hrefs of the form wiki/MessageOfTheDay>123 where > can also be <,<=,>= and the number is the revision number */
-			int start = 0;
-			boolean nothingIncluded = true;
-			Pattern versionPattern = Pattern.compile("\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
-			Matcher matcher = versionPattern.matcher(motdcontent);
-			matcher.reset();
-			while (matcher.find()) {
-				int targetVersion = Integer.parseInt(matcher.group(3));
-				String condition = matcher.group(2);
-				boolean included = false;
-				if (condition.equals("%3E")) {
-					if ((myVersion == 0 || myVersion > targetVersion) && ! Main.pref.getBoolean("motd.gt."+targetVersion)) {
-						Main.pref.put("motd.gt."+targetVersion, true);
-						included = true;
-					}
-				} else if (condition.equals("%3E%3D")) {
-					if ((myVersion == 0 || myVersion >= targetVersion) && ! Main.pref.getBoolean("motd.ge."+targetVersion)) {
-						Main.pref.put("motd.ge."+targetVersion, true);
-						included = true;
-					}
-				} else if (condition.equals("%3C")) {
-					included = myVersion < targetVersion;
-				} else {
-					 included = myVersion <= targetVersion;
-				}
-				if (matcher.start() > start) {
-					content += motdcontent.substring(start, matcher.start() - 1);
-				}
-				start = matcher.end();
-				if (included) {
-					try {
-						content += wr.read(matcher.group(1)).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
-						nothingIncluded = false;
-					} catch (IOException ioe) {
-						// do nothing
-					}			
-				}
-			}
-			if (nothingIncluded) {
-				content += "<div align=\"center\">Watch this space for announcements</div>";
-				content += "<div align=\"center\" style=\"font-weight: normal\">(remove the \"motd\" entries in Advanced Preferences to see any available announcements next time)</div>";
-			}
-			content += motdcontent.substring(start);
-			content = content.replace("<html>", "<html><style>\nbody { font-family: sans-serif; font-weight: bold; }\n</style>");
-			content = content.replace("<h1", "<h1 align=\"center\"");
-		}
+            /* look for hrefs of the form wiki/MessageOfTheDay>123 where > can also be <,<=,>= and the number is the revision number */
+            int start = 0;
+            boolean nothingIncluded = true;
+            Pattern versionPattern = Pattern.compile("\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/)(MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
+            Matcher matcher = versionPattern.matcher(motdcontent);
+            matcher.reset();
+            while (matcher.find()) {
+                int targetVersion = Integer.parseInt(matcher.group(4));
+                String condition = matcher.group(3);
+                boolean included = false;
+                if (condition.equals("%3E")) {
+                    if ((myVersion == 0 || myVersion > targetVersion) 
+                        /* && ! Main.pref.getBoolean("motd.gt."+targetVersion) */) {
+                        /* Main.pref.put("motd.gt."+targetVersion, true); */
+                        included = true;
+                    }
+                } else if (condition.equals("%3E%3D")) {
+                    if ((myVersion == 0 || myVersion >= targetVersion) 
+                        /* && ! Main.pref.getBoolean("motd.ge."+targetVersion) */) {
+                        /* Main.pref.put("motd.ge."+targetVersion, true); */
+                        included = true;
+                    }
+                } else if (condition.equals("%3C")) {
+                    included = myVersion < targetVersion;
+                } else {
+                     included = myVersion <= targetVersion;
+                }
+                if (matcher.start() > start) {
+                    content += motdcontent.substring(start, matcher.start() - 1);
+                }
+                start = matcher.end();
+                if (included) {
+                    // translators: set this to a suitable language code to
+                    // be able to provide translations in the Wiki.
+                    String languageCode = tr("En:");
+                    String url = matcher.group(1) + languageCode + matcher.group(2);
+                    try {
+                        content += wr.read(url).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
+                        nothingIncluded = false;
+                    } catch (IOException ioe) {
+                        url = matcher.group(1) + matcher.group(2);
+                        try {
+                            content += wr.read(url).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
+                            nothingIncluded = false;
+                        } catch (IOException ioe2) {
+                        }            
+                    }            
+                }
+            }
+            if (nothingIncluded) {
+                content += "<div align=\"center\">Watch this space for announcements</div>";
+                content += "<div align=\"center\" style=\"font-weight: normal\">(remove the \"motd\" entries in Advanced Preferences to see any available announcements next time)</div>";
+            }
+            content += motdcontent.substring(start);
+            content = content.replace("<html>", "<html><style>\nbody { font-family: sans-serif; font-weight: bold; }\n</style>");
+            content = content.replace("<h1", "<h1 align=\"center\"");
+        }
 
-	}
-	
-	public GettingStarted() {
-		super(new BorderLayout());
-		assignContent();
-								
-		// panel.add(GBC.glue(0,1), GBC.eol());
-		//panel.setMinimumSize(new Dimension(400, 600));
-		JScrollPane scroller = new JScrollPane(new LinkGeneral(content));
-		scroller.setViewportBorder(new EmptyBorder(100,100,10,100));
-		add(scroller, BorderLayout.CENTER);
+    }
+    
+    public GettingStarted() {
+        super(new BorderLayout());
+        assignContent();
+                                
+        // panel.add(GBC.glue(0,1), GBC.eol());
+        //panel.setMinimumSize(new Dimension(400, 600));
+        JScrollPane scroller = new JScrollPane(new LinkGeneral(content));
+        scroller.setViewportBorder(new EmptyBorder(100,100,10,100));
+        add(scroller, BorderLayout.CENTER);
     }
 }
