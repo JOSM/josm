@@ -12,10 +12,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -31,12 +33,17 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.xml.sax.SAXException;
 
 /**
  * This dialog is for editing relations.
@@ -237,6 +244,14 @@ public class RelationEditor extends JFrame {
 				Main.ds.setSelected(sel);
 			}
 		}));
+        buttonPanel.add(createButton(marktr("Download Members"),"down", tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_L, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                downloadRelationMembers();                
+                refreshTables();
+            }            
+        }));
+        
+        
 		bothTables.add(buttonPanel, GBC.eop().fill(GBC.HORIZONTAL));
 
 		tabPane.add(bothTables, "Basic");
@@ -284,4 +299,51 @@ public class RelationEditor extends JFrame {
 		}
 		refreshTables();
 	}
+    private void downloadRelationMembers()  {
+
+        boolean download = false;
+        for (RelationMember member : clone.members) {
+            if (member.member.incomplete) {
+                download = true;
+                break;
+            }
+        }
+        if (download) {
+            OsmServerObjectReader reader = new OsmServerObjectReader();
+            try {
+                DataSet dataSet = reader.parseOsm(clone.id,
+                        OsmServerObjectReader.TYPE_REL, true);
+                if (dataSet != null) {
+                    final MergeVisitor visitor = new MergeVisitor(Main.main
+                            .editLayer().data, dataSet);
+                    for (final OsmPrimitive osm : dataSet.allPrimitives())
+                        osm.visit(visitor);
+                    visitor.fixReferences();
+
+                    // copy the merged layer's data source info
+                    for (DataSource src : dataSet.dataSources)
+                        Main.main.editLayer().data.dataSources.add(src);
+                    Main.main.editLayer().fireDataChange();
+
+                    if (visitor.conflicts.isEmpty())
+                        return;
+                    final ConflictDialog dlg = Main.map.conflictDialog;
+                    dlg.add(visitor.conflicts);
+                    JOptionPane.showMessageDialog(Main.parent,
+                            tr("There were conflicts during import."));
+                    if (!dlg.isVisible())
+                        dlg.action
+                                .actionPerformed(new ActionEvent(this, 0, ""));
+                }
+
+            } catch (SAXException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this,tr("Error parsing server response.")+": "+e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);        
+            } catch (IOException e) {
+                e.printStackTrace();                
+                JOptionPane.showMessageDialog(this,tr("Cannot connect to server.")+": "+e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }
 }
