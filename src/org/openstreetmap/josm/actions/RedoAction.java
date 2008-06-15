@@ -18,7 +18,7 @@ import org.openstreetmap.josm.Main;
 public class RedoAction extends JosmAction {
 
 	/**
-	 * Construct the action with "Undo" as label.
+	 * Construct the action with "Redo" as label.
 	 */
 	public RedoAction() {
 		super(tr("Redo"), "redo", tr("Redo the last undone action."), KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK, true);

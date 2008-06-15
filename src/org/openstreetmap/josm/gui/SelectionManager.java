@@ -61,7 +61,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 	public interface SelectionEnded {
 		/**
 		 * Called, when the left mouse button was released.
-		 * @param r The rectangle, that is currently the selection.
+		 * @param r The rectangle that is currently the selection.
 		 * @param alt Whether the alt key was pressed
 		 * @param shift Whether the shift key was pressed
 		 * @param ctrl Whether the ctrl key was pressed 
@@ -106,7 +106,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 	/**
 	 * Create a new SelectionManager.
 	 *
-	 * @param actionListener The action listener that receives the event when
+	 * @param selectionEndedListener The action listener that receives the event when
 	 * 		the left button is released.
 	 * @param aspectRatio If true, the selection window must obtain the aspect
 	 * 		ratio of the drawComponent.

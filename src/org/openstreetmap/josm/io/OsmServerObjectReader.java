@@ -17,15 +17,15 @@ public class OsmServerObjectReader extends OsmServerReader {
      public final static  String TYPE_NODE = "node";
      
      /**
-      * Method to download single Objects from OSM server. ways, relations, nodes
-      * @param id  Object ID
-      * @param type  way node relation
+      * Method to download single objects from OSM server. ways, relations, nodes
+      * @param id Object ID
+      * @param type way node relation
       * @param full download with or without child objects
-      * @return
+      * @return the data requested
       * @throws SAXException
       * @throws IOException
       */
-     public DataSet parseOsm(long id,String type, boolean full ) throws SAXException, IOException {
+     public DataSet parseOsm(long id, String type, boolean full) throws SAXException, IOException {
             try {
                 
                 Main.pleaseWaitDlg.progress.setValue(0);

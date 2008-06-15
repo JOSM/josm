@@ -5,19 +5,30 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
- * Classes subclass this are able to convert lat/lon values to 
- * planear screen coordinates.
+ * Classes implementing this are able to convert lat/lon values to 
+ * planar screen coordinates.
  * 
  * @author imi
  */
 public interface Projection {
 
+	/**
+	 * Maximum latitude representable.
+	 */
 	public static final double MAX_LAT = 85.05112877980659; // Mercator squares the world
+	
+	/**
+	 * Maximum longditude representable.
+	 */
 	public static final double MAX_LON = 180;
+
+	/**
+	 * Minimum difference in location to not be represented as the same position.
+	 */
 	public static final double MAX_SERVER_PRECISION = 1e12;
 
 	/**
-	 * List of all available Projections.
+	 * List of all available projections.
 	 */
 	public static Projection[] allProjections = new Projection[]{
 		new Epsg4326(),

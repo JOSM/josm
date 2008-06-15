@@ -314,7 +314,7 @@ public class MergeVisitorTest extends TestCase {
     }
 
 	/**
-	 * The merger should auto-resolve items, that have not changed but are marked as
+	 * The merger should auto-resolve items that have not changed but are marked as
 	 * changed. In the case where an unmodified newer item is merged over an modified
 	 * older, the modified-flag should be removed and the newer timestamp is used.
 	 */

@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
 /**
- * Move is an action that can move all kind of OsmPrimitives (except Keys for now).
+ * Move is an action that can move all kind of OsmPrimitives (except keys for now).
  *
  * If an selected object is under the mouse when dragging, move all selected objects.
  * If an unselected object is under the mouse when dragging, it becomes selected

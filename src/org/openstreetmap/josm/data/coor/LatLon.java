@@ -27,8 +27,9 @@ public class LatLon extends Coordinate {
 	}
 
 	/**
-	 * @return <code>true</code>, if the other point has almost the same lat/lon
-	 * values, only differ by no more than 1/Projection.MAX_SERVER_PRECISION.
+	 * @return <code>true</code> if the other point has almost the same lat/lon
+	 * values, only differing by no more than
+	 * 1 / {@link org.openstreetmap.josm.data.projection.Projection#MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
 	 */
 	public boolean equalsEpsilon(LatLon other) {
 		final double p = 1/Projection.MAX_SERVER_PRECISION;

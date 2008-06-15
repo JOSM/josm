@@ -25,7 +25,7 @@ import org.openstreetmap.josm.io.GpxReader;
 import org.xml.sax.SAXException;
 
 /**
- * Open a file chooser dialog and select an file to import. Than call the gpx-import
+ * Open a file chooser dialog and select an file to import. Then call the gpx-import
  * driver. Finally open an internal frame into the main window with the gpx data shown.
  * 
  * @author imi

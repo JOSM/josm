@@ -70,8 +70,8 @@ abstract public class Main {
 	public static Main main;
 	/**
 	 * The worker thread slave. This is for executing all long and intensive
-	 * calculations. The executed runnables are guaranteed to be executed seperatly
-	 * and sequenciel.
+	 * calculations. The executed runnables are guaranteed to be executed separately
+	 * and sequential.
 	 */
 	public final static Executor worker = Executors.newSingleThreadExecutor();
 	/**
@@ -285,7 +285,7 @@ abstract public class Main {
 	}
 
 	/**
-	 * Add a new layer to the map. If no map exist, create one.
+	 * Add a new layer to the map. If no map exists, create one.
 	 */
 	public final void addLayer(final Layer layer) {
 		if (map == null) {
@@ -298,7 +298,7 @@ abstract public class Main {
 		map.mapView.addLayer(layer);
 	}
 	/**
-	 * @return The edit osm layer. If none exist, it will be created.
+	 * @return The edit osm layer. If none exists, it will be created.
 	 */
 	public final OsmDataLayer editLayer() {
 		if (map == null || map.mapView.editLayer == null)

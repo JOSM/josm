@@ -223,7 +223,7 @@ public class OsmDataLayer extends Layer {
 	 * really deleting all deleted objects and reset the modified flags. This is done
 	 * after a successfull upload.
 	 * 
-	 * @param processed A list of all objects, that were actually uploaded. 
+	 * @param processed A list of all objects that were actually uploaded. 
 	 * 		May be <code>null</code>, which means nothing has been uploaded but 
 	 * 		saved to disk instead. Note that an empty collection for "processed"
 	 *      means that an upload has been attempted but failed.

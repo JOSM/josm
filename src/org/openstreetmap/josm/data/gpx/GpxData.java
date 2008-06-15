@@ -11,8 +11,9 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
- * objects of this class represent a gpx file with tracks, waypoints and routes
- * it uses GPX1.1 see http://www.topografix.com/GPX/1/1/ for details
+ * Objects of this class represent a gpx file with tracks, waypoints and routes.
+ * It uses GPX v1.1, see {@link <a href="http://www.topografix.com/GPX/1/1/">the spec</a>}
+ * for details.
  * 
  * @author Raphael Mack <ramack@raphael-mack.de>
  */

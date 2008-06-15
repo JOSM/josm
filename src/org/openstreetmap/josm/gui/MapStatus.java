@@ -110,7 +110,7 @@ public class MapStatus extends JPanel implements Helpful {
 		 */
 		Collection<OsmPrimitive> osmStatus;
 		/**
-		 * The old modifiers, that was pressed the last time this collector ran.
+		 * The old modifiers that was pressed the last time this collector ran.
 		 */
 		private int oldModifiers;
 		/**
@@ -250,7 +250,7 @@ public class MapStatus extends JPanel implements Helpful {
 
 	/**
 	 * Construct a new MapStatus and attach it to the map view.
-	 * @param mv The MapView the status line is part of.
+	 * @param mapFrame The MapFrame the status line is part of.
 	 */
 	public MapStatus(final MapFrame mapFrame) {
 		this.mv = mapFrame.mapView;

@@ -29,7 +29,7 @@ public class RenameLayerAction extends AbstractAction {
 	private Layer layer;
 
 	/**
-	 * @param file The filen of the original location of this layer.
+	 * @param file The file of the original location of this layer.
 	 * 		If null, no possibility to "rename the file as well" is provided. 
 	 */
 	public RenameLayerAction(File file, Layer layer) {

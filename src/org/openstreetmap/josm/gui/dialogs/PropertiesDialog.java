@@ -241,7 +241,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	}
 
 	/**
-     * @param row
      * @param key
      * @param allData
      * @param values

@@ -58,8 +58,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
 	/**
 	 * Checks whether it is ok to launch a save (whether we have data,
-	 * there is no conflict etc...)
-	 * @return <code>true</code>, if it is save to save.
+	 * there is no conflict etc.)
+	 * @return <code>true</code>, if it is safe to save.
 	 */
 	public boolean checkSaveConditions(Layer layer) {
 		if (layer == null) {
@@ -210,7 +210,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
 	/**
 	 * Check the data set if it would be empty on save. It is empty, if it contains
-	 * no objects (after all objects that are created and deleted without beeing 
+	 * no objects (after all objects that are created and deleted without being 
 	 * transfered to the server have been removed).
 	 *  
 	 * @return <code>true</code>, if a save result in an empty data set.

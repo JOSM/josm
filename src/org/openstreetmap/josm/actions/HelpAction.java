@@ -148,7 +148,7 @@ public class HelpAction extends AbstractAction {
     }
 
 	/**
-	 * Displays the help (or browse on the already open help) to the online page
+	 * Displays the help (or browse on the already open help) on the online page
 	 * with the given help topic. Use this for larger help descriptions.
 	 */
 	public void help(String topic) {

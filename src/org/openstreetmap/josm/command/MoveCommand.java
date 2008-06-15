@@ -82,7 +82,7 @@ public class MoveCommand extends Command {
 	 * are added together and so the resulting will be moved to the previous
 	 * vector plus this one.
 	 * 
-	 * The move is immediatly executed and any undo will undo both vectors to
+	 * The move is immediately executed and any undo will undo both vectors to
 	 * the original position the objects had before first moving.
 	 */
 	public void moveAgain(double x, double y) {

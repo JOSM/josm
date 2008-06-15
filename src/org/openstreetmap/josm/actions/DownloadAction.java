@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
- * Action that opens a connection to the osm server and download map data.
+ * Action that opens a connection to the osm server and downloads map data.
  *
  * An dialog is displayed asking the user to specify a rectangle to grab.
  * The url and account settings from the preferences are used.

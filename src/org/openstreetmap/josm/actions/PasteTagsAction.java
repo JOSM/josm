@@ -75,7 +75,7 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
 	}
 	
 	/**
-	 * determines whether to enable the widget depending on the contents of the paste 
+	 * Determines whether to enable the widget depending on the contents of the paste 
 	 * buffer and current selection 
 	 * @param pasteBuffer
 	 */

@@ -153,7 +153,7 @@ public class AboutAction extends JosmAction {
 	}
 
 	/**
-	 * Load the specified ressource into an TextArea and return it.
+	 * Load the specified resource into an TextArea and return it.
 	 * @param resource The resource url to load
 	 * @return	An read-only text area with the content of "resource"
 	 */

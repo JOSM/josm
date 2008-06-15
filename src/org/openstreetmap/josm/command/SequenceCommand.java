@@ -13,7 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
- * A command consisting of a sequenz of other commands. Executes the other commands
+ * A command consisting of a sequence of other commands. Executes the other commands
  * and undo them in reverse order.
  * @author imi
  */
@@ -29,7 +29,7 @@ public class SequenceCommand extends Command {
 
 	/**
 	 * Create the command by specifying the list of commands to execute.
-	 * @param sequenz The sequenz that should be executed.
+	 * @param sequenz The sequence that should be executed.
 	 */
 	public SequenceCommand(String name, Collection<Command> sequenz) {
 		this.name = name;
@@ -38,7 +38,7 @@ public class SequenceCommand extends Command {
 	}
 
 	/**
-	 * Convinient constructor, if the commands are known at compile time.
+	 * Convenient constructor, if the commands are known at compile time.
 	 */
 	public SequenceCommand(String name, Command... sequenz) {
 		this(name, Arrays.asList(sequenz));

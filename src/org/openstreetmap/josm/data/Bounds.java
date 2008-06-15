@@ -8,9 +8,6 @@ import org.openstreetmap.josm.data.projection.Projection;
  * This is a simple data class for "rectangular" areas of the world, given in 
  * lat/lon min/max values.
  * 
- * Do not confuse this with "Area", which is an OSM-primitive for a vector of nodes, 
- * describing some area (like a sea).
- * 
  * @author imi
  */
 public class Bounds {
@@ -43,7 +40,7 @@ public class Bounds {
 	 * @return Center of the bounding box.
 	 */
 	public LatLon center() {
-		// not sure, whether this calculation is right.. maybe there is some
+		// FIXME: not sure whether this calculation is right; maybe there is some
 		// more complex calculation needed to get a center of a spherical
 		// dimension?
 		return new LatLon((min.lat()+max.lat())/2, (min.lon()+max.lon())/2);

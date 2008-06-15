@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 
 /**
- * Helper class for all actions, that access the disk
+ * Helper class for all actions that access the disk
  */
 abstract public class DiskAccessAction extends JosmAction {
 

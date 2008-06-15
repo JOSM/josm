@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class ChangePropertyCommand extends Command {
 	/**
-	 * All primitives, that are affected with this command.
+	 * All primitives that are affected with this command.
 	 */
 	private final List<OsmPrimitive> objects;
 	/**
@@ -34,7 +34,7 @@ public class ChangePropertyCommand extends Command {
 	private final String key;
 	/**
 	 * The key value. If it is <code>null</code>, delete all key references with the given
-	 * key. Else, change the properties of all objects to the given value or create keys of
+	 * key. Otherwise, change the properties of all objects to the given value or create keys of
 	 * those objects that do not have the key yet.
 	 */
 	private final String value;

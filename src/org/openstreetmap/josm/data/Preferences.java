@@ -77,7 +77,7 @@ public class Preferences {
 	}
 
 	/**
-	 * @return A list of all existing directories, where resources could be stored.
+	 * @return A list of all existing directories where resources could be stored.
 	 */
 	public Collection<String> getAllPossiblePreferenceDirs() {
 	    LinkedList<String> locations = new LinkedList<String>();

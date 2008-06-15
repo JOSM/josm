@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 import org.openstreetmap.josm.Main;
 
 /**
- * Exit the application. May ask for permition first (if something has changed).
+ * Exit the application. May ask for permission first (if something has changed).
  *  
  * @author imi
  */

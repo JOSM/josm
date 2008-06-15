@@ -21,8 +21,7 @@ import org.openstreetmap.josm.tools.DateParser;
  * and updated within the OSM-Server.
  *
  * Although OsmPrimitive is designed as a base class, it is not to be meant to subclass
- * it by any other than from the package org.openstreetmap.josm.data.osm (thus the
- * visibility of the constructor). The available primitives are a fixed set that are given
+ * it by any other than from the package {@link org.openstreetmap.josm.data.osm}. The available primitives are a fixed set that are given
  * by the server environment and not an extendible data stuff. 
  *
  * @author imi
@@ -35,7 +34,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public Map<String, String> keys;
 
 	/**
-	 * Unique identifier in OSM. This is used to reidentify objects in the server.
+	 * Unique identifier in OSM. This is used to identify objects on the server.
 	 * An id of 0 means an unknown id. The object has not been uploaded yet to 
 	 * know what id it will get.
 	 * 
@@ -47,7 +46,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public long id = 0;
 
 	/**
-	 * <code>true</code>, if the object has been modified since it was loaded from
+	 * <code>true</code> if the object has been modified since it was loaded from
 	 * the server. In this case, on next upload, this object will be updated.
 	 * Deleted objects are deleted from the server. If the objects are added (id=0),
 	 * the modified is ignored and the object is added to the server. 
@@ -82,7 +81,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	public boolean tagged = false;
 	
 	/**
-	 * true if this object has direction dependant tags (e.g. oneway)
+	 * true if this object has direction dependent tags (e.g. oneway)
 	 */
 	public boolean hasDirectionKeys = false;
 	
@@ -112,7 +111,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
 	/** 
 	 * Contains the version number as returned by the API. Needed to
-	 * ensure update consistancy
+	 * ensure update consistency
 	 */
 	public int version = -1;
 	 
@@ -124,14 +123,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		new HashSet<String>(Arrays.asList(new String[] {"source", "note", "created_by"}));
 	
 	/**
-	 * Contains a list of direction-dependent keys that do not make an object
+	 * Contains a list of direction-dependent keys that make an object
 	 * direction dependent.
 	 */
 	public static Collection<String> directionKeys = 
 		new HashSet<String>(Arrays.asList(new String[] {"oneway", "incline", "incline_steep", "aerialway"}));
 	
 	/**
-	 * Implementation of the visitor scheme. Subclases have to call the correct
+	 * Implementation of the visitor scheme. Subclasses have to call the correct
 	 * visitor function.
 	 * @param visitor The visitor from which the visit() function must be called.
 	 */
@@ -173,9 +172,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
 	/**
-	 * Return the id plus the class type encoded as hashcode or supers hashcode if id is 0.
+	 * Return the id plus the class type encoded as hashcode or super's hashcode if id is 0.
 	 * 
-	 * An primitive has the same hashcode as its incomplete counter part.
+	 * An primitive has the same hashcode as its incomplete counterpart.
 	 */
 	@Override public final int hashCode() {
 		if (id == 0)

@@ -6,7 +6,7 @@ import java.util.HashMap;
 /** 
  * A simple class to keep a list of user names.
  * 
- * Instead of storing user names as strings with every OSM primtive, we store
+ * Instead of storing user names as strings with every OSM primitive, we store
  * a reference to an user object, and make sure that for each username there
  * is only one user object.
  * 

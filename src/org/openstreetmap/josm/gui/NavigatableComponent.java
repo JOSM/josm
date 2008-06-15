@@ -104,7 +104,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
 	/**
 	 * Return the point on the screen where this Coordinate would be.
-	 * @param point The point, where this geopoint would be drawn.
+	 * @param p The point, where this geopoint would be drawn.
 	 * @return The point on screen where "point" would be drawn, relative
 	 * 		to the own top/left.
 	 */
@@ -116,8 +116,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
 	/**
 	 * Zoom to the given coordinate.
-	 * @param centerX The center x-value (easting) to zoom to.
-	 * @param centerY The center y-value (northing) to zoom to.
+	 * @param newCenter The center x-value (easting) to zoom to.
 	 * @param scale The scale to use.
 	 */
 	public void zoomTo(EastNorth newCenter, double scale) {
@@ -234,7 +233,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 * If nothing is found, return <code>null</code>.
 	 *
 	 * @param p				 The point on screen.
-	 * @return	The primitive, that is nearest to the point p.
+	 * @return	The primitive that is nearest to the point p.
 	 */
 	public OsmPrimitive getNearest(Point p) {
 		OsmPrimitive osm = getNearestNode(p);

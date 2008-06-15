@@ -27,7 +27,7 @@ public final class Changeset /*extends OsmPrimitive*/ implements OsmWriterInterf
 	public long id = 0;
 	
 	/** 
-	 * User that created thos changeset, as specified by the server.
+	 * User that created this changeset, as specified by the server.
 	 * Never changed by JOSM.
 	 */
 	public User user = null;

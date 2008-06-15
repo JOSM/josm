@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
  * points up to the whole osm database. DataSet's can be merged together,
  * saved, (up/down/disk)loaded etc.
  *
- * Note, that DataSet is not an osm-primitive and so has no key association
+ * Note that DataSet is not an osm-primitive and so has no key association
  * but a few members to store some information.
  *
  * @author imi
@@ -48,8 +48,8 @@ public class DataSet implements Cloneable {
 	
 	/**
 	 * A list of listeners to selection changed events. The list is static,
-	 * as listeners register themself for any dataset selection changes that 
-	 * occour, regardless of the current active dataset. (However, the
+	 * as listeners register themselves for any dataset selection changes that 
+	 * occur, regardless of the current active dataset. (However, the
 	 * selection does only change in the active layer)
 	 */
 	public static Collection<SelectionChangedListener> selListeners = new LinkedList<SelectionChangedListener>();
@@ -90,7 +90,8 @@ public class DataSet implements Cloneable {
 
 	/**
 	 * Remove the selection of the whole dataset.
-	 * @deprecated Use setSelected() instead.
+	 * @deprecated Use {@link #setSelected(Collection) setSelected}
+	 * instead.
 	 */
 	@Deprecated
 	public void clearSelection() {

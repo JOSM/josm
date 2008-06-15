@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.coor;
 import java.io.Serializable;
 
 /**
- * Base class of points of both coordinate system.
+ * Base class of points of both coordinate systems.
  * 
  * The variables are default package protected to allow routines in the data package
  * to access them directly.
@@ -29,8 +29,8 @@ abstract class Coordinate implements Serializable {
 	 * Construct the point with latitude / longitude values.
 	 * The x/y values are left uninitialized.
 	 * 
-	 * @param lat Latitude of the point.
-	 * @param lon Longitude of the point.
+	 * @param x X coordinate of the point.
+	 * @param y Y coordinate of the point.
 	 */
 	Coordinate(double x, double y) {
 		this.x = x;

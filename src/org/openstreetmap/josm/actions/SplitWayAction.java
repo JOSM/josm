@@ -168,10 +168,6 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 
 	/**
 	 * Split a way into two or more parts, starting at a selected node.
-	 * 
-	 * FIXME: what do the following "arguments" refer to?
-	 * @param way the way to split
-	 * @param nodes the node(s) to split the way at; must be part of the way.
 	 */
 	private void splitWay() {
 		// We take our way's list of nodes and copy them to a way chunk (a

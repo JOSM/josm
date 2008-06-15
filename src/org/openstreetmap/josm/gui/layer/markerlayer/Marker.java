@@ -176,8 +176,7 @@ public class Marker implements ActionListener {
 	 * Returns an object of class Marker or one of its subclasses
 	 * created from the parameters given.
 	 *
-	 * @param ll lat/lon for marker
-	 * @param data hash containing keys and values from the GPX waypoint structure
+	 * @param wpt waypoint data for marker
 	 * @param relativePath An path to use for constructing relative URLs or 
 	 *        <code>null</code> for no relative URLs
 	 * @param offset double in seconds as the time offset of this marker from 

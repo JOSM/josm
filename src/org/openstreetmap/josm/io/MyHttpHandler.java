@@ -22,7 +22,7 @@ public class MyHttpHandler extends sun.net.www.protocol.http.Handler  {
                 return openConnection(u, (Proxy) null);
             }
             public MyHttpHandler(String proxy, int port) {
-                proxy = proxy;
+                this.proxy = proxy;
                 proxyPort = port;
             }
   

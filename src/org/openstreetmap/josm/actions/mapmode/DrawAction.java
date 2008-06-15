@@ -477,7 +477,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		Collections.reverse(is);
 	}
 
-	/*
+	/**
 	 * Adjusts the position of a node to lie on a segment (or a segment
 	 * intersection).
 	 * 

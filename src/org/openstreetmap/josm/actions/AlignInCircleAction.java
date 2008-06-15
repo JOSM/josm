@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
- * Aligns all selected nodes within a circle. (Usefull for roundabouts)
+ * Aligns all selected nodes within a circle. (Useful for roundabouts)
  * 
  * @author Matthew Newton
  */

@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.coor;
 
 /**
- * Northern, Easting of the projected coordinates.
+ * Northing, Easting of the projected coordinates.
  * 
  * This class is immutable.
  * 

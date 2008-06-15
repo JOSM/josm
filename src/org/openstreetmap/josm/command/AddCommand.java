@@ -20,9 +20,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * A command that adds an osm primitive to a dataset. Keys cannot be added this
- * way. Use ChangeKeyValueCommand instead.
+ * way.
  * 
- * See ChangeCommand for comments on relation back references.
+ * See {@link ChangeCommand ChangeCommand} for comments on relation back references.
  * 
  * @author imi
  */

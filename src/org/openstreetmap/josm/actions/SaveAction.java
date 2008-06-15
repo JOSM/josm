@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
- * Export the data  as OSM intern xml file.
+ * Export the data as an OSM xml file.
  * 
  * @author imi
  */

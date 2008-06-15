@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
- * Visitor, that adds the visited object to the dataset given at constructor.
+ * Visitor that adds the visited object to the dataset given at constructor.
  * 
  * Is not capable of adding keys.
  * 

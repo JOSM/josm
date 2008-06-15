@@ -32,8 +32,7 @@ public class WayPoint extends WithAttributes implements Comparable{
 	}
 	
 	/**
-	 * convert the time stamp of ther waypoint into seconds from the epoch
-	 * @return seconds
+	 * Convert the time stamp of the waypoint into seconds from the epoch
 	 */
 	public void setTime () {
 		if (! attr.containsKey("time")) {

@@ -57,7 +57,7 @@ public class MainApplication extends Main {
 		// Do not translate the early strings below until the locale is set up.
 		// (By the eager loaded plugins)
 		//
-		// These strings cannot be translated. That's live. Really. Sorry.
+		// These strings cannot be translated. That's life. Really. Sorry.
 		//
 		//                                                                 Imi.
 		/////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,6 @@ public class MainApplication extends Main {
 
 		// get the preferences.
 		final File prefDir = new File(Main.pref.getPreferencesDir());
-
 		// check if preferences directory has moved (TODO: Update code. Remove this after some time)
 		File oldPrefDir = new File(System.getProperty("user.home")+"/.josm");
 		if (!prefDir.isDirectory() && oldPrefDir.isDirectory()) {

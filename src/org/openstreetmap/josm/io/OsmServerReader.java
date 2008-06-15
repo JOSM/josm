@@ -25,7 +25,8 @@ abstract class OsmServerReader extends OsmConnection {
 	/**
 	 * Open a connection to the given url and return a reader on the input stream
 	 * from that connection. In case of user cancel, return <code>null</code>.
-	 * @param url The exact url to connect to.
+	 * @param urlStr The exact url to connect to.
+	 * @param pleaseWaitDlg
 	 * @return An reader reading the input stream (servers answer) or <code>null</code>.
 	 */
 	protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {

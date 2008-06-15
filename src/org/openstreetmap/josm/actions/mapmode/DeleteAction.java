@@ -30,10 +30,10 @@ import org.openstreetmap.josm.tools.*;
 /**
  * An action that enables the user to delete nodes and other objects.
  *
- * The user can click on an object, which get deleted if possible. When Ctrl is 
+ * The user can click on an object, which gets deleted if possible. When Ctrl is 
  * pressed when releasing the button, the objects and all its references are 
- * deleted. The exact definition of "all its references" are in 
- * @see #deleteWithReferences(OsmPrimitive)
+ * deleted. The exact definition of "all its references" are in
+ * {@link #deleteWithReferences deleteWithReferences}.
  *
  * If the user did not press Ctrl and the object has any references, the user
  * is informed and nothing is deleted.
@@ -158,7 +158,7 @@ public class DeleteAction extends MapMode {
 	 * and do not delete.
 	 * 
 	 * @param selection The objects to delete.
-	 * @param alsoDeleteNodesInWay true if nodes should be deleted as well
+	 * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
 	 * @return command A command to perform the deletions, or null of there is
 	 * nothing to delete.
 	 */

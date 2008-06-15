@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 
 /**
- * Action that opens a connection to the osm server and upload all changes.
+ * Action that opens a connection to the osm server and uploads all changes.
  *
  * An dialog is displayed asking the user to specify a rectangle to grab.
  * The url and account settings from the preferences are used.
@@ -51,8 +51,8 @@ public class UploadAction extends JosmAction {
 	 * when the user wants to upload data. Plugins can insert their own hooks here
 	 * if they want to be able to veto an upload.
 	 * 
-	 * Be dafault, the standard upload dialog is the only element in the list.
-	 * Plugins shold normally insert their code before that, so that the upload
+	 * Be default, the standard upload dialog is the only element in the list.
+	 * Plugins should normally insert their code before that, so that the upload
 	 * dialog is the last thing shown before upload really starts; on occasion
 	 * however, a plugin might also want to insert something after that.
 	 */

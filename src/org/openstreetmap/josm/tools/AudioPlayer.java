@@ -139,7 +139,7 @@ public class AudioPlayer extends Thread {
 	
 	/**
 	 * To get the Url of the playing or recently played audio.
-	 * @returns url - could be null
+	 * @return url - could be null
 	 */
 	public static URL url() {
 		return AudioPlayer.get().playingUrl;
@@ -147,7 +147,7 @@ public class AudioPlayer extends Thread {
 	
 	/**
 	 * Whether or not we are paused.
-	 * @returns boolean whether or not paused
+	 * @return boolean whether or not paused
 	 */
 	public static boolean paused() {
 		return AudioPlayer.get().state == State.PAUSED;
@@ -155,7 +155,7 @@ public class AudioPlayer extends Thread {
 
 	/**
 	 * Whether or not we are playing.
-	 * @returns boolean whether or not playing
+	 * @return boolean whether or not playing
 	 */
 	public static boolean playing() {
 		return AudioPlayer.get().state == State.PLAYING;
@@ -163,7 +163,7 @@ public class AudioPlayer extends Thread {
 
 	/**
 	 * How far we are through playing, in seconds.
-	 * @returns double seconds
+	 * @return double seconds
 	 */
 	public static double position() {
 		return AudioPlayer.get().position;
@@ -171,7 +171,7 @@ public class AudioPlayer extends Thread {
 	
 	/**
 	 * Speed at which we will play.
-	 * @returns double, speed multiplier
+	 * @return double, speed multiplier
 	 */
 	public static double speed() {
 		return AudioPlayer.get().speed;

@@ -32,7 +32,7 @@ import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginProxy;
 
 /**
- * An exception handler, that ask the user to send a bug report.
+ * An exception handler that asks the user to send a bug report.
  *
  * @author imi
  */
@@ -59,7 +59,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 			if (plugin != null) {
 				int answer = JOptionPane.showConfirmDialog(
 						Main.parent, 
-						tr("An unexpected exception occurred, that may come from in the ''{0}'' plugin.", plugin.info.name)+"\n"+
+						tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)+"\n"+
 						(plugin.info.author != null ? tr("According to the information within the plugin, the author is {0}.", plugin.info.author) : "")+"\n"+
 						tr("Should the plugin be disabled?"),
 						tr("Disable plugin"),

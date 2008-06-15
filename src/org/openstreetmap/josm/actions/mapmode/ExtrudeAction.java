@@ -52,7 +52,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 	 */
 	private Cursor oldCursor;
 	/**
-	 * The curren tposition of the mouse 
+	 * The current position of the mouse 
 	 */
 	private Point mousePos;
 	/** 

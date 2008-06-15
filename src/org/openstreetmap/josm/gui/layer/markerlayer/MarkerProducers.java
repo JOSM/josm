@@ -18,8 +18,7 @@ public interface MarkerProducers {
 	 * Returns a Marker object if this implementation wants to create one for the
 	 * given input data, or <code>null</code> otherwise.
 	 * 
-	 * @param ll lat/lon for the marker position
-	 * @param data A map of all tags found in the <wpt> node of the gpx file. 
+	 * @param wp waypoint data 
 	 * @param relativePath An path to use for constructing relative URLs or 
 	 *        <code>null</code> for no relative URLs
 	 * @return A Marker object, or <code>null</code>.

@@ -97,12 +97,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 	 * @return Whether the other layer can be merged into this layer.
 	 */
 	abstract public boolean isMergable(Layer other);
-	
-	/**
-	 * @return The bounding rectangle this layer occupies on screen when looking
-	 * 		at x/y values or <code>null</code>, if infinite area or unknown
-	 * 		area is occupied.
-	 */
+
 	abstract public void visitBoundingBox(BoundingXYVisitor v);
 
 	abstract public Object getInfoComponent();
