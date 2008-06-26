@@ -52,7 +52,11 @@ public class GettingStarted extends JPanel {
             try {
                 motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay");
             } catch (IOException ioe) {
-                motdcontent = tr("<html>\n<h1>JOSM, the Java OpenStreetMap editor</h1>\n<h2>(Message of the day not available)</h2>");            
+                motdcontent = "<html><body>\n<h1>" +
+                    tr("JOSM, the Java OpenStreetMap editor") +
+                    "</h1>\n<h2>(" +
+                    tr ("Message of the day not available") +
+                    ")</h2>";
             }
 
             int myVersion;
@@ -126,13 +130,11 @@ public class GettingStarted extends JPanel {
                     }            
                 }
             }
-            if (nothingIncluded) {
-                content += "<div align=\"center\">Watch this space for announcements</div>";
-                content += "<div align=\"center\" style=\"font-weight: normal\">(remove the \"motd\" entries in Advanced Preferences to see any available announcements next time)</div>";
-            }
             content += motdcontent.substring(start);
             content = content.replace("<html>", "<html><style>\nbody { font-family: sans-serif; font-weight: bold; }\n</style>");
             content = content.replace("<h1", "<h1 align=\"center\"");
+            /* replace the wiki title */ 
+            content = content.replace("JOSM, the Java OpenStreetMap editor", tr("JOSM, the Java OpenStreetMap editor")); 
         }
 
     }
