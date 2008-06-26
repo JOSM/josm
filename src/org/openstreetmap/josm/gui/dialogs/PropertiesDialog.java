@@ -169,7 +169,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		values.setEditable(true);
 		updateListData(key, allData, values);
 		Map<String, Integer> m=(Map<String, Integer>)propertyData.getValueAt(row, 1);
-		final String selection= m.size()!=1?"<different>":m.entrySet().iterator().next().getKey();
+		final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
 		values.setSelectedItem(selection);
 		values.getEditor().setItem(selection);
 		p.add(new JLabel(tr("Value")), GBC.std());
@@ -452,7 +452,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 					case 1:
 						Map<String, Integer> v = (Map<String,Integer>) value;
 						if (v.size()!=1) {
-							str="<different>";	
+							str=tr("<different>");
 							c.setFont(c.getFont().deriveFont(Font.ITALIC));
 						} else {
 							str=v.entrySet().iterator().next().getKey();
