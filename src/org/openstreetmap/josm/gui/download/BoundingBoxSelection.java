@@ -10,9 +10,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.HashMap;
 
 import javax.swing.JLabel;
@@ -20,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -77,27 +76,25 @@ public class BoundingBoxSelection implements DownloadSelection {
 			f.setMinimumSize(new Dimension(100,new JTextField().getMinimumSize().height));
 			f.addFocusListener(dialogUpdater);
 		}
-		
-		final KeyListener osmUrlRefresher = new KeyAdapter() {
-			@Override public void keyTyped(KeyEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Bounds b = osmurl2bounds(osmUrl.getText());
-						if (b != null) {
-							gui.minlon = b.min.lon();
-							gui.minlat = b.min.lat();
-							gui.maxlon = b.max.lon();
-							gui.maxlat = b.max.lat();
-							gui.boundingBoxChanged(BoundingBoxSelection.this);
-							updateBboxFields(gui);
-							updateSizeCheck(gui);
-						}
-					}
-				});
+		class osmUrlRefresher implements DocumentListener {
+			public void changedUpdate(DocumentEvent e) { dowork(); }
+			public void insertUpdate(DocumentEvent e) { dowork(); }
+			public void removeUpdate(DocumentEvent e) { dowork(); }
+			private void dowork() {
+				Bounds b = osmurl2bounds(osmUrl.getText());
+				if (b != null) {
+					gui.minlon = b.min.lon();
+					gui.minlat = b.min.lat();
+					gui.maxlon = b.max.lon();
+					gui.maxlat = b.max.lat();
+					gui.boundingBoxChanged(BoundingBoxSelection.this);
+					updateBboxFields(gui);
+					updateSizeCheck(gui);
+				}
 			}
 		};
 		
-		osmUrl.addKeyListener(osmUrlRefresher);
+		osmUrl.getDocument().addDocumentListener(new osmUrlRefresher());
 		
 		// select content on receiving focus. this seems to be the default in the
 		// windows look+feel but not for others. needs invokeLater to avoid strange
