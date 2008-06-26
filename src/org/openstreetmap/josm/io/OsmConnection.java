@@ -8,6 +8,11 @@ import java.awt.GridBagLayout;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CharacterCodingException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -128,7 +133,10 @@ public class OsmConnection {
 		}
 	}
 
-	protected void addAuth(HttpURLConnection con) {
-        con.addRequestProperty("Authorization", "Basic "+Base64.encode(Main.pref.get("osm-server.username")+":"+Main.pref.get("osm-server.password")));
+	protected void addAuth(HttpURLConnection con) throws CharacterCodingException {
+            CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+            String auth = Main.pref.get("osm-server.username") + ":" + Main.pref.get("osm-server.password");
+            ByteBuffer bytes = encoder.encode(CharBuffer.wrap(auth));
+            con.addRequestProperty("Authorization", "Basic "+Base64.encode(bytes));
     }
 }
