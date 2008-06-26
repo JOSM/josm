@@ -59,8 +59,8 @@ public class UndoRedoHandler implements LayerChangeListener {
 			OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
 			data.setModified(data.uploadedModified || !commands.isEmpty());
 			data.fireDataChange();
-			fireCommandsChanged();
 		}		
+		fireCommandsChanged();
 		Main.ds.setSelected();
 	}
 
@@ -78,8 +78,8 @@ public class UndoRedoHandler implements LayerChangeListener {
 			OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
 			data.setModified(true);
 			data.fireDataChange();
-			fireCommandsChanged();
 		}
+		fireCommandsChanged();
 	}
 
 	public void fireCommandsChanged() {
