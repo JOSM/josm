@@ -292,10 +292,21 @@ public class RelationEditor extends JFrame {
 	
 	private void addSelected() {
 		for (OsmPrimitive p : Main.ds.getSelected()) {
-			RelationMember em = new RelationMember();
-			em.member = p;
-			em.role = "";
-			clone.members.add(em);
+			boolean skip = false;
+			for (RelationMember rm : clone.members) {
+				if (rm.member == p)
+				{
+					skip = true;
+					break;
+				}
+			}
+			if(!skip)
+			{
+				RelationMember em = new RelationMember();
+				em.member = p;
+				em.role = "";
+				clone.members.add(em);
+			}
 		}
 		refreshTables();
 	}
