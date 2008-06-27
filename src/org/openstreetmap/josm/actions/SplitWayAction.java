@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -242,6 +243,24 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 			commandList.add(new AddCommand(wayToAdd));
 			Main.debug("wayToAdd: " + wayToAdd);
 			newSelection.add(wayToAdd);
+
+			// now copy all relations to new way also
+			for (Relation r : Main.ds.relations) {
+				if (r.deleted || r.incomplete) continue;
+				for (RelationMember rm : r.members) {
+					if (rm.member instanceof Way) {
+						if (rm.member == selectedWay)
+						{
+							Relation c = new Relation(r);
+							RelationMember em = new RelationMember();
+							em.member = wayToAdd;
+							em.role = rm.role;
+							c.members.add(em);
+							commandList.add(new ChangeCommand(r, c));
+						}
+					}
+				}
+			}
 		}
 
 		NameVisitor v = new NameVisitor();
