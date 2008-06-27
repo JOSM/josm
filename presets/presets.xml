@@ -1607,10 +1607,17 @@
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Landuse/Farm" icon="presets/landuse.png">
-		<label text="Edit Farm Landuse" />
+	<item name="Landuse/Farmyard" icon="presets/landuse.png">
+		<label text="Edit Farmyard Landuse" />
 		<label text=" " />
-		<key key="landuse" value="farm" />
+		<key key="landuse" value="farmyard" />
+		<text key="name" text="Name:" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Landuse/Farmland" icon="presets/landuse.png">
+		<label text="Edit Farmland Landuse" />
+		<label text=" " />
+		<key key="landuse" value="farmland" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 	</item>
 
