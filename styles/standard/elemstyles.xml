@@ -1436,6 +1436,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 <!--landuse tags -->
 	<rule>
 		<condition k="landuse" v="farm" />
+		<area colour="#b1e0c2" />
 		<icon annotate="true" src="misc/landmark/farm.png"  />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
