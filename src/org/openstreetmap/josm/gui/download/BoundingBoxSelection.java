@@ -40,6 +40,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 			new JTextField(11),
 			new JTextField(11) };
 	final JTextArea osmUrl = new JTextArea();
+	String oldUrl;
 	
 	final JLabel sizeCheck = new JLabel();
 	
@@ -81,15 +82,18 @@ public class BoundingBoxSelection implements DownloadSelection {
 			public void insertUpdate(DocumentEvent e) { dowork(); }
 			public void removeUpdate(DocumentEvent e) { dowork(); }
 			private void dowork() {
-				Bounds b = osmurl2bounds(osmUrl.getText());
-				if (b != null) {
-					gui.minlon = b.min.lon();
-					gui.minlat = b.min.lat();
-					gui.maxlon = b.max.lon();
-					gui.maxlat = b.max.lat();
-					gui.boundingBoxChanged(BoundingBoxSelection.this);
-					updateBboxFields(gui);
-					updateSizeCheck(gui);
+				if(!oldUrl.equals(osmUrl.getText()))
+				{
+					Bounds b = osmurl2bounds(osmUrl.getText());
+					if (b != null) {
+						gui.minlon = b.min.lon();
+						gui.minlat = b.min.lat();
+						gui.maxlon = b.max.lon();
+						gui.maxlat = b.max.lat();
+						gui.boundingBoxChanged(BoundingBoxSelection.this);
+						updateBboxFields(gui);
+						updateSizeCheck(gui);
+					}
 				}
 			}
 		};
@@ -162,7 +166,9 @@ public class BoundingBoxSelection implements DownloadSelection {
 			size *= 2;
 			zoom++;
 		}
-		osmUrl.setText("http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom);
+		// setting old URL prevents refresh based on this URL
+		oldUrl = "http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom;
+		osmUrl.setText(oldUrl);
 	}
 	
 	private void updateSizeCheck(DownloadDialog gui) {
