@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +24,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
+import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.*;
 
@@ -162,11 +165,41 @@ public class DeleteAction extends MapMode {
 	 * @return command A command to perform the deletions, or null of there is
 	 * nothing to delete.
 	 */
+	private int testRelation(Relation ref, OsmPrimitive osm)
+	{
+		NameVisitor n = new NameVisitor();
+		ref.visit(n);
+		NameVisitor s = new NameVisitor();
+		osm.visit(s);
+		String role = new String();
+		for (RelationMember m : ref.members)
+		{
+			if (m.member == osm)
+			{
+				role = m.role;
+				break;
+			}
+		}
+		if (role.length() > 0)
+		{
+			return JOptionPane.showConfirmDialog(Main.parent,
+			tr("Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?", s.name, n.name, role),
+			tr("Conflicting relation"), JOptionPane.YES_NO_OPTION);
+		}
+		else
+		{
+			return JOptionPane.showConfirmDialog(Main.parent,
+			tr("Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?", s.name, n.name),
+			tr("Conflicting relation"), JOptionPane.YES_NO_OPTION);
+		}
+	}
+
 	private Command delete(Collection<OsmPrimitive> selection, boolean alsoDeleteNodesInWay) {
 		if (selection.isEmpty()) return null;
 
 		Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>(selection);
 		Collection<Way> waysToBeChanged = new HashSet<Way>();
+		HashMap<OsmPrimitive, Collection<OsmPrimitive>> relationsToBeChanged = new HashMap<OsmPrimitive, Collection<OsmPrimitive>>();
 
 		if (alsoDeleteNodesInWay) {
 			// Delete untagged nodes that are to be unreferenced.
@@ -196,9 +229,15 @@ public class DeleteAction extends MapMode {
 				if (ref instanceof Way) {
 					waysToBeChanged.add((Way) ref);
 				} else if (ref instanceof Relation) {
-					JOptionPane.showMessageDialog(Main.parent,
-						tr("Cannot delete: Selection is used by relation"));
-					return null;
+					if (testRelation((Relation)ref, osm) == JOptionPane.YES_OPTION)
+					{
+						Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
+						if(relset == null) relset = new HashSet<OsmPrimitive>();
+						relset.add(osm);
+						relationsToBeChanged.put(ref, relset);
+					}
+					else
+						return null;
 				} else {
 					return null;
 				}
@@ -217,8 +256,30 @@ public class DeleteAction extends MapMode {
 				for (OsmPrimitive ref : v.data) {
 					if (del.contains(ref)) continue;
 					if (ref instanceof Relation) {
-						JOptionPane.showMessageDialog(Main.parent,
-							tr("Cannot delete: Selection is used by relation"));
+						Boolean found = false;
+						Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
+						if (relset == null)
+							relset = new HashSet<OsmPrimitive>();
+						else
+						{
+							for (OsmPrimitive m : relset) {
+								if(m == w)
+								{
+									found = true;
+									break;
+								}
+							}
+						}
+						if (!found)
+						{
+							if (testRelation((Relation)ref, w) == JOptionPane.YES_OPTION)
+							{
+								relset.add(w);
+								relationsToBeChanged.put(ref, relset);
+							}
+							else
+								return null;
+						}
 					} else {
 						return null;
 					}
@@ -226,6 +287,27 @@ public class DeleteAction extends MapMode {
 			} else {
 				cmds.add(new ChangeCommand(w, wnew));
 			}
+		}
+
+		Iterator<OsmPrimitive> iterator = relationsToBeChanged.keySet().iterator();
+		while(iterator.hasNext())
+		{
+			Relation cur = (Relation)iterator.next();
+			Relation rel = new Relation(cur);
+			for(OsmPrimitive osm : relationsToBeChanged.get(cur))
+			{
+				for (RelationMember rm : rel.members) {
+					if (rm.member == osm)
+					{
+						RelationMember mem = new RelationMember();
+						mem.role = rm.role;
+						mem.member = rm.member;
+						rel.members.remove(mem);
+						break;
+					}
+				}
+			}
+			cmds.add(new ChangeCommand(cur, rel));
 		}
 
 		if (!del.isEmpty()) cmds.add(new DeleteCommand(del));

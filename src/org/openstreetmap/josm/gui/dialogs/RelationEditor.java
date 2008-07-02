@@ -146,9 +146,9 @@ public class RelationEditor extends JFrame {
 		});
 
 		JLabel help = new JLabel("<html><em>"+
-			"This is the basic relation editor which allows you to change the relation's tags " +
+			tr("This is the basic relation editor which allows you to change the relation's tags " +
 			"as well as the members. In addition to this we should have a smart editor that " +
-			"detects the type of relationship and limits your choices in a sensible way.</em></html>");
+			"detects the type of relationship and limits your choices in a sensible way.")+"</em></html>");
 		
 		getContentPane().add(help, BorderLayout.NORTH);		
 		try { setAlwaysOnTop(true); } catch (SecurityException sx) {}
@@ -223,6 +223,12 @@ public class RelationEditor extends JFrame {
 			}
 		}));
 
+		buttonPanel.add(createButton(marktr("Delete Selected"),"deleteselected", tr("Delete all currently selected objects from releation"), KeyEvent.VK_R, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteSelected();
+			}
+		}));
+
 		buttonPanel.add(createButton(marktr("Delete"),"delete", tr("Remove the member in the current table row from this relation"), KeyEvent.VK_D, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int[] rows = memberTable.getSelectedRows();
@@ -258,7 +264,7 @@ public class RelationEditor extends JFrame {
 		
 		refreshTables();
 		
-		setSize(new Dimension(400, 500));
+		setSize(new Dimension(600, 500));
 		setLocationRelativeTo(Main.parent);
 	}
 	
@@ -310,6 +316,23 @@ public class RelationEditor extends JFrame {
 		}
 		refreshTables();
 	}
+
+	private void deleteSelected() {
+		for (OsmPrimitive p : Main.ds.getSelected()) {
+			Relation c = new Relation(clone);
+			for (RelationMember rm : c.members) {
+				if (rm.member == p)
+				{
+					RelationMember mem = new RelationMember();
+					mem.role = rm.role;
+					mem.member = rm.member;
+					clone.members.remove(mem);
+				}
+			}
+		}
+		refreshTables();
+	}
+
     private void downloadRelationMembers()  {
 
         boolean download = false;

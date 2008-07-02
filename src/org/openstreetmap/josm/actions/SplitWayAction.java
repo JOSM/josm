@@ -244,6 +244,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 			Main.debug("wayToAdd: " + wayToAdd);
 			newSelection.add(wayToAdd);
 
+			Boolean warnme=false;
 			// now copy all relations to new way also
 			for (Relation r : Main.ds.relations) {
 				if (r.deleted || r.incomplete) continue;
@@ -255,12 +256,17 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 							RelationMember em = new RelationMember();
 							em.member = wayToAdd;
 							em.role = rm.role;
+							if(em.role.length() > 0)
+								warnme = true;
 							c.members.add(em);
 							commandList.add(new ChangeCommand(r, c));
+							break;
 						}
 					}
 				}
 			}
+			if(warnme)
+				JOptionPane.showMessageDialog(Main.parent, tr("A role based relation membership was copied to both new ways.\nYou should verify this and correct it when necessary."));
 		}
 
 		NameVisitor v = new NameVisitor();

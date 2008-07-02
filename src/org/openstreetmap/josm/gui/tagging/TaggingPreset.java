@@ -127,7 +127,7 @@ public class TaggingPreset extends AbstractAction {
 	            ((JComboBox)value).getEditor().setItem(DIFFERENT);
 	            originalValue = DIFFERENT;
 			}
-			p.add(new JLabel(text), GBC.std().insets(0,0,10,0));
+			p.add(new JLabel(tr(text)+":"), GBC.std().insets(0,0,10,0));
 			p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
 		}
 		
@@ -173,7 +173,7 @@ public class TaggingPreset extends AbstractAction {
 							"false".equals(oneValue) ? 
 							QuadStateCheckBox.State.NOT_SELECTED :
 							QuadStateCheckBox.State.UNSET;
-				check = new QuadStateCheckBox(text, initialState, 
+				check = new QuadStateCheckBox(tr(text), initialState, 
 						new QuadStateCheckBox.State[] { 
 						QuadStateCheckBox.State.SELECTED,
 						QuadStateCheckBox.State.NOT_SELECTED,
@@ -183,7 +183,7 @@ public class TaggingPreset extends AbstractAction {
 				// else than true/false. we display a quad-state check box
 				// in "partial" state.
 				initialState = QuadStateCheckBox.State.PARTIAL;
-				check = new QuadStateCheckBox(text, QuadStateCheckBox.State.PARTIAL, 
+				check = new QuadStateCheckBox(tr(text), QuadStateCheckBox.State.PARTIAL, 
 						new QuadStateCheckBox.State[] { 
 						QuadStateCheckBox.State.PARTIAL,
 						QuadStateCheckBox.State.SELECTED,
@@ -235,7 +235,7 @@ public class TaggingPreset extends AbstractAction {
 				lhm.put(DIFFERENT, DIFFERENT);
 			}
 			for (int i=0; i<value_array.length; i++) {
-				lhm.put(value_array[i], display_array[i]);
+				lhm.put(value_array[i], tr(display_array[i]));
 			}
 			for (String s : usage.values) {
 				if (!lhm.containsKey(s)) lhm.put(s, s);
@@ -249,7 +249,7 @@ public class TaggingPreset extends AbstractAction {
 			} else {
 				combo.setSelectedItem(DIFFERENT); originalValue=DIFFERENT;
 			}
-			p.add(new JLabel(text), GBC.std().insets(0,0,10,0));
+			p.add(new JLabel(tr(text)+":"), GBC.std().insets(0,0,10,0));
 			p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
 		}
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
@@ -276,7 +276,7 @@ public class TaggingPreset extends AbstractAction {
 		public String text;
 
 		@Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-			p.add(new JLabel(text), GBC.eol());
+			p.add(new JLabel(tr(text)), GBC.eol());
 		}
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
 	}
@@ -309,7 +309,7 @@ public class TaggingPreset extends AbstractAction {
 	 * Called from the XML parser to set the name of the tagging preset
 	 */
 	public void setName(String name) {
-		putValue(Action.NAME, name);
+		putValue(Action.NAME, tr(name));
 		putValue("toolbar", "tagging_"+name);
 	}
 
