@@ -1329,7 +1329,7 @@
 		<key key="amenity" value="place_of_worship" />
 		<text key="name" text="Name:" default="" delete_if_empty="true" />
 		<combo key="religion" text="Religion:" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
-		<combo key="denomination" text="Denomination:" values="anglican,baptist,catholic,protestant,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,quaker,evangelical,jehovahs_witness,shia,sunni" default="" delete_if_empty="true" />
+		<combo key="denomination" text="Denomination:" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
 	</item>
 
 	<item name="Buildings/Shelter" icon="presets/shelter.png">
