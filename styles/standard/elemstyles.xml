@@ -2329,6 +2329,13 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 
 	<rule>
+		<condition k="shop" v="car" />
+		<icon annotate="true" src="misc/proposed.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="shop" v="car_repair" />
 		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
@@ -2344,6 +2351,20 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="clothes" />
+		<icon annotate="true" src="misc/proposed.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="computer" />
+		<icon annotate="true" src="misc/proposed.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="cycle_repair" />
 		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
