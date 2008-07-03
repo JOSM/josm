@@ -1605,6 +1605,8 @@
 		<label text="Edit Grave Yard" />
 		<key key="amenity" value="grave_yard" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+		<combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
 	</item>
 
 	<item name="Landuse/Farmyard" icon="presets/landuse.png">
@@ -1739,6 +1741,8 @@
 		<label text=" " />
 		<key key="landuse" value="cemetery" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+		<combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
 	</item>
 	
 	<item name="Landuse/Village Green" icon="presets/landuse.png">
