@@ -499,7 +499,7 @@
 		<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
 		<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
 		<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-		<combo key="surface" text="Surface" values="copperstone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+		<combo key="surface" text="Surface" values="cobblestone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
 		<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
 		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 	</item>
