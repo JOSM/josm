@@ -1982,4 +1982,10 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
+	<item name="Man Made/Surveillance" icon="presets/empty.png">
+		<label text="Edit Surveillance Camera" />
+		<key key="man_made" value="surveillance" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
 </annotations>
