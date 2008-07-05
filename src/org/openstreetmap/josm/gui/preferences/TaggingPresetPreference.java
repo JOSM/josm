@@ -128,22 +128,25 @@ public class TaggingPresetPreference implements PreferenceSetting {
 		{
 			HashMap<String,JMenu> submenus = new HashMap<String,JMenu>();
 			for (final TaggingPreset p : taggingPresets) {
-				if (p.getValue(Action.NAME).equals(" ")) {
+				String name = (String) p.getValue(Action.NAME);
+				if (name.equals(" ")) {
 					Main.main.menu.presetsMenu.add(new JSeparator());
 				} else {
-					String name = (String) p.getValue(Action.NAME);
 					String[] sp = name.split("/");
 					if (sp.length <= 1) {
 						Main.main.menu.presetsMenu.add(new JMenuItem(p));
 					} else {
-						p.setName(sp[1]);
+						p.setDisplayName(sp[1]);
 						JMenu submenu = submenus.get(sp[0]);
 						if (submenu == null) {
 							submenu = new JMenu(sp[0]);
 							submenus.put(sp[0], submenu);
 							Main.main.menu.presetsMenu.add(submenu);
 						}
-						submenu.add(new JMenuItem(p));
+						if (sp[1].equals(" "))
+							submenu.add(new JSeparator());
+						else
+							submenu.add(p);
 					}
 				}
 			}		

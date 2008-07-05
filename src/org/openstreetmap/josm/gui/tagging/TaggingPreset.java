@@ -331,8 +331,15 @@ public class TaggingPreset extends AbstractAction {
 	 * Called from the XML parser to set the name of the tagging preset
 	 */
 	public void setName(String name) {
-		putValue(Action.NAME, tr(name));
+		setDisplayName(tr(name));
 		putValue("toolbar", "tagging_"+name);
+	}
+	
+	/**
+	 * Change the display name without changing the toolbar value.
+	 */
+	public void setDisplayName(String name) {
+		putValue(Action.NAME, tr(name));
 	}
 
 	/**
