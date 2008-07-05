@@ -40,15 +40,33 @@ public class ChangePropertyCommand extends Command {
 	private final String value;
 	
 	public ChangePropertyCommand(Collection<OsmPrimitive> objects, String key, String value) {
-		this.objects = new LinkedList<OsmPrimitive>(objects);
+		this.objects = new LinkedList<OsmPrimitive>();
 		this.key = key;
 		this.value = value;
+		if (value == null) {
+			for (OsmPrimitive osm : objects) {
+				if(osm.get(key) != null)
+					this.objects.add(osm);
+			}
+		} else {
+			for (OsmPrimitive osm : objects) {
+				String val = osm.get(key);
+				if(val == null || !value.equals(val))
+				{
+					this.objects.add(osm);
+				}
+			}
+		}
 	}
 
 	public ChangePropertyCommand(OsmPrimitive object, String key, String value) {
-		this.objects = new LinkedList<OsmPrimitive>(Collections.singleton(object));
+		this.objects = new LinkedList<OsmPrimitive>();
 		this.key = key;
 		this.value = value;
+		String val = object.get(key);
+		if ((value == null && val != null)
+		|| (value != null && (val == null || !value.equals(val))))
+			this.objects.add(object);
 	}
 	
 	@Override public boolean executeCommand() {

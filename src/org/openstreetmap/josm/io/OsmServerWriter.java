@@ -129,7 +129,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 		} catch (RuntimeException e) {
 			if( useChangesets ) stopChangeset(10);
 			e.printStackTrace();
-			throw new SAXException("An error occoured: "+e.getMessage());
+			throw new SAXException(tr("An error occoured: {0}",e.getMessage()));
 		}
 	}
 	

@@ -40,7 +40,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 			new JTextField(11),
 			new JTextField(11) };
 	final JTextArea osmUrl = new JTextArea();
-	String oldUrl;
+	String oldUrl = "";
 	
 	final JLabel sizeCheck = new JLabel();
 	
@@ -93,6 +93,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 						gui.boundingBoxChanged(BoundingBoxSelection.this);
 						updateBboxFields(gui);
 						updateSizeCheck(gui);
+						oldUrl = osmUrl.getText();
 					}
 				}
 			}

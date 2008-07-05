@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -27,6 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XmlObjectParser implements Iterable<Object> {
 
+	public static final String lang = tr("En:").toLowerCase();
 	public static class Uniform<T> implements Iterable<T>{
 		private Iterator<Object> iterator;
 		/**
@@ -103,13 +106,30 @@ public class XmlObjectParser implements Iterable<Object> {
 				Object c = current.peek();
 				Field f = null;
 				try {
-	                f = c.getClass().getField(fieldName);
-                } catch (NoSuchFieldException e) {
-                }
+					f = c.getClass().getField(fieldName);
+				} catch (NoSuchFieldException e) {
+					if(fieldName.startsWith(lang))
+					{
+						String locfieldName = "locale_" +
+						fieldName.substring(lang.length());
+						try {
+							f = c.getClass().getField(locfieldName);
+						} catch (NoSuchFieldException ex) {
+						}
+					}
+				}
 				if (f != null && Modifier.isPublic(f.getModifiers()))
 					f.set(c, getValueForClass(f.getType(), value));
 				else {
-					fieldName = "set" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
+					if(fieldName.startsWith(lang))
+					{
+						int l = lang.length();
+						fieldName = "set" + fieldName.substring(l,l+1).toUpperCase() + fieldName.substring(l+1);
+					}
+					else
+					{
+						fieldName = "set" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
+					}
 					Method[] methods = c.getClass().getDeclaredMethods();
 					for (Method m : methods) {
 						if (m.getName().equals(fieldName) && m.getParameterTypes().length == 1) {

@@ -233,7 +233,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			} else {
 				commands.add(new ChangePropertyCommand(sel, newkey, value));
 			}
-			Main.main.undoRedo.add(new SequenceCommand(trn("Change properties of {0} objects", "Change properties of {0} objects", sel.size(), sel.size()), commands));
+			Main.main.undoRedo.add(new SequenceCommand(trn("Change properties of up to {0} object", "Change properties of up to {0} objects", sel.size(), sel.size()), commands));
 		}
 
 		selectionChanged(sel); // update whole table
@@ -278,7 +278,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		}
 
 		JPanel p = new JPanel(new BorderLayout());
-		p.add(new JLabel("<html>"+trn("This will change {0} object.","This will change {0} objects.", sel.size(),sel.size())+"<br><br>"+tr("Please select a key")),
+		p.add(new JLabel("<html>"+trn("This will change up to {0} object.","This will change up to {0} objects.", sel.size(),sel.size())+"<br><br>"+tr("Please select a key")),
 				BorderLayout.NORTH);
 		final TreeMap<String, TreeSet<String>> allData = createAutoCompletionInfo(false);
 		final AutoCompleteComboBox keys = new AutoCompleteComboBox();

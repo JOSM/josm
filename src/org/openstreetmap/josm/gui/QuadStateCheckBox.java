@@ -88,7 +88,7 @@ public class QuadStateCheckBox extends JCheckBox {
 				other.setArmed(false);
 				setPressed(false);
 				setSelected(true);
-				setToolTipText(tr("true: the property is explicitly switched off"));
+				setToolTipText(tr("true: the property is explicitly switched on"));
 			} else if (state == State.PARTIAL) {
 				other.setArmed(true);
 				setPressed(true);

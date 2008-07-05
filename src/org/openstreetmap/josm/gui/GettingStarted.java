@@ -54,7 +54,7 @@ public class GettingStarted extends JPanel {
             } catch (IOException ioe) {
                 motdcontent = "<html><body>\n<h1>" +
                     tr("JOSM, the Java OpenStreetMap editor") +
-                    "</h1>\n<h2>(" +
+                    "</h1>\n<h2 align=\"center\">(" +
                     tr ("Message of the day not available") +
                     ")</h2>";
             }
