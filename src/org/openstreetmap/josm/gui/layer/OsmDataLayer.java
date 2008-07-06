@@ -198,6 +198,8 @@ public class OsmDataLayer extends Layer {
 		for (DataSource src : ((OsmDataLayer)from).data.dataSources) 
 			data.dataSources.add(src);
 		fireDataChange();
+		// repaint to make sure new data is displayed properly.
+		Main.map.mapView.repaint();
 		
 		if (visitor.conflicts.isEmpty())
 			return;
