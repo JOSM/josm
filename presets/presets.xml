@@ -1039,7 +1039,7 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Sport/Basketball" icon="presets/empty.png">
+	<item name="Sport/Basketball" icon="presets/basketball.png">
 		<label text="Edit Basketball" />
 		<key key="sport" value="basketball" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1201,7 +1201,7 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Sport/Table Tennis" icon="presets/empty.png">
+	<item name="Sport/Table Tennis" icon="presets/tennisball.png">
 		<label text="Edit Table Tennis" />
 		<key key="sport" value="table_tennis" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
