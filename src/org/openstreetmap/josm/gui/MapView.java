@@ -152,9 +152,11 @@ public class MapView extends NavigatableComponent {
 			l.layerAdded(layer);
 		for (Layer.LayerChangeListener l : Layer.listeners)
 			l.layerAdded(layer);
-
 		// autoselect the new layer
+		Layer old = activeLayer;
 		setActiveLayer(layer);
+		for (Layer.LayerChangeListener l : Layer.listeners)
+			l.activeLayerChange(old, layer);
 		repaint();
 	}
 

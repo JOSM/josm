@@ -130,8 +130,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 	}
 	
 	public void activeLayerChange(Layer a, Layer b) {
-		if (a instanceof OsmDataLayer && b instanceof OsmDataLayer) {
-			((OsmDataLayer)a).listenerDataChanged.remove(this);
+		if ((a == null || a instanceof OsmDataLayer) && b instanceof OsmDataLayer) {
+			if (a != null) ((OsmDataLayer)a).listenerDataChanged.remove(this);
 			((OsmDataLayer)b).listenerDataChanged.add(this);
 			updateList();
 			repaint();
