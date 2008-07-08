@@ -61,13 +61,12 @@ public class Lambert implements Projection {
     /**
      *  Because josm cannot work correctly if two zones are displayed, we allow some overlapping
      */
-    public static final double cMaxOverlappingZones = Math.toRadians(0.5 * 0.9);
+    public static final double cMaxOverlappingZones = Math.toRadians(1.5 * 0.9);
 
     public static int layoutZone = -1;
 
     /**
-     * @param p
-     *            a WGS84 lat/lon (ellipsoid GRS80) (in degree)
+     * @param p  WGS84 lat/lon (ellipsoid GRS80) (in degree)
      * @return eastnorth projection in Lambert Zone (ellipsoid Clark)
      */
     public EastNorth latlon2eastNorth(LatLon p) {
@@ -107,12 +106,14 @@ public class Lambert implements Projection {
             if ((currentZone < layoutZone && Math.abs(zoneLimits[currentZone] - lt) > cMaxOverlappingZones)
                     || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
                 JOptionPane.showMessageDialog(Main.parent,
-                        tr("Some data are positionned far away from current Lambert zone limits.\n"
-                                +"Split long ways to avoid distortions."));
+                        tr("IMPORTANT : data positionned far away from\n"
+                                +"the current Lambert zone limits.\n"
+                                +"Undo your last action, Save your work \n"
+                                +"and Start a new layer on the new zone."));
                 layoutZone = -1;
             } else {
                 System.out.println("temporarily extends Lambert zone " + layoutZone 
-                		+ " projection at lat,lon:" + lt + "," + lg);
+                        + " projection at lat,lon:" + lt + "," + lg);
             }
         }
         if (layoutZone == -1) {
