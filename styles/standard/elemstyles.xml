@@ -603,6 +603,64 @@ Using both area and line attributes for the same key/value pair doesn't work!
     
 <!--aerialway tags -->
 
+<rule>
+	<condition k="aerialway" v="chair_lift"/>
+	<line width="2" colour="#707070" dashed="true"/>
+	<scale_min>1</scale_min>
+	<scale_max>50000</scale_max>
+</rule>
+
+<rule>
+	<condition k="aerialway" v="cable_car"/>
+	<line width="2" colour="#707070" dashed="true"/>
+	<scale_min>1</scale_min>
+	<scale_max>50000</scale_max>
+</rule>
+
+<rule>
+	<condition k="aerialway" v="gondola"/>
+	<line width="2" colour="#707070" dashed="true"/>
+	<scale_min>1</scale_min>
+	<scale_max>50000</scale_max>
+</rule>
+
+<!-- piste tags -->
+
+<rule>
+	<condition k="piste:difficulty" v="easy"/>
+	<line width="6" colour="#0000FF"/>
+	<scale_min>1</scale_min>
+	<scale_max>30000</scale_max>
+</rule>
+
+<rule>
+	<condition k="piste:difficulty" v="intermediate"/>
+	<line width="6" colour="#FF0000"/>
+	<scale_min>1</scale_min>
+	<scale_max>30000</scale_max>
+</rule>
+
+<rule>
+	<condition k="piste:difficulty" v="advanced"/>
+	<line width="6" colour="#606060"/>
+	<scale_min>1</scale_min>
+	<scale_max>30000</scale_max>
+</rule>
+
+<rule>
+	<condition k="piste:difficulty" v="freeride"/>
+	<line width="6" colour="#FFFF00"/>
+	<scale_min>1</scale_min>
+	<scale_max>30000</scale_max>
+</rule>
+
+<rule>
+	<condition k="piste:difficulty v="novice"/>
+	<line width="6" colour="#00FF00"/>
+	<scale_min>1</scale_min>
+	<scale_max>300000</scale_max>
+</rule>
+
 <!--power tags -->
 
 	<rule>
