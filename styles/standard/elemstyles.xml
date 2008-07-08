@@ -1016,7 +1016,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="amenity" v="drinking_water" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="misc/drinking_water.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
