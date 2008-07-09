@@ -1093,7 +1093,7 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Sport/Canoeing" icon="presets/empty.png">
+	<item name="Sport/Canoeing" icon="presets/canoe.png">
 		<label text="Edit Canoeing" />
 		<key key="sport" value="canoe" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
