@@ -333,6 +333,11 @@ public class TaggingPreset extends AbstractAction {
 	 */
 	public TaggingPreset() {}
 
+
+	public boolean isEmpty()
+	{
+		return (data.size() == 0);
+	}
 	/**
 	 * Called from the XML parser to set the name of the tagging preset
 	 */

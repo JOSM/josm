@@ -134,7 +134,19 @@ public class TaggingPresetPreference implements PreferenceSetting {
 				} else {
 					String[] sp = name.split("/");
 					if (sp.length <= 1) {
-						Main.main.menu.presetsMenu.add(new JMenuItem(p));
+						if(p.isEmpty())
+						{
+							JMenu submenu = submenus.get(sp[0]);
+							if (submenu == null) {
+								submenu = new JMenu(p);
+								submenus.put(sp[0], submenu);
+								Main.main.menu.presetsMenu.add(submenu);
+							}
+						}
+						else
+						{
+							Main.main.menu.presetsMenu.add(new JMenuItem(p));
+						}
 					} else {
 						p.setDisplayName(sp[1]);
 						JMenu submenu = submenus.get(sp[0]);

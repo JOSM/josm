@@ -13,6 +13,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 import javax.swing.Action;
@@ -140,16 +141,23 @@ public class ToolbarPreferences implements PreferenceSetting {
 	public void addGui(PreferenceDialog gui) {
 		selected.removeAllElements();
 		unselected.removeAllElements();
+		Map<String, Action> us = new TreeMap<String, Action>();
 		for (Action a : actions.values())
-			unselected.addElement(a);
+		{
+			String name = a.getValue(a.NAME).toString();
+			if(!name.equals(" "))
+				us.put(a.getValue(a.NAME).toString(), a);
+		}
+		for (String a : us.keySet())
+			unselected.addElement(us.get(a));
 		unselected.addElement(null);
 
 		final JPanel left = new JPanel(new GridBagLayout());
-		left.add(new JLabel("Toolbar"), GBC.eol());
+		left.add(new JLabel(tr("Toolbar")), GBC.eol());
 		left.add(new JScrollPane(selectedList), GBC.std().fill(GBC.BOTH));
 
 		final JPanel right = new JPanel(new GridBagLayout());
-		right.add(new JLabel("Available"), GBC.eol());
+		right.add(new JLabel(tr("Available")), GBC.eol());
 		right.add(new JScrollPane(unselectedList), GBC.eol().fill(GBC.BOTH));
 
 		final JPanel buttons = new JPanel(new GridLayout(6,1));
@@ -190,7 +198,7 @@ public class ToolbarPreferences implements PreferenceSetting {
 		p.add(buttons);
 		p.add(right);
 
-		JPanel panel = gui.createPreferenceTab("toolbar", "Toolbar customization", "Customize the elements on the toolbar.");
+		JPanel panel = gui.createPreferenceTab("toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
 		panel.add(p, GBC.eol().fill(GBC.BOTH));
 
 		for (String s : getToolString()) {
