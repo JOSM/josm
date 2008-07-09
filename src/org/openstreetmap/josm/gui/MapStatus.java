@@ -333,7 +333,7 @@ public class MapStatus extends JPanel implements Helpful {
 	}
 
 	public String helpTopic() {
-		return tr("Statusline");
+		return "Statusline";
 	}
 	
 	public void setHelpText(String t) {

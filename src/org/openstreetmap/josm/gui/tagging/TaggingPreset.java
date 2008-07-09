@@ -272,21 +272,27 @@ public class TaggingPreset extends AbstractAction {
 			p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
 		}
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
-			Object display = combo.getSelectedItem();
+			String display = combo.getSelectedItem().toString();
 			String value = null;
-			if (display != null) 
-				for (String key : lhm.keySet()) { 
+			if(display == null && combo.isEditable())
+				display = combo.getEditor().getItem().toString();
+
+			if (display != null)
+			{
+				for (String key : lhm.keySet()) {
 					String k = lhm.get(key);
-					if (k != null && k.equals(display)) value=key; 
+					if (k != null && k.equals(display)) value=key;
 				}
-			String str = combo.isEditable() ? combo.getEditor().getItem().toString() : value;
-			
+				if(value == null)
+					value = display;
+			}
+
 			// no change if same as before
-			if (str.equals(originalValue) || (originalValue == null && str.length() == 0)) return;
+			if (value.equals(originalValue) || (originalValue == null && (value == null || value.length() == 0))) return;
 			
-			if (delete_if_empty && str != null && str.length() == 0)
-				str = null;
-			cmds.add(new ChangePropertyCommand(sel, key, str));
+			if (delete_if_empty && value != null && value.length() == 0)
+				value = null;
+			cmds.add(new ChangePropertyCommand(sel, key, value));
 		}
 		@Override boolean requestFocusInWindow() {return combo.requestFocusInWindow();}
 	}
