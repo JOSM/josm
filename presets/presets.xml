@@ -1075,6 +1075,12 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
+	<item name="Sport/Archery" icon="presets/empty.png">
+		<label text="Edit Archery" />
+		<key key="sport" value="archery" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
 	<item name="Sport/Boules" icon="presets/empty.png">
 		<label text="Edit Boules" />
 		<key key="sport" value="boules" />
@@ -1204,6 +1210,12 @@
 	<item name="Sport/Skiing" icon="presets/skiing.png">
 		<label text="Edit Skiing" />
 		<key key="sport" value="skiing" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport/Shooting" icon="presets/empty.png">
+		<label text="Edit Shooting" />
+		<key key="sport" value="shooting" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
