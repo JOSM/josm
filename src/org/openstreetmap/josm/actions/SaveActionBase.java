@@ -86,8 +86,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
 		return true;
 	}
 
-	public static File openFileDialog() {
-		JFileChooser fc = createAndOpenFileChooser(false, false);
+	public static File openFileDialog(Layer layer) {
+		JFileChooser fc = createAndOpenFileChooser(false, false, layer instanceof GpxLayer ? tr("Save GPX file") : tr("Save OSM file"));
 		if (fc == null)
 			return null;
 
@@ -98,6 +98,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
 			FileFilter ff = fc.getFileFilter();
 			if (ff instanceof ExtensionFileFilter)
 				fn += "." + ((ExtensionFileFilter)ff).defaultExtension;
+			else if (layer instanceof GpxLayer)
+				fn += ".gpx";
 			else
 				fn += ".osm";
 			file = new File(fn);

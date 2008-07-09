@@ -40,7 +40,7 @@ public class OpenAction extends DiskAccessAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		JFileChooser fc = createAndOpenFileChooser(true, true);
+		JFileChooser fc = createAndOpenFileChooser(true, true, null);
 		if (fc == null)
 			return;
 		File[] files = fc.getSelectedFiles();

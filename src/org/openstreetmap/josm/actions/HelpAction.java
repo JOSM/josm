@@ -45,7 +45,7 @@ public class HelpAction extends AbstractAction {
 		String helpTopic();
     }
 
-	private JFrame helpBrowser = new JFrame("JOSM Online Help");
+	private JFrame helpBrowser = new JFrame(tr("JOSM Online Help"));
 	private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
 	private JEditorPane help = new JEditorPane();
 	private WikiReader reader = new WikiReader(baseurl);
@@ -81,9 +81,9 @@ public class HelpAction extends AbstractAction {
 
 		JPanel buttons = new JPanel();
 		p.add(buttons, BorderLayout.SOUTH);
-		createButton(buttons, "Open in Browser");
-		createButton(buttons, "Edit");
-		createButton(buttons, "Reload");
+		createButton(buttons, tr("Open in Browser"));
+		createButton(buttons, tr("Edit"));
+		createButton(buttons, tr("Reload"));
 
 		helpBrowser.addWindowListener(new WindowAdapter(){
 			@Override public void windowClosing(WindowEvent e) {
@@ -100,15 +100,15 @@ public class HelpAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if ("Open in Browser".equals(e.getActionCommand())) {
+		if (tr("Open in Browser").equals(e.getActionCommand())) {
 			OpenBrowser.displayUrl(url);
-		} else if ("Edit".equals(e.getActionCommand())) {
+		} else if (tr("Edit").equals(e.getActionCommand())) {
 			if (!url.startsWith(baseurl)) {
 				JOptionPane.showMessageDialog(Main.parent, tr("Can only edit help pages from JOSM Online Help"));
 				return;
 			}
 			OpenBrowser.displayUrl(url+"?action=edit");
-		} else if ("Reload".equals(e.getActionCommand())) {
+		} else if (tr("Reload").equals(e.getActionCommand())) {
 			setHelpUrl(url);
 		} else if (e.getActionCommand() == null) {
 			String topic = null;
@@ -165,7 +165,7 @@ public class HelpAction extends AbstractAction {
 		try {
 			help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
         } catch (IOException e) {
-        	help.setText("Error while loading page "+url);
+        	help.setText(tr("Error while loading page {0}",url));
         }
 		helpBrowser.setVisible(true);
 	}

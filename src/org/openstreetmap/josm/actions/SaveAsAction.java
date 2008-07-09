@@ -25,6 +25,6 @@ public class SaveAsAction extends SaveActionBase {
 	}
 	
 	@Override protected File getFile(Layer layer) {
-		return openFileDialog();
+		return openFileDialog(layer);
 	}
 }

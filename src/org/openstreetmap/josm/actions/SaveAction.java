@@ -39,6 +39,6 @@ public class SaveAction extends SaveActionBase {
 				return f;
 			}
 		}
-		return openFileDialog();
+		return openFileDialog(layer);
 	}
 }

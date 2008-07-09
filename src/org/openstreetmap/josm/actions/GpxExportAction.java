@@ -54,7 +54,7 @@ public class GpxExportAction extends DiskAccessAction {
 			return;
 		}
 
-		JFileChooser fc = createAndOpenFileChooser(false, false);
+		JFileChooser fc = createAndOpenFileChooser(false, false, null);
 		if (fc == null)
 			return;
 		File file = fc.getSelectedFile();

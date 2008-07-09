@@ -19,11 +19,14 @@ abstract public class DiskAccessAction extends JosmAction {
 		super(name, iconName, tooltip, shortCut, modifiers, true);
 	}
 	
-	protected static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple) {
+	protected static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title) {
 		String curDir = Main.pref.get("lastDirectory");
 		if (curDir.equals(""))
 			curDir = ".";
 		JFileChooser fc = new JFileChooser(new File(curDir));
+		if(title != null)
+			fc.setDialogTitle(title);
+
 		fc.setMultiSelectionEnabled(multiple);
 		for (int i = 0; i < ExtensionFileFilter.filters.length; ++i)
 			fc.addChoosableFileFilter(ExtensionFileFilter.filters[i]);
