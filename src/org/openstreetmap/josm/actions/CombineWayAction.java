@@ -147,7 +147,18 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 			}
 		}
 
-		Way newWay = new Way(selectedWays.get(0));
+		// Find the most appropriate way to modify.
+
+		// Eventually this might want to be the way with the longest
+		// history or the longest selected way but for now just attempt
+		// to reuse an existing id.
+		Way modifyWay = selectedWays.peek();
+		for (Way w : selectedWays) {
+			modifyWay = w;
+			if (w.id != 0) break;
+		}
+		Way newWay = new Way(modifyWay);
+
 		newWay.nodes.clear();
 		newWay.nodes.addAll(nodeList);
 
@@ -178,8 +189,10 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 		}
 
 		LinkedList<Command> cmds = new LinkedList<Command>();
-		cmds.add(new DeleteCommand(selectedWays.subList(1, selectedWays.size())));
-		cmds.add(new ChangeCommand(selectedWays.peek(), newWay));
+		LinkedList<Way> deletedWays = new LinkedList<Way>(selectedWays);
+		deletedWays.remove(modifyWay);
+		cmds.add(new DeleteCommand(deletedWays));
+		cmds.add(new ChangeCommand(modifyWay, newWay));
 
 		// modify all relations containing the now-deleted ways
 		for (Relation r : relationsUsingWays) {
@@ -196,12 +209,12 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 				}
 			}
 			for (String role : rolesToReAdd) {
-				newRel.members.add(new RelationMember(role, selectedWays.peek()));
+				newRel.members.add(new RelationMember(role, modifyWay));
 			}
 			cmds.add(new ChangeCommand(r, newRel));
 		}
 		Main.main.undoRedo.add(new SequenceCommand(tr("Combine {0} ways", selectedWays.size()), cmds));
-		Main.ds.setSelected(selectedWays.peek());
+		Main.ds.setSelected(modifyWay);
 	}
 
 	/**
