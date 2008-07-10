@@ -272,7 +272,8 @@ public class TaggingPreset extends AbstractAction {
 			p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
 		}
 		@Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
-			String display = combo.getSelectedItem().toString();
+			Object obj = combo.getSelectedItem();
+			String display = (obj == null) ? null : obj.toString();
 			String value = null;
 			if(display == null && combo.isEditable())
 				display = combo.getEditor().getItem().toString();
@@ -286,6 +287,8 @@ public class TaggingPreset extends AbstractAction {
 				if(value == null)
 					value = display;
 			}
+			else
+				value = "";
 
 			// no change if same as before
 			if (value.equals(originalValue) || (originalValue == null && (value == null || value.length() == 0))) return;
