@@ -38,6 +38,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -81,14 +82,7 @@ public class TaggingPreset extends AbstractAction {
 		Usage returnValue = new Usage();
 		returnValue.values = new HashSet<String>();
 		for (OsmPrimitive s : sel) {
-			String v = s.get(key);
-			if ("true".equalsIgnoreCase(v)) v = "true";
-			else if ("yes".equalsIgnoreCase(v)) v = "true";
-			else if ("1".equals(v)) v = "true";
-			else if ("false".equalsIgnoreCase(v)) v = "false";
-			else if ("no".equalsIgnoreCase(v)) v = "false";
-			else if ("0".equals(v)) v = "false";			
-			returnValue.values.add(v);
+			returnValue.values.add(OsmUtils.getNamedOsmBoolean(s.get(key)));
 		}
 		return returnValue;
 	}
@@ -172,12 +166,12 @@ public class TaggingPreset extends AbstractAction {
 
 			String oneValue = null;
 			for (String s : usage.values) oneValue = s;
-			if (usage.values.size() < 2 && (oneValue == null || "true".equals(oneValue) || "false".equals(oneValue))) {
+			if (usage.values.size() < 2 && (oneValue == null || OsmUtils.trueval.equals(oneValue) || OsmUtils.falseval.equals(oneValue))) {
 				// all selected objects share the same value which is either true or false or unset, 
 				// we can display a standard check box.
-				initialState = "true".equals(oneValue) ? 
+				initialState = OsmUtils.trueval.equals(oneValue) ? 
 							QuadStateCheckBox.State.SELECTED :
-							"false".equals(oneValue) ? 
+							OsmUtils.falseval.equals(oneValue) ? 
 							QuadStateCheckBox.State.NOT_SELECTED :
 							QuadStateCheckBox.State.UNSET;
 				check = new QuadStateCheckBox(locale_text, initialState, 
@@ -206,8 +200,8 @@ public class TaggingPreset extends AbstractAction {
 			
 			// otherwise change things according to the selected value.
 			cmds.add(new ChangePropertyCommand(sel, key, 
-					check.getState() == QuadStateCheckBox.State.SELECTED ? "true" :
-					check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? "false" :
+					check.getState() == QuadStateCheckBox.State.SELECTED ? OsmUtils.trueval :
+					check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? OsmUtils.falseval :
 					null));
 		}
 		@Override boolean requestFocusInWindow() {return check.requestFocusInWindow();}
@@ -354,6 +348,8 @@ public class TaggingPreset extends AbstractAction {
 	 */
 	public void setDisplayName(String name) {
 		putValue(Action.NAME, tr(name));
+		String tooltip = tr("Use presets ''{0}''", tr(name));
+		putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
 	}
 
 	/**
