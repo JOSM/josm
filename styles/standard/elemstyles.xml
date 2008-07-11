@@ -80,6 +80,13 @@ Using both area and line attributes for the same key/value pair doesn't work!
     </rule>
 
 	<rule>
+		<condition k="highway" v="road"/>
+		<line width="2" realwidth="5" dashed="true" colour="#ff4040"/>
+        <scale_min>1</scale_min>
+        <scale_max>40000</scale_max>
+    </rule>
+
+	<rule>
 		<condition k="highway" v="unsurfaced"/>
 		<line width="1" realwidth="3" colour="#c0c0c0"/>
         <scale_min>1</scale_min>
@@ -431,6 +438,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="waterway" v="dam" />
+		<icon annotate="true" src="nautical.png" />
         <line width="2" colour="#D8D8D8" />
 		<!-- it's not possible to have both line and area, line seems more likely -->
         <scale_min>1</scale_min>
@@ -2389,6 +2397,21 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
 	</rule>
 
+	<!-- lot's of "openGeoDB:..." tags can be found in germany -->
+	<rule>
+		<condition k="openGeoDB:type" v="Stadt" />
+		<icon annotate="true" src="places/settlement/town.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="openGeoDB:type" v="Gemeinde" />
+		<icon annotate="true" src="places/settlement/town.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
 <!--annotation tags -->
 
 <!--"deprecated" tags -->
@@ -2401,28 +2424,28 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="man_made" v="power_wind" />
-		<icon annotate="true" src="misc/landmark/power/wind.png" />
+		<icon annotate="true" src="misc/deprecated.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="man_made" v="power_hydro" />
-		<icon annotate="true" src="misc/landmark/power/hydro.png" />
+		<icon annotate="true" src="misc/deprecated.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="man_made" v="power_fossil" />
-		<icon annotate="true" src="misc/landmark/power/fossil.png" />
+		<icon annotate="true" src="misc/deprecated.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="man_made" v="power_nuclear" />
-		<icon annotate="true" src="misc/landmark/power/nuclear.png" />
+		<icon annotate="true" src="misc/deprecated.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2728,6 +2751,13 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="video" />
+		<icon annotate="true" src="misc/proposed.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="shopping_center" />
 		<icon annotate="true" src="misc/proposed.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
