@@ -208,7 +208,7 @@
 		</xsl:call-template>
 
 		<xsl:choose>
-			<xsl:when test="$ypos &lt; 44">
+			<xsl:when test="$ypos &lt; 43">
 				<!-- recursive call - increasing index and output counters -->
 			    <xsl:call-template name="posed_rules">
 					<xsl:with-param name="key" select="$key"/>
@@ -304,7 +304,7 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'tracktype'"/>
 		<xsl:with-param name="column" select="2"/>
-		<xsl:with-param name="row" select="10"/>
+		<xsl:with-param name="row" select="8"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'surface'"/>
@@ -335,6 +335,11 @@
 		<xsl:with-param name="key" select="'junction'"/>
 		<xsl:with-param name="column" select="2"/>
 		<xsl:with-param name="row" select="28"/>
+    </xsl:call-template>
+	<xsl:call-template name="topic">
+		<xsl:with-param name="key" select="'barrier'"/>
+		<xsl:with-param name="column" select="2"/>
+		<xsl:with-param name="row" select="30"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'route'"/>
@@ -398,59 +403,49 @@
 		<xsl:with-param name="row" select="21"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'oneway'"/>
+		<xsl:with-param name="key" select="'noexit'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="23"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'noexit'"/>
+		<xsl:with-param name="key" select="'maxweight'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="25"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'maxweight'"/>
+		<xsl:with-param name="key" select="'maxheight'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="27"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'maxheight'"/>
+		<xsl:with-param name="key" select="'maxwidth'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="29"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'maxwidth'"/>
+		<xsl:with-param name="key" select="'maxlength'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="31"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'maxlength'"/>
+		<xsl:with-param name="key" select="'maxspeed'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="33"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'maxspeed'"/>
+		<xsl:with-param name="key" select="'minspeed'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="35"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'minspeed'"/>
+		<xsl:with-param name="key" select="'maxstay'"/>
 		<xsl:with-param name="column" select="3"/>
 		<xsl:with-param name="row" select="37"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'maxstay'"/>
-		<xsl:with-param name="column" select="3"/>
-		<xsl:with-param name="row" select="39"/>
-    </xsl:call-template>
-	<xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'toll'"/>
 		<xsl:with-param name="column" select="3"/>
-		<xsl:with-param name="row" select="41"/>
-    </xsl:call-template>
-	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'barrier'"/>
-		<xsl:with-param name="column" select="3"/>
-		<xsl:with-param name="row" select="43"/>
+		<xsl:with-param name="row" select="39"/>
     </xsl:call-template>
 		
     <xsl:call-template name="topic">
@@ -461,12 +456,12 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'service'"/>
 		<xsl:with-param name="column" select="4"/>
-		<xsl:with-param name="row" select="20"/>
+		<xsl:with-param name="row" select="21"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'waterway'"/>
 		<xsl:with-param name="column" select="4"/>
-		<xsl:with-param name="row" select="25"/>
+		<xsl:with-param name="row" select="26"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
