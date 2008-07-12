@@ -160,6 +160,35 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>10000</scale_max>
 	</rule>
 
+<!--the designation rules should be placed before the path rule! -->
+	<rule>
+		<condition k="horse" v="designated"/>
+		<line width="1" realwidth="2" colour="#c08000" />
+		<scale_min>1</scale_min>
+		<scale_max>30000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="bicycle" v="designated"/>
+		<line width="1" realwidth="2" colour="#ff00ff"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="foot" v="designated"/>
+		<line width="1" realwidth="1" colour="#00ff00" />
+		<scale_min>1</scale_min>
+		<scale_max>10000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="path"/>
+		<line width="1" realwidth="1" colour="#00ff00" />
+		<scale_min>1</scale_min>
+		<scale_max>10000</scale_max>
+	</rule>
+
 	<rule>
 		<condition k="highway" v="pedestrian"/>
 		<line width="3" realwidth="5" colour="#00ff00"/>
