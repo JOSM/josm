@@ -594,6 +594,87 @@
 		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 	</item>
 
+	<item name="Ways/ " icon="presets/empty.png"></item>
+
+	<item name="Ways/Hiking" icon="presets/empty.png">
+		<label text="Edit Hiking" />
+		<label text=" " />
+		<key key="highway" value="path" />
+		<key key="foot" value="designated" />
+		<key key="sac_scale" value="yes" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Mountain Hiking" icon="presets/empty.png">
+		<label text="Edit Mountain Hiking" />
+		<label text=" " />
+		<key key="highway" value="path" />
+		<key key="foot" value="designated" />
+		<key key="sac_scale" value="mountain" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Demanding Mountain Hiking" icon="presets/empty.png">
+		<label text="Edit Demanding Mountain Hiking" />
+		<label text=" " />
+		<key key="highway" value="path" />
+		<key key="foot" value="designated" />
+		<key key="sac_scale" value="demanding_mountain" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Alpine Hiking" icon="presets/empty.png">
+		<label text="Edit Alpine Hiking" />
+		<label text=" " />
+		<key key="highway" value="path" />
+		<key key="foot" value="designated" />
+		<key key="sac_scale" value="alpine" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Demanding alpine hiking" icon="presets/empty.png">
+		<label text="Edit Demanding alpine hiking" />
+		<label text=" " />
+		<key key="highway" value="path" />
+		<key key="foot" value="designated" />
+		<key key="sac_scale" value="demanding_alpine" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Ways/Difficult alpine hiking" icon="presets/empty.png">
+		<label text="Edit Difficult alpine hiking" />
+		<label text=" " />
+		<key key="highway" value="path" />
+		<key key="foot" value="designated" />
+		<key key="sac_scale" value="difficult_alpine" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+	</item>
+	
+
 
 	<item name="Railway/Rail" icon="presets/railway.png">
 		<label text="Edit a Rail" />
