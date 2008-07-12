@@ -19,6 +19,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="motorway"/>
         <line width="3" realwidth="8" colour="#809bc0"  width_bg="5" colour_bg="#FFFF00"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>200000000</scale_max>
 	</rule>
@@ -26,6 +27,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="motorway_link"/>
         <line width="3" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -33,6 +35,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="trunk"/>
 		<line width="3" colour="#7fc97f"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>20000</scale_max>
 	</rule>
@@ -40,6 +43,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="trunk_link"/>
         <line width="3" colour="#7fc97f"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>20000</scale_max>
 	</rule>
@@ -47,6 +51,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="primary"/>
 		<line width="3" realwidth="8" colour="#fb805f"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>700000</scale_max>
 	</rule>
@@ -54,6 +59,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="primary_link"/>
         <line width="3" colour="#fb805f"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>40000</scale_max>
 	</rule>
@@ -61,6 +67,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="secondary"/>
 		<line width="3" realwidth="6" colour="#fdbf6f"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>300000</scale_max>
     </rule>
@@ -68,6 +75,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="highway" v="tertiary"/>
         <line width="2" realwidth="5" colour="#f7f496"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>30000</scale_max>
 	</rule>
@@ -75,6 +83,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="unclassified"/>
 		<line width="2" realwidth="5" colour="#c0c0c0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>40000</scale_max>
     </rule>
@@ -82,6 +91,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="road"/>
 		<line width="2" realwidth="5" dashed="true" colour="#ff4040"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>40000</scale_max>
     </rule>
@@ -89,6 +99,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="unsurfaced"/>
 		<line width="1" realwidth="3" colour="#c0c0c0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>40000</scale_max>
     </rule>
@@ -96,6 +107,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="highway" v="track"/>
         <line width="1" realwidth="3" colour="#006600"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>20000</scale_max>
 	</rule>
@@ -103,6 +115,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="residential"/>
 		<line width="2" realwidth="5" colour="#c0c0c0"/> 
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>40000</scale_max>
     </rule>
@@ -110,6 +123,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="living_street"/>
 		<line width="1" realwidth="3" colour="#c0c0c0"/> 
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>40000</scale_max>
     </rule>
@@ -117,6 +131,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="highway" v="service"/>
         <line width="1" realwidth="3" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>20000</scale_max>
 	</rule>
@@ -124,6 +139,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="bridleway"/>
 		<line width="1" realwidth="2" colour="#c08000" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>30000</scale_max>
 	</rule>
@@ -131,6 +147,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="cycleway"/>
 		<line width="1" realwidth="2" colour="#ff00ff"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -138,6 +155,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="footway"/>
 		<line width="1" realwidth="1" colour="#00ff00" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>10000</scale_max>
 	</rule>
@@ -145,6 +163,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="highway" v="pedestrian"/>
 		<line width="3" realwidth="5" colour="#00ff00"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>10000</scale_max>
     </rule>
@@ -152,6 +171,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="highway" v="steps"/>
         <line width="1" realwidth="1" colour="#00ff00"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>10000</scale_max>
 	</rule>
@@ -159,6 +179,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="highway" v="bus_guideway"/>
         <line width="1" realwidth="1" colour="#00ff00"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>10000</scale_max>
 	</rule>
@@ -277,7 +298,8 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="highway" v="construction" />
-		<line width="3" realwidth="5" colour="#00ff00"/>		
+		<line width="3" realwidth="5" colour="#FFFF00"/>
+		<icon src="misc/construction.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -296,6 +318,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="cycleway" v="lane"/>
 		<line width="1" realwidth="2" colour="#ff00ff"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -303,6 +326,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="cycleway" v="track"/>
 		<line width="1" realwidth="2" colour="#ff00ff"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -310,6 +334,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="cycleway" v="opposite_lane"/>
 		<line width="1" realwidth="2" colour="#ff00ff"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -317,6 +342,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="cycleway" v="opposite_track"/>
 		<line width="1" realwidth="2" colour="#ff00ff"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -324,22 +350,58 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="cycleway" v="opposite"/>
 		<line width="1" realwidth="2" colour="#ff00ff"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 	
 <!-- tracktype tags -->
 
-	<!-- grade1 tag -->
-	<!-- grade2 tag -->
-	<!-- grade3 tag -->
-	<!-- grade4 tag -->
-	<!-- grade5 tag -->
+	<rule>
+		<condition k="tracktype" v="grade1"/>
+        <line width="1" realwidth="3" dashed="true" colour="#006600"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="tracktype" v="grade2"/>
+        <line width="1" realwidth="3" dashed="true" colour="#006600"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="tracktype" v="grade3"/>
+        <line width="1" realwidth="3" dashed="true" colour="#006600"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="tracktype" v="grade4"/>
+        <line width="1" realwidth="3" dashed="true" colour="#006600"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="tracktype" v="grade5"/>
+        <line width="1" realwidth="3" dashed="true" colour="#006600"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
 
 <!--waterway tags -->
 	<rule>
 		<condition k="waterway" v="river"/>
         <line width="2" realwidth="10" colour="#0000ff" width_bg="3" colour_bg="#00001f"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -347,6 +409,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<!--rule>
 		<condition k="waterway" v="riverbank"/>
         <line width="1" colour="#00005f" width_bg="1" colour_bg="#00001f"/>
+	<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule-->
@@ -354,6 +417,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="waterway" v="canal"/>
         <line width="2" colour="#0000ff" width_bg="2" colour_bg="#00001f"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -361,6 +425,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="waterway" v="stream"/>
         <line width="1" colour="#6600cc" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -368,6 +433,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="waterway" v="drain"/>
         <line width="1" colour="#0000ff"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -375,6 +441,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="waterway" v="dock"/>
         <line width="1" colour="#0000cf"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -491,6 +558,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="railway" v="rail"/>
 		<line width="2" colour="#808080" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -498,6 +566,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="tram"/>
         <line width="1" colour="#606060" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -505,6 +574,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="light_rail"/>
         <line width="2" colour="#808080" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -512,6 +582,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="subway"/>
         <line width="1" colour="#303030" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -526,6 +597,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="preserved"/>
         <line width="1" colour="#202020" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -533,6 +605,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="disused"/>
         <line width="1" colour="#202020" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -540,6 +613,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="abandoned"/>
         <line width="1" colour="#202020" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -547,6 +621,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="narrow_gauge"/>
         <line width="1" colour="#202020" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -554,6 +629,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="railway" v="monorail"/>
         <line width="1" colour="#202020" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -566,6 +642,26 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
     </rule>
     
+	<rule>
+		<condition k="service" v="yard" />
+		<icon annotate="true" src="misc/proposed.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="service" v="siding" />
+		<icon annotate="true" src="misc/proposed.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="service" v="spur" />
+		<icon annotate="true" src="misc/proposed.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
 <!--aeroway tags -->
 
     <rule>
@@ -592,6 +688,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="aeroway" v="runway"/>
         <line width="3" colour="#330000" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -599,6 +696,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="aeroway" v="taxiway"/>
         <line width="2" colour="#660000" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -606,6 +704,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="aeroway" v="apron"/>
         <area colour="#D8D8D8" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -614,6 +713,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="aerialway" v="cable_car"/>
 		<line width="2" colour="#707070" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -621,6 +721,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="aerialway" v="chair_lift"/>
 		<line width="2" colour="#707070" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -628,6 +729,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="aerialway" v="drag_lift"/>
 		<line width="2" colour="#707070" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -635,6 +737,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="aerialway" v="gondola"/>
 		<line width="2" colour="#707070" dashed="true"/>
+		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -644,6 +747,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="piste:difficulty" v="easy"/>
 		<line width="6" colour="#0000FF"/>
+		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
 	</rule>
@@ -651,6 +755,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="piste:difficulty" v="intermediate"/>
 		<line width="6" colour="#FF0000"/>
+		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
 	</rule>
@@ -658,6 +763,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="piste:difficulty" v="advanced"/>
 		<line width="6" colour="#606060"/>
+		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
 	</rule>
@@ -665,6 +771,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="piste:difficulty" v="freeride"/>
 		<line width="6" colour="#FFFF00"/>
+		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
 	</rule>
@@ -672,6 +779,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="piste:difficulty" v="novice"/>
 		<line width="6" colour="#00FF00"/>
+		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
 		<scale_max>300000</scale_max>
 	</rule>
@@ -688,6 +796,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="power" v="line" />
         <line width="1" colour="#eeeeee" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -825,6 +934,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="man_made" v="pipeline" />
         <line width="2" colour="#660000" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1935,6 +2045,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="bus"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1942,6 +2053,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="ferry"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1949,6 +2061,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="flight"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1956,6 +2069,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="ncn"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1963,6 +2077,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="subsea"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1970,6 +2085,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="ski"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1977,6 +2093,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="tour"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1984,6 +2101,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="route" v="pub_crawl"/>
         <line width="1" colour="#809bc0"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1993,6 +2111,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="boundary" v="national"/>
         <line width="1" colour="#3a5d8c"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2000,6 +2119,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="boundary" v="administrative"/>
         <line width="1" colour="#3a5d8c"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2007,6 +2127,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="boundary" v="civil"/>
         <line width="1" colour="#3a5d8c"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2014,6 +2135,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="boundary" v="political"/>
         <line width="1" colour="#3a5d8c"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2021,6 +2143,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="boundary" v="national_park"/>
         <line width="1" colour="#3a5d8c"/>
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2805,6 +2928,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
        <condition k="highway" v="minor"/>
        <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
+       <icon annotate="true" src="misc/deprecated.png" />
        <scale_min>1</scale_min>
        <scale_max>40000</scale_max>
      </rule>
