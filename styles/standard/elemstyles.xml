@@ -2414,65 +2414,6 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 <!--annotation tags -->
 
-<!--"deprecated" tags -->
-	<rule>
-		<condition k="historic" v="museum" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="man_made" v="power_wind" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="man_made" v="power_hydro" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="man_made" v="power_fossil" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="man_made" v="power_nuclear" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<!-- was never approved anyway, shop=laundry was approved instead -->
-	<rule>
-		<condition k="shop" v="laundromat" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-    <rule>
-       <condition k="highway" v="minor"/>
-       <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-
-	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
-	<rule>
-		<condition k="leisure" v="zoo" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
 <!--"work in progress" tags -->
 	<rule>
 		<condition k="amenity" v="bar" />
@@ -2816,4 +2757,64 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
+
+<!--"deprecated" tags -->
+	<rule>
+		<condition k="historic" v="museum" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="power_wind" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="power_hydro" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="power_fossil" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="power_nuclear" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<!-- was never approved anyway, shop=laundry was approved instead -->
+	<rule>
+		<condition k="shop" v="laundromat" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+    <rule>
+       <condition k="highway" v="minor"/>
+       <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
+       <scale_min>1</scale_min>
+       <scale_max>40000</scale_max>
+     </rule>
+
+	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
+	<rule>
+		<condition k="leisure" v="zoo" />
+		<icon annotate="true" src="misc/deprecated.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
 </rules>
