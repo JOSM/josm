@@ -13,7 +13,9 @@
     />
 
 
-	
+<xsl:variable name="xscale">20</xsl:variable>
+<xsl:variable name="yscale">10</xsl:variable>
+
 	
 	
 <xsl:template name="rule">
@@ -76,7 +78,7 @@
 			<xsl:with-param name="key" select="$key"/>
 			<xsl:with-param name="inpos" select="$inpos + 1"/>
 			<xsl:with-param name="xpos" select="$xpos"/>
-			<xsl:with-param name="ypos" select="$ypos + 1"/>
+			<xsl:with-param name="ypos" select="$ypos + $yscale"/>
 	    </xsl:call-template>
 	</xsl:if>
 
@@ -96,18 +98,22 @@
 <xsl:template name="key_rules">
 	<xsl:param name="key"/>
 	<xsl:param name="xpos"/>
+
+
+	<xsl:variable name="xoffset"><xsl:value-of select="number($xpos*$xscale)" /></xsl:variable>
+
 	
 	<!-- header item -->
 	<xsl:variable name="xoutpos">
 		<xsl:choose>
-			<xsl:when test="$xpos &gt;= 100"><xsl:value-of select="$xpos" /></xsl:when>
-			<xsl:when test="$xpos &gt;= 10">0<xsl:value-of select="$xpos" /></xsl:when>
-			<xsl:otherwise>00<xsl:value-of select="$xpos" /></xsl:otherwise>
+			<xsl:when test="$xoffset &gt;= 100"><xsl:value-of select="$xoffset" /></xsl:when>
+			<xsl:when test="$xoffset &gt;= 10">0<xsl:value-of select="$xoffset" /></xsl:when>
+			<xsl:otherwise>00<xsl:value-of select="$xoffset" /></xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 	
 	<xsl:element name="node">
-		<xsl:attribute name="id">-<xsl:value-of select="$xpos" />0000</xsl:attribute>
+		<xsl:attribute name="id">-<xsl:value-of select="$xoffset" />0000</xsl:attribute>
 		<xsl:attribute name="user">overview-creator</xsl:attribute>
 		<xsl:attribute name="visible">true</xsl:attribute>
 		<xsl:attribute name="lat">-0.0</xsl:attribute>
@@ -127,8 +133,8 @@
     <xsl:call-template name="posed_rules">
 		<xsl:with-param name="key" select="$key"/>
 		<xsl:with-param name="inpos" select="1"/>
-		<xsl:with-param name="xpos" select="$xpos"/>
-		<xsl:with-param name="ypos" select="1"/>
+		<xsl:with-param name="xpos" select="$xoffset"/>
+		<xsl:with-param name="ypos" select="$yscale"/>
     </xsl:call-template>
 </xsl:template>
 	
