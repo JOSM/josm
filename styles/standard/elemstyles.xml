@@ -1784,6 +1784,14 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="landuse" v="farmland" />
+		<area colour="#b1e0c2" />
+		<icon annotate="true" src="misc/landmark/farm.png"  />
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
     <rule>
         <condition k="landuse" v="quarry"/>
         <area colour="#888888" />
@@ -1839,6 +1847,15 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
+
+	<rule>
+		<condition k="landuse" v="farmyard"/>
+		<area colour="#f0f0f0"/>
+		<icon src="misc/no_icon.png" />
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
 
 	<rule>
 		<condition k="landuse" v="retail"/>
