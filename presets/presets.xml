@@ -750,6 +750,7 @@
 		<label text=" " />
 		<key key="waterway" value="river" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
 	</item>
 
 	<item name="Waterway/Dock" icon="presets/waterway.png">
@@ -764,6 +765,7 @@
 		<label text=" " />
 		<key key="waterway" value="canal" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
 	</item>
 
 	<item name="Waterway/Drain" icon="presets/waterway.png">
@@ -771,6 +773,7 @@
 		<label text=" " />
 		<key key="waterway" value="drain" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
 	</item>
 
 	<item name="Waterway/Stream" icon="presets/waterway.png">
@@ -778,6 +781,7 @@
 		<label text=" " />
 		<key key="waterway" value="stream" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
 	</item>
 
 	<item name="Waterway/ " icon="presets/empty.png"></item>

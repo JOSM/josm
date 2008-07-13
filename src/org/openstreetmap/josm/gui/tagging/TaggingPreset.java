@@ -348,7 +348,7 @@ public class TaggingPreset extends AbstractAction {
 	 */
 	public void setDisplayName(String name) {
 		putValue(Action.NAME, tr(name));
-		String tooltip = tr("Use presets ''{0}''", tr(name));
+		String tooltip = tr("Use preset ''{0}''", tr(name));
 		putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
 	}
 
