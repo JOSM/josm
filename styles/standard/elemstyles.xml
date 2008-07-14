@@ -632,16 +632,6 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
 	</rule>
 	
-<!-- junction tag -->
-
-	<rule>
-		<condition k="junction" v="roundabout" />
-        <area width="1" colour="#eeeeee" />
-		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-	
 <!-- cycleway tags -->
 
 	<rule>
