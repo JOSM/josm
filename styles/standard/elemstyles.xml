@@ -481,7 +481,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="highway" v="path"/>
-		<line width="1" realwidth="1" colour="#00ff00" />
+		<line width="1" realwidth="1" dashed="true" colour="#00ff00" />
 		<icon annotate="true" src="misc/deprecated.png" />
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
