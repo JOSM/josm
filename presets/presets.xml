@@ -600,7 +600,6 @@
 		<label text="Edit Hiking" />
 		<label text=" " />
 		<key key="highway" value="path" />
-		<key key="foot" value="designated" />
 		<key key="sac_scale" value="yes" />
 		<label text=" " />
 		<label text="Optional Attributes:" />
@@ -613,7 +612,6 @@
 		<label text="Edit Mountain Hiking" />
 		<label text=" " />
 		<key key="highway" value="path" />
-		<key key="foot" value="designated" />
 		<key key="sac_scale" value="mountain" />
 		<label text=" " />
 		<label text="Optional Attributes:" />
@@ -626,7 +624,6 @@
 		<label text="Edit Demanding Mountain Hiking" />
 		<label text=" " />
 		<key key="highway" value="path" />
-		<key key="foot" value="designated" />
 		<key key="sac_scale" value="demanding_mountain" />
 		<label text=" " />
 		<label text="Optional Attributes:" />
@@ -639,7 +636,6 @@
 		<label text="Edit Alpine Hiking" />
 		<label text=" " />
 		<key key="highway" value="path" />
-		<key key="foot" value="designated" />
 		<key key="sac_scale" value="alpine" />
 		<label text=" " />
 		<label text="Optional Attributes:" />
@@ -652,7 +648,6 @@
 		<label text="Edit Demanding alpine hiking" />
 		<label text=" " />
 		<key key="highway" value="path" />
-		<key key="foot" value="designated" />
 		<key key="sac_scale" value="demanding_alpine" />
 		<label text=" " />
 		<label text="Optional Attributes:" />
@@ -665,7 +660,6 @@
 		<label text="Edit Difficult alpine hiking" />
 		<label text=" " />
 		<key key="highway" value="path" />
-		<key key="foot" value="designated" />
 		<key key="sac_scale" value="difficult_alpine" />
 		<label text=" " />
 		<label text="Optional Attributes:" />
@@ -942,7 +936,7 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Tourism/Museum" icon="presets/museum.png">
+	<item name="Tourism/Museum" icon="presets/State_Public.png">
 		<label text="Edit Museum" />
 		<key key="tourism" value="museum" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -987,13 +981,13 @@
 
 
 	
-	<item name="Historic Places/Castle" icon="presets/empty.png">
+	<item name="Historic Places/Castle" icon="presets/State_Tourist.png">
 		<label text="Edit Castle" />
 		<key key="historic" value="castle" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Historic Places/Ruins" icon="presets/empty.png">
+	<item name="Historic Places/Ruins" icon="presets/State_Tourist.png">
 		<label text="Edit Ruins" />
 		<key key="historic" value="ruins" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
