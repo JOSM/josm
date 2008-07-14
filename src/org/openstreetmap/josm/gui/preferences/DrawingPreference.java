@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
@@ -14,11 +16,13 @@ import org.openstreetmap.josm.tools.GBC;
 public class DrawingPreference implements PreferenceSetting {
 
 	private JCheckBox drawRawGpsLines = new JCheckBox(tr("Draw lines between raw gps points."));
+	private JTextField drawRawGpsMaxLineLength = new JTextField(8);
 	private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
 	private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
 	private JCheckBox colorTracks = new JCheckBox(tr("Color tracks by velocity."));
 	private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
 	private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
+	private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
 	private JCheckBox interestingDirections = new JCheckBox(tr("Only interesting direction hints (e.g. with oneway tag)."));
 	private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
 	private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
@@ -28,18 +32,23 @@ public class DrawingPreference implements PreferenceSetting {
 		// drawRawGpsLines
 		drawRawGpsLines.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-                            if (!drawRawGpsLines.isSelected()){
-                                forceRawGpsLines.setSelected(false);
-                                drawGpsArrows.setSelected(false);
-                            }
                             forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
+                            drawRawGpsMaxLineLength.setEnabled(drawRawGpsLines.isSelected());
                             drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
+                            drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
                             colorTracks.setEnabled(drawRawGpsLines.isSelected());
 			}
 		});
 		drawRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines"));
 		drawRawGpsLines.setToolTipText(tr("If your gps device draw too few lines, select this to draw lines along your way."));
 		gui.display.add(drawRawGpsLines, GBC.eol().insets(20,0,0,0));
+
+		// drawRawGpsMaxLineLength
+		drawRawGpsMaxLineLength.setText(Main.pref.get("draw.rawgps.max-line-length", "-1"));
+		drawRawGpsMaxLineLength.setToolTipText(tr("Maximum length (in meters) to draw lines. Set to '-1' to draw all lines."));
+		drawRawGpsMaxLineLength.setEnabled(drawRawGpsLines.isSelected());
+		gui.display.add(new JLabel(tr("Maximum length (meters)")), GBC.std().insets(40,0,0,0));
+		gui.display.add(drawRawGpsMaxLineLength, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
 		// forceRawGpsLines
 		forceRawGpsLines.setToolTipText(tr("Force drawing of lines if the imported data contain no line information."));
@@ -48,10 +57,21 @@ public class DrawingPreference implements PreferenceSetting {
 		gui.display.add(forceRawGpsLines, GBC.eop().insets(40,0,0,0));
 		
 		// drawGpsArrows
+		drawGpsArrows.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+                            drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
+			}
+		});
 		drawGpsArrows.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
 		drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction"));
 		drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
 		gui.display.add(drawGpsArrows, GBC.eop().insets(40,0,0,0));
+
+		// drawGpsArrowsFast
+		drawGpsArrowsFast.setToolTipText(tr("Draw the direction arrows using table lookups instead of complex math."));
+		drawGpsArrowsFast.setSelected(Main.pref.getBoolean("draw.rawgps.alternatedirection"));
+		drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
+		gui.display.add(drawGpsArrowsFast, GBC.eop().insets(60,0,0,0));
 
 		// colorTracks
 		colorTracks.setSelected(Main.pref.getBoolean("draw.rawgps.colors"));
@@ -75,7 +95,7 @@ public class DrawingPreference implements PreferenceSetting {
                             interestingDirections.setEnabled(directionHint.isSelected());
 			}
 		});
-		directionHint.setToolTipText(tr("Draw direction hints for segments."));
+		directionHint.setToolTipText(tr("Draw direction hints for way segments."));
 		directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction"));
 		gui.display.add(directionHint, GBC.eop().insets(20,0,0,0));
 
@@ -103,8 +123,10 @@ public class DrawingPreference implements PreferenceSetting {
 
 	public void ok() {
 		Main.pref.put("draw.rawgps.lines", drawRawGpsLines.isSelected());
+		Main.pref.put("draw.rawgps.max-line-length", drawRawGpsMaxLineLength.getText());
 		Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());
 		Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
+		Main.pref.put("draw.rawgps.alternatedirection", drawGpsArrowsFast.isSelected());
 		Main.pref.put("draw.rawgps.colors", colorTracks.isSelected());
 		Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
 		Main.pref.put("draw.segment.direction", directionHint.isSelected());
