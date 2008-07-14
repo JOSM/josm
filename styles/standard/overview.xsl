@@ -338,8 +338,8 @@
     </xsl:call-template>
 	<xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'barrier'"/>
-		<xsl:with-param name="column" select="2"/>
-		<xsl:with-param name="row" select="40"/>
+		<xsl:with-param name="column" select="3"/>
+		<xsl:with-param name="row" select="35"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
@@ -462,7 +462,7 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'route'"/>
 		<xsl:with-param name="column" select="5"/>
-		<xsl:with-param name="row" select="30"/>
+		<xsl:with-param name="row" select="33"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
@@ -483,7 +483,7 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'waterway'"/>
 		<xsl:with-param name="column" select="6"/>
-		<xsl:with-param name="row" select="24"/>
+		<xsl:with-param name="row" select="25"/>
     </xsl:call-template>
 	
 

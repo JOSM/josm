@@ -321,6 +321,18 @@ Using both area and line attributes for the same key/value pair doesn't work!
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
+	<rule>
+		<condition k="barrier" v="gate" />
+		<icon annotate="true" src="vehicle/gate.png" />
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="speed_bump" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
 
 <!-- highway tags -->
 	<rule>
@@ -856,12 +868,28 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 
 	<rule>
+		<condition k="railway" v="tram_station" />
+		<area colour="#f7efb7"/>
+		<icon annotate="true" src="transport/railway.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
 		<condition k="railway" v="tram_stop" />
 		<icon annotate="true" src="transport/railway_small.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
 
+    <rule>
+        <condition k="railway" v="subway_entrance"/>
+		<area colour="#f7efb7"/>
+		<icon annotate="true" src="transport/underground.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+    </rule>
+    
 	<rule>
 		<condition k="railway" v="viaduct" />
 		<line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
@@ -914,14 +942,6 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <condition k="railway" v="subway"/>
         <line width="1" colour="#606060" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-    </rule>
-    
-    <rule>
-        <condition k="railway" v="subway_entrance"/>
-		<area colour="#f7efb7"/>
-		<icon annotate="true" src="transport/underground.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -1070,7 +1090,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     </rule>
     
 	<rule>
-		<condition k="aerialway" v="gondola"/>
+		<condition k="aerialway" v="station"/>
 		<line width="1" colour="#663300" dashed="true"/>
 		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
@@ -1132,7 +1152,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="power" v="line" />
         <line width="1" colour="#eeeeee" />
-		<icon annotate="true" src="misc/landmark/power.png" />
+		<icon annotate="true" src="misc/deprecated.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1479,7 +1499,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	
 	<rule>
 		<condition k="amenity" v="ice_cream" />
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="food/icecream.png" />
 		<area colour="#ecba52"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1528,7 +1548,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="amenity" v="car_wash" />
 		<area colour="#f7efb7"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="transport/car.png" />
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1695,7 +1715,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="amenity" v="crematorium" />
 		<area colour="#f7efb7"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1742,7 +1762,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="amenity" v="kindergarten" />
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#f7efb7"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -1765,17 +1785,9 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 
 	<rule>
-		<condition k="amenity" v="sheltered_housing" />
-        <area colour="#eeeeee" />
-		<icon annotate="true" src="misc/proposed.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="amenity" v="nursery" />
         <area colour="#eeeeee" />
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1783,7 +1795,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="amenity" v="dentist" />
         <area colour="#eeeeee" />
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1887,7 +1899,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="amenity" v="park_bench" />
 		<area colour="#f7efb7"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -1895,7 +1907,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="amenity" v="shelter" />
 		<area colour="#f7efb7"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="accomodation/shelter.png" />
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1977,6 +1989,247 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="shop" v="kiosk" />
 		<icon annotate="true" src="shopping/kiosk.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="beverages" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="books" />
+		<icon annotate="true" src="shopping/rental/library.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="car" />
+		<icon annotate="true" src="transport/car.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="car_dealer" />
+		<icon annotate="true" src="transport/car.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="car_repair" />
+		<icon annotate="true" src="transport/car.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="chemist" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="clothes" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="computer" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="cycle_repair" />
+		<icon annotate="true" src="sports/bicycle.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="department_store" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="electronics" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="furniture" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="florist" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="groceries" />
+		<icon annotate="true" src="shopping/groceries/fruits.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="garden_centre" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="hairdresser" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="hardware" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="hifi" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="jewelry" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="mall" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="motorcycle" />
+		<icon annotate="true" src="vehicle/motorbike.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="newsagent" />
+		<icon annotate="true" src="shopping/kiosk.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="organic" />
+		<icon annotate="true" src="shopping/groceries/fruits.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="optician" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="shoes" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="tailor" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="travel_agency" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="toys" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="video" />
+		<icon annotate="true" src="misc/no_icon.png" />
+		<area colour="#00005f"/>
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<!-- duplicate of shopping_centre? -->
+	<rule>
+		<condition k="shop" v="shopping_center" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2154,6 +2407,14 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	
 	<rule>
 		<condition k="historic" v="wayside_cross" />
+		<icon annotate="true" src="misc/no_icon.png" />
+        <area colour="#663300" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="historic" v="wayside_shrine" />
 		<icon annotate="true" src="misc/no_icon.png" />
         <area colour="#663300" />
         <scale_min>1</scale_min>
@@ -2873,6 +3134,110 @@ Using both area and line attributes for the same key/value pair doesn't work!
         <scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="sport" v="paintball" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="squash" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="shooting" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="volleyball" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="beachvolleyball" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="bowling" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="handball" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="rowing" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="sailing" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="diving" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="badminton" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="archery" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
+	<rule>
+		<condition k="sport" v="fishing" />
+		<area colour="#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+	
 <!--abutters tags -->
 
 <!--accessories tags -->
@@ -3045,253 +3410,6 @@ Using both area and line attributes for the same key/value pair doesn't work!
 <!--annotation tags -->
 
 <!--"work in progress" tags -->
-	<rule>
-		<condition k="shop" v="beverages" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="books" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="car" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="car_dealer" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="car_repair" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="chemist" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="clothes" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="computer" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="cycle_repair" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="department_store" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="electronics" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="furniture" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="florist" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="food" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="garden_centre" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="hairdresser" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="hardware" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="hifi" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="jewelry" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="mall" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="motorcycle" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="newsagent" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="organic" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="optician" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="shoes" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="tailor" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="travel_agency" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="toys" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="video" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="shop" v="shopping_center" />
-		<icon annotate="true" src="misc/proposed.png" />
-		<area colour="#00005f"/>
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="historic" v="church" />
-		<icon annotate="true" src="misc/proposed.png" />
-        <area colour="#663300" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
 
 	<!-- keep this generic rules at the end of the file, so more specialised rules fit first -->
 	<rule>
@@ -3303,60 +3421,38 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	</rule>
 	<rule>
 		<condition k="building" v="true"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#cb9999"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="church"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#cb9999"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="museum"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#cb9999"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="tower"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#cb9999"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="station"/>
-		<icon annotate="true" src="misc/proposed.png" />
+		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#cb9999"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="sport" v="paintball" />
-		<area colour="#bde3cb"/>
-		<icon annotate="true" src="misc/proposed.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="sport" v="squash" />
-		<area colour="#bde3cb"/>
-		<icon annotate="true" src="misc/proposed.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="railway" v="tram_station" />
-		<area colour="#f7efb7"/>
-		<icon annotate="true" src="transport/railway.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
 	</rule>
 
 <!--"deprecated" tags -->
