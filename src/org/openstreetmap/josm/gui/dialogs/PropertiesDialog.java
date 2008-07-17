@@ -509,6 +509,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 				if (e.getActionCommand().equals("Add"))
 					add();
 				else if (e.getActionCommand().equals("Edit")) {
+					if(propertyTable.getRowCount() == 1)
+						sel = 0;
 					if (sel == -1)
 						JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
 					else
