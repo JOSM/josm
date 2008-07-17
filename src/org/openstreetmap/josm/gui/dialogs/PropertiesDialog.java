@@ -128,7 +128,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			JOptionPane.showMessageDialog(Main.parent, tr("Please select the objects you want to change properties for."));
 			return;
 		}
-		String msg = "<html>"+trn("This will change {0} object.", "This will change {0} objects.", sel.size(), sel.size())+"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
+		String msg = "<html>"+trn("This will change up to {0} object.", "This will change up to {0} objects.", sel.size(), sel.size())+"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
 		
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JLabel(msg), BorderLayout.NORTH);
@@ -218,13 +218,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			if (value.equals(tr("<different>"))) {
 				HashMap<String, Vector<OsmPrimitive>> map=new HashMap<String, Vector<OsmPrimitive>>();
 				for (OsmPrimitive osm: sel) {
-					String val=osm.keys.get(key);
-					if (map.containsKey(val)) {
-						map.get(val).add(osm);
-					} else {
-						Vector<OsmPrimitive> v = new Vector<OsmPrimitive>();
-						v.add(osm);
-						map.put(val, v);
+					if(osm.keys != null)
+					{
+						String val=osm.keys.get(key);
+						if(val != null)
+						{
+							if (map.containsKey(val)) {
+								map.get(val).add(osm);
+							} else {
+								Vector<OsmPrimitive> v = new 	Vector<OsmPrimitive>();
+								v.add(osm);
+								map.put(val, v);
+							}
+						}
 					}
 				}
 				for (Entry<String, Vector<OsmPrimitive>> e: map.entrySet()) {
