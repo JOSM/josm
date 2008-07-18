@@ -1238,7 +1238,7 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Sport/Hockey" icon="presets/empty.png">
+	<item name="Sport/Hockey" icon="presets/Hockey.png">
 		<label text="Edit Hockey" />
 		<key key="sport" value="hockey" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
