@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -46,13 +47,20 @@ public final class ReverseWayAction extends JosmAction {
 				tr("Please select at least one way."));
     		return;
     	}
-    	Collection<Command> c = new LinkedList<Command>();
-    	for (Way w : sel) {
-    		Way wnew = new Way(w);
+
+    	boolean propertiesUpdated = false;
+		ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
+		Collection<Command> c = new LinkedList<Command>();
+		for (Way w : sel) {
+			Way wnew = new Way(w);
 			Collections.reverse(wnew.nodes);
-    		c.add(new ChangeCommand(w, wnew));
-    	}
-    	Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
-    	Main.map.repaint();
+			if (Main.pref.getBoolean("tag-correction.reverse-way", true))
+				propertiesUpdated = reverseWayTagCorrector.execute(wnew) || propertiesUpdated;
+			c.add(new ChangeCommand(w, wnew));
+		}
+		Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
+		if (propertiesUpdated)
+			Main.map.getPropertiesDialog().selectionChanged(Main.ds.getSelected());
+		Main.map.repaint();
     }
 }
