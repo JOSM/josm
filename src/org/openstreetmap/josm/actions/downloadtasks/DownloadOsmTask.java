@@ -57,6 +57,15 @@ public class DownloadOsmTask implements DownloadTask {
 	private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"), true);
 
 	public void download(DownloadAction action, double minlat, double minlon, double maxlat, double maxlon) {
+    // Swap min and max if user has specified them the wrong way round
+    // (easy to do if you are crossing 0, for example)
+    if (minlat > maxlat) {
+      double t = minlat; minlat = maxlat; maxlat = t;
+    }
+    if (minlon > maxlon) {
+      double t = minlon; minlon = maxlon; maxlon = t;
+    }
+    
 		Task task = new Task(action.dialog == null || action.dialog.newLayer.isSelected(), new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon));
 		Main.worker.execute(task);
     }
