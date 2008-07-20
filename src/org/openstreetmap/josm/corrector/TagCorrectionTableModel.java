@@ -20,7 +20,7 @@ public class TagCorrectionTableModel extends AbstractTableModel {
 		Arrays.fill(apply, true);
 	}
 
-	@Override public int getColumnCount() {
+	public int getColumnCount() {
 		return 5;
 	}
 
@@ -46,11 +46,11 @@ public class TagCorrectionTableModel extends AbstractTableModel {
 		return null;
 	}
 
-	@Override public int getRowCount() {
+	public int getRowCount() {
 		return tagCorrections.size();
 	}
 
-	@Override public Object getValueAt(int rowIndex, int colIndex) {
+	public Object getValueAt(int rowIndex, int colIndex) {
 
 		TagCorrection tagCorrection = tagCorrections.get(rowIndex);
 
