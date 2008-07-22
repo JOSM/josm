@@ -98,8 +98,8 @@ public class WorldChooser extends NavigatableComponent implements DownloadSelect
 		temp.setLayout(new BorderLayout());
 		temp.add(this, BorderLayout.CENTER);
 		temp.add(new JLabel(tr("You can use the mouse or Ctrl+Arrow keys/./ to zoom and pan.")), BorderLayout.SOUTH);
-		gui.tabpane.add(temp, "Map");
-		new MapMover(this, temp);		
+		gui.tabpane.add(temp, tr("Map"));
+		new MapMover(this, temp);
 		SelectionEnded selListener = new SelectionEnded(){
 			public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
 				markerMin = getEastNorth(r.x, r.y+r.height);

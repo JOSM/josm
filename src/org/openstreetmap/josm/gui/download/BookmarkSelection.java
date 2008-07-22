@@ -41,7 +41,7 @@ public class BookmarkSelection implements DownloadSelection {
 	public void addGui(final DownloadDialog gui) {
 		
 		JPanel dlg = new JPanel(new GridBagLayout());
-		gui.tabpane.addTab("Bookmarks", dlg);
+		gui.tabpane.addTab(tr("Bookmarks"), dlg);
 
 		bookmarks = new BookmarkList();
 		

@@ -132,7 +132,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 		dlg.add(osmUrl, GBC.eop().insets(10,0,5,0).fill());
 		dlg.add(sizeCheck, GBC.eop().insets(10,0,5,20));
 
-		gui.tabpane.addTab("Bounding Box", dlg);
+		gui.tabpane.addTab(tr("Bounding Box"), dlg);
 	}
 	
 	/**

@@ -46,6 +46,7 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -95,23 +96,26 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	public class DblClickWatch extends MouseAdapter {
 		@Override public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() < 2)
-				return;
-	
-			if (e.getSource() == propertyTable)
+			{
+				if (e.getSource() == propertyTable)
+					membershipTable.clearSelection();
+				else if (e.getSource() == membershipTable)
+					propertyTable.clearSelection();
+			}
+			else if (e.getSource() == propertyTable)
 			{
 				int row = propertyTable.rowAtPoint(e.getPoint());
-				if (row > -1) {
+				if (row > -1)
 					propertyEdit(row);
-					return;
-			}
 			} else if (e.getSource() == membershipTable) {
 				int row = membershipTable.rowAtPoint(e.getPoint());
-				if (row > -1) {
+				if (row > -1)
 					membershipEdit(row);
-					return;
-				}
 			}
-			add();
+			else
+			{
+				add();
+			}
 		}
 	}
 
@@ -474,7 +478,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		// setting up the membership table
 		
 		membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role")});
-		membershipTable.setRowSelectionAllowed(false);
+		membershipTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		membershipTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
 			@Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -505,21 +509,56 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		JPanel buttonPanel = new JPanel(new GridLayout(1,3));
 		ActionListener buttonAction = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				int sel = propertyTable.getSelectedRow();
+				int row = membershipTable.getSelectedRow();
 				if (e.getActionCommand().equals("Add"))
 					add();
-				else if (e.getActionCommand().equals("Edit")) {
-					if(propertyTable.getRowCount() == 1)
-						sel = 0;
-					if (sel == -1)
-						JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
-					else
-						propertyEdit(sel);
-				} else if (e.getActionCommand().equals("Delete")) {
-					if (sel == -1)
-						JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
-					else
-						delete(sel);
+				else if(row >= 0)
+				{
+					if (e.getActionCommand().equals("Edit"))
+						membershipEdit(row);
+					else if (e.getActionCommand().equals("Delete")) {
+						Relation cur = (Relation)membershipData.getValueAt(row, 0);
+						NameVisitor n = new NameVisitor();
+						cur.visit(n);
+						if(JOptionPane.showConfirmDialog(Main.parent, tr("Really delete selection from relation {0}?", n.name),
+						tr("Change relation"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_NO_OPTION)
+						{
+							Relation rel = new Relation(cur);
+							Collection<OsmPrimitive> sel = Main.ds.getSelected();
+							for (RelationMember rm : cur.members) {
+								for (OsmPrimitive osm : sel) {
+									if (rm.member == osm)
+									{
+										RelationMember mem = new RelationMember();
+										mem.role = rm.role;
+										mem.member = rm.member;
+										rel.members.remove(mem);
+										break;
+									}
+								}
+							}
+							Main.main.undoRedo.add(new ChangeCommand(cur, rel));
+							selectionChanged(sel); // update whole table
+						}
+						
+					}
+				}
+				else
+				{
+					int sel = propertyTable.getSelectedRow();
+					if (e.getActionCommand().equals("Edit")) {
+						if(propertyTable.getRowCount() == 1)
+							sel = 0;
+						if (sel == -1)
+							JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
+						else
+							propertyEdit(sel);
+					} else if (e.getActionCommand().equals("Delete")) {
+						if (sel == -1)
+							JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
+						else
+							delete(sel);
+					}
 				}
 			}
 		};

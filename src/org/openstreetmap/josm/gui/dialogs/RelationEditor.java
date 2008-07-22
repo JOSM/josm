@@ -64,6 +64,7 @@ public class RelationEditor extends JFrame {
 	 */
 	private final Relation relation;
 	private final Relation clone;
+	private JLabel status;
 	
 	/**
 	 * The property data.
@@ -136,8 +137,10 @@ public class RelationEditor extends JFrame {
 						// clicked ok!
 						if (RelationEditor.this.relation == null) {
 							Main.main.undoRedo.add(new AddCommand(clone));
+							Main.ds.fireSelectionChanged(Main.ds.getSelected());
 						} else if (!RelationEditor.this.relation.realEqual(clone, true)) {
 							Main.main.undoRedo.add(new ChangeCommand(RelationEditor.this.relation, clone));
+							Main.ds.fireSelectionChanged(Main.ds.getSelected());
 						}
 					}
 					setVisible(false);
@@ -149,8 +152,7 @@ public class RelationEditor extends JFrame {
 			tr("This is the basic relation editor which allows you to change the relation's tags " +
 			"as well as the members. In addition to this we should have a smart editor that " +
 			"detects the type of relationship and limits your choices in a sensible way.")+"</em></html>");
-		
-		getContentPane().add(help, BorderLayout.NORTH);		
+		getContentPane().add(help, BorderLayout.NORTH);
 		try { setAlwaysOnTop(true); } catch (SecurityException sx) {}
 		
 		// Basic Editor panel has two blocks; 
@@ -181,7 +183,7 @@ public class RelationEditor extends JFrame {
 		
 		// setting up the member table
 		
-	    memberData.setColumnIdentifiers(new String[]{tr("Role"),tr("Occupied By")});
+		memberData.setColumnIdentifiers(new String[]{tr("Role"),tr("Occupied By")});
 		memberTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		memberTable.getColumnModel().getColumn(1).setCellRenderer(new OsmPrimitivRenderer());
 		/*
@@ -212,7 +214,7 @@ public class RelationEditor extends JFrame {
 		bothTables.setLayout(new GridBagLayout());
 		bothTables.add(new JLabel(tr("Tags (empty value deletes tag)")), GBC.eol().fill(GBC.HORIZONTAL));
 		bothTables.add(new JScrollPane(propertyTable), GBC.eop().fill(GBC.BOTH));
-		bothTables.add(new JLabel(tr("Members")), GBC.eol().fill(GBC.HORIZONTAL));
+		bothTables.add(status = new JLabel(tr("Members")), GBC.eol().fill(GBC.HORIZONTAL));
 		bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
 		
 		JPanel buttonPanel = new JPanel(new GridLayout(1,3));
@@ -250,20 +252,19 @@ public class RelationEditor extends JFrame {
 				Main.ds.setSelected(sel);
 			}
 		}));
-        buttonPanel.add(createButton(marktr("Download Members"),"down", tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_L, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                downloadRelationMembers();                
-                refreshTables();
-            }            
-        }));
-        
-        
+		buttonPanel.add(createButton(marktr("Download Members"),"down", tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_L, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				downloadRelationMembers();
+				refreshTables();
+			}
+		}));
+
 		bothTables.add(buttonPanel, GBC.eop().fill(GBC.HORIZONTAL));
 
 		tabPane.add(bothTables, "Basic");
-		
+
 		refreshTables();
-		
+
 		setSize(new Dimension(600, 500));
 		setLocationRelativeTo(Main.parent);
 	}
@@ -284,6 +285,7 @@ public class RelationEditor extends JFrame {
 		for (RelationMember em : clone.members) {
 			memberData.addRow(new Object[]{em.role, em.member});
 		}
+		status.setText(tr("Members: {0}", clone.members.size()));
 	}
 	
 	private JButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {

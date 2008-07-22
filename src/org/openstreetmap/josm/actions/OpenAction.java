@@ -67,15 +67,16 @@ public class OpenAction extends DiskAccessAction {
 	}
 
 	private void openAsData(File file) throws SAXException, IOException, FileNotFoundException {
-	    String fn = file.getName();
-	    if (ExtensionFileFilter.filters[ExtensionFileFilter.OSM].acceptName(fn)) {
-	    	DataSet dataSet = OsmReader.parseDataSet(new FileInputStream(file), null, Main.pleaseWaitDlg);
-	    	OsmDataLayer layer = new OsmDataLayer(dataSet, file.getName(), file);
-            Main.main.addLayer(layer);
-	    }
-	    else
-	    	JOptionPane.showMessageDialog(Main.parent, fn+": "+tr("Unknown file extension: {0}", fn.substring(file.getName().lastIndexOf('.')+1)));
-    }
+		String fn = file.getName();
+		if (ExtensionFileFilter.filters[ExtensionFileFilter.OSM].acceptName(fn)) {
+			DataSet dataSet = OsmReader.parseDataSet(new FileInputStream(file), null, Main.pleaseWaitDlg);
+			OsmDataLayer layer = new OsmDataLayer(dataSet, file.getName(), file);
+			Main.main.addLayer(layer);
+			layer.fireDataChange();
+		}
+		else
+			JOptionPane.showMessageDialog(Main.parent, fn+": "+tr("Unknown file extension: {0}", fn.substring(file.getName().lastIndexOf('.')+1)));
+	}
 
 	private void openFileAsGpx(File file) throws SAXException, IOException, FileNotFoundException {
 		String fn = file.getName();

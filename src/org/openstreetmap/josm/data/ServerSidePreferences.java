@@ -65,7 +65,7 @@ public class ServerSidePreferences extends Preferences {
 		public void upload(String s) {
 			try {
 				URL u = new URL(getPreferencesDir());
-				System.out.println("uplaoding preferences to "+u);
+				System.out.println("uploading preferences to "+u);
 				HttpURLConnection con = (HttpURLConnection)u.openConnection();
 				con.addRequestProperty("Authorization", "Basic "+Base64.encode(get("osm-server.username")+":"+get("osm-server.password")));
 				con.setRequestMethod("POST");

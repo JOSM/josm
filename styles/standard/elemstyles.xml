@@ -1909,7 +1909,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="amenity" v="shelter" />
 		<area colour="#f7efb7"/>
-		<icon annotate="true" src="accomodation/shelter.png" />
+		<icon annotate="true" src="accommodation/shelter.png" />
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>

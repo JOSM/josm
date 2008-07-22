@@ -60,7 +60,7 @@ public final class ReverseWayAction extends JosmAction {
 		}
 		Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
 		if (propertiesUpdated)
-			Main.map.getPropertiesDialog().selectionChanged(Main.ds.getSelected());
+			Main.ds.fireSelectionChanged(Main.ds.getSelected());
 		Main.map.repaint();
     }
 }
