@@ -18,70 +18,21 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<!-- mark some specials that should be fixed - they are already the default and therefore shouldn't be tagged -->
     <rule>
-       <condition k="oneway" v="yes"/>
+       <condition k="oneway"/>
 	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
        <icon annotate="true" src="misc/deprecated.png" />
        <scale_min>1</scale_min>
        <scale_max>40000</scale_max>
      </rule>
     <rule>
-       <condition k="oneway" v="1"/>
-	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
-       <icon annotate="true" src="misc/deprecated.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="oneway" v="-1"/>
-	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
-       <icon annotate="true" src="misc/deprecated.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="oneway" v="true"/>
-	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
-       <icon annotate="true" src="misc/deprecated.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="oneway" v="no"/>
-       <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
-       <icon annotate="true" src="misc/deprecated.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="oneway" v="false"/>
-       <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
-       <icon annotate="true" src="misc/deprecated.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="bridge" v="yes"/>
+       <condition k="bridge" b="yes"/>
 	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
        <icon annotate="true" src="vehicle/viaduct.png" />
        <scale_min>1</scale_min>
        <scale_max>40000</scale_max>
      </rule>
     <rule>
-       <condition k="bridge" v="true"/>
-	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
-       <icon annotate="true" src="vehicle/viaduct.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="bridge" v="false"/>
-       <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
-       <icon annotate="true" src="misc/deprecated.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="bridge" v="no"/>
+       <condition k="bridge" b="no"/>
        <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
        <icon annotate="true" src="misc/deprecated.png" />
        <scale_min>1</scale_min>
@@ -109,42 +60,28 @@ Using both area and line attributes for the same key/value pair doesn't work!
        <scale_max>40000</scale_max>
      </rule>
     <rule>
-       <condition k="tunnel" v="yes"/>
+       <condition k="tunnel" b="yes"/>
 	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
 		<icon annotate="true" src="vehicle/tunnel.png" />
        <scale_min>1</scale_min>
        <scale_max>40000</scale_max>
      </rule>
     <rule>
-       <condition k="tunnel" v="true"/>
-	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
-		<icon annotate="true" src="vehicle/tunnel.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="tunnel" v="false"/>
+       <condition k="tunnel" b="no"/>
        <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
        <icon annotate="true" src="misc/deprecated.png" />
        <scale_min>1</scale_min>
        <scale_max>40000</scale_max>
      </rule>
     <rule>
-       <condition k="tunnel" v="no"/>
+       <condition k="cutting" b="no"/>
        <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
        <icon annotate="true" src="misc/deprecated.png" />
        <scale_min>1</scale_min>
        <scale_max>40000</scale_max>
      </rule>
     <rule>
-       <condition k="cutting" v="false"/>
-       <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
-       <icon annotate="true" src="misc/deprecated.png" />
-       <scale_min>1</scale_min>
-       <scale_max>40000</scale_max>
-     </rule>
-    <rule>
-       <condition k="embankment" v="false"/>
+       <condition k="embankment" b="no"/>
        <line width="2" realwidth="5" dashed="true" colour="#ff0000"/>
        <icon annotate="true" src="misc/deprecated.png" />
        <scale_min>1</scale_min>

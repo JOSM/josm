@@ -16,6 +16,7 @@ public class ElemStyleHandler extends DefaultHandler
 	boolean inDoc, inRule, inCondition, inElemStyle, inLine, inIcon, inArea, inScaleMax, inScaleMin;
 	String curKey = null;
 	String curValue = null;
+	String curBoolean = null;
 	int curLineWidth = -1;
 	int curLineRealWidth = 0;
 	boolean curLineDashed = false;
@@ -55,9 +56,15 @@ public class ElemStyleHandler extends DefaultHandler
 				inCondition=true;
 				for (int count=0; count<atts.getLength(); count++) {
 					if(atts.getQName(count).equals("k"))
-						curKey = atts.getValue(count);        
+					{
+						curKey = atts.getValue(count);
+						curBoolean = null;
+						curValue = null;
+					}
 					else if(atts.getQName(count).equals("v"))
-						curValue = atts.getValue(count);        
+						curValue = atts.getValue(count);
+					else if(atts.getQName(count).equals("b"))
+						curBoolean = atts.getValue(count);
 				}
 			} else if (qName.equals("line")) {
 				inLine = true;
@@ -126,7 +133,7 @@ public class ElemStyleHandler extends DefaultHandler
 			if (curLineWidth != -1) {
 				newStyle = new LineElemStyle(curLineWidth, curLineRealWidth, curLineColour, 
 						curLineDashed, curScaleMax, curScaleMin);
-				MapPaintStyles.add(curKey, curValue, newStyle);
+				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
 				curLineWidth	= -1;
 				curLineRealWidth= 0;
 				curLineDashed   = false;
@@ -135,13 +142,13 @@ public class ElemStyleHandler extends DefaultHandler
 			
 			if (curIcon != null) {
 				newStyle = new IconElemStyle(curIcon, curIconAnnotate, curScaleMax, curScaleMin);
-				MapPaintStyles.add(curKey, curValue, newStyle);
+				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
 				curIcon 		= null;
 				curIconAnnotate = true;
 			}
 			if (curAreaColour != null) {
 				newStyle = new AreaElemStyle (curAreaColour, curScaleMax, curScaleMin);
-				MapPaintStyles.add(curKey, curValue, newStyle);
+				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
 				curAreaColour 	= null;
 			}
 			curScaleMax = 1000000000;

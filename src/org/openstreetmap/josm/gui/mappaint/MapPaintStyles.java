@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -74,22 +75,31 @@ public class MapPaintStyles {
 		}
 	}
 
-	static int nr = 0;
+//	static int nr = 0;
 
-	public static void add (String k, String v, ElemStyle style) {
+	public static void add (String k, String v, String b, ElemStyle style) {
 		ElemStyle  old_style;
-		String key = k + "=" + v;
+		String key;
 
 		/* unfortunately, there don't seem to be an efficient way to */
 		/* find out, if a given OsmPrimitive is an area or not, */
 		/* so distinguish only between way and node here - for now */
-		if (style instanceof AreaElemStyle) {
-			key = key + "way";
-		} else if (style instanceof LineElemStyle) {
-			key = key + "way";
-		} else if (style instanceof IconElemStyle) {
-			key = key + "node";
-		}
+		if (style instanceof AreaElemStyle)
+			key = "way";
+		else if (style instanceof LineElemStyle)
+			key = "way";
+		else if (style instanceof IconElemStyle)
+			key = "node";
+		else
+			key = "";
+
+		if(v != null)
+			key += "n" + k + "=" + v;
+		else if(b != null)
+			key += "b" + k  + "=" + OsmUtils.getNamedOsmBoolean(b);
+		else
+			key += "x" + k;
+
 		/* avoid duplicates - for now */
 		old_style = styles.get(key);
 		if (old_style == null) {
@@ -119,44 +129,49 @@ public class MapPaintStyles {
 			while (iterator.hasNext())	
 			{
 				String key = iterator.next();
-				kv = key + "=" + p.keys.get(key) + classname;
-				if (styles.containsKey(kv))	{
+				kv = classname + "n" + key + "=" + p.keys.get(key);
+				if (styles.containsKey(kv))
 					return styles.get(kv);
-				}
+				kv = classname + "b" + key + "=" + OsmUtils.getNamedOsmBoolean(p.keys.get(key));
+				if (styles.containsKey(kv))
+					return styles.get(kv);
+				kv = classname + "x" + key;
+				if (styles.containsKey(kv))
+					return styles.get(kv);
 			}
 
 			// not a known key/value combination
-			boolean first_line = true;
+//			boolean first_line = true;
 
 			// filter out trivial tags and show the rest
-			iterator = p.keys.keySet().iterator();
-			while (iterator.hasNext()) {
-				String key = iterator.next();
-				kv = key + "=" + p.keys.get(key);
-				if (!kv.startsWith("created_by=") &&
-						!kv.startsWith("converted_by=") &&
-						!kv.startsWith("source=") &&
-						!kv.startsWith("note=") &&
-						!kv.startsWith("layer=") &&
-						!kv.startsWith("bridge=") &&
-						!kv.startsWith("tunnel=") &&
-						!kv.startsWith("oneway=") &&
-						!kv.startsWith("speedlimit=") &&
-						!kv.startsWith("motorcar=") &&
-						!kv.startsWith("horse=") &&
-						!kv.startsWith("bicycle=") &&
-						!kv.startsWith("foot=")
-				) {
+//			iterator = p.keys.keySet().iterator();
+//			while (iterator.hasNext()) {
+//				String key = iterator.next();
+//				kv = key + "=" + p.keys.get(key);
+//				if (!kv.startsWith("created_by=") &&
+//						!kv.startsWith("converted_by=") &&
+//						!kv.startsWith("source=") &&
+//						!kv.startsWith("note=") &&
+//						!kv.startsWith("layer=") &&
+//						!kv.startsWith("bridge=") &&
+//						!kv.startsWith("tunnel=") &&
+//						!kv.startsWith("oneway=") &&
+//						!kv.startsWith("speedlimit=") &&
+//						!kv.startsWith("motorcar=") &&
+//						!kv.startsWith("horse=") &&
+//						!kv.startsWith("bicycle=") &&
+//						!kv.startsWith("foot=")
+//				) {
 
-					if (first_line) {
-						nr++;
-						//System.out.println("mappaint - rule not found[" + nr + "]: " + kv + " id:" + p.id);
-					} else {
-						//System.out.println("mappaint - rule not found[" + nr + "]: " + kv);
-					}
-					first_line=false;
-				}
-			}
+//					if (first_line) {
+//						nr++;
+//						System.out.println("mappaint - rule not found[" + nr + "]: " + kv + " id:" + p.id);
+//					} else {
+//						System.out.println("mappaint - rule not found[" + nr + "]: " + kv);
+//					}
+//					first_line=false;
+//				}
+//			}
 		}
 
 		return null;
