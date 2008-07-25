@@ -18,7 +18,7 @@ public class AutoCompleteComboBox extends JComboBox {
 
 	/**
 	 * Auto-complete a JComboBox.
-	 * 
+	 *
 	 * Inspired by http://www.orbital-computer.de/JComboBox/
 	 */
 	private class AutoCompleteComboBoxDocument extends PlainDocument {
@@ -36,29 +36,34 @@ public class AutoCompleteComboBox extends JComboBox {
 		}
 
 		@Override public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+			if(selecting || (offs == 0 && str.equals(getText(0, getLength()))))
+				return;
 			super.insertString(offs, str, a);
 
 			// return immediately when selecting an item
-			// Nota: this is done after calling super method because we need
+			// Note: this is done after calling super method because we need
 			// ActionListener informed
 			if (selecting)
 				return;
 
+			int size = getLength();
+			String curText = getText(0, size);
 			// lookup and select a matching item
-			Object item = lookupItem(getText(0, getLength()));
+			Object item = lookupItem(curText);
 			if (item != null) {
-				// remove all text and insert the completed string
-				super.remove(0, getLength());
-				super.insertString(0, item.toString(), a);
-
+				String newText = item.toString();
+				if(!newText.equals(curText))
+				{
+					selecting = true;
+					super.remove(0, size);
+					super.insertString(0, newText, a);
+					selecting = false;
+					JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
+					editor.setSelectionStart(size);
+					editor.setSelectionEnd(getLength());
+				}
 			}
-			
 			setSelectedItem(item);
-			
-			// select the completed part
-			JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
-			editor.setSelectionStart(offs + str.length());
-			editor.setSelectionEnd(getLength());
 		}
 
 		private void setSelectedItem(Object item) {

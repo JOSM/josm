@@ -53,7 +53,7 @@ public class MapPaintStyles {
 		else {// reading the builtin file from the plugin jar file
 			URL elemStylesPath = Main.class.getResource("/styles/"+styleName+"/elemstyles.xml");
 
-			System.out.println("mappaint: Using jar's elemstyles.xml: \"" + elemStylesPath + "\"");
+//			System.out.println("mappaint: Using jar's elemstyles.xml: \"" + elemStylesPath + "\"");
 			if (elemStylesPath != null)
 			{
 				try
