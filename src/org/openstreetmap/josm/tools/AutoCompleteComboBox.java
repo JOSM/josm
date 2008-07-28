@@ -38,6 +38,7 @@ public class AutoCompleteComboBox extends JComboBox {
 		@Override public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
 			if(selecting || (offs == 0 && str.equals(getText(0, getLength()))))
 				return;
+			boolean initial = (offs == 0 && getLength() == 0);
 			super.insertString(offs, str, a);
 
 			// return immediately when selecting an item
@@ -47,9 +48,14 @@ public class AutoCompleteComboBox extends JComboBox {
 				return;
 
 			int size = getLength();
+			int start = offs+str.length();
+			int end = start;
 			String curText = getText(0, size);
 			// lookup and select a matching item
 			Object item = lookupItem(curText);
+			setSelectedItem(item);
+			if(initial)
+				start = 0;
 			if (item != null) {
 				String newText = item.toString();
 				if(!newText.equals(curText))
@@ -58,12 +64,13 @@ public class AutoCompleteComboBox extends JComboBox {
 					super.remove(0, size);
 					super.insertString(0, newText, a);
 					selecting = false;
-					JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
-					editor.setSelectionStart(size);
-					editor.setSelectionEnd(getLength());
+					start = size;
+					end = getLength();
 				}
 			}
-			setSelectedItem(item);
+			JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
+			editor.setSelectionStart(start);
+			editor.setSelectionEnd(end);
 		}
 
 		private void setSelectedItem(Object item) {
@@ -94,6 +101,5 @@ public class AutoCompleteComboBox extends JComboBox {
 		model.removeAllElements();
 		for (String elem : elems) model.addElement(elem);
 		this.getEditor().setItem(oldValue);
-		this.getEditor().selectAll();
 	}
 }
