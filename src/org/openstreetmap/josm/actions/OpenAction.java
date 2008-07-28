@@ -17,11 +17,12 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.GpxReader;
+import org.openstreetmap.josm.io.NmeaReader;
+import org.openstreetmap.josm.io.OsmReader;
 import org.xml.sax.SAXException;
 
 /**
@@ -55,6 +56,8 @@ public class OpenAction extends DiskAccessAction {
 		try {
 			if (asGpxData(file.getName()))
 				openFileAsGpx(file);
+			else if (asNmeaData(file.getName()))
+				openFileAsNmea(file);
 			else
 				openAsData(file);
 		} catch (SAXException x) {
@@ -102,9 +105,31 @@ public class OpenAction extends DiskAccessAction {
 		}
     }
 
+	private void openFileAsNmea(File file) throws IOException, FileNotFoundException {
+		String fn = file.getName();
+		if (ExtensionFileFilter.filters[ExtensionFileFilter.NMEA].acceptName(fn)) {
+			NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
+			r.data.storageFile = file;
+			GpxLayer gpxLayer = new GpxLayer(r.data, fn);
+			Main.main.addLayer(gpxLayer);
+			if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+				MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
+				if (ml.data.size() > 0) {
+					Main.main.addLayer(ml);
+				}
+			}
+
+		} else {
+			throw new IllegalStateException();
+		}
+    }
 
 	private boolean asGpxData(String fn) {
 		return ExtensionFileFilter.filters[ExtensionFileFilter.GPX].acceptName(fn);
+	}
+
+	private boolean asNmeaData(String fn) {
+		return ExtensionFileFilter.filters[ExtensionFileFilter.NMEA].acceptName(fn);
 	}
 
 
