@@ -38,7 +38,7 @@ public class AutoCompleteComboBox extends JComboBox {
 		@Override public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
 			if(selecting || (offs == 0 && str.equals(getText(0, getLength()))))
 				return;
-			boolean initial = (offs == 0 && getLength() == 0);
+			boolean initial = (offs == 0 && getLength() == 0 && str.length() > 1);
 			super.insertString(offs, str, a);
 
 			// return immediately when selecting an item
