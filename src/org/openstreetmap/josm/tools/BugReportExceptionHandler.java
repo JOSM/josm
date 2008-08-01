@@ -43,7 +43,10 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 		if (Main.parent != null) {
 			if (e instanceof OutOfMemoryError) {
 				// do not translate the string, as translation may raise an exception
-				JOptionPane.showMessageDialog(Main.parent, "You are out of memory. Strange things may happen.\nPlease restart JOSM and load smaller data sets.");
+				JOptionPane.showMessageDialog(Main.parent, "JOSM is out of memory. " +
+						"Strange things may happen.\nPlease restart JOSM with the -Xmx###M option,\n" +
+						"where ### is the the number of MB assigned to JOSM (e.g. 256).\n" +
+						"Currently, " + Runtime.getRuntime().maxMemory()/1024/1024 + " MB are available to JOSM.");
 				return;
 			}
 
