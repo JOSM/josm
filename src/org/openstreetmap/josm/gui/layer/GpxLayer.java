@@ -719,6 +719,12 @@ public class GpxLayer extends Layer {
 					Way w = new Way();
 					for (WayPoint p : segment) {
 						Node n = new Node(p.latlon);
+						String timestr = p.getString("time");
+						if(timestr != null)
+						{
+							timestr = timestr.replace("Z","+00:00");
+							n.timestamp = timestr;
+						}
 						ds.nodes.add(n);
 						w.nodes.add(n);
 					}

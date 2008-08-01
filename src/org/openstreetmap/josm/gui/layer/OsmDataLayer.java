@@ -367,12 +367,17 @@ public class OsmDataLayer extends Layer {
 				if (!n.tagged) {
 					doneNodes.add(n);
 				}
-				trkseg.add(new WayPoint(n.coor));
+				WayPoint wpt = new WayPoint(n.coor);
+				if(n.timestamp != null)
+					wpt.attr.put("time", n.timestamp);
+				trkseg.add(wpt);
 			}
 		}
 		for (Node n : data.nodes) {
 			if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;
 			WayPoint wpt = new WayPoint(n.coor);
+			if(n.timestamp != null)
+				wpt.attr.put("time", n.timestamp);
 			if (n.keys != null && n.keys.containsKey("name")) {
 				wpt.attr.put("name", n.keys.get("name"));
 			}
