@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.xnap.commons.i18n.I18n.marktr;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,7 +20,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -42,7 +42,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.ConflictResolver;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.SideButton;
 
 public final class ConflictDialog extends ToggleDialog {
 
@@ -63,29 +63,22 @@ public final class ConflictDialog extends ToggleDialog {
 		add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
-		JButton button = new JButton(tr("Resolve"), ImageProvider.get("dialogs", "conflict"));
-		button.setToolTipText(tr("Open a merge dialog of all selected items in the list above."));
-		button.addActionListener(new ActionListener(){
+		buttonPanel.add(new SideButton(marktr("Resolve"), "conflict", "Conflict",
+		tr("Open a merge dialog of all selected items in the list above."), new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				resolve();
 			}
-		});
-		button.putClientProperty("help", "Dialog/Conflict/Resolve");
-		buttonPanel.add(button);
+		}));
 
-		button = new JButton(tr("Select"), ImageProvider.get("mapmode/selection/select"));
-		button.setToolTipText(tr("Set the selected elements on the map to the selected items in the list above."));
-		button.addActionListener(new ActionListener(){
+		buttonPanel.add(new SideButton(marktr("Select"), "select", "Conflict",
+		tr("Set the selected elements on the map to the selected items in the list above."), new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
 				for (Object o : displaylist.getSelectedValues())
 					sel.add((OsmPrimitive)o);
 				Main.ds.setSelected(sel);
 			}
-		});
-		button.putClientProperty("help", "Dialog/Conflict/Select");
-		buttonPanel.add(button);
-
+		}));
 		add(buttonPanel, BorderLayout.SOUTH);
 
 		DataSet.selListeners.add(new SelectionChangedListener(){

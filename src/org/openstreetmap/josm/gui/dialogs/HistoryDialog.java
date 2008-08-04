@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.xnap.commons.i18n.I18n.marktr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -19,7 +20,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,6 +34,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -83,8 +84,6 @@ public class HistoryDialog extends ToggleDialog implements SelectionChangedListe
 
 	private Map<OsmPrimitive, List<HistoryItem>> cache = new HashMap<OsmPrimitive, List<HistoryItem>>();
 	private JLabel notLoaded = new JLabel("<html><i>"+tr("Click Reload to refresh list")+"</i></html>");
-	private JButton reloadButton = new JButton(tr("Reload"), ImageProvider.get("dialogs/refresh"));
-	private JButton revertButton = new JButton(tr("Revert"), ImageProvider.get("dialogs/revert"));
 
 	public HistoryDialog() {
 		super(tr("History"), "history", tr("Display the history of all selected items."), KeyEvent.VK_H, 150);
@@ -123,26 +122,20 @@ public class HistoryDialog extends ToggleDialog implements SelectionChangedListe
 		add(centerPanel, BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel(new GridLayout(1,2));
-		buttons.add(reloadButton);
-		buttons.add(revertButton);
-		add(buttons, BorderLayout.SOUTH);
-
-		reloadButton.addActionListener(new ActionListener(){
+		buttons.add(new SideButton(marktr("Reload"), "refresh", "History", tr("Reload all currently selected objects and refresh the list."),
+		new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				reload();
 			}
-		});
-		reloadButton.setToolTipText(tr("Reload all currently selected objects and refresh the list."));
-		reloadButton.putClientProperty("help", "Dialog/History/Reload");
-		
-		revertButton.addActionListener(new ActionListener(){
+		}));
+		buttons.add(new SideButton(marktr("Revert"), "revert", "History",
+		tr("Revert the state of all currently selected objects to the version selected in the history list."), new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(Main.parent, tr("Not implemented yet."));
 			}
-		});
-		revertButton.setToolTipText(tr("Revert the state of all currently selected objects to the version selected in the history list."));
-		revertButton.putClientProperty("help", "Dialog/History/Revert");
-		
+		}));
+		add(buttons, BorderLayout.SOUTH);
+
 		DataSet.selListeners.add(this);
 	}
 

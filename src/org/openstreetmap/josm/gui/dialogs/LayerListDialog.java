@@ -19,7 +19,6 @@ import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -32,6 +31,7 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -125,15 +125,15 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 	 * The merge action. This is only called, if the current selection and its
 	 * item below are editable datasets and the merge button is clicked.
 	 */
-	private final JButton mergeButton = new JButton(ImageProvider.get("dialogs", "mergedown"));
+	private final SideButton mergeButton;
 	/**
 	 * Button for moving layer up.
 	 */
-	private JButton upButton = new JButton(ImageProvider.get("dialogs", "up"));
+	private final SideButton upButton;
 	/**
 	 * Button for moving layer down.
 	 */
-	private JButton downButton = new JButton(ImageProvider.get("dialogs", "down"));
+	private final SideButton downButton;
 	/**
 	 * Button for delete layer.
 	 */
@@ -230,28 +230,17 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 			}
 		};
 
-		upButton.setToolTipText(tr("Move the selected layer one row up."));
-		upButton.addActionListener(upDown);
-		upButton.setActionCommand("up");
-		upButton.putClientProperty("help", "Dialog/LayerList/Up");
+		upButton = new SideButton("up", "LayerList", tr("Move the selected layer one row up."), upDown);
 		buttonPanel.add(upButton);
 
-		downButton.setToolTipText(tr("Move the selected layer one row down."));
-		downButton.addActionListener(upDown);
-		downButton.setActionCommand("down");
-		downButton.putClientProperty("help", "Dialog/LayerList/Down");
+ 		downButton = new SideButton("down", "LayerList", tr("Move the selected layer one row down."), upDown);
 		buttonPanel.add(downButton);
 
-		JButton showHideButton = new JButton(new ShowHideLayerAction(null));
-		showHideButton.setText("");
-		buttonPanel.add(showHideButton);
+		buttonPanel.add(new SideButton(new ShowHideLayerAction(null)));
+		buttonPanel.add(new SideButton(deleteAction));
 
-		JButton deleteButton = new JButton(deleteAction);
-		deleteButton.setText("");
-		buttonPanel.add(deleteButton);
-
-		mergeButton.setToolTipText(tr("Merge the layer directly below into the selected layer."));
-		mergeButton.addActionListener(new ActionListener(){
+		mergeButton = new SideButton("Merge", "mergedown", "LayerList", tr("Merge the layer directly below into the selected layer."),
+		new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				Layer lTo = (Layer)instance.getSelectedValue();
 				Layer lFrom = (Layer)model.get(instance.getSelectedIndex()+1);
@@ -261,7 +250,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 				mapView.repaint();
 			}
 		});
-		mergeButton.putClientProperty("help", "Dialog/LayerList/Merge");
+		mergeButton.setText(null);
 		buttonPanel.add(mergeButton);
 
 		add(buttonPanel, BorderLayout.SOUTH);

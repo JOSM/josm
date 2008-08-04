@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.xnap.commons.i18n.I18n.marktr;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -15,7 +16,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,7 +26,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.SideButton;
 
 /**
  * A small tool dialog for displaying the current selection. The selection manager
@@ -62,32 +62,25 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
 		JPanel buttonPanel = new JPanel(new GridLayout(1,2));
 
-		buttonPanel.add(createButton("Select", "mapmode/selection/select", "Set the selected elements on the map to the selected items in the list above.", new ActionListener(){
+		buttonPanel.add(new SideButton(marktr("Select"), "select", "SelectionList",
+		tr("Set the selected elements on the map to the selected items in the list above."), new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				updateMap();
 			}
 		}));
 
-		buttonPanel.add(createButton("Reload", "dialogs/refresh", "Refresh the selection list.", new ActionListener(){
+		buttonPanel.add(new SideButton(marktr("Reload"), "refresh", "SelectionList", tr("Refresh the selection list."), new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				selectionChanged(Main.ds.getSelected());
             }
 		}));
 
-		buttonPanel.add(createButton("Search", "dialogs/search", "Search for objects.", Main.main.menu.search));
+		buttonPanel.add(new SideButton(marktr("Search"), "search", "SelectionList", tr("Search for objects."), Main.main.menu.search));
 
 		add(buttonPanel, BorderLayout.SOUTH);
 		selectionChanged(Main.ds.getSelected());
 
 		DataSet.selListeners.add(this);
-	}
-
-	private JButton createButton(String name, String icon, String tooltip, ActionListener action) {
-		JButton button = new JButton(tr(name), ImageProvider.get(icon));
-		button.setToolTipText(tr(tooltip));
-		button.addActionListener(action);
-		button.putClientProperty("help", "Dialog/SelectionList/"+name);
-		return button;
 	}
 
 	@Override public void setVisible(boolean b) {

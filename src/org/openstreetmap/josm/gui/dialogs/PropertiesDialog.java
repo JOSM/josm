@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -60,9 +59,9 @@ import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.ForwardActionListener;
 import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This dialog displays the properties of the current selected primitives.
@@ -563,22 +562,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		};
 		
-		buttonPanel.add(createButton(marktr("Add"),tr("Add a new key/value pair to all objects"), KeyEvent.VK_A, buttonAction));
-		buttonPanel.add(createButton(marktr("Edit"),tr( "Edit the value of the selected key for all objects"), KeyEvent.VK_E, buttonAction));
-		buttonPanel.add(createButton(marktr("Delete"),tr("Delete the selected key in all objects"), KeyEvent.VK_D, buttonAction));
+		buttonPanel.add(new SideButton(marktr("Add"),"add","Properties",tr("Add a new key/value pair to all objects"), KeyEvent.VK_A, buttonAction));
+		buttonPanel.add(new SideButton(marktr("Edit"),"edit","Properties",tr("Edit the value of the selected key for all objects"), KeyEvent.VK_E, buttonAction));
+		buttonPanel.add(new SideButton(marktr("Delete"),"delete","Properties",tr("Delete the selected key in all objects"), KeyEvent.VK_D, buttonAction));
 		add(buttonPanel, BorderLayout.SOUTH);
 
 		DataSet.selListeners.add(this);
-	}
-
-	private JButton createButton(String name, String tooltip, int mnemonic, ActionListener actionListener) {
-		JButton b = new JButton(tr(name), ImageProvider.get("dialogs", name.toLowerCase()));
-		b.setActionCommand(name);
-		b.addActionListener(actionListener);
-		b.setToolTipText(tooltip);
-		b.setMnemonic(mnemonic);
-		b.putClientProperty("help", "Dialog/Properties/"+name);
-		return b;
 	}
 
 	@Override public void setVisible(boolean b) {
