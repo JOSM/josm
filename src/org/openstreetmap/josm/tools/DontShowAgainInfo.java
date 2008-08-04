@@ -16,13 +16,21 @@ import org.openstreetmap.josm.Main;
 public class DontShowAgainInfo {
 
 	public static boolean show(String prefKey, String msg) {
-		return show(prefKey, new JLabel(msg));
+		return show(prefKey, new JLabel(msg), true);
+	}
+
+	public static boolean show(String prefKey, String msg, Boolean state) {
+		return show(prefKey, new JLabel(msg), state);
 	}
 
 	public static boolean show(String prefKey, Container msg) {
+		return show(prefKey, msg, true);
+	}
+
+	public static boolean show(String prefKey, Container msg, Boolean state) {
 		if (!Main.pref.getBoolean("message."+prefKey)) {
 			JCheckBox dontshowagain = new JCheckBox(tr("Do not show again"));
-			dontshowagain.setSelected(Main.pref.getBoolean("message."+prefKey, true));
+			dontshowagain.setSelected(Main.pref.getBoolean("message."+prefKey, state));
 			JPanel all = new JPanel(new GridBagLayout());
 			all.add(msg, GBC.eop());
 			all.add(dontshowagain, GBC.eol());

@@ -21,6 +21,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -68,8 +69,17 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		public void actionPerformed(ActionEvent e) {
 			int sel = instance.getSelectedIndex();
 			Layer l = layer != null ? layer : (Layer)instance.getSelectedValue();
-			if (l instanceof OsmDataLayer && !DontShowAgainInfo.show("delete_layer", tr("Do you really want to delete the whole layer?")))
-				return;
+			if (l instanceof OsmDataLayer)
+			{
+				if (((OsmDataLayer)l).isModified())
+				{
+					if(JOptionPane.showConfirmDialog(instance, tr("There are unsaved changes. Delete the layer anwyay?"),
+					tr("Unsaved Changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+						return;
+				}
+				else if(!DontShowAgainInfo.show("delete_layer", tr("Do you really want to delete the whole layer?"), false))
+					return;
+			}
 			Main.main.removeLayer(l);
 			if (sel >= instance.getModel().getSize())
 				sel = instance.getModel().getSize()-1;
