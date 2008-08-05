@@ -1,6 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import java.awt.Polygon;
+import java.awt.Shape;
+import java.awt.geom.Area;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -203,4 +206,19 @@ public class DataSet implements Cloneable {
 			ds.dataSources.add(new DataSource(source.bounds, source.origin));
 	    return ds;
     }
+	
+	/**
+	 * Returns the total area of downloaded data (the "yellow rectangles").
+	 * @return Area object encompassing downloaded data.
+	 */
+	public Area getDataSourceArea()
+	{
+		Area a = new Area();
+		for (DataSource source : dataSources) {
+			// create area from data bounds
+			a.add(new Area(source.bounds.asRect()));
+		}
+		return a;
+		
+	}
 }

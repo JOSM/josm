@@ -1,6 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data;
 
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
+
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 
@@ -65,4 +68,13 @@ public class Bounds {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Returns the lat/lon bounding box as an object of type Rectangle2D.Double
+	 * @return
+	 */
+	public Rectangle2D.Double asRect() {
+		return new Rectangle2D.Double(min.lon(), min.lat(), max.lon()-min.lon(), max.lat()-min.lat());
+	}
+
 }
