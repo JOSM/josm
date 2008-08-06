@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.Way;
 
 /**
  * Aligns all selected nodes within a circle. (Useful for roundabouts)
- * 
+ *
  * @author Matthew Newton
  */
 public final class AlignInCircleAction extends JosmAction {
@@ -34,18 +34,22 @@ public final class AlignInCircleAction extends JosmAction {
 	public void actionPerformed(ActionEvent e) {
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
 		Collection<Node> nodes = new LinkedList<Node>();
-		
+
 		for (OsmPrimitive osm : sel)
 			if (osm instanceof Node)
 				nodes.add((Node)osm);
-		
+
 		// special case if no single nodes are selected and exactly one way is: 
 		// then use the way's nodes
 		if ((nodes.size() == 0) && (sel.size() == 1))
 			for (OsmPrimitive osm : sel)
 				if (osm instanceof Way)
-					nodes.addAll(((Way)osm).nodes);
-		
+					for (Node n : ((Way)osm).nodes)
+					{
+						if(!nodes.contains(n))
+							nodes.add(n);
+					}
+
 		if (nodes.size() < 4) {
 			JOptionPane.showMessageDialog(Main.parent, tr("Please select at least four nodes."));
 			return;
