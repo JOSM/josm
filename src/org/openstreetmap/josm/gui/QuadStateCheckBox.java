@@ -81,23 +81,23 @@ public class QuadStateCheckBox extends JCheckBox {
 		private void setState(State state) {
 			if (state == State.NOT_SELECTED) {
 				other.setArmed(false);
-				setPressed(false);
-				setSelected(false);
+				other.setPressed(false);
+				other.setSelected(false);
 				setToolTipText(tr("false: the property is explicitly switched off"));
 			} else if (state == State.SELECTED) {
 				other.setArmed(false);
-				setPressed(false);
-				setSelected(true);
+				other.setPressed(false);
+				other.setSelected(true);
 				setToolTipText(tr("true: the property is explicitly switched on"));
 			} else if (state == State.PARTIAL) {
 				other.setArmed(true);
-				setPressed(true);
-				setSelected(true);
+				other.setPressed(true);
+				other.setSelected(true);
 				setToolTipText(tr("partial: different selected objects have different values, do not change"));
 			} else {
 				other.setArmed(true);
-				setPressed(true);
-				setSelected(false);
+				other.setPressed(true);
+				other.setSelected(false);
 				setToolTipText(tr("unset: do not set this property on the selected objects"));
 			}
 		}
@@ -133,9 +133,10 @@ public class QuadStateCheckBox extends JCheckBox {
 				}
 			}
 		}
-		/** Filter: No one may change the armed status except us. */
-		public void setArmed(boolean b) {
-		}
+		/** Filter: No one may change the armed/selected/pressed status except us. */
+		public void setArmed(boolean b) { }
+		public void setSelected(boolean b) { }
+		public void setPressed(boolean b) { }
 		/** We disable focusing on the component when it is not
 		 * enabled. */
 		public void setEnabled(boolean b) {
@@ -149,8 +150,6 @@ public class QuadStateCheckBox extends JCheckBox {
 		public boolean isEnabled() { return other.isEnabled(); }
 		public boolean isPressed() { return other.isPressed(); }
 		public boolean isRollover() { return other.isRollover(); }
-		public void setSelected(boolean b) { other.setSelected(b); }
-		public void setPressed(boolean b) { other.setPressed(b); }
 		public void setRollover(boolean b) { other.setRollover(b); }
 		public void setMnemonic(int key) { other.setMnemonic(key); }
 		public int getMnemonic() { return other.getMnemonic(); }
