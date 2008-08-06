@@ -86,10 +86,12 @@ public class AutoScaleAction extends JosmAction {
 			// increase bbox by 0.001 degrees on each side. this is required 
 			// especially if the bbox contains one single node, but helpful 
 			// in most other cases as well.
-			// if (v.min != null && v.max != null && v.min.north() == v.max.north() && v.min.east() == v.max.east()) {
-			EastNorth en = Main.proj.latlon2eastNorth(new LatLon(0.001, 0.001));
-			v.min = new EastNorth(v.min.east()-en.east(), v.min.north()-en.north());
-			v.max = new EastNorth(v.max.east()+en.east(), v.max.north()+en.north());
+			if (v.min != null && v.max != null) // && v.min.north() == v.max.north() && v.min.east() == v.max.east()) {
+			{
+				EastNorth en = Main.proj.latlon2eastNorth(new LatLon(0.001, 0.001));
+				v.min = new EastNorth(v.min.east()-en.east(), v.min.north()-en.north());
+				v.max = new EastNorth(v.max.east()+en.east(), v.max.north()+en.north());
+			}
 		}
 		return v;
 	}
