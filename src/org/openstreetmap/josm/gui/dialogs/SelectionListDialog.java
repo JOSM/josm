@@ -47,7 +47,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 	private JList displaylist = new JList(list);
 
 	public SelectionListDialog() {
-		super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."), KeyEvent.VK_E, 150);
+		super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."), KeyEvent.VK_T, 150);
 		displaylist.setCellRenderer(new OsmPrimitivRenderer());
 		displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		displaylist.addMouseListener(new MouseAdapter(){
