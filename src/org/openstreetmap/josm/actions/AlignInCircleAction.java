@@ -53,9 +53,9 @@ public final class AlignInCircleAction extends JosmAction {
 
 		// Get average position of all nodes
 		Node avn = new Node(new LatLon(0,0));
+		avn.eastNorth = new EastNorth(0,0);
 		for (Node n : nodes) {
 			avn.eastNorth = new EastNorth(avn.eastNorth.east()+n.eastNorth.east(), avn.eastNorth.north()+n.eastNorth.north());
-			avn.coor = Main.proj.eastNorth2latlon(avn.eastNorth);
 		}
 		avn.eastNorth = new EastNorth(avn.eastNorth.east()/nodes.size(), avn.eastNorth.north()/nodes.size());
 		avn.coor = Main.proj.eastNorth2latlon(avn.eastNorth);

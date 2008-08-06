@@ -12,8 +12,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
-public class WayPoint extends WithAttributes implements Comparable{
-	
+public class WayPoint extends WithAttributes implements Comparable<WayPoint>
+{
 	public final LatLon latlon;
 	public final EastNorth eastNorth;
 	public double time;
@@ -22,7 +22,7 @@ public class WayPoint extends WithAttributes implements Comparable{
 	public int dir;
 
 	public WayPoint(LatLon ll) {
-		latlon = ll; 
+		latlon = ll;
 		eastNorth = Main.proj.latlon2eastNorth(ll);
 	}
 
@@ -48,11 +48,8 @@ public class WayPoint extends WithAttributes implements Comparable{
 		}
 	}
 
-    public int compareTo(Object other){
-        if(other instanceof WayPoint){
-            WayPoint w = (WayPoint)other;
-            return (int)time - (int)w.time;
-        }
-        return 0;
-    }
+	public int compareTo(WayPoint w)
+	{
+		return Double.compare(time, w.time);
+	}
 }

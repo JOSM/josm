@@ -62,7 +62,8 @@ public class RotateCommand extends Command {
 
 		this.objects = AllNodesVisitor.getAllNodes(objects);
 		pivot = new Node(new LatLon(0,0));
-			
+		pivot.eastNorth = new EastNorth(0,0);
+
 		for (Node n : this.objects) {
 			MoveCommand.OldState os = new MoveCommand.OldState();
 			os.eastNorth = n.eastNorth;
@@ -70,10 +71,9 @@ public class RotateCommand extends Command {
 			os.modified = n.modified;
 			oldState.put(n, os);
 			pivot.eastNorth = new EastNorth(pivot.eastNorth.east()+os.eastNorth.east(), pivot.eastNorth.north()+os.eastNorth.north());
-			pivot.coor = Main.proj.eastNorth2latlon(pivot.eastNorth);
 		}
 		pivot.eastNorth = new EastNorth(pivot.eastNorth.east()/this.objects.size(), pivot.eastNorth.north()/this.objects.size());
-		pivot.coor = Main.proj.eastNorth2latlon(pivot.eastNorth);	
+		pivot.coor = Main.proj.eastNorth2latlon(pivot.eastNorth);
 
 		rotationAngle = Math.PI/2;
 		rotateAgain(start, end);
@@ -88,10 +88,10 @@ public class RotateCommand extends Command {
 		// compute angle
 		startAngle = Math.atan2(start.east()-pivot.eastNorth.east(), start.north()-pivot.eastNorth.north());
 		double endAngle = Math.atan2(end.east()-pivot.eastNorth.east(), end.north()-pivot.eastNorth.north());
-		rotationAngle += startAngle - endAngle;		
+		rotationAngle += startAngle - endAngle;
 		rotateNodes(false);
 	}
-	
+
 	/**
 	 * Helper for actually rotationg the nodes.
 	 * @param setModified - true if rotated nodes should be flagged "modified"
