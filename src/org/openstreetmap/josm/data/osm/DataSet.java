@@ -81,6 +81,14 @@ public class DataSet implements Cloneable {
 		return o;
 	}
 
+	public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
+		Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
+		for (OsmPrimitive osm : allPrimitives())
+			if (!osm.deleted && !osm.incomplete && !(osm instanceof Relation))
+				o.add(osm);
+		return o;
+	}
+
 	public void addPrimitive(OsmPrimitive osm) {
 		if (osm instanceof Node) {
 			nodes.add((Node) osm);
