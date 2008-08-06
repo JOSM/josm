@@ -326,7 +326,7 @@ public class MapStatus extends JPanel implements Helpful {
 				}
 
 				@Override public void keyReleased(KeyEvent e) {
-					keyReleased(e);
+					keyPressed(e);
 				}
 			});
 		}
