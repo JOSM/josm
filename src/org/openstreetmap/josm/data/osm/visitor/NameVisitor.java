@@ -76,6 +76,6 @@ public class NameVisitor implements Visitor {
 
 	private void addId(OsmPrimitive osm) {
 	    if (Main.pref.getBoolean("osm-primitives.showid"))
-			name += tr(" (id: {0}))", osm.id);
+			name += tr(" [id: {0}]", osm.id);
     }
 }
