@@ -87,7 +87,7 @@ public class SearchAction extends JosmAction {
 		try {
 			Collection<OsmPrimitive> sel = Main.ds.getSelected();
 			SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive);
-			for (OsmPrimitive osm : Main.ds.allNonDeletedPhysicalPrimitives()) {
+			for (OsmPrimitive osm : Main.ds.allNonDeletedCompletePrimitives()) {
 				if (mode == SearchMode.replace) {
 					if (matcher.match(osm))
 						sel.add(osm);

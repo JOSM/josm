@@ -95,13 +95,9 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 	 * @param newSelection The new selection array.
 	 */
 	public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-		if (list == null)
+		if (list == null || !isVisible())
 			return; // selection changed may be received in base class constructor before init
-		if (!isVisible())
-			return;
-		OsmPrimitive[] selArr = new OsmPrimitive[newSelection.size()];
-		selArr = newSelection.toArray(selArr);
-		Arrays.sort(selArr);
+		OsmPrimitive selArr[] = Main.ds.sort(newSelection);
 		list.setSize(selArr.length);
 		int i = 0;
 		for (OsmPrimitive osm : selArr)

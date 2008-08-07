@@ -1,5 +1,8 @@
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,8 +68,28 @@ public final class Relation extends OsmPrimitive {
 
 	public int compareTo(OsmPrimitive o) {
 	    return o instanceof Relation ? Long.valueOf(id).compareTo(o.id) : -1;
-    }
-	
+	}
+
+	public String getName() {
+		String name;
+		if (incomplete) {
+			name = tr("incomplete");
+		} else {
+			name = get("type");
+			// FIXME add names of members
+			if (name == null)
+				name = tr("relation");
+			
+			name += " (";
+			String nameTag = get("name");
+			if (nameTag == null) nameTag = get("ref");
+			if (nameTag != null) name += "\"" + nameTag + "\", ";
+			int mbno = members.size();
+			name += trn("{0} member", "{0} members", mbno, mbno) + ")";
+		}
+		return name;
+	}
+
 	public boolean isIncomplete() {
 		for (RelationMember m : members)
 			if (m.member == null)

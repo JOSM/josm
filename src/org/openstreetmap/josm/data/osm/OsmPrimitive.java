@@ -218,6 +218,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
                 checkDirectionTagged();
 	}
 
+	public String getName() {
+		return null;
+	}
+
 	public final String get(String key) {
 		return keys == null ? null : keys.get(key);
 	}

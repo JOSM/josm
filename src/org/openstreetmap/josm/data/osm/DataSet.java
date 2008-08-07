@@ -7,7 +7,9 @@ import java.awt.geom.Area;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,6 +79,14 @@ public class DataSet implements Cloneable {
 		Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
 		for (OsmPrimitive osm : allPrimitives())
 			if (!osm.deleted)
+				o.add(osm);
+		return o;
+	}
+
+	public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
+		Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
+		for (OsmPrimitive osm : allPrimitives())
+			if (!osm.deleted && !osm.incomplete)
 				o.add(osm);
 		return o;
 	}
@@ -228,5 +238,37 @@ public class DataSet implements Cloneable {
 		}
 		return a;
 		
+	}
+
+	// Search für Relation wieder erlauben.
+	public static OsmPrimitive[] sort(Collection<? extends OsmPrimitive> list) {
+		OsmPrimitive[] selArr = new OsmPrimitive[list.size()];
+		final HashMap<Object, String> h = new HashMap<Object, String>();
+		selArr = list.toArray(selArr);
+		Arrays.sort(selArr, new Comparator<OsmPrimitive>() {
+			public int compare(OsmPrimitive a, OsmPrimitive b)
+			{
+				if(a.getClass() == b.getClass())
+				{
+					String as = h.get(a);
+					if(as == null)
+					{
+						as = a.getName();
+						h.put(a, as);
+					}
+					String bs = h.get(b);
+					if(bs == null)
+					{
+						bs = b.getName();
+						h.put(b, bs);
+					}
+					int res = as.compareTo(bs);
+					if(res != 0)
+						return res;
+				}
+				return a.compareTo(b);
+			}
+		});
+		return selArr;
 	}
 }

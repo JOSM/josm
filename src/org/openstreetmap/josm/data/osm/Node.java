@@ -1,6 +1,12 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -66,5 +72,20 @@ public final class Node extends OsmPrimitive {
 
 	public int compareTo(OsmPrimitive o) {
 	    return o instanceof Node ? Long.valueOf(id).compareTo(o.id) : 1;
-    }
+	}
+
+	public String getName() {
+		String name;
+		if (incomplete) {
+			name = tr("incomplete");
+		} else {
+			NumberFormat latLonFormat = new DecimalFormat("###0.0000000");
+
+			name = get("name");
+			if (name == null)
+				name = id == 0 ? "" : ""+id;
+			name += " ("+latLonFormat.format(coor.lat())+", "+latLonFormat.format(coor.lon())+")";
+		}
+		return name;
+	}
 }

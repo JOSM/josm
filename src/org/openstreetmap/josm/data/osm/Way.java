@@ -1,6 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
+
+import java.util.HashSet;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,8 +91,31 @@ public final class Way extends OsmPrimitive {
     }
 
 	public int compareTo(OsmPrimitive o) {
-	    return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
-    }
+		if(o instanceof Relation)
+			return 1;
+		return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
+	}
+
+	public String getName() {
+		String name;
+		if (incomplete) {
+			name = tr("incomplete");
+		} else {
+			name = get("name");
+			if (name == null) name = get("ref");
+			if (name == null) {
+				name = 
+					(get("highway") != null) ? tr("highway") :
+					(get("railway") != null) ? tr("railway") :
+					(get("waterway") != null) ? tr("waterway") :
+					(get("landuse") != null) ? tr("landuse") : "";
+			}
+
+			int nodesNo = new HashSet<Node>(nodes).size();
+			name += trn(" ({0} node)", " ({0} nodes)", nodesNo, nodesNo);
+		}
+		return name;
+	}
 
 	@Deprecated
 	public boolean isIncomplete() {

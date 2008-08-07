@@ -57,19 +57,26 @@ public class DeleteCommand extends Command {
 
 		if (data.size() == 1) {
 			data.iterator().next().visit(v);
-			return new DefaultMutableTreeNode(new JLabel(tr("Delete")+" "+tr(v.className)+" "+v.name, v.icon, JLabel.HORIZONTAL));
+			return new DefaultMutableTreeNode(new JLabel(tr("Delete {1} {0}", v.name, tr(v.className)), v.icon, JLabel.HORIZONTAL));
 		}
 
 		String cname = null;
+		String cnamem = null;
 		for (OsmPrimitive osm : data) {
 			osm.visit(v);
 			if (cname == null)
+			{
 				cname = v.className;
+				cnamem = v.classNamePlural;
+			}
 			else if (!cname.equals(v.className))
+			{
 				cname = "object";
+				cnamem = trn("object", "objects", 2);
+			}
 		}
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(
-				tr("Delete")+" "+data.size()+" "+trn(cname, cname+"s", data.size()), ImageProvider.get("data", cname), JLabel.HORIZONTAL));
+				tr("Delete {0} {1}", data.size(), trn(cname, cnamem, data.size())), ImageProvider.get("data", cname), JLabel.HORIZONTAL));
 		for (OsmPrimitive osm : data) {
 			osm.visit(v);
 			root.add(new DefaultMutableTreeNode(v.toLabel()));
