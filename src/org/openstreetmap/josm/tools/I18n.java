@@ -15,25 +15,29 @@ public class I18n {
 	 */
 	public static org.xnap.commons.i18n.I18n i18n;
 
-	public static String tr(String text, Object... objects) {
+	public static final String tr(String text, Object... objects) {
 		if (i18n == null)
 			return MessageFormat.format(text, objects);
 		return i18n.tr(text, objects);
 	}
 
-	public static String tr(String text) {
+	public static final String tr(String text) {
 		if (i18n == null)
 			return text;
 		return i18n.tr(text);
 	}
 
-	public static String trn(String text, String pluralText, long n, Object... objects) {
+	public static final String marktr(String text) {
+		return text;
+	}
+
+	public static final String trn(String text, String pluralText, long n, Object... objects) {
 		if (i18n == null)
 			return n == 1 ? tr(text, objects) : tr(pluralText, objects);
 			return i18n.trn(text, pluralText, n, objects);
 	}
 
-	public static String trn(String text, String pluralText, long n) {
+	public static final String trn(String text, String pluralText, long n) {
 		if (i18n == null)
 			return n == 1 ? tr(text) : tr(pluralText);
 			return i18n.trn(text, pluralText, n);

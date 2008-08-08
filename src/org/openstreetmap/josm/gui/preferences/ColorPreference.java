@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.xnap.commons.i18n.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
 import java.awt.Component;

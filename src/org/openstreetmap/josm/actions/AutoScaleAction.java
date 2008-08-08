@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.xnap.commons.i18n.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
