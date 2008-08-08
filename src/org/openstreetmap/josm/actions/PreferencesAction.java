@@ -39,6 +39,7 @@ public class PreferencesAction extends JosmAction {
 
 		JOptionPane pane = new JOptionPane(prefPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 		JDialog dlg = pane.createDialog(Main.parent, tr("Preferences"));
+		dlg.setResizable(true);
 
 		if (dlg.getWidth() > 600)
 			dlg.setSize(600, dlg.getHeight());
