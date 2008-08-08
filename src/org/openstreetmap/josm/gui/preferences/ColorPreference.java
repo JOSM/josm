@@ -149,6 +149,7 @@ public class ColorPreference implements PreferenceSetting {
 			marktr("segment"), ColorHelper.color2html(SimplePaintVisitor.darkgreen),
 			marktr("way"), ColorHelper.color2html(SimplePaintVisitor.darkblue),
 			marktr("incomplete way"), ColorHelper.color2html(SimplePaintVisitor.darkerblue),
+			marktr("relation"), ColorHelper.color2html(SimplePaintVisitor.teal),
 			marktr("selected"), ColorHelper.color2html(Color.white),
 			marktr("gps point"), ColorHelper.color2html(Color.gray),
 			marktr("conflict"), ColorHelper.color2html(Color.gray),

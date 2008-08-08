@@ -1,11 +1,13 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm.visitor;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 
 import java.util.Iterator;
@@ -13,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -30,6 +33,7 @@ public class SimplePaintVisitor implements Visitor {
 	public final static Color darkerblue = new Color(0,0,96);
 	public final static Color darkblue = new Color(0,0,128);
 	public final static Color darkgreen = new Color(0,128,0);
+	public final static Color teal = new Color(0,128,128);
 
 	/**
 	 * The environment to paint to.
@@ -51,6 +55,7 @@ public class SimplePaintVisitor implements Visitor {
 	protected Color selectedColor;
 	protected Color nodeColor;
 	protected Color dfltWayColor;
+	protected Color relationColor;
 	protected Color untaggedWayColor;
 	protected Color incompleteColor;
 	protected Color backgroundColor;
@@ -71,6 +76,7 @@ public class SimplePaintVisitor implements Visitor {
 		selectedColor = Preferences.getPreferencesColor("selected", Color.WHITE);
 		nodeColor = Preferences.getPreferencesColor("node", Color.RED);
 		dfltWayColor = Preferences.getPreferencesColor("way", darkblue);
+		relationColor = Preferences.getPreferencesColor("relation", teal);
 		untaggedWayColor = Preferences.getPreferencesColor("untagged way", darkgreen);
 		incompleteColor = Preferences.getPreferencesColor("incomplete way", darkerblue);
 		backgroundColor = Preferences.getPreferencesColor("background", Color.BLACK);
@@ -81,6 +87,10 @@ public class SimplePaintVisitor implements Visitor {
 		// draw tagged ways first, then untagged ways. takes
 		// time to iterate through list twice, OTOH does not
 		// require changing the colour while painting...
+		for (final OsmPrimitive osm : data.relations)
+			if (!osm.deleted && !osm.selected)
+				osm.visit(this);
+
 		for (final OsmPrimitive osm : data.ways)
 			if (!osm.deleted && !osm.selected && osm.tagged)
 				osm.visit(this);
@@ -156,8 +166,48 @@ public class SimplePaintVisitor implements Visitor {
 		}
 	}
 
-	public void visit(Relation e) {
-		// relations are not (yet?) drawn.
+	private Stroke relatedWayStroke = new BasicStroke(
+		4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
+	public void visit(Relation r) {
+		if (r.incomplete) return;
+
+		Color col;
+		if (inactive) {
+			col = inactiveColor;
+		} else if (r.selected) {
+			col = selectedColor;
+		} else {
+			col = relationColor;
+		}
+		g.setColor(col);
+
+		for (RelationMember m : r.members) {
+			if (m.member.incomplete || m.member.deleted) continue;
+
+			if (m.member instanceof Node) {
+				Point p = nc.getPoint(((Node) m.member).eastNorth);
+				if (p.x < 0 || p.y < 0
+					|| p.x > nc.getWidth() || p.y > nc.getHeight()) continue;
+
+				g.drawOval(p.x-3, p.y-3, 6, 6);
+			} else if (m.member instanceof Way) {
+				GeneralPath path = new GeneralPath();
+
+				boolean first = true;
+				for (Node n : ((Way) m.member).nodes) {
+					if (n.incomplete || n.deleted) continue;
+					Point p = nc.getPoint(n.eastNorth);
+					if (first) {
+						path.moveTo(p.x, p.y);
+						first = false;
+					} else {
+						path.lineTo(p.x, p.y);
+					}
+				}
+
+				((Graphics2D) g).draw(relatedWayStroke.createStrokedShape(path));
+			}
+		}
 	}
 	
 	/**
