@@ -5,6 +5,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 
@@ -26,7 +27,12 @@ public class BoundingXYVisitor implements Visitor {
 	}
 
 	public void visit(Relation e) {
-		// relations have no bounding box.
+		// only use direct members
+		for (RelationMember m : e.members) {
+			if (!(m.member instanceof Relation)) {
+				m.member.visit(this);
+			}
+		}
 	}
 
 	public void visit(EastNorth eastNorth) {
