@@ -301,10 +301,11 @@ public class MarkerLayer extends Layer {
 		// make our new marker
 		AudioMarker newAudioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(en), 
 			AudioMarker.inventName(offset), AudioPlayer.url().toString(), this, time, offset);
-		
+
 		// insert it at the right place in a copy the collection
 		Collection<Marker> newData = new ArrayList<Marker>();
-		am = null; 
+		am = null;
+		AudioMarker ret = newAudioMarker; // save to have return value
 		for (Marker m : data) {
 			if (m.getClass() == AudioMarker.class) {
 				am = (AudioMarker) m;
@@ -316,16 +317,17 @@ public class MarkerLayer extends Layer {
 			}
 			newData.add(m);
 		}
+
 		if (newAudioMarker != null) {
 			if (am != null)
-				newAudioMarker.adjustOffset(am.syncOffset()); // i.e. same as predecessor				
+				newAudioMarker.adjustOffset(am.syncOffset()); // i.e. same as predecessor
 			newData.add(newAudioMarker); // insert at end
 		}
-		
+
 		// replace the collection
 		data.clear();
 		data.addAll(newData);
-		return newAudioMarker;
+		return ret;
 	}
 	
 	public static void playAudio() {

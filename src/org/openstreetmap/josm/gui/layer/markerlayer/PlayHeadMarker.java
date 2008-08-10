@@ -219,13 +219,15 @@ public class PlayHeadMarker extends Marker {
 	 * @param en : the EastNorth end point of the drag
 	 */
 	public void synchronize(EastNorth en) {
+		AudioMarker recent = AudioMarker.recentlyPlayedMarker();
+		if(recent == null)
+			return;
 		/* First, see if we dropped onto an existing audio marker in the layer being played */
 		Point startPoint = Main.map.mapView.getPoint(en);
-		AudioMarker ca = null; 
-		AudioMarker recent = AudioMarker.recentlyPlayedMarker(); 		
-		if (recent != null || recent.parentLayer != null) {
+		AudioMarker ca = null;
+		if (recent.parentLayer != null) {
 			double closestAudioMarkerDistanceSquared = 1.0E100;
-			for (Marker m : AudioMarker.recentlyPlayedMarker().parentLayer.data) {
+			for (Marker m : recent.parentLayer.data) {
 				if (m instanceof AudioMarker) {
 					double distanceSquared = m.eastNorth.distanceSq(en);
 					if (distanceSquared < closestAudioMarkerDistanceSquared) {
@@ -238,10 +240,10 @@ public class PlayHeadMarker extends Marker {
 
 		/* We found the closest marker: did we actually hit it? */
 		if (ca != null && ! ca.containsPoint(startPoint)) ca = null;
-		
+
 		/* If we didn't hit an audio marker, we need to create one at the nearest point on the track */
-		if (ca == null && recent != null) {
-			/* work out EastNorth equivalent of 50 (default) pixels tolerance */ 
+		if (ca == null) {
+			/* work out EastNorth equivalent of 50 (default) pixels tolerance */
 			Point p = Main.map.mapView.getPoint(en);
 			EastNorth enPlus25px = Main.map.mapView.getEastNorth(p.x+dropTolerance, p.y);
 			WayPoint cw = recent.parentLayer.fromLayer.nearestPointOnTrack(en, enPlus25px.east() - en.east());
@@ -254,8 +256,13 @@ public class PlayHeadMarker extends Marker {
 		}
 
 		/* Actually do the synchronization */
-		if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
-			JOptionPane.showMessageDialog(Main.parent, tr("Audio synchronized at point ") + ca.text);
+		if(ca == null)
+		{
+			JOptionPane.showMessageDialog(Main.parent,tr("Unable to create new Audio marker."));
+			endDrag(true);
+		}
+		else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
+			JOptionPane.showMessageDialog(Main.parent, tr("Audio synchronized at point {0}.", ca.text));
 			eastNorth = ca.eastNorth;
 			endDrag(false);
 		} else {
