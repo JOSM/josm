@@ -127,16 +127,19 @@ public class OsmConnection {
 		Main.pleaseWaitDlg.currentAction.setText(tr("Aborting..."));
 		cancel = true;
 		if (activeConnection != null) {
-			activeConnection.setConnectTimeout(1);
-			activeConnection.setReadTimeout(1);
+			activeConnection.setConnectTimeout(100);
+			activeConnection.setReadTimeout(100);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ex) {}
 			activeConnection.disconnect();
 		}
 	}
 
 	protected void addAuth(HttpURLConnection con) throws CharacterCodingException {
-            CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
-            String auth = Main.pref.get("osm-server.username") + ":" + Main.pref.get("osm-server.password");
-            ByteBuffer bytes = encoder.encode(CharBuffer.wrap(auth));
-            con.addRequestProperty("Authorization", "Basic "+Base64.encode(bytes));
-    }
+		CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+		String auth = Main.pref.get("osm-server.username") + ":" + Main.pref.get("osm-server.password");
+		ByteBuffer bytes = encoder.encode(CharBuffer.wrap(auth));
+		con.addRequestProperty("Authorization", "Basic "+Base64.encode(bytes));
+	}
 }

@@ -54,8 +54,9 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	/**
 	 * Whether the operation should be aborted as soon as possible.
 	 */
-	private boolean cancel = false;
-	
+	// use the inherited variable
+	// private boolean cancel = false;
+
 	/**
 	 * Object describing current changeset
 	 */
