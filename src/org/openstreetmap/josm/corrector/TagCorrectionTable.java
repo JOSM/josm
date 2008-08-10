@@ -12,7 +12,7 @@ import java.awt.Font;
 
 public class TagCorrectionTable extends JTable {
 
-	public class BoldRenderer extends JLabel implements TableCellRenderer {
+	public static class BoldRenderer extends JLabel implements TableCellRenderer {
 
 		public Component getTableCellRendererComponent(JTable table,
 		        Object value, boolean isSelected, boolean hasFocus, int row,
@@ -29,11 +29,8 @@ public class TagCorrectionTable extends JTable {
 
 	private static TableCellRenderer boldRenderer = null;
 
-	private static TagCorrectionTableModel tagCorrectionTableModel;
-
 	public static TagCorrectionTable create(List<TagCorrection> tagCorrections) {
-
-		tagCorrectionTableModel = new TagCorrectionTableModel(tagCorrections);
+		TagCorrectionTableModel tagCorrectionTableModel = new TagCorrectionTableModel(tagCorrections);
 		TagCorrectionTable table = new TagCorrectionTable(
 		        tagCorrectionTableModel);
 		int lines = tagCorrections.size() > 10 ? 10 : tagCorrections.size();  
@@ -45,7 +42,7 @@ public class TagCorrectionTable extends JTable {
 	}
 
 	public TableCellRenderer getCellRenderer(int row, int column) {
-		TagCorrection tagCorrection = tagCorrectionTableModel.tagCorrections
+		TagCorrection tagCorrection = getTagCorrectionTableModel().tagCorrections
 		        .get(row);
 		if ((column == 2 && tagCorrection.isKeyChanged())
 		        || (column == 3 && tagCorrection.isValueChanged())) {
@@ -61,7 +58,7 @@ public class TagCorrectionTable extends JTable {
 	}
 
 	public TagCorrectionTableModel getTagCorrectionTableModel() {
-		return tagCorrectionTableModel;
+		return (TagCorrectionTableModel) getModel();
 	}
 
 }
