@@ -302,7 +302,7 @@ public class RelationEditor extends JFrame {
 		for (OsmPrimitive p : Main.ds.getSelected()) {
 			boolean skip = false;
 			for (RelationMember rm : clone.members) {
-				if (rm.member == p)
+				if (rm.member == p || p == relation)
 				{
 					skip = true;
 					break;

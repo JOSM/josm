@@ -58,13 +58,15 @@ public final class Relation extends OsmPrimitive {
 		}
 	}
 
-    @Override public String toString() {
-        return "{Relation id="+id+" version="+version+" members="+Arrays.toString(members.toArray())+"}";
-    }
+	@Override public String toString() {
+		// return "{Relation id="+id+" version="+version+" members="+Arrays.toString(members.toArray())+"}";
+		// adding memvbers in string increases memory usage a lot and overflows for looped relations
+		return "{Relation id="+id+" version="+version+"}";
+	}
 
 	@Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
 		return osm instanceof Relation ? super.realEqual(osm, semanticOnly) && members.equals(((Relation)osm).members) : false;
-    }
+	}
 
 	public int compareTo(OsmPrimitive o) {
 	    return o instanceof Relation ? Long.valueOf(id).compareTo(o.id) : -1;
