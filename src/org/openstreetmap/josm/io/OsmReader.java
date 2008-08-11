@@ -49,395 +49,424 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OsmReader {
 
-	/**
-	 * This is used as (readonly) source for finding missing references when not transferred in the
-	 * file.
-	 */
-	private DataSet references;
+     /**
+      * This is used as (readonly) source for finding missing references when not transferred in the
+      * file.
+      */
+     private DataSet references;
 
-	/**
-	 * The dataset to add parsed objects to.
-	 */
-	private DataSet ds = new DataSet();
+     /**
+      * The dataset to add parsed objects to.
+      */
+     private DataSet ds = new DataSet();
 
-	/**
-	 * The visitor to use to add the data to the set.
-	 */
-	private AddVisitor adder = new AddVisitor(ds);
+     /**
+      * The visitor to use to add the data to the set.
+      */
+     private AddVisitor adder = new AddVisitor(ds);
 
-	/**
-	 * All read nodes after phase 1.
-	 */
-	private Map<Long, Node> nodes = new HashMap<Long, Node>();
+     /**
+      * All read nodes after phase 1.
+      */
+     private Map<Long, Node> nodes = new HashMap<Long, Node>();
 
-	// TODO: What the hack? Is this really from me? Please, clean this up!
-	private static class OsmPrimitiveData extends OsmPrimitive {
-		@Override public void visit(Visitor visitor) {}
-		public int compareTo(OsmPrimitive o) {return 0;}
+     // TODO: What the hack? Is this really from me? Please, clean this up!
+     private static class OsmPrimitiveData extends OsmPrimitive {
+          @Override public void visit(Visitor visitor) {}
+          public int compareTo(OsmPrimitive o) {return 0;}
 
-		public void copyTo(OsmPrimitive osm) {
-			osm.id = id;
-			osm.keys = keys;
-			osm.modified = modified;
-			osm.selected = selected;
-			osm.deleted = deleted;
-			osm.timestamp = timestamp;
-			osm.user = user;
-			osm.visible = visible;
-			osm.version = version;
-			osm.checkTagged();
+          public void copyTo(OsmPrimitive osm) {
+               osm.id = id;
+               osm.keys = keys;
+               osm.modified = modified;
+               osm.selected = selected;
+               osm.deleted = deleted;
+               osm.timestamp = timestamp;
+               osm.user = user;
+               osm.visible = visible;
+               osm.version = version;
+               osm.checkTagged();
                         osm.checkDirectionTagged();
-		}
-	}
+          }
+     }
 
-	/**
-	 * Used as a temporary storage for relation members, before they
-	 * are resolved into pointers to real objects.
-	 */
-	private static class RelationMemberData {
-		public String type;
-		public long id;
-		public RelationMember relationMember;
-	}
+     /**
+      * Used as a temporary storage for relation members, before they
+      * are resolved into pointers to real objects.
+      */
+     private static class RelationMemberData {
+          public String type;
+          public long id;
+          public RelationMember relationMember;
+     }
 
-	/**
-	 * Data structure for the remaining way objects
-	 */
-	private Map<OsmPrimitiveData, Collection<Long>> ways = new HashMap<OsmPrimitiveData, Collection<Long>>();
+     /**
+      * Data structure for the remaining way objects
+      */
+     private Map<OsmPrimitiveData, Collection<Long>> ways = new HashMap<OsmPrimitiveData, Collection<Long>>();
 
-	/** 
-	 * Data structure for relation objects
-	 */
-	private Map<OsmPrimitiveData, Collection<RelationMemberData>> relations = new HashMap<OsmPrimitiveData, Collection<RelationMemberData>>();
+     /** 
+      * Data structure for relation objects
+      */
+     private Map<OsmPrimitiveData, Collection<RelationMemberData>> relations = new HashMap<OsmPrimitiveData, Collection<RelationMemberData>>();
 
-	/** 
-	 * List of protocol versions that will be accepted on reading
-	 */
-	private HashSet<String> allowedVersions = new HashSet<String>();
+     /** 
+      * List of protocol versions that will be accepted on reading
+      */
+     private HashSet<String> allowedVersions = new HashSet<String>();
 
-	private class Parser extends DefaultHandler {
-		/**
-		 * The current osm primitive to be read.
-		 */
-		private OsmPrimitive current;
+     private class Parser extends DefaultHandler {
+          /**
+           * The current osm primitive to be read.
+           */
+          private OsmPrimitive current;
+          private String generator;
 
-		@Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-			try {
-				if (qName.equals("osm")) {
-					if (atts == null)
-						throw new SAXException(tr("Unknown version"));
-					if (!allowedVersions.contains(atts.getValue("version")))
-						throw new SAXException(tr("Unknown version")+": "+atts.getValue("version"));
-				} else if (qName.equals("bound")) {
-					String bbox = atts.getValue("box");
-					String origin = atts.getValue("origin");
-					if (origin == null) origin = "";
-					if (bbox != null) {
-						String[] b = bbox.split(",");
-						Bounds bounds = new Bounds();
-						if (b.length == 4)
-							bounds = new Bounds(
-									new LatLon(Double.parseDouble(b[0]),Double.parseDouble(b[1])),
-									new LatLon(Double.parseDouble(b[2]),Double.parseDouble(b[3])));
-						DataSource src = new DataSource(bounds, origin);
-						ds.dataSources.add(src);
-					}
-					
-				// ---- PARSING NODES AND WAYS ----
-					
-				} else if (qName.equals("node")) {
-					current = new Node(new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon")));
-					readCommon(atts, current);
-					nodes.put(current.id, (Node)current);
-				} else if (qName.equals("way")) {
-					current = new OsmPrimitiveData();
-					readCommon(atts, current);
-					ways.put((OsmPrimitiveData)current, new ArrayList<Long>());
-				} else if (qName.equals("nd")) {
-					Collection<Long> list = ways.get(current);
-					if (list == null)
-						throw new SAXException(tr("Found <nd> element in non-way."));
-					long id = getLong(atts, "ref");
-					if (id == 0)
-						throw new SAXException(tr("<nd> has zero ref"));
-					list.add(id);
+          @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+               try {
+                    if (qName.equals("osm")) {
+                         if (atts == null)
+                              throw new SAXException(tr("Unknown version"));
+                         if (!allowedVersions.contains(atts.getValue("version")))
+                              throw new SAXException(tr("Unknown version")+": "+atts.getValue("version"));
+                         // save generator attribute for later use when creating DataSource objects
+                         generator = atts.getValue("generator");
 
-				// ---- PARSING RELATIONS ----			
+                         
+                    } else if (qName.equals("bound")) {
+                         // old style bounds.
+                         // TODO: remove this around 1st October 2008.
+                         // - this is a bit of a hack; since we still write out old style bound objects, 
+                         // we don't want to load them both. so when writing, we add a "note" tag the our
+                         // old-style bound, and when reading, ignore those with a "note".
+                         String note = atts.getValue("note");
+                         if (note == null) {
+                             System.out.println("Notice: old style <bound> element detected; support for these will be dropped in a future release.");
+                             String bbox = atts.getValue("box");
+                             String origin = atts.getValue("origin");
+                             if (origin == null) origin = "";
+                             if (bbox != null) {
+                                  String[] b = bbox.split(",");
+                                  Bounds bounds = new Bounds();
+                                  if (b.length == 4)
+                                       bounds = new Bounds(
+                                                 new LatLon(Double.parseDouble(b[0]),Double.parseDouble(b[1])),
+                                                 new LatLon(Double.parseDouble(b[2]),Double.parseDouble(b[3])));
+                                  DataSource src = new DataSource(bounds, origin);
+                                  ds.dataSources.add(src);
+                             }
+                         }
+                    } else if (qName.equals("bounds")) {
+                         // new style bounds.
+                         String minlon = atts.getValue("minlon");
+                         String minlat = atts.getValue("minlat");
+                         String maxlon = atts.getValue("maxlon");
+                         String maxlat = atts.getValue("maxlat");
+                         String origin = atts.getValue("origin");
+                         if (minlon != null && maxlon != null && minlat != null && maxlat != null) {
+                              if (origin == null) origin = generator;
+                              Bounds bounds = new Bounds(
+                                  new LatLon(Double.parseDouble(minlat), Double.parseDouble(minlon)),
+                                  new LatLon(Double.parseDouble(maxlat), Double.parseDouble(maxlon)));
+                              DataSource src = new DataSource(bounds, origin);
+                              ds.dataSources.add(src);
+                         }
+                         
+                    // ---- PARSING NODES AND WAYS ----
+                         
+                    } else if (qName.equals("node")) {
+                         current = new Node(new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon")));
+                         readCommon(atts, current);
+                         nodes.put(current.id, (Node)current);
+                    } else if (qName.equals("way")) {
+                         current = new OsmPrimitiveData();
+                         readCommon(atts, current);
+                         ways.put((OsmPrimitiveData)current, new ArrayList<Long>());
+                    } else if (qName.equals("nd")) {
+                         Collection<Long> list = ways.get(current);
+                         if (list == null)
+                              throw new SAXException(tr("Found <nd> element in non-way."));
+                         long id = getLong(atts, "ref");
+                         if (id == 0)
+                              throw new SAXException(tr("<nd> has zero ref"));
+                         list.add(id);
 
-				} else if (qName.equals("relation")) {
-					current = new OsmPrimitiveData();
-					readCommon(atts, current);
-					relations.put((OsmPrimitiveData)current, new LinkedList<RelationMemberData>());
-				} else if (qName.equals("member")) {
-					Collection<RelationMemberData> list = relations.get(current);
-					if (list == null)
-						throw new SAXException(tr("Found <member> tag on non-relation."));
-					RelationMemberData emd = new RelationMemberData();
-					emd.relationMember = new RelationMember();
-					emd.id = getLong(atts, "ref");
-					emd.type=atts.getValue("type");
-					emd.relationMember.role = atts.getValue("role");
-					
-					if (emd.id == 0)
-						throw new SAXException(tr("Incomplete <member> specification with ref=0"));
-					
-					list.add(emd);
-					
-				// ---- PARSING TAGS (applicable to all objects) ----
-					
-				} else if (qName.equals("tag")) {
-					current.put(atts.getValue("k"), atts.getValue("v"));
-				}
-			} catch (NumberFormatException x) {
-				x.printStackTrace(); // SAXException does not chain correctly
-				throw new SAXException(x.getMessage(), x);
-			} catch (NullPointerException x) {
-				x.printStackTrace(); // SAXException does not chain correctly
-				throw new SAXException(tr("NullPointerException, Possibly some missing tags."), x);
-			}
-		}
+                    // ---- PARSING RELATIONS ----               
 
-		private double getDouble(Attributes atts, String value) {
-			return Double.parseDouble(atts.getValue(value));
-		}
-	}
-	
-	/** 
-	 * Constructor initializes list of allowed protocol versions.
-	 */
-	public OsmReader() {
-		// first add the main server version
-		allowedVersions.add(Main.pref.get("osm-server.version", "0.5"));
-		// now also add all compatible versions
-		String[] additionalVersions = 
-			Main.pref.get("osm-server.additional-versions", "").split("/,/");
-		if (additionalVersions.length == 1 && additionalVersions[0].length() == 0)
-			additionalVersions = new String[] {};
-		allowedVersions.addAll(Arrays.asList(additionalVersions));	
-	}
+                    } else if (qName.equals("relation")) {
+                         current = new OsmPrimitiveData();
+                         readCommon(atts, current);
+                         relations.put((OsmPrimitiveData)current, new LinkedList<RelationMemberData>());
+                    } else if (qName.equals("member")) {
+                         Collection<RelationMemberData> list = relations.get(current);
+                         if (list == null)
+                              throw new SAXException(tr("Found <member> tag on non-relation."));
+                         RelationMemberData emd = new RelationMemberData();
+                         emd.relationMember = new RelationMember();
+                         emd.id = getLong(atts, "ref");
+                         emd.type=atts.getValue("type");
+                         emd.relationMember.role = atts.getValue("role");
+                         
+                         if (emd.id == 0)
+                              throw new SAXException(tr("Incomplete <member> specification with ref=0"));
+                         
+                         list.add(emd);
+                         
+                    // ---- PARSING TAGS (applicable to all objects) ----
+                         
+                    } else if (qName.equals("tag")) {
+                         current.put(atts.getValue("k"), atts.getValue("v"));
+                    }
+               } catch (NumberFormatException x) {
+                    x.printStackTrace(); // SAXException does not chain correctly
+                    throw new SAXException(x.getMessage(), x);
+               } catch (NullPointerException x) {
+                    x.printStackTrace(); // SAXException does not chain correctly
+                    throw new SAXException(tr("NullPointerException, Possibly some missing tags."), x);
+               }
+          }
 
-	/**
-	 * Read out the common attributes from atts and put them into this.current.
-	 */
-	void readCommon(Attributes atts, OsmPrimitive current) throws SAXException {
-		current.id = getLong(atts, "id");
-		if (current.id == 0)
-			throw new SAXException(tr("Illegal object with id=0"));
+          private double getDouble(Attributes atts, String value) {
+               return Double.parseDouble(atts.getValue(value));
+          }
+     }
+     
+     /** 
+      * Constructor initializes list of allowed protocol versions.
+      */
+     public OsmReader() {
+          // first add the main server version
+          allowedVersions.add(Main.pref.get("osm-server.version", "0.5"));
+          // now also add all compatible versions
+          String[] additionalVersions = 
+               Main.pref.get("osm-server.additional-versions", "").split("/,/");
+          if (additionalVersions.length == 1 && additionalVersions[0].length() == 0)
+               additionalVersions = new String[] {};
+          allowedVersions.addAll(Arrays.asList(additionalVersions));     
+     }
 
-		String time = atts.getValue("timestamp");
-		if (time != null && time.length() != 0) {
-			/* Do not parse the date here since it wastes a HUGE amount of time.
-			 * Moved into OsmPrimitive.
-			try {
-				current.timestamp = DateParser.parse(time);
-			} catch (ParseException e) {
-				e.printStackTrace();
-				throw new SAXException(tr("Couldn't read time format \"{0}\".",time));
-			}
-			*/
-			current.timestamp = time;
-		}
-		
-		// user attribute added in 0.4 API
-		String user = atts.getValue("user");
-		if (user != null) {
-			// do not store literally; get object reference for string
-			current.user = User.get(user);
-		}
-		
-		// visible attribute added in 0.4 API
-		String visible = atts.getValue("visible");
-		if (visible != null) {
-			current.visible = Boolean.parseBoolean(visible);
-		}
+     /**
+      * Read out the common attributes from atts and put them into this.current.
+      */
+     void readCommon(Attributes atts, OsmPrimitive current) throws SAXException {
+          current.id = getLong(atts, "id");
+          if (current.id == 0)
+               throw new SAXException(tr("Illegal object with id=0"));
 
-		// oldversion attribute added in 0.6 API
+          String time = atts.getValue("timestamp");
+          if (time != null && time.length() != 0) {
+               /* Do not parse the date here since it wastes a HUGE amount of time.
+                * Moved into OsmPrimitive.
+               try {
+                    current.timestamp = DateParser.parse(time);
+               } catch (ParseException e) {
+                    e.printStackTrace();
+                    throw new SAXException(tr("Couldn't read time format \"{0}\".",time));
+               }
+               */
+               current.timestamp = time;
+          }
+          
+          // user attribute added in 0.4 API
+          String user = atts.getValue("user");
+          if (user != null) {
+               // do not store literally; get object reference for string
+               current.user = User.get(user);
+          }
+          
+          // visible attribute added in 0.4 API
+          String visible = atts.getValue("visible");
+          if (visible != null) {
+               current.visible = Boolean.parseBoolean(visible);
+          }
 
-		// Note there is an asymmetry here: the server will send
-		// the version as "version" the client sends it as
-		// "oldversion". So we take both since which we receive will
-		// depend on reading from a file or reading from the server
+          // oldversion attribute added in 0.6 API
 
-		String version = atts.getValue("version");
-		if (version != null) {
-			current.version = Integer.parseInt(version);
-		}
-		version = atts.getValue("old_version");
-		if (version != null) {
-			current.version = Integer.parseInt(version);
-		}
+          // Note there is an asymmetry here: the server will send
+          // the version as "version" the client sends it as
+          // "oldversion". So we take both since which we receive will
+          // depend on reading from a file or reading from the server
 
-		String action = atts.getValue("action");
-		if (action == null)
-			return;
-		if (action.equals("delete"))
-			current.delete(true);
-		else if (action.startsWith("modify"))
-			current.modified = true;
-	}
-	private long getLong(Attributes atts, String value) throws SAXException {
-		String s = atts.getValue(value);
-		if (s == null)
-			throw new SAXException(tr("Missing required attribute \"{0}\".",value));
-		return Long.parseLong(s);
-	}
+          String version = atts.getValue("version");
+          if (version != null) {
+               current.version = Integer.parseInt(version);
+          }
+          version = atts.getValue("old_version");
+          if (version != null) {
+               current.version = Integer.parseInt(version);
+          }
 
-	private Node findNode(long id) {
-	    Node n = nodes.get(id);
-	    if (n != null)
-	    	return n;
-	    for (Node node : references.nodes)
-	    	if (node.id == id)
-	    		return node;
-	    // TODO: This has to be changed to support multiple layers.
-	    for (Node node : Main.ds.nodes)
-	    	if (node.id == id)
-	    		return new Node(node);
-	    return null;
+          String action = atts.getValue("action");
+          if (action == null)
+               return;
+          if (action.equals("delete"))
+               current.delete(true);
+          else if (action.startsWith("modify"))
+               current.modified = true;
+     }
+     private long getLong(Attributes atts, String value) throws SAXException {
+          String s = atts.getValue(value);
+          if (s == null)
+               throw new SAXException(tr("Missing required attribute \"{0}\".",value));
+          return Long.parseLong(s);
+     }
+
+     private Node findNode(long id) {
+         Node n = nodes.get(id);
+         if (n != null)
+              return n;
+         for (Node node : references.nodes)
+              if (node.id == id)
+                   return node;
+         // TODO: This has to be changed to support multiple layers.
+         for (Node node : Main.ds.nodes)
+              if (node.id == id)
+                   return new Node(node);
+         return null;
     }
 
-	private void createWays() {
-		for (Entry<OsmPrimitiveData, Collection<Long>> e : ways.entrySet()) {
-			Way w = new Way();
-			boolean failed = false;
-			for (long id : e.getValue()) {
-				Node n = findNode(id);
-				if (n == null) {
-					failed = true;
-					break;
-				}
-				w.nodes.add(n);
-			}
-			if (failed) continue;
-			e.getKey().copyTo(w);
-			adder.visit(w);
-		}
-		
-	}
+     private void createWays() {
+          for (Entry<OsmPrimitiveData, Collection<Long>> e : ways.entrySet()) {
+               Way w = new Way();
+               boolean failed = false;
+               for (long id : e.getValue()) {
+                    Node n = findNode(id);
+                    if (n == null) {
+                         failed = true;
+                         break;
+                    }
+                    w.nodes.add(n);
+               }
+               if (failed) continue;
+               e.getKey().copyTo(w);
+               adder.visit(w);
+          }
+          
+     }
 
-	/**
-	 * Return the Way object with the given id, or null if it doesn't
-	 * exist yet. This method only looks at ways stored in the data set.
-	 * 
-	 * @param id
-	 * @return way object or null
-	 */
-	private Way findWay(long id) {
-		for (Way wy : ds.ways)
-			if (wy.id == id)
-				return wy;
-		for (Way wy : Main.ds.ways)
-			if (wy.id == id)
-				return wy;
-		return null;
-	}
+     /**
+      * Return the Way object with the given id, or null if it doesn't
+      * exist yet. This method only looks at ways stored in the data set.
+      * 
+      * @param id
+      * @return way object or null
+      */
+     private Way findWay(long id) {
+          for (Way wy : ds.ways)
+               if (wy.id == id)
+                    return wy;
+          for (Way wy : Main.ds.ways)
+               if (wy.id == id)
+                    return wy;
+          return null;
+     }
 
-	/**
-	 * Return the Relation object with the given id, or null if it doesn't
-	 * exist yet. This method only looks at relations stored in the data set.
-	 * 
-	 * @param id
-	 * @return relation object or null
-	 */
-	private Relation findRelation(long id) {
-		for (Relation e : ds.relations)
-			if (e.id == id)
-				return e;
-		for (Relation e : Main.ds.relations)
-			if (e.id == id)
-				return e;
-		return null;
-	}
+     /**
+      * Return the Relation object with the given id, or null if it doesn't
+      * exist yet. This method only looks at relations stored in the data set.
+      * 
+      * @param id
+      * @return relation object or null
+      */
+     private Relation findRelation(long id) {
+          for (Relation e : ds.relations)
+               if (e.id == id)
+                    return e;
+          for (Relation e : Main.ds.relations)
+               if (e.id == id)
+                    return e;
+          return null;
+     }
 
-	/**
-	 * Create relations. This is slightly different than n/s/w because 
-	 * unlike other objects, relations may reference other relations; it
-	 * is not guaranteed that a referenced relation will have been created
-	 * before it is referenced. So we have to create all relations first,
-	 * and populate them later.
-	 */
-	private void createRelations() {
-		
-		// pass 1 - create all relations
-		for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
-			Relation en = new Relation();
-			e.getKey().copyTo(en);
-			adder.visit(en);
-		}
+     /**
+      * Create relations. This is slightly different than n/s/w because 
+      * unlike other objects, relations may reference other relations; it
+      * is not guaranteed that a referenced relation will have been created
+      * before it is referenced. So we have to create all relations first,
+      * and populate them later.
+      */
+     private void createRelations() {
+          
+          // pass 1 - create all relations
+          for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
+               Relation en = new Relation();
+               e.getKey().copyTo(en);
+               adder.visit(en);
+          }
 
-		// pass 2 - sort out members
-		for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
-			Relation en = findRelation(e.getKey().id);
-			if (en == null) throw new Error("Failed to create relation " + e.getKey().id);
-			
-			for (RelationMemberData emd : e.getValue()) {
-				RelationMember em = emd.relationMember;
-				if (emd.type.equals("node")) {
-					em.member = findNode(emd.id);
-					if (em.member == null) {
-						em.member = new Node(emd.id);
-						adder.visit((Node)em.member);
-					}
-				} else if (emd.type.equals("way")) {
-					em.member = findWay(emd.id);
-					if (em.member == null) {
-						em.member = new Way(emd.id);
-						adder.visit((Way)em.member);
-					}
-				} else if (emd.type.equals("relation")) {
-					em.member = findRelation(emd.id);
-					if (em.member == null) {
-						em.member = new Relation(emd.id);
-						adder.visit((Relation)em.member);
-					}
-				} else {
-					// this is an error.
-				}
-				en.members.add(em);
-			}
-		}
-	}
+          // pass 2 - sort out members
+          for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
+               Relation en = findRelation(e.getKey().id);
+               if (en == null) throw new Error("Failed to create relation " + e.getKey().id);
+               
+               for (RelationMemberData emd : e.getValue()) {
+                    RelationMember em = emd.relationMember;
+                    if (emd.type.equals("node")) {
+                         em.member = findNode(emd.id);
+                         if (em.member == null) {
+                              em.member = new Node(emd.id);
+                              adder.visit((Node)em.member);
+                         }
+                    } else if (emd.type.equals("way")) {
+                         em.member = findWay(emd.id);
+                         if (em.member == null) {
+                              em.member = new Way(emd.id);
+                              adder.visit((Way)em.member);
+                         }
+                    } else if (emd.type.equals("relation")) {
+                         em.member = findRelation(emd.id);
+                         if (em.member == null) {
+                              em.member = new Relation(emd.id);
+                              adder.visit((Relation)em.member);
+                         }
+                    } else {
+                         // this is an error.
+                    }
+                    en.members.add(em);
+               }
+          }
+     }
 
-	/**
-	 * Parse the given input source and return the dataset.
-	 * @param ref The dataset that is search in for references first. If
-	 * 	the Reference is not found here, Main.ds is searched and a copy of the
-	 *  elemet found there is returned.
-	 */
-	public static DataSet parseDataSet(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
-		OsmReader osm = new OsmReader();
-		osm.references = ref == null ? new DataSet() : ref;
+     /**
+      * Parse the given input source and return the dataset.
+      * @param ref The dataset that is search in for references first. If
+      *      the Reference is not found here, Main.ds is searched and a copy of the
+      *  elemet found there is returned.
+      */
+     public static DataSet parseDataSet(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
+          OsmReader osm = new OsmReader();
+          osm.references = ref == null ? new DataSet() : ref;
 
-		// phase 1: Parse nodes and read in raw ways
-		InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
-		try {
-	        SAXParserFactory.newInstance().newSAXParser().parse(inputSource, osm.new Parser());
+          // phase 1: Parse nodes and read in raw ways
+          InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
+          try {
+             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, osm.new Parser());
         } catch (ParserConfigurationException e1) {
-        	e1.printStackTrace(); // broken SAXException chaining
-        	throw new SAXException(e1);
+             e1.printStackTrace(); // broken SAXException chaining
+             throw new SAXException(e1);
         }
 
         if (pleaseWaitDlg != null) {
-			pleaseWaitDlg.progress.setValue(0);
-			pleaseWaitDlg.currentAction.setText(tr("Preparing data..."));
-		}
+               pleaseWaitDlg.progress.setValue(0);
+               pleaseWaitDlg.currentAction.setText(tr("Preparing data..."));
+          }
 
-		for (Node n : osm.nodes.values())
-			osm.adder.visit(n);
+          for (Node n : osm.nodes.values())
+               osm.adder.visit(n);
 
-		try {
-			osm.createWays();
-			osm.createRelations();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			throw new SAXException(tr("Illformed Node id"));
-		}
+          try {
+               osm.createWays();
+               osm.createRelations();
+          } catch (NumberFormatException e) {
+               e.printStackTrace();
+               throw new SAXException(tr("Illformed Node id"));
+          }
 
-		// clear all negative ids (new to this file)
-		for (OsmPrimitive o : osm.ds.allPrimitives())
-			if (o.id < 0)
-				o.id = 0;
+          // clear all negative ids (new to this file)
+          for (OsmPrimitive o : osm.ds.allPrimitives())
+               if (o.id < 0)
+                    o.id = 0;
 
-		return osm.ds;
-	}
+          return osm.ds;
+     }
 }

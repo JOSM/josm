@@ -97,10 +97,14 @@ public class BoundingBoxDownloader extends OsmServerReader {
     			return null;
     		Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
     		final DataSet data = OsmReader.parseDataSet(in, null, Main.pleaseWaitDlg);
+            /*
+             * We're not doing this here anymore as the API now properly sets a bounds element
+             * which will get parsed.
     		String origin = Main.pref.get("osm-server.url")+"/"+Main.pref.get("osm-server.version", "0.5");
     		Bounds bounds = new Bounds(new LatLon(lat1, lon1), new LatLon(lat2, lon2));
 			DataSource src = new DataSource(bounds, origin);
     		data.dataSources.add(src);
+             */
     		in.close();
     		activeConnection = null;
     		return data;
