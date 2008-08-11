@@ -101,8 +101,8 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="bicycle" v="no" />
 		<icon src="misc/no_icon.png" />
-        <scale_min>1</scale_min>
-        <scale_max>50000</scale_max>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="bicycle" v="designated"/>
@@ -324,11 +324,19 @@ Using both area and line attributes for the same key/value pair doesn't work!
 		<condition k="highway" v="secondary"/>
 		<line width="3" realwidth="6" colour="#fdbf6f"/>
 		<icon annotate="true" src="misc/deprecated.png" />
-        <scale_min>1</scale_min>
-        <scale_max>300000</scale_max>
-    </rule>
+		<scale_min>1</scale_min>
+		<scale_max>300000</scale_max>
+	</rule>
 
-    <rule>
+	<rule>
+		<condition k="highway" v="secondary_link"/>
+		<line width="3" realwidth="6" colour="#fdbf6f"/>
+		<icon annotate="true" src="misc/deprecated.png" />
+		<scale_min>1</scale_min>
+		<scale_max>300000</scale_max>
+	</rule>
+
+        <rule>
         <condition k="highway" v="tertiary"/>
         <line width="2" realwidth="5" colour="#f7f496"/>
 		<icon annotate="true" src="misc/deprecated.png" />
@@ -3352,14 +3360,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<!-- keep this generic rules at the end of the file, so more specialised rules fit first -->
 	<rule>
-		<condition k="building" v="yes"/>
-		<icon annotate="true" src="misc/no_icon.png" />
-		<area colour="#cb9999"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="building" v="true"/>
+		<condition k="building" b="yes"/>
 		<icon annotate="true" src="misc/no_icon.png" />
 		<area colour="#cb9999"/>
 		<scale_min>1</scale_min>
