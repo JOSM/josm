@@ -11,7 +11,7 @@ import org.openstreetmap.josm.Main;
 public final class ZoomOutAction extends JosmAction {
 
 	public ZoomOutAction() {
-		super(tr("ZoomOut"), null, tr("Zoom out"),
+		super(tr("Zoom out"), null, tr("Zoom out"),
 		        KeyEvent.VK_MINUS, 0, true);
 		setEnabled(true);
 	}

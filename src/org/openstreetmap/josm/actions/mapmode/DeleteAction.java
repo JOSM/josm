@@ -53,7 +53,7 @@ public class DeleteAction extends MapMode {
 	 * @param mapFrame The frame this action belongs to.
 	 */
 	public DeleteAction(MapFrame mapFrame) {
-		super(tr("DeleteMode"), 
+		super(tr("Delete Mode"),
 				"delete", 
 				tr("Delete nodes or ways."), 
 				KeyEvent.VK_D, 

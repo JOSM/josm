@@ -11,7 +11,7 @@ import org.openstreetmap.josm.Main;
 public final class ZoomInAction extends JosmAction {
 
 	public ZoomInAction() {
-		super(tr("ZoomIn"), null, tr("Zoom in"),
+		super(tr("Zoom in"), null, tr("Zoom in"),
 		        KeyEvent.VK_PLUS, 0, true);
 		setEnabled(true);
 	}
