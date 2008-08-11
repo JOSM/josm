@@ -53,7 +53,7 @@ public class DeleteAction extends MapMode {
 	 * @param mapFrame The frame this action belongs to.
 	 */
 	public DeleteAction(MapFrame mapFrame) {
-		super(tr("Delete"), 
+		super(tr("DeleteMode"), 
 				"delete", 
 				tr("Delete nodes or ways."), 
 				KeyEvent.VK_D, 
@@ -74,7 +74,11 @@ public class DeleteAction extends MapMode {
 	
 	@Override public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
-		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		doActionPerformed(e);
+	}
+
+	public void doActionPerformed(ActionEvent e) {
+	    boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 
 		Command c;
@@ -88,7 +92,7 @@ public class DeleteAction extends MapMode {
 		}
 
 		Main.map.repaint();
-	}
+    }
 
 	/**
 	 * If user clicked with the left button, delete the nearest object.

@@ -109,6 +109,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 * 		to the own top/left.
 	 */
 	public Point getPoint(EastNorth p) {
+		if(null == p)
+			return new Point();
 		double x = (p.east()-center.east())/scale + getWidth()/2;
 		double y = (center.north()-p.north())/scale + getHeight()/2;
 		return new Point((int)x,(int)y);

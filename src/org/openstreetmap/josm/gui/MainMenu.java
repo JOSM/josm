@@ -14,20 +14,21 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AlignInRectangleAction;
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
+import org.openstreetmap.josm.actions.AlignInRectangleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
+import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenAction;
@@ -43,12 +44,14 @@ import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.actions.UndoAction;
 import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UploadAction;
+import org.openstreetmap.josm.actions.ZoomInAction;
+import org.openstreetmap.josm.actions.ZoomOutAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
+import org.openstreetmap.josm.actions.audio.AudioFasterAction;
 import org.openstreetmap.josm.actions.audio.AudioFwdAction;
 import org.openstreetmap.josm.actions.audio.AudioNextAction;
 import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
-import org.openstreetmap.josm.actions.audio.AudioFasterAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
@@ -78,6 +81,7 @@ public class MainMenu extends JMenuBar {
 	public final RedoAction redo = new RedoAction();
 	public final JosmAction copy = new CopyAction();
 	public final JosmAction paste = new PasteAction();
+	public final JosmAction delete = new DeleteAction();
 	public final JosmAction pasteTags = new PasteTagsAction(copy); 
 	public final JosmAction duplicate = new DuplicateAction(); 
 	public final JosmAction selectAll = new SelectAllAction();
@@ -153,6 +157,8 @@ public class MainMenu extends JMenuBar {
 		editMenu.addSeparator();
 		current = editMenu.add(copy);
 		current.setAccelerator(copy.shortCut);
+		current = editMenu.add(delete);
+		current.setAccelerator(delete.shortCut);
 		current = editMenu.add(paste);
 		current.setAccelerator(paste.shortCut);
 		current = editMenu.add(pasteTags);
@@ -179,8 +185,14 @@ public class MainMenu extends JMenuBar {
 		    current.setAccelerator(autoScaleAction.shortCut);
         }
         viewMenu.addSeparator();
+        JosmAction a = new ZoomOutAction();
+		viewMenu.add(a).setAccelerator(a.shortCut);
+		a = new ZoomInAction();
+		viewMenu.add(a).setAccelerator(a.shortCut);
 
-        // TODO move code to an "action" like the others?
+		viewMenu.addSeparator();
+
+		// TODO move code to an "action" like the others?
         final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe view"));
         wireframe.setSelected(Main.pref.getBoolean("draw.wireframe", true));     
         wireframe.setAccelerator(KeyStroke.getKeyStroke("ctrl W"));

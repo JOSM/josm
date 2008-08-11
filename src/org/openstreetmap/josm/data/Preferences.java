@@ -276,4 +276,18 @@ public class Preferences {
 		}
 		return ColorHelper.html2color(colStr);
 	}
+
+	public int getInteger(String key, int def) {
+	    String v = get(key);
+	    if(null == v)
+	    	return def;
+	    
+	    try {
+	    	return Integer.parseInt(v);
+	    } catch(NumberFormatException e) {
+	    	// fall out
+	    }
+	    
+	    return def;
+    }
 }

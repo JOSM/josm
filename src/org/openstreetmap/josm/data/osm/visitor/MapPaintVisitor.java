@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.LinkedList;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -76,6 +78,20 @@ public class MapPaintVisitor implements Visitor {
     protected boolean showRelevantDirectionsOnly;
     protected boolean showOrderNumber;
     
+	private boolean fillSelectedNode;
+
+	private boolean fillUnselectedNode;
+
+	private int selectedNodeRadius;
+
+	private int unselectedNodeRadius;
+
+	private int selectedNodeSize;
+
+	private int unselectedNodeSize;
+
+	private int defaultSegmentWidth = 2;
+
     public final static Color darkerblue = new Color(0,0,96);
     public final static Color darkblue = new Color(0,0,128);
     
@@ -125,7 +141,10 @@ public class MapPaintVisitor implements Visitor {
                 // throw some sort of exception
             }
         } else {
-            drawNode(n, n.selected ? selectedColor : nodeColor);
+			if (n.selected)
+				drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+			else
+				drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
         }
     }
 
@@ -142,7 +161,7 @@ public class MapPaintVisitor implements Visitor {
                                                              && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
 
         Color colour = untaggedColor;
-        int width = 2;
+		int width = defaultSegmentWidth;
         int realWidth = 0; //the real width of the element in meters 
         boolean dashed = false;
         boolean area = false;
@@ -325,14 +344,19 @@ public class MapPaintVisitor implements Visitor {
      * @param n  The node to draw.
      * @param color The color of the node.
      */
-    public void drawNode(Node n, Color color) {
-        if(isZoomOk(null)) {
-            Point p = nc.getPoint(n.eastNorth);
-            if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
-            g.setColor(color);
-            g.drawRect(p.x-1, p.y-1, 2, 2);
-        }
-    }
+    public void drawNode(Node n, Color color, int size, int radius, boolean fill) {
+		if (isZoomOk(null) && size > 1) {
+			Point p = nc.getPoint(n.eastNorth);
+			if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
+			        || (p.y > nc.getHeight()))
+				return;
+			g.setColor(color);
+			if (fill)
+				g.fillRect(p.x - radius, p.y - radius, size, size);
+			else
+				g.drawRect(p.x - radius, p.y - radius, size, size);
+		}
+	}
 
     // NW 111106 Overridden from SimplePaintVisitor in josm-1.4-nw1
     // Shows areas before non-areas
@@ -352,18 +376,29 @@ public class MapPaintVisitor implements Visitor {
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
         fillAreas = Main.pref.getBoolean("mappaint.fillareas", true);
 
-        /* XXX - there must be a better way to get a bounded Integer pref! */
-        try {
-            fillAlpha = Integer.valueOf(Main.pref.get("mappaint.fillalpha", "50"));
-            if (fillAlpha < 0) {
-                fillAlpha = 0;
-            }
-            if (fillAlpha > 255) {
-                fillAlpha = 255;
-            }
-        } catch (NumberFormatException nfe) {
-            fillAlpha = 50;
-        }
+		selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size",
+		        5) / 2;
+		selectedNodeSize = selectedNodeRadius * 2;
+		unselectedNodeRadius = Main.pref.getInteger(
+		        "mappaint.node.unselected-size", 3) / 2;
+		unselectedNodeSize = unselectedNodeRadius * 2;
+
+		defaultSegmentWidth = Main.pref.getInteger(
+		        "mappaint.segment.default-width", 2);
+
+		fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected",
+		        true);
+		fillUnselectedNode = Main.pref.getBoolean(
+		        "mappaint.node.fill-unselected", false);
+
+		((Graphics2D)g)
+		        .setRenderingHint(
+		                RenderingHints.KEY_ANTIALIASING,
+		                Main.pref.getBoolean("mappaint.use-antialiasing", true) ? RenderingHints.VALUE_ANTIALIAS_ON
+		                        : RenderingHints.VALUE_ANTIALIAS_OFF);
+
+		fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref
+		        .getInteger("mappaint.fillalpha", 50))));
 
         Collection<Way> noAreaWays = new LinkedList<Way>();
 

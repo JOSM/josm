@@ -186,14 +186,22 @@ public class GpxLayer extends Layer {
 						return tr("Wave Audio files (*.wav)");
 					}
 				});
-				fc.showOpenDialog(Main.parent);
-				File sel = fc.getSelectedFile();
-				if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
-					Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
-				if (sel == null)
-					return;
-				importAudio(sel);
-				Main.map.repaint();
+				fc.setMultiSelectionEnabled(true);
+				if(fc.showOpenDialog(Main.parent) == JFileChooser.APPROVE_OPTION) {
+					if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
+						Main.pref.put("markers.lastaudiodirectory", fc
+								.getCurrentDirectory().getAbsolutePath());
+					
+					// FIXME: properly support multi-selection here. 
+					// Calling importAudio several times just creates N maker layers, which
+					// is sub-optimal.
+					File sel[] = fc.getSelectedFiles();
+					if(sel != null)
+						for (int i = 0; i < sel.length; i++) 
+							importAudio(sel[i]);
+					
+					Main.map.repaint();
+				}
 			}
 		});
 

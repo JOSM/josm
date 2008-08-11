@@ -7,20 +7,21 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
-
 import java.util.Iterator;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.tools.ColorHelper;
 
 /**
  * A visitor that paints a simple scheme of every primitive it visits to a 
@@ -63,6 +64,20 @@ public class SimplePaintVisitor implements Visitor {
     protected boolean showRelevantDirectionsOnly;
 	protected boolean showOrderNumber;
 	
+	private boolean fillSelectedNode;
+
+	private boolean fillUnselectedNode;
+
+	private int selectedNodeRadius;
+
+	private int unselectedNodeRadius;
+
+	private int selectedNodeSize;
+
+	private int unselectedNodeSize;
+
+	private int defaultSegmentWidth = 2;
+
 	/**
 	 * Draw subsequent segments of same color as one Path
 	 */
@@ -84,6 +99,27 @@ public class SimplePaintVisitor implements Visitor {
 		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
 		
+		selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size",
+		        5) / 2;
+		selectedNodeSize = selectedNodeRadius * 2;
+		unselectedNodeRadius = Main.pref.getInteger(
+		        "mappaint.node.unselected-size", 3) / 2;
+		unselectedNodeSize = unselectedNodeRadius * 2;
+
+		defaultSegmentWidth = Main.pref.getInteger(
+		        "mappaint.segment.default-width", 2);
+
+		fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected",
+		        true);
+		fillUnselectedNode = Main.pref.getBoolean(
+		        "mappaint.node.fill-unselected", false);
+
+		((Graphics2D)g)
+		        .setRenderingHint(
+		                RenderingHints.KEY_ANTIALIASING,
+		                Main.pref.getBoolean("mappaint.use-antialiasing", true) ? RenderingHints.VALUE_ANTIALIAS_ON
+		                        : RenderingHints.VALUE_ANTIALIAS_OFF);
+
 		// draw tagged ways first, then untagged ways. takes
 		// time to iterate through list twice, OTOH does not
 		// require changing the colour while painting...
@@ -120,14 +156,12 @@ public class SimplePaintVisitor implements Visitor {
 	public void visit(Node n) {
 		if (n.incomplete) return;
 
-		Color color = null;
 		if (inactive)
-			color = inactiveColor;
+			drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
 		else if (n.selected)
-			color = selectedColor;
+			drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
 		else
-			color = nodeColor;
-		drawNode(n, color);
+			drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
 	}
 
 	/**
@@ -234,18 +268,18 @@ public class SimplePaintVisitor implements Visitor {
 	 * @param n		The node to draw.
 	 * @param color The color of the node.
 	 */
-	public void drawNode(Node n, Color color) {
-		Point p = nc.getPoint(n.eastNorth);
-        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
-
-        g.setColor(color);
-
-        if (n.tagged) {
-            g.drawRect(p.x, p.y, 0, 0);
-            g.drawRect(p.x-2, p.y-2, 4, 4);
-        } else {
-            g.drawRect(p.x-1, p.y-1, 2, 2);
-        }
+	public void drawNode(Node n, Color color, int size, int radius, boolean fill) {
+		if (size > 1) {
+			Point p = nc.getPoint(n.eastNorth);
+			if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
+			        || (p.y > nc.getHeight()))
+				return;
+			g.setColor(color);
+			if (fill)
+				g.fillRect(p.x - radius, p.y - radius, size, size);
+			else
+				g.drawRect(p.x - radius, p.y - radius, size, size);
+		}
 	}
 
 	/**
