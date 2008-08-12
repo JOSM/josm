@@ -96,9 +96,10 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 				for (Way w : Main.ds.ways) {
 					if (w.deleted || w.incomplete) continue;
 					int last = w.nodes.size()-1;
+					Boolean circular = w.nodes.get(0).equals(w.nodes.get(last));
 					int i = 0;
 					for (Node wn : w.nodes) {
-						if ((i > 0) && (i < last) && n.equals(wn)) {
+						if ((circular || (i > 0 && i < last)) && n.equals(wn)) {
 							Integer old = wayOccurenceCounter.get(w);
 							wayOccurenceCounter.put(w, (old == null) ? 1 : old+1);
 							break;
@@ -129,7 +130,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 				return;
 			}
 
-			// If a way and nodes are selected, verify that the nodes are part of the way.
+		// If a way and nodes are selected, verify that the nodes are part of the way.
 		} else if (selectedWay != null && selectedNodes != null) {
 
 			HashSet<Node> nds = new HashSet<Node>(selectedNodes);
@@ -215,11 +216,14 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 		}
 
 		if (wayChunks.size() < 2) {
-			JOptionPane.showMessageDialog(Main.parent, tr("The way cannot be split at the selected nodes. (Hint: Select nodes in the middle of the way.)"));
+			if(wayChunks.get(0).get(0) == wayChunks.get(0).get(wayChunks.get(0).size()-1))
+				JOptionPane.showMessageDialog(Main.parent, tr("You must select two or more nodes to split a circular way."));
+			else
+				JOptionPane.showMessageDialog(Main.parent, tr("The way cannot be split at the selected nodes. (Hint: Select nodes in the middle of the way.)"));
 			return;
 		}
-		Main.debug("wayChunks.size(): " + wayChunks.size());
-		Main.debug("way id: " + selectedWay.id);
+		//Main.debug("wayChunks.size(): " + wayChunks.size());
+		//Main.debug("way id: " + selectedWay.id);
 
 		// build a list of commands, and also a new selection list
 		Collection<Command> commandList = new ArrayList<Command>(wayChunks.size());
@@ -244,7 +248,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 			}
 			wayToAdd.nodes.addAll(chunkIt.next());
 			commandList.add(new AddCommand(wayToAdd));
-			Main.debug("wayToAdd: " + wayToAdd);
+			//Main.debug("wayToAdd: " + wayToAdd);
 			newSelection.add(wayToAdd);
 
 			Boolean warnme=false;
