@@ -645,5 +645,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			String value = e.getValue().size() > 1 || valueCountM.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next();
 			membershipData.addRow(new Object[]{e.getKey(), value});
 		}
+		membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
 	}
 }

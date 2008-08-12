@@ -55,15 +55,16 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 			// Check for an explicit problem when calling a plugin function
 			if (e instanceof PluginException)
 				plugin = ((PluginException)e).plugin;
-			
+
 			if (plugin == null)
 				plugin = guessPlugin(e);
 
 			if (plugin != null) {
 				int answer = JOptionPane.showConfirmDialog(
-						Main.parent, 
-						tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)+"\n"+
-						(plugin.info.author != null ? tr("According to the information within the plugin, the author is {0}.", plugin.info.author) : "")+"\n"+
+						Main.parent, tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.",
+						plugin.info.name) + "\n"+ (plugin.info.author != null ?
+						tr("According to the information within the plugin, the author is {0}.",
+						plugin.info.author) : "") + "\n" +
 						tr("Should the plugin be disabled?"),
 						tr("Disable plugin"),
 						JOptionPane.YES_NO_OPTION);
@@ -77,9 +78,11 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 						if (p.length() > 0)
 							p = p.substring(1);
 						Main.pref.put("plugins", p);
-						JOptionPane.showMessageDialog(Main.parent, tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."));
+						JOptionPane.showMessageDialog(Main.parent,
+						tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."));
 					} else {
-						JOptionPane.showMessageDialog(Main.parent, tr("The plugin could not be removed. Please tell the people you got JOSM from about the problem."));
+						JOptionPane.showMessageDialog(Main.parent,
+						tr("The plugin could not be removed. Please tell the people you got JOSM from about the problem."));
 					}
 					return;
 				}
@@ -87,7 +90,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
 			Object[] options = new String[]{tr("Do nothing"), tr("Report Bug")};
 			int answer = JOptionPane.showOptionDialog(Main.parent, tr("An unexpected exception occurred.\n\n" +
-					"This is always a coding error. If you are running the latest\n" +
+			"This is always a coding error. If you are running the latest\n" +
 			"version of JOSM, please consider being kind and file a bug report."),
 			tr("Unexpected Exception"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE,
 			null, options, options[0]);
@@ -120,15 +123,16 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 					sb.append("\n"+stack.getBuffer().toString());
 
 					JPanel p = new JPanel(new GridBagLayout());
-					p.add(new JLabel(tr("Please report a ticket at http://josm.openstreetmap.de/newticket, including your steps to get to\n" +
-							            "the error and be sure to include the following information")), GBC.eol());
+					p.add(new JLabel(tr("<html>Please report a ticket at {0}<br>" +
+					"Include your steps to get to the error (as detailed as possible)!<br>" +
+					"Be sure to include the following information:</html>", "http://josm.openstreetmap.de/newticket")), GBC.eol());
 					try {
-	                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(sb.toString()), new ClipboardOwner(){
-	                    	public void lostOwnership(Clipboard clipboard, Transferable contents) {}
-	                    });
-	                    p.add(new JLabel(tr("The text has already been copied to your clipboard.")), GBC.eop());
-                    } catch (RuntimeException x) {
-                    }
+						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(sb.toString()), new ClipboardOwner(){
+							public void lostOwnership(Clipboard clipboard, Transferable contents) {}
+						});
+						p.add(new JLabel(tr("The text has already been copied to your clipboard.")), GBC.eop());
+					}
+					catch (RuntimeException x) {}
 
 					JTextArea info = new JTextArea(sb.toString(), 20, 60);
 					info.setCaretPosition(0);
@@ -155,17 +159,17 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 	 * Analyze the stack of the argument and return a name of a plugin, if
 	 * some known problem pattern has been found or <code>null</code>, if
 	 * the stack does not contain plugin-code.
-	 * 
+	 *
 	 * Note: This heuristic is not meant as discrimination against specific
 	 * plugins, but only to stop the flood of similar bug reports about plugins.
-	 * Of course, plugin writers are free to install their own version of 
-	 * an exception handler with their email address listed to receive 
-	 * bug reports ;-). 
+	 * Of course, plugin writers are free to install their own version of
+	 * an exception handler with their email address listed to receive
+	 * bug reports ;-).
 	 */
 	private String guessPluginName(Throwable e) {
 		for (StackTraceElement element : e.getStackTrace()) {
 			String c = element.getClassName();
-			
+
 			if (c.contains("wmsplugin.") || c.contains(".WMSLayer"))
 				return "wmsplugin";
 			if (c.contains("landsat.") || c.contains(".LandsatLayer"))
