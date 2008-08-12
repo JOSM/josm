@@ -95,19 +95,22 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 			for (Node n : selectedNodes) {
 				for (Way w : Main.ds.ways) {
 					if (w.deleted || w.incomplete) continue;
+					int last = w.nodes.size()-1;
+					int i = 0;
 					for (Node wn : w.nodes) {
-						if (n.equals(wn)) {
+						if ((i > 0) && (i < last) && n.equals(wn)) {
 							Integer old = wayOccurenceCounter.get(w);
 							wayOccurenceCounter.put(w, (old == null) ? 1 : old+1);
 							break;
 						}
+						i++;
 					}
 				}
 			}
 			if (wayOccurenceCounter.isEmpty()) {
 				JOptionPane.showMessageDialog(Main.parent, 
-						trn("The selected node is not part of any way.",
-								"The selected nodes are not part of any way.", selectedNodes.size()));
+						trn("The selected node is no inner part of any way.",
+								"The selected nodes are no inner part of any way.", selectedNodes.size()));
 				return;
 			}
 
