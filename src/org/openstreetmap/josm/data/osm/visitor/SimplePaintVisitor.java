@@ -85,6 +85,8 @@ public class SimplePaintVisitor implements Visitor {
 	protected GeneralPath currentPath = new GeneralPath();
 
 	Rectangle bbox = new Rectangle();
+	private int taggedNodeRadius;
+	private int taggedNodeSize;
 
 	public void visitAll(DataSet data) {
 		inactiveColor = Preferences.getPreferencesColor("inactive", Color.DARK_GRAY);
@@ -105,6 +107,10 @@ public class SimplePaintVisitor implements Visitor {
 		unselectedNodeRadius = Main.pref.getInteger(
 		        "mappaint.node.unselected-size", 3) / 2;
 		unselectedNodeSize = unselectedNodeRadius * 2;
+
+		taggedNodeRadius = Main.pref.getInteger(
+				"mappaint.node.tagged-size", 5) / 2;
+		taggedNodeSize = taggedNodeRadius * 2;
 
 		defaultSegmentWidth = Main.pref.getInteger(
 		        "mappaint.segment.default-width", 2);
@@ -160,7 +166,9 @@ public class SimplePaintVisitor implements Visitor {
 			drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
 		else if (n.selected)
 			drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-		else
+		else if(n.tagged)
+			drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
+		else 
 			drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
 	}
 
@@ -275,9 +283,10 @@ public class SimplePaintVisitor implements Visitor {
 			        || (p.y > nc.getHeight()))
 				return;
 			g.setColor(color);
-			if (fill)
+			if (fill) {
 				g.fillRect(p.x - radius, p.y - radius, size, size);
-			else
+				g.drawRect(p.x - radius, p.y - radius, size, size);
+			} else
 				g.drawRect(p.x - radius, p.y - radius, size, size);
 		}
 	}

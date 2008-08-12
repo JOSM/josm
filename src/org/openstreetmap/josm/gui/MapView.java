@@ -85,6 +85,8 @@ public class MapView extends NavigatableComponent {
 	
 	private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 	
+	private BufferedImage offscreenBuffer;
+	
 	/**
 	 * The listener of the active layer changes.
 	 * @deprecated Use Layer.listener instead.
@@ -203,9 +205,15 @@ public class MapView extends NavigatableComponent {
 	@Override public void paint(Graphics g) {
 		if (center == null)
 			return; // no data loaded yet.
-		
-		BufferedImage bim = new BufferedImage(getWidth(), getHeight(), Transparency.OPAQUE);
-		Graphics2D tempG = bim.createGraphics();
+
+		// re-create offscreen-buffer if we've been resized, otherwise
+		// just re-use it.
+		if (null == offscreenBuffer || offscreenBuffer.getWidth() != getWidth()
+		        || offscreenBuffer.getHeight() != getHeight())
+			offscreenBuffer = new BufferedImage(getWidth(), getHeight(),
+			        BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D tempG = offscreenBuffer.createGraphics();
 		tempG.setColor(Preferences.getPreferencesColor("background", Color.BLACK));
 		tempG.fillRect(0, 0, getWidth(), getHeight());
 
@@ -237,7 +245,7 @@ public class MapView extends NavigatableComponent {
 		if (playHeadMarker != null)
 			playHeadMarker.paint(tempG, this);
 
-		g.drawImage(bim, 0, 0, null);
+		g.drawImage(offscreenBuffer, 0, 0, null);
 		super.paint(g);
 	}
 
