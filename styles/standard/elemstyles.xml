@@ -717,7 +717,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
         <condition k="waterway" v="dock"/>
         <line width="1" colour="#0000cf"/>
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="nautical/boatyard.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
     </rule>
@@ -1943,7 +1943,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="beverages" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/beverages.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2039,7 +2039,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="florist" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/florist.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -3349,6 +3349,20 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="openGeoDB:type" v="Ort" />
+		<icon annotate="true" src="places/settlement/town.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="openGeoDB:type" v="District" />
+		<icon annotate="true" src="places/settlement/town.png" />
+        <scale_min>1</scale_min>
+        <scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="openGeoDB:location" v="locality" />
 		<icon annotate="true" src="places/settlement/town.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
