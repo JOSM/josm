@@ -111,7 +111,7 @@ abstract public class Main {
 	/**
 	 * The toolbar preference control to register new actions.
 	 */
-	public static ToolbarPreferences toolbar = new ToolbarPreferences();
+	public static ToolbarPreferences toolbar;
 
 
 	public UndoRedoHandler undoRedo = new UndoRedoHandler();
@@ -344,6 +344,7 @@ abstract public class Main {
 
 		try {
 			UIManager.setLookAndFeel(Main.pref.get("laf"));
+			toolbar = new ToolbarPreferences();
 			contentPane.updateUI();
 			panel.updateUI();
 		} catch (final Exception e) {
