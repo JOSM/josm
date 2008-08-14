@@ -117,10 +117,10 @@
 			<xsl:with-param name="x" select="number($xoffset - $areaoffset)"/>
 			<xsl:with-param name="y" select="number($yoffset - $areaoffset)"/>
 		</xsl:call-template>
-		<xsl:element name="tag">
+		<!--<xsl:element name="tag">
 			<xsl:attribute name="k">pos</xsl:attribute>
 			<xsl:attribute name="v">nw</xsl:attribute>
-		</xsl:element>
+		</xsl:element>-->
 	</xsl:element>
 	
 	<xsl:element name="node">
@@ -129,10 +129,10 @@
 			<xsl:with-param name="x" select="number($xoffset + $areaoffset + 2*$xscale)"/>
 			<xsl:with-param name="y" select="number($yoffset - $areaoffset)"/>
 		</xsl:call-template>
-		<xsl:element name="tag">
+		<!--<xsl:element name="tag">
 			<xsl:attribute name="k">pos</xsl:attribute>
 			<xsl:attribute name="v">ne</xsl:attribute>
-		</xsl:element>
+		</xsl:element>-->
 	</xsl:element>
 	
 	<xsl:element name="node">
@@ -141,10 +141,10 @@
 			<xsl:with-param name="x" select="number($xoffset + $areaoffset + 2*$xscale)"/>
 			<xsl:with-param name="y" select="number($yoffset + $areaoffset)"/>
 		</xsl:call-template>
-		<xsl:element name="tag">
+		<!--<xsl:element name="tag">
 			<xsl:attribute name="k">pos</xsl:attribute>
 			<xsl:attribute name="v">se</xsl:attribute>
-		</xsl:element>
+		</xsl:element>-->
 	</xsl:element>
 	
 	<xsl:element name="node">
@@ -153,10 +153,10 @@
 			<xsl:with-param name="x" select="number($xoffset - $areaoffset)"/>
 			<xsl:with-param name="y" select="number($yoffset + $areaoffset)"/>
 		</xsl:call-template>
-		<xsl:element name="tag">
+		<!--<xsl:element name="tag">
 			<xsl:attribute name="k">pos</xsl:attribute>
 			<xsl:attribute name="v">sw</xsl:attribute>
-		</xsl:element>
+		</xsl:element>-->
 	</xsl:element>
 	
 	
