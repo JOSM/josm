@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm.visitor;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -89,14 +91,14 @@ public class SimplePaintVisitor implements Visitor {
 	private int taggedNodeSize;
 
 	public void visitAll(DataSet data) {
-		inactiveColor = Preferences.getPreferencesColor("inactive", Color.DARK_GRAY);
-		selectedColor = Preferences.getPreferencesColor("selected", Color.WHITE);
-		nodeColor = Preferences.getPreferencesColor("node", Color.RED);
-		dfltWayColor = Preferences.getPreferencesColor("way", darkblue);
-		relationColor = Preferences.getPreferencesColor("relation", teal);
-		untaggedWayColor = Preferences.getPreferencesColor("untagged way", darkgreen);
-		incompleteColor = Preferences.getPreferencesColor("incomplete way", darkerblue);
-		backgroundColor = Preferences.getPreferencesColor("background", Color.BLACK);
+		inactiveColor = Preferences.getPreferencesColor(marktr("inactive"), Color.DARK_GRAY);
+		selectedColor = Preferences.getPreferencesColor(marktr("selected"), Color.WHITE);
+		nodeColor = Preferences.getPreferencesColor(marktr("node"), Color.RED);
+		dfltWayColor = Preferences.getPreferencesColor(marktr("way"), darkblue);
+		relationColor = Preferences.getPreferencesColor(marktr("relation"), teal);
+		untaggedWayColor = Preferences.getPreferencesColor(marktr("untagged way"), darkgreen);
+		incompleteColor = Preferences.getPreferencesColor(marktr("incomplete way"), darkerblue);
+		backgroundColor = Preferences.getPreferencesColor(marktr("background"), Color.BLACK);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
 		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");

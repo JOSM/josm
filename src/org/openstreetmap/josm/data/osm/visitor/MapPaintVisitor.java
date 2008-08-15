@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm.visitor;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -367,14 +369,14 @@ public class MapPaintVisitor implements Visitor {
     // NW 111106 Overridden from SimplePaintVisitor in josm-1.4-nw1
     // Shows areas before non-areas
     public void visitAll(DataSet data) {
-        inactiveColor = Preferences.getPreferencesColor("inactive", Color.DARK_GRAY);
-        selectedColor = Preferences.getPreferencesColor("selected", Color.YELLOW);
-        nodeColor = Preferences.getPreferencesColor("node", Color.RED);
-        dfltWayColor = Preferences.getPreferencesColor("way", darkblue);
-        incompleteColor = Preferences.getPreferencesColor("incomplete way", darkerblue);
-        backgroundColor = Preferences.getPreferencesColor("background", Color.BLACK);
-        untaggedColor = Preferences.getPreferencesColor("untagged",Color.GRAY);
-        textColor = Preferences.getPreferencesColor ("text", Color.WHITE);
+        inactiveColor = Preferences.getPreferencesColor(marktr("inactive"), Color.DARK_GRAY);
+        selectedColor = Preferences.getPreferencesColor(marktr("selected"), Color.YELLOW);
+        nodeColor = Preferences.getPreferencesColor(marktr("node"), Color.RED);
+        dfltWayColor = Preferences.getPreferencesColor(marktr("way"), darkblue);
+        incompleteColor = Preferences.getPreferencesColor(marktr("incomplete way"), darkerblue);
+        backgroundColor = Preferences.getPreferencesColor(marktr("background"), Color.BLACK);
+        untaggedColor = Preferences.getPreferencesColor(marktr("untagged"),Color.GRAY);
+        textColor = Preferences.getPreferencesColor (marktr("text"), Color.WHITE);
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
         showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
