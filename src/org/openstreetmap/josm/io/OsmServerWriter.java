@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -108,8 +109,14 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 				break;
 			comment = null;
 		}
-		if( useChangesets && !startChangeset(10, comment) )
+		try {
+			if( useChangesets && !startChangeset(10, comment) )
+				return;
+		}
+		catch (OsmTransferException ex) {
+			dealWithTransferException (ex);
 			return;
+		}
 		
 		NameVisitor v = new NameVisitor();
 		try {
@@ -126,11 +133,26 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 				Main.pleaseWaitDlg.progress.setValue(Main.pleaseWaitDlg.progress.getValue()+1);
 				Main.pleaseWaitDlg.progress.setValue(progress+1);
 			}
-			if( useChangesets ) stopChangeset(10);
+				if( useChangesets ) 
+					stopChangeset(10);
 		} catch (RuntimeException e) {
-			if( useChangesets ) stopChangeset(10);
+			try {
+				if( useChangesets ) stopChangeset(10);
+			}
+			catch (OsmTransferException ex) {
+				dealWithTransferException(ex);
+			}
 			e.printStackTrace();
 			throw new SAXException(tr("An error occoured: {0}",e.getMessage()));
+		}
+		catch (OsmTransferException e) {
+			try {
+				if( useChangesets ) stopChangeset(10);
+			}
+			catch (OsmTransferException ex) {
+				dealWithTransferException(ex);	
+			}
+			dealWithTransferException(e);
 		}
 	}
 	
@@ -145,8 +167,10 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	 * handled in one place (preferably without recursion). While at you
 	 * can fix the issue where hitting cancel doesn't do anything while
 	 * retrying. - Mv0 Apr 2008
+	 * 
+	 * Cancelling has an effect now, maybe it does not always catch on. Florian Heer, Aug 08
 	 */
-	private boolean startChangeset(int retries, String comment) {
+	private boolean startChangeset(int retries, String comment) throws OsmTransferException {
 		Main.pleaseWaitDlg.currentAction.setText(tr("Opening changeset..."));
 		changeset = new Changeset();
 		changeset.put( "created_by", "JOSM" );
@@ -201,11 +225,13 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
 					OsmWriter.output(o, changeset);
 					System.out.println(new String(o.toByteArray(), "UTF-8").toString());
-					throw new RuntimeException(retCode+" "+retMsg);
+					//throw new RuntimeException(retCode+" "+retMsg);
+					throw new OsmTransferException (retCode + " " + retMsg);
 				}
 			}
 		} catch (UnknownHostException e) {
-			throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
+			//throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
+			throw new OsmTransferException(tr("Unknown host")+": "+e.getMessage(), e);
 		} catch(SocketTimeoutException e) {
 			System.out.println(" timed out, retries left: " + retries);
 			if (cancel)
@@ -213,10 +239,25 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			if (retries-- > 0)
 				startChangeset(retries, comment);
 			else
-				throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
-		} catch (Exception e) {
+				// throw new RuntimeException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				throw new OsmTransferException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+		}
+		catch (ConnectException e) {
+			System.out.println(" timed out, retries left: " + retries);
 			if (cancel)
 				return false; // assume cancel
+			if (retries-- > 0)
+				startChangeset(retries, comment);
+			else
+				// throw new RuntimeException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				throw new OsmTransferException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+		}
+		
+		catch (Exception e) {
+			if (cancel)
+				return false; // assume cancel
+			if (e instanceof OsmTransferException)
+				throw (OsmTransferException)e;
 			if (e instanceof RuntimeException)
 				throw (RuntimeException)e;
 			throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
@@ -224,7 +265,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 		return true;
 	}
 
-	private void stopChangeset(int retries) {
+	private void stopChangeset(int retries) throws OsmTransferException {
 		Main.pleaseWaitDlg.currentAction.setText(tr("Closing changeset..."));
 		try {
 			if (cancel)
@@ -277,11 +318,13 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
 					OsmWriter.output(o, changeset);
 					System.out.println(new String(o.toByteArray(), "UTF-8").toString());
-					throw new RuntimeException(retCode+" "+retMsg);
+					//throw new RuntimeException(retCode+" "+retMsg);
+					throw new OsmTransferException(retCode+" "+retMsg);
 				}
 			}
 		} catch (UnknownHostException e) {
-			throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
+			//throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
+			throw new OsmTransferException(tr("Unknown host")+": "+e.getMessage(), e);
 		} catch(SocketTimeoutException e) {
 			System.out.println(" timed out, retries left: " + retries);
 			if (cancel)
@@ -289,10 +332,22 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			if (retries-- > 0)
 				stopChangeset(retries);
 			else
-				throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				//throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				throw new OsmTransferException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+		} catch(ConnectException e) {
+			System.out.println(" timed out, retries left: " + retries);
+			if (cancel)
+				return; // assume cancel
+			if (retries-- > 0)
+				stopChangeset(retries);
+			else
+				//throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				throw new OsmTransferException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
 		} catch (Exception e) {
 			if (cancel)
 				return; // assume cancel
+			if (e instanceof OsmTransferException)
+				throw (OsmTransferException)e;
 			if (e instanceof RuntimeException)
 				throw (RuntimeException)e;
 			throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
@@ -360,7 +415,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	 * @param body the body to be sent
 	 */
 	private void sendRequestRetry(String requestMethod, String urlSuffix,
-			OsmPrimitive osm, OsmWriterInterface body, int retries) {
+			OsmPrimitive osm, OsmWriterInterface body, int retries) throws OsmTransferException {
 		try {
 			if (cancel)
 				return; // assume cancel
@@ -370,7 +425,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 					"/" + version + "/"),
 					urlSuffix + 
 					"/" + (osm.id==0 ? "create" : osm.id),
-					(java.net.URLStreamHandler)new MyHttpHandler());
+					new MyHttpHandler());
 			System.out.print("upload to: "+url+ "..." );
 			activeConnection = (HttpURLConnection)url.openConnection();
 			activeConnection.setConnectTimeout(15000);
@@ -420,11 +475,13 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
 					OsmWriter.output(o, body);
 					System.out.println(new String(o.toByteArray(), "UTF-8").toString());
-					throw new RuntimeException(retCode+" "+retMsg);
+					//throw new RuntimeException(retCode+" "+retMsg);
+					throw new OsmTransferException(retCode+" "+retMsg);
 				}
 			}
 		} catch (UnknownHostException e) {
-			throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
+			//throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
+			throw new OsmTransferException(tr("Unknown host")+": "+e.getMessage(), e);
 		} catch(SocketTimeoutException e) {
 			System.out.println(" timed out, retries left: " + retries);
 			if (cancel)
@@ -432,21 +489,48 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			if (retries-- > 0)
 				sendRequestRetry(requestMethod, urlSuffix, osm, body, retries);
 			else
-				throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				//throw new RuntimeException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				throw new OsmTransferException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+		} catch(ConnectException e) {
+			System.out.println(" timed out, retries left: " + retries);
+			if (cancel)
+				return; // assume cancel
+			if (retries-- > 0)
+				sendRequestRetry(requestMethod, urlSuffix, osm, body, retries);
+			else
+				//throw new RuntimeException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+				throw new OsmTransferException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
 		} catch (Exception e) {
 			if (cancel)
 				return; // assume cancel
+			if (e instanceof OsmTransferException)
+				throw (OsmTransferException)e;
 			if (e instanceof RuntimeException)
 				throw (RuntimeException)e;
 			throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
 		}
 	}
+	
 	private void sendRequest(String requestMethod, String urlSuffix,
-			OsmPrimitive osm, boolean addBody) {
+			OsmPrimitive osm, boolean addBody)  {
 		XmlWriter.OsmWriterInterface body = null;
 		if (addBody) {
 				body = new OsmWriter.Single(osm, true, changeset);
 		}
-		sendRequestRetry(requestMethod, urlSuffix, osm, body, 10);
+		try {
+			sendRequestRetry(requestMethod, urlSuffix, osm, body, 10);
+		}
+		catch (OsmTransferException e) {
+			dealWithTransferException (e);
+		}
+	}
+	
+	private void dealWithTransferException (OsmTransferException e) {
+		Main.pleaseWaitDlg.currentAction.setText(tr("Transfer aborted due to error (will wait now 5 seconds):") + e.getMessage());
+		cancel = true;
+		try {
+			Thread.sleep(5000);
+		}
+		catch (InterruptedException ex) {}
 	}
 }
