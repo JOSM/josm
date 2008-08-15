@@ -27,6 +27,7 @@ public class DrawingPreference implements PreferenceSetting {
 	private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
 	private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
 	private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
+	private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
 
 	public void addGui(PreferenceDialog gui) {
 		// drawRawGpsLines
@@ -110,6 +111,11 @@ public class DrawingPreference implements PreferenceSetting {
 		segmentOrderNumber.setSelected(Main.pref.getBoolean("draw.segment.order_number"));
 		gui.display.add(segmentOrderNumber, GBC.eop().insets(20,0,0,0));
 		
+		// antialiasing
+		useAntialiasing.setToolTipText(tr("Apply antialiasing to the map view resulting in a smoother appearance."));
+		useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing"));
+		gui.display.add(useAntialiasing, GBC.eop().insets(20,0,0,0));
+		
 		// downloaded area
 		sourceBounds.setToolTipText(tr("Draw the boundaries of data loaded from the server."));
 		sourceBounds.setSelected(Main.pref.getBoolean("draw.data.downloaded_area", true));
@@ -134,5 +140,6 @@ public class DrawingPreference implements PreferenceSetting {
 		Main.pref.put("draw.segment.order_number", segmentOrderNumber.isSelected());
 		Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
 		Main.pref.put("draw.data.inactive_color", inactive.isSelected());
+		Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
     }
 }
