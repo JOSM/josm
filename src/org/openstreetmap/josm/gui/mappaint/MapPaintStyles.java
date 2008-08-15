@@ -16,17 +16,22 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class MapPaintStyles {
 
 	public static String styleDir;
+	public static String imageDir;
 	private static HashMap<String, ElemStyle> styles = new HashMap<String, ElemStyle>();
 	
 	public static String getStyleDir(){
 		return styleDir;
 	}
+	public static String getImageDir(){
+		return imageDir;
+	}
 
 	public static void readFromPreferences() {
 
 		String styleName = Main.pref.get("mappaint.style", "standard");
-		styleDir = Main.pref.getPreferencesDir()+"plugins/mappaint/"+styleName+"/"; //some day we will support different icon directories over options
+		styleDir = Main.pref.get("mappaint.styledir", Main.pref.getPreferencesDir()+"plugins/mappaint/"+styleName+"/");
 		String elemStylesFile = getStyleDir()+"elemstyles.xml";
+		imageDir = styleDir+"icons/";
 
 //		System.out.println("mappaint: Using style: " + styleName);
 //		System.out.println("mappaint: Using style dir: " + styleDir);
@@ -56,6 +61,7 @@ public class MapPaintStyles {
 //			System.out.println("mappaint: Using jar's elemstyles.xml: \"" + elemStylesPath + "\"");
 			if (elemStylesPath != null)
 			{
+				imageDir = "/images/styles/standard/";
 				try
 				{
 					XMLReader xmlReader = XMLReaderFactory.createXMLReader();

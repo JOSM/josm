@@ -86,25 +86,25 @@ public class ElemStyleHandler extends DefaultHandler
 				inIcon = true;
 				for (int count=0; count<atts.getLength(); count++) {
 					if (atts.getQName(count).equals("src")) {
-						String imageFile = MapPaintStyles.getStyleDir()+"icons/"+atts.getValue(count); 
+						String imageFile = MapPaintStyles.getImageDir()+atts.getValue(count); 
 						File f = new File(imageFile);
 						if (f.exists()) {
 							//open icon from user directory
 							curIcon = new ImageIcon(imageFile);
 						} else {
 							try {
-								URL path = getClass().getResource("/styles/standard/icons/"+atts.getValue(count));
+								URL path = getClass().getResource(MapPaintStyles.getImageDir()+atts.getValue(count));
 								if (path == null) {
 									/* icon not found, using default */
 									System.out.println("Mappaint: Icon " + atts.getValue(count) + " not found, using default icon");
-									path = getClass().getResource("/styles/standard/icons/misc/no_icon.png");
+									path = getClass().getResource(MapPaintStyles.getImageDir()+"misc/no_icon.png");
 									curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 								} else {
 									curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 								}
 							}
 							catch (Exception e){
-								URL path = getClass().getResource("/styles/standard/icons/amenity.png");
+								URL path = getClass().getResource(MapPaintStyles.getImageDir()+"incomming/amenity.png");
 								curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 							}
 						}

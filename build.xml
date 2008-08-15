@@ -30,8 +30,10 @@
 		</copy>
 
 		<!-- styles -->
-		<copy todir="build/styles">
-			<fileset dir="styles" />
+		<copy file="styles/standard/elemstyles.xml" todir="build/styles/standard"/>
+
+		<copy todir="build/images/styles/standard">
+			<fileset dir="styles/standard/icons" />
 		</copy>
 
 		<!-- create josm-custom.jar -->
