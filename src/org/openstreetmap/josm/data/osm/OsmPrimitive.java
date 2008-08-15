@@ -120,7 +120,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 * "tagged".
 	 */
 	public static Collection<String> uninteresting = 
-		new HashSet<String>(Arrays.asList(new String[] {"source", "note", "created_by"}));
+		new HashSet<String>(Arrays.asList(new String[] {"source", "note", "converted_by", "created_by"}));
 	
 	/**
 	 * Contains a list of direction-dependent keys that make an object

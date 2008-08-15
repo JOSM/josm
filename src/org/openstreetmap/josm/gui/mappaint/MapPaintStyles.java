@@ -15,8 +15,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class MapPaintStyles {
 
-	public static String styleDir;
-	public static String imageDir;
+	private static String styleDir;
+	private static String imageDir;
+	private static String internalImageDir;
+	private static Boolean isInternal = false;
 	private static HashMap<String, ElemStyle> styles = new HashMap<String, ElemStyle>();
 	
 	public static String getStyleDir(){
@@ -24,6 +26,12 @@ public class MapPaintStyles {
 	}
 	public static String getImageDir(){
 		return imageDir;
+	}
+	public static String getInternalImageDir(){
+		return internalImageDir;
+	}
+	public static Boolean isInternal(){
+		return isInternal;
 	}
 
 	public static void readFromPreferences() {
@@ -61,7 +69,8 @@ public class MapPaintStyles {
 //			System.out.println("mappaint: Using jar's elemstyles.xml: \"" + elemStylesPath + "\"");
 			if (elemStylesPath != null)
 			{
-				imageDir = "/images/styles/standard/";
+				internalImageDir = "/images/styles/"+styleName+"/";
+				isInternal = true;
 				try
 				{
 					XMLReader xmlReader = XMLReaderFactory.createXMLReader();

@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public class ElemStyles
 {
 	HashMap<String, ElemStyle> styles;
-	static int nr = 0;
+	// static int nr = 0;
 
 
 	public ElemStyles()
@@ -68,7 +68,7 @@ public class ElemStyles
 					return styles.get(kv);
 				}
 			}
-
+/**
             // not a known key/value combination
 			boolean first_line = true;
 
@@ -102,8 +102,8 @@ public class ElemStyles
 					first_line=false;
 				}
 			}
+*/		
 		}
-		
 		return null;
 	}
 

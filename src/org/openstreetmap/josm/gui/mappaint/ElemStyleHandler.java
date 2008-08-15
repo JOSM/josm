@@ -86,27 +86,30 @@ public class ElemStyleHandler extends DefaultHandler
 				inIcon = true;
 				for (int count=0; count<atts.getLength(); count++) {
 					if (atts.getQName(count).equals("src")) {
-						String imageFile = MapPaintStyles.getImageDir()+atts.getValue(count); 
-						File f = new File(imageFile);
-						if (f.exists()) {
-							//open icon from user directory
-							curIcon = new ImageIcon(imageFile);
-						} else {
-							try {
-								URL path = getClass().getResource(MapPaintStyles.getImageDir()+atts.getValue(count));
-								if (path == null) {
-									/* icon not found, using default */
-									System.out.println("Mappaint: Icon " + atts.getValue(count) + " not found, using default icon");
-									path = getClass().getResource(MapPaintStyles.getImageDir()+"misc/no_icon.png");
-									curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
-								} else {
-									curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
-								}
+						if(!MapPaintStyles.isInternal())
+						{
+							String imageFile = MapPaintStyles.getImageDir()+atts.getValue(count); 
+							File f = new File(imageFile);
+							if (f.exists()) {
+								//open icon from user directory
+								curIcon = new ImageIcon(imageFile);
+								continue;
 							}
-							catch (Exception e){
-								URL path = getClass().getResource(MapPaintStyles.getImageDir()+"incomming/amenity.png");
+						}
+						try {
+							URL path = getClass().getResource(MapPaintStyles.getInternalImageDir()+atts.getValue(count));
+							if (path == null) {
+								/* icon not found, using default */
+								System.out.println("Mappaint: Icon " + atts.getValue(count) + " not found, using default icon");
+								path = getClass().getResource(MapPaintStyles.getInternalImageDir()+"misc/no_icon.png");
+								curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
+							} else {
 								curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 							}
+						}
+						catch (Exception e){
+							URL path = getClass().getResource(MapPaintStyles.getInternalImageDir()+"incomming/amenity.png");
+							curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 						}
 					} else if (atts.getQName(count).equals("annotate")) {
 						curIconAnnotate = Boolean.parseBoolean (atts.getValue(count));
