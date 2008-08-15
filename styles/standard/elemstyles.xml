@@ -55,7 +55,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
     <rule>
        <condition k="bridge" v="swing"/>
 	   <!-- no line or area, as this is a highway=xy, railway=xy, .... -->
-       <icon annotate="true" src="nautical/viaduct.png" />
+       <icon annotate="true" src="vehicle/viaduct.png" />
        <scale_min>1</scale_min>
        <scale_max>40000</scale_max>
      </rule>
@@ -1983,7 +1983,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="chemist" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/chemist.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -1999,7 +1999,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="computer" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/computer.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2023,7 +2023,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="electronics" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/electronics.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2055,7 +2055,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="garden_centre" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/garden_centre.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2071,7 +2071,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="hardware" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/diy_store.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2079,7 +2079,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="hifi" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/hifi.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2087,7 +2087,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="jewelry" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/jewelry.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2095,7 +2095,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="mall" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/mall.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2151,7 +2151,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="travel_agency" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="places/island.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2159,7 +2159,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="toys" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/toys.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2167,7 +2167,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 
 	<rule>
 		<condition k="shop" v="video" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/video.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2176,7 +2176,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<!-- duplicate of shopping_centre? -->
 	<rule>
 		<condition k="shop" v="shopping_center" />
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="shopping/mall.png" />
 		<area colour="#00005f"/>
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
@@ -2860,7 +2860,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="baseball" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/baseball.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -2900,7 +2900,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="cricket" />
 		<area colour="#bde3cb"/>
-		<icon src="misc/no_icon.png" />
+		<icon src="sports/cricket.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -3108,7 +3108,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="volleyball" />
 		<area colour="#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="sports/volleyball.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -3156,7 +3156,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="diving" />
 		<area colour="#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="sports/diving.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
@@ -3180,7 +3180,7 @@ Using both area and line attributes for the same key/value pair doesn't work!
 	<rule>
 		<condition k="sport" v="fishing" />
 		<area colour="#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png" />
+		<icon annotate="true" src="sports/fishing.png" />
         <scale_min>1</scale_min>
         <scale_max>50000</scale_max>
 	</rule>
