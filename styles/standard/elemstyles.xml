@@ -2,6 +2,10 @@
 a little help:
 1. every rule starts with <rule> and ends with </rule>
 2. every rule needs a condition
+		-k for the key (required)
+		-v for the value as a string
+		-b for the values yes / no (boolean, will also understand true, 1 and false, 0 respectively)
+		(although the value flags v/b for the condition are optional, using at least one of them is highly recommended!)
 3. line attributes
 		- width absolute width in pixel in every zoom level
 		- realwidth relative width which will be scaled in meters, integer
@@ -10,8 +14,11 @@ a little help:
 		- colour
 5. icon attributes
 		- icon path to icon , relative from where this file is
+6. scale_min / scale_max - currently unused in JOSM
 
 Using both area and line attributes for the same key/value pair doesn't work!
+
+BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is unpredicted!
 -->
 
 <rules>
