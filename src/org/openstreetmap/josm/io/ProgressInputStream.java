@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -32,7 +34,7 @@ public class ProgressInputStream extends InputStream {
 			this.in = con.getInputStream();
 		} catch (IOException e) {
 			if (con.getHeaderField("Error") != null)
-				throw new OsmServerException(con.getHeaderField("Error"));
+				throw new OsmServerException(tr(con.getHeaderField("Error")));
 			throw e;
 		}
 
