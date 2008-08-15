@@ -893,8 +893,8 @@
     <tag k="name" v="bridge"/>
   </node>
   <node id="-44200" user="overview-creator" visible="true" lat="-0.00210" lon="0.00060">
-    <tag k="bridge" v=""/>
-    <tag k="name" v=""/>
+    <tag k="bridge" v="yes"/>
+    <tag k="name" v="yes"/>
   </node>
   <node id="-44201" user="overview-creator" visible="true" lat="-0.00206" lon="0.00056"/>
   <node id="-44202" user="overview-creator" visible="true" lat="-0.00206" lon="0.00084"/>
@@ -910,8 +910,8 @@
     <tag k="name" v=""/>
   </way>
   <node id="-44400" user="overview-creator" visible="true" lat="-0.00220" lon="0.00060">
-    <tag k="bridge" v=""/>
-    <tag k="name" v=""/>
+    <tag k="bridge" v="no"/>
+    <tag k="name" v="no"/>
   </node>
   <node id="-44401" user="overview-creator" visible="true" lat="-0.00216" lon="0.00056"/>
   <node id="-44402" user="overview-creator" visible="true" lat="-0.00216" lon="0.00084"/>
@@ -982,8 +982,8 @@
     <tag k="name" v="tunnel"/>
   </node>
   <node id="-46200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00060">
-    <tag k="tunnel" v=""/>
-    <tag k="name" v=""/>
+    <tag k="tunnel" v="yes"/>
+    <tag k="name" v="yes"/>
   </node>
   <node id="-46201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00056"/>
   <node id="-46202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00084"/>
@@ -999,8 +999,8 @@
     <tag k="name" v=""/>
   </way>
   <node id="-46400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00060">
-    <tag k="tunnel" v=""/>
-    <tag k="name" v=""/>
+    <tag k="tunnel" v="no"/>
+    <tag k="name" v="no"/>
   </node>
   <node id="-46401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00056"/>
   <node id="-46402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00084"/>
@@ -1587,10 +1587,7 @@
     <tag k="tourism" v="information"/>
     <tag k="name" v="oneway"/>
   </node>
-  <node id="-84000" user="overview-creator" visible="true" lat="-0.00200" lon="0.00120">
-    <tag k="oneway" v=""/>
-    <tag k="name" v=""/>
-  </node>
+  <node id="-84000" user="overview-creator" visible="true" lat="-0.00200" lon="0.00120"/>
   <node id="-84001" user="overview-creator" visible="true" lat="-0.00196" lon="0.00116"/>
   <node id="-84002" user="overview-creator" visible="true" lat="-0.00196" lon="0.00144"/>
   <node id="-84003" user="overview-creator" visible="true" lat="-0.00204" lon="0.00144"/>
@@ -6717,8 +6714,8 @@
     <tag k="name" v="building"/>
   </node>
   <node id="-327200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00480">
-    <tag k="building" v=""/>
-    <tag k="name" v=""/>
+    <tag k="building" v="yes"/>
+    <tag k="name" v="yes"/>
   </node>
   <node id="-327201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00476"/>
   <node id="-327202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00504"/>

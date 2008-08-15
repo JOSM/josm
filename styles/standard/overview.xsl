@@ -98,14 +98,26 @@
 			<xsl:with-param name="y" select="$yoffset"/>
 		</xsl:call-template>
 
-		<xsl:element name="tag">
-			<xsl:attribute name="k"><xsl:value-of select = "rule[$index]/condition/@k" /></xsl:attribute>
-			<xsl:attribute name="v"><xsl:value-of select = "rule[$index]/condition/@v" /></xsl:attribute>
-		</xsl:element>
-		<xsl:element name="tag">
-			<xsl:attribute name="k">name</xsl:attribute>
-			<xsl:attribute name="v"><xsl:value-of select = "rule[$index]/condition/@v" /></xsl:attribute>
-		</xsl:element>
+		<xsl:if test="rule[$index]/condition/@v">
+			<xsl:element name="tag">
+				<xsl:attribute name="k"><xsl:value-of select = "rule[$index]/condition/@k" /></xsl:attribute>
+				<xsl:attribute name="v"><xsl:value-of select = "rule[$index]/condition/@v" /></xsl:attribute>
+			</xsl:element>
+			<xsl:element name="tag">
+				<xsl:attribute name="k">name</xsl:attribute>
+				<xsl:attribute name="v"><xsl:value-of select = "rule[$index]/condition/@v" /></xsl:attribute>
+			</xsl:element>
+		</xsl:if>
+		<xsl:if test="rule[$index]/condition/@b">
+			<xsl:element name="tag">
+				<xsl:attribute name="k"><xsl:value-of select = "rule[$index]/condition/@k" /></xsl:attribute>
+				<xsl:attribute name="v"><xsl:value-of select = "rule[$index]/condition/@b" /></xsl:attribute>
+			</xsl:element>
+			<xsl:element name="tag">
+				<xsl:attribute name="k">name</xsl:attribute>
+				<xsl:attribute name="v"><xsl:value-of select = "rule[$index]/condition/@b" /></xsl:attribute>
+			</xsl:element>
+		</xsl:if>
 	</xsl:element>
 
 
