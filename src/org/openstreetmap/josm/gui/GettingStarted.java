@@ -146,7 +146,7 @@ public class GettingStarted extends JPanel {
         // panel.add(GBC.glue(0,1), GBC.eol());
         //panel.setMinimumSize(new Dimension(400, 600));
         JScrollPane scroller = new JScrollPane(new LinkGeneral(content));
-        scroller.setViewportBorder(new EmptyBorder(100,100,10,100));
+        scroller.setViewportBorder(new EmptyBorder(10,100,10,100));
         add(scroller, BorderLayout.CENTER);
     }
 }
