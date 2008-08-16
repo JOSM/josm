@@ -188,7 +188,7 @@ public class ToolbarPreferences implements PreferenceSetting {
 			public void layoutContainer(Container parent) {
 				Dimension d = p.getSize();
 				Dimension b = buttons.getPreferredSize();
-				int width = d.width/2-10-b.width;
+				int width = (d.width-10-b.width)/2;
 				left.setBounds(new Rectangle(0,0,width,d.height));
 				right.setBounds(new Rectangle(width+10+b.width,0,width,d.height));
 				buttons.setBounds(new Rectangle(width+5, d.height/2-b.height/2, b.width, b.height));
