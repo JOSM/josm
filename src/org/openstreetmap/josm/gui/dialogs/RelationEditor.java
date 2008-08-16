@@ -1,7 +1,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -13,12 +13,11 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,7 +29,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
@@ -47,7 +45,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
-
 /**
  * This dialog is for editing relations.
  * 
@@ -61,8 +58,6 @@ import org.xml.sax.SAXException;
  */
 public class RelationEditor extends JFrame {
 
-	
-	
 	/**
 	 * The relation that this editor is working on, and the clone made for
 	 * editing.
@@ -100,61 +95,6 @@ public class RelationEditor extends JFrame {
 	 */
 	private final JTable propertyTable = new JTable(propertyData);
 	private final JTable memberTable = new JTable(memberData);
-	
-	/**
-	 * Collator for sorting the roles and entries of the member table. 
-	 */
-	private static final Collator collator;
-	static { 
-		collator = Collator.getInstance();
-		collator.setStrength(Collator.PRIMARY);
-	}
-	
-	/**
-	 * Comparator for member roles. Tries to sort even roles like "stop_nn" correct.
-	 */
-	private final Comparator<String> memberRoleComp = new Comparator<String>() {
-		public int compare(String s1, String s2) {
-
-			int last1 = s1.lastIndexOf('_');
-			if (last1 > 0) {
-				int last2 = s2.lastIndexOf('_');
-				if (last2 == last1) {
-					String prefix1 = s1.substring(0, last1);
-					String prefix2 = s2.substring(0, last2);
-
-					if (prefix1.equalsIgnoreCase(prefix2)) {
-						// Both roles have the same prefix, now determine the suffix.
-						String suffix1 = s1.substring(last1+1, s1.length());
-						String suffix2 = s2.substring(last2+1, s2.length());
-
-						if (suffix1.matches("\\d+") && suffix2.matches("\\d+")) {
-							// Suffix is an number -> compare it.
-							int i1 = Integer.parseInt(suffix1);
-							int i2 = Integer.parseInt(suffix2);
-
-							return i1 - i2;
-						}
-					}
-				}
-			}
-			
-			// Default handling if the role name is nothing like "stop_xx"
-			return collator.compare(s1, s2);
-
-		}
-	};
-	
-	/**
-	 * Comparator for the member names.
-	 */
-	private final Comparator<OsmPrimitive> memberValueComp = new Comparator<OsmPrimitive>() {
-		public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-		    return collator.compare(o1.getName(), o2.getName());
-		}
-	};
-	
-	private final TableRowSorter<DefaultTableModel> memberSorter = new TableRowSorter<DefaultTableModel>(memberData);
 	
 	/**
 	 * Creates a new relation editor for the given relation. The relation
@@ -222,7 +162,6 @@ public class RelationEditor extends JFrame {
 		
 		propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
 		propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
 		propertyData.addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent tme) {
 				if (tme.getType() == TableModelEvent.UPDATE) {
@@ -246,13 +185,7 @@ public class RelationEditor extends JFrame {
 		
 		memberData.setColumnIdentifiers(new String[]{tr("Role"),tr("Occupied By")});
 		memberTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
 		memberTable.getColumnModel().getColumn(1).setCellRenderer(new OsmPrimitivRenderer());
-		
-		memberSorter.setComparator(0, memberRoleComp);
-		memberSorter.setComparator(1, memberValueComp);		
-		memberTable.setRowSorter(memberSorter);
-
 		/*
 		memberTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
