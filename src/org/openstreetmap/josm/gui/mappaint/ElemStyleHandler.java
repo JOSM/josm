@@ -8,6 +8,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.Main;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -31,12 +32,18 @@ public class ElemStyleHandler extends DefaultHandler
 		inDoc=inRule=inCondition=inElemStyle=inLine=inIcon=inArea=false;
 	}
 
-	/*
-    ElemStyles getElemStyles()
-    {
-        return styles;
-    }
-	*/
+	Color convertColor(String colString)
+	{
+		int i = colString.indexOf("#");
+		String colorString;
+		if(i < 0) // name only
+			colorString = Main.pref.get("color.mappaint."+colString);
+		else if(i == 0) // value only
+			colorString = colString;
+		else // value and name
+			colorString = Main.pref.get("color.mappaint."+colString.substring(0,i), colString.substring(i));
+		return ColorHelper.html2color(colorString);
+	}
 
 	@Override public void startDocument() {
 		inDoc = true;
@@ -72,7 +79,7 @@ public class ElemStyleHandler extends DefaultHandler
 					if(atts.getQName(count).equals("width"))
 						curLineWidth = Integer.parseInt(atts.getValue(count));
 					else if (atts.getQName(count).equals("colour"))
-						curLineColour=ColorHelper.html2color(atts.getValue(count));
+						curLineColour=convertColor(atts.getValue(count));
 					else if (atts.getQName(count).equals("realwidth"))
 						curLineRealWidth=Integer.parseInt(atts.getValue(count));
 					else if (atts.getQName(count).equals("dashed"))
@@ -122,7 +129,7 @@ public class ElemStyleHandler extends DefaultHandler
 				for (int count=0; count<atts.getLength(); count++)
 				{
 					if (atts.getQName(count).equals("colour"))
-						curAreaColour=ColorHelper.html2color(atts.getValue(count));
+						curAreaColour=convertColor(atts.getValue(count));
 				}
 			}
 		}
