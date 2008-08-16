@@ -18,6 +18,11 @@ a little help:
 
 Using both area and line attributes for the same key/value pair doesn't work!
 
+The colours can consist of the two components - name and hex code (e.g. water#0000ff).
+If both are given, the color name is introduced in preferences with that value. If only
+code is given (e.g. #0000ff), it is used directly. If only name is given, either user
+modified preferences or previous value is used.
+
 BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is unpredicted!
 -->
 
