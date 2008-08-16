@@ -146,7 +146,6 @@ public class ColorPreference implements PreferenceSetting {
 		String[] cp = {
 			marktr("background"), ColorHelper.color2html(Color.black),
 			marktr("node"), ColorHelper.color2html(Color.red),
-			marktr("segment"), ColorHelper.color2html(SimplePaintVisitor.darkgreen),
 			marktr("way"), ColorHelper.color2html(SimplePaintVisitor.darkblue),
 			marktr("incomplete way"), ColorHelper.color2html(SimplePaintVisitor.darkerblue),
 			marktr("relation"), ColorHelper.color2html(SimplePaintVisitor.teal),
