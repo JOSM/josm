@@ -210,7 +210,7 @@ public class MarkerLayer extends Layer {
 				}
 				AudioMarker recent = AudioMarker.recentlyPlayedMarker();
 				if (synchronizeAudioMarkers(recent)) {
-					JOptionPane.showMessageDialog(Main.parent, tr("Audio synchronized at point {0}", recent.text));
+					JOptionPane.showMessageDialog(Main.parent, tr("Audio synchronized at point {0}.", recent.text));
 				} else {
 					JOptionPane.showMessageDialog(Main.parent,tr("Unable to synchronize in layer being played."));
 				}

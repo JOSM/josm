@@ -34,7 +34,7 @@ public class PleaseWaitDialog extends JDialog {
 		pane.add(progressBar, GBC.eop().fill(GBC.HORIZONTAL));
 		pane.add(cancel, GBC.eol().anchor(GBC.CENTER));
 		setContentPane(pane);
-		setSize(350,100);
+		setSize(400,100);
 		setLocationRelativeTo(Main.parent);
 	}
 }
