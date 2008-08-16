@@ -134,7 +134,7 @@ public class AudioPreference implements PreferenceSetting {
 		audioMarkersFromStart.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
 		gui.audio.add(audioMarkersFromStart, GBC.eol().insets(10,0,0,0));
 		
-		audioForwardBackAmount.setText(Main.pref.get("audio.forwardbackamount", "10"));
+		audioForwardBackAmount.setText(Main.pref.get("audio.forwardbackamount", "10.0"));
 		audioForwardBackAmount.setToolTipText(tr("The number of seconds to jump forward or back when the relevant button is pressed"));
 		gui.audio.add(new JLabel(tr("Forward/back time (seconds)")), GBC.std());
 		gui.audio.add(audioForwardBackAmount, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));

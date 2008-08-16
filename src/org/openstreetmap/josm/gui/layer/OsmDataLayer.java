@@ -147,7 +147,7 @@ public class OsmDataLayer extends Layer {
 	 */
 	@Override public void paint(final Graphics g, final MapView mv) {
 		boolean inactive = Main.map.mapView.getActiveLayer() != this && Main.pref.getBoolean("draw.data.inactive_color", true);
-		if (Main.pref.getBoolean("draw.data.downloaded_area", false)) {
+		if (Main.pref.getBoolean("draw.data.downloaded_area", true)) {
 			// FIXME this is inefficient; instead a proper polygon has to be built, and instead
 			// of drawing the outline, the outlying areas should perhaps be shaded.
 			for (DataSource src : data.dataSources) {

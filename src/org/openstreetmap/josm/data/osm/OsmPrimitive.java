@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.DateParser;
+import org.openstreetmap.josm.Main;
 
 
 /**
@@ -22,7 +23,7 @@ import org.openstreetmap.josm.tools.DateParser;
  *
  * Although OsmPrimitive is designed as a base class, it is not to be meant to subclass
  * it by any other than from the package {@link org.openstreetmap.josm.data.osm}. The available primitives are a fixed set that are given
- * by the server environment and not an extendible data stuff. 
+ * by the server environment and not an extendible data stuff.
  *
  * @author imi
  */
@@ -35,9 +36,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
 	/**
 	 * Unique identifier in OSM. This is used to identify objects on the server.
-	 * An id of 0 means an unknown id. The object has not been uploaded yet to 
+	 * An id of 0 means an unknown id. The object has not been uploaded yet to
 	 * know what id it will get.
-	 * 
+	 *
 	 * Do not write to this attribute except you know exactly what you are doing.
 	 * More specific, it is not good to set this to 0 and think the object is now
 	 * new to the server! To create a new object, call the default constructor of
@@ -49,7 +50,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 * <code>true</code> if the object has been modified since it was loaded from
 	 * the server. In this case, on next upload, this object will be updated.
 	 * Deleted objects are deleted from the server. If the objects are added (id=0),
-	 * the modified is ignored and the object is added to the server. 
+	 * the modified is ignored and the object is added to the server.
 	 */
 	public boolean modified = false;
 
@@ -65,26 +66,26 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 * these, so this is really for future use only.
 	 */
 	public boolean visible = true;
-	
-	/** 
+
+	/**
 	 * User that last modified this primitive, as specified by the server.
 	 * Never changed by JOSM.
 	 */
 	public User user = null;
-	
+
 	/**
 	 * true if this object is considered "tagged". To be "tagged", an object
 	 * must have one or more "non-standard" tags. "created_by" and "source"
-	 * are typically considered "standard" tags and do not make an object 
+	 * are typically considered "standard" tags and do not make an object
 	 * "tagged".
 	 */
 	public boolean tagged = false;
-	
+
 	/**
 	 * true if this object has direction dependent tags (e.g. oneway)
 	 */
 	public boolean hasDirectionKeys = false;
-	
+
 	/**
 	 * If set to true, this object is currently selected.
 	 */
@@ -96,39 +97,39 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	 * used to check against edit conflicts.
 	 */
 	public String timestamp = null;
-	
+
 	/**
-	 * The timestamp is only parsed when this is really necessary, and this 
+	 * The timestamp is only parsed when this is really necessary, and this
 	 * is the cache for the result.
 	 */
 	public Date parsedTimestamp = null;
-	
+
 	/**
 	 * If set to true, this object is incomplete, which means only the id
 	 * and type is known (type is the objects instance class)
 	 */
-	public boolean incomplete = false; 
+	public boolean incomplete = false;
 
-	/** 
+	/**
 	 * Contains the version number as returned by the API. Needed to
 	 * ensure update consistency
 	 */
 	public int version = -1;
-	 
+
 	/**
 	 * Contains a list of "uninteresting" keys that do not make an object
 	 * "tagged".
+	 * Initialized by checkTagged()
 	 */
-	public static Collection<String> uninteresting = 
-		new HashSet<String>(Arrays.asList(new String[] {"source", "note", "converted_by", "created_by"}));
-	
+	private static Collection<String> uninteresting = null;
+
 	/**
 	 * Contains a list of direction-dependent keys that make an object
 	 * direction dependent.
+	 * Initialized by checkDirectionTagged()
 	 */
-	public static Collection<String> directionKeys = 
-		new HashSet<String>(Arrays.asList(new String[] {"oneway", "incline", "incline_steep", "aerialway"}));
-	
+	private static Collection<String> directionKeys = null;
+
 	/**
 	 * Implementation of the visitor scheme. Subclasses have to call the correct
 	 * visitor function.
@@ -141,7 +142,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		selected = false;
 		modified = true;
 	}
-	
+
 	/**
 	 * Returns the timestamp for this object, or the current time if none is set.
 	 * Internally, parses the timestamp from XML into a Date object and caches it
@@ -156,24 +157,24 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			}
 		}
 		return parsedTimestamp;
- 	}
+	}
 
 	/**
-	 * Equal, if the id (and class) is equal. 
-	 * 
+	 * Equal, if the id (and class) is equal.
+	 *
 	 * An primitive is equal to its incomplete counter part.
 	 */
-    @Override public boolean equals(Object obj) {
-        if (id == 0) return obj == this;
-        if (obj instanceof OsmPrimitive) { // not null too
-            return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
-        }
-        return false;
-    }
+	@Override public boolean equals(Object obj) {
+		if (id == 0) return obj == this;
+		if (obj instanceof OsmPrimitive) { // not null too
+			return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
+		}
+		return false;
+	}
 
 	/**
 	 * Return the id plus the class type encoded as hashcode or super's hashcode if id is 0.
-	 * 
+	 *
 	 * An primitive has the same hashcode as its incomplete counterpart.
 	 */
 	@Override public final int hashCode() {
@@ -203,7 +204,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			keys.put(key, value);
 		}
 		checkTagged();
-                checkDirectionTagged();
+		checkDirectionTagged();
 	}
 	/**
 	 * Remove the given key from the list.
@@ -215,7 +216,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 				keys = null;
 		}
 		checkTagged();
-                checkDirectionTagged();
+		checkDirectionTagged();
 	}
 
 	public String getName() {
@@ -255,7 +256,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 	}
 
 	/**
-	 * Perform an equality compare for all non-volatile fields not only for the id 
+	 * Perform an equality compare for all non-volatile fields not only for the id
 	 * but for the whole object (for conflict resolving)
 	 * @param semanticOnly if <code>true</code>, modified flag and timestamp are not compared
 	 */
@@ -263,7 +264,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 		return
 			id == osm.id &&
 			incomplete == osm.incomplete &&
-			(semanticOnly || (modified == osm.modified)) && 
+			(semanticOnly || (modified == osm.modified)) &&
 			deleted == osm.deleted &&
 			(semanticOnly || (timestamp == null ? osm.timestamp==null : timestamp.equals(osm.timestamp))) &&
 			(semanticOnly || (version==osm.version)) &&
@@ -271,17 +272,20 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			(semanticOnly || (visible == osm.visible)) &&
 			(keys == null ? osm.keys==null : keys.equals(osm.keys));
 	}
-	
+
 	public String getTimeStr() {
 		return timestamp == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestamp);
 	}
-	
+
 	/**
 	 * Updates the "tagged" flag. "keys" property should probably be made private
 	 * to make sure this gets called when keys are set.
 	 */
 	public void checkTagged() {
 		tagged = false;
+		if(uninteresting == null)
+			uninteresting = new HashSet<String>(Arrays.asList(Main.pref.get("tags.uninteresting",
+			"source;note;converted_by;created_by").split(";")));
 		if (keys != null) {
 			for (Entry<String,String> e : keys.entrySet()) {
 				if (!uninteresting.contains(e.getKey())) {
@@ -291,21 +295,22 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 			}
 		}
 	}
-    /**
-     * Updates the "hasDirectionKeys" flag. "keys" property should probably be made private
-     * to make sure this gets called when keys are set.
-     */
-    public void checkDirectionTagged() {
-        hasDirectionKeys = false;
-        if (keys != null) {
-            for (Entry<String,String> e : keys.entrySet()) {
-                if (directionKeys.contains(e.getKey())) {
-                    hasDirectionKeys = true;
-                    break;
-                }
-            }
-        }
-
-    }
-	
+	/**
+	 * Updates the "hasDirectionKeys" flag. "keys" property should probably be made private
+	 * to make sure this gets called when keys are set.
+	 */
+	public void checkDirectionTagged() {
+		hasDirectionKeys = false;
+		if(directionKeys == null)
+			directionKeys = new HashSet<String>(Arrays.asList(Main.pref.get("tags.direction",
+			"oneway;incline;incline_step;aerialway").split(";")));
+		if (keys != null) {
+			for (Entry<String,String> e : keys.entrySet()) {
+				if (directionKeys.contains(e.getKey())) {
+					hasDirectionKeys = true;
+					break;
+				}
+			}
+		}
+	}
 }

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
@@ -29,26 +31,58 @@ import org.openstreetmap.josm.tools.GBC;
 public class AdvancedPreference implements PreferenceSetting {
 
 	private Map<String,String> orig;
+	private Map<String,String> defaults;
 	private DefaultTableModel model;
 
 	public void addGui(final PreferenceDialog gui) {
 		JPanel p = gui.createPreferenceTab("advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
 
-		model = new DefaultTableModel(new String[]{"Key", "Value"},0) {
+		model = new DefaultTableModel(new String[]{tr("Key"), tr("Value")},0) {
 			@Override public boolean isCellEditable(int row, int column) {
 				return column != 0;
 			}
 		};
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer(){
+			public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column)
+			{
+				JLabel label=new JLabel();
+				String s = defaults.get((String)value);
+				if(s != null)
+				{
+					if(s.equals(model.getValueAt(row, 1)))
+						label.setToolTipText(tr("Current value is default."));
+					else
+						label.setToolTipText(tr("Default value is ''{0}''.", s));
+				}
+				else
+					label.setToolTipText(tr("Default value currently unknown (setting has not been used yet)."));
+				label.setText((String)value);
+				return label;
+			};
+		};
 		final JTable list = new JTable(model);
+		list.getColumn(tr("Key")).setCellRenderer(renderer);
 		JScrollPane scroll = new JScrollPane(list);
 		p.add(scroll, GBC.eol().fill(GBC.BOTH));
 		scroll.setPreferredSize(new Dimension(400,200));
 
 		orig = Main.pref.getAllPrefix("");
+		defaults = Main.pref.getDefaults();
 		orig.remove("osm-server.password");
+		TreeSet<String> ts = new TreeSet<String>(orig.keySet());
+		for (String s : defaults.keySet())
+		{
+			if(!ts.contains(s))
+				ts.add(s);
+		}
 
-		for (String s : new TreeSet<String>(orig.keySet()))
-			model.addRow(new String[]{s, Main.pref.get(s)});
+		for (String s : ts)
+		{
+			String val = Main.pref.get(s);
+			if(val == null) val = "";
+			model.addRow(new String[]{s, val});
+		}
 
 		JButton add = new JButton(tr("Add"));
 		p.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
@@ -84,8 +118,8 @@ public class AdvancedPreference implements PreferenceSetting {
 					JOptionPane.showMessageDialog(gui, tr("Please select the row to delete."));
 					return;
 				}
-				while (list.getSelectedRow() != -1)
-					model.removeRow(list.getSelectedRow());
+				for(int row: list.getSelectedRows())
+					model.setValueAt("", row, 1);
 			}
 		});
 
@@ -99,12 +133,15 @@ public class AdvancedPreference implements PreferenceSetting {
 
 	public void ok() {
 		for (int i = 0; i < model.getRowCount(); ++i) {
-			String key = model.getValueAt(i,0).toString();
 			String value = model.getValueAt(i,1).toString();
-			String origValue = orig.get(key);
-			if (origValue == null || !origValue.equals(value))
-				Main.pref.put(key, value);
-			orig.remove(key); // processed.
+			if(value.length() != 0)
+			{
+				String key = model.getValueAt(i,0).toString();
+				String origValue = orig.get(key);
+				if (origValue == null || !origValue.equals(value))
+					Main.pref.put(key, value);
+				orig.remove(key); // processed.
+			}
 		}
 		for (Entry<String, String> e : orig.entrySet())
 			Main.pref.put(e.getKey(), null);

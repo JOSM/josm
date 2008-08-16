@@ -53,6 +53,7 @@ public class Preferences {
 	 * Map the property name to the property object.
 	 */
 	protected final SortedMap<String, String> properties = new TreeMap<String, String>();
+	protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
 
 	/**
 	 * Override some values on read. This is intended to be used for technology previews
@@ -117,6 +118,10 @@ public class Preferences {
 		return properties.get(key);
 	}
 	synchronized public String get(final String key, final String def) {
+		if(!defaults.containsKey(key))
+			defaults.put(key, def);
+		else if(!defaults.get(key).equals(def))
+			System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
 		if (override.containsKey(key)) 
 			return override.get(key);
 		final String prop = properties.get(key);
@@ -138,10 +143,21 @@ public class Preferences {
 		return all;
 	}
 	
+	synchronized public Map<String, String> getDefaults()
+	{
+		return defaults;
+	}
+	
 	synchronized public boolean getBoolean(final String key) {
-		return getBoolean(key, false);
+		if (override.containsKey(key))
+			return override.get(key) == null ? false : Boolean.parseBoolean(override.get(key));
+		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : false;
 	}
 	synchronized public boolean getBoolean(final String key, final boolean def) {
+		if(!defaults.containsKey(key))
+			defaults.put(key, Boolean.toString(def));
+		else if(!defaults.get(key).equals(Boolean.toString(def)))
+			System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
 		if (override.containsKey(key))
 			return override.get(key) == null ? def : Boolean.parseBoolean(override.get(key));
 		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;

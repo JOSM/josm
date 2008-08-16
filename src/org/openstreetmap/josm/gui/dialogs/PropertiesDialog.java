@@ -421,7 +421,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		// activate it if they really want. Presets should be used from the 
 		// menu.
 		if (TaggingPresetPreference.taggingPresets.size() > 0 && 
-				Main.pref.getBoolean("taggingpresets.in-properties-dialog", false)) {
+				Main.pref.getBoolean("taggingpreset.in-properties-dialog", false)) {
 			Vector<ActionListener> allPresets = new Vector<ActionListener>();
 			for (final TaggingPreset p : TaggingPresetPreference.taggingPresets)
 				allPresets.add(new ForwardActionListener(this, p));

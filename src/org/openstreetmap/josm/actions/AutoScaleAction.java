@@ -88,7 +88,7 @@ public class AutoScaleAction extends JosmAction {
 			// in most other cases as well.
 			if (v.min != null && v.max != null) // && v.min.north() == v.max.north() && v.min.east() == v.max.east()) {
 			{
-				EastNorth en = Main.proj.latlon2eastNorth(new LatLon(0.001, 0.001));
+				EastNorth en = new EastNorth(0,0);
 				v.min = new EastNorth(v.min.east()-en.east(), v.min.north()-en.north());
 				v.max = new EastNorth(v.max.east()+en.east(), v.max.north()+en.north());
 			}
