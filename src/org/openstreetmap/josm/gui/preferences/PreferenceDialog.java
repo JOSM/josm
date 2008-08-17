@@ -60,7 +60,7 @@ public class PreferenceDialog extends JTabbedPane {
 		p.add(descLabel, GBC.eol().insets(5,0,5,20).fill(GBC.HORIZONTAL));
 
 		addTab(null, ImageProvider.get("preferences", icon), p);
-		setToolTipTextAt(getTabCount()-1, desc);
+		setToolTipTextAt(getTabCount()-1, "<html>"+desc+"</html>");
 		return p;
 	}
 

@@ -134,6 +134,10 @@ public class RelationEditor extends JFrame {
 				}
 			}
 		}
+		if(s1.length() == 0 && s2.length() != 0)
+			return 1;
+		else if(s2.length() == 0 && s1.length() != 0)
+			return -1;
 
 		// Default handling if the role name is nothing like "stop_xx"
 		return collator.compare(s1, s2);
@@ -151,9 +155,8 @@ public class RelationEditor extends JFrame {
 		public int compare(RelationMember r1, RelationMember r2) {
 			int roleResult = compareRole(r1.role, r2.role);
 
-			if (roleResult == 0) {
-				return compareMemebers(r1.member, r2.member);
-			}
+			if (roleResult == 0)
+				roleResult = compareMemebers(r1.member, r2.member);
 
 			return roleResult;
 		}

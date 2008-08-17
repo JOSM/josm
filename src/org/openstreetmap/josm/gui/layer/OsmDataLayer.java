@@ -156,8 +156,8 @@ public class OsmDataLayer extends Layer {
 					EastNorth en2 = Main.proj.latlon2eastNorth(src.bounds.max);
 					Point p1 = mv.getPoint(en1);
 					Point p2 = mv.getPoint(en2);
-					Color color = inactive ? Preferences.getPreferencesColor(marktr("inactive"), Color.DARK_GRAY) :
-							Preferences.getPreferencesColor(marktr("downloaded Area"), Color.YELLOW);
+					Color color = inactive ? Main.pref.getColor(marktr("inactive"), Color.DARK_GRAY) :
+							Main.pref.getColor(marktr("downloaded Area"), Color.YELLOW);
 					g.setColor(color);
 					g.drawRect(Math.min(p1.x,p2.x), Math.min(p1.y, p2.y), Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y));
 				}

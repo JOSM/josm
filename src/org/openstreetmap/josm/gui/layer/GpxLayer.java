@@ -2,6 +2,7 @@
 
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -134,18 +135,18 @@ public class GpxLayer extends Layer {
 		color.putClientProperty("help", "Action/LayerCustomizeColor");
 		color.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String col = Main.pref.get("color.layer "+name, Main.pref.get("color.gps point", ColorHelper.color2html(Color.gray)));
-				JColorChooser c = new JColorChooser(ColorHelper.html2color(col));
+				JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+name, Color.gray));
 				Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-				int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				switch (answer) {
 				case 0:
-					Main.pref.put("color.layer "+name, ColorHelper.color2html(c.getColor()));
+					Main.pref.putColor("layer "+name, c.getColor());
 					break;
 				case 1:
 					return;
 				case 2:
-					Main.pref.put("color.layer "+name, null);
+					Main.pref.putColor("layer "+name, null);
 					break;
 				}
 				Main.map.repaint();
@@ -366,16 +367,7 @@ public class GpxLayer extends Layer {
 		 ********** STEP 1 - GET CONFIG VALUES **************************
 		 ****************************************************************/
 		Long startTime = System.currentTimeMillis();
-		String gpsCol = Main.pref.get("color.gps point");
-		String gpsColSpecial = Main.pref.get("color.layer "+name);
-		Color neutralColor;
-		if (!gpsColSpecial.equals("")) {
-			neutralColor = ColorHelper.html2color(gpsColSpecial);
-		} else if (!gpsCol.equals("")) {
-			neutralColor = ColorHelper.html2color(gpsCol);
-		} else{
-			neutralColor = Color.GRAY;
-		}
+		Color neutralColor = Main.pref.getColor(marktr("gps point"), "layer "+name, Color.GRAY);
 		boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");                     // also draw lines between points belonging to different segments
 		boolean direction = Main.pref.getBoolean("draw.rawgps.direction");                        // draw direction arrows on the lines
 		int maxLineLength = -1;
@@ -398,7 +390,7 @@ public class GpxLayer extends Layer {
 		if (computeCacheInSync && ((computeCacheMaxLineLengthUsed != maxLineLength) ||
 		                           (!neutralColor.equals(computeCacheColorUsed)) ||
 		                           (computeCacheColored != colored))) {
-			System.out.println("(re-)computing gpx line styles, reason: CCIS=" + computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) + " CCCU=" +  (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" + (computeCacheColored != colored));
+//			System.out.println("(re-)computing gpx line styles, reason: CCIS=" + computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) + " CCCU=" +  (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" + (computeCacheColored != colored));
 			computeCacheMaxLineLengthUsed = maxLineLength;
 			computeCacheInSync = false;
 			computeCacheColorUsed = neutralColor;
@@ -523,7 +515,7 @@ public class GpxLayer extends Layer {
 		/****************************************************************
 		 ********** STEP 3d - DRAW LARGE POINTS *************************
 		 ****************************************************************/
-						if (large) {
+		if (large) {
 			g.setColor(neutralColor);
 			for (GpxTrack trk : data.tracks) {
 				for (Collection<WayPoint> segment : trk.trackSegs) {

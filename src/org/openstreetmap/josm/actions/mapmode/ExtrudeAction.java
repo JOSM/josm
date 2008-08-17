@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.mapmode;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
@@ -82,7 +83,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 		putValue("help", "Action/Extrude/Extrude");
 		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {}
 		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","5")); } catch (NumberFormatException x) {}
-		selectedColor = Preferences.getPreferencesColor("selected", Color.YELLOW);
+		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
 	}
 
 	private static Cursor getCursor(String name, String mod, int def) {

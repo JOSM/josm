@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -134,16 +135,9 @@ public class MarkerLayer extends Layer {
 	@Override public void paint(Graphics g, MapView mv) {
 		boolean mousePressedTmp = mousePressed;
 		Point mousePos = mv.getMousePosition();
-		String mkrCol = Main.pref.get("color.gps marker");
-		String mkrColSpecial = Main.pref.get("color.layer "+name);
-        String mkrTextShow = Main.pref.get("marker.show "+name, "show");
+		String mkrTextShow = Main.pref.get("marker.show "+name, "show");
 
-		if (!mkrColSpecial.equals(""))
-			g.setColor(ColorHelper.html2color(mkrColSpecial));
-		else if (!mkrCol.equals(""))
-			g.setColor(ColorHelper.html2color(mkrCol));
-		else
-			g.setColor(Color.GRAY);
+		g.setColor(Main.pref.getColor(marktr("gps marker"), "layer "+name, Color.gray));
 		
 		for (Marker mkr : data) {
 			if (mousePos != null && mkr.containsPoint(mousePos)) {
@@ -182,18 +176,18 @@ public class MarkerLayer extends Layer {
 		color.putClientProperty("help", "Action/LayerCustomizeColor");
 		color.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				String col = Main.pref.get("color.layer "+name, Main.pref.get("color.gps marker", ColorHelper.color2html(Color.gray)));
-				JColorChooser c = new JColorChooser(ColorHelper.html2color(col));
+				JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps marker"), "layer "+name, Color.gray));
 				Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-				int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				switch (answer) {
 				case 0:
-					Main.pref.put("color.layer "+name, ColorHelper.color2html(c.getColor()));
+					Main.pref.putColor("layer "+name, c.getColor());
 					break;
 				case 1:
 					return;
 				case 2:
-					Main.pref.put("color.layer "+name, null);
+					Main.pref.putColor("layer "+name, null);
 					break;
 				}
 				Main.map.repaint();

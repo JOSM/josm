@@ -2,6 +2,9 @@
 
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 
@@ -31,7 +34,7 @@ public class MapScaler extends JComponent implements Helpful {
 		double dist = ll1.greatCircleDistance(ll2);
 		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+"km" : Math.round(dist*10)/10+"m";
 		Rectangle2D bound = g.getFontMetrics().getStringBounds(text, g);
-		g.setColor(ColorHelper.html2color(Main.pref.get("color.scale", "#ffffff")));
+		g.setColor(Main.pref.getColor(marktr("scale"), Color.white));
 		g.drawLine(0, 5, 99, 5);
 		g.drawLine(0, 0, 0, 10);
 		g.drawLine(99, 0, 99, 10);

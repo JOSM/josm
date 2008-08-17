@@ -369,14 +369,14 @@ public class MapPaintVisitor implements Visitor {
     // NW 111106 Overridden from SimplePaintVisitor in josm-1.4-nw1
     // Shows areas before non-areas
     public void visitAll(DataSet data) {
-        inactiveColor = Preferences.getPreferencesColor(marktr("inactive"), Color.DARK_GRAY);
-        selectedColor = Preferences.getPreferencesColor(marktr("selected"), Color.YELLOW);
-        nodeColor = Preferences.getPreferencesColor(marktr("node"), Color.RED);
-        dfltWayColor = Preferences.getPreferencesColor(marktr("way"), darkblue);
-        incompleteColor = Preferences.getPreferencesColor(marktr("incomplete way"), darkerblue);
-        backgroundColor = Preferences.getPreferencesColor(marktr("background"), Color.BLACK);
-        untaggedColor = Preferences.getPreferencesColor(marktr("untagged"),Color.GRAY);
-        textColor = Preferences.getPreferencesColor (marktr("text"), Color.WHITE);
+        inactiveColor = Main.pref.getColor(marktr("inactive"), Color.DARK_GRAY);
+        selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
+        nodeColor = Main.pref.getColor(marktr("node"), Color.RED);
+        dfltWayColor = Main.pref.getColor(marktr("way"), darkblue);
+        incompleteColor = Main.pref.getColor(marktr("incomplete way"), darkerblue);
+        backgroundColor = Main.pref.getColor(marktr("background"), Color.BLACK);
+        untaggedColor = Main.pref.getColor(marktr("untagged"),Color.GRAY);
+        textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
         showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");

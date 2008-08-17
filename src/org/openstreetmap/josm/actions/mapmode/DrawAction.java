@@ -1,6 +1,7 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.mapmode;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
@@ -80,7 +81,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 			KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), tr("Draw"));
 		
 		//putValue("help", "Action/AddNode/Autnode");
-		selectedColor = Preferences.getPreferencesColor("selected", Color.YELLOW);
+		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
 		
 		drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
 	}

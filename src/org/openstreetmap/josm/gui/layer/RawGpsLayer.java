@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -226,14 +227,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 	}
 
 	@Override public void paint(Graphics g, MapView mv) {
-		String gpsCol = Main.pref.get("color.gps point");
-		String gpsColSpecial = Main.pref.get("color.layer "+name);
-		if (!gpsColSpecial.equals(""))
-			g.setColor(ColorHelper.html2color(gpsColSpecial));
-		else if (!gpsCol.equals(""))
-			g.setColor(ColorHelper.html2color(gpsCol));
-		else
-			g.setColor(Color.GRAY);
+		g.setColor(Main.pref.getColor(marktr("gps point"), "layer "+name, Color.gray));
 		Point old = null;
 
 		boolean force = Main.pref.getBoolean("draw.rawgps.lines.force");
@@ -328,18 +322,18 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 		JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
 		color.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				String col = Main.pref.get("color.layer "+name, Main.pref.get("color.gps point", ColorHelper.color2html(Color.gray)));
-				JColorChooser c = new JColorChooser(ColorHelper.html2color(col));
+				JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+name, Color.gray));
 				Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-				int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				switch (answer) {
 				case 0:
-					Main.pref.put("color.layer "+name, ColorHelper.color2html(c.getColor()));
+					Main.pref.putColor("layer "+name, c.getColor());
 					break;
 				case 1:
 					return;
 				case 2:
-					Main.pref.put("color.layer "+name, null);
+					Main.pref.putColor("layer "+name, null);
 					break;
 				}
 				Main.map.repaint();

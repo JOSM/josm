@@ -111,6 +111,7 @@ public class Preferences {
 		return override.containsKey(key) ? override.get(key) != null : properties.containsKey(key);
 	}
 	synchronized public String get(final String key) {
+		putDefault(key, null);
 		if (override.containsKey(key))
 			return override.get(key);
 		if (!properties.containsKey(key))
@@ -118,10 +119,7 @@ public class Preferences {
 		return properties.get(key);
 	}
 	synchronized public String get(final String key, final String def) {
-		if(!defaults.containsKey(key))
-			defaults.put(key, def);
-		else if(!defaults.get(key).equals(def))
-			System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
+		putDefault(key, def);
 		if (override.containsKey(key)) 
 			return override.get(key);
 		final String prop = properties.get(key);
@@ -147,17 +145,21 @@ public class Preferences {
 	{
 		return defaults;
 	}
+	synchronized public void putDefault(final String key, final String def) {
+		if(!defaults.containsKey(key) || defaults.get(key) == null)
+			defaults.put(key, def);
+		else if(def != null && !defaults.get(key).equals(def))
+			System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
+	}
 	
 	synchronized public boolean getBoolean(final String key) {
+		putDefault(key, null);
 		if (override.containsKey(key))
 			return override.get(key) == null ? false : Boolean.parseBoolean(override.get(key));
 		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : false;
 	}
 	synchronized public boolean getBoolean(final String key, final boolean def) {
-		if(!defaults.containsKey(key))
-			defaults.put(key, Boolean.toString(def));
-		else if(!defaults.get(key).equals(Boolean.toString(def)))
-			System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
+		putDefault(key, Boolean.toString(def));
 		if (override.containsKey(key))
 			return override.get(key) == null ? def : Boolean.parseBoolean(override.get(key));
 		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
@@ -284,13 +286,43 @@ public class Preferences {
 	 * @param def default value
 	 * @return a Color object for the configured colour, or the default value if none configured.
 	 */
-	public static Color getPreferencesColor(String colName, Color def) {
-		String colStr = Main.pref.get("color."+colName);
+	synchronized public Color getColor(String colName, Color def) {
+		String colStr = get("color."+colName);
 		if (colStr.equals("")) {
-			Main.pref.put("color."+colName, ColorHelper.color2html(def));
+			put("color."+colName, ColorHelper.color2html(def));
 			return def;
 		}
 		return ColorHelper.html2color(colStr);
+	}
+	// only for compatibility. Don't use any more.
+	public static Color getPreferencesColor(String colName, Color def)
+	{
+		return Main.pref.getColor(colName, def);
+	}
+
+	/**
+	 * Convenience method for accessing colour preferences.
+	 *
+	 * @param colName name of the colour
+	 * @param specName name of the special colour settings
+	 * @param def default value
+	 * @return a Color object for the configured colour, or the default value if none configured.
+	 */
+	synchronized public Color getColor(String colName, String specName, Color def) {
+		String colStr = get("color."+specName);
+		if(colStr.equals(""))
+		{
+			colStr = get("color."+colName);
+			if (colStr.equals("")) {
+				put("color."+colName, ColorHelper.color2html(def));
+				return def;
+			}
+		}
+		putDefault("color."+colName, ColorHelper.color2html(def));
+		return ColorHelper.html2color(colStr);
+	}
+	synchronized public void putColor(String colName, Color val) {
+		put("color."+colName, ColorHelper.color2html(val));
 	}
 
 	public int getInteger(String key, int def) {

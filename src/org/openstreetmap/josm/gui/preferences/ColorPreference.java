@@ -150,14 +150,18 @@ public class ColorPreference implements PreferenceSetting {
 			marktr("incomplete way"), ColorHelper.color2html(SimplePaintVisitor.darkerblue),
 			marktr("relation"), ColorHelper.color2html(SimplePaintVisitor.teal),
 			marktr("selected"), ColorHelper.color2html(Color.white),
+			marktr("gps marker"), ColorHelper.color2html(Color.gray),
 			marktr("gps point"), ColorHelper.color2html(Color.gray),
 			marktr("conflict"), ColorHelper.color2html(Color.gray),
 			marktr("scale"), ColorHelper.color2html(Color.white),
 			marktr("inactive"), ColorHelper.color2html(Color.darkGray),
 		};
 		for (int i = 0; i < cp.length/2; ++i)
+		{
 			if (!Main.pref.hasKey("color."+cp[i*2]))
 				Main.pref.put("color."+cp[i*2], cp[i*2+1]);
+			Main.pref.putDefault("color."+cp[i*2], cp[i*2+1]);
+		}
     }
 
 	public void ok() {

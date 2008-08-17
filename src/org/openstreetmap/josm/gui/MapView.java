@@ -214,7 +214,7 @@ public class MapView extends NavigatableComponent {
 			        BufferedImage.TYPE_INT_ARGB);
 
 		Graphics2D tempG = offscreenBuffer.createGraphics();
-		tempG.setColor(Preferences.getPreferencesColor("background", Color.BLACK));
+		tempG.setColor(Main.pref.getColor("background", Color.BLACK));
 		tempG.fillRect(0, 0, getWidth(), getHeight());
 
 		for (int i = layers.size()-1; i >= 0; --i) {

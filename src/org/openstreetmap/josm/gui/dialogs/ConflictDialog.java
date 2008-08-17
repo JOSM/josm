@@ -136,7 +136,7 @@ public final class ConflictDialog extends ToggleDialog {
 	 * Paint all conflicts that can be expressed on the main window.
 	 */
 	public void paintConflicts(final Graphics g, final NavigatableComponent nc) {
-		Color preferencesColor = Preferences.getPreferencesColor("conflict", Color.gray);
+		Color preferencesColor = Main.pref.getColor("conflict", Color.gray);
 		if (preferencesColor.equals(Color.BLACK))
 			return;
 		g.setColor(preferencesColor);

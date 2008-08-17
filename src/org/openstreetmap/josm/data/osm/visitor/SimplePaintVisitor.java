@@ -91,14 +91,14 @@ public class SimplePaintVisitor implements Visitor {
 	private int taggedNodeSize;
 
 	public void visitAll(DataSet data) {
-		inactiveColor = Preferences.getPreferencesColor(marktr("inactive"), Color.DARK_GRAY);
-		selectedColor = Preferences.getPreferencesColor(marktr("selected"), Color.WHITE);
-		nodeColor = Preferences.getPreferencesColor(marktr("node"), Color.RED);
-		dfltWayColor = Preferences.getPreferencesColor(marktr("way"), darkblue);
-		relationColor = Preferences.getPreferencesColor(marktr("relation"), teal);
-		untaggedWayColor = Preferences.getPreferencesColor(marktr("untagged way"), darkgreen);
-		incompleteColor = Preferences.getPreferencesColor(marktr("incomplete way"), darkerblue);
-		backgroundColor = Preferences.getPreferencesColor(marktr("background"), Color.BLACK);
+		inactiveColor = Main.pref.getColor(marktr("inactive"), Color.DARK_GRAY);
+		selectedColor = Main.pref.getColor(marktr("selected"), Color.WHITE);
+		nodeColor = Main.pref.getColor(marktr("node"), Color.RED);
+		dfltWayColor = Main.pref.getColor(marktr("way"), darkblue);
+		relationColor = Main.pref.getColor(marktr("relation"), teal);
+		untaggedWayColor = Main.pref.getColor(marktr("untagged way"), darkgreen);
+		incompleteColor = Main.pref.getColor(marktr("incomplete way"), darkerblue);
+		backgroundColor = Main.pref.getColor(marktr("background"), Color.BLACK);
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
 		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
@@ -343,6 +343,6 @@ public class SimplePaintVisitor implements Visitor {
 	 * FIXME: remove this once not used by plugins any longer.
 	 */
 	public static Color getPreferencesColor(String name, Color dflt) {
-		return Preferences.getPreferencesColor(name, dflt);
+		return Main.pref.getColor(name, dflt);
 	}
 }
