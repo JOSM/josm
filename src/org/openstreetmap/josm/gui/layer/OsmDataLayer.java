@@ -147,6 +147,7 @@ public class OsmDataLayer extends Layer {
 	 */
 	@Override public void paint(final Graphics g, final MapView mv) {
 		boolean inactive = Main.map.mapView.getActiveLayer() != this && Main.pref.getBoolean("draw.data.inactive_color", true);
+		boolean virtual = !inactive && Main.map.mapView.useVirtualNodes();
 		if (Main.pref.getBoolean("draw.data.downloaded_area", true)) {
 			// FIXME this is inefficient; instead a proper polygon has to be built, and instead
 			// of drawing the outline, the outlying areas should perhaps be shaded.
@@ -168,14 +169,14 @@ public class OsmDataLayer extends Layer {
 			wireframeMapPainter.setGraphics(g);
 			wireframeMapPainter.setNavigatableComponent(mv);
 			wireframeMapPainter.inactive = inactive;
-			wireframeMapPainter.visitAll(data);
+			wireframeMapPainter.visitAll(data, virtual);
 		}
 		else
 		{
 			standardMapPainter.setGraphics(g);
 			standardMapPainter.setNavigatableComponent(mv);
 			standardMapPainter.inactive = inactive;
-			standardMapPainter.visitAll(data);
+			standardMapPainter.visitAll(data, virtual);
 		}
 		Main.map.conflictDialog.paintConflicts(g, mv);
 	}

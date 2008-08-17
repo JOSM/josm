@@ -31,9 +31,10 @@ import org.openstreetmap.josm.data.projection.Projection;
  */
 public class NavigatableComponent extends JComponent implements Helpful {
 
-
 	public static final EastNorth world = Main.proj.latlon2eastNorth(new LatLon(Projection.MAX_LAT, Projection.MAX_LON));
+	public static final int snapDistance = sqr(Main.pref.getInteger("node.snap-distance", 10));
 
+	private static int sqr(int a) { return a*a;}
 	/**
 	 * The scale factor in x or y-units per pixel. This means, if scale = 10,
 	 * every physical pixel on screen are 10 x or 10 y units in the
@@ -140,7 +141,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 				continue;
 			Point sp = getPoint(n.eastNorth);
 			double dist = p.distanceSq(sp);
-			if (minDistanceSq > dist && dist < 100) {
+			if (minDistanceSq > dist && dist < snapDistance) {
 				minDistanceSq = p.distanceSq(sp);
 				minPrimitive = n;
 			}
@@ -179,7 +180,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 				double a = p.distanceSq(B);
 				double b = p.distanceSq(A);
 				double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
-				if (perDist < 100 && a < c+100 && b < c+100) {
+				if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
 					List<WaySegment> l;
 					if (nearest.containsKey(perDist)) {
 						l = nearest.get(perDist);
@@ -227,7 +228,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	public final Way getNearestWay(Point p) {
 		WaySegment nearestWaySeg = getNearestWaySegment(p);
 		return nearestWaySeg == null ? null : nearestWaySeg.way;
-    }
+	}
 
 	/**
 	 * Return the object, that is nearest to the given screen point.
@@ -239,13 +240,15 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 *
 	 * If nothing is found, return <code>null</code>.
 	 *
-	 * @param p				 The point on screen.
-	 * @return	The primitive that is nearest to the point p.
+	 * @param p The point on screen.
+	 * @return  The primitive that is nearest to the point p.
 	 */
 	public OsmPrimitive getNearest(Point p) {
 		OsmPrimitive osm = getNearestNode(p);
 		if (osm == null)
+		{
 			osm = getNearestWay(p);
+		}
 		return osm;
 	}
 
@@ -257,11 +260,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
 		if (osm == null) 
 			return Collections.emptySet();
 		return Collections.singleton(osm);
-	}
-
-	@Deprecated
-	public OsmPrimitive getNearest(Point p, boolean segmentInsteadWay) {
-		return getNearest(p);
 	}
 
 	/**
@@ -289,7 +287,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 				double a = p.distanceSq(B);
 				double b = p.distanceSq(A);
 				double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
-				if (perDist < 100 && a < c+100 && b < c+100) {
+				if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
 					nearest.add(w);
 						break;
 					}
@@ -298,7 +296,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 			}
 		for (Node n : Main.ds.nodes) {
 			if (!n.deleted && !n.incomplete
-					&& getPoint(n.eastNorth).distanceSq(p) < 100) {
+					&& getPoint(n.eastNorth).distanceSq(p) < snapDistance) {
 				nearest.add(n);
 			}
 		}
@@ -317,7 +315,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 		Collection<Node> nearest = new HashSet<Node>();
 		for (Node n : Main.ds.nodes) {
 			if (!n.deleted && !n.incomplete
-					&& getPoint(n.eastNorth).distanceSq(p) < 100) {
+					&& getPoint(n.eastNorth).distanceSq(p) < snapDistance) {
 				nearest.add(n);
 			}
 		}

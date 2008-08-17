@@ -26,9 +26,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 /**
- * A visitor that paints a simple scheme of every primitive it visits to a 
+ * A visitor that paints a simple scheme of every primitive it visits to a
  * previous set graphic environment.
- * 
+ *
  * @author imi
  */
 public class SimplePaintVisitor implements Visitor {
@@ -46,11 +46,11 @@ public class SimplePaintVisitor implements Visitor {
 	 * MapView to get screen coordinates.
 	 */
 	protected NavigatableComponent nc;
-	
+
 	public boolean inactive;
 
 	protected static final double PHI = Math.toRadians(20);
-	
+
 	/**
 	 * Preferences
 	*/
@@ -62,23 +62,20 @@ public class SimplePaintVisitor implements Visitor {
 	protected Color untaggedWayColor;
 	protected Color incompleteColor;
 	protected Color backgroundColor;
-    protected boolean showDirectionArrow;
-    protected boolean showRelevantDirectionsOnly;
+	protected boolean showDirectionArrow;
+	protected boolean showRelevantDirectionsOnly;
 	protected boolean showOrderNumber;
-	
-	private boolean fillSelectedNode;
-
-	private boolean fillUnselectedNode;
-
-	private int selectedNodeRadius;
-
-	private int unselectedNodeRadius;
-
-	private int selectedNodeSize;
-
-	private int unselectedNodeSize;
-
-	private int defaultSegmentWidth = 2;
+	protected boolean fillSelectedNode;
+	protected boolean fillUnselectedNode;
+	protected int selectedNodeRadius;
+	protected int unselectedNodeRadius;
+	protected int selectedNodeSize;
+	protected int unselectedNodeSize;
+	protected int defaultSegmentWidth = 2;
+	protected int virtualNodeSize;
+	protected int virtualNodeSpace;
+	protected int taggedNodeRadius;
+	protected int taggedNodeSize;
 
 	/**
 	 * Draw subsequent segments of same color as one Path
@@ -87,10 +84,8 @@ public class SimplePaintVisitor implements Visitor {
 	protected GeneralPath currentPath = new GeneralPath();
 
 	Rectangle bbox = new Rectangle();
-	private int taggedNodeRadius;
-	private int taggedNodeSize;
 
-	public void visitAll(DataSet data) {
+	protected void getSettings(Boolean virtual) {
 		inactiveColor = Main.pref.getColor(marktr("inactive"), Color.DARK_GRAY);
 		selectedColor = Main.pref.getColor(marktr("selected"), Color.WHITE);
 		nodeColor = Main.pref.getColor(marktr("node"), Color.RED);
@@ -102,32 +97,27 @@ public class SimplePaintVisitor implements Visitor {
 		showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
 		showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
 		showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
-		
-		selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size",
-		        5) / 2;
+		selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size", 5) / 2;
 		selectedNodeSize = selectedNodeRadius * 2;
-		unselectedNodeRadius = Main.pref.getInteger(
-		        "mappaint.node.unselected-size", 3) / 2;
+		unselectedNodeRadius = Main.pref.getInteger("mappaint.node.unselected-size", 3) / 2;
 		unselectedNodeSize = unselectedNodeRadius * 2;
-
-		taggedNodeRadius = Main.pref.getInteger(
-				"mappaint.node.tagged-size", 5) / 2;
+		taggedNodeRadius = Main.pref.getInteger("mappaint.node.tagged-size", 5) / 2;
 		taggedNodeSize = taggedNodeRadius * 2;
-
-		defaultSegmentWidth = Main.pref.getInteger(
-		        "mappaint.segment.default-width", 2);
-
-		fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected",
-		        true);
-		fillUnselectedNode = Main.pref.getBoolean(
-		        "mappaint.node.fill-unselected", false);
+		defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
+		fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
+		fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
+		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 4) / 2 : 0;
+		virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 50);
 
 		((Graphics2D)g)
-		        .setRenderingHint(
-		                RenderingHints.KEY_ANTIALIASING,
-		                Main.pref.getBoolean("mappaint.use-antialiasing", true) ? RenderingHints.VALUE_ANTIALIAS_ON
-		                        : RenderingHints.VALUE_ANTIALIAS_OFF);
+				.setRenderingHint(
+						RenderingHints.KEY_ANTIALIASING,
+						Main.pref.getBoolean("mappaint.use-antialiasing", true) ? RenderingHints.VALUE_ANTIALIAS_ON
+								: RenderingHints.VALUE_ANTIALIAS_OFF);
+	}
 
+	public void visitAll(DataSet data, Boolean virtual) {
+		getSettings(virtual);
 		// draw tagged ways first, then untagged ways. takes
 		// time to iterate through list twice, OTOH does not
 		// require changing the colour while painting...
@@ -140,25 +130,25 @@ public class SimplePaintVisitor implements Visitor {
 				osm.visit(this);
 		displaySegments(null);
 
-	    for (final OsmPrimitive osm : data.ways)
+		for (final OsmPrimitive osm : data.ways)
 			if (!osm.deleted && !osm.selected && !osm.tagged)
 				osm.visit(this);
 		displaySegments(null);
-	    
+
 		for (final OsmPrimitive osm : data.nodes)
 			if (!osm.deleted && !osm.selected)
 				osm.visit(this);
-	
+
 		for (final OsmPrimitive osm : data.getSelected())
 			if (!osm.deleted)
 				osm.visit(this);
 		displaySegments(null);
-        }
+	}
 
 	/**
-	 * Draw a small rectangle. 
+	 * Draw a small rectangle.
 	 * White if selected (as always) or red otherwise.
-	 * 
+	 *
 	 * @param n The node to draw.
 	 */
 	public void visit(Node n) {
@@ -170,7 +160,7 @@ public class SimplePaintVisitor implements Visitor {
 			drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
 		else if(n.tagged)
 			drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
-		else 
+		else
 			drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
 	}
 
@@ -181,14 +171,14 @@ public class SimplePaintVisitor implements Visitor {
 	public void visit(Way w) {
 		if (w.incomplete) return;
 
-                // show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
-                // (even if the tag is negated as in oneway=false) or the way is selected
+				// show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
+				// (even if the tag is negated as in oneway=false) or the way is selected
 
-                boolean showThisDirectionArrow = w.selected
-                                                 || (showDirectionArrow
-                                                     && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
+				boolean showThisDirectionArrow = w.selected
+												 || (showDirectionArrow
+													 && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
 		Color wayColor;
-		
+
 		if (inactive) {
 			wayColor = inactiveColor;
 		} else if (!w.tagged) {
@@ -253,7 +243,7 @@ public class SimplePaintVisitor implements Visitor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Draw an number of the order of the two consecutive nodes within the
 	 * parents way
@@ -270,7 +260,7 @@ public class SimplePaintVisitor implements Visitor {
 			g.setColor(c);
 			g.drawString(""+orderNumber, x, y);
 		}
-    }
+	}
 
 	/**
 	 * Draw the node as small rectangle with the given color.
@@ -282,7 +272,7 @@ public class SimplePaintVisitor implements Visitor {
 		if (size > 1) {
 			Point p = nc.getPoint(n.eastNorth);
 			if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
-			        || (p.y > nc.getHeight()))
+					|| (p.y > nc.getHeight()))
 				return;
 			g.setColor(color);
 			if (fill) {
@@ -293,41 +283,61 @@ public class SimplePaintVisitor implements Visitor {
 		}
 	}
 
+	protected void drawVirtualNode(Point p1, Point p2, Color col)
+	{
+		if(virtualNodeSize > 0)
+		{
+			int xd = p2.x-p1.x; if(xd < 0) xd = -xd;
+			int yd = p2.y-p1.y; if(yd < 0) yd = -yd;
+			if(xd+yd > virtualNodeSpace)
+			{
+				int x = (p1.x+p2.x)/2;
+				int y = (p1.y+p2.y)/2;
+				currentPath.moveTo(x-5, y);
+				currentPath.lineTo(x+5, y);
+				currentPath.moveTo(x, y-5);
+				currentPath.lineTo(x, y+5);
+			}
+		}
+	}
+
 	/**
 	 * Draw a line with the given color.
 	 */
 	protected void drawSegment(Point p1, Point p2, Color col, boolean showDirection) {
 
 		if (col != currentColor) displaySegments(col);
-		
+
 		if (isSegmentVisible(p1, p2)) {
+			drawVirtualNode(p1, p2, col);
+
 			currentPath.moveTo(p1.x, p1.y);
 			currentPath.lineTo(p2.x, p2.y);
-			
+
 			if (showDirection) {
 				double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
 				currentPath.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
 				currentPath.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
-				currentPath.lineTo(p2.x, p2.y);  
+				currentPath.lineTo(p2.x, p2.y);
 			}
 		}
 	}
-        
-    private boolean isSegmentVisible(Point p1, Point p2) {
-        if ((p1.x < 0) && (p2.x < 0)) return false;
-        if ((p1.y < 0) && (p2.y < 0)) return false;
-        if ((p1.x > nc.getWidth()) && (p2.x > nc.getWidth())) return false;
-        if ((p1.y > nc.getHeight()) && (p2.y > nc.getHeight())) return false;
-        return true;
-    }
-	
+
+	protected boolean isSegmentVisible(Point p1, Point p2) {
+		if ((p1.x < 0) && (p2.x < 0)) return false;
+		if ((p1.y < 0) && (p2.y < 0)) return false;
+		if ((p1.x > nc.getWidth()) && (p2.x > nc.getWidth())) return false;
+		if ((p1.y > nc.getHeight()) && (p2.y > nc.getHeight())) return false;
+		return true;
+	}
+
 	public void setGraphics(Graphics g) {
 		this.g = g;
 	}
 
 	public void setNavigatableComponent(NavigatableComponent nc) {
-    	this.nc = nc;
-    }
+		this.nc = nc;
+	}
 
 	protected void displaySegments(Color newColor) {
 		if (currentPath != null) {
@@ -336,13 +346,5 @@ public class SimplePaintVisitor implements Visitor {
 			currentPath = new GeneralPath();
 			currentColor = newColor;
 		}
-	}
-	
-	/**
-	 * Provided for backwards compatibility only.
-	 * FIXME: remove this once not used by plugins any longer.
-	 */
-	public static Color getPreferencesColor(String name, Color dflt) {
-		return Main.pref.getColor(name, dflt);
 	}
 }

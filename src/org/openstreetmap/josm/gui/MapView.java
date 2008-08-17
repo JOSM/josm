@@ -181,6 +181,20 @@ public class MapView extends NavigatableComponent {
 		layer.destroy();
 	}
 
+	private Boolean virtualnodes = false;
+	public void enableVirtualNodes(Boolean state)
+	{
+		if(virtualnodes != state)
+		{
+			virtualnodes = state;
+			repaint();
+		}
+	}
+	public Boolean useVirtualNodes()
+	{
+		return virtualnodes;
+	}
+
 	/**
 	 * Moves the layer to the given new position. No event is fired.
 	 * @param layer		The layer to move

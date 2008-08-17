@@ -26,6 +26,7 @@ public class DrawingPreference implements PreferenceSetting {
 	private JCheckBox interestingDirections = new JCheckBox(tr("Only interesting direction hints (e.g. with oneway tag)."));
 	private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
 	private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
+	private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
 	private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
 	private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
 
@@ -120,7 +121,12 @@ public class DrawingPreference implements PreferenceSetting {
 		sourceBounds.setToolTipText(tr("Draw the boundaries of data loaded from the server."));
 		sourceBounds.setSelected(Main.pref.getBoolean("draw.data.downloaded_area", true));
 		gui.display.add(sourceBounds, GBC.eop().insets(20,0,0,0));
-		
+
+		// virtual nodes
+		virtualNodes.setToolTipText(tr("Draw virtual nodes in select mode for easy way modification."));
+		virtualNodes.setSelected(Main.pref.getInteger("mappaint.node.virtual-size", 4) != 0);
+		gui.display.add(virtualNodes, GBC.eop().insets(20,0,0,0));
+
 		// background layers in inactive color
 		inactive.setToolTipText(tr("Draw the inactive data layers in a different color."));
 		inactive.setSelected(Main.pref.getBoolean("draw.data.inactive_color", true));
@@ -141,5 +147,6 @@ public class DrawingPreference implements PreferenceSetting {
 		Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
 		Main.pref.put("draw.data.inactive_color", inactive.isSelected());
 		Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
+		Main.pref.put("mappaint.node.virtual-size", virtualNodes.isSelected() ? "4" : "0");
     }
 }

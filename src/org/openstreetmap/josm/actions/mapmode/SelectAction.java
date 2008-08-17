@@ -10,20 +10,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
+import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.RotateCommand;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -107,6 +114,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		super.enterMode();
 		Main.map.mapView.addMouseListener(this);
 		Main.map.mapView.addMouseMotionListener(this);
+		Main.map.mapView.enableVirtualNodes(Main.pref.getInteger("mappaint.node.virtual-size", 4) != 0);
 	}
 
 	@Override public void exitMode() {
@@ -114,6 +122,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		selectionManager.unregister(Main.map.mapView);
 		Main.map.mapView.removeMouseListener(this);
 		Main.map.mapView.removeMouseMotionListener(this);
+		Main.map.mapView.enableVirtualNodes(false);
 	}
 
 	/**
@@ -194,6 +203,46 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		didMove = true;
 	}
 
+	private Collection<OsmPrimitive> getNearestCollectionVirtual(Point p) {
+		MapView c = Main.map.mapView;
+		OsmPrimitive osm = c.getNearestNode(p);
+		if (osm == null)
+		{
+			WaySegment nearestWaySeg = c.getNearestWaySegment(p);
+			if(nearestWaySeg != null)
+			{
+				osm = nearestWaySeg.way;
+				if(Main.pref.getInteger("mappaint.node.virtual-size", 4) > 0)
+				{
+					Way w = (Way)osm;
+					Point p1 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex).eastNorth);
+					Point p2 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex+1).eastNorth);
+					int xd = p2.x-p1.x; if(xd < 0) xd = -xd;
+					int yd = p2.y-p1.y; if(yd < 0) yd = -yd;
+					if(xd+yd > Main.pref.getInteger("mappaint.node.virtual-space", 50))
+					{
+						Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
+						if(p.distanceSq(pc) < Main.map.mapView.snapDistance)
+						{
+							Collection<Command> cmds = new LinkedList<Command>();
+							Node n = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
+							cmds.add(new AddCommand(n));
+
+							Way wnew = new Way(w);
+							wnew.nodes.add(nearestWaySeg.lowerIndex+1, n);
+							cmds.add(new ChangeCommand(w, wnew));
+							Main.main.undoRedo.add(new SequenceCommand(tr("Add a new node to an existing way"), cmds));
+							osm = n;
+						}
+					}
+				}
+			}
+		}
+		if (osm == null) 
+			return Collections.emptySet();
+		return Collections.singleton(osm);
+	}
+
 	/**
 	 * Look, whether any object is selected. If not, select the nearest node.
 	 * If there are no nodes in the dataset, do nothing.
@@ -215,8 +264,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		didMove = false;
 		initialMoveThresholdExceeded = false;
 
-		Collection<OsmPrimitive> osmColl =
-			Main.map.mapView.getNearestCollection(e.getPoint());
+		Collection<OsmPrimitive> osmColl = getNearestCollectionVirtual(e.getPoint());
 
 		if (ctrl && shift) {
 			if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, true, false);
@@ -288,7 +336,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	}
 
 	public void selectPrims(Collection<OsmPrimitive> selectionList, boolean shift, boolean ctrl) {
-	    if (shift && ctrl)
+		if (shift && ctrl)
 			return; // not allowed together
 
 		Collection<OsmPrimitive> curSel;
@@ -304,7 +352,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 				curSel.add(osm);
 		Main.ds.setSelected(curSel);
 		Main.map.mapView.repaint();
-    }
+	}
 	
 	@Override public String getModeHelpText() {
 		if (mode == Mode.select) {
