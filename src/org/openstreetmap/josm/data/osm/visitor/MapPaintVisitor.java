@@ -155,17 +155,17 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 				if(fillAreas)
 				{
 					// hack to make direction arrows visible against filled background
-					if (showDirection)
-						drawSeg(lastN, n, w.selected ? selectedColor : untaggedColor, showDirection, width, true);
+					if (showDirection || virtualNodeSize != 0)
+						drawSeg(lastN, n, w.selected ? selectedColor : untaggedColor, showDirection, width, false, false);
 				}
 				else
-					drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, true);
+					drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, true, true);
 			} else {
 				if (realWidth > 0 && useRealWidth && !showDirection) {
 					int tmpWidth = (int) (100 /  (float) (circum / realWidth));
 					if (tmpWidth > width) width = tmpWidth;
 				}
-				drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed);
+				drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed, true);
 			}
 
 			if (showOrderNumber)
@@ -226,10 +226,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	 */
 	protected void drawSegment(Node n1, Node n2, Color col, boolean showDirection) {
 		if (useRealWidth && showDirection) showDirection = false;
-		drawSeg(n1, n2, col, showDirection, 1, false);
+		drawSeg(n1, n2, col, showDirection, 1, false, true);
 	}
 
-	private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, boolean dashed) {
+	private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, boolean dashed, boolean drawway) {
 		if (col != currentColor || width != currentWidth || dashed != currentDashed) {
 			displaySegments(col, width, dashed);
 		}
@@ -240,11 +240,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			return;
 		}
 		drawVirtualNode(p1, p2, col);
-		currentPath.moveTo(p1.x, p1.y);
-		currentPath.lineTo(p2.x, p2.y);
+		if(drawway)
+		{
+			currentPath.moveTo(p1.x, p1.y);
+			currentPath.lineTo(p2.x, p2.y);
+		}
 
 		if (showDirection) {
 			double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
+			if(!drawway)
+				currentPath.moveTo(p2.x, p2.y);
 			currentPath.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
 			currentPath.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
 			currentPath.lineTo(p2.x, p2.y);
@@ -320,14 +325,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		for (final OsmPrimitive osm : noAreaWays)
 			osm.visit(this);
 
-		for (final OsmPrimitive osm : data.nodes)
-			if (!osm.incomplete && !osm.deleted)
-				osm.visit(this);
-
 		for (final OsmPrimitive osm : data.getSelected())
 			if (!osm.incomplete && !osm.deleted){
 				osm.visit(this);
 			}
+
+		for (final OsmPrimitive osm : data.nodes)
+			if (!osm.incomplete && !osm.deleted)
+				osm.visit(this);
 		displaySegments();
 	}
 

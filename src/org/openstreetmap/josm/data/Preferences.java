@@ -333,6 +333,7 @@ public class Preferences {
 	}
 
 	synchronized public int getInteger(String key, int def) {
+		putDefault(key, Integer.toString(def));
 		String v = get(key);
 		if(null == v)
 			return def;
