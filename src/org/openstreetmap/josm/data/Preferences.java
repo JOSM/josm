@@ -20,13 +20,12 @@ import java.util.Map.Entry;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ColorHelper;
 
-
 /**
  * This class holds all preferences for JOSM.
- * 
+ *
  * Other classes can register their beloved properties here. All properties will be
  * saved upon set-access.
- * 
+ *
  * @author imi
  */
 public class Preferences {
@@ -81,35 +80,35 @@ public class Preferences {
 	 * @return A list of all existing directories where resources could be stored.
 	 */
 	public Collection<String> getAllPossiblePreferenceDirs() {
-	    LinkedList<String> locations = new LinkedList<String>();
-        locations.add(Main.pref.getPreferencesDir());
-        String s;
-        if ((s = System.getenv("JOSM_RESOURCES")) != null) {
-	    	if (!s.endsWith("/") && !s.endsWith("\\"))
-	    		s = s + "/";
-        	locations.add(s);
-        }
-        if ((s = System.getProperty("josm.resources")) != null) {
-	    	if (!s.endsWith("/") && !s.endsWith("\\"))
-	    		s = s + "/";
-        	locations.add(s);
-        }
-       	String appdata = System.getenv("APPDATA");
-       	if (System.getenv("ALLUSERSPROFILE") != null && appdata != null && appdata.lastIndexOf("\\") != -1) {
-       		appdata = appdata.substring(appdata.lastIndexOf("\\"));
-       		locations.add(System.getenv("ALLUSERSPROFILE")+appdata+"/JOSM/");
-       	}
-       	locations.add("/usr/local/share/josm/");
-       	locations.add("/usr/local/lib/josm/");
-       	locations.add("/usr/share/josm/");
-       	locations.add("/usr/lib/josm/");
-	    return locations;
+		LinkedList<String> locations = new LinkedList<String>();
+		locations.add(Main.pref.getPreferencesDir());
+		String s;
+		if ((s = System.getenv("JOSM_RESOURCES")) != null) {
+			if (!s.endsWith("/") && !s.endsWith("\\"))
+				s = s + "/";
+			locations.add(s);
+		}
+		if ((s = System.getProperty("josm.resources")) != null) {
+			if (!s.endsWith("/") && !s.endsWith("\\"))
+				s = s + "/";
+			locations.add(s);
+		}
+		String appdata = System.getenv("APPDATA");
+		if (System.getenv("ALLUSERSPROFILE") != null && appdata != null && appdata.lastIndexOf("\\") != -1) {
+			appdata = appdata.substring(appdata.lastIndexOf("\\"));
+			locations.add(System.getenv("ALLUSERSPROFILE")+appdata+"/JOSM/");
+		}
+		locations.add("/usr/local/share/josm/");
+		locations.add("/usr/local/lib/josm/");
+		locations.add("/usr/share/josm/");
+		locations.add("/usr/lib/josm/");
+		return locations;
 	}
-
 
 	synchronized public boolean hasKey(final String key) {
 		return override.containsKey(key) ? override.get(key) != null : properties.containsKey(key);
 	}
+
 	synchronized public String get(final String key) {
 		putDefault(key, null);
 		if (override.containsKey(key))
@@ -118,15 +117,17 @@ public class Preferences {
 			return "";
 		return properties.get(key);
 	}
+
 	synchronized public String get(final String key, final String def) {
 		putDefault(key, def);
-		if (override.containsKey(key)) 
+		if (override.containsKey(key))
 			return override.get(key);
 		final String prop = properties.get(key);
 		if (prop == null || prop.equals(""))
 			return def;
 		return prop;
 	}
+
 	synchronized public Map<String, String> getAllPrefix(final String prefix) {
 		final Map<String,String> all = new TreeMap<String,String>();
 		for (final Entry<String,String> e : properties.entrySet())
@@ -140,24 +141,26 @@ public class Preferences {
 					all.put(e.getKey(), e.getValue());
 		return all;
 	}
-	
+
 	synchronized public Map<String, String> getDefaults()
 	{
 		return defaults;
 	}
+
 	synchronized public void putDefault(final String key, final String def) {
 		if(!defaults.containsKey(key) || defaults.get(key) == null)
 			defaults.put(key, def);
 		else if(def != null && !defaults.get(key).equals(def))
 			System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
 	}
-	
+
 	synchronized public boolean getBoolean(final String key) {
 		putDefault(key, null);
 		if (override.containsKey(key))
 			return override.get(key) == null ? false : Boolean.parseBoolean(override.get(key));
 		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : false;
 	}
+
 	synchronized public boolean getBoolean(final String key, final boolean def) {
 		putDefault(key, Boolean.toString(def));
 		if (override.containsKey(key))
@@ -173,6 +176,7 @@ public class Preferences {
 		save();
 		firePreferenceChanged(key, value);
 	}
+
 	synchronized public void put(final String key, final boolean value) {
 		properties.put(key, Boolean.toString(value));
 		save();
@@ -200,7 +204,7 @@ public class Preferences {
 			e.printStackTrace();
 			// do not message anything, since this can be called from strange
 			// places.
-		}		
+		}
 	}
 
 	public void load() throws IOException {
@@ -278,10 +282,10 @@ public class Preferences {
 		}
 		out.close();
 	}
-	
+
 	/**
 	 * Convenience method for accessing colour preferences.
-	 * 
+	 *
 	 * @param colName name of the colour
 	 * @param def default value
 	 * @return a Color object for the configured colour, or the default value if none configured.
@@ -294,7 +298,9 @@ public class Preferences {
 		}
 		return ColorHelper.html2color(colStr);
 	}
+
 	// only for compatibility. Don't use any more.
+	@Deprecated
 	public static Color getPreferencesColor(String colName, Color def)
 	{
 		return Main.pref.getColor(colName, def);
@@ -321,21 +327,21 @@ public class Preferences {
 		putDefault("color."+colName, ColorHelper.color2html(def));
 		return ColorHelper.html2color(colStr);
 	}
+
 	synchronized public void putColor(String colName, Color val) {
 		put("color."+colName, ColorHelper.color2html(val));
 	}
 
-	public int getInteger(String key, int def) {
-	    String v = get(key);
-	    if(null == v)
-	    	return def;
-	    
-	    try {
-	    	return Integer.parseInt(v);
-	    } catch(NumberFormatException e) {
-	    	// fall out
-	    }
-	    
-	    return def;
-    }
+	synchronized public int getInteger(String key, int def) {
+		String v = get(key);
+		if(null == v)
+			return def;
+
+		try {
+			return Integer.parseInt(v);
+		} catch(NumberFormatException e) {
+			// fall out
+		}
+		return def;
+	}
 }

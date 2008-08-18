@@ -40,6 +40,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 			new JTextField(11),
 			new JTextField(11) };
 	final JTextArea osmUrl = new JTextArea();
+	String noteUrl = tr("You can paste an URL here to download the area.");
 	String oldUrl = "";
 	
 	final JLabel sizeCheck = new JLabel();
@@ -47,7 +48,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 	public void addGui(final DownloadDialog gui) {
 
 		JPanel dlg = new JPanel(new GridBagLayout());
-		osmUrl.setText(tr("You can paste an URL here to download the area."));
+		osmUrl.setText(noteUrl);
 
 		final FocusListener dialogUpdater = new FocusAdapter() {
 			@Override public void focusLost(FocusEvent e) {
@@ -168,7 +169,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 			zoom++;
 		}
 		// setting old URL prevents refresh based on this URL
-		oldUrl = "http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom;
+		oldUrl = noteUrl+"\n"+"http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom;
 		osmUrl.setText(oldUrl);
 	}
 	
