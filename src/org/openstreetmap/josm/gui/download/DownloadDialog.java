@@ -23,19 +23,19 @@ import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Main download dialog.
- * 
+ *
  * Can be extended by plugins in two ways:
  * (1) by adding download tasks that are then called with the selected bounding box
  * (2) by adding "DownloadSelection" objects that implement different ways of selecting a bounding box
- * 
+ *
  * @author Frederik Ramm <frederik@remote.org>
  *
  */
 public class DownloadDialog extends JPanel {
-	
+
 	// the JOptionPane that contains this dialog. required for the closeDialog() method.
 	private JOptionPane optionPane;
-	
+
 	public interface DownloadTask {
 		/**
 		 * Execute the download.
@@ -62,19 +62,19 @@ public class DownloadDialog extends JPanel {
 	public final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
 	public final JTabbedPane tabpane = new JTabbedPane();
 	public final JCheckBox newLayer;
-	
+
 	public double minlon;
 	public double minlat;
 	public double maxlon;
 	public double maxlat;
-	
-	
+
+
 	public DownloadDialog() {
 		setLayout(new GridBagLayout());
-		
+
 		downloadTasks.add(new DownloadOsmTask());
 		downloadTasks.add(new DownloadGpsTask());
-		
+
 		// adding the download tasks
 		add(new JLabel(tr("Data Sources and Types")), GBC.eol().insets(0,5,0,0));
 		for (DownloadTask task : downloadTasks) {
@@ -84,24 +84,24 @@ public class DownloadDialog extends JPanel {
 				task.getCheckBox().setSelected(Main.pref.getBoolean("download."+task.getPreferencesSuffix()));
 			}
 		}
-		
+
 		// predefined download selections
 		downloadSelections.add(new BoundingBoxSelection());
-		downloadSelections.add(new BookmarkSelection());	
+		downloadSelections.add(new BookmarkSelection());
 		downloadSelections.add(new WorldChooser());
-		
+
 		// add selections from plugins
 		for (PluginProxy p : Main.plugins) {
 			p.addDownloadSelection(downloadSelections);
 		}
-		
+
 		// now everybody may add their tab to the tabbed pane
 		// (not done right away to allow plugins to remove one of
 		// the default selectors!)
 		for (DownloadSelection s : downloadSelections) {
 			s.addGui(this);
 		}
-		
+
 		if (Main.map != null) {
 			MapView mv = Main.map.mapView;
 			minlon = mv.getLatLon(0, mv.getHeight()).lon();
@@ -110,31 +110,45 @@ public class DownloadDialog extends JPanel {
 			maxlat = mv.getLatLon(mv.getWidth(), 0).lat();
 			boundingBoxChanged(null);
 		}
+		else if (Main.pref.hasKey("osm-download.bounds")) {
+			// read the bounding box from the preferences
+			try {
+				String bounds[] = Main.pref.get("osm-download.bounds").split(";");
+				minlat = Double.parseDouble(bounds[0]);
+				minlon = Double.parseDouble(bounds[1]);
+				maxlat = Double.parseDouble(bounds[2]);
+				maxlon = Double.parseDouble(bounds[3]);
+				boundingBoxChanged(null);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
 		newLayer = new JCheckBox(tr("Download as new layer"), Main.pref.getBoolean("download.newlayer", false));
 		add(newLayer, GBC.eol().insets(0,5,0,0));
 
 		add(new JLabel(tr("Download Area")), GBC.eol().insets(0,5,0,0));
 		add(tabpane, GBC.eol().fill());
-		
+
 		try {
 			tabpane.setSelectedIndex(Integer.parseInt(Main.pref.get("download.tab", "0")));
 		} catch (Exception ex) {
 			Main.pref.put("download.tab", "0");
 		}
 	}
-	
+
 	/**
-	 * Distributes a "bounding box changed" from one DownloadSelection 
-	 * object to the others, so they may update or clear their input 
+	 * Distributes a "bounding box changed" from one DownloadSelection
+	 * object to the others, so they may update or clear their input
 	 * fields.
-	 * 
+	 *
 	 * @param eventSource - the DownloadSelection object that fired this notification.
 	 */
 	public void boundingBoxChanged(DownloadSelection eventSource) {
 		for (DownloadSelection s : downloadSelections) {
 			if (s != eventSource) s.boundingBoxChanged(this);
-		}	
+		}
 	}
 
 	/*
@@ -143,11 +157,11 @@ public class DownloadDialog extends JPanel {
 	public int getSelectedTab() {
 		return tabpane.getSelectedIndex();
 	}
-	
+
 	/**
 	 * Closes the download dialog. This is intended to be called by one of
 	 * the various download area selection "plugins".
-	 * 
+	 *
 	 * @param download true to download selected data, false to cancel download
 	 */
 	public void closeDownloadDialog(boolean download) {
@@ -159,6 +173,6 @@ public class DownloadDialog extends JPanel {
 	 * @param optionPane
 	 */
 	public void setOptionPane(JOptionPane optionPane) {
-    	this.optionPane = optionPane;
-    }
+		this.optionPane = optionPane;
+	}
 }
