@@ -330,10 +330,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 				osm.visit(this);
 			}
 
+		displaySegments();
+
 		for (final OsmPrimitive osm : data.nodes)
 			if (!osm.incomplete && !osm.deleted)
 				osm.visit(this);
-		displaySegments();
 	}
 
 	/**
