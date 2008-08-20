@@ -59,8 +59,9 @@ public class NmeaReader {
 	public static enum GPRMC {
 		TIME(1),
 		/** Warning from the receiver (A = data ok, V = warning) */
-		RECEIVER_WARNING(2), WIDTH_NORTH(3), WIDTH_NORTH_NAME(4), LENGTH_EAST(5), LENGTH_EAST_NAME(
-		        6),
+		RECEIVER_WARNING(2), 
+		WIDTH_NORTH(3), WIDTH_NORTH_NAME(4), 
+		LENGTH_EAST(5), LENGTH_EAST_NAME(6),
 		/** Speed in knots */
 		SPEED(7), COURSE(8), DATE(9),
 		/** magnetic declination */
@@ -167,17 +168,19 @@ public class NmeaReader {
 		}
 
 		int latdeg = Integer.parseInt(widthNorth.substring(0, 2));
-		if ("S".equals(e[GPRMC.WIDTH_NORTH_NAME.position])) {
-			latdeg = -latdeg;
-		}
 		double latmin = Double.parseDouble(widthNorth.substring(2));
+		double lat = latdeg + latmin / 60;
+		if ("S".equals(e[GPRMC.WIDTH_NORTH_NAME.position])) {
+			lat = -lat;
+		}	
 
 		int londeg = Integer.parseInt(lengthEast.substring(0, 3));
-		if ("W".equals(e[GPRMC.LENGTH_EAST_NAME.position])) {
-			londeg = -londeg;
-		}
 		double lonmin = Double.parseDouble(lengthEast.substring(3));
-
-		return new LatLon(latdeg + latmin / 60, londeg + lonmin / 60);
+		double lon = londeg + lonmin / 60;
+		if ("W".equals(e[GPRMC.LENGTH_EAST_NAME.position])) {
+			lon = -lon;
+		}
+		
+		return new LatLon(lat, lon);
 	}
 }
