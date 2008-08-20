@@ -329,7 +329,7 @@ public class Preferences {
 	}
 
 	synchronized public void putColor(String colName, Color val) {
-		put("color."+colName, ColorHelper.color2html(val));
+		put("color."+colName, val != null ? ColorHelper.color2html(val) : null);
 	}
 
 	synchronized public int getInteger(String key, int def) {
@@ -340,6 +340,20 @@ public class Preferences {
 
 		try {
 			return Integer.parseInt(v);
+		} catch(NumberFormatException e) {
+			// fall out
+		}
+		return def;
+	}
+
+	synchronized public double getDouble(String key, double def) {
+		putDefault(key, Double.toString(def));
+		String v = get(key);
+		if(null == v)
+			return def;
+
+		try {
+			return Double.parseDouble(v);
 		} catch(NumberFormatException e) {
 			// fall out
 		}
