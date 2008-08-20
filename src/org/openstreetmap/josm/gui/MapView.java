@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Transparency;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
@@ -83,6 +85,11 @@ public class MapView extends NavigatableComponent {
 	 */
 	private Layer activeLayer;
 	
+	/**
+	 * The last event performed by mouse.
+	 */
+	public MouseEvent lastMEvent;
+
 	private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 	
 	private BufferedImage offscreenBuffer;
@@ -126,6 +133,16 @@ public class MapView extends NavigatableComponent {
 		DataSet.selListeners.add(new SelectionChangedListener(){
 			public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
 				repaint();
+			}
+		});
+
+		//store the last mouse action
+		this.addMouseMotionListener(new MouseMotionListener() {
+			public void mouseDragged(MouseEvent e) {
+				mouseMoved(e);
+			}
+			public void mouseMoved(MouseEvent e) {
+				lastMEvent = e;
 			}
 		});
 	}

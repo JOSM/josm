@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.awt.event.MouseMotionListener;
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
@@ -37,7 +40,6 @@ public final class PasteAction extends JosmAction {
 		DataSet pasteBuffer = Main.pasteBuffer;
 
 		/* Find the middle of the pasteBuffer area */ 
-		EastNorth centre = Main.map.mapView.getCenter();
 		double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
 		for (Node n : pasteBuffer.nodes) {
 			double east = n.eastNorth.east();
@@ -47,8 +49,16 @@ public final class PasteAction extends JosmAction {
 			if (north > maxNorth) { maxNorth = north; } 
 			if (north < minNorth) { minNorth = north; } 
 		}
-		double offsetEast = centre.east() - (maxEast + minEast)/2.0;
-		double offsetNorth = centre.north() - (maxNorth + minNorth)/2.0; 
+
+		EastNorth mPosition;
+		if((e.getModifiers() & ActionEvent.CTRL_MASK) ==0){
+			mPosition = Main.map.mapView.getCenter();
+		} else {
+			mPosition = Main.map.mapView.getEastNorth(Main.map.mapView.lastMEvent.getX(), Main.map.mapView.lastMEvent.getY());
+		};
+
+		double offsetEast  = mPosition.east() - (maxEast + minEast)/2.0;
+		double offsetNorth = mPosition.north() - (maxNorth + minNorth)/2.0;
 		
 		HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>(); 
 		  /* temporarily maps old nodes to new so we can do a true deep copy */
