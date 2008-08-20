@@ -65,6 +65,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 						plugin.info.name) + "\n"+ (plugin.info.author != null ?
 						tr("According to the information within the plugin, the author is {0}.",
 						plugin.info.author) : "") + "\n" +
+						tr("Try updating to the newest version of this plugin before reporting a bug.") +
 						tr("Should the plugin be disabled?"),
 						tr("Disable plugin"),
 						JOptionPane.YES_NO_OPTION);
