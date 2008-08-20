@@ -2,9 +2,9 @@
 
 package org.openstreetmap.josm.gui.dialogs;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
-import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -44,8 +45,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -55,11 +56,11 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.ForwardActionListener;
 import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -271,7 +272,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	 * @param row
 	 */
 	void membershipEdit(int row) {	
-		final RelationEditor editor = new RelationEditor((Relation)membershipData.getValueAt(row, 0));
+		final RelationEditor editor = new RelationEditor((Relation)membershipData.getValueAt(row, 0), 
+				(Collection<RelationMember>) membershipData.getValueAt(row, 1) );
 		editor.setVisible(true);
 	}
 
@@ -490,6 +492,29 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		});
 		
+		membershipTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			@Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+				if (c instanceof JLabel) {
+					Collection<RelationMember> col = (Collection<RelationMember>) value;
+					
+					String text = null;
+					for (RelationMember r : col) {
+						if (text == null) {
+							text = r.role;
+						}
+						else if (!text.equals(r.role)) {
+							text = tr("<different>");
+							break;
+						}
+					}
+					
+					((JLabel)c).setText(text);
+				}
+				return c;
+			}
+		});
+		
 		// combine both tables and wrap them in a scrollPane
 		JPanel bothTables = new JPanel();
 		bothTables.setLayout(new GridBagLayout());
@@ -620,31 +645,26 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		
 		membershipData.setRowCount(0);
 		
-		Map<Relation, Integer> valueCountM = new HashMap<Relation, Integer>();
-		TreeMap<Relation, Collection<String>> roles = new TreeMap<Relation, Collection<String>>();
+		TreeMap<Relation, Collection<RelationMember>> roles = new TreeMap<Relation, Collection<RelationMember>>();
 		for (Relation r : Main.ds.relations) {
 			if (!r.deleted && !r.incomplete) {
 				for (RelationMember m : r.members) {
 					if (newSelection.contains(m.member)) {
-						Collection<String> value = roles.get(r);
+						Collection<RelationMember> value = roles.get(r);
 						if (value == null) {
-							value = new TreeSet<String>();
+							value = new HashSet<RelationMember>();
 							roles.put(r, value);
 						}
-						value.add(m.role);
-						valueCountM.put(r, keyCount.containsKey(r) ? keyCount.get(r)+1 : 1);
+						value.add(m);
 					}
 				}
 			}
 		}
 		
-		for (Entry<Relation, Collection<String>> e : roles.entrySet()) {
-			//JComboBox value = new JComboBox(e.getValue().toArray());
-			//value.setEditable(true);
-			//value.getEditor().setItem(e.getValue().size() > 1 || valueCount.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next());
-			String value = e.getValue().size() > 1 || valueCountM.get(e.getKey()) != newSelection.size() ? tr("<different>") : e.getValue().iterator().next();
-			membershipData.addRow(new Object[]{e.getKey(), value});
+		for (Entry<Relation, Collection<RelationMember>> e : roles.entrySet()) {
+			membershipData.addRow(new Object[]{e.getKey(), e.getValue()});
 		}
+		
 		membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
 	}
 }

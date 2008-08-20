@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map.Entry;
@@ -165,12 +166,25 @@ public class RelationEditor extends JFrame {
 	/**
 	 * Creates a new relation editor for the given relation. The relation
 	 * will be saved if the user selects "ok" in the editor.
-	 *
+	 * 
 	 * If no relation is given, will create an editor for a new relation.
-	 *
+	 * 
 	 * @param relation relation to edit, or null to create a new one.
 	 */
 	public RelationEditor(Relation relation)
+	{
+		this(relation, null);
+	}
+
+	/**
+	 * Creates a new relation editor for the given relation. The relation
+	 * will be saved if the user selects "ok" in the editor.
+	 * 
+	 * If no relation is given, will create an editor for a new relation.
+	 * 
+	 * @param relation relation to edit, or null to create a new one.
+	 */
+	public RelationEditor(Relation relation, Collection<RelationMember> selectedMembers )
 	{
 		super(relation == null ? tr("Create new relation") :
 			relation.id == 0 ? tr ("Edit new relation") :
@@ -324,6 +338,25 @@ public class RelationEditor extends JFrame {
 		tabPane.add(bothTables, "Basic");
 
 		refreshTables();
+
+		if (selectedMembers != null) {
+			boolean scrolled = false;
+			for (int i = 0; i < memberData.getRowCount(); i++) {		
+				for (RelationMember m : selectedMembers) {
+					if (m.member == memberData.getValueAt(i, 1)
+					        && m.role.equals(memberData.getValueAt(i, 0))) {
+						memberTable.addRowSelectionInterval(i, i);
+						if (!scrolled) {
+							// Ensure that the first member is visible
+							memberTable.scrollRectToVisible(memberTable.getCellRect(i, 0, true));
+							scrolled = true;
+						}
+						break;
+					}
+				}
+				
+			}	
+		}
 
 		setSize(new Dimension(600, 500));
 		setLocationRelativeTo(Main.parent);
