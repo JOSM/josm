@@ -80,7 +80,7 @@ public class GpxLayer extends Layer {
 	private int computeCacheMaxLineLengthUsed;
 	private Color computeCacheColorUsed;
 	private boolean computeCacheColored;
-	
+
 	public GpxLayer(GpxData d) {
 		super((String) d.attr.get("name"));
 		data = d;
@@ -161,13 +161,13 @@ public class GpxLayer extends Layer {
 				for (GpxTrack track : data.tracks)
 					for (Collection<WayPoint> seg : track.trackSegs)
 						for (WayPoint point : seg)
-							if (point.attr.containsKey("name") || point.attr.containsKey("desc")) 
+							if (point.attr.containsKey("name") || point.attr.containsKey("desc"))
 								namedTrackPoints.waypoints.add(point);
 
-	            MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name), associatedFile, me);
-	            if (ml.data.size() > 0) {
-	            	Main.main.addLayer(ml);
-	            }
+				MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name), associatedFile, me);
+				if (ml.data.size() > 0) {
+					Main.main.addLayer(ml);
+				}
 			}
 		});
 
@@ -190,17 +190,16 @@ public class GpxLayer extends Layer {
 				fc.setMultiSelectionEnabled(true);
 				if(fc.showOpenDialog(Main.parent) == JFileChooser.APPROVE_OPTION) {
 					if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
-						Main.pref.put("markers.lastaudiodirectory", fc
-								.getCurrentDirectory().getAbsolutePath());
-					
-					// FIXME: properly support multi-selection here. 
+						Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
+
+					// FIXME: properly support multi-selection here.
 					// Calling importAudio several times just creates N maker layers, which
 					// is sub-optimal.
 					File sel[] = fc.getSelectedFiles();
 					if(sel != null)
-						for (int i = 0; i < sel.length; i++) 
+						for (int i = 0; i < sel.length; i++)
 							importAudio(sel[i]);
-					
+
 					Main.map.repaint();
 				}
 			}
@@ -255,74 +254,70 @@ public class GpxLayer extends Layer {
 				new JSeparator(),
 				new JMenuItem(new LayerListPopup.InfoAction(this))};
 		return new Component[] {
-				new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-				new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
-				new JSeparator(),
-				new JMenuItem(new SaveAction(this)),
-				new JMenuItem(new SaveAsAction(this)),
-				// new JMenuItem(new UploadTraceAction()),
-				color,
-				line,
-				tagimage,
-				importAudio,
-				markersFromNamedTrackpoints,
-				new JMenuItem(new ConvertToDataLayerAction()),
-				new JSeparator(),
-				new JMenuItem(new RenameLayerAction(associatedFile, this)),
-				new JSeparator(),
-				new JMenuItem(new LayerListPopup.InfoAction(this))};
+			new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
+			new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
+			new JSeparator(),
+			new JMenuItem(new SaveAction(this)),
+			new JMenuItem(new SaveAsAction(this)),
+			// new JMenuItem(new UploadTraceAction()),
+			color,
+			line,
+			tagimage,
+			importAudio,
+			markersFromNamedTrackpoints,
+			new JMenuItem(new ConvertToDataLayerAction()),
+			new JSeparator(),
+			new JMenuItem(new RenameLayerAction(associatedFile, this)),
+			new JSeparator(),
+			new JMenuItem(new LayerListPopup.InfoAction(this))};
 	}
 
 	@Override public String getToolTipText() {
 		StringBuilder info = new StringBuilder().append("<html>");
 
 		info.append(trn("{0} track, ", "{0} tracks, ",
-				data.tracks.size(), data.tracks.size()))
-			.append(trn("{0} route, ", "{0} routes, ",
-				data.routes.size(), data.routes.size()))
-			.append(trn("{0} waypoint", "{0} waypoints",
-				data.waypoints.size(), data.waypoints.size()))
-			.append("<br>");
+		data.tracks.size(), data.tracks.size())).append(trn("{0} route, ", "{0} routes, ",
+		data.routes.size(), data.routes.size())).append(trn("{0} waypoint", "{0} waypoints",
+		data.waypoints.size(), data.waypoints.size())).append("<br>");
 
 		if (data.attr.containsKey("name"))
-			info.append(tr("Name: {0}", data.attr.get("name")))
-				.append("<br>");
+			info.append(tr("Name: {0}", data.attr.get("name"))).append("<br>");
 
 		if (data.attr.containsKey("desc"))
-			info.append(tr("Description: {0}", data.attr.get("desc")))
-				.append("<br>");
+			info.append(tr("Description: {0}", data.attr.get("desc"))).append("<br>");
 
-                if(data.tracks.size() > 0){
-                    boolean first = true;
-                    WayPoint earliest = null, latest = null;
+		if(data.tracks.size() > 0){
+			boolean first = true;
+			WayPoint earliest = null, latest = null;
 
-                    for(GpxTrack trk: data.tracks){
-                        for(Collection<WayPoint> seg:trk.trackSegs){
-                            for(WayPoint pnt:seg){
-                                if(first){
-                                    latest = earliest = pnt;
-                                    first = false;
-                                }else{
-                                    if(pnt.compareTo(earliest) < 0){
-                                        earliest = pnt;
-                                    }else{
-                                        latest = pnt;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if(earliest != null && latest != null){
-                        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-                        info.append(tr("Timespan: ") + df.format(new Date((long)(earliest.time * 1000))) + " - " + df.format(new Date((long)(latest.time * 1000))));
-                        int diff = (int)(latest.time - earliest.time);
-                        info.append(" (" + (diff / 3600) + ":" + ((diff % 3600)/60) + ")");
-                        info.append("<br>");
-                    }
-                }
-                info.append(tr("Length: ") + new DecimalFormat("#0.00").format(data.length() / 1000) + "km");
-                info.append("<br>");
-                
+			for(GpxTrack trk: data.tracks){
+				for(Collection<WayPoint> seg:trk.trackSegs){
+					for(WayPoint pnt:seg){
+						if(first){
+							latest = earliest = pnt;
+							first = false;
+						}else{
+							if(pnt.compareTo(earliest) < 0){
+								earliest = pnt;
+							}else{
+								latest = pnt;
+							}
+						}
+					}
+				}
+			}
+			if(earliest != null && latest != null){
+				DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+				info.append(tr("Timespan: ") + df.format(new Date((long)(earliest.time * 1000))) + " - "
+				+ df.format(new Date((long)(latest.time * 1000))));
+				int diff = (int)(latest.time - earliest.time);
+				info.append(" (" + (diff / 3600) + ":" + ((diff % 3600)/60) + ")");
+				info.append("<br>");
+			}
+		}
+		info.append(tr("Length: ") + new DecimalFormat("#0.00").format(data.length() / 1000) + "km");
+		info.append("<br>");
+
 		return info.append("</html>").toString();
 	}
 
@@ -388,9 +383,9 @@ public class GpxLayer extends Layer {
 		 ********** STEP 2a - CHECK CACHE VALIDITY **********************
 		 ****************************************************************/
 		if (computeCacheInSync && ((computeCacheMaxLineLengthUsed != maxLineLength) ||
-		                           (!neutralColor.equals(computeCacheColorUsed)) ||
-		                           (computeCacheColored != colored))) {
-//			System.out.println("(re-)computing gpx line styles, reason: CCIS=" + computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) + " CCCU=" +  (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" + (computeCacheColored != colored));
+								   (!neutralColor.equals(computeCacheColorUsed)) ||
+								   (computeCacheColored != colored))) {
+//          System.out.println("(re-)computing gpx line styles, reason: CCIS=" + computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) + " CCCU=" +  (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" + (computeCacheColored != colored));
 			computeCacheMaxLineLengthUsed = maxLineLength;
 			computeCacheInSync = false;
 			computeCacheColorUsed = neutralColor;
@@ -439,7 +434,7 @@ public class GpxLayer extends Layer {
 			}
 			computeCacheInSync = true;
 		}
-						
+
 		/****************************************************************
 		 ********** STEP 3a - DRAW LINES ********************************
 		 ****************************************************************/
@@ -452,9 +447,10 @@ public class GpxLayer extends Layer {
 						continue;
 					Point screen = mv.getPoint(trkPnt.eastNorth);
 						if (trkPnt.drawLine) {
-							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) { // skip points that are on the same screenposition
+							// skip points that are on the same screenposition
+							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
 								g.setColor(trkPnt.speedLineColor);
-                                                g.drawLine(old.x, old.y, screen.x, screen.y);
+								g.drawLine(old.x, old.y, screen.x, screen.y);
 							}
 						}
 						old = screen;
@@ -475,14 +471,17 @@ public class GpxLayer extends Layer {
 							continue;
 						if (trkPnt.drawLine) {
 							Point screen = mv.getPoint(trkPnt.eastNorth);
-							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) { // skip points that are on the same screenposition
+							// skip points that are on the same screenposition
+							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
 								g.setColor(trkPnt.speedLineColor);
-                                                    double t = Math.atan2(screen.y-old.y, screen.x-old.x) + Math.PI;
-                                                    g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t-PHI)), (int)(screen.y + 10*Math.sin(t-PHI)));
-                                                    g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t+PHI)), (int)(screen.y + 10*Math.sin(t+PHI)));
-                                                }
-							old = screen;
+								double t = Math.atan2(screen.y-old.y, screen.x-old.x) + Math.PI;
+								g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t-PHI)), (int)(screen.y
+								+ 10*Math.sin(t-PHI)));
+								g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t+PHI)), (int)(screen.y
+								+ 10*Math.sin(t+PHI)));
 							}
+							old = screen;
+						}
 					} // end for trkpnt
 				} // end for segment
 			} // end for trk
@@ -500,13 +499,14 @@ public class GpxLayer extends Layer {
 							continue;
 						if (trkPnt.drawLine) {
 							Point screen = mv.getPoint(trkPnt.eastNorth);
-							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) { // skip points that are on the same screenposition
+							// skip points that are on the same screenposition
+							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
 								g.setColor(trkPnt.speedLineColor);
 								g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y + dir[trkPnt.dir][1]);
 								g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][2], screen.y + dir[trkPnt.dir][3]);
-						}
+							}
 							old = screen;
-                                            }
+						}
 					} // end for trkpnt
 				} // end for segment
 			} // end for trk
@@ -565,9 +565,8 @@ public class GpxLayer extends Layer {
 			} // end for trk
 		} // end if large
 
-	Long duration = System.currentTimeMillis() - startTime;
-	//System.out.println(duration);
-
+		//Long duration = System.currentTimeMillis() - startTime;
+		//System.out.println(duration);
 	} // end paint
 
 	@Override public void visitBoundingBox(BoundingXYVisitor v) {
@@ -633,28 +632,25 @@ public class GpxLayer extends Layer {
 			{
 				try {
 					String version = Main.pref.get("osm-server.version", "0.5");
-					URL url = new URL(Main.pref.get("osm-server.url") +
-							"/" + version + "/gpx/create");
+					URL url = new URL(Main.pref.get("osm-server.url") + "/" + version + "/gpx/create");
 
 					// create a boundary string
 					String boundary = MultiPartFormOutputStream.createBoundary();
 					URLConnection urlConn = MultiPartFormOutputStream.createConnection(url);
 					urlConn.setRequestProperty("Accept", "*/*");
-					urlConn.setRequestProperty("Content-Type", 
-							MultiPartFormOutputStream.getContentType(boundary));
+					urlConn.setRequestProperty("Content-Type", MultiPartFormOutputStream.getContentType(boundary));
 					// set some other request headers...
 					urlConn.setRequestProperty("Connection", "Keep-Alive");
 					urlConn.setRequestProperty("Cache-Control", "no-cache");
 					// no need to connect cuz getOutputStream() does it
-					MultiPartFormOutputStream out = 
-						new MultiPartFormOutputStream(urlConn.getOutputStream(), boundary);
+					MultiPartFormOutputStream out = new MultiPartFormOutputStream(urlConn.getOutputStream(), boundary);
 					out.writeField("description", description.getText());
 					out.writeField("tags", tags.getText());
 					out.writeField("public", (c3.getSelectedObjects() != null) ? "1" : "0");
 					// upload a file
 					// out.writeFile("gpx_file", "text/xml", associatedFile);
 					// can also write bytes directly
-					// out.writeFile("myFile", "text/plain", "C:\\test.txt", 
+					// out.writeFile("myFile", "text/plain", "C:\\test.txt",
 					// "This is some file text.".getBytes("ASCII"));
 					File tmp = File.createTempFile("josm", "tmp.gpx");
 					FileOutputStream outs = new FileOutputStream(tmp);
@@ -666,8 +662,7 @@ public class GpxLayer extends Layer {
 					out.close();
 					tmp.delete();
 					// read response from server
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(urlConn.getInputStream()));
+					BufferedReader in = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
 					String line = "";
 					while((line = in.readLine()) != null) {
 						System.out.println(line);
@@ -675,7 +670,7 @@ public class GpxLayer extends Layer {
 					in.close();
 
 					//TODO check response
-					/*					int retCode = urlConn.getResponseCode();
+					/*                  int retCode = urlConn.getResponseCode();
 					System.out.println("got return: " + retCode);
 					String retMsg = urlConn.getResponseMessage();
 					urlConn.disconnect();
@@ -694,11 +689,11 @@ public class GpxLayer extends Layer {
 					throw new RuntimeException(tr("Unknown host")+": "+ex.getMessage(), ex);
 				} catch (Exception ex) {
 					//if (cancel)
-					//	return; // assume cancel
+					//  return; // assume cancel
 					if (ex instanceof RuntimeException)
 						throw (RuntimeException)ex;
 					throw new RuntimeException(ex.getMessage(), ex);
-				}	
+				}
 			}
 		}
 	}
@@ -735,9 +730,9 @@ public class GpxLayer extends Layer {
 			Main.main.removeLayer(GpxLayer.this);
 		}
 	}
-	
+
 	/**
-	 * Makes a new marker layer derived from this GpxLayer containing at least one 
+	 * Makes a new marker layer derived from this GpxLayer containing at least one
 	 * audio marker which the given audio file is associated with.
 	 * Markers are derived from the following
 	 * (a) explict waypoints in the GPX layer, or
@@ -748,115 +743,116 @@ public class GpxLayer extends Layer {
 	 */
 	private void importAudio(File wavFile) {
 		String uri = "file:".concat(wavFile.getAbsolutePath());
-	    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
-	    
-	    Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
-	    boolean timedMarkersOmitted = false;
-	    boolean untimedMarkersOmitted = false;
-	    
-	    // determine time of first point in track
-	    double firstTime = -1.0;
-    	if (data.tracks != null && ! data.tracks.isEmpty()) {
-    		for (GpxTrack track : data.tracks) {
-    			if (track.trackSegs == null) continue;
-    			for (Collection<WayPoint> seg : track.trackSegs) {
-    				for (WayPoint w : seg) {
-    					firstTime = w.time;
-    					break;
-    				}
-        			if (firstTime >= 0.0) break;
-    			}
-    			if (firstTime >= 0.0) break;
-    		}
-    	}
-    	if (firstTime < 0.0) {
+		MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
+
+		Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
+		boolean timedMarkersOmitted = false;
+		boolean untimedMarkersOmitted = false;
+		double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3); /* about 25m */
+
+		// determine time of first point in track
+		double firstTime = -1.0;
+		if (data.tracks != null && ! data.tracks.isEmpty()) {
+			for (GpxTrack track : data.tracks) {
+				if (track.trackSegs == null) continue;
+				for (Collection<WayPoint> seg : track.trackSegs) {
+					for (WayPoint w : seg) {
+						firstTime = w.time;
+						break;
+					}
+					if (firstTime >= 0.0) break;
+				}
+				if (firstTime >= 0.0) break;
+			}
+		}
+		if (firstTime < 0.0) {
 			JOptionPane.showMessageDialog(Main.parent, tr("No GPX track available in layer to associate audio with."));
 			return;
-    	}
-	    
-	    // (a) try explicit timestamped waypoints - unless suppressed
-	    if (Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true) && 
-	    	data.waypoints != null && ! data.waypoints.isEmpty())
-	    {
-	    	for (WayPoint w : data.waypoints) {
-	    		if (w.time > firstTime) {
-	    			waypoints.add(w);
-	    		} else if (w.time > 0.0) {
-	    			timedMarkersOmitted = true;
-	    		}
-	    	}
-	    }
-
-	    // (b) try explicit waypoints without timestamps - unless suppressed
-	    if (Main.pref.getBoolean("marker.audiofromuntimedwaypoints", true) && 
-	    	data.waypoints != null && ! data.waypoints.isEmpty())
-	    {
-	    	for (WayPoint w : data.waypoints) {
-	    		if (waypoints.contains(w)) { continue; }
-    			WayPoint wNear = nearestPointOnTrack(w.eastNorth, 10.0e-7 /* about 25m */);
-    			if (wNear != null) {
-    				WayPoint wc = new WayPoint(w.latlon);
-    				wc.time = wNear.time;
-    				if (w.attr.containsKey("name")) wc.attr.put("name", w.getString("name"));
-    				waypoints.add(wc);
-    			} else {
-    				untimedMarkersOmitted = true;
-    			}
-	    	}
-	    }
-	    
-	    // (c) use explicitly named track points, again unless suppressed
-	    if ((Main.pref.getBoolean("marker.audiofromnamedtrackpoints", Main.pref.getBoolean("marker.namedtrackpoints") /* old name */)) && 
-	    	data.tracks != null && ! data.tracks.isEmpty())
-	    {
-	    	for (GpxTrack track : data.tracks) {
-	    		if (track.trackSegs == null) continue;
-	    		for (Collection<WayPoint> seg : track.trackSegs) {
-	    			for (WayPoint w : seg) {
-	    				if (w.attr.containsKey("name") || w.attr.containsKey("desc")) {
-	    					waypoints.add(w);
-	    				}
-	    			}
-	    		}
-	    	}
-	    }
-
-	    // (d) analyse audio for spoken markers here, in due course
-	    
-	    // (e) simply add a single marker at the start of the track
-	    if ((Main.pref.getBoolean("marker.audiofromstart") || waypoints.isEmpty()) &&
-	    	data.tracks != null && ! data.tracks.isEmpty())
-		{
-	    	boolean gotOne = false;
-	    	for (GpxTrack track : data.tracks) {
-	    		if (track.trackSegs == null) continue;
-	    		for (Collection<WayPoint> seg : track.trackSegs) {
-	    			for (WayPoint w : seg) {
-	    				WayPoint wStart = new WayPoint(w.latlon);
-	    				wStart.attr.put("name", "start");
-	    				wStart.time = w.time;
-	    				waypoints.add(wStart);
-	    				gotOne = true;
-	    				break;
-	    			}
-	    			if (gotOne) break;
-	    		}
-	    		if (gotOne) break;
-	    	}
 		}
 
-	    /* we must have got at least one waypoint now */
-	    
-	    Collections.sort((ArrayList<WayPoint>) waypoints, new Comparator<WayPoint>() {
-	    	public int compare(WayPoint a, WayPoint b) {
-	    		return a.time <= b.time ? -1 : 1;
-	    	}
-	    });
+		// (a) try explicit timestamped waypoints - unless suppressed
+		if (Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true) &&
+			data.waypoints != null && ! data.waypoints.isEmpty())
+		{
+			for (WayPoint w : data.waypoints) {
+				if (w.time > firstTime) {
+					waypoints.add(w);
+				} else if (w.time > 0.0) {
+					timedMarkersOmitted = true;
+				}
+			}
+		}
 
-	    firstTime = -1.0; /* this time of the first waypoint, not first trackpoint */
-	    for (WayPoint w : waypoints) {
-	    	if (firstTime < 0.0) firstTime = w.time;
-	    	double offset = w.time - firstTime;
+		// (b) try explicit waypoints without timestamps - unless suppressed
+		if (Main.pref.getBoolean("marker.audiofromuntimedwaypoints", true) &&
+			data.waypoints != null && ! data.waypoints.isEmpty())
+		{
+			for (WayPoint w : data.waypoints) {
+				if (waypoints.contains(w)) { continue; }
+				WayPoint wNear = nearestPointOnTrack(w.eastNorth, snapDistance);
+				if (wNear != null) {
+					WayPoint wc = new WayPoint(w.latlon);
+					wc.time = wNear.time;
+					if (w.attr.containsKey("name")) wc.attr.put("name", w.getString("name"));
+					waypoints.add(wc);
+				} else {
+					untimedMarkersOmitted = true;
+				}
+			}
+		}
+
+		// (c) use explicitly named track points, again unless suppressed
+		if ((Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false)) &&
+			data.tracks != null && ! data.tracks.isEmpty())
+		{
+			for (GpxTrack track : data.tracks) {
+				if (track.trackSegs == null) continue;
+				for (Collection<WayPoint> seg : track.trackSegs) {
+					for (WayPoint w : seg) {
+						if (w.attr.containsKey("name") || w.attr.containsKey("desc")) {
+							waypoints.add(w);
+						}
+					}
+				}
+			}
+		}
+
+		// (d) analyse audio for spoken markers here, in due course
+
+		// (e) simply add a single marker at the start of the track
+		if ((Main.pref.getBoolean("marker.audiofromstart") || waypoints.isEmpty()) &&
+			data.tracks != null && ! data.tracks.isEmpty())
+		{
+			boolean gotOne = false;
+			for (GpxTrack track : data.tracks) {
+				if (track.trackSegs == null) continue;
+				for (Collection<WayPoint> seg : track.trackSegs) {
+					for (WayPoint w : seg) {
+						WayPoint wStart = new WayPoint(w.latlon);
+						wStart.attr.put("name", "start");
+						wStart.time = w.time;
+						waypoints.add(wStart);
+						gotOne = true;
+						break;
+					}
+					if (gotOne) break;
+				}
+				if (gotOne) break;
+			}
+		}
+
+		/* we must have got at least one waypoint now */
+
+		Collections.sort((ArrayList<WayPoint>) waypoints, new Comparator<WayPoint>() {
+			public int compare(WayPoint a, WayPoint b) {
+				return a.time <= b.time ? -1 : 1;
+			}
+		});
+
+		firstTime = -1.0; /* this time of the first waypoint, not first trackpoint */
+		for (WayPoint w : waypoints) {
+			if (firstTime < 0.0) firstTime = w.time;
+			double offset = w.time - firstTime;
 			String name;
 			if (w.attr.containsKey("name"))
 				name = w.getString("name");
@@ -864,62 +860,64 @@ public class GpxLayer extends Layer {
 				name = w.getString("desc");
 			else
 				name = AudioMarker.inventName(offset);
-			AudioMarker am = AudioMarker.create(w.latlon, 
+			AudioMarker am = AudioMarker.create(w.latlon,
 					name, uri, ml, w.time, offset);
-			ml.data.add(am);	    			    	
-	    }
-	    Main.main.addLayer(ml);
-	    
-	    if (timedMarkersOmitted) {
-			JOptionPane.showMessageDialog(Main.parent, tr("Some waypoints with timestamps from before the start of the track were omitted."));
-	    }
-	    if (untimedMarkersOmitted) {
-			JOptionPane.showMessageDialog(Main.parent, tr("Some waypoints which were too far from the track to sensibly estimate their time were omitted."));
-	    }
+			ml.data.add(am);
+		}
+		Main.main.addLayer(ml);
+
+		if (timedMarkersOmitted) {
+			JOptionPane.showMessageDialog(Main.parent,
+			tr("Some waypoints with timestamps from before the start of the track were omitted."));
+		}
+		if (untimedMarkersOmitted) {
+			JOptionPane.showMessageDialog(Main.parent,
+			tr("Some waypoints which were too far from the track to sensibly estimate their time were omitted."));
+		}
 	}
 
 	/**
-	 * Makes a WayPoint at the projection of point P onto the track providing P is 
-	 * less than tolerance away from the track 
+	 * Makes a WayPoint at the projection of point P onto the track providing P is
+	 * less than tolerance away from the track
 
 	 * @param P : the point to determine the projection for
 	 * @param tolerance : must be no further than this from the track
-	 * @return the closest point on the track to P, which may be the 
-	 * first or last point if off the end of a segment, or may be null if 
+	 * @return the closest point on the track to P, which may be the
+	 * first or last point if off the end of a segment, or may be null if
 	 * nothing close enough
 	 */
 	public WayPoint nearestPointOnTrack(EastNorth P, double tolerance) {
 		/*
-		 * assume the coordinates of P are xp,yp, and those of a section of track 
+		 * assume the coordinates of P are xp,yp, and those of a section of track
 		 * between two trackpoints are R=xr,yr and S=xs,ys. Let N be the projected point.
-		 * 
+		 *
 		 * The equation of RS is Ax + By + C = 0 where
 		 * A = ys - yr
 		 * B = xr - xs
 		 * C = - Axr - Byr
-		 * 
+		 *
 		 * Also, note that the distance RS^2 is A^2 + B^2
-		 * 
+		 *
 		 * If RS^2 == 0.0 ignore the degenerate section of track
-		 * 
+		 *
 		 * PN^2 = (Axp + Byp + C)^2 / RS^2
 		 * that is the distance from P to the line
-		 * 
-		 * so if PN^2 is less than PNmin^2 (initialized to tolerance) we can reject 
+		 *
+		 * so if PN^2 is less than PNmin^2 (initialized to tolerance) we can reject
 		 * the line; otherwise...
 		 * determine if the projected poijnt lies within the bounds of the line:
 		 * PR^2 - PN^2 <= RS^2 and PS^2 - PN^2 <= RS^2
-		 * 
+		 *
 		 * where PR^2 = (xp - xr)^2 + (yp-yr)^2
 		 * and   PS^2 = (xp - xs)^2 + (yp-ys)^2
-		 * 
+		 *
 		 * If so, calculate N as
 		 * xn = xr + (RN/RS) B
 		 * yn = y1 + (RN/RS) A
-		 * 
+		 *
 		 * where RN = sqrt(PR^2 - PN^2)
 		 */
-		
+
 		double PNminsq = tolerance * tolerance;
 		EastNorth bestEN = null;
 		double bestTime = 0.0;
@@ -928,7 +926,7 @@ public class GpxLayer extends Layer {
 		double rx = 0.0, ry = 0.0, sx, sy, x, y;
 		if (data.tracks == null) return null;
 		for (GpxTrack track : data.tracks) {
-			if (track.trackSegs == null) continue;			
+			if (track.trackSegs == null) continue;
 			for (Collection<WayPoint> seg : track.trackSegs) {
 				WayPoint R = null;
 				for (WayPoint S : seg) {
@@ -987,7 +985,6 @@ public class GpxLayer extends Layer {
 						bestEN = R.eastNorth;
 						bestTime = R.time;
 					}
-					
 				}
 			}
 		}

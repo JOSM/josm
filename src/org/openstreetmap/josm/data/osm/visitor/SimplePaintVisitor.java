@@ -107,7 +107,7 @@ public class SimplePaintVisitor implements Visitor {
 		fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
 		fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
 		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 4) / 2 : 0;
-		virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 50);
+		virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
 
 		((Graphics2D)g)
 				.setRenderingHint(

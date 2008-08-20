@@ -119,7 +119,7 @@ public class AudioPreference implements PreferenceSetting {
 					audioMarkersFromNamedTrackpoints.setSelected(false);
 			}
 		});
-		audioMarkersFromNamedTrackpoints.setSelected(Main.pref.getBoolean("marker.audiofromnamedtrackpoints", Main.pref.getBoolean("marker.namedtrackpoints")));
+		audioMarkersFromNamedTrackpoints.setSelected(Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false));
 		audioMarkersFromNamedTrackpoints.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
 		gui.audio.add(audioMarkersFromNamedTrackpoints, GBC.eol().insets(10,0,0,0));
 		

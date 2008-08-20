@@ -223,14 +223,16 @@ public class GpxReader {
 				}
 				break;
 			case wpt:
-				if (qName.equals("ele") || qName.equals("desc")
-						|| qName.equals("magvar") || qName.equals("geoidheight")
-						|| qName.equals("name")	|| qName.equals("sym") 
-						|| qName.equals("cmt") || qName.equals("type")) {
+				if (qName.equals("ele") || qName.equals("magvar")
+						|| qName.equals("geoidheight") || qName.equals("name")
+						|| qName.equals("sym") || qName.equals("type")) {
 					currentWayPoint.attr.put(qName, accumulator.toString());
 				} else if (qName.equals("time")) {
 					currentWayPoint.attr.put(qName, accumulator.toString());
 					currentWayPoint.setTime();					
+				} else if (qName.equals("cmt") || qName.equals("desc")) {
+					currentWayPoint.attr.put(qName, accumulator.toString());
+					currentWayPoint.setGarminCommentTime(qName);					
 				} else if (qName.equals("rtept")) {
 					currentState = states.pop();
 					currentRoute.routePoints.add(currentWayPoint);

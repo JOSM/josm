@@ -205,6 +205,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 	private Collection<OsmPrimitive> getNearestCollectionVirtual(Point p) {
 		MapView c = Main.map.mapView;
+		int snapDistance = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
+		snapDistance *= snapDistance;
 		OsmPrimitive osm = c.getNearestNode(p);
 		if (osm == null)
 		{
@@ -219,10 +221,10 @@ public class SelectAction extends MapMode implements SelectionEnded {
 					Point p2 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex+1).eastNorth);
 					int xd = p2.x-p1.x; if(xd < 0) xd = -xd;
 					int yd = p2.y-p1.y; if(yd < 0) yd = -yd;
-					if(xd+yd > Main.pref.getInteger("mappaint.node.virtual-space", 50))
+					if(xd+yd > Main.pref.getInteger("mappaint.node.virtual-space", 70))
 					{
 						Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
-						if(p.distanceSq(pc) < Main.map.mapView.snapDistance)
+						if(p.distanceSq(pc) < snapDistance)
 						{
 							Collection<Command> cmds = new LinkedList<Command>();
 							Node n = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
