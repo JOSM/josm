@@ -32,7 +32,7 @@ public class ExtensionFileFilter extends FileFilter {
 	 * Construct an extension file filter by giving the extension to check after.
 	 *
 	 */
-	private ExtensionFileFilter(String extension, String defExt, String description) {
+	public ExtensionFileFilter(String extension, String defExt, String description) {
 		this.extension = extension;
 		defaultExtension = defExt;
 		this.description = description;
