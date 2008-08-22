@@ -85,8 +85,8 @@
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
-			<text key="exit_nr" text="Exit Number" default="" delete_if_empty="true" />
-			<text key="exit_name" text="Exit Name" default="" delete_if_empty="true" />
+			<text key="ref" text="Exit Number" default="" delete_if_empty="true" />
+			<text key="name" text="Exit Name" default="" delete_if_empty="true" />
 		</item>
 
 		<seperator/>
