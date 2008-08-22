@@ -764,7 +764,7 @@
 		<key key="highway" value="turning_circle" />
 	</item>
 
-	<item name="Waypoints/Bus Stop" icon="presets/waypoints.png">
+	<item name="Waypoints/Bus Stop" icon="presets/bus.png">
 		<label text="Edit Bus Stop" />
 		<label text=" " />
 		<key key="highway" value="bus_stop" />
@@ -773,6 +773,16 @@
 		<label text=" " />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
+
+	<item name="Waypoints/Bus Station" icon="presets/bus.png">
+		<label text="Edit a Bus Station" />
+		<key key="amenity" value="bus_station" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
 
 	<item name="Waypoints/Stop" icon="presets/Stop.png">
 		<key key="highway" value="stop" />
@@ -1625,12 +1635,6 @@
 		<key key="amenity" value="toilets" />
 	</item>
 
-	<item name="Amenities/Bus Station" icon="presets/bus.png">
-		<label text="Edit a Bus Station" />
-		<key key="amenity" value="bus_station" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
 	<item name="Amenities/Post Box" icon="presets/letter.png">
 		<key key="amenity" value="post_box" />
 	</item>
