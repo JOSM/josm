@@ -1258,60 +1258,25 @@
 	
 	
 
-	<item name="Sport/Stadium" icon="presets/stadium.png">
+	<item name="Sport Facilities/Stadium" icon="presets/stadium.png">
 		<label text="Edit Stadium" />
 		<key key="leisure" value="stadium" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Sport/Sports Centre" icon="presets/sports_centre.png">
+	<item name="Sport Facilities/Sports Centre" icon="presets/sports_centre.png">
 		<label text="Edit Sports Centre" />
 		<key key="leisure" value="sports_centre" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Sport/Pitch" icon="presets/pitch.png">
+	<item name="Sport Facilities/Pitch" icon="presets/pitch.png">
 		<label text="Edit Pitch" />
 		<key key="leisure" value="pitch" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Sport/Soccer" icon="presets/soccer.png">
-		<label text="Edit Soccer" />
-		<key key="sport" value="soccer" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
 
-	<item name="Sport/Football" icon="presets/empty.png">
-		<label text="Edit Football" />
-		<key key="sport" value="football" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Sport/Australian Football" icon="presets/empty.png">
-		<label text="Edit Australian Football" />
-		<key key="sport" value="australian_football" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Baseball" icon="presets/empty.png">
-		<label text="Edit Baseball" />
-		<key key="sport" value="baseball" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Basketball" icon="presets/basketball.png">
-		<label text="Edit Basketball" />
-		<key key="sport" value="basketball" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Golf Course" icon="presets/golf.png">
-		<label text="Edit Golf Course" />
-		<key key="leisure" value="golf_course" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
 	<item name="Sport/Track" icon="presets/empty.png">
 		<label text="Edit Track" />
 		<key key="leisure" value="track" />
@@ -1342,18 +1307,6 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Sport/Boules" icon="presets/empty.png">
-		<label text="Edit Boules" />
-		<key key="sport" value="boules" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Bowls" icon="presets/empty.png">
-		<label text="Edit Bowls" />
-		<key key="sport" value="bowls" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
 	<item name="Sport/Climbing" icon="presets/empty.png">
 		<label text="Edit Climbing" />
 		<key key="sport" value="climbing" />
@@ -1366,24 +1319,6 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Sport/Cricket" icon="presets/empty.png">
-		<label text="Edit Cricket" />
-		<key key="sport" value="cricket" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Cricket Nets" icon="presets/empty.png">
-		<label text="Edit Cricket Nets" />
-		<key key="sport" value="cricket_nets" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Croquet" icon="presets/empty.png">
-		<label text="Edit Croquet" />
-		<key key="sport" value="croquet" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
 	<item name="Sport/Cycling" icon="presets/cycling.png">
 		<label text="Edit Cycling" />
 		<key key="sport" value="cycling" />
@@ -1407,49 +1342,19 @@
 		<key key="sport" value="horse_racing" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Sport/Golf" icon="presets/empty.png">
-		<label text="Edit Golf" />
-		<key key="sport" value="golf" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
+
 	<item name="Sport/Gymnastics" icon="presets/empty.png">
 		<label text="Edit Gymnastics" />
 		<key key="sport" value="gymnastics" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Sport/Hockey" icon="presets/Hockey.png">
-		<label text="Edit Hockey" />
-		<key key="sport" value="hockey" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
+
 	<item name="Sport/Motor Sports" icon="presets/motorbike.png">
 		<label text="Edit Motor Sports" />
 		<key key="sport" value="motor" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
-	
-	<item name="Sport/Pelota" icon="presets/empty.png">
-		<label text="Edit Pelota" />
-		<key key="sport" value="pelota" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Racquet" icon="presets/empty.png">
-		<label text="Edit Racquet" />
-		<key key="sport" value="racquet" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Sport/Rugby" icon="presets/empty.png">
-		<label text="Edit Rugby" />
-		<key key="sport" value="rugby" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
+
 	<item name="Sport/Skating" icon="presets/empty.png">
 		<label text="Edit Skating" />
 		<key key="sport" value="skating" />
@@ -1479,19 +1384,121 @@
 		<key key="sport" value="shooting" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
+
+
+
+
+	<item name="Sport (Ball)/Soccer" icon="presets/soccer.png">
+		<label text="Edit Soccer" />
+		<key key="sport" value="soccer" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
 	
-	<item name="Sport/Table Tennis" icon="presets/tennisball.png">
+	<item name="Sport (Ball)/Football" icon="presets/empty.png">
+		<label text="Edit Football" />
+		<key key="sport" value="football" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Australian Football" icon="presets/empty.png">
+		<label text="Edit Australian Football" />
+		<key key="sport" value="australian_football" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Baseball" icon="presets/empty.png">
+		<label text="Edit Baseball" />
+		<key key="sport" value="baseball" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Basketball" icon="presets/basketball.png">
+		<label text="Edit Basketball" />
+		<key key="sport" value="basketball" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Golf Course" icon="presets/golf.png">
+		<label text="Edit Golf Course" />
+		<key key="leisure" value="golf_course" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Boules" icon="presets/empty.png">
+		<label text="Edit Boules" />
+		<key key="sport" value="boules" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Bowls" icon="presets/empty.png">
+		<label text="Edit Bowls" />
+		<key key="sport" value="bowls" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Cricket" icon="presets/empty.png">
+		<label text="Edit Cricket" />
+		<key key="sport" value="cricket" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Cricket Nets" icon="presets/empty.png">
+		<label text="Edit Cricket Nets" />
+		<key key="sport" value="cricket_nets" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Croquet" icon="presets/empty.png">
+		<label text="Edit Croquet" />
+		<key key="sport" value="croquet" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Hockey" icon="presets/Hockey.png">
+		<label text="Edit Hockey" />
+		<key key="sport" value="hockey" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Golf" icon="presets/empty.png">
+		<label text="Edit Golf" />
+		<key key="sport" value="golf" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Pelota" icon="presets/empty.png">
+		<label text="Edit Pelota" />
+		<key key="sport" value="pelota" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Racquet" icon="presets/empty.png">
+		<label text="Edit Racquet" />
+		<key key="sport" value="racquet" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Rugby" icon="presets/empty.png">
+		<label text="Edit Rugby" />
+		<key key="sport" value="rugby" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Sport (Ball)/Table Tennis" icon="presets/tennisball.png">
 		<label text="Edit Table Tennis" />
 		<key key="sport" value="table_tennis" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 	
-	<item name="Sport/Tennis" icon="presets/tennis.png">
+	<item name="Sport (Ball)/Tennis" icon="presets/tennis.png">
 		<label text="Edit Tennis" />
 		<key key="sport" value="tennis" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
-	
+
+
+
+
 	<item name="Buildings/Public Building" icon="presets/empty.png">
 		<label text="Edit Public Building" />
 		<key key="amenity" value="public_building" />
