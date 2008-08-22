@@ -1066,7 +1066,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Hostel" icon="presets/bed.png">
+		<item name="Hostel" icon="presets/hostel.png">
 			<label text="Edit Hostel" />
 			<key key="tourism" value="hostel" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1556,7 +1556,7 @@
 		</item>
 	</group>
 
-	<separator/>
+	<seperator/>
 	
 	<group name="Health" icon="presets/pharmacy.png">
 		<item name="Pharmacy" icon="presets/pharmacy.png">
