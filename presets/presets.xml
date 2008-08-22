@@ -1508,8 +1508,29 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
+	
+	<item name="Health/Pharmacy" icon="presets/pharmacy.png">
+		<label text="Edit Pharmacy" />
+		<key key="amenity" value="pharmacy" />
+		<combo key="dispensing" text="Dispensing" values="yes,no" default="no" delete_if_empty="true" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	<item name="Health/Hospital" icon="presets/hospital.png">
+		<label text="Edit Hospital" />
+		<key key="amenity" value="hospital" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
 
-
+	<item name="Health/Emergency Access Point" icon="presets/pharmacy.png">
+		<label text="Edit Emergency Access Point" />
+		<label text=" " />
+		<key key="highway" value="emergency_access_point" />
+		<text key="ref" text="Point Number" default="" delete_if_empty="true" />
+		<text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+		<label text="(Use international code, like +12-345-67890)" />
+		<label text=" " />
+	</item>
 
 	<item name="Buildings/Public Building" icon="presets/empty.png">
 		<label text="Edit Public Building" />
@@ -1550,21 +1571,6 @@
 	<item name="Buildings/Post Office" icon="presets/letter.png">
 		<label text="Edit Post Office" />
 		<key key="amenity" value="post_office" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-
-	<item name="Buildings/ " icon="presets/empty.png"></item>
-
-	<item name="Buildings/Pharmacy" icon="presets/pharmacy.png">
-		<label text="Edit Pharmacy" />
-		<key key="amenity" value="pharmacy" />
-		<combo key="dispensing" text="Dispensing" values="yes,no" default="no" delete_if_empty="true" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
-	
-	<item name="Buildings/Hospital" icon="presets/hospital.png">
-		<label text="Edit Hospital" />
-		<key key="amenity" value="hospital" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
