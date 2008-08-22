@@ -9,10 +9,10 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 
 public class TaggingPresetMenu extends TaggingPreset {
 	public void setDisplayName() {
-		putValue(Action.NAME, tr(name));
-		String tooltip = tr("Preset group ''{0}''", tr(name));
-		putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
-		putValue("toolbar", "tagginggroup_" + name);
+		String n = getName();
+		putValue(Action.NAME, n);
+		putValue(SHORT_DESCRIPTION, "<html>"+tr("Preset group ''{0}''", n)+"</html>");
+		putValue("toolbar", "tagginggroup_" + getRawName());
 	}
 	public void setIcon(String iconName) {
 		super.setIcon(iconName);

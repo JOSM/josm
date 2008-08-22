@@ -339,22 +339,20 @@ public class TaggingPreset extends AbstractAction {
 	 * Change the display name without changing the toolbar value.
 	 */
 	public void setDisplayName() {
-		if(group == null)
-		{
-			putValue(Action.NAME, tr(name));
-			String tooltip = tr("Use preset ''{0}''", tr(name));
-			putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
-			putValue("toolbar", "tagging_" + name);
-		}
-		else
-		{
-			putValue(Action.NAME, tr(group.name) + "/" + tr(name));
-			String tooltip = tr("Use preset ''{0}'' of group ''{1}''", tr(name), tr(group.name));
-			putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
-			putValue("toolbar", "tagging_" + group.name + "/" + name);
-		}
+		putValue(Action.NAME, getName());
+		putValue("toolbar", "tagging_" + getRawName());
+		putValue(SHORT_DESCRIPTION, "<html>"+ group != null ?
+		tr("Use preset ''{0}'' of group ''{1}''", tr(name), group.getName()) :
+		tr("Use preset ''{0}''", tr(name))
+		+"</html>");
 	}
 
+	public String getName() {
+		return group != null ? group.getName() + "/" + tr(name) : tr(name);
+	}
+	public String getRawName() {
+		return group != null ? group.getRawName() + "/" + name : name;
+	}
 	/**
 	 * Called from the XML parser to set the icon
 	 * 
@@ -412,10 +410,11 @@ public class TaggingPreset extends AbstractAction {
 			if (o instanceof TaggingPresetMenu) {
 				TaggingPresetMenu tp = (TaggingPresetMenu) o;
 				if(tp == lastmenu)
-					lastmenu = null;
+					lastmenu = tp.group;
 				else
 				{
 					tp.setDisplayName();
+					tp.group = lastmenu;
 					lastmenu = tp;
 					all.add(tp);
 					Main.toolbar.register(tp);
