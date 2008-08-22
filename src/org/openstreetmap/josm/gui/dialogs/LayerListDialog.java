@@ -287,7 +287,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 	 * Add the new layer to the list.
 	 */
 	public void layerAdded(Layer newLayer) {
-		model.add(0, newLayer);
+		model.add(model.size(), newLayer);
 		updateButtonEnabled();
 	}
 

@@ -123,6 +123,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	 * redraw to (possibly) get rid of helper line if selection changes.
 	 */
 	public void eventDispatched(AWTEvent event) {
+		if(!Main.map.mapView.isDrawableLayer())
+			return;
 		InputEvent e = (InputEvent) event;
 		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
@@ -133,6 +135,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	 * redraw to (possibly) get rid of helper line if selection changes.
 	 */
 	public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+		if(!Main.map.mapView.isDrawableLayer())
+			return;
 		computeHelperLine();
 	}
 
@@ -145,6 +149,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	@Override public void mouseClicked(MouseEvent e) {
 
 		if (e.getButton() != MouseEvent.BUTTON1)
+			return;
+		if(!Main.map.mapView.isDrawableLayer())
 			return;
 
 		// we copy ctrl/alt/shift from the event just in case our global
@@ -330,6 +336,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	}
 	
 	@Override public void mouseMoved(MouseEvent e) {
+		if(!Main.map.mapView.isDrawableLayer())
+			return;
 
 		// we copy ctrl/alt/shift from the event just in case our global
 		// AWTEvent didn't make it through the security manager. Unclear
@@ -440,6 +448,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	 * Repaint on mouse exit so that the helper line goes away.
 	 */
 	@Override public void mouseExited(MouseEvent e) {
+		if(!Main.map.mapView.isDrawableLayer())
+			return;
 		mousePos = e.getPoint();
 		Main.map.mapView.repaint();
 	}

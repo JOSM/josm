@@ -171,12 +171,27 @@ public class MapView extends NavigatableComponent {
 			l.layerAdded(layer);
 		for (Layer.LayerChangeListener l : Layer.listeners)
 			l.layerAdded(layer);
-		// autoselect the new layer
-		Layer old = activeLayer;
-		setActiveLayer(layer);
-		for (Layer.LayerChangeListener l : Layer.listeners)
-			l.activeLayerChange(old, layer);
+		if (layer instanceof OsmDataLayer) {
+			// autoselect the new layer
+			Layer old = activeLayer;
+			setActiveLayer(layer);
+			for (Layer.LayerChangeListener l : Layer.listeners)
+				l.activeLayerChange(old, layer);
+		}
 		repaint();
+	}
+
+	@Override
+	protected DataSet getData()
+	{
+		if(activeLayer != null && activeLayer instanceof OsmDataLayer)
+			return ((OsmDataLayer)activeLayer).data;
+		return new DataSet();
+	}
+
+	public Boolean isDrawableLayer()
+	{
+		return activeLayer != null && activeLayer instanceof OsmDataLayer;
 	}
 
 	/**
@@ -250,12 +265,12 @@ public class MapView extends NavigatableComponent {
 
 		for (int i = layers.size()-1; i >= 0; --i) {
 			Layer l = layers.get(i);
-			if (l.visible && l != getActiveLayer())
+			if (l.visible/* && l != getActiveLayer()*/)
 				l.paint(tempG, this);
 		}
-		
-		if (getActiveLayer() != null && getActiveLayer().visible)
-			getActiveLayer().paint(tempG, this);
+
+		/*if (getActiveLayer() != null && getActiveLayer().visible)
+			getActiveLayer().paint(tempG, this);*/
 
 		for (MapViewPaintable mvp : temporaryLayers) {
 			mvp.paint(tempG, this);
@@ -352,8 +367,10 @@ public class MapView extends NavigatableComponent {
 		if (layer instanceof OsmDataLayer) {
 			editLayer = (OsmDataLayer)layer;
 			Main.ds = editLayer.data;
-			DataSet.fireSelectionChanged(Main.ds.getSelected());
 		}
+		else
+			Main.ds.setSelected();
+		DataSet.fireSelectionChanged(Main.ds.getSelected());
 		Layer old = activeLayer;
 		activeLayer = layer;
 		if (old != layer) {

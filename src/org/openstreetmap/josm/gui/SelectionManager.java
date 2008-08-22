@@ -284,13 +284,13 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 				selection.add(osm);
 		} else {
 			// nodes
-			for (Node n : Main.ds.nodes) {
+			for (Node n : nc.getData().nodes) {
 				if (!n.deleted && !n.incomplete && r.contains(nc.getPoint(n.eastNorth)))
 					selection.add(n);
 			}
 			
 			// ways
-			for (Way w : Main.ds.ways) {
+			for (Way w : nc.getData().ways) {
 				if (w.deleted || w.nodes.isEmpty() || w.incomplete)
 						continue;
 				if (alt) {

@@ -17,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -48,7 +49,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
 	public NavigatableComponent() {
 		setLayout(null);
-    }
+	}
+
+	protected DataSet getData()
+	{
+		return Main.ds;
+	}
 
 	/**
 	 * Return the OSM-conform zoom factor (0 for whole world, 1 for half, 2 for quarter...)
@@ -136,7 +142,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	public final Node getNearestNode(Point p) {
 		double minDistanceSq = Double.MAX_VALUE;
 		Node minPrimitive = null;
-		for (Node n : Main.ds.nodes) {
+		for (Node n : getData().nodes) {
 			if (n.deleted || n.incomplete)
 				continue;
 			Point sp = getPoint(n.eastNorth);
@@ -162,7 +168,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 */
 	public final List<WaySegment> getNearestWaySegments(Point p) {
 		TreeMap<Double, List<WaySegment>> nearest = new TreeMap<Double, List<WaySegment>>();
-		for (Way w : Main.ds.ways) {
+		for (Way w : getData().ways) {
 			if (w.deleted || w.incomplete) continue;
 			Node lastN = null;
 			int i = -2;
@@ -272,7 +278,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 */
 	public Collection<OsmPrimitive> getAllNearest(Point p) {
 		Collection<OsmPrimitive> nearest = new HashSet<OsmPrimitive>();
-			for (Way w : Main.ds.ways) {
+			for (Way w : getData().ways) {
 			if (w.deleted || w.incomplete) continue;
 			Node lastN = null;
 			for (Node n : w.nodes) {
@@ -294,7 +300,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 				lastN = n;
 				}
 			}
-		for (Node n : Main.ds.nodes) {
+		for (Node n : getData().nodes) {
 			if (!n.deleted && !n.incomplete
 					&& getPoint(n.eastNorth).distanceSq(p) < snapDistance) {
 				nearest.add(n);
@@ -313,7 +319,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 	 */
 	public Collection<Node> getNearestNodes(Point p) {
 		Collection<Node> nearest = new HashSet<Node>();
-		for (Node n : Main.ds.nodes) {
+		for (Node n : getData().nodes) {
 			if (!n.deleted && !n.incomplete
 					&& getPoint(n.eastNorth).distanceSq(p) < snapDistance) {
 				nearest.add(n);
