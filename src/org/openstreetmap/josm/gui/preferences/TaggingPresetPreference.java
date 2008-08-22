@@ -28,6 +28,8 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetSeperator;
 import org.openstreetmap.josm.tools.GBC;
 
 public class TaggingPresetPreference implements PreferenceSetting {
@@ -126,42 +128,27 @@ public class TaggingPresetPreference implements PreferenceSetting {
 		}
 		else
 		{
-			HashMap<String,JMenu> submenus = new HashMap<String,JMenu>();
+			HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<TaggingPresetMenu,JMenu>();
 			for (final TaggingPreset p : taggingPresets) {
 				String name = (String) p.getValue(Action.NAME);
-				if (name.equals(" ")) {
-					Main.main.menu.presetsMenu.add(new JSeparator());
-				} else {
-					String[] sp = name.split("/");
-					if (sp.length <= 1) {
-						if(p.isEmpty())
-						{
-							JMenu submenu = submenus.get(sp[0]);
-							if (submenu == null) {
-								submenu = new JMenu(p);
-								submenus.put(sp[0], submenu);
-								Main.main.menu.presetsMenu.add(submenu);
-							}
-						}
-						else
-						{
-							Main.main.menu.presetsMenu.add(new JMenuItem(p));
-						}
-					} else {
-						p.setDisplayName(sp[1]);
-						JMenu submenu = submenus.get(sp[0]);
-						if (submenu == null) {
-							submenu = new JMenu(sp[0]);
-							submenus.put(sp[0], submenu);
-							Main.main.menu.presetsMenu.add(submenu);
-						}
-						if (sp[1].equals(" "))
-							submenu.add(new JSeparator());
-						else
-							submenu.add(p);
-					}
+				if (p instanceof TaggingPresetSeperator) {
+					if(p.group != null)
+						submenus.get(p.group).add(new JSeparator());
+					else
+						Main.main.menu.presetsMenu.add(new JSeparator());
 				}
-			}		
+				else if (p instanceof TaggingPresetMenu)
+				{
+					JMenu submenu = new JMenu(p);
+					submenus.put((TaggingPresetMenu)p, submenu);
+					Main.main.menu.presetsMenu.add(submenu);
+				} else {
+					if(p.group != null)
+						submenus.get(p.group).add(p);
+					else
+						Main.main.menu.presetsMenu.add(new JMenuItem(p));
+				}
+			}
 		}
 	}
 }

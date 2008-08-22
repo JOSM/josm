@@ -66,6 +66,13 @@ public class XmlObjectParser implements Iterable<Object> {
 					setValue(a.getQName(i), a.getValue(i));
 				if (mapping.get(qname).onStart)
 					report();
+				if (mapping.get(qname).both)
+				{
+					try {
+						queue.put(current.peek());
+					} catch (InterruptedException e) {
+					}
+				}
 			}
 		}
 		@Override public void endElement(String ns, String lname, String qname) throws SAXException {
@@ -155,10 +162,12 @@ public class XmlObjectParser implements Iterable<Object> {
 	private static class Entry {
 		Class<?> klass;
 		boolean onStart;
-		public Entry(Class<?> klass, boolean onStart) {
+		boolean both;
+		public Entry(Class<?> klass, boolean onStart, boolean both) {
 			super();
 			this.klass = klass;
 			this.onStart = onStart;
+			this.both = both;
 		}
 	}
 
@@ -208,11 +217,15 @@ public class XmlObjectParser implements Iterable<Object> {
 	}
 
 	public void map(String tagName, Class<?> klass) {
-		mapping.put(tagName, new Entry(klass,false));
+		mapping.put(tagName, new Entry(klass,false,false));
 	}
 
 	public void mapOnStart(String tagName, Class<?> klass) {
-		mapping.put(tagName, new Entry(klass,true));
+		mapping.put(tagName, new Entry(klass,true,false));
+	}
+
+	public void mapBoth(String tagName, Class<?> klass) {
+		mapping.put(tagName, new Entry(klass,false,true));
 	}
 
 	/**

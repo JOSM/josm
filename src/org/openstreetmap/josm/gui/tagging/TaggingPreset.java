@@ -40,6 +40,8 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetSeperator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -53,7 +55,10 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  */
 public class TaggingPreset extends AbstractAction {
-	
+
+	public TaggingPresetMenu group = null;
+	public String name;
+
 	public static abstract class Item {
 		public boolean focus = false;
 		abstract void addToPanel(JPanel p, Collection<OsmPrimitive> sel);
@@ -330,26 +335,24 @@ public class TaggingPreset extends AbstractAction {
 	 */
 	public TaggingPreset() {}
 
-
-	public boolean isEmpty()
-	{
-		return (data.size() == 0);
-	}
-	/**
-	 * Called from the XML parser to set the name of the tagging preset
-	 */
-	public void setName(String name) {
-		setDisplayName(tr(name));
-		putValue("toolbar", "tagging_"+name);
-	}
-	
 	/**
 	 * Change the display name without changing the toolbar value.
 	 */
-	public void setDisplayName(String name) {
-		putValue(Action.NAME, tr(name));
-		String tooltip = tr("Use preset ''{0}''", tr(name));
-		putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
+	public void setDisplayName() {
+		if(group == null)
+		{
+			putValue(Action.NAME, tr(name));
+			String tooltip = tr("Use preset ''{0}''", tr(name));
+			putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
+			putValue("toolbar", "tagging_" + name);
+		}
+		else
+		{
+			putValue(Action.NAME, tr(group.name) + "/" + tr(name));
+			String tooltip = tr("Use preset ''{0}'' of group ''{1}''", tr(name), tr(group.name));
+			putValue(SHORT_DESCRIPTION, "<html>"+tooltip+"</html>");
+			putValue("toolbar", "tagging_" + group.name + "/" + name);
+		}
 	}
 
 	/**
@@ -394,18 +397,40 @@ public class TaggingPreset extends AbstractAction {
 		}
 		XmlObjectParser parser = new XmlObjectParser();
 		parser.mapOnStart("item", TaggingPreset.class);
+		parser.mapOnStart("seperator", TaggingPresetSeperator.class);
+		parser.mapBoth("group", TaggingPresetMenu.class);
 		parser.map("text", Text.class);
 		parser.map("check", Check.class);
 		parser.map("combo", Combo.class);
 		parser.map("label", Label.class);
 		parser.map("key", Key.class);
 		LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
+		TaggingPresetMenu lastmenu = null;
 		parser.start(in);
 		while(parser.hasNext()) {
 			Object o = parser.next();
-			if (o instanceof TaggingPreset) {
-				all.add((TaggingPreset)o);
-				Main.toolbar.register((TaggingPreset)o);
+			if (o instanceof TaggingPresetMenu) {
+				TaggingPresetMenu tp = (TaggingPresetMenu) o;
+				if(tp == lastmenu)
+					lastmenu = null;
+				else
+				{
+					tp.setDisplayName();
+					lastmenu = tp;
+					all.add(tp);
+					Main.toolbar.register(tp);
+					
+				}
+			} else if (o instanceof TaggingPresetSeperator) {
+				TaggingPresetSeperator tp = (TaggingPresetSeperator) o;
+				tp.group = lastmenu;
+				all.add(tp);
+			} else if (o instanceof TaggingPreset) {
+				TaggingPreset tp = (TaggingPreset) o;
+				tp.group = lastmenu;
+				tp.setDisplayName();
+				all.add(tp);
+				Main.toolbar.register(tp);
 			} else
 				all.getLast().data.add((Item)o);
 		}

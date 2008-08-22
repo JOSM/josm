@@ -144,9 +144,7 @@ public class ToolbarPreferences implements PreferenceSetting {
 		Map<String, Action> us = new TreeMap<String, Action>();
 		for (Action a : actions.values())
 		{
-			String name = a.getValue(a.NAME).toString();
-			if(!name.equals(" "))
-				us.put(a.getValue(a.NAME).toString()+a.toString(), a);
+			us.put(a.getValue(a.NAME).toString()+a.toString(), a);
 		}
 		for (String a : us.keySet())
 			unselected.addElement(us.get(a));
