@@ -500,16 +500,6 @@
 		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 	</item>
 
-
-	<item name="Ways/ " icon="presets/empty.png"></item>
-	
-	<item name="Ways/Points" icon="presets/waypoints.png">
-		<label text="Road Points" />
-		<combo key="highway" text="Type" values="motorway_junction,services,toll_booth,traffic_signals,crossing,mini_roundabout,incline,incline_steep,viaduct,stop,gate,bus_stop,stile,cattle_grid,ford,turning_circle" default="" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-		<check key="mountain_pass" text="Mountain Pass" default="off" delete_if_empty="true" />
-	</item>
-	
 	<item name="Ways/ " icon="presets/empty.png"></item>
 	
 	<item name="Ways/Track" icon="presets/track.png">
@@ -710,9 +700,103 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 		<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 	</item>
+
+
+	<item name="Waypoints/Toll Booth" icon="presets/waypoints.png">
+		<label text="Edit Toll Booth" />
+		<label text=" " />
+		<key key="highway" value="toll_booth" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="operator" text="Operator" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waypoints/Services" icon="presets/waypoints.png">
+		<label text="Edit Service Station" />
+		<label text=" " />
+		<key key="highway" value="service" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="operator" text="Operator" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waypoints/Motorway Junction" icon="presets/waypoints.png">
+		<label text="Edit Motorway Junction" />
+		<label text=" " />
+		<key key="highway" value="motorway_junction" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<text key="ref" text="Number" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waypoints/Ford" icon="presets/waypoints.png">
+		<label text="Edit Ford" />
+		<label text=" " />
+		<key key="highway" value="ford" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waypoints/Crossing" icon="presets/waypoints.png">
+		<label text="Edit Crossing" />
+		<label text=" " />
+		<key key="highway" value="crossing" />
+	</item>
 	
+	<item name="Waypoints/Mini Roundabout" icon="presets/waypoints.png">
+		<key key="highway" value="mini_roundabout" />
+	</item>
 
+	<item name="Waypoints/Traffic Signal" icon="presets/waypoints.png">
+		<label text="Edit Traffic Signal" />
+		<label text=" " />
+		<key key="highway" value="traffic_signals" />
+	</item>
 
+	<item name="Waypoints/Turning Circle" icon="presets/waypoints.png">
+		<label text="Edit Turning Circle" />
+		<label text=" " />
+		<key key="highway" value="turning_circle" />
+	</item>
+
+	<item name="Waypoints/Bus Stop" icon="presets/waypoints.png">
+		<label text="Edit Bus Stop" />
+		<label text=" " />
+		<key key="highway" value="bus_stop" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Waypoints/Stop" icon="presets/Stop.png">
+		<key key="highway" value="stop" />
+	</item>
+
+	<item name="Waypoints/Cattle Grid" icon="presets/waypoints.png">
+		<key key="highway" value="cattle_grid" />
+	</item>
+
+	<item name="Waypoints/Stile" icon="presets/waypoints.png">
+		<key key="highway" value="stile" />
+	</item>
+
+	<item name="Waypoints/Mountain Pass" icon="presets/waypoints.png">
+		<label text="Edit Mountain Pass" />
+		<label text=" " />
+		<key key="highway" value="mountain_pass" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+	
+	
 	<item name="Railway/Rail" icon="presets/railway.png">
 		<label text="Edit a Rail" />
 		<label text=" " />
@@ -774,14 +858,61 @@
 	</item>
 	
 	<item name="Railway/ " icon="presets/empty.png"></item>
-	
-	<item name="Railway/Railway Point" icon="presets/railwaypoint.png">
-		<label text="Edit a Railway Point" />
-		<combo key="railway" text="Type" values="station,halt,tram_stop,subway_entrance,crossing,level_crossing,turntable,viaduct" default="" delete_if_empty="true" />
-		<text key="name" text="Name" default="" delete_if_empty="true"  />
+
+
+	<item name="Railway Point/Station" icon="presets/railwaypoint.png">
+		<label text="Edit Station" />
+		<label text=" " />
+		<key key="railway" value="station" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
-	
-	
+
+	<item name="Railway Point/Halt" icon="presets/railwaypoint.png">
+		<label text="Edit Halt" />
+		<label text=" " />
+		<key key="railway" value="halt" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Railway Point/Tram Stop" icon="presets/railwaypoint.png">
+		<label text="Edit Tram Stop" />
+		<label text=" " />
+		<key key="railway" value="tram_stop" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Railway Point/Subway Entrance" icon="presets/railwaypoint.png">
+		<label text="Edit Subway Entrance" />
+		<label text=" " />
+		<key key="railway" value="subway_entrance" />
+		<label text=" " />
+		<label text="Optional Attributes:" />
+		<label text=" " />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Railway Point/Crossing" icon="presets/railwaypoint.png">
+		<key key="railway" value="crossing" />
+	</item>
+
+	<item name="Railway Point/Level Crossing" icon="presets/railwaypoint.png">
+		<key key="railway" value="level_crossing" />
+	</item>
+
+	<item name="Railway Point/Turntable" icon="presets/railwaypoint.png">
+		<key key="railway" value="turntable" />
+	</item>
+
+
 	<item name="Waterway/River" icon="presets/waterway.png">
 		<label text="Edit a River" />
 		<label text=" " />
@@ -837,15 +968,26 @@
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
 
-	<item name="Waterway/Waterway Point" icon="presets/waterwaypoint.png">
-		<label text="Edit Waterway Points" />
+	<item name="Waterway/Boatyard" icon="presets/empty.png">
+		<label text="Edit a Boatyard" />
 		<label text=" " />
-		<combo key="waterway" text="Type" values="lock_gate,turning_point,aqueduct,boatyard,water_point,waste_disposal,mooring,weir" default="" delete_if_empty="true" />
+		<key key="waterway" value="boatyard" />
 		<text key="name" text="Name" default="" delete_if_empty="true" />
 	</item>
-	
-	
-	
+
+	<item name="Waterway Points/Lock Gate" icon="presets/empty.png">
+		<key key="waterway" value="lock_gate" />
+	</item>
+
+	<item name="Waterway Points/Turning Point" icon="presets/empty.png">
+		<key key="waterway" value="turning_point" />
+	</item>
+
+	<item name="Waterway Points/Waste Disposal" icon="presets/empty.png">
+		<key key="waterway" value="waste_disposal" />
+	</item>
+
+
 	<item name="Car/Fuel" icon="presets/fuel.png">
 		<label text="Edit Fuel" />
 		<key key="amenity" value="fuel" />
