@@ -1110,7 +1110,7 @@
 	</group> <!-- Food+Drinks -->
 
 	<group name="Tourism" icon="presets/State_Public.png">
-		<item name="Information" icon="presets/information.png">
+		<item name="Information point" icon="presets/information.png">
 			<label text="Edit Tourist Information" />
 			<key key="tourism" value="information" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1274,8 +1274,8 @@
 	</group> <!-- Sport Facilities -->
 
 	<group name="Sport" icon="presets/soccer.png">
-		<item name="Track" icon="presets/empty.png">
-			<label text="Edit Track" />
+		<item name="Sports Track" icon="presets/empty.png">
+			<label text="Edit Sports Track" />
 			<key key="leisure" value="track" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
@@ -1843,7 +1843,7 @@
 			<label text=" " />
 			<text key="addr:housename" text="House name" default="" delete_if_empty="true" />
 			<text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
-			<text key="addr:city" text="City" use_last_as_default="true" delete_if_empty="true" />
+			<text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
 			<text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
 		</item>
 
@@ -2006,14 +2006,14 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Railway" icon="presets/landuse.png">
+		<item name="Railway land" icon="presets/landuse.png">
 			<label text="Edit Railway Landuse" />
 			<label text=" " />
 			<key key="landuse" value="railway" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Construction" icon="presets/landuse.png">
+		<item name="Construction area" icon="presets/landuse.png">
 			<label text="Edit Construction Landuse" />
 			<label text=" " />
 			<key key="landuse" value="construction" />
