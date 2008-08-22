@@ -1249,7 +1249,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Playground" icon="presets/empty.png">
+		<item name="Playground" icon="presets/playground.png">
 			<label text="Edit Playground" />
 			<key key="leisure" value="playground" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1510,7 +1510,7 @@
 
 	<seperator/>
 
-	<group name="Health" icon="presets/hospital.png">
+	<group name="Health" icon="presets/pharmacy.png">
 		<item name="Pharmacy" icon="presets/pharmacy.png">
 			<label text="Edit Pharmacy" />
 			<key key="amenity" value="pharmacy" />
@@ -1524,7 +1524,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Emergency Access Point" icon="presets/pharmacy.png">
+		<item name="Emergency Access Point" icon="presets/emergency_access_point.png">
 			<label text="Edit Emergency Access Point" />
 			<label text=" " />
 			<key key="highway" value="emergency_access_point" />
@@ -1753,7 +1753,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Outdoor" icon="presets/empty.png">
+		<item name="Outdoor" icon="presets/tent.png">
 			<label text="Edit Outdoor Shop" />
 			<key key="shop" value="outdoor" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
