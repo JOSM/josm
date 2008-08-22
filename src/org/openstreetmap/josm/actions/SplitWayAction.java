@@ -96,6 +96,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 				for (Way w : Main.ds.ways) {
 					if (w.deleted || w.incomplete) continue;
 					int last = w.nodes.size()-1;
+					if(last <= 0) continue; // zero or one node ways
 					Boolean circular = w.nodes.get(0).equals(w.nodes.get(last));
 					int i = 0;
 					for (Node wn : w.nodes) {
