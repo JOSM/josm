@@ -1303,8 +1303,8 @@
 	</group>
 	
 	<group name="Sport" icon="presets/soccer.png">
-		<item name="Sports Track" icon="presets/empty.png">
-			<label text="Edit a sports track" />
+		<item name="Racetrack" icon="presets/empty.png">
+			<label text="Edit a racetrack" />
 			<key key="leisure" value="track" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<label text=" " />
