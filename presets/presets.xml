@@ -604,7 +604,7 @@
 
 		<seperator/>
 
-		<item name="Hiking" icon="presets/empty.png">
+		<item name="Hiking" icon="presets/hiking_grade1.png">
 			<label text="Edit Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
@@ -616,7 +616,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Mountain Hiking" icon="presets/empty.png">
+		<item name="Mountain Hiking" icon="presets/hiking_grade1.png">
 			<label text="Edit Mountain Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
@@ -628,7 +628,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Demanding Mountain Hiking" icon="presets/empty.png">
+		<item name="Demanding Mountain Hiking" icon="presets/hiking_grade3.png">
 			<label text="Edit Demanding Mountain Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
@@ -640,7 +640,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Alpine Hiking" icon="presets/empty.png">
+		<item name="Alpine Hiking" icon="presets/hiking_grade4.png">
 			<label text="Edit Alpine Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
@@ -652,7 +652,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Demanding alpine hiking" icon="presets/empty.png">
+		<item name="Demanding alpine hiking" icon="presets/hiking_grade5.png">
 			<label text="Edit Demanding alpine hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
@@ -664,7 +664,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Difficult alpine hiking" icon="presets/empty.png">
+		<item name="Difficult alpine hiking" icon="presets/hiking_grade6.png">
 			<label text="Edit Difficult alpine hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
@@ -761,6 +761,12 @@
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
+
+		<item name="Slipway" icon="presets/slipway.png">
+			<label text="Edit Slipway" />
+			<key key="leisure" value="slipway" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
 	</group> <!-- Waypoints -->
 
 	<seperator/>
@@ -828,21 +834,21 @@
 	</group> <!-- Railway -->
 
 	<group name="Railway Point" icon="presets/railwaypoint.png">
-		<item name="Crossing" icon="presets/railwaypoint.png">
+		<item name="Crossing" icon="presets/crossing.png">
 			<key key="railway" value="crossing" />
 		</item>
 
-		<item name="Level Crossing" icon="presets/railwaypoint.png">
+		<item name="Level Crossing" icon="presets/level_crossing.png">
 			<key key="railway" value="level_crossing" />
 		</item>
 
 		<item name="Turntable" icon="presets/railwaypoint.png">
 			<key key="railway" value="turntable" />
 		</item>
-	</group> <!-- Tailway Point -->
+	</group> <!-- Railway Point -->
 
 	<group name="Public Transport" icon="presets/bus.png">
-		<item name="Station" icon="presets/railwaypoint.png">
+		<item name="Station" icon="presets/station.png">
 			<label text="Edit Station" />
 			<label text=" " />
 			<key key="railway" value="station" />
@@ -852,7 +858,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Halt" icon="presets/railwaypoint.png">
+		<item name="Railway Halt" icon="presets/railway_halt.png">
 			<label text="Edit Halt" />
 			<label text=" " />
 			<key key="railway" value="halt" />
@@ -862,7 +868,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Tram Stop" icon="presets/railwaypoint.png">
+		<item name="Tram Stop" icon="presets/tram.png">
 			<label text="Edit Tram Stop" />
 			<label text=" " />
 			<key key="railway" value="tram_stop" />
@@ -882,19 +888,19 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Bus Stop" icon="presets/bus.png">
-			<label text="Edit Bus Stop" />
-			<label text=" " />
-			<key key="highway" value="bus_stop" />
+		<item name="Bus Station" icon="presets/bus.png">
+			<label text="Edit a Bus Station" />
+			<key key="amenity" value="bus_station" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Bus Station" icon="presets/bus.png">
-			<label text="Edit a Bus Station" />
-			<key key="amenity" value="bus_station" />
+		<item name="Bus Stop" icon="presets/bus_halt.png">
+			<label text="Edit Bus Stop" />
+			<label text=" " />
+			<key key="highway" value="bus_stop" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
@@ -966,7 +972,7 @@
 		</item>
 	</group> <!-- Waterway -->
 
-	<group name="Waterway Point" icon="presets/waterway.png">
+	<group name="Waterway Point" icon="presets/waterwaypoint.png">
 		<item name="Lock Gate" icon="presets/empty.png">
 			<key key="waterway" value="lock_gate" />
 		</item>
@@ -995,6 +1001,13 @@
 			<key key="amenity" value="parking" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
+
+		<item name="Car Shop" icon="presets/car_repair.png">
+			<label text="Edit Car Shop" />
+			<key key="shop" value="car" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+	</item>
 
 		<item name="Car Rental" icon="presets/car.png">
 			<label text="Edit Car Rental" />
@@ -1071,6 +1084,8 @@
 		</item>
 	</group> <!-- Accomodation -->
 
+
+
 	<group name="Food+Drinks" icon="presets/restaurant.png">
 		<item name="Restaurant" icon="presets/restaurant.png">
 			<label text="Edit Restaurant" />
@@ -1078,7 +1093,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Biergarten" icon="presets/empty.png">
+		<item name="Biergarten" icon="presets/biergarten.png">
 			<label text="Edit Biergarten" />
 			<key key="amenity" value="biergarten" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1122,13 +1137,13 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Zoo" icon="presets/empty.png">
+		<item name="Zoo" icon="presets/zoo.png">
 			<label text="Edit Zoo" />
 			<key key="tourism" value="zoo" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Viewpoint" icon="presets/empty.png">
+		<item name="Viewpoint" icon="presets/viewpoint.png">
 			<label text="Edit Viewpoint" />
 			<key key="tourism" value="viewpoint" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1178,13 +1193,13 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Monument" icon="presets/empty.png">
+		<item name="Monument" icon="presets/monument.png">
 			<label text="Edit Monument" />
 			<key key="historic" value="monument" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Memorial" icon="presets/empty.png">
+		<item name="Memorial" icon="presets/memorial.png">
 			<label text="Edit Memorial" />
 			<key key="historic" value="memorial" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
