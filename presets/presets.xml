@@ -2245,6 +2245,12 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Power Solar" icon="presets/empty.png">
+			<label text="Edit Power Solar" />
+			<key key="man_made" value="power_hydro" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Power Hydro" icon="presets/power_tower.png">
 			<label text="Edit Power Hydro" />
 			<key key="man_made" value="power_hydro" />
