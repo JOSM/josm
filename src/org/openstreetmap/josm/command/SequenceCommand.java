@@ -60,6 +60,11 @@ public class SequenceCommand extends Command {
 		return true;
 	}
 
+	public Command getLastCommand() {
+		if(sequence.length == 0)
+			return null;
+		return sequence[sequence.length-1];
+	}
 	private void undoCommands(int start) {
 		// We probably aborted this halfway though the
 		// execution sequence because of a sub-command

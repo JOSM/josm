@@ -50,6 +50,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	private Mode mode = null;
 	private long mouseDownTime = 0;
 	private boolean didMove = false;
+	Node virtualNode = null;
+	WaySegment virtualWay = null;
+	SequenceCommand virtualCmds = null;
 
 	/**
 	 * The old cursor before the user pressed the mouse button.
@@ -132,7 +135,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	@Override public void mouseDragged(MouseEvent e) {
 		if (mode == Mode.select) return;
-		
+
 		// do not count anything as a move if it lasts less than 100 milliseconds.
 		if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay)) return;
 
@@ -163,6 +166,21 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		if (dx == 0 && dy == 0)
 			return;
 
+		if(virtualWay != null)
+		{
+			Collection<Command> virtualCmds = new LinkedList<Command>();
+			virtualCmds.add(new AddCommand(virtualNode));
+			Way w = virtualWay.way;
+			Way wnew = new Way(w);
+			wnew.nodes.add(virtualWay.lowerIndex+1, virtualNode);
+			virtualCmds.add(new ChangeCommand(w, wnew));
+			virtualCmds.add(new MoveCommand(virtualNode, dx, dy));
+			Main.main.undoRedo.add(new SequenceCommand(tr("Add and move a virtual new node to way"), virtualCmds));
+			selectPrims(Collections.singleton((OsmPrimitive)virtualNode), false, false);
+			virtualWay = null;
+			virtualNode = null;
+		}
+
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 		
@@ -172,6 +190,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 		Command c = !Main.main.undoRedo.commands.isEmpty()
 			? Main.main.undoRedo.commands.getLast() : null;
+		if(c instanceof SequenceCommand)
+			c = ((SequenceCommand)c).getLastCommand();
 
 		if (mode == Mode.move) {
 			if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).objects))
@@ -226,15 +246,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
 						Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
 						if(p.distanceSq(pc) < snapDistance)
 						{
-							Collection<Command> cmds = new LinkedList<Command>();
-							Node n = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
-							cmds.add(new AddCommand(n));
-
-							Way wnew = new Way(w);
-							wnew.nodes.add(nearestWaySeg.lowerIndex+1, n);
-							cmds.add(new ChangeCommand(w, wnew));
-							Main.main.undoRedo.add(new SequenceCommand(tr("Add a new node to an existing way"), cmds));
-							osm = n;
+							virtualWay = nearestWaySeg;
+							virtualNode = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
+							osm = w;
 						}
 					}
 				}
@@ -286,6 +300,11 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			oldCursor = Main.map.mapView.getCursor();
 			selectionManager.register(Main.map.mapView);
 			selectionManager.mousePressed(e);
+		}
+		if(mode != Mode.move || shift || ctrl)
+		{
+			virtualNode = null;
+			virtualWay = null;
 		}
 
 		updateStatusLine();
