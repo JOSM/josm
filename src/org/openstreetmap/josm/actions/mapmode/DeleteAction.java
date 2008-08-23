@@ -74,11 +74,15 @@ public class DeleteAction extends MapMode {
 	
 	@Override public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
+		if(!Main.map.mapView.isDrawableLayer())
+			return;
 		doActionPerformed(e);
 	}
 
 	public void doActionPerformed(ActionEvent e) {
-	    boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+		if(!Main.map.mapView.isDrawableLayer())
+			return;
+		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 
 		Command c;
@@ -100,6 +104,8 @@ public class DeleteAction extends MapMode {
 	 */
 	@Override public void mouseClicked(MouseEvent e) {
 		if (e.getButton() != MouseEvent.BUTTON1)
+			return;
+		if(!Main.map.mapView.isDrawableLayer())
 			return;
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
