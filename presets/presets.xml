@@ -848,66 +848,7 @@
 		</item>
 	</group> <!-- Railway Point -->
 
-	<group name="Public Transport" icon="presets/bus.png">
-		<item name="Station" icon="presets/station.png">
-			<label text="Edit Station" />
-			<label text=" " />
-			<key key="railway" value="station" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Railway Halt" icon="presets/railway_halt.png">
-			<label text="Edit Halt" />
-			<label text=" " />
-			<key key="railway" value="halt" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Tram Stop" icon="presets/tram.png">
-			<label text="Edit Tram Stop" />
-			<label text=" " />
-			<key key="railway" value="tram_stop" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Subway Entrance" icon="presets/railwaypoint.png">
-			<label text="Edit Subway Entrance" />
-			<label text=" " />
-			<key key="railway" value="subway_entrance" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Bus Station" icon="presets/bus.png">
-			<label text="Edit a Bus Station" />
-			<key key="amenity" value="bus_station" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Bus Stop" icon="presets/bus_halt.png">
-			<label text="Edit Bus Stop" />
-			<label text=" " />
-			<key key="highway" value="bus_stop" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-	</group> <!-- Public Transport -->
+	<seperator/>
 
 	<group name="Waterway" icon="presets/waterway.png">
 		<item name="River" icon="presets/waterway.png">
@@ -1044,6 +985,67 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Bicycle -->
+
+	<group name="Public Transport" icon="presets/bus.png">
+		<item name="Station" icon="presets/station.png">
+			<label text="Edit Station" />
+			<label text=" " />
+			<key key="railway" value="station" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Railway Halt" icon="presets/railway_halt.png">
+			<label text="Edit Halt" />
+			<label text=" " />
+			<key key="railway" value="halt" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Tram Stop" icon="presets/tram.png">
+			<label text="Edit Tram Stop" />
+			<label text=" " />
+			<key key="railway" value="tram_stop" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Subway Entrance" icon="presets/railwaypoint.png">
+			<label text="Edit Subway Entrance" />
+			<label text=" " />
+			<key key="railway" value="subway_entrance" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Bus Station" icon="presets/bus.png">
+			<label text="Edit a Bus Station" />
+			<key key="amenity" value="bus_station" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Bus Stop" icon="presets/bus_halt.png">
+			<label text="Edit Bus Stop" />
+			<label text=" " />
+			<key key="highway" value="bus_stop" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+	</group> <!-- Public Transport -->
 
 	<seperator/>
 
@@ -1304,7 +1306,7 @@
 	
 	<group name="Sport" icon="presets/soccer.png">
 		<item name="Racetrack" icon="presets/empty.png">
-			<label text="Edit a racetrack" />
+			<label text="Edit Racetrack" />
 			<key key="leisure" value="track" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<label text=" " />
@@ -2027,7 +2029,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Residential area" icon="presets/landuse.png">
+		<item name="Residential" icon="presets/landuse.png">
 			<label text="Edit Residential Landuse" />
 			<label text=" " />
 			<key key="landuse" value="residential" />
