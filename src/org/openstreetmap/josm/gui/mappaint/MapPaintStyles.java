@@ -37,9 +37,12 @@ public class MapPaintStyles {
 	public static void readFromPreferences() {
 
 		String styleName = Main.pref.get("mappaint.style", "standard");
+		// fallback to standard name for internal case, as we only have one internal style
+		String internalStyleName = "standard";
 		styleDir = Main.pref.get("mappaint.styledir", Main.pref.getPreferencesDir()+"plugins/mappaint/"+styleName+"/");
 		String elemStylesFile = getStyleDir()+"elemstyles.xml";
 		imageDir = styleDir+"icons/";
+		internalImageDir = "/images/styles/"+internalStyleName+"/";
 
 //		System.out.println("mappaint: Using style: " + styleName);
 //		System.out.println("mappaint: Using style dir: " + styleDir);
@@ -64,12 +67,11 @@ public class MapPaintStyles {
 			}
 		} 
 		else {// reading the builtin file from the plugin jar file
-			URL elemStylesPath = Main.class.getResource("/styles/"+styleName+"/elemstyles.xml");
+			URL elemStylesPath = Main.class.getResource("/styles/"+internalStyleName+"/elemstyles.xml");
 
 //			System.out.println("mappaint: Using jar's elemstyles.xml: \"" + elemStylesPath + "\"");
 			if (elemStylesPath != null)
 			{
-				internalImageDir = "/images/styles/"+styleName+"/";
 				isInternal = true;
 				try
 				{
