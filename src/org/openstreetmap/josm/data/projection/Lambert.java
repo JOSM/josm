@@ -105,13 +105,13 @@ public class Lambert implements Projection {
 			outOfLambertZones = true; // possible when MAX_LAT is used
 			if (p.lat() != 0 && Math.abs(p.lat()) != Projection.MAX_LAT
 					&& p.lon() != 0 && Math.abs(p.lon()) != Projection.MAX_LON
-			        && dontDisplayErrors == false) {
-				JOptionPane.showMessageDialog(Main.parent, 
-						tr("The projection \"" + this.toString() + "\" is designed for\n" 
-				        + "latitudes between 46.1 and 57 degrees only.\n"
-				        + "Use another projection system if you are not using\n"
-				        + "a french WMS server.\n"
-				        + "Do not upload any data after this message."));
+					&& dontDisplayErrors == false) {
+				JOptionPane.showMessageDialog(Main.parent,
+						tr("The projection \"{0}\" is designed for\n"
+						+ "latitudes between 46.1° and 57° only.\n"
+						+ "Use another projection system if you are not using\n"
+						+ "a french WMS server.\n"
+						+ "Do not upload any data after this message.", this.toString()));
 				dontDisplayErrors = true;
 			}
 		}
@@ -125,14 +125,14 @@ public class Lambert implements Projection {
 					JOptionPane.showMessageDialog(Main.parent,
 									tr("IMPORTANT : data positionned far away from\n"
 											+ "the current Lambert zone limits.\n"
-									        + "Do not upload any data after this message.\n"
+											+ "Do not upload any data after this message.\n"
 											+ "Undo your last action, Save your work \n"
 											+ "and Start a new layer on the new zone."));
 					layoutZone = -1;
 					dontDisplayErrors = true;
 				} else {
-					System.out.println("temporarily extends Lambert zone " + layoutZone + " projection at lat,lon:"
-					        + lt + "," + lg);
+					System.out.println("temporarily extend Lambert zone " + layoutZone + " projection at lat,lon:"
+							+ lt + "," + lg);
 				}
 			}
 		}
@@ -155,7 +155,7 @@ public class Lambert implements Projection {
 	}
 
 	@Override public String toString() {
-		return "Lambert Zone (France)";
+		return tr("Lambert Zone (France)");
 	}
 
 	public String getCacheDirectoryName() {
@@ -292,7 +292,7 @@ public class Lambert implements Projection {
 			double s2 = Math.sin(lt);
 			s2 *= s2;
 			double l = Math.atan((Z / norm)
-					/ (1.0 - (ell.a * ell.e2 * Math.cos(lt) / (norm * Math.sqrt(1.0 - ell.e2 * s2)))));
+				/ (1.0 - (ell.a * ell.e2 * Math.cos(lt) / (norm * Math.sqrt(1.0 - ell.e2 * s2)))));
 			delta = Math.abs(l - lt);
 			lt = l;
 		}
