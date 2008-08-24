@@ -187,6 +187,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 				double b = p.distanceSq(A);
 				double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
 				if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
+					if(w.selected) // prefer selected ways a little bit
+						perDist -= 0.00001;
 					List<WaySegment> l;
 					if (nearest.containsKey(perDist)) {
 						l = nearest.get(perDist);

@@ -356,17 +356,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	protected void drawOrderNumber(Node n1, Node n2, int orderNumber) {
 		Point p1 = nc.getPoint(n1.eastNorth);
 		Point p2 = nc.getPoint(n2.eastNorth);
-		if (!isSegmentVisible(p1, p2)) {
-			return;
-		}
-		int strlen = (""+orderNumber).length();
-		int x = (p1.x+p2.x)/2 - 4*strlen;
-		int y = (p1.y+p2.y)/2 + 4;
-
-		Color c = g.getColor();
-		g.setColor(backgroundColor);
-		g.fillRect(x-1, y-12, 8*strlen+1, 14);
-		g.setColor(c);
-		g.drawString(""+orderNumber, x, y);
+		drawOrderNumber(p1, p2, orderNumber);
 	}
 }

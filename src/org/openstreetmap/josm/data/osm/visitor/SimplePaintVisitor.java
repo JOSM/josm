@@ -74,6 +74,7 @@ public class SimplePaintVisitor implements Visitor {
 	protected int defaultSegmentWidth = 2;
 	protected int virtualNodeSize;
 	protected int virtualNodeSpace;
+	protected int segmentNumberSpace;
 	protected int taggedNodeRadius;
 	protected int taggedNodeSize;
 
@@ -108,6 +109,7 @@ public class SimplePaintVisitor implements Visitor {
 		fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
 		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 4) / 2 : 0;
 		virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
+		segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
 
 		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
@@ -170,6 +172,13 @@ public class SimplePaintVisitor implements Visitor {
 			drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
 	}
 
+	public static Boolean isLargeSegment(Point p1, Point p2, int space)
+	{
+		int xd = p1.x-p2.x; if(xd < 0) xd = -xd;
+		int yd = p1.y-p2.y; if(yd < 0) yd = -yd;
+		return (xd+yd > space);
+	}
+
 	public void visitVirtual(Way w) {
 		Iterator<Node> it = w.nodes.iterator();
 		if (it.hasNext()) {
@@ -177,19 +186,14 @@ public class SimplePaintVisitor implements Visitor {
 			while(it.hasNext())
 			{
 				Point p = nc.getPoint(it.next().eastNorth);
-				if(isSegmentVisible(lastP, p))
+				if(isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace))
 				{
-					int xd = p.x-lastP.x; if(xd < 0) xd = -xd;
-					int yd = p.y-lastP.y; if(yd < 0) yd = -yd;
-					if(xd+yd > virtualNodeSpace)
-					{
-						int x = (p.x+lastP.x)/2;
-						int y = (p.y+lastP.y)/2;
-						currentPath.moveTo(x-5, y);
-						currentPath.lineTo(x+5, y);
-						currentPath.moveTo(x, y-5);
-						currentPath.lineTo(x, y+5);
-					}
+					int x = (p.x+lastP.x)/2;
+					int y = (p.y+lastP.y)/2;
+					currentPath.moveTo(x-5, y);
+					currentPath.lineTo(x+5, y);
+					currentPath.moveTo(x, y-5);
+					currentPath.lineTo(x, y+5);
 				}
 				lastP = p;
 			}
@@ -281,16 +285,23 @@ public class SimplePaintVisitor implements Visitor {
 	 * parents way
 	 */
 	protected void drawOrderNumber(Point p1, Point p2, int orderNumber) {
-		int strlen = (""+orderNumber).length();
-		int x = (p1.x+p2.x)/2 - 4*strlen;
-		int y = (p1.y+p2.y)/2 + 4;
+		if (isSegmentVisible(p1, p2) && isLargeSegment(p1, p2, segmentNumberSpace)) {
+			String on = Integer.toString(orderNumber);
+			int strlen = on.length();
+			int x = (p1.x+p2.x)/2 - 4*strlen;
+			int y = (p1.y+p2.y)/2 + 4;
 
-		if (isSegmentVisible(p1, p2)) {
+			if(virtualNodeSize != 0 && isLargeSegment(p1, p2, virtualNodeSpace))
+			{
+				y = (p1.y+p2.y)/2 - virtualNodeSize - 3;
+			}
+
+			displaySegments(currentColor); // draw nodes on top!
 			Color c = g.getColor();
 			g.setColor(backgroundColor);
 			g.fillRect(x-1, y-12, 8*strlen+1, 14);
 			g.setColor(c);
-			g.drawString(""+orderNumber, x, y);
+			g.drawString(on, x, y);
 		}
 	}
 

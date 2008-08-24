@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
+import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
@@ -239,9 +240,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 					Way w = (Way)osm;
 					Point p1 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex).eastNorth);
 					Point p2 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex+1).eastNorth);
-					int xd = p2.x-p1.x; if(xd < 0) xd = -xd;
-					int yd = p2.y-p1.y; if(yd < 0) yd = -yd;
-					if(xd+yd > Main.pref.getInteger("mappaint.node.virtual-space", 70))
+					if(SimplePaintVisitor.isLargeSegment(p1, p2, Main.pref.getInteger("mappaint.node.virtual-space", 70)))
 					{
 						Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
 						if(p.distanceSq(pc) < snapDistance)
