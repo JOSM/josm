@@ -133,14 +133,22 @@ public class SimplePaintVisitor implements Visitor {
 				osm.visit(this);
 		displaySegments(null);
 
-		for (final OsmPrimitive osm : data.nodes)
-			if (!osm.deleted && !osm.selected)
-				osm.visit(this);
-
 		for (final OsmPrimitive osm : data.getSelected())
 			if (!osm.deleted)
 				osm.visit(this);
 		displaySegments(null);
+
+		for (final OsmPrimitive osm : data.nodes)
+			if (!osm.deleted && !osm.selected)
+				osm.visit(this);
+		if(virtualNodeSize != 0)
+		{
+			currentColor = nodeColor;
+			for (final OsmPrimitive osm : data.ways)
+				if (!osm.deleted)
+					visitVirtual((Way)osm);
+			displaySegments(null);
+		}
 	}
 
 	/**
@@ -160,6 +168,32 @@ public class SimplePaintVisitor implements Visitor {
 			drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
 		else
 			drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
+	}
+
+	public void visitVirtual(Way w) {
+		Iterator<Node> it = w.nodes.iterator();
+		if (it.hasNext()) {
+			Point lastP = nc.getPoint(it.next().eastNorth);
+			while(it.hasNext())
+			{
+				Point p = nc.getPoint(it.next().eastNorth);
+				if(isSegmentVisible(lastP, p))
+				{
+					int xd = p.x-lastP.x; if(xd < 0) xd = -xd;
+					int yd = p.y-lastP.y; if(yd < 0) yd = -yd;
+					if(xd+yd > virtualNodeSpace)
+					{
+						int x = (p.x+lastP.x)/2;
+						int y = (p.y+lastP.y)/2;
+						currentPath.moveTo(x-5, y);
+						currentPath.lineTo(x+5, y);
+						currentPath.moveTo(x, y-5);
+						currentPath.lineTo(x, y+5);
+					}
+				}
+				lastP = p;
+			}
+		}
 	}
 
 	/**
@@ -281,24 +315,6 @@ public class SimplePaintVisitor implements Visitor {
 		}
 	}
 
-	protected void drawVirtualNode(Point p1, Point p2, Color col)
-	{
-		if(virtualNodeSize > 0)
-		{
-			int xd = p2.x-p1.x; if(xd < 0) xd = -xd;
-			int yd = p2.y-p1.y; if(yd < 0) yd = -yd;
-			if(xd+yd > virtualNodeSpace)
-			{
-				int x = (p1.x+p2.x)/2;
-				int y = (p1.y+p2.y)/2;
-				currentPath.moveTo(x-5, y);
-				currentPath.lineTo(x+5, y);
-				currentPath.moveTo(x, y-5);
-				currentPath.lineTo(x, y+5);
-			}
-		}
-	}
-
 	/**
 	 * Draw a line with the given color.
 	 */
@@ -307,8 +323,6 @@ public class SimplePaintVisitor implements Visitor {
 		if (col != currentColor) displaySegments(col);
 
 		if (isSegmentVisible(p1, p2)) {
-			drawVirtualNode(p1, p2, col);
-
 			currentPath.moveTo(p1.x, p1.y);
 			currentPath.lineTo(p2.x, p2.y);
 

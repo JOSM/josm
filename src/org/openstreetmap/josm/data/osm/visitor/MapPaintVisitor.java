@@ -156,14 +156,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 				{
 					if(w.selected)
 					{
-						if(showDirection || virtualNodeSize != 0)
-							drawSeg(lastN, n, selectedColor, showDirection, width, false, false);
+						if(showDirection)
+							drawSeg(lastN, n, selectedColor, showDirection, width, dashed, false);
 					}
 					else
-						drawSeg(lastN, n, untaggedColor, showDirection, width, dashed, true);
+						drawSeg(lastN, n, colour, showDirection, width, dashed, true);
 				}
 				else
-					drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, true, true);
+					drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed, true);
 			} else {
 				if (realWidth > 0 && useRealWidth && !showDirection) {
 					int tmpWidth = (int) (100 /  (float) (circum / realWidth));
@@ -243,7 +243,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		if (!isSegmentVisible(p1, p2)) {
 			return;
 		}
-		drawVirtualNode(p1, p2, col);
 		if(drawway)
 		{
 			currentPath.moveTo(p1.x, p1.y);
@@ -339,6 +338,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		for (final OsmPrimitive osm : data.nodes)
 			if (!osm.incomplete && !osm.deleted)
 				osm.visit(this);
+
+		if(virtualNodeSize != 0)
+		{
+			currentColor = nodeColor;
+			for (final OsmPrimitive osm : data.ways)
+				if (!osm.deleted)
+					visitVirtual((Way)osm);
+			displaySegments(null);
+		}
 	}
 
 	/**
