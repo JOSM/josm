@@ -109,11 +109,9 @@ public class SimplePaintVisitor implements Visitor {
 		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 4) / 2 : 0;
 		virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
 
-		((Graphics2D)g)
-				.setRenderingHint(
-						RenderingHints.KEY_ANTIALIASING,
-						Main.pref.getBoolean("mappaint.use-antialiasing", true) ? RenderingHints.VALUE_ANTIALIAS_ON
-								: RenderingHints.VALUE_ANTIALIAS_OFF);
+		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+			Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
+			RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
 	public void visitAll(DataSet data, Boolean virtual) {
