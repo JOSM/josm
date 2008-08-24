@@ -41,6 +41,7 @@ import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
+import org.openstreetmap.josm.actions.UnGlueAction;
 import org.openstreetmap.josm.actions.UndoAction;
 import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UploadAction;
@@ -101,6 +102,7 @@ public class MainMenu extends JMenuBar {
 	public final JosmAction alignInRect = new AlignInRectangleAction();
 	public final JosmAction mergeNodes = new MergeNodesAction();
 	public final JosmAction joinNodeWay = new JoinNodeWayAction();
+	public final JosmAction unglueNodes = new UnGlueAction();
 
 	/* Audio menu */
 	public final JosmAction audioPlayPause = new AudioPlayPauseAction();
@@ -228,6 +230,8 @@ public class MainMenu extends JMenuBar {
 		current.setAccelerator(mergeNodes.shortCut);
 		current = toolsMenu.add(joinNodeWay);
 		current.setAccelerator(joinNodeWay.shortCut);
+		current = toolsMenu.add(unglueNodes);
+		current.setAccelerator(unglueNodes.shortCut);
 		add(toolsMenu);
 
 		if (! Main.pref.getBoolean("audio.menuinvisible")) {
