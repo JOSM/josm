@@ -151,26 +151,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			}
 			orderNumber++;
 
-			if (area) {
-				if(fillAreas)
-				{
-					if(w.selected)
-					{
-						if(showDirection)
-							drawSeg(lastN, n, selectedColor, showDirection, width, dashed, false);
-					}
-					else
-						drawSeg(lastN, n, colour, showDirection, width, dashed, true);
-				}
-				else
-					drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed, true);
-			} else {
-				if (realWidth > 0 && useRealWidth && !showDirection) {
-					int tmpWidth = (int) (100 /  (float) (circum / realWidth));
-					if (tmpWidth > width) width = tmpWidth;
-				}
-				drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed, true);
+			if (!area && realWidth > 0 && useRealWidth && !showDirection) {
+				int tmpWidth = (int) (100 /  (float) (circum / realWidth));
+				if (tmpWidth > width) width = tmpWidth;
 			}
+			drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed);
 
 			if (showOrderNumber)
 				drawOrderNumber(lastN, n, orderNumber);
@@ -187,18 +172,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	protected void drawWayAsArea(Way w, Color colour)
 	{
 		Polygon polygon = new Polygon();
-		Point p;
-		// set the opacity (alpha) level of the filled polygon
-		Color coloura = new Color( colour.getRed(), colour.getGreen(), colour.getBlue(), fillAlpha);
 
 		for (Node n : w.nodes)
 		{
-			p = nc.getPoint(n.eastNorth);
+			Point p = nc.getPoint(n.eastNorth);
 			polygon.addPoint(p.x,p.y);
 		}
 
-		g.setColor( w.selected ?
-				selectedColor : coloura);
+		Color mycolor = w.selected ? selectedColor : colour;
+		// set the opacity (alpha) level of the filled polygon
+		g.setColor(new Color( mycolor.getRed(), mycolor.getGreen(), mycolor.getBlue(), fillAlpha));
 
 		g.fillPolygon(polygon);
 	}
@@ -225,15 +208,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		}
 	}
 
-	/**
-	 * Draw a line with the given color.
-	 */
-	protected void drawSegment(Node n1, Node n2, Color col, boolean showDirection) {
-		if (useRealWidth && showDirection) showDirection = false;
-		drawSeg(n1, n2, col, showDirection, 1, false, true);
-	}
-
-	private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, boolean dashed, boolean drawway) {
+	private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, boolean dashed) {
 		if (col != currentColor || width != currentWidth || dashed != currentDashed) {
 			displaySegments(col, width, dashed);
 		}
@@ -243,16 +218,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		if (!isSegmentVisible(p1, p2)) {
 			return;
 		}
-		if(drawway)
-		{
-			currentPath.moveTo(p1.x, p1.y);
-			currentPath.lineTo(p2.x, p2.y);
-		}
+		currentPath.moveTo(p1.x, p1.y);
+		currentPath.lineTo(p2.x, p2.y);
 
 		if (showDirection) {
 			double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
-			if(!drawway)
-				currentPath.moveTo(p2.x, p2.y);
 			currentPath.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
 			currentPath.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
 			currentPath.lineTo(p2.x, p2.y);
