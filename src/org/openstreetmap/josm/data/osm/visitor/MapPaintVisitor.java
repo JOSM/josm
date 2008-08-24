@@ -264,7 +264,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	}
 
 	protected void displaySegments(Color newColor, int newWidth, boolean newDash) {
-
 		if (currentPath != null) {
 			Graphics2D g2d = (Graphics2D)g;
 			g2d.setColor(inactive ? inactiveColor : currentColor);

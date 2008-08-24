@@ -128,17 +128,17 @@ public class SimplePaintVisitor implements Visitor {
 		for (final OsmPrimitive osm : data.ways)
 			if (!osm.deleted && !osm.selected && osm.tagged)
 				osm.visit(this);
-		displaySegments(null);
+		displaySegments();
 
 		for (final OsmPrimitive osm : data.ways)
 			if (!osm.deleted && !osm.selected && !osm.tagged)
 				osm.visit(this);
-		displaySegments(null);
+		displaySegments();
 
 		for (final OsmPrimitive osm : data.getSelected())
 			if (!osm.deleted)
 				osm.visit(this);
-		displaySegments(null);
+		displaySegments();
 
 		for (final OsmPrimitive osm : data.nodes)
 			if (!osm.deleted && !osm.selected)
@@ -149,7 +149,7 @@ public class SimplePaintVisitor implements Visitor {
 			for (final OsmPrimitive osm : data.ways)
 				if (!osm.deleted)
 					visitVirtual((Way)osm);
-			displaySegments(null);
+			displaySegments();
 		}
 	}
 
@@ -296,7 +296,7 @@ public class SimplePaintVisitor implements Visitor {
 				y = (p1.y+p2.y)/2 - virtualNodeSize - 3;
 			}
 
-			displaySegments(currentColor); // draw nodes on top!
+			displaySegments(); // draw nodes on top!
 			Color c = g.getColor();
 			g.setColor(backgroundColor);
 			g.fillRect(x-1, y-12, 8*strlen+1, 14);
@@ -330,7 +330,6 @@ public class SimplePaintVisitor implements Visitor {
 	 * Draw a line with the given color.
 	 */
 	protected void drawSegment(Point p1, Point p2, Color col, boolean showDirection) {
-
 		if (col != currentColor) displaySegments(col);
 
 		if (isSegmentVisible(p1, p2)) {
@@ -362,6 +361,9 @@ public class SimplePaintVisitor implements Visitor {
 		this.nc = nc;
 	}
 
+	protected void displaySegments() {
+		displaySegments(null);
+	}
 	protected void displaySegments(Color newColor) {
 		if (currentPath != null) {
 			g.setColor(currentColor);
