@@ -65,6 +65,10 @@ public class Lambert implements Projection {
 
 	public static int layoutZone = -1;
 
+	private static int currentZone = 0;
+
+	private static boolean dontDisplayErrors = false;
+
 	/**
 	 * @param p  WGS84 lat/lon (ellipsoid GRS80) (in degree)
 	 * @return eastnorth projection in Lambert Zone (ellipsoid Clark)
@@ -76,7 +80,7 @@ public class Lambert implements Projection {
 		double lg = geo.lon();
 
 		// check if longitude and latitude are inside the french Lambert zones
-		int currentZone = 0;
+		currentZone = 0;
 		boolean outOfLambertZones = false;
 		if (lt >= zoneLimits[3] && lt <= cMaxLatZone1 && lg >= cMinLonZones && lg <= cMaxLonZones) {
 			// zone I
@@ -99,23 +103,36 @@ public class Lambert implements Projection {
 					currentZone = 3;
 		} else {
 			outOfLambertZones = true; // possible when MAX_LAT is used
+			if (p.lat() != 0 && Math.abs(p.lat()) != Projection.MAX_LAT
+					&& p.lon() != 0 && Math.abs(p.lon()) != Projection.MAX_LON
+			        && dontDisplayErrors == false) {
+				JOptionPane.showMessageDialog(Main.parent, 
+						tr("The projection \"" + this.toString() + "\" is designed for\n" 
+				        + "latitudes between 46.1 and 57 degrees only.\n"
+				        + "Use another projection system if you are not using\n"
+				        + "a french WMS server.\n"
+				        + "Do not upload any data after this message."));
+				dontDisplayErrors = true;
+			}
 		}
 		if (!outOfLambertZones) {
-			if (layoutZone == -1)
+			if (layoutZone == -1) {
 				layoutZone = currentZone;
-			else if (layoutZone != currentZone) {
+				dontDisplayErrors = false;
+			} else if (layoutZone != currentZone) {
 				if ((currentZone < layoutZone && Math.abs(zoneLimits[currentZone] - lt) > cMaxOverlappingZones)
 						|| (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
 					JOptionPane.showMessageDialog(Main.parent,
 									tr("IMPORTANT : data positionned far away from\n"
 											+ "the current Lambert zone limits.\n"
+									        + "Do not upload any data after this message.\n"
 											+ "Undo your last action, Save your work \n"
 											+ "and Start a new layer on the new zone."));
 					layoutZone = -1;
+					dontDisplayErrors = true;
 				} else {
-					System.out.println("temporarily extends Lambert zone "
-							+ layoutZone + " projection at lat,lon:" + lt + ","
-							+ lg);
+					System.out.println("temporarily extends Lambert zone " + layoutZone + " projection at lat,lon:"
+					        + lt + "," + lg);
 				}
 			}
 		}
@@ -126,15 +143,19 @@ public class Lambert implements Projection {
 	}
 
 	public LatLon eastNorth2latlon(EastNorth p) {
-		LatLon geo = Geographic(p, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
+		LatLon geo;
+		if (layoutZone == -1)
+			// possible until the Lambert zone is determined by latlon2eastNorth() with a valid LatLon
+			geo = Geographic(p, Xs[currentZone], Ys[currentZone], c[currentZone], n[currentZone]);
+		else
+			geo = Geographic(p, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
 		// translate ellipsoid Clark => GRS80 (WGS83)
 		LatLon wgs = Clark2GRS80(geo);
 		return new LatLon(Math.toDegrees(wgs.lat()), Math.toDegrees(wgs.lon()));
 	}
 
-	@Override
-	public String toString() {
-		return "Lambert";
+	@Override public String toString() {
+		return "Lambert Zone (France)";
 	}
 
 	public String getCacheDirectoryName() {
