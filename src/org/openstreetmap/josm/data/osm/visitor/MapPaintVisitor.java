@@ -154,9 +154,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			if (area) {
 				if(fillAreas)
 				{
-					// hack to make direction arrows visible against filled background
-					if (showDirection || virtualNodeSize != 0)
-						drawSeg(lastN, n, w.selected ? selectedColor : untaggedColor, showDirection, width, false, false);
+					if(w.selected)
+					{
+						if(showDirection || virtualNodeSize != 0)
+							drawSeg(lastN, n, selectedColor, showDirection, width, false, false);
+					}
+					else
+						drawSeg(lastN, n, untaggedColor, showDirection, width, dashed, true);
 				}
 				else
 					drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, true, true);
