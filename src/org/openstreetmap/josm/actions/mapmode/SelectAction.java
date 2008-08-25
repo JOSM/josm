@@ -181,41 +181,43 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			virtualWay = null;
 			virtualNode = null;
 		}
-
-		Collection<OsmPrimitive> selection = Main.ds.getSelected();
-		Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
+		else
+		{
+			Collection<OsmPrimitive> selection = Main.ds.getSelected();
+			Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 		
-		// when rotating, having only one node makes no sense - quit silently
-		if (mode == Mode.rotate && affectedNodes.size() < 2) 
-			return;
+			// when rotating, having only one node makes no sense - quit silently
+			if (mode == Mode.rotate && affectedNodes.size() < 2) 
+				return;
 
-		Command c = !Main.main.undoRedo.commands.isEmpty()
-			? Main.main.undoRedo.commands.getLast() : null;
-		if(c instanceof SequenceCommand)
-			c = ((SequenceCommand)c).getLastCommand();
+			Command c = !Main.main.undoRedo.commands.isEmpty()
+				? Main.main.undoRedo.commands.getLast() : null;
+			if(c instanceof SequenceCommand)
+				c = ((SequenceCommand)c).getLastCommand();
 
-		if (mode == Mode.move) {
-			if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).objects))
-				((MoveCommand)c).moveAgain(dx,dy);
-			else
-				Main.main.undoRedo.add(
-					c = new MoveCommand(selection, dx, dy));
+			if (mode == Mode.move) {
+				if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).objects))
+					((MoveCommand)c).moveAgain(dx,dy);
+				else
+					Main.main.undoRedo.add(
+						c = new MoveCommand(selection, dx, dy));
 
-			for (Node n : affectedNodes) {
-				if (n.coor.isOutSideWorld()) {
-					// Revert move
-					((MoveCommand) c).moveAgain(-dx, -dy);
+				for (Node n : affectedNodes) {
+					if (n.coor.isOutSideWorld()) {
+						// Revert move
+						((MoveCommand) c).moveAgain(-dx, -dy);
 
-					JOptionPane.showMessageDialog(Main.parent,
-						tr("Cannot move objects outside of the world."));
-					return;
+						JOptionPane.showMessageDialog(Main.parent,
+							tr("Cannot move objects outside of the world."));
+						return;
+					}
 				}
+			} else if (mode == Mode.rotate) {
+				if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand)c).objects))
+					((RotateCommand)c).rotateAgain(mouseStartEN, mouseEN);
+				else
+					Main.main.undoRedo.add(new RotateCommand(selection, mouseStartEN, mouseEN));
 			}
-		} else if (mode == Mode.rotate) {
-			if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand)c).objects))
-				((RotateCommand)c).rotateAgain(mouseStartEN, mouseEN);
-			else
-				Main.main.undoRedo.add(new RotateCommand(selection, mouseStartEN, mouseEN));
 		}
 
 		Main.map.mapView.repaint();
