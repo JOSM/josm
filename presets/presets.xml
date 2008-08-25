@@ -2029,7 +2029,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Residential" icon="presets/landuse.png">
+		<item name="Residential area" icon="presets/landuse.png">
 			<label text="Edit Residential Landuse" />
 			<label text=" " />
 			<key key="landuse" value="residential" />
