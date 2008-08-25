@@ -69,6 +69,8 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		public void actionPerformed(ActionEvent e) {
 			int sel = instance.getSelectedIndex();
 			Layer l = layer != null ? layer : (Layer)instance.getSelectedValue();
+			if(l == null)
+				return;
 			if (l instanceof OsmDataLayer)
 			{
 				if (((OsmDataLayer)l).isModified())
@@ -102,6 +104,8 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 
 		public void actionPerformed(ActionEvent e) {
 			Layer l = layer == null ? (Layer)instance.getSelectedValue() : layer;
+			if(l == null)
+				return;
 			l.visible = !l.visible;
 			Main.map.mapView.repaint();
 			instance.repaint();
@@ -279,7 +283,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 		enable = enable && ((Layer)model.get(sel+1)).isMergable(l);
 		mergeButton.setEnabled(enable);
 		upButton.setEnabled(sel > 0);
-		downButton.setEnabled(sel < model.getSize()-1);
+		downButton.setEnabled(sel >= 0 && sel < model.getSize()-1);
 		deleteAction.setEnabled(!model.isEmpty());
 	}
 

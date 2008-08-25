@@ -171,7 +171,7 @@ public class MapView extends NavigatableComponent {
 			l.layerAdded(layer);
 		for (Layer.LayerChangeListener l : Layer.listeners)
 			l.layerAdded(layer);
-		if (layer instanceof OsmDataLayer) {
+		if (layer instanceof OsmDataLayer || activeLayer == null) {
 			// autoselect the new layer
 			Layer old = activeLayer;
 			setActiveLayer(layer);
