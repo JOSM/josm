@@ -720,8 +720,6 @@
 		</item>
 
 		<item name="Crossing" icon="presets/waypoints.png">
-			<label text="Edit Crossing" />
-			<label text=" " />
 			<key key="highway" value="crossing" />
 		</item>
 
@@ -730,14 +728,10 @@
 		</item>
 
 		<item name="Traffic Signal" icon="presets/waypoints.png">
-			<label text="Edit Traffic Signal" />
-			<label text=" " />
 			<key key="highway" value="traffic_signals" />
 		</item>
 
 		<item name="Turning Circle" icon="presets/waypoints.png">
-			<label text="Edit Turning Circle" />
-			<label text=" " />
 			<key key="highway" value="turning_circle" />
 		</item>
 
