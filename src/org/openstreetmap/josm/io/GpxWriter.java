@@ -50,7 +50,6 @@ public class GpxWriter extends XmlWriter {
 		writeTracks();
 		out.print("</gpx>");
 		out.flush();
-		out.close();
 	}
 
 	private void writeAttr(Map<String, Object> attr) {

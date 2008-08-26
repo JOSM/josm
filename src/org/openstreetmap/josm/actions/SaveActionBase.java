@@ -185,8 +185,11 @@ public abstract class SaveActionBase extends DiskAccessAction {
 					tmpFile = new File(file.getPath() + "~");
 					copy(file, tmpFile);
 				}
+				FileOutputStream fo = new FileOutputStream(file);
+				new GpxWriter(fo).write(layer.data);
+				fo.flush();
+				fo.close();
 
-				new GpxWriter(new FileOutputStream(file)).write(layer.data);
 				if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null)) {
 					tmpFile.delete();
 				}

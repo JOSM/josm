@@ -128,7 +128,10 @@ public class GpxExportAction extends DiskAccessAction {
 			gpxData = OsmDataLayer.toGpxData(Main.ds);
 		// TODO: add copyright, etc.
 		try {
-			new GpxWriter(new FileOutputStream(file)).write(gpxData);
+			FileOutputStream fo = new FileOutputStream(file);
+			new GpxWriter(fo).write(gpxData);
+			fo.flush();
+			fo.close();
 		} catch (IOException x) {
 			x.printStackTrace();
 			JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}", fn)+":\n"+x.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
