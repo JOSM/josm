@@ -321,6 +321,18 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Parking Aisle" icon="presets/way_service.png">
+			<label text="Edit a Parking Aisle" />
+			<label text=" " />
+			<key key="highway" value="service" />
+			<key key="service" value="parking_aisle" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+			<combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Ferry" icon="presets/ferry.png">
 			<label text="Edit a Ferry" />
 			<label text=" " />
