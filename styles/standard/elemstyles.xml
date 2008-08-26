@@ -594,8 +594,7 @@ BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is 
 
 	<rule>
 		<condition k="junction" v="roundabout"/>
-		<!-- this overwrites the "underlying" highway tag, so comment it out until we have a better way to display this -->
-		<!--area width="1" colour="roundabout#eeeeee" /-->
+		<area width="1" colour="roundabout#eeeeee"/>
 		<!-- tagging a node makes no real sense, a roundabout should be tagged with several nodes, or a highway=mini_roundabout should probably be used -->
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>

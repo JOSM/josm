@@ -113,6 +113,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		 && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
 
 		Color colour = untaggedColor;
+		Color areacolour = untaggedColor;
 		int width = defaultSegmentWidth;
 		int realWidth = 0; //the real width of the element in meters
 		boolean dashed = false;
@@ -125,22 +126,28 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
 		if(wayStyle!=null)
 		{
+			LineElemStyle l = null;
 			if(wayStyle instanceof LineElemStyle)
 			{
-				colour = ((LineElemStyle)wayStyle).colour;
-				width = ((LineElemStyle)wayStyle).width;
-				realWidth = ((LineElemStyle)wayStyle).realWidth;
-				dashed = ((LineElemStyle)wayStyle).dashed;
+				l = (LineElemStyle)wayStyle;
 			}
 			else if (wayStyle instanceof AreaElemStyle)
 			{
-				colour = ((AreaElemStyle)wayStyle).getColour();
+				areacolour = ((AreaElemStyle)wayStyle).colour;
+				l = ((AreaElemStyle)wayStyle).line;
 				area = true;
+			}
+			if(l != null)
+			{
+				colour = l.colour;
+				width = l.width;
+				realWidth = l.realWidth;
+				dashed = l.dashed;
 			}
 		}
 
 		if (area && fillAreas)
-			drawWayAsArea(w, colour);
+			drawWayAsArea(w, areacolour);
 		int orderNumber = 0;
 
 		Node lastN = null;
@@ -151,7 +158,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			}
 			orderNumber++;
 
-			if (!area && realWidth > 0 && useRealWidth && !showDirection) {
+			if (realWidth > 0 && useRealWidth && !showDirection)
+			{
 				int tmpWidth = (int) (100 /  (float) (circum / realWidth));
 				if (tmpWidth > width) width = tmpWidth;
 			}

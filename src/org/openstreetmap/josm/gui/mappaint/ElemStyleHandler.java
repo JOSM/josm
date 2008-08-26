@@ -144,22 +144,22 @@ public class ElemStyleHandler extends DefaultHandler
 				newStyle = new LineElemStyle(curLineWidth, curLineRealWidth, curLineColour, 
 						curLineDashed, curScaleMax, curScaleMin);
 				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
-				curLineWidth	= -1;
+				curLineWidth = -1;
 				curLineRealWidth= 0;
-				curLineDashed   = false;
-				curLineColour 	= null;
+				curLineDashed = false;
+				curLineColour = null;
 			}
 			
 			if (curIcon != null) {
 				newStyle = new IconElemStyle(curIcon, curIconAnnotate, curScaleMax, curScaleMin);
 				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
-				curIcon 		= null;
+				curIcon = null;
 				curIconAnnotate = true;
 			}
 			if (curAreaColour != null) {
 				newStyle = new AreaElemStyle (curAreaColour, curScaleMax, curScaleMin);
 				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
-				curAreaColour 	= null;
+				curAreaColour = null;
 			}
 			curScaleMax = 1000000000;
 			curScaleMin = 0;
