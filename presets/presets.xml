@@ -2265,6 +2265,11 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Power Tower" icon="presets/power_tower.png">
+			<label text="Edit Power Tower" />
+			<key key="power" value="tower" />
+		</item>
+
 		<item name="Tower" icon="presets/tower.png">
 			<label text="Edit Tower" />
 			<key key="man_made" value="tower" />
