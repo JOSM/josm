@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,14 +54,17 @@ public class PluginDownloader {
 		}
 
 		@Override protected void realRun() throws SAXException, IOException {
+			File pluginDir = Main.pref.getPluginsDirFile();
+			if (!pluginDir.exists())
+				pluginDir.mkdirs();
 			for (PluginDescription d : toUpdate) {
-				File tempFile = new File(Main.pref.getPreferencesDir()+"temp.jar");
-				if (download(d.resource, tempFile)) {
-					tempFile.renameTo(new File(Main.pref.getPreferencesDir()+"plugins/"+d.name+".jar"));
+				File pluginFile = new File(pluginDir, d.name + ".jar.new");
+				if (download(d.resource, pluginFile))
 					count++;
-				} else
+				else
 					errors += d.name + "\n";
 			}
+			PluginDownloader.moveUpdatedPlugins();
 		}
 	}
 
@@ -78,7 +82,9 @@ public class PluginDownloader {
 					txt = readWiki(r);
 				r.close();
 				new File(Main.pref.getPreferencesDir()+"plugins").mkdir();
-				FileWriter out = new FileWriter(Main.pref.getPreferencesDir()+"plugins/"+count+"-site-"+site.replaceAll("[/:\\\\ <>|]", "_")+".xml");
+				FileWriter out = new FileWriter(new File(Main.pref
+				        .getPluginsDirFile(), count + "-site-"
+				        + site.replaceAll("[/:\\\\ <>|]", "_") + ".xml"));
 				out.append(txt);
 				out.close();
 				count++;
@@ -122,7 +128,7 @@ public class PluginDownloader {
 	}
 
 	public static boolean downloadPlugin(PluginDescription pd) {
-		File file = new File(Main.pref.getPreferencesDir()+"plugins/"+pd.name+".jar");
+		File file = new File(Main.pref.getPluginsDirFile(), pd.name + ".jar");
 		if (!download(pd.resource, file)) {
 			JOptionPane.showMessageDialog(Main.parent, tr("Could not download plugin: {0} from {1}", pd.name, pd.resource));
 		} else {
@@ -161,5 +167,22 @@ public class PluginDownloader {
 
 	public static void update(Collection<PluginDescription> update) {
 		Main.worker.execute(new UpdateTask(update));
+	}
+	
+	public static boolean moveUpdatedPlugins() {
+		File pluginDir = Main.pref.getPluginsDirFile();
+		boolean ok = true; 		
+		if (pluginDir.exists() && pluginDir.isDirectory()) {
+			final File[] files = pluginDir.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+	                return name.endsWith(".new");
+                }});
+			for (File updatedPlugin : files) {
+				final String filePath = updatedPlugin.getPath();
+				File plugin = new File(filePath.substring(0, filePath.length() - 4));
+				ok = plugin.delete() && updatedPlugin.renameTo(plugin) && ok;
+			}
+		}
+		return ok;
 	}
 }

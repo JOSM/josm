@@ -101,6 +101,7 @@ public class PluginPreference implements PreferenceSetting {
 		update.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				update();
+				refreshPluginPanel(gui);
 			}
 
 		});
@@ -167,6 +168,9 @@ public class PluginPreference implements PreferenceSetting {
 	}
 
 	private void update() {
+		// refresh description
+		PluginDownloader.downloadDescription();
+
 		Set<PluginDescription> toUpdate = new HashSet<PluginDescription>();
 		StringBuilder toUpdateStr = new StringBuilder();
 		for (PluginProxy proxy : Main.plugins) {
@@ -211,7 +215,24 @@ public class PluginPreference implements PreferenceSetting {
 		
 		for (final PluginDescription plugin : availablePlugins) {
 			boolean enabled = enabledPlugins.contains(plugin.name);
-			final JCheckBox pluginCheck = new JCheckBox(plugin.name+(plugin.version != null && !plugin.version.equals("") ? " Version: "+plugin.version : ""), enabled);
+			String remoteversion = plugin.version;
+			if(remoteversion == null || remoteversion.equals(""))
+				remoteversion = tr("unknown");
+
+			String localversion;
+			PluginInformation p = PluginInformation.findPlugin(plugin.name);
+			if(p != null)
+			{
+				if(p.version != null && !p.version.equals(""))
+					localversion = p.version;
+				else
+					localversion = tr("unknown");
+				localversion = " (" + localversion + ")";
+			}
+			else
+				localversion = "";
+
+			final JCheckBox pluginCheck = new JCheckBox(tr("{0}: Version {1}{2}", plugin.name, remoteversion, localversion), enabled);
 			pluginPanel.add(pluginCheck);
 
 			pluginCheck.setToolTipText(plugin.resource != null ? ""+plugin.resource : tr("Plugin bundled with JOSM"));

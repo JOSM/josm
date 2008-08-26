@@ -71,9 +71,20 @@ public class Preferences {
 	 * Return the location of the user defined preferences file
 	 */
 	public String getPreferencesDir() {
+		final String path = getPreferencesDirFile().getPath();
+		if (path.endsWith(File.separator))
+			return path;
+		return path + File.separator;
+	}
+
+	public File getPreferencesDirFile() {
 		if (System.getenv("APPDATA") != null)
-			return System.getenv("APPDATA")+"/JOSM/";
-		return System.getProperty("user.home")+"/.josm/";
+			return new File(System.getenv("APPDATA"), "JOSM");
+		return new File(System.getProperty("user.home"), ".josm");
+	}
+	
+	public File getPluginsDirFile() {
+		return new File(getPreferencesDirFile(), "plugins");
 	}
 
 	/**
@@ -84,19 +95,21 @@ public class Preferences {
 		locations.add(Main.pref.getPreferencesDir());
 		String s;
 		if ((s = System.getenv("JOSM_RESOURCES")) != null) {
-			if (!s.endsWith("/") && !s.endsWith("\\"))
-				s = s + "/";
+			if (!s.endsWith(File.separator))
+				s = s + File.separator;
 			locations.add(s);
 		}
 		if ((s = System.getProperty("josm.resources")) != null) {
-			if (!s.endsWith("/") && !s.endsWith("\\"))
-				s = s + "/";
+			if (!s.endsWith(File.separator))
+				s = s + File.separator;
 			locations.add(s);
 		}
 		String appdata = System.getenv("APPDATA");
-		if (System.getenv("ALLUSERSPROFILE") != null && appdata != null && appdata.lastIndexOf("\\") != -1) {
-			appdata = appdata.substring(appdata.lastIndexOf("\\"));
-			locations.add(System.getenv("ALLUSERSPROFILE")+appdata+"/JOSM/");
+		if (System.getenv("ALLUSERSPROFILE") != null && appdata != null
+		        && appdata.lastIndexOf(File.separator) != -1) {
+			appdata = appdata.substring(appdata.lastIndexOf(File.separator));
+			locations.add(new File(new File(System.getenv("ALLUSERSPROFILE"),
+			        appdata), "JOSM").getPath());
 		}
 		locations.add("/usr/local/share/josm/");
 		locations.add("/usr/local/lib/josm/");

@@ -195,7 +195,7 @@ public class PluginInformation {
         Collection<String> locations = getPluginLocations();
 
        	for (String s : locations) {
-       		File pluginFile = new File(s+"/"+pluginName+".jar");
+       		File pluginFile = new File(s, pluginName + ".jar");
        		if (pluginFile.exists()) {
 				PluginInformation info = new PluginInformation(pluginFile);
 				return info;

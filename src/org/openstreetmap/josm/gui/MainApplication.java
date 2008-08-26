@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.plugins.PluginDownloader;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 /**
  * Main window class application.
@@ -83,7 +84,7 @@ public class MainApplication extends Main {
 		// get the preferences.
 		final File prefDir = new File(Main.pref.getPreferencesDir());
 		// check if preferences directory has moved (TODO: Update code. Remove this after some time)
-		File oldPrefDir = new File(System.getProperty("user.home")+"/.josm");
+		File oldPrefDir = new File(System.getProperty("user.home"), ".josm");
 		if (!prefDir.isDirectory() && oldPrefDir.isDirectory()) {
 			if (oldPrefDir.renameTo(prefDir)) {
 				// do not translate this
@@ -118,6 +119,12 @@ public class MainApplication extends Main {
 			Main.pref.save();
 		}
 
+		if (!PluginDownloader.moveUpdatedPlugins()) {
+			JOptionPane.showMessageDialog(null,
+			        tr("Activating the updated plugins failed."),
+			        tr("Plugins"), JOptionPane.ERROR_MESSAGE);
+		}
+		
 		// load the early plugins
 		Main.loadPlugins(true);
 

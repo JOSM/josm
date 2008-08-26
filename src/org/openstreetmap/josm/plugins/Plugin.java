@@ -52,7 +52,7 @@ public abstract class Plugin {
 	 * @return The directory for the plugin to store all kind of stuff.
 	 */
 	public final String getPluginDir() {
-		return Main.pref.getPreferencesDir()+"plugins/"+info.name+"/";
+		return new File(Main.pref.getPluginsDirFile(), info.name).getPath();
 	}
 
 	/**
