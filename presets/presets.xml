@@ -299,6 +299,19 @@
 			<combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
+		<item name="Bridge" icon="presets/bridge.png">
+			<label text="Edit a Bridge" />
+			<label text=" " />
+			<key key="bridge" value="yes" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+			<text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
+			<text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
+			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+		</item>
 	</group> <!-- Streets -->
 
 	<group name="Ways" icon="presets/way_unknown.png">
@@ -721,7 +734,7 @@
 			<text key="ref" text="Number" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Ford" icon="presets/waypoints.png">
+		<item name="Ford" icon="presets/ford.png">
 			<label text="Edit Ford" />
 			<label text=" " />
 			<key key="highway" value="ford" />
@@ -739,7 +752,7 @@
 			<key key="highway" value="mini_roundabout" />
 		</item>
 
-		<item name="Traffic Signal" icon="presets/waypoints.png">
+		<item name="Traffic Signal" icon="presets/traffic-light.png">
 			<key key="highway" value="traffic_signals" />
 		</item>
 
@@ -857,7 +870,7 @@
 	<seperator/>
 
 	<group name="Waterway" icon="presets/waterway.png">
-		<item name="River" icon="presets/waterway.png">
+		<item name="River" icon="presets/river.png">
 			<label text="Edit a River" />
 			<label text=" " />
 			<key key="waterway" value="river" />
@@ -1773,7 +1786,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Kiosk" icon="presets/empty.png">
+		<item name="Kiosk" icon="presets/kiosk.png">
 			<label text="Edit Kiosk" />
 			<key key="shop" value="kiosk" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1797,13 +1810,13 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Dry Cleaning" icon="presets/empty.png">
+		<item name="Dry Cleaning" icon="presets/laundry.png">
 			<label text="Edit Dry Cleaning" />
 			<key key="shop" value="dry_cleaning" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Laundry" icon="presets/empty.png">
+		<item name="Laundry" icon="presets/laundry.png">
 			<label text="Edit Laundry" />
 			<key key="shop" value="laundry" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1963,7 +1976,7 @@
 	</group> <!-- Boundaries -->
 
 	<group name="Landuse" icon="presets/landuse.png">
-		<item name="Grave Yard" icon="presets/empty.png">
+		<item name="Grave Yard" icon="presets/graveyard.png">
 			<label text="Edit Grave Yard" />
 			<key key="amenity" value="grave_yard" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2006,14 +2019,14 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Basin" icon="presets/landuse.png">
+		<item name="Basin" icon="presets/landuse_water.png">
 			<label text="Edit Basin Landuse" />
 			<label text=" " />
 			<key key="landuse" value="basin" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Reservoir" icon="presets/landuse.png">
+		<item name="Reservoir" icon="presets/landuse_water.png">
 			<label text="Edit Reservoir Landuse" />
 			<label text=" " />
 			<key key="landuse" value="reservoir" />
@@ -2098,7 +2111,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Cemetery" icon="presets/landuse.png">
+		<item name="Cemetery" icon="presets/cemetery.png">
 			<label text="Edit Cemetery Landuse" />
 			<label text=" " />
 			<key key="landuse" value="cemetery" />
