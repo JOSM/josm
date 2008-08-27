@@ -341,9 +341,9 @@ public class TaggingPreset extends AbstractAction {
 	public void setDisplayName() {
 		putValue(Action.NAME, getName());
 		putValue("toolbar", "tagging_" + getRawName());
-		putValue(SHORT_DESCRIPTION, "<html>"+ group != null ?
+		putValue(SHORT_DESCRIPTION, "<html>"+ (group != null ?
 		tr("Use preset ''{0}'' of group ''{1}''", tr(name), group.getName()) :
-		tr("Use preset ''{0}''", tr(name))
+		tr("Use preset ''{0}''", tr(name)))
 		+"</html>");
 	}
 
