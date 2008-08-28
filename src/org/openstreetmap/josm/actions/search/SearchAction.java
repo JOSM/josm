@@ -52,6 +52,7 @@ public class SearchAction extends JosmAction {
     			"<li><b>incomplete</b> - all incomplete objects</li>" +
     			"<li>Use <b>|</b> or <b>OR</b> to combine with logical or</li>" +
     			"<li>Use <b>\"</b> to quote operators (e.g. if key contains :)</li>" +
+    			"<li>Use <b>(</b> and <b>)</b> to group expressions</li>" +
     	"</ul></html>"));
     
     	JRadioButton replace = new JRadioButton(tr("replace selection"), true);
