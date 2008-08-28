@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.search;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.Map.Entry;
@@ -152,7 +154,7 @@ public class SearchCompiler {
 
 	private static class Modified extends Match {
 		@Override public boolean match(OsmPrimitive osm) {
-			return osm.modified;
+			return osm.modified || osm.id == 0;
 		}
 		@Override public String toString() {return "modified";}
 	}
@@ -209,7 +211,7 @@ public class SearchCompiler {
 		if (tokenizer.readIfEqual("|")) {
 			Match b = parseNot();
 			if (a == null || b == null) {
-				throw new ParseError("Missing arguments for or.");
+				throw new ParseError(tr("Missing arguments for or."));
 			}
 			return new Or(a, b);
 		}
@@ -220,7 +222,7 @@ public class SearchCompiler {
 		if (tokenizer.readIfEqual("-")) {
 			Match m = parseParens();
 			if (m == null) {
-				throw new ParseError("Missing argument for not.");
+				throw new ParseError(tr("Missing argument for not."));
 			}
 			return new Not(m);
 		}
@@ -231,7 +233,7 @@ public class SearchCompiler {
 		if (tokenizer.readIfEqual("(")) {
 			Match m = parseJuxta();
 			if (!tokenizer.readIfEqual(")")) {
-				throw new ParseError("Expected closing paren");
+				throw new ParseError(tr("Expected closing parenthesis."));
 			}
 			return m;
 		}

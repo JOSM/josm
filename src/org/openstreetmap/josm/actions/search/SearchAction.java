@@ -37,12 +37,21 @@ public class SearchAction extends JosmAction {
     	}
     	JLabel label = new JLabel(tr("Please enter a search string."));
     	final JTextField input = new JTextField(lastSearch);
-    	input.setToolTipText(tr("<html>Fulltext search.<ul>" +
-    			"<li><code>Baker Street</code>  - 'Baker' and 'Street' in any key or name.</li>" +
-    			"<li><code>\"Baker Street\"</code>  - 'Baker Street' in any key or name.</li>" +
-    			"<li><code>name:Bak</code>  - 'Bak' anywhere in the name.</li>" +
-    			"<li><code>-name:Bak</code>  - not 'Bak' in the name.</li>" +
-    			"<li><code>foot:</code>  - key=foot set to any value." +
+    	input.setToolTipText(tr("<html>Fulltext search:<ul>" +
+    			"<li><b>Baker Street</b> - 'Baker' and 'Street' in any key or name.</li>" +
+    			"<li><b>\"Baker Street\"</b> - 'Baker Street' in any key or name.</li>" +
+    			"<li><b>name:Bak</b> - 'Bak' anywhere in the name.</li>" +
+    			"<li><b>-name:Bak</b> - not 'Bak' in the name.</li>" +
+    			"<li><b>foot:</b> - key=foot set to any value.</li>" +
+    			"<li>Special targets:</li>" +
+    			"<li><b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)</li>" +
+    			"<li><b>user:</b>... - all objects changed by user</li>" +
+    			"<li><b>id:</b>... - object with given ID</li>" +
+    			"<li><b>nodes:</b>... - object with given number of nodes</li>" +
+    			"<li><b>modified</b> - all changed objects</li>" +
+    			"<li><b>incomplete</b> - all incomplete objects</li>" +
+    			"<li>Use <b>|</b> or <b>OR</b> to combine with logical or</li>" +
+    			"<li>Use <b>\"</b> to quote operators (e.g. if key contains :)</li>" +
     	"</ul></html>"));
     
     	JRadioButton replace = new JRadioButton(tr("replace selection"), true);
