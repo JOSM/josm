@@ -634,7 +634,7 @@
 			<label text="Edit Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
-			<key key="sac_scale" value="yes" />
+			<key key="sac_scale" value="hiking" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
@@ -642,11 +642,11 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Mountain Hiking" icon="presets/hiking_grade1.png">
+		<item name="Mountain Hiking" icon="presets/hiking_grade2.png">
 			<label text="Edit Mountain Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
-			<key key="sac_scale" value="mountain" />
+			<key key="sac_scale" value="mountain_hiking" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
@@ -658,7 +658,7 @@
 			<label text="Edit Demanding Mountain Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
-			<key key="sac_scale" value="demanding_mountain" />
+			<key key="sac_scale" value="demanding_mountain_hiking" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
@@ -670,7 +670,7 @@
 			<label text="Edit Alpine Hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
-			<key key="sac_scale" value="alpine" />
+			<key key="sac_scale" value="alpine_hiking" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
@@ -682,7 +682,7 @@
 			<label text="Edit Demanding alpine hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
-			<key key="sac_scale" value="demanding_alpine" />
+			<key key="sac_scale" value="demanding_alpine_hiking" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
@@ -694,7 +694,7 @@
 			<label text="Edit Difficult alpine hiking" />
 			<label text=" " />
 			<key key="highway" value="path" />
-			<key key="sac_scale" value="difficult_alpine" />
+			<key key="sac_scale" value="difficult_alpine_hiking" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
