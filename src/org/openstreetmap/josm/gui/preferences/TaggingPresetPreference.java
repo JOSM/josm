@@ -137,6 +137,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 				else if (p instanceof TaggingPresetMenu)
 				{
 					JMenu submenu = new JMenu(p);
+					((TaggingPresetMenu)p).menu = submenu;
 					submenus.put((TaggingPresetMenu)p, submenu);
 					m.add(submenu);
 				}
