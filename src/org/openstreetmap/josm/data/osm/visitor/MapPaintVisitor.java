@@ -134,6 +134,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			else if (wayStyle instanceof AreaElemStyle)
 			{
 				areacolour = ((AreaElemStyle)wayStyle).colour;
+				colour = areacolour;
 				l = ((AreaElemStyle)wayStyle).line;
 				area = true;
 			}
