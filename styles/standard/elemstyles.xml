@@ -1,29 +1,46 @@
 <!--
-a little help:
+A little help:
 1. every rule starts with <rule> and ends with </rule>
 2. every rule needs a condition
 	-k for the key (required)
 	-v for the value as a string
 	-b for the values yes / no (boolean, will also understand true, 1 and false, 0 respectively)
-	(although the value flags v/b for the condition are optional, using at least one of them is highly recommended!)
+	Although the value flags v/b for the condition are optional, using at
+        least one of them is highly recommended!
 3. line attributes
 	- width absolute width in pixel in every zoom level
 	- realwidth relative width which will be scaled in meters, integer
 	- colour
-4. area attributes
+        - priority
+4. linemod attributes
+	- all line attributes
+	- mode ('over' or 'under')
+	- width can be specified relative to modified way:
+	  +x - <x> pixels are added to way size
+	  -x - <x> pixels are subtracted from way size
+	  x% - the size is <x> percent of modified way
+	  If the size is <= 1 the minimum size of 1 is used.
+5. area attributes
 	- colour
-5. icon attributes
-	- icon path to icon , relative from where this file is
-6. scale_min / scale_max - currently unused in JOSM
+        - priority
+6. icon attributes
+	- icon path to icon, relative to the icon path (default: where this file is)
+        - priority
+7. scale_min / scale_max
+	- zoom scale for display
 
-Using both area and line attributes for the same key/value pair doesn't work!
+Using both area and line attributes for the same key/value pair does work. For areas
+first the rbest matching area rule is searched and the best matching line rule is
+connected with it. They need not have the same key/value pair.
 
 The colours can consist of the two components - name and hex code (e.g. water#0000ff).
 If both are given, the color name is introduced in preferences with that value. If only
 code is given (e.g. #0000ff), it is used directly. If only name is given, either user
-modified preferences or previous value is used.
+modified preferences or previous value is used. The color code can also have a hex value
+containing the alpha channel (thus havin 8 hex digits instead of 6).
 
-BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is unpredicted!
+If a key/value pair matches more than one rule, the "rule that wins" is unpredicted
+in case they have same priority! Using priority settings helps to solve conflicts.
 -->
 
 <rules>
