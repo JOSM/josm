@@ -1321,9 +1321,7 @@
 			<label text=" " />
 			<combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
 		</item>
-	</group>
-	
-	<group name="Sport" icon="presets/soccer.png">
+
 		<item name="Racetrack" icon="presets/empty.png">
 			<label text="Edit Racetrack" />
 			<key key="leisure" value="track" />
@@ -1333,8 +1331,9 @@
 			<label text=" " />
 			<combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
 		</item>
-		
-		
+	</group>
+	
+	<group name="Sport" icon="presets/soccer.png">
 		<item name="Multi" icon="presets/empty.png">
 			<label text="Edit Multi" />
 			<key key="sport" value="multi" />
