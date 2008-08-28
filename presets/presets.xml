@@ -744,7 +744,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Zebra crossing" icon="presets/waypoints.png">
+		<item name="Zebra crossing" icon="presets/zebracrossing.png">
 			<key key="highway" value="crossing" />
 		</item>
 
