@@ -2456,6 +2456,14 @@ BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is 
 	</rule>
 
 	<rule>
+		<condition k="landuse" v="grass"/>
+		<area colour="green#b1e0c2"/>
+		<icon src="misc/landmark/plant.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="landuse" v="residential"/>
 		<area colour="residential#f0f0f0"/>
 		<icon src="misc/no_icon.png"/>
