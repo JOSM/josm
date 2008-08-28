@@ -1121,7 +1121,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Fast Food" icon="presets/empty.png">
+		<item name="Fast Food" icon="presets/fastfood.png">
 			<label text="Edit Fast Food Restaurant" />
 			<key key="amenity" value="fast_food" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
