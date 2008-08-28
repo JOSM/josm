@@ -11,13 +11,14 @@ public class ColorHelper {
 	public static Color html2color(String html) {
 		if (html.length() > 0 && html.charAt(0) == '#')
 			html = html.substring(1);
-		if (html.length() != 6)
+		else if (html.length() != 6 && html.length() != 8)
 			return null;
 		try {
 			return new Color(
 					Integer.parseInt(html.substring(0,2),16),
 					Integer.parseInt(html.substring(2,4),16),
-					Integer.parseInt(html.substring(4,6),16));
+					Integer.parseInt(html.substring(4,6),16),
+					(html.length() == 8 ? Integer.parseInt(html.substring(6,8),16) : 255));
 		} catch (NumberFormatException e) {
 			return null;
 		}		

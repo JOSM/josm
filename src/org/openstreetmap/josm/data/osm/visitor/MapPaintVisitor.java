@@ -47,32 +47,20 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	protected static final Font orderFont = new Font("Helvetica", Font.PLAIN, 8);
 
 	protected boolean isZoomOk(ElemStyle e) {
+		if (!zoomLevelDisplay) /* show everything if the user wishes so */
+			return true;
+
 		double circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
 
-		/* show everything if the user wishes so */
-		if (!zoomLevelDisplay) {
-			return true;
-		}
-
-		if (e == null) {
-			/* the default for things that don't have a rule (show, if scale is smaller than 1500m) */
-			if (circum < 1500)
-				return true;
-			return false;
-		}
+		if(e == null) /* the default for things that don't have a rule (show, if scale is smaller than 1500m) */
+			return (circum < 1500);
 
 		// formula to calculate a map scale: natural size / map size = scale
 		// example: 876000mm (876m as displayed) / 22mm (roughly estimated screen size of legend bar) = 39818
 		//
 		// so the exact "correcting value" below depends only on the screen size and resolution
 		// XXX - do we need a Preference setting for this (if things vary widely)?
-		/*System.out.println(
-		"Circum: " + circum +
-		" max: " + e.getMaxScale() + "(" + e.getMaxScale()/22 + ")" +
-		" min:" + e.getMinScale() + "(" + e.getMinScale()/22 + ")");*/
-		if(circum>=e.getMaxScale() / 22 || circum<e.getMinScale() / 22)
-			return false;
-		return true;
+		return !(circum >= e.maxScale / 22 || circum < e.minScale / 22);
 	}
 
 	/**
@@ -82,16 +70,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	 * @param n The node to draw.
 	 */
 	public void visit(Node n) {
-		ElemStyle nodeStyle = MapPaintStyles.getStyle(n);
-		if (nodeStyle!=null) {
-			if (nodeStyle instanceof IconElemStyle) {
-				if (isZoomOk(nodeStyle)) {
-					drawNode(n, ((IconElemStyle)nodeStyle).getIcon(), ((IconElemStyle)nodeStyle).doAnnotate());
-				}
-			} else {
-				// throw some sort of exception
-			}
-		} else {
+		IconElemStyle nodeStyle = MapPaintStyles.getStyles().get(n);
+		if (nodeStyle != null && isZoomOk(nodeStyle))
+			drawNode(n, nodeStyle.icon, nodeStyle.annotate);
+		else {
 			if (n.selected)
 				drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
 			else if (n.tagged)
@@ -112,35 +94,32 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		boolean showDirection = w.selected || ((!useRealWidth) && (showDirectionArrow
 		 && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
 
-		Color colour = untaggedColor;
-		Color areacolour = untaggedColor;
+		Color color = untaggedColor;
+		Color areacolor = untaggedColor;
 		int width = defaultSegmentWidth;
 		int realWidth = 0; //the real width of the element in meters
 		boolean dashed = false;
 		boolean area = false;
-		ElemStyle wayStyle = MapPaintStyles.getStyle(w);
+		ElemStyle wayStyle = MapPaintStyles.getStyles().get(w);
 
-		if(!isZoomOk(wayStyle)) {
+		if(!isZoomOk(wayStyle))
 			return;
-		}
 
+		LineElemStyle l = null;
 		if(wayStyle!=null)
 		{
-			LineElemStyle l = null;
 			if(wayStyle instanceof LineElemStyle)
-			{
 				l = (LineElemStyle)wayStyle;
-			}
 			else if (wayStyle instanceof AreaElemStyle)
 			{
-				areacolour = ((AreaElemStyle)wayStyle).colour;
-				colour = areacolour;
+				areacolor = ((AreaElemStyle)wayStyle).color;
+				color = areacolor;
 				l = ((AreaElemStyle)wayStyle).line;
 				area = true;
 			}
 			if(l != null)
 			{
-				colour = l.colour;
+				color = l.color;
 				width = l.width;
 				realWidth = l.realWidth;
 				dashed = l.dashed;
@@ -148,28 +127,69 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		}
 
 		if (area && fillAreas)
-			drawWayAsArea(w, areacolour);
-		int orderNumber = 0;
+			drawWayAsArea(w, areacolor);
+		if (realWidth > 0 && useRealWidth && !showDirection)
+		{
+			int tmpWidth = (int) (100 /  (float) (circum / realWidth));
+			if (tmpWidth > width) width = tmpWidth;
+		}
 
-		Node lastN = null;
-		for (Node n : w.nodes) {
-			if (lastN == null) {
-				lastN = n;
-				continue;
-			}
-			orderNumber++;
-
-			if (realWidth > 0 && useRealWidth && !showDirection)
+		Node lastN;
+		if(l != null && l.overlays != null)
+		{
+			for(LineElemStyle s : l.overlays)
 			{
-				int tmpWidth = (int) (100 /  (float) (circum / realWidth));
-				if (tmpWidth > width) width = tmpWidth;
+				if(!s.over)
+				{
+					lastN = null;
+					for(Node n : w.nodes)
+					{
+						if(lastN != null)
+							drawSeg(lastN, n, s.color != null ? s.color : color, false, s.getWidth(width), s.dashed);
+						lastN = n;
+					}
+				}
 			}
-			drawSeg(lastN, n, w.selected ? selectedColor : colour, showDirection, width, dashed);
+		}
 
-			if (showOrderNumber)
-				drawOrderNumber(lastN, n, orderNumber);
-
+		lastN = null;
+		for(Node n : w.nodes)
+		{
+			if(lastN != null)
+				drawSeg(lastN, n, w.selected ? selectedColor : color, showDirection, width, dashed);
 			lastN = n;
+		}
+
+		if(l != null && l.overlays != null)
+		{
+			for(LineElemStyle s : l.overlays)
+			{
+				if(s.over)
+				{
+					lastN = null;
+					for(Node n : w.nodes)
+					{
+						if(lastN != null)
+							drawSeg(lastN, n, s.color != null ? s.color : color, false, s.getWidth(width), s.dashed);
+						lastN = n;
+					}
+				}
+			}
+		}
+
+		if(showOrderNumber)
+		{
+			int orderNumber = 0;
+			lastN = null;
+			for(Node n : w.nodes)
+			{
+				if(lastN != null)
+				{
+					orderNumber++;
+					drawOrderNumber(lastN, n, orderNumber);
+				}
+				lastN = n;
+			}
 		}
 	}
 
@@ -178,7 +198,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	}
 
 	// This assumes that all segments are aligned in the same direction!
-	protected void drawWayAsArea(Way w, Color colour)
+	protected void drawWayAsArea(Way w, Color color)
 	{
 		Polygon polygon = new Polygon();
 
@@ -188,7 +208,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			polygon.addPoint(p.x,p.y);
 		}
 
-		Color mycolor = w.selected ? selectedColor : colour;
+		Color mycolor = w.selected ? selectedColor : color;
 		// set the opacity (alpha) level of the filled polygon
 		g.setColor(new Color( mycolor.getRed(), mycolor.getGreen(), mycolor.getBlue(), fillAlpha));
 
@@ -298,7 +318,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		Collection<Way> noAreaWays = new LinkedList<Way>();
 
 		for (final OsmPrimitive osm : data.ways)
-			if (!osm.incomplete && !osm.deleted && MapPaintStyles.isArea(osm))
+			if (!osm.incomplete && !osm.deleted && MapPaintStyles.getStyles().isArea((Way)osm))
 				osm.visit(this);
 			else if (!osm.deleted && !osm.incomplete)
 				noAreaWays.add((Way)osm);

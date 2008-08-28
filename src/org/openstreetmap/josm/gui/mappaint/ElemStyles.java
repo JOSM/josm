@@ -1,105 +1,159 @@
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Iterator;
 
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Way;
 
 public class ElemStyles
 {
-	private HashMap<String, ElemStyle> styles;
+	private HashMap<String, IconElemStyle> icons;
+	private HashMap<String, LineElemStyle> lines;
+	private HashMap<String, AreaElemStyle> areas;
+	private HashMap<String, LineElemStyle> modifiers;
 
 	public ElemStyles()
 	{
-		styles = new HashMap<String, ElemStyle>();
+		icons = new HashMap<String, IconElemStyle>();
+		lines = new HashMap<String, LineElemStyle>();
+		modifiers = new HashMap<String, LineElemStyle>();
+		areas = new HashMap<String, AreaElemStyle>();
 	}
 
-	public void add(String k, String v, String b, ElemStyle style)
+	private String getKey(String k, String v, String b)
 	{
-		ElemStyle  old_style;
-		String key;
-
-		/* unfortunately, there don't seem to be an efficient way to */
-		/* find out, if a given OsmPrimitive is an area or not, */
-		/* so distinguish only between way and node here - for now */
-		if (style instanceof AreaElemStyle)
-			key = "w";
-		else if (style instanceof LineElemStyle)
-			key = "w";
-		else if (style instanceof IconElemStyle)
-			key = "n";
-		else
-			key = "";
-
 		if(v != null)
-			key += "n" + k + "=" + v;
+			return "n" + k + "=" + v;
 		else if(b != null)
-			key += "b" + k  + "=" + OsmUtils.getNamedOsmBoolean(b);
+			return "b" + k  + "=" + OsmUtils.getNamedOsmBoolean(b);
 		else
-			key += "x" + k;
-
-		/* avoid duplicates - for now */
-		old_style = styles.get(key);
-		if (old_style == null) {
-			/* new key/value, insert */
-			styles.put(key, style);
-		} else {
-			if (style.getMaxScale() < old_style.getMaxScale()) {
-				/* existing larger scale key/value, replace */
-				styles.remove(old_style);
-				styles.put(key, style);
-			}
-		}
+			return "x" + k;
 	}
 
-	public ElemStyle get(OsmPrimitive p, Boolean area)
+	public void add(String k, String v, String b, LineElemStyle style)
 	{
-		if (p.keys!=null) {
-			String classname;
-			String kv = null;
+		lines.put(getKey(k,v,b), style);
+	}
 
-			if (p instanceof org.openstreetmap.josm.data.osm.Node) {
-				if(area)
-					return null;
-				classname = "n";
-			} else {
-				classname = "w";
-			}
-			Iterator<String> iterator = p.keys.keySet().iterator();
-			while (iterator.hasNext())
+	public void addModifier(String k, String v, String b, LineElemStyle style)
+	{
+		modifiers.put(getKey(k,v,b), style);
+	}
+
+	public void add(String k, String v, String b, AreaElemStyle style)
+	{
+		areas.put(getKey(k,v,b), style);
+	}
+
+	public void add(String k, String v, String b, IconElemStyle style)
+	{
+		icons.put(getKey(k,v,b), style);
+	}
+
+	public IconElemStyle get(Node n)
+	{
+		IconElemStyle ret = null;
+		if(n.keys != null)
+		{
+			Iterator<String> iterator = n.keys.keySet().iterator();
+			while(iterator.hasNext())
 			{
 				String key = iterator.next();
-				ElemStyle style = null;
-				kv = classname + "n" + key + "=" + p.keys.get(key);
-				if (styles.containsKey(kv))
+				String val = n.keys.get(key);
+				IconElemStyle style;
+				if((style = icons.get("n" + key + "=" + val)) != null)
 				{
-					style = styles.get(kv);
-					if(area == style instanceof AreaElemStyle)
-						return style;
+					if(ret == null || style.priority > ret.priority)
+						ret = style;
 				}
-				kv = classname + "b" + key + "=" + OsmUtils.getNamedOsmBoolean(p.keys.get(key));
-				if (styles.containsKey(kv))
+				if((style = icons.get("n" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
 				{
-					style = styles.get(kv);
-					if(area == style instanceof AreaElemStyle)
-						return style;
+					if(ret == null || style.priority > ret.priority)
+						ret = style;
 				}
-				kv = classname + "x" + key;
-				if (styles.containsKey(kv))
+				if((style = icons.get("x" + key)) != null)
 				{
-					style = styles.get(kv);
-					if(area == style instanceof AreaElemStyle)
-						return style;
+					if(ret == null || style.priority > ret.priority)
+						ret = style;
 				}
 			}
 		}
-
-		return null;
+		return ret;
 	}
 
-	public boolean isArea(OsmPrimitive p)
+	public ElemStyle get(Way w)
 	{
-		return get(p, true) instanceof AreaElemStyle;
+		AreaElemStyle retArea = null;
+		LineElemStyle retLine = null;
+		List<LineElemStyle> over = new LinkedList<LineElemStyle>();
+		if(w.keys != null)
+		{
+			Iterator<String> iterator = w.keys.keySet().iterator();
+			while(iterator.hasNext())
+			{
+				String key = iterator.next();
+				String val = w.keys.get(key);
+				AreaElemStyle styleArea;
+				LineElemStyle styleLine;
+				String idx = "n" + key + "=" + val;
+				if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+					retArea = styleArea;
+				if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+					retLine = styleLine;
+				if((styleLine = modifiers.get(idx)) != null)
+					over.add(styleLine);
+				idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
+				if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+					retArea = styleArea;
+				if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+					retLine = styleLine;
+				if((styleLine = modifiers.get(idx)) != null)
+					over.add(styleLine);
+				idx = "x" + key;
+				if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+					retArea = styleArea;
+				if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+					retLine = styleLine;
+				if((styleLine = modifiers.get(idx)) != null)
+					over.add(styleLine);
+			}
+		}
+		if(over.size() != 0 && retLine != null)
+		{
+			Collections.sort(over);
+			retLine = new LineElemStyle(retLine, over);
+		}
+		if(retArea != null)
+		{
+			if(retLine != null)
+				return new AreaElemStyle(retArea, retLine);
+			else
+				return retArea;
+		}
+		return retLine;
+	}
+
+	public boolean isArea(Way w)
+	{
+		if(w.keys != null)
+		{
+			Iterator<String> iterator = w.keys.keySet().iterator();
+			while(iterator.hasNext())
+			{
+				String key = iterator.next();
+				String val = w.keys.get(key);
+				if(areas.containsKey("n" + key + "=" + val)
+				|| areas.containsKey("n" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
+				|| areas.containsKey("x" + key))
+					return true;
+			}
+		}
+		return false;
 	}
 }

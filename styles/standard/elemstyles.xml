@@ -38,7 +38,7 @@ BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is 
 	</rule>
 	<rule>
 		<condition k="bridge" b="yes"/>
-		<!-- no line or area, as this is a highway=xy, railway=xy, .... -->
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 		<icon annotate="true" src="vehicle/viaduct.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
@@ -52,28 +52,28 @@ BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is 
 	</rule>
 	<rule>
 		<condition k="bridge" v="viaduct"/>
-		<!-- no line or area, as this is a highway=xy, railway=xy, .... -->
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 		<icon annotate="true" src="vehicle/viaduct.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="bridge" v="aqueduct"/>
-		<!-- no line or area, as this is a highway=xy, railway=xy, .... -->
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 		<icon annotate="true" src="nautical/aqueduct.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="bridge" v="swing"/>
-		<!-- no line or area, as this is a highway=xy, railway=xy, .... -->
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 		<icon annotate="true" src="vehicle/viaduct.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="tunnel" b="yes"/>
-		<!-- no line or area, as this is a highway=xy, railway=xy, .... -->
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 		<icon annotate="true" src="vehicle/tunnel.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
@@ -885,7 +885,9 @@ BEWARE: If a key/value pair matches more than one rule, the "rule that wins" is 
 
 	<rule>
 		<condition k="railway" v="tram"/>
-		<line width="1" colour="rail#808080" dashed="true"/>
+                <!-- prefer way types over tram - draw tram as overlay in joined cases -->
+		<line width="1" colour="rail#808080" dashed="true" priority="-10000"/>
+		<linemod mode="over" width="1" colour="rail#808080" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>

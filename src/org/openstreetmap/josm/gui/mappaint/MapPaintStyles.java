@@ -1,10 +1,13 @@
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -21,49 +24,45 @@ public class MapPaintStyles {
 	private static Boolean isInternal = false;
 	private static ElemStyles styles = new ElemStyles();
 	
-	public static String getStyleDir(){
-		return styleDir;
-	}
-	public static String getImageDir(){
-		return imageDir;
-	}
-	public static String getInternalImageDir(){
-		return internalImageDir;
-	}
-	public static Boolean isInternal(){
-		return isInternal;
-	}
-	public static void add(String k, String v, String b, ElemStyle style)
+	public static ElemStyles getStyles()
 	{
-		styles.add(k, v, b, style);
+		return styles;
 	}
-	public static ElemStyle getStyle(OsmPrimitive osm)
+
+	public static ImageIcon getIcon(String name)
 	{
-		ElemStyle s = styles.get(osm, true);
-		if(s != null)
-		{
-			ElemStyle l = styles.get(osm, false);
-			if(l != null && l instanceof LineElemStyle)
+		try {
+			if(isInternal)
 			{
-				s = new AreaElemStyle((AreaElemStyle)s, (LineElemStyle)l);
+				String imageFile = imageDir+name;
+				File f = new File(imageFile);
+				if(f.exists())
+				{
+					//open icon from user directory
+					return new ImageIcon(imageFile);
+				}
 			}
+			URL path = Main.class.getResource(internalImageDir+name);
+			if(path == null)
+			{
+				System.out.println("Mappaint: Icon " + name + " not found, using default icon");
+				path = Main.class.getResource(internalImageDir+"misc/no_icon.png");
+			}
+			return new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
 		}
-		else
-			s = styles.get(osm, false);
-		return s;
-	}
-	public static boolean isArea(OsmPrimitive osm)
-	{
-		return styles.isArea(osm);
+		catch (Exception e)
+		{
+			URL path = Main.class.getResource(internalImageDir+"incomming/amenity.png");
+			return new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
+		}
 	}
 
 	public static void readFromPreferences() {
-
 		String styleName = Main.pref.get("mappaint.style", "standard");
 		// fallback to standard name for internal case, as we only have one internal style
 		String internalStyleName = "standard";
 		styleDir = Main.pref.get("mappaint.styledir", Main.pref.getPreferencesDir()+"plugins/mappaint/"+styleName+"/");
-		String elemStylesFile = getStyleDir()+"elemstyles.xml";
+		String elemStylesFile = styleDir+"elemstyles.xml";
 		imageDir = styleDir+"icons/";
 		internalImageDir = "/images/styles/"+internalStyleName+"/";
 

@@ -1,35 +1,46 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
-import java.awt.Toolkit;
-import java.io.File;
-import java.net.URL;
-
-import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.tools.ColorHelper;
-import org.openstreetmap.josm.Main;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.openstreetmap.josm.Main;
+
 public class ElemStyleHandler extends DefaultHandler
 {
-	boolean inDoc, inRule, inCondition, inElemStyle, inLine, inIcon, inArea, inScaleMax, inScaleMin;
-	String curKey = null;
-	String curValue = null;
-	String curBoolean = null;
-	int curLineWidth = -1;
-	int curLineRealWidth = 0;
-	boolean curLineDashed = false;
-	Color curLineColour = null;
-	Color curAreaColour = null;
-	ImageIcon curIcon = null;
-	boolean curIconAnnotate = true;
-	long curScaleMax = 1000000000;
-	long curScaleMin = 0;
+	boolean inDoc, inRule, inCondition, inElemStyle, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
+	boolean hadLine, hadLineMod, hadIcon, hadArea;
+	ElemStyles styles;
+	RuleElem rule = new RuleElem();
+
+	class RuleElem {
+		String key;
+		String value;
+		String boolValue;
+		long scaleMax;
+		long scaleMin;
+		LineElemStyle line = new LineElemStyle();
+		LineElemStyle linemod = new LineElemStyle();
+		AreaElemStyle area = new AreaElemStyle();
+		IconElemStyle icon = new IconElemStyle();
+		public void init()
+		{
+			key = value = boolValue = null;
+			scaleMax = 1000000000;
+			scaleMin = 0;
+			line.init();
+			linemod.init();
+			area.init();
+			icon.init();
+		}
+	};
 
 	public ElemStyleHandler() {
 		inDoc=inRule=inCondition=inElemStyle=inLine=inIcon=inArea=false;
+		rule.init();
+		styles = MapPaintStyles.getStyles();
 	}
 
 	Color convertColor(String colString)
@@ -53,83 +64,105 @@ public class ElemStyleHandler extends DefaultHandler
 		inDoc = false;
 	}
 
-	@Override public void startElement(String uri,String name, String qName, 
-			Attributes atts) {
-		if (inDoc==true)	{
-			if (qName.equals("rule")) {
+	@Override public void startElement(String uri,String name, String qName, Attributes atts) {
+		if (inDoc==true)
+		{
+			if (qName.equals("rule"))
 				inRule=true;
-			}
-			else if (qName.equals("condition") && inRule) {
-				inCondition=true;
-				for (int count=0; count<atts.getLength(); count++) {
-					if(atts.getQName(count).equals("k"))
-					{
-						curKey = atts.getValue(count);
-						curBoolean = null;
-						curValue = null;
-					}
-					else if(atts.getQName(count).equals("v"))
-						curValue = atts.getValue(count);
-					else if(atts.getQName(count).equals("b"))
-						curBoolean = atts.getValue(count);
-				}
-			} else if (qName.equals("line")) {
-				inLine = true;
-				for (int count=0; count<atts.getLength(); count++) {
-					if(atts.getQName(count).equals("width"))
-						curLineWidth = Integer.parseInt(atts.getValue(count));
-					else if (atts.getQName(count).equals("colour"))
-						curLineColour=convertColor(atts.getValue(count));
-					else if (atts.getQName(count).equals("realwidth"))
-						curLineRealWidth=Integer.parseInt(atts.getValue(count));
-					else if (atts.getQName(count).equals("dashed"))
-						curLineDashed=Boolean.parseBoolean(atts.getValue(count));
-				}
-			} else if (qName.equals("scale_max")) {
+			else if (qName.equals("scale_max"))
 				inScaleMax = true;
-			} else if (qName.equals("scale_min")) {
+			else if (qName.equals("scale_min"))
 				inScaleMin = true;
-			} else if (qName.equals("icon")) {
-				inIcon = true;
-				for (int count=0; count<atts.getLength(); count++) {
-					if (atts.getQName(count).equals("src")) {
-						if(!MapPaintStyles.isInternal())
+			else if (qName.equals("condition") && inRule)
+			{
+				inCondition=true;
+				for (int count=0; count<atts.getLength(); count++)
+				{
+					if(atts.getQName(count).equals("k"))
+						rule.key = atts.getValue(count);
+					else if(atts.getQName(count).equals("v"))
+						rule.value = atts.getValue(count);
+					else if(atts.getQName(count).equals("b"))
+						rule.boolValue = atts.getValue(count);
+				}
+			}
+			else if (qName.equals("line"))
+			{
+				hadLine = inLine = true;
+				for (int count=0; count<atts.getLength(); count++)
+				{
+					if(atts.getQName(count).equals("width"))
+						rule.line.width = Integer.parseInt(atts.getValue(count));
+					else if (atts.getQName(count).equals("colour"))
+						rule.line.color=convertColor(atts.getValue(count));
+					else if (atts.getQName(count).equals("realwidth"))
+						rule.line.realWidth=Integer.parseInt(atts.getValue(count));
+					else if (atts.getQName(count).equals("dashed"))
+						rule.line.dashed=Boolean.parseBoolean(atts.getValue(count));
+					else if(atts.getQName(count).equals("priority"))
+						rule.line.priority = Integer.parseInt(atts.getValue(count));
+				}
+			}
+			else if (qName.equals("linemod"))
+			{
+				hadLineMod = inLine = true;
+				for (int count=0; count<atts.getLength(); count++)
+				{
+					if(atts.getQName(count).equals("width"))
+					{
+						String val = atts.getValue(count);
+						if(val.startsWith("+"))
 						{
-							String imageFile = MapPaintStyles.getImageDir()+atts.getValue(count); 
-							File f = new File(imageFile);
-							if (f.exists()) {
-								//open icon from user directory
-								curIcon = new ImageIcon(imageFile);
-								continue;
-							}
+							rule.line.width = Integer.parseInt(val.substring(1));
+							rule.line.widthMode = LineElemStyle.WidthMode.OFFSET;
 						}
-						try {
-							URL path = getClass().getResource(MapPaintStyles.getInternalImageDir()+atts.getValue(count));
-							if (path == null) {
-								/* icon not found, using default */
-								System.out.println("Mappaint: Icon " + atts.getValue(count) + " not found, using default icon");
-								path = getClass().getResource(MapPaintStyles.getInternalImageDir()+"misc/no_icon.png");
-								curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
-							} else {
-								curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
-							}
+						else if(val.startsWith("-"))
+						{
+							rule.line.width = Integer.parseInt(val);
+							rule.line.widthMode = LineElemStyle.WidthMode.OFFSET;
 						}
-						catch (Exception e){
-							URL path = getClass().getResource(MapPaintStyles.getInternalImageDir()+"incomming/amenity.png");
-							curIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
+						else if(val.endsWith("%"))
+						{
+							rule.line.width = Integer.parseInt(val.substring(0, val.length()-1));
+							rule.line.widthMode = LineElemStyle.WidthMode.PERCENT;
 						}
-					} else if (atts.getQName(count).equals("annotate")) {
-						curIconAnnotate = Boolean.parseBoolean (atts.getValue(count));
+						else
+							rule.line.width = Integer.parseInt(val);
 					}
+					else if (atts.getQName(count).equals("colour"))
+						rule.line.color=convertColor(atts.getValue(count));
+					else if (atts.getQName(count).equals("realwidth"))
+						rule.line.realWidth=Integer.parseInt(atts.getValue(count));
+					else if (atts.getQName(count).equals("dashed"))
+						rule.line.dashed=Boolean.parseBoolean(atts.getValue(count));
+					else if(atts.getQName(count).equals("priority"))
+						rule.line.priority = Integer.parseInt(atts.getValue(count));
+					else if(atts.getQName(count).equals("mode"))
+						rule.line.over = !atts.getValue(count).equals("under");
+				}
+			}
+			else if (qName.equals("icon"))
+			{
+				hadIcon = inIcon = true;
+				for (int count=0; count<atts.getLength(); count++)
+				{
+					if (atts.getQName(count).equals("src"))
+						rule.icon.icon = MapPaintStyles.getIcon(atts.getValue(count));
+					else if (atts.getQName(count).equals("annotate"))
+						rule.icon.annotate = Boolean.parseBoolean (atts.getValue(count));
+					else if(atts.getQName(count).equals("priority"))
+						rule.icon.priority = Integer.parseInt(atts.getValue(count));
 				}
 			}
 			else if (qName.equals("area"))
 			{
-				inArea = true;
+				hadArea = inArea = true;
 				for (int count=0; count<atts.getLength(); count++)
 				{
 					if (atts.getQName(count).equals("colour"))
-						curAreaColour=convertColor(atts.getValue(count));
+						rule.area.color=convertColor(atts.getValue(count));
+					else if(atts.getQName(count).equals("priority"))
+						rule.area.priority = Integer.parseInt(atts.getValue(count));
 				}
 			}
 		}
@@ -137,33 +170,23 @@ public class ElemStyleHandler extends DefaultHandler
 
 	@Override public void endElement(String uri,String name, String qName)
 	{
-		if (inRule && qName.equals("rule")) {
-			ElemStyle newStyle;
+		if (inRule && qName.equals("rule"))
+		{
+			if(hadLine)
+				styles.add(rule.key, rule.value, rule.boolValue,
+				new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
+			if(hadLineMod)
+				styles.addModifier(rule.key, rule.value, rule.boolValue,
+				new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
+			if(hadIcon)
+				styles.add(rule.key, rule.value, rule.boolValue,
+				new IconElemStyle(rule.icon, rule.scaleMax, rule.scaleMin));
+			if(hadArea)
+				styles.add(rule.key, rule.value, rule.boolValue,
+				new AreaElemStyle(rule.area, rule.scaleMax, rule.scaleMin));
 			inRule = false;
-			if (curLineWidth != -1) {
-				newStyle = new LineElemStyle(curLineWidth, curLineRealWidth, curLineColour, 
-						curLineDashed, curScaleMax, curScaleMin);
-				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
-				curLineWidth = -1;
-				curLineRealWidth= 0;
-				curLineDashed = false;
-				curLineColour = null;
-			}
-			
-			if (curIcon != null) {
-				newStyle = new IconElemStyle(curIcon, curIconAnnotate, curScaleMax, curScaleMin);
-				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
-				curIcon = null;
-				curIconAnnotate = true;
-			}
-			if (curAreaColour != null) {
-				newStyle = new AreaElemStyle (curAreaColour, curScaleMax, curScaleMin);
-				MapPaintStyles.add(curKey, curValue, curBoolean, newStyle);
-				curAreaColour = null;
-			}
-			curScaleMax = 1000000000;
-			curScaleMin = 0;
-
+			hadLine = hadLineMod = hadIcon = hadArea = false;
+			rule.init();
 		}
 		else if (inCondition && qName.equals("condition"))
 			inCondition = false;
@@ -179,18 +202,11 @@ public class ElemStyleHandler extends DefaultHandler
 			inScaleMin = false;
 	}
 
-	@Override public void characters(char ch[], int start, int length) {
-		if (inScaleMax == true) {
-			String content = new String(ch, start, length);
-			curScaleMax = Long.parseLong(content);
-		}
-		if (inScaleMin == true) {
-			String content = new String(ch, start, length);
-			curScaleMin = Long.parseLong(content);
-		}
+	@Override public void characters(char ch[], int start, int length)
+	{
+		if (inScaleMax == true)
+			rule.scaleMax = Long.parseLong(new String(ch, start, length));
+		else if (inScaleMin == true)
+			rule.scaleMin = Long.parseLong(new String(ch, start, length));
 	}
 }
-
-
-
-
