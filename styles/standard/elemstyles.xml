@@ -3462,6 +3462,13 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="area" b="yes"/>
+		<area colour="area#ffffff"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
 <!--"deprecated" tags -->
 
 	<rule>
