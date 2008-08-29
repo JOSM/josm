@@ -333,7 +333,7 @@ public class AudioPlayer extends Thread {
 
 	public static void audioMalfunction(Exception ex) {
 		JOptionPane.showMessageDialog(Main.parent, 
-				"<html><p>" + ex.getMessage() + "</p></html>",
+				"<html><p>" + tr(ex.getMessage()) + "</p></html>",
 				tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
 	}
 }
