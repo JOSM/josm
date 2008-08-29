@@ -1188,7 +1188,6 @@
 			<key key="tourism" value="artwork" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-	</group>
 
 	<separator/>
 
@@ -1208,6 +1207,8 @@
 	<item name="Bench" icon="presets/bench.png">
 		<key key="amenity" value="bench" />
 	</item>
+
+</group>
 
 <!-- Tourism -->
 
