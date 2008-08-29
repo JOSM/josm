@@ -1177,12 +1177,6 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Picnic Site" icon="presets/empty.png">
-			<label text="Edit Picnic Site" />
-			<key key="tourism" value="picnic_site" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
 		<item name="Theme Park" icon="presets/empty.png">
 			<label text="Edit Theme Park" />
 			<key key="tourism" value="theme_park" />
@@ -1194,7 +1188,28 @@
 			<key key="tourism" value="artwork" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-	</group> <!-- Tourism -->
+	</group>
+
+	<seperator/>
+
+	<item name="Shelter" icon="presets/shelter.png">
+		<label text="Edit Shelter" />
+		<key key="amenity" value="shelter" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+		<check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
+	</item>
+
+	<item name="Picnic Site" icon="presets/empty.png">
+		<label text="Edit Picnic Site" />
+		<key key="tourism" value="picnic_site" />
+		<text key="name" text="Name" default="" delete_if_empty="true" />
+	</item>
+
+	<item name="Bench" icon="presets/bench.png">
+		<key key="amenity" value="bench" />
+	</item>
+
+<!-- Tourism -->
 
 	<group name="Historic Places" icon="presets/State_Tourist.png">
 		<item name="Castle" icon="presets/State_Tourist.png">
@@ -1706,9 +1721,6 @@
 			<combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Shelter" icon="presets/shelter.png">
-			<key key="amenity" value="shelter" />
-		</item>
 	</group> <!-- Buildings -->
 
 	<group name="Amenities" icon="presets/telephone.png">
