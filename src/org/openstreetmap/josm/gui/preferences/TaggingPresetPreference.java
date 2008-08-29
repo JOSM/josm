@@ -29,7 +29,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSeperator;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
 import org.openstreetmap.josm.tools.GBC;
 
 public class TaggingPresetPreference implements PreferenceSetting {
@@ -132,7 +132,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 			for (final TaggingPreset p : taggingPresets)
 			{
 				JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
-				if (p instanceof TaggingPresetSeperator)
+				if (p instanceof TaggingPresetSeparator)
 					m.add(new JSeparator());
 				else if (p instanceof TaggingPresetMenu)
 				{

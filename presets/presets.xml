@@ -89,7 +89,7 @@
 			<text key="name" text="Exit Name" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Primary" icon="presets/way_primary.png">
 			<label text="Edit a Primary Road" />
@@ -255,7 +255,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Road Restrictions" icon="presets/restrictions.png">
 			<label text="Edit Road Restrictions" />
@@ -395,7 +395,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Bridleway" icon="presets/equestrian.png">
 			<label text="Edit a Bridleway" />
@@ -473,7 +473,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Track" icon="presets/track.png">
 			<label text="Edit a Track" />
@@ -600,7 +600,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Path" icon="presets/path.png">
 			<label text="Edit Path" />
@@ -789,7 +789,7 @@
 		</item>
 	</group> <!-- Waypoints -->
 
-	<seperator/>
+	<separator/>
 
 	<group name="Railway" icon="presets/railway.png">
 		<item name="Rail" icon="presets/railway.png">
@@ -867,7 +867,7 @@
 		</item>
 	</group> <!-- Railway Point -->
 
-	<seperator/>
+	<separator/>
 
 	<group name="Waterway" icon="presets/waterway.png">
 		<item name="River" icon="presets/river.png">
@@ -909,7 +909,7 @@
 			<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Weir" icon="presets/empty.png">
 			<label text="Edit a Weir" />
@@ -947,7 +947,7 @@
 		</item>
 	</group> <!-- Waterway -->
 
-	<seperator/>
+	<separator/>
 
 	<group name="Car" icon="presets/car.png">
 			<item name="Fuel" icon="presets/fuel.png">
@@ -1066,7 +1066,7 @@
 		</item>
 	</group> <!-- Public Transport -->
 
-	<seperator/>
+	<separator/>
 
 	<group name="Accomodation" icon="presets/bed.png">
 		<item name="Hotel" icon="presets/bed.png">
@@ -1190,7 +1190,7 @@
 		</item>
 	</group>
 
-	<seperator/>
+	<separator/>
 
 	<item name="Shelter" icon="presets/shelter.png">
 		<label text="Edit Shelter" />
@@ -1304,7 +1304,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Leisure -->
-	<seperator/>
+	<separator/>
 
 	<group name="Sport Facilities" icon="presets/stadium.png">
 		<item name="Stadium" icon="presets/stadium.png">
@@ -1591,7 +1591,7 @@
 		</item>
 	</group>
 
-	<seperator/>
+	<separator/>
 	
 	<group name="Health" icon="presets/pharmacy.png">
 		<item name="Pharmacy" icon="presets/pharmacy.png">
@@ -1661,7 +1661,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Kindergarten" icon="presets/kindergarten.png">
 			<label text="Edit Kindergarten" />
@@ -1687,7 +1687,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Cinema" icon="presets/empty.png">
 			<label text="Edit Cinema" />
@@ -1840,7 +1840,7 @@
 		</item>
 	</group> <!-- Shops -->
 
-	<seperator/>
+	<separator/>
 
 	<group name="Places" icon="presets/places.png">
 		<item name="Continent" icon="presets/places.png">
@@ -1927,7 +1927,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<seperator/>
+		<separator/>
 
 		<item name="Addresses" icon="presets/addresses.png">
 			<label text="Edit address information" />

@@ -41,7 +41,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSeperator;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -395,7 +395,7 @@ public class TaggingPreset extends AbstractAction {
 		}
 		XmlObjectParser parser = new XmlObjectParser();
 		parser.mapOnStart("item", TaggingPreset.class);
-		parser.mapOnStart("seperator", TaggingPresetSeperator.class);
+		parser.mapOnStart("separator", TaggingPresetSeparator.class);
 		parser.mapBoth("group", TaggingPresetMenu.class);
 		parser.map("text", Text.class);
 		parser.map("check", Check.class);
@@ -420,8 +420,8 @@ public class TaggingPreset extends AbstractAction {
 					Main.toolbar.register(tp);
 					
 				}
-			} else if (o instanceof TaggingPresetSeperator) {
-				TaggingPresetSeperator tp = (TaggingPresetSeperator) o;
+			} else if (o instanceof TaggingPresetSeparator) {
+				TaggingPresetSeparator tp = (TaggingPresetSeparator) o;
 				tp.group = lastmenu;
 				all.add(tp);
 			} else if (o instanceof TaggingPreset) {
