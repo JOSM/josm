@@ -307,7 +307,7 @@
 			<label text="Optional Attributes:" />
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+			<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" delete_if_empty="true" />
 			<text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
 			<text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
@@ -1189,28 +1189,25 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-	<separator/>
+		<separator/>
 
-	<item name="Shelter" icon="presets/shelter.png">
-		<label text="Edit Shelter" />
-		<key key="amenity" value="shelter" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-		<check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
-	</item>
+		<item name="Shelter" icon="presets/shelter.png">
+			<label text="Edit Shelter" />
+			<key key="amenity" value="shelter" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
+		</item>
 
-	<item name="Picnic Site" icon="presets/empty.png">
-		<label text="Edit Picnic Site" />
-		<key key="tourism" value="picnic_site" />
-		<text key="name" text="Name" default="" delete_if_empty="true" />
-	</item>
+		<item name="Picnic Site" icon="presets/empty.png">
+			<label text="Edit Picnic Site" />
+			<key key="tourism" value="picnic_site" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
 
-	<item name="Bench" icon="presets/bench.png">
-		<key key="amenity" value="bench" />
-	</item>
-
-</group>
-
-<!-- Tourism -->
+		<item name="Bench" icon="presets/bench.png">
+			<key key="amenity" value="bench" />
+		</item>
+	</group> <!-- Tourism -->
 
 	<group name="Historic Places" icon="presets/State_Tourist.png">
 		<item name="Castle" icon="presets/State_Tourist.png">
