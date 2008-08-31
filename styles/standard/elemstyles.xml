@@ -1050,7 +1050,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="aerialway" v="cable_car"/>
 		<line width="1" colour="aerialway#663300" dashed="true"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="transport/aerialway/cable_car.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1058,7 +1058,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="aerialway" v="chair_lift"/>
 		<line width="1" colour="aerialway#663300" dashed="true"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="transport/aerialway/chair_lift.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1066,7 +1066,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="aerialway" v="drag_lift"/>
 		<line width="1" colour="aerialway#663300" dashed="true"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="transport/aerialway/drag_lift.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1074,7 +1074,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="aerialway" v="station"/>
 		<line width="1" colour="aerialway#663300" dashed="true"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="transport/aerialway/station.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
