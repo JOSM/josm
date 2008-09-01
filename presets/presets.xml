@@ -726,7 +726,7 @@
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Motorway Junction" icon="presets/waypoints.png">
+		<item name="Motorway Junction" icon="presets/motorway_junction.png">
 			<label text="Edit Motorway Junction" />
 			<label text=" " />
 			<key key="highway" value="motorway_junction" />
@@ -756,7 +756,7 @@
 			<key key="highway" value="traffic_signals" />
 		</item>
 
-		<item name="Turning Circle" icon="presets/waypoints.png">
+		<item name="Turning Circle" icon="presets/turning_circle.png">
 			<key key="highway" value="turning_circle" />
 		</item>
 
