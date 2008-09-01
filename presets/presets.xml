@@ -2352,7 +2352,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Wastewater Plant" icon="presets/empty.png">
+		<item name="Wastewater Plant" icon="presets/wastewater_plant.png">
 			<label text="Edit Wastewater Plant" />
 			<key key="man_made" value="wastewater_plant" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2370,7 +2370,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Survey Point" icon="presets/empty.png">
+		<item name="Survey Point" icon="presets/survey_point.png">
 			<label text="Edit Survey Point" />
 			<key key="man_made" value="survey_point" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
