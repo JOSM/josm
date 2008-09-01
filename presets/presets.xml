@@ -1183,7 +1183,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Artwork" icon="presets/empty.png">
+		<item name="Artwork" icon="presets/arts.png">
 			<label text="Edit Artwork" />
 			<key key="tourism" value="artwork" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1266,7 +1266,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Fishing" icon="presets/empty.png">
+		<item name="Fishing" icon="presets/fishing.png">
 			<label text="Edit Fishing" />
 			<key key="leisure" value="fishing" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1699,7 +1699,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Arts Centre" icon="presets/empty.png">
+		<item name="Arts Centre" icon="presets/arts.png">
 			<label text="Edit Arts Centre" />
 			<key key="amenity" value="arts_centre" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1748,7 +1748,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Fountain" icon="presets/fountain.png">
+		<item name="Fountain" icon="presets/spring.png">
 			<label text="Edit a Fountain" />
 			<key key="amenity" value="fountain" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2164,7 +2164,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Spring" icon="presets/empty.png">
+		<item name="Spring" icon="presets/spring.png">
 			<label text="Edit Spring" />
 			<key key="natural" value="spring" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2275,7 +2275,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Power Solar" icon="presets/empty.png">
+		<item name="Power Solar" icon="presets/power_tower.png">
 			<label text="Edit Power Solar" />
 			<key key="man_made" value="power_hydro" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2322,7 +2322,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Covered Reservoir" icon="presets/empty.png">
+		<item name="Covered Reservoir" icon="presets/reservoir_covered.png">
 			<label text="Edit Covered Reservoir" />
 			<key key="man_made" value="reservoir_covered" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
