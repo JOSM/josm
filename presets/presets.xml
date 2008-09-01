@@ -1115,12 +1115,6 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Biergarten" icon="presets/biergarten.png">
-			<label text="Edit Biergarten" />
-			<key key="amenity" value="biergarten" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
 		<item name="Fast Food" icon="presets/fastfood.png">
 			<label text="Edit Fast Food Restaurant" />
 			<key key="amenity" value="fast_food" />
@@ -1136,6 +1130,12 @@
 		<item name="Pub" icon="presets/empty.png">
 			<label text="Edit Pub" />
 			<key key="amenity" value="pub" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Biergarten" icon="presets/biergarten.png">
+			<label text="Edit Biergarten" />
+			<key key="amenity" value="biergarten" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
@@ -1216,7 +1216,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Ruins" icon="presets/State_Tourist.png">
+		<item name="Ruins" icon="presets/ruins.png">
 			<label text="Edit Ruins" />
 			<key key="historic" value="ruins" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1876,13 +1876,6 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Island" icon="presets/island.png">
-			<label text="Edit Island" />
-			<label text=" " />
-			<key key="place" value="island" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
 		<item name="City" icon="presets/places.png">
 			<label text="Edit City" />
 			<label text=" " />
@@ -1922,6 +1915,13 @@
 			<label text="Edit Locality" />
 			<label text=" " />
 			<key key="place" value="locality" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Island" icon="presets/island.png">
+			<label text="Edit Island" />
+			<label text=" " />
+			<key key="place" value="island" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
