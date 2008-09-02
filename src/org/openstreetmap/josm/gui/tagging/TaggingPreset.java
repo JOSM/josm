@@ -8,12 +8,9 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -39,6 +35,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
@@ -325,7 +322,7 @@ public class TaggingPreset extends AbstractAction {
 	 * The types as preparsed collection.
 	 */
 	public Collection<Class<?>> types;
-	private List<Item> data = new LinkedList<Item>();
+	public List<Item> data = new LinkedList<Item>();
 	private static HashMap<String,String> lastValue = new HashMap<String,String>();
 
 	/**
@@ -385,14 +382,7 @@ public class TaggingPreset extends AbstractAction {
 		}
 	}
 
-	public static List<TaggingPreset> readAll(InputStream inStream) throws SAXException {
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			in = new BufferedReader(new InputStreamReader(inStream));
-		}
+	private static List<TaggingPreset> readAll(BufferedReader in) throws SAXException {
 		XmlObjectParser parser = new XmlObjectParser();
 		parser.mapOnStart("item", TaggingPreset.class);
 		parser.mapOnStart("separator", TaggingPresetSeparator.class);
@@ -440,28 +430,26 @@ public class TaggingPreset extends AbstractAction {
 		LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
 		String allTaggingPresets = Main.pref.get("taggingpreset.sources");
 		
-		if (Main.pref.getBoolean("taggingpreset.enable-defaults", true)) {
-			InputStream in = Main.class.getResourceAsStream("/presets/presets.xml");
-			try {
-				allPresets.addAll(TaggingPreset.readAll(in));
-			} catch (SAXException x) {
-				JOptionPane.showMessageDialog(Main.parent, tr("Error parsing presets.xml: ")+x.getMessage());
-			}
+		if (Main.pref.getBoolean("taggingpreset.enable-defaults", true))
+		{
+			allTaggingPresets = "resource://presets/presets.xml"
+			+ (allTaggingPresets != null ? ";"+allTaggingPresets : "");
 		}
 		
-		StringTokenizer st = new StringTokenizer(allTaggingPresets, ";");
-		while (st.hasMoreTokens()) {
-			InputStream in = null;
-			String source = st.nextToken();
+		for(String source : allTaggingPresets.split(";"))
+		{
 			try {
-				if (source.startsWith("http") || source.startsWith("ftp") || source.startsWith("file"))
-					in = new URL(source).openStream();
-				else if (source.startsWith("resource://")) 
-					in = Main.class.getResourceAsStream(source.substring("resource:/".length()));
-				else
-					in = new FileInputStream(source);
-				allPresets.addAll(TaggingPreset.readAll(in));
-				in.close();
+				MirroredInputStream s = new MirroredInputStream(source);
+				InputStreamReader r;
+				try
+				{
+					r = new InputStreamReader(s, "UTF-8");
+				}
+				catch (UnsupportedEncodingException e)
+				{
+					r = new InputStreamReader(s);
+				}
+				allPresets.addAll(TaggingPreset.readAll(new BufferedReader(r)));
 			} catch (IOException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(Main.parent, tr("Could not read tagging preset source: {0}",source));

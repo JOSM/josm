@@ -170,6 +170,7 @@ public class PluginPreference implements PreferenceSetting {
 	private void update() {
 		// refresh description
 		PluginDownloader.downloadDescription();
+		refreshPluginPanel(gui);
 
 		Set<PluginDescription> toUpdate = new HashSet<PluginDescription>();
 		StringBuilder toUpdateStr = new StringBuilder();
