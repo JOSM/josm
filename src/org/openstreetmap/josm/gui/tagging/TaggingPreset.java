@@ -383,7 +383,7 @@ public class TaggingPreset extends AbstractAction {
 		}
 	}
 
-	private static List<TaggingPreset> readAll(Reader in) throws SAXException {
+	public static List<TaggingPreset> readAll(Reader in) throws SAXException {
 		XmlObjectParser parser = new XmlObjectParser();
 		parser.mapOnStart("item", TaggingPreset.class);
 		parser.mapOnStart("separator", TaggingPresetSeparator.class);
