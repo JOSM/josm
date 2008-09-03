@@ -977,8 +977,33 @@
 
 	<separator/>
 
+	<group name="Aerialway" icon="styles/standard/transport/aerialway.png">
+		<item name="Chair Lift" icon="styles/standard/transport/aerialway/chair_lift.png">
+			<label text="Edit a Chair Lift" />
+			<key key="aerialway" value="chair_lift" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		<item name="Drag Lift" icon="styles/standard/transport/aerialway/drag_lift.png">
+			<label text="Edit a Drag Lift" />
+			<key key="aerialway" value="drag_lift" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		<item name="Cable Car" icon="styles/standard/transport/aerialway/cable_car.png">
+			<label text="Edit a Cable Car" />
+			<key key="aerialway" value="cable_car" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		<item name="Station" icon="styles/standard/transport/aerialway/station.png">
+			<label text="Edit a Station" />
+			<key key="aerialway" value="station" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+	</group> <!-- Aerialway -->
+
+	<separator/>
+
 	<group name="Car" icon="presets/car.png">
-			<item name="Fuel" icon="presets/fuel.png">
+		<item name="Fuel" icon="presets/fuel.png">
 			<label text="Edit Fuel" />
 			<key key="amenity" value="fuel" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
