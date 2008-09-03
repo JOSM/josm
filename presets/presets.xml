@@ -1564,14 +1564,14 @@
 			<combo key="leisure" text="type" values="golf_course,pitch,sports_centre,stadium,track" default="golf_course" delete_if_empty="true" />
 		</item>
 		
-		<item name="Boules" icon="presets/empty.png">
-			<label text="Edit Boules" />
+		<item name="Boule" icon="styles/standard/sports/boule.png">
+			<label text="Edit Boule" />
 			<key key="sport" value="boules" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Bowls" icon="presets/empty.png">
+		<item name="Bowls" icon="styles/standard/sports/boule.png">
 			<label text="Edit Bowls" />
 			<key key="sport" value="bowls" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1613,7 +1613,7 @@
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Racquet" icon="presets/empty.png">
+		<item name="Racquet" icon="styles/standard/sports/racquetball.png">
 			<label text="Edit Racquet" />
 			<key key="sport" value="racquet" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
