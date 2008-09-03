@@ -3528,4 +3528,11 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="traffic_sign" v="city_limit"/>
+		<icon annotate="true" src="citylimit.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
 </rules>

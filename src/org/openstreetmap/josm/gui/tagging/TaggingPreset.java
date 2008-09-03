@@ -360,7 +360,10 @@ public class TaggingPreset extends AbstractAction {
 	public void setIcon(String iconName) {
 		ImageIcon icon = ImageProvider.getIfAvailable(null, iconName);
 		if (icon == null)
+		{
+			System.out.println("Could not get presets icon " + iconName);
 			icon = new ImageIcon(iconName);
+		}
 		if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 16)
 			icon = new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 		putValue(Action.SMALL_ICON, icon);

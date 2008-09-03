@@ -229,7 +229,7 @@
 
 		<separator/>
 
-		<item name="Road (Unknown Type)" icon="presets/way_unknown.png">
+		<item name="Road (Unknown Type)" icon="presets/way_unclassified.png">
 			<label text="Edit a Road of unknown type" />
 			<label text=" " />
 			<key key="highway" value="road" />
@@ -292,6 +292,7 @@
 			<combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
+
 		<item name="Bridge" icon="presets/bridge.png">
 			<label text="Edit a Bridge" />
 			<label text=" " />
@@ -307,8 +308,8 @@
 		</item>
 	</group> <!-- Streets -->
 
-	<group name="Ways" icon="presets/way_unknown.png">
-		<item name="Service" icon="presets/way_service.png">
+	<group name="Ways" icon="presets/way_unclassified.png">
+		<item name="Service" icon="presets/way_unclassified.png">
 			<label text="Edit a Serviceway" />
 			<label text=" " />
 			<key key="highway" value="service" />
@@ -327,7 +328,7 @@
 			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Parking Aisle" icon="presets/way_service.png">
+		<item name="Parking Aisle" icon="presets/way_unclassified.png">
 			<label text="Edit a Parking Aisle" />
 			<label text=" " />
 			<key key="highway" value="service" />
@@ -458,7 +459,7 @@
 
 		<separator/>
 
-		<item name="Track" icon="presets/track.png">
+		<item name="Track" icon="presets/track1.png">
 			<label text="Edit a Track" />
 			<label text=" " />
 			<key key="highway" value="track" />
@@ -777,6 +778,19 @@
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
+
+		<item name="City Limit" icon="presets/citylimit.png">
+			<label text="Edit a city limit sign" />
+			<label text=" " />
+			<key key="traffic_sign" value="city_limit" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Speed Camera" icon="presets/waypoints.png">
+			<key key="amenity" value="speed_camera" />
+		</item>
 	</group> <!-- Waypoints -->
 
 	<separator/>
@@ -1030,7 +1044,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Railway Halt" icon="presets/railway_halt.png">
+		<item name="Railway Halt" icon="presets/station.png">
 			<label text="Edit Halt" />
 			<label text=" " />
 			<key key="railway" value="halt" />

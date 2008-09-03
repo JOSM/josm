@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -32,7 +34,7 @@ abstract class OsmServerReader extends OsmConnection {
 	protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
 		String version = Main.pref.get("osm-server.version", "0.5");
 		urlStr = Main.pref.get("osm-server.url")+"/"+version+"/" + urlStr;
-		System.out.println("download: "+urlStr);
+//		System.out.println("download: "+urlStr);
 		initAuthentication();
 		URL url = new URL(urlStr);
 		activeConnection = (HttpURLConnection)url.openConnection();
@@ -44,10 +46,14 @@ abstract class OsmServerReader extends OsmConnection {
 		if (Boolean.parseBoolean(Main.pref.get("osm-server.use-compression", "true")))
 			activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
 
-		System.out.println("got return: "+activeConnection.getResponseCode());
 		activeConnection.setConnectTimeout(15000);
 		if (isAuthCancelled() && activeConnection.getResponseCode() == 401)
 			return null;
+		if( activeConnection.getResponseCode() == 500 )
+		{
+			throw new IOException(tr("Server returned internal error. Try a reduced area or retry after waiting some time."));
+		}
+//		System.out.println("got return: "+activeConnection.getResponseCode());
 
 		String encoding = activeConnection.getContentEncoding();
 		InputStream inputStream = new ProgressInputStream(activeConnection, pleaseWaitDlg);
