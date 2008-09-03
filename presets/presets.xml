@@ -2309,42 +2309,7 @@
 			<key key="man_made" value="works" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-
-		<item name="Power Wind" icon="presets/power_wind.png">
-			<label text="Edit Power Wind" />
-			<key key="man_made" value="power_wind" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Power Solar" icon="presets/power_tower.png">
-			<label text="Edit Power Solar" />
-			<key key="man_made" value="power_hydro" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Power Hydro" icon="presets/power_tower.png">
-			<label text="Edit Power Hydro" />
-			<key key="man_made" value="power_hydro" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Power Fossil" icon="presets/power_tower.png">
-			<label text="Edit Power Fossil" />
-			<key key="man_made" value="power_fossil" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Power Nuclear" icon="presets/power_tower.png">
-			<label text="Edit Power Nuclear" />
-			<key key="man_made" value="power_nuclear" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Power Tower" icon="presets/power_tower.png">
-			<label text="Edit Power Tower" />
-			<key key="power" value="tower" />
-		</item>
-
+		
 		<item name="Tower" icon="presets/tower.png">
 			<label text="Edit Tower" />
 			<key key="man_made" value="tower" />
@@ -2354,6 +2319,18 @@
 		<item name="Water Tower" icon="presets/water_tower.png">
 			<label text="Edit Water Tower" />
 			<key key="man_made" value="water_tower" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Power Tower" icon="presets/power_tower.png">
+			<label text="Edit Power Tower" />
+			<key key="power" value="tower" />
+		</item>
+
+		<item name="Power Generator" icon="presets/power_tower.png">
+			<label text="Edit Power Generator" />
+			<key key="power" value="generator" />
+			<combo key="power_source" text="Type" values="power_hydro,power_wind,power_hydro,power_fossil,power_nuclear" default="" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
