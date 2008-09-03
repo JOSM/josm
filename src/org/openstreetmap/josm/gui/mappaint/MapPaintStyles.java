@@ -44,6 +44,8 @@ public class MapPaintStyles {
 			}
 			URL path = Main.class.getResource(internalImageDir+name);
 			if(path == null)
+				path = Main.class.getResource("/styles/"+name);
+			if(path == null)
 			{
 				System.out.println("Mappaint: Icon " + name + " not found, using default icon");
 				path = Main.class.getResource(internalImageDir+"misc/no_icon.png");
