@@ -2330,7 +2330,7 @@
 		<item name="Power Generator" icon="presets/power_tower.png">
 			<label text="Edit Power Generator" />
 			<key key="power" value="generator" />
-			<combo key="power_source" text="Type" values="power_hydro,power_wind,power_hydro,power_fossil,power_nuclear" default="" />
+			<combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear" default="" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
