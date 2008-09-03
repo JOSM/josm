@@ -80,15 +80,6 @@
 			<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
 		</item>
 
-		<item name="Highway Exit" icon="presets/motorway_exit.png">
-			<label text="Edit an Exit" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="ref" text="Exit Number" default="" delete_if_empty="true" />
-			<text key="name" text="Exit Name" default="" delete_if_empty="true" />
-		</item>
-
 		<separator/>
 
 		<item name="Primary" icon="presets/way_primary.png">
@@ -718,6 +709,15 @@
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Highway Exit" icon="presets/motorway_exit.png">
+			<label text="Edit an Exit" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="ref" text="Exit Number" default="" delete_if_empty="true" />
+			<text key="name" text="Exit Name" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Motorway Junction" icon="presets/motorway_junction.png">
 			<label text="Edit Motorway Junction" />
 			<label text=" " />
@@ -771,12 +771,6 @@
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Slipway" icon="presets/slipway.png">
-			<label text="Edit Slipway" />
-			<key key="leisure" value="slipway" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Waypoints -->
@@ -915,13 +909,6 @@
 
 		<separator/>
 
-		<item name="Weir" icon="presets/weir.png">
-			<label text="Edit a Weir" />
-			<label text=" " />
-			<key key="waterway" value="weir" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
 		<item name="Dam" icon="presets/empty.png">
 			<label text="Edit a Dam" />
 			<label text=" " />
@@ -942,12 +929,27 @@
 			<key key="waterway" value="lock_gate" />
 		</item>
 
+		<item name="Weir" icon="presets/weir.png">
+			<label text="Edit a Weir" />
+			<label text=" " />
+			<key key="waterway" value="weir" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Turning Point" icon="presets/turning.png">
 			<key key="waterway" value="turning_point" />
 		</item>
 
-		<item name="Waste Disposal" icon="presets/empty.png">
-			<key key="waterway" value="waste_disposal" />
+		<item name="Marina" icon="presets/empty.png">
+			<label text="Edit Marina" />
+			<key key="leisure" value="marina" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Slipway" icon="presets/slipway.png">
+			<label text="Edit Slipway" />
+			<key key="leisure" value="slipway" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Waterway -->
 
@@ -1255,18 +1257,6 @@
 		<item name="Water Park" icon="presets/empty.png">
 			<label text="Edit Water Park" />
 			<key key="leisure" value="water_park" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Marina" icon="presets/empty.png">
-			<label text="Edit Marina" />
-			<key key="leisure" value="marina" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Slipway" icon="presets/empty.png">
-			<label text="Edit Slipway" />
-			<key key="leisure" value="slipway" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
