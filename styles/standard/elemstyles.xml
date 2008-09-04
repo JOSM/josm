@@ -24,7 +24,8 @@ A little help:
 	- colour
         - priority
 6. icon attributes
-	- icon path to icon, relative to the icon path (default: where this file is)
+	- icon path to icon, relative to the icon path (default: subdirectory icons in
+	  directory where this file is)
         - priority
 7. scale_min / scale_max
 	- zoom scale for display
