@@ -1010,27 +1010,27 @@
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Car Parking" icon="presets/parking.png">
+		<item name="Parking" icon="presets/parking.png">
 			<label text="Edit Parking" />
 			<key key="amenity" value="parking" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Car Shop" icon="presets/car_repair.png">
+		<item name="Shop" icon="presets/car_repair.png">
 			<label text="Edit Car Shop" />
 			<key key="shop" value="car" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 	</item>
 
-		<item name="Car Rental" icon="presets/car_rental.png">
+		<item name="Rental" icon="presets/car_rental.png">
 			<label text="Edit Car Rental" />
 			<key key="amenity" value="car_rental" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Car Sharing" icon="presets/car_sharing.png">
+		<item name="Sharing" icon="presets/car_sharing.png">
 			<label text="Edit Car Sharing" />
 			<key key="amenity" value="car_sharing" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1039,19 +1039,19 @@
 	</group> <!-- Car -->
 
 	<group name="Bicycle" icon="presets/bike.png">
-		<item name="Bicycle Parking" icon="presets/bike_parking.png">
+		<item name="Parking" icon="presets/bike_parking.png">
 			<label text="Edit Bicycle Parking" />
 			<key key="amenity" value="bicycle_parking" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Bicycle Rental" icon="presets/bicycle_rental.png">
+		<item name="Rental" icon="presets/bicycle_rental.png">
 			<label text="Edit Bicycle Rental" />
 			<key key="amenity" value="bicycle_rental" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Bicycle Shop" icon="presets/bike.png">
+		<item name="Shop" icon="presets/bike.png">
 			<label text="Edit Bicycle Shop" />
 			<key key="shop" value="bicycle" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
