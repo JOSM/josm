@@ -400,7 +400,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="track"/>
-		<line width="1" realwidth="3" colour="track#006600"/>
+		<line width="1" realwidth="3" colour="track#006600" priority="-10000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>20000</scale_max>
