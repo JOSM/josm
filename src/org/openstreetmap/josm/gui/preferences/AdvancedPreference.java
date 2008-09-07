@@ -70,6 +70,7 @@ public class AdvancedPreference implements PreferenceSetting {
 		orig = Main.pref.getAllPrefix("");
 		defaults = Main.pref.getDefaults();
 		orig.remove("osm-server.password");
+		defaults.remove("osm-server.password");
 		TreeSet<String> ts = new TreeSet<String>(orig.keySet());
 		for (String s : defaults.keySet())
 		{

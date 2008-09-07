@@ -182,18 +182,23 @@ public class Preferences {
 	}
 
 	synchronized public void put(final String key, final String value) {
-		if (value == null)
-			properties.remove(key);
-		else
-			properties.put(key, value);
-		save();
-		firePreferenceChanged(key, value);
+		String oldvalue = properties.get(key);
+		if(value != null && value.length() == 0)
+			value = null;
+		if(!((oldvalue == null && value == null) || (value != null
+		&& oldvalue != null && oldvalue.equals(value))))
+		{
+			if (value == null)
+				properties.remove(key);
+			else
+				properties.put(key, value);
+			save();
+			firePreferenceChanged(key, value);
+		}
 	}
 
 	synchronized public void put(final String key, final boolean value) {
-		properties.put(key, Boolean.toString(value));
-		save();
-		firePreferenceChanged(key, Boolean.toString(value));
+		put(key, Boolean.toString(value));
 	}
 
 	private final void firePreferenceChanged(final String key, final String value) {
@@ -209,8 +214,7 @@ public class Preferences {
 		try {
 			final PrintWriter out = new PrintWriter(new FileWriter(getPreferencesDir() + "preferences"), false);
 			for (final Entry<String, String> e : properties.entrySet()) {
-				if (!e.getValue().equals(""))
-					out.println(e.getKey() + "=" + e.getValue());
+				out.println(e.getKey() + "=" + e.getValue());
 			}
 			out.close();
 		} catch (final IOException e) {

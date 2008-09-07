@@ -52,7 +52,7 @@ public class PluginPreference implements PreferenceSetting {
 	 * 
 	 * @author imi
 	 */
-	public static class PluginDescription {
+	public static class PluginDescription implements Comparable {
 		// Note: All the following need to be public instance variables of
 		// type String.  (Plugin description XMLs from the server are parsed
 		// with tools.XmlObjectParser, which uses reflection to access them.)
@@ -67,6 +67,12 @@ public class PluginPreference implements PreferenceSetting {
 			this.version = version;
 		}
 		public PluginDescription() {
+		}
+		public int compareTo(Object n) {
+			if(n instanceof PluginDescription)
+				return name.compareToIgnoreCase(((PluginDescription)n).name);
+			else
+				return -1;
 		}
 	}
 
@@ -327,11 +333,17 @@ public class PluginPreference implements PreferenceSetting {
 		}
 
 		String plugins = "";
-		for (Entry<PluginDescription, Boolean> entry : pluginMap.entrySet())
-			if (entry.getValue())
-				plugins += entry.getKey().name + ",";
-		if (plugins.endsWith(","))
+		Object pd[] = pluginMap.keySet().toArray();
+		Arrays.sort(pd);
+		for(Object d : pd)
+		{
+			if(pluginMap.get(d))
+				plugins += ((PluginDescription)d).name + ",";
+		}
+		if(plugins.endsWith(","))
 			plugins = plugins.substring(0, plugins.length()-1);
+		if(plugins.length() == 0)
+			plugins = null;
 
 		String oldPlugins = Main.pref.get("plugins");
 		if (!plugins.equals(oldPlugins)) {
