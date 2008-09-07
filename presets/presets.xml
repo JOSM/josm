@@ -746,6 +746,10 @@
 			<key key="highway" value="cattle_grid" />
 		</item>
 
+		<item name="Gate" icon="presets/waypoints.png">
+			<key key="highway" value="gate" />
+		</item>
+
 		<item name="Stile" icon="styles/standard/vehicle/stile.png">
 			<key key="highway" value="stile" />
 		</item>
