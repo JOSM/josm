@@ -181,7 +181,7 @@ public class Preferences {
 		return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
 	}
 
-	synchronized public void put(final String key, final String value) {
+	synchronized public void put(final String key, String value) {
 		String oldvalue = properties.get(key);
 		if(value != null && value.length() == 0)
 			value = null;
