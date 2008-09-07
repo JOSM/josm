@@ -1091,6 +1091,8 @@
 			<label text="Optional Attributes:" />
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<check key="wheelchair" text="Wheelchair" default="off" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
 		</item>
 		
 		<item name="Tram Stop" icon="presets/tram.png">
