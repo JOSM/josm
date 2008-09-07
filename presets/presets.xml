@@ -754,6 +754,10 @@
 			<key key="highway" value="stile" />
 		</item>
 
+		<item name="Bollard" icon="styles/standard/vehicle/stile.png">
+			<key key="barrier" value="bollard" />
+		</item>
+
 		<item name="Mountain Pass" icon="presets/mountain_pass.png">
 			<label text="Edit Mountain Pass" />
 			<label text=" " />
