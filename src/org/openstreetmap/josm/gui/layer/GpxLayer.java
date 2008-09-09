@@ -306,7 +306,7 @@ public class GpxLayer extends Layer {
 					}
 				}
 			}
-			if(earliest != null && latest != null){
+			if (earliest != null && latest != null) {
 				DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
 				info.append(tr("Timespan: ") + df.format(new Date((long)(earliest.time * 1000))) + " - "
 				+ df.format(new Date((long)(latest.time * 1000))));
@@ -361,7 +361,7 @@ public class GpxLayer extends Layer {
 		/****************************************************************
 		 ********** STEP 1 - GET CONFIG VALUES **************************
 		 ****************************************************************/
-		Long startTime = System.currentTimeMillis();
+		// Long startTime = System.currentTimeMillis();
 		Color neutralColor = Main.pref.getColor(marktr("gps point"), "layer "+name, Color.GRAY);
 		boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");                     // also draw lines between points belonging to different segments
 		boolean direction = Main.pref.getBoolean("draw.rawgps.direction");                        // draw direction arrows on the lines
@@ -396,20 +396,20 @@ public class GpxLayer extends Layer {
 		 ********** STEP 2b - RE-COMPUTE CACHE DATA *********************
 		 ****************************************************************/
 		if (!computeCacheInSync) { // don't compute if the cache is good
-		WayPoint oldWp = null;
-		for (GpxTrack trk : data.tracks) {
+			WayPoint oldWp = null;
+			for (GpxTrack trk : data.tracks) {
 				if (!forceLines) { // don't draw lines between segments, unless forced to
 					oldWp = null;
-			}
-			for (Collection<WayPoint> segment : trk.trackSegs) {
-				for (WayPoint trkPnt : segment) {
+				}
+				for (Collection<WayPoint> segment : trk.trackSegs) {
+					for (WayPoint trkPnt : segment) {
 						if (Double.isNaN(trkPnt.latlon.lat()) || Double.isNaN(trkPnt.latlon.lon())) {
-						continue;
+							continue;
 						}
 						if (oldWp != null) {
-						double dist = trkPnt.latlon.greatCircleDistance(oldWp.latlon);
-						double dtime = trkPnt.time - oldWp.time;
-						double vel = dist/dtime;
+							double dist = trkPnt.latlon.greatCircleDistance(oldWp.latlon);
+							double dtime = trkPnt.time - oldWp.time;
+							double vel = dist/dtime;
 
 							if (!colored) {
 								trkPnt.speedLineColor = neutralColor;
@@ -423,7 +423,7 @@ public class GpxLayer extends Layer {
 								trkPnt.dir = (int)(Math.atan2(-trkPnt.eastNorth.north()+oldWp.eastNorth.north(), trkPnt.eastNorth.east()-oldWp.eastNorth.east()) / Math.PI * 4 + 3.5); // crude but works
 							} else {
 								trkPnt.drawLine = false;
-						}
+							}
 						} else { // make sure we reset outdated data
 							trkPnt.speedLineColor = colors[255];
 							trkPnt.drawLine = false;

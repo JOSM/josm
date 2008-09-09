@@ -370,16 +370,24 @@ public class OsmDataLayer extends Layer {
 					doneNodes.add(n);
 				}
 				WayPoint wpt = new WayPoint(n.coor);
-				if(n.timestamp != null)
+				if (n.timestamp != null)
+				{
 					wpt.attr.put("time", n.timestamp);
+					wpt.setTime();
+				}
 				trkseg.add(wpt);
 			}
 		}
+		
+		// what is this loop meant to do? it creates waypoints but never 
+		// records them?
 		for (Node n : data.nodes) {
 			if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;
 			WayPoint wpt = new WayPoint(n.coor);
-			if(n.timestamp != null)
+			if (n.timestamp != null) {
 				wpt.attr.put("time", n.timestamp);
+				wpt.setTime();
+			}
 			if (n.keys != null && n.keys.containsKey("name")) {
 				wpt.attr.put("name", n.keys.get("name"));
 			}
