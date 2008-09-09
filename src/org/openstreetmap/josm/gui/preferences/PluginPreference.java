@@ -335,21 +335,18 @@ public class PluginPreference implements PreferenceSetting {
 		String plugins = "";
 		Object pd[] = pluginMap.keySet().toArray();
 		Arrays.sort(pd);
-		for(Object d : pd)
-		{
-			if(pluginMap.get(d))
+		for (Object d : pd) {
+			if (pluginMap.get(d))
 				plugins += ((PluginDescription)d).name + ",";
 		}
-		if(plugins.endsWith(","))
+		if (plugins.endsWith(","))
 			plugins = plugins.substring(0, plugins.length()-1);
-		if(plugins.length() == 0)
+		if (plugins.length() == 0)
 			plugins = null;
 
 		String oldPlugins = Main.pref.get("plugins");
-		if(oldPlugins == null && plugins == null)
-			return;
-		if(plugins == null || oldPlugins == null || !plugins.equals(oldPlugins))
-		{
+		if ((plugins == null && oldPlugins != null) ||
+            plugins != null && !plugins.equals(oldPlugins)) {
 			Main.pref.put("plugins", plugins);
 			gui.requiresRestart = true;
 		}
