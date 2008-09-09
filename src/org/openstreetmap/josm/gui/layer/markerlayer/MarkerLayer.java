@@ -29,6 +29,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
@@ -74,12 +75,23 @@ public class MarkerLayer extends Layer {
 		this.data = new ArrayList<Marker>();
 		this.fromLayer = fromLayer;
 		double firstTime = -1.0;
+		String lastLinkedFile = "";
 
 		for (WayPoint wpt : indata.waypoints) {
 			/* calculate time differences in waypoints */
 			double time = wpt.time;
-			if (firstTime < 0)
+			if (firstTime < 0) {
 				firstTime = time;
+				for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
+					lastLinkedFile = oneLink.uri;
+					break;
+				}
+			}
+			for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
+				if (!oneLink.uri.equals(lastLinkedFile))firstTime = time;
+				lastLinkedFile = oneLink.uri;
+				break;
+			}
             Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, time - firstTime);
             if (m != null)
             	data.add(m);
