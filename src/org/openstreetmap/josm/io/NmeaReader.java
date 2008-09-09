@@ -161,21 +161,33 @@ public class NmeaReader {
 	}
 
 	private LatLon parseLatLon(String[] e) throws NumberFormatException {
-		String widthNorth = e[GPRMC.WIDTH_NORTH.position];
-		String lengthEast = e[GPRMC.LENGTH_EAST.position];
+		String widthNorth = e[GPRMC.WIDTH_NORTH.position].trim();
+		String lengthEast = e[GPRMC.LENGTH_EAST.position].trim();
 		if ("".equals(widthNorth) || "".equals(lengthEast)) {
 			return null;
 		}
 
-		int latdeg = Integer.parseInt(widthNorth.substring(0, 2));
-		double latmin = Double.parseDouble(widthNorth.substring(2));
+		// The format is xxDDLL.LLLL
+		// xx optional whitespace
+		// DD (int) degres
+		// LL.LLLL (double) latidude
+		int latdegsep = widthNorth.indexOf('.') - 2;
+		if (latdegsep < 0) {
+			return null;
+		}
+		int latdeg = Integer.parseInt(widthNorth.substring(0, latdegsep));
+		double latmin = Double.parseDouble(widthNorth.substring(latdegsep));
 		double lat = latdeg + latmin / 60;
 		if ("S".equals(e[GPRMC.WIDTH_NORTH_NAME.position])) {
 			lat = -lat;
 		}	
 
-		int londeg = Integer.parseInt(lengthEast.substring(0, 3));
-		double lonmin = Double.parseDouble(lengthEast.substring(3));
+		int londegsep = lengthEast.indexOf('.') - 2;
+		if (londegsep < 0) {
+			return null;
+		}
+		int londeg = Integer.parseInt(lengthEast.substring(0, londegsep));
+		double lonmin = Double.parseDouble(lengthEast.substring(londegsep));
 		double lon = londeg + lonmin / 60;
 		if ("W".equals(e[GPRMC.LENGTH_EAST_NAME.position])) {
 			lon = -lon;

@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Properties;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 
 /**
@@ -212,6 +214,7 @@ public class Preferences {
 	 */
 	public void save() {
 		try {
+			setSystemProperties();
 			final PrintWriter out = new PrintWriter(new FileWriter(getPreferencesDir() + "preferences"), false);
 			for (final Entry<String, String> e : properties.entrySet()) {
 				out.println(e.getKey() + "=" + e.getValue());
@@ -240,6 +243,7 @@ public class Preferences {
 		if (!errLines.isEmpty()) {
 			throw new IOException("Malformed config file at lines " + errLines);
 		}
+		setSystemProperties();
 	}
 
 	public final void resetToDefault() {
@@ -375,5 +379,25 @@ public class Preferences {
 			// fall out
 		}
 		return def;
+	}
+
+	private void setSystemProperties() {
+		Properties sysProp = System.getProperties();
+		if (getBoolean(ProxyPreferences.PROXY_ENABLE)) {
+			sysProp.put("proxySet", "true");
+			sysProp.put("http.proxyHost", get(ProxyPreferences.PROXY_HOST));
+			sysProp.put("proxyPort", get(ProxyPreferences.PROXY_PORT));
+			if (!getBoolean(ProxyPreferences.PROXY_ANONYMOUS)) {
+				sysProp.put("proxyUser", get(ProxyPreferences.PROXY_USER));
+				sysProp.put("proxyPassword", get(ProxyPreferences.PROXY_PASS));
+			}
+		} else {
+			sysProp.put("proxySet", "false");
+			sysProp.remove("http.proxyHost");
+			sysProp.remove("proxyPort");
+			sysProp.remove("proxyUser");
+			sysProp.remove("proxyPassword");
+		}
+		System.setProperties(sysProp);
 	}
 }
