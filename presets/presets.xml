@@ -1822,6 +1822,13 @@
 			<key key="amenity" value="drinking_water" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
+
+		<item name="Baby Hatch" icon="presets/empty.png">
+			<label text="Edit a Baby Hatch" />
+			<key key="amenity" value="baby_hatch" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+			<text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
+		</item>
 	</group> <!-- Amenities -->
 
 	<group name="Cash" icon="presets/dollar.png">
