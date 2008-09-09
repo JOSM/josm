@@ -167,8 +167,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		if (dx == 0 && dy == 0)
 			return;
 
-		if(virtualWay != null)
-		{
+		if (virtualWay != null)	{
 			Collection<Command> virtualCmds = new LinkedList<Command>();
 			virtualCmds.add(new AddCommand(virtualNode));
 			Way w = virtualWay.way;
@@ -180,9 +179,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			selectPrims(Collections.singleton((OsmPrimitive)virtualNode), false, false);
 			virtualWay = null;
 			virtualNode = null;
-		}
-		else
-		{
+		} else {
 			Collection<OsmPrimitive> selection = Main.ds.getSelected();
 			Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 		
@@ -192,7 +189,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
 			Command c = !Main.main.undoRedo.commands.isEmpty()
 				? Main.main.undoRedo.commands.getLast() : null;
-			if(c instanceof SequenceCommand)
+			if (c instanceof SequenceCommand)
 				c = ((SequenceCommand)c).getLastCommand();
 
 			if (mode == Mode.move) {
@@ -231,10 +228,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		int snapDistance = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
 		snapDistance *= snapDistance;
 		OsmPrimitive osm = c.getNearestNode(p);
+		virtualWay = null;
+		virtualNode = null;
+		
 		if (osm == null)
 		{
 			WaySegment nearestWaySeg = c.getNearestWaySegment(p);
-			if(nearestWaySeg != null)
+			if (nearestWaySeg != null)
 			{
 				osm = nearestWaySeg.way;
 				if(Main.pref.getInteger("mappaint.node.virtual-size", 4) > 0)
@@ -245,7 +245,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 					if(SimplePaintVisitor.isLargeSegment(p1, p2, Main.pref.getInteger("mappaint.node.virtual-space", 70)))
 					{
 						Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
-						if(p.distanceSq(pc) < snapDistance)
+						if (p.distanceSq(pc) < snapDistance)
 						{
 							virtualWay = nearestWaySeg;
 							virtualNode = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
