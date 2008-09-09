@@ -346,7 +346,10 @@ public class PluginPreference implements PreferenceSetting {
 			plugins = null;
 
 		String oldPlugins = Main.pref.get("plugins");
-		if (!plugins.equals(oldPlugins)) {
+		if(oldPlugins == null && plugins == null)
+			return;
+		if(plugins == null || oldPlugins == null || !plugins.equals(oldPlugins))
+		{
 			Main.pref.put("plugins", plugins);
 			gui.requiresRestart = true;
 		}
