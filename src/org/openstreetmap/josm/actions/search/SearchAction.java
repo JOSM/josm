@@ -97,18 +97,44 @@ public class SearchAction extends JosmAction {
 		try {
 			Collection<OsmPrimitive> sel = Main.ds.getSelected();
 			SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive);
+			int foundMatches = 0;
 			for (OsmPrimitive osm : Main.ds.allNonDeletedCompletePrimitives()) {
-				if (mode == SearchMode.replace) {
+				if (mode == SearchMode.replace)
+				{
 					if (matcher.match(osm))
+					{
 						sel.add(osm);
+						++foundMatches;
+					}
 					else
 						sel.remove(osm);
-				} else if (mode == SearchMode.add && !osm.selected && matcher.match(osm))
+				}
+				else if (mode == SearchMode.add && !osm.selected && matcher.match(osm))
+				{
 					sel.add(osm);
+					++foundMatches;
+				}
 				else if (mode == SearchMode.remove && osm.selected && matcher.match(osm))
+				{
 					sel.remove(osm);
+					++foundMatches;
+				}
 			}
 			Main.ds.setSelected(sel);
+			if(foundMatches == 0)
+			{
+				String msg = null;
+				if (mode == SearchMode.replace)
+					msg = tr("No match found for ''{0}''", search);
+				else if (mode == SearchMode.add)
+					msg = tr("Nothing added to selection by searching for ''{0}''", search);
+				else if (mode == SearchMode.remove)
+					msg = tr("Nothing removed from selection by searching for ''{0}''", search);
+				Main.map.statusLine.setHelpText(msg);
+				JOptionPane.showMessageDialog(Main.parent, msg);
+			}
+			else
+				Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
 		} catch (SearchCompiler.ParseError e) {
 			JOptionPane.showMessageDialog(Main.parent, e.getMessage());
 		}
