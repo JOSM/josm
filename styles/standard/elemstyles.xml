@@ -822,7 +822,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="waterway" v="waterfall"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="nautical/waterfall.png"/>
 		<line width="2" colour="manmade#d8d8d8"/>
 		<!-- it's not possible to have both line and area, line seems more likely -->
 		<scale_min>1</scale_min>
