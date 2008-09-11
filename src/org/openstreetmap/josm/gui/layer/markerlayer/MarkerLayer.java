@@ -80,17 +80,20 @@ public class MarkerLayer extends Layer {
 		for (WayPoint wpt : indata.waypoints) {
 			/* calculate time differences in waypoints */
 			double time = wpt.time;
-			if (firstTime < 0) {
+			boolean wpt_has_link = wpt.attr.containsKey("link");
+			if (firstTime < 0 && wpt_has_link) {
 				firstTime = time;
 				for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
 					lastLinkedFile = oneLink.uri;
 					break;
 				}
 			}
-			for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
-				if (!oneLink.uri.equals(lastLinkedFile))firstTime = time;
-				lastLinkedFile = oneLink.uri;
-				break;
+			if (wpt_has_link) {
+				for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
+					if (!oneLink.uri.equals(lastLinkedFile))firstTime = time;
+					lastLinkedFile = oneLink.uri;
+					break;
+				}
 			}
             Marker m = Marker.createMarker(wpt, indata.storageFile, this, time, time - firstTime);
             if (m != null)
