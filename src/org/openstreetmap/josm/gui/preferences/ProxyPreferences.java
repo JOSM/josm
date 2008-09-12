@@ -48,6 +48,7 @@ public class ProxyPreferences implements PreferenceSetting {
 		proxyHost.setText(Main.pref.get(PROXY_HOST));
 		proxyPort.setEnabled(Main.pref.getBoolean(PROXY_ENABLE));
 		proxyPort.setText(Main.pref.get(PROXY_PORT));
+		proxyAnonymous.setEnabled(Main.pref.getBoolean(PROXY_ENABLE));
 		proxyAnonymous.setSelected(Main.pref.getBoolean(PROXY_ANONYMOUS));
 		proxyAnonymous.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
