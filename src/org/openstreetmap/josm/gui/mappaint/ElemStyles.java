@@ -72,7 +72,7 @@ public class ElemStyles
 					if(ret == null || style.priority > ret.priority)
 						ret = style;
 				}
-				if((style = icons.get("n" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
+				if((style = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
 				{
 					if(ret == null || style.priority > ret.priority)
 						ret = style;

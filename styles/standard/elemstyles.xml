@@ -63,7 +63,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 	<rule>
 		<condition k="bridge" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000" priority="-50000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
