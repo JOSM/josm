@@ -754,7 +754,7 @@
 			<key key="highway" value="stile" />
 		</item>
 
-		<item name="Bollard" icon="styles/standard/vehicle/stile.png">
+		<item name="Bollard" icon="styles/standard/vehicle/restrictions/bollard.png">
 			<key key="barrier" value="bollard" />
 		</item>
 
