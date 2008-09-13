@@ -2054,7 +2054,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="shop" v="department_store"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="shopping/mall.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
