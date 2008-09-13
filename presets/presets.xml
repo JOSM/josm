@@ -2253,13 +2253,13 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Glacier" icon="presets/empty.png">
+		<item name="Glacier" icon="styles/standard/misc/landmark/glacier.png">
 			<label text="Edit Glacier" />
 			<key key="natural" value="glacier" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Volcano" icon="presets/empty.png">
+		<item name="Volcano" icon="styles/standard/misc/landmark/volcano.png">
 			<label text="Edit Volcano" />
 			<key key="natural" value="volcano" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
