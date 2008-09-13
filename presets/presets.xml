@@ -744,7 +744,7 @@
 		</item>
 
 		<item name="Speed Camera" icon="presets/speed_camera.png">
-			<key key="amenity" value="speed_camera" />
+			<key key="highway" value="speed_camera" />
 		</item>
 		
 		<separator/>
@@ -1313,6 +1313,18 @@
 		<item name="Battlefield" icon="presets/battlefield.png">
 			<label text="Edit Battlefield" />
 			<key key="historic" value="battlefield" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Wayside Cross" icon="presets/empty.png">
+			<label text="Edit a Wayside Cross" />
+			<key key="historic" value="wayside_cross" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Wayside Shrine" icon="presets/empty.png">
+			<label text="Edit a Wayside Shrine" />
+			<key key="historic" value="wayside_shrine" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Historic Places -->
