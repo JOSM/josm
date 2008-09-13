@@ -66,6 +66,24 @@ public class TaggingPreset extends AbstractAction {
 	
 	public static class Usage {
 		Set<String> values;
+		Boolean hadKeys = false;
+		Boolean hadEmpty = false;
+		public Boolean allSimilar()
+		{
+			return values.size() == 1 && !hadEmpty;
+		}
+		public Boolean unused()
+		{
+			return values.size() == 0;
+		}
+		public String getFirst()
+		{
+			return (String)(values.toArray()[0]);
+		}
+		public Boolean hadKeys()
+		{
+			return hadKeys;
+		}
 	}
 	
 	public static final String DIFFERENT = tr("<different>");
@@ -75,7 +93,12 @@ public class TaggingPreset extends AbstractAction {
 		returnValue.values = new HashSet<String>();
 		for (OsmPrimitive s : sel) {
 			String v = s.get(key);
-			/* if (v != null) */ returnValue.values.add(v);
+			if (v != null)
+				returnValue.values.add(v);
+			else
+				returnValue.hadEmpty = true;
+			if(s.keys != null && s.keys.size() > 0)
+				returnValue.hadKeys = true;
 		}
 		return returnValue;
 	}
@@ -106,14 +129,15 @@ public class TaggingPreset extends AbstractAction {
 			
 			// find out if our key is already used in the selection.
 			Usage usage = determineTextUsage(sel, key);
-			if (usage.values.size() == 1 && usage.values.toArray()[0] == null) {
+			if (usage.unused())
+			{
 				value = new JTextField();
 				if (use_last_as_default && lastValue.containsKey(key)) {
 					((JTextField)value).setText(lastValue.get(key));
 				} else {
 					((JTextField)value).setText(default_);
 				}
-			} else if (usage.values.size() == 1) {
+			} else if (usage.allSimilar()) {
 				// all objects use the same value
 				value = new JTextField();
 				for (String s : usage.values) ((JTextField) value).setText(s);
@@ -122,8 +146,8 @@ public class TaggingPreset extends AbstractAction {
 				// the objects have different values
 				value = new JComboBox(usage.values.toArray());
 				((JComboBox)value).setEditable(true);
-	            ((JComboBox)value).getEditor().setItem(DIFFERENT);
-	            originalValue = DIFFERENT;
+				((JComboBox)value).getEditor().setItem(DIFFERENT);
+				originalValue = DIFFERENT;
 			}
 			if(locale_text == null)
 				locale_text = tr(text);
@@ -243,7 +267,8 @@ public class TaggingPreset extends AbstractAction {
 				display_array = value_array;
 
 			lhm = new LinkedHashMap<String,String>();
-			if (usage.values.size() > 1) {
+			if (!usage.allSimilar() && !usage.unused())
+			{
 				lhm.put(DIFFERENT, DIFFERENT);
 			}
 			for (int i=0; i<value_array.length; i++) {
@@ -251,18 +276,39 @@ public class TaggingPreset extends AbstractAction {
 				(locale_display_values == null) ?
 				tr(display_array[i]) : display_array[i]);
 			}
-			for (String s : usage.values) {
-				if (!lhm.containsKey(s)) lhm.put(s, s);
+			if(!usage.unused())
+			{
+				for (String s : usage.values) {
+					if (!lhm.containsKey(s)) lhm.put(s, s);
+				}
 			}
-			if ((default_ != null) && (!lhm.containsKey(default_))) lhm.put(default_, default_);
-			
+			if (default_ != null && !lhm.containsKey(default_)) lhm.put(default_, default_);
+			if(!lhm.containsKey("")) lhm.put("", "");
+
 			combo = new JComboBox(lhm.values().toArray());
 			combo.setEditable(editable);
-			if (usage.values.size() == 1) {
-				for (String s : usage.values) { combo.setSelectedItem(lhm.get(s)); originalValue=s; }
-			} else {
-				combo.setSelectedItem(DIFFERENT); originalValue=DIFFERENT;
+			if (usage.allSimilar() && !usage.unused())
+			{
+				originalValue=usage.getFirst();
+				combo.setSelectedItem(lhm.get(originalValue));
 			}
+			// use default only in case it is a totally new entry
+			else if(default_ != null && !usage.hadKeys())
+			{
+				combo.setSelectedItem(default_);
+				originalValue=DIFFERENT;
+			}
+			else if(usage.unused())
+			{
+				combo.setSelectedItem("");
+				originalValue="";
+			}
+			else
+			{
+				combo.setSelectedItem(DIFFERENT);
+				originalValue=DIFFERENT;
+			}
+
 			if(locale_text == null)
 				locale_text = tr(text);
 			p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
