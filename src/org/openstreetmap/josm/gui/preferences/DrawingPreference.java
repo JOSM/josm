@@ -124,7 +124,7 @@ public class DrawingPreference implements PreferenceSetting {
 
 		// virtual nodes
 		virtualNodes.setToolTipText(tr("Draw virtual nodes in select mode for easy way modification."));
-		virtualNodes.setSelected(Main.pref.getInteger("mappaint.node.virtual-size", 4) != 0);
+		virtualNodes.setSelected(Main.pref.getInteger("mappaint.node.virtual-size", 6) != 0);
 		gui.display.add(virtualNodes, GBC.eop().insets(20,0,0,0));
 
 		// background layers in inactive color
@@ -147,6 +147,9 @@ public class DrawingPreference implements PreferenceSetting {
 		Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
 		Main.pref.put("draw.data.inactive_color", inactive.isSelected());
 		Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
-		Main.pref.put("mappaint.node.virtual-size", virtualNodes.isSelected() ? "4" : "0");
-    }
+		int vn = Main.pref.getInteger("mappaint.node.virtual-size", 6);
+		if(virtualNodes.isSelected()) {	if (vn < 1) vn = 6; }
+		else { vn = 0; }
+		Main.pref.put("mappaint.node.virtual-size", vn);
+	}
 }

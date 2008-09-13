@@ -107,7 +107,7 @@ public class SimplePaintVisitor implements Visitor {
 		defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
 		fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
 		fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
-		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 4) / 2 : 0;
+		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 6) / 2 : 0;
 		virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
 		segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
 
@@ -190,10 +190,10 @@ public class SimplePaintVisitor implements Visitor {
 				{
 					int x = (p.x+lastP.x)/2;
 					int y = (p.y+lastP.y)/2;
-					currentPath.moveTo(x-5, y);
-					currentPath.lineTo(x+5, y);
-					currentPath.moveTo(x, y-5);
-					currentPath.lineTo(x, y+5);
+					currentPath.moveTo(x-virtualNodeSize, y);
+					currentPath.lineTo(x+virtualNodeSize, y);
+					currentPath.moveTo(x, y-virtualNodeSize);
+					currentPath.lineTo(x, y+virtualNodeSize);
 				}
 				lastP = p;
 			}
