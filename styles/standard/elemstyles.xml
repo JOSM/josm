@@ -6,12 +6,12 @@ A little help:
 	-v for the value as a string
 	-b for the values yes / no (boolean, will also understand true, 1 and false, 0 respectively)
 	Although the value flags v/b for the condition are optional, using at
-        least one of them is highly recommended!
+	least one of them is highly recommended!
 3. line attributes
 	- width absolute width in pixel in every zoom level
 	- realwidth relative width which will be scaled in meters, integer
 	- colour
-        - priority
+	- priority
 4. linemod attributes
 	- all line attributes
 	- mode ('over' or 'under')
@@ -22,11 +22,11 @@ A little help:
 	  If the size is <= 1 the minimum size of 1 is used.
 5. area attributes
 	- colour
-        - priority
+	- priority
 6. icon attributes
 	- icon path to icon, relative to the icon path (default: subdirectory icons in
 	  directory where this file is)
-        - priority
+	- priority
 7. scale_min / scale_max
 	- zoom scale for display
 
@@ -903,7 +903,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="tram"/>
-                <!-- prefer way types over tram - draw tram as overlay in joined cases -->
+		<!-- prefer way types over tram - draw tram as overlay in joined cases -->
 		<line width="1" colour="rail#808080" dashed="true" priority="-10000"/>
 		<linemod mode="over" width="1" colour="railover#202020" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
