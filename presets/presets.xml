@@ -722,6 +722,10 @@
 			<key key="highway" value="crossing" />
 		</item>
 
+		<item name="Bollard" icon="styles/standard/vehicle/restrictions/bollard.png">
+			<key key="barrier" value="bollard" />
+		</item>
+
 		<item name="Mini Roundabout" icon="presets/roundabout_left.png">
 			<key key="highway" value="mini_roundabout" />
 		</item>
@@ -730,6 +734,19 @@
 			<key key="highway" value="turning_circle" />
 		</item>
 
+		<item name="City Limit" icon="presets/citylimit.png">
+			<label text="Edit a city limit sign" />
+			<label text=" " />
+			<key key="traffic_sign" value="city_limit" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Speed Camera" icon="presets/speed_camera.png">
+			<key key="amenity" value="speed_camera" />
+		</item>
+		
 		<separator/>
 
 		<item name="Ford" icon="presets/ford.png">
@@ -746,16 +763,12 @@
 			<key key="highway" value="cattle_grid" />
 		</item>
 
-		<item name="Gate" icon="presets/waypoints.png">
+		<item name="Gate" icon="styles/standard/vehicle/gate.png">
 			<key key="highway" value="gate" />
 		</item>
 
 		<item name="Stile" icon="styles/standard/vehicle/stile.png">
 			<key key="highway" value="stile" />
-		</item>
-
-		<item name="Bollard" icon="styles/standard/vehicle/restrictions/bollard.png">
-			<key key="barrier" value="bollard" />
 		</item>
 
 		<item name="Mountain Pass" icon="presets/mountain_pass.png">
@@ -766,19 +779,6 @@
 			<label text="Optional Attributes:" />
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="City Limit" icon="presets/citylimit.png">
-			<label text="Edit a city limit sign" />
-			<label text=" " />
-			<key key="traffic_sign" value="city_limit" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Speed Camera" icon="presets/speed_camera.png">
-			<key key="amenity" value="speed_camera" />
 		</item>
 	</group> <!-- Waypoints -->
 
@@ -963,6 +963,13 @@
 			<label text="Edit a Weir" />
 			<label text=" " />
 			<key key="waterway" value="weir" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Waterfall" icon="styles/standard/nautical/waterfall.png">
+			<label text="Edit a Waterfall" />
+			<label text=" " />
+			<key key="waterway" value="waterfall" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
@@ -1210,6 +1217,12 @@
 	</group> <!-- Food+Drinks -->
 
 	<group name="Tourism" icon="presets/State_Public.png">
+		<item name="Attraction" icon="presets/sightseeing.png">
+			<label text="Edit Attraction" />
+			<key key="tourism" value="attraction" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Information point" icon="presets/information.png">
 			<label text="Edit Tourist Information" />
 			<key key="tourism" value="information" />
@@ -1231,12 +1244,6 @@
 		<item name="Viewpoint" icon="presets/viewpoint.png">
 			<label text="Edit Viewpoint" />
 			<key key="tourism" value="viewpoint" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Attraction" icon="presets/sightseeing.png">
-			<label text="Edit Attraction" />
-			<key key="tourism" value="attraction" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
