@@ -2650,7 +2650,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="natural" v="glacier"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/landmark/glacier_small.png"/>
 		<area colour="glacier#ffffff"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2658,7 +2658,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="natural" v="volcano"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/landmark/volcano_small.png"/>
 		<area colour="volcano#5f0000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
