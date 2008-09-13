@@ -510,8 +510,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="speed_camera"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<icon annotate="true" src="vehicle/restrictions/speed_trap.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
