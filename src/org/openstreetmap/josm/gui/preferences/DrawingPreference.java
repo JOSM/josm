@@ -150,6 +150,6 @@ public class DrawingPreference implements PreferenceSetting {
 		int vn = Main.pref.getInteger("mappaint.node.virtual-size", 6);
 		if(virtualNodes.isSelected()) {	if (vn < 1) vn = 6; }
 		else { vn = 0; }
-		Main.pref.put("mappaint.node.virtual-size", vn);
+		Main.pref.put("mappaint.node.virtual-size", Integer.toString(vn));
 	}
 }
