@@ -119,7 +119,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		Main.map.mapView.addMouseListener(this);
 		Main.map.mapView.addMouseMotionListener(this);
 		Main.map.mapView.enableVirtualNodes(
-		Main.pref.getInteger("mappaint.node.virtual-size", 6) != 0);
+		Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
 	}
 
 	@Override public void exitMode() {
@@ -238,7 +238,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			if (nearestWaySeg != null)
 			{
 				osm = nearestWaySeg.way;
-				if(Main.pref.getInteger("mappaint.node.virtual-size", 6) > 0)
+				if(Main.pref.getInteger("mappaint.node.virtual-size", 8) > 0)
 				{
 					Way w = (Way)osm;
 					Point p1 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex).eastNorth);

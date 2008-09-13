@@ -107,7 +107,7 @@ public class SimplePaintVisitor implements Visitor {
 		defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
 		fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
 		fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
-		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 6) / 2 : 0;
+		virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
 		virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
 		segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
 
