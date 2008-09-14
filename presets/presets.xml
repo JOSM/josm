@@ -1699,6 +1699,10 @@
 	</group> <!-- Health -->
 
 	<group name="Buildings" icon="presets/townhall.png">
+		<item name="Building" icon="presets/empty.png">
+			<key key="building" value="yes" />
+		</item>
+
 		<item name="Public Building" icon="presets/empty.png">
 			<label text="Edit Public Building" />
 			<key key="amenity" value="public_building" />
