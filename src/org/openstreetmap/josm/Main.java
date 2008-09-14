@@ -205,18 +205,34 @@ abstract public class Main {
 	 * Load all plugins specified in preferences. If the parameter is <code>true</code>, all
 	 * early plugins are loaded (before constructor).
 	 */
-	public static void loadPlugins(boolean early) {
+	public static void loadPlugins(boolean early, String lang) {
 		List<String> plugins = new LinkedList<String>();
 		if (Main.pref.hasKey("plugins"))
 			plugins.addAll(Arrays.asList(Main.pref.get("plugins").split(",")));
 		if (System.getProperty("josm.plugins") != null)
 			plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
-		
-		// we remove mappaint from the preferences on startup but this is just
-		// in case it crept in through the properties:
-		if (plugins.contains("mappaint")) {
-			plugins.remove("mappaint");
-			System.out.println("Warning - loading of mappaint plugin was requested. This JOSM version has built-in mappaint support. The plugin is not required.");
+
+		String [] oldplugins = new String[]{"mappaint", "unglueplugin"};
+		for(String p : oldplugins)
+		{
+			if(plugins.contains(p))
+			{
+				plugins.remove(p);
+				System.out.println(tr("Warning - loading of {0} plugin was requested. This plugin is no longer required.", p));
+			}
+		}
+		if(lang != null)
+		{
+			for(String p : plugins)
+			{
+				if(p.startsWith("lang-"))
+				{
+					plugins.remove(p);
+					break;
+				}
+			}
+			if(!lang.equals("en"))
+				plugins.add("lang-"+lang);
 		}
 		
 		if (plugins.isEmpty())

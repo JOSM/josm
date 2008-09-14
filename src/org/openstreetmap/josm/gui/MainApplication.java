@@ -118,6 +118,9 @@ public class MainApplication extends Main {
 			new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
 			Main.pref.save();
 		}
+		String language = null;
+		if(args.containsKey("language"))
+			language = (String)(args.get("language").toArray()[0]);
 
 		if (!PluginDownloader.moveUpdatedPlugins()) {
 			JOptionPane.showMessageDialog(null,
@@ -126,7 +129,7 @@ public class MainApplication extends Main {
 		}
 		
 		// load the early plugins
-		Main.loadPlugins(true);
+		Main.loadPlugins(true, language);
 
 		if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
 			System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
@@ -142,7 +145,7 @@ public class MainApplication extends Main {
 					"\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
 					"\t--no-fullscreen                           "+tr("Don't launch in fullscreen mode")+"\n"+
 					"\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
-					"\t--language=<language>                     "+tr("Set the language. Example: ")+"\n\n"+
+					"\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
 					tr("examples")+":\n"+
 					"\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
 					"\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
@@ -159,7 +162,7 @@ public class MainApplication extends Main {
 		JFrame mainFrame = new JFrame(tr("Java OpenStreetMap - Editor"));
 		Main.parent = mainFrame;
 		final Main main = new MainApplication(mainFrame);
-		Main.loadPlugins(false);
+		Main.loadPlugins(false, null);
 		toolbar.refreshToolbarControl();
 
 		mainFrame.setVisible(true);
