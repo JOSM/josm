@@ -45,6 +45,7 @@ public class HelpAction extends AbstractAction {
 		String helpTopic();
     }
 
+	private String languageCode = tr("En:");
 	private JFrame helpBrowser = new JFrame(tr("JOSM Online Help"));
 	private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
 	private JEditorPane help = new JEditorPane();
@@ -161,12 +162,38 @@ public class HelpAction extends AbstractAction {
 	 * @param url The url this content is the representation of
 	 */
 	public void setHelpUrl(String url) {
-		this.url = url;
-		try {
-			help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
-        } catch (IOException e) {
-        	help.setText(tr("Error while loading page {0}",url));
-        }
+		int i = url.lastIndexOf("/")+1;
+		String title = url.substring(i);
+		if(!title.startsWith(languageCode))
+			title = languageCode + title;
+		String langurl = url.substring(0, i) + title;
+		if(langurl.equals(this.url) || langurl.equals(url))
+		{
+			this.url = url;
+			try {
+				help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
+			} catch (IOException ex) {
+				help.setText(tr("Error while loading page {0}",url));
+			}
+		}
+		else
+		{
+			try {
+				help.read(new StringReader(reader.read(langurl)), help.getEditorKit().createDefaultDocument());
+				String message = help.getText();
+				String le = "http://josm-extern." + langurl.substring(7);
+				if(message.indexOf("Describe &quot;") >= 0 && message.indexOf(le) >= 0)
+					throw new IOException();
+				this.url = langurl;
+			} catch (IOException e) {
+				this.url = url;
+				try {
+					help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
+				} catch (IOException ex) {
+					help.setText(tr("Error while loading page {0}",url));
+				}
+			}
+		}
 		helpBrowser.setVisible(true);
 	}
 
