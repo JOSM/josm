@@ -2257,8 +2257,14 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Tree" icon="presets/tree.png">
+			<label text="Edit a Tree" />
+			<key key="natural" value="tree" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Spring" icon="presets/spring.png">
-			<label text="Edit Spring" />
+			<label text="Edit a Spring" />
 			<key key="natural" value="spring" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
