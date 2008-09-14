@@ -1133,7 +1133,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="power" v="tower"/>
-		<icon annotate="true" src="misc/landmark/power/tower.png"/>
+		<icon annotate="true" src="misc/landmark/power/tower_small.png"/>
 		<area width="1" colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
