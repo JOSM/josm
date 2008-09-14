@@ -27,6 +27,7 @@ import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
+import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
@@ -116,6 +117,7 @@ public class MainMenu extends JMenuBar {
 	/* Help menu */
 	public final HelpAction help = new HelpAction();
 	public final JosmAction about = new AboutAction();
+	public final HistoryInfoAction historyinfo = new HistoryInfoAction();
 	
 	public final JMenu fileMenu = new JMenu(tr("File"));
 	public final JMenu editMenu = new JMenu(tr("Edit"));
@@ -268,6 +270,8 @@ public class MainMenu extends JMenuBar {
 		//current.setAccelerator(help.shortCut);
 		current = helpMenu.add(about);
 		current.setAccelerator(about.shortCut);
+		current = helpMenu.add(historyinfo);
+		current.setAccelerator(historyinfo.shortCut);
 		add(helpMenu);
     }
 }
