@@ -1571,6 +1571,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="emergency_phone"/>
+		<icon annotate="true" src="vehicle/emergency_phone.png"/>
+		<area colour="amenity2#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="toilets"/>
 		<icon annotate="true" src="public/toilets.png"/>
 		<area colour="amenity2#f7efb7"/>
@@ -1794,6 +1802,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="veterinary"/>
+		<area colour="health#eeeeee"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="library"/>
 		<area colour="amenity2#f7efb7"/>
 		<icon annotate="true" src="shopping/rental/library.png"/>
@@ -1820,6 +1836,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="bus_station"/>
 		<icon annotate="true" src="transport/bus.png"/>
+		<area colour="amenity2#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="ferry_terminal"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<area colour="amenity2#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2904,7 +2928,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="10pin"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sports/10pin.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2984,7 +3008,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="croquet"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sports/croquet.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3040,7 +3064,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="hockey"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sports/hockey.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3056,7 +3080,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="motor"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="vehicle/motorbike.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
