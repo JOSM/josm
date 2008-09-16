@@ -602,6 +602,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="turning_circle"/>
+		<area width="1" colour="roundabout#c0c0c0"/>
 		<icon annotate="true" src="vehicle/turning_circle.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
