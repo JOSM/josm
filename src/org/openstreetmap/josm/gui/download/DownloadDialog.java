@@ -87,6 +87,7 @@ public class DownloadDialog extends JPanel {
 
 		// predefined download selections
 		downloadSelections.add(new BoundingBoxSelection());
+		downloadSelections.add(new TileSelection());
 		downloadSelections.add(new BookmarkSelection());
 		downloadSelections.add(new WorldChooser());
 
