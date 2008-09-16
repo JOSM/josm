@@ -689,7 +689,7 @@
 		<item name="Services" icon="presets/services.png">
 			<label text="Edit Service Station" />
 			<label text=" " />
-			<key key="highway" value="service" />
+			<key key="highway" value="services" />
 			<label text=" " />
 			<label text="Optional Attributes:" />
 			<label text=" " />
