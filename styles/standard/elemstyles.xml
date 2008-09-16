@@ -3088,7 +3088,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="multi"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sports/multi.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3208,7 +3208,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="beachvolleyball"/>
 		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="sports/volleyball.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3216,7 +3216,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="bowling"/>
 		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="sports/10pin.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3224,7 +3224,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="handball"/>
 		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="sports/handball.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3264,7 +3264,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="sport" v="archery"/>
 		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="sports/archery.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
