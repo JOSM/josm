@@ -205,14 +205,14 @@ public class SimplePaintVisitor implements Visitor {
 	 * @param w The way to draw.
 	 */
 	public void visit(Way w) {
-		if (w.incomplete) return;
+		if (w.incomplete || w.nodes.size() < 2)
+			return;
 
-				// show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
-				// (even if the tag is negated as in oneway=false) or the way is selected
+		// show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
+		// (even if the tag is negated as in oneway=false) or the way is selected
 
-				boolean showThisDirectionArrow = w.selected
-												 || (showDirectionArrow
-													 && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
+		boolean showThisDirectionArrow = w.selected
+		|| (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
 		Color wayColor;
 
 		if (inactive) {

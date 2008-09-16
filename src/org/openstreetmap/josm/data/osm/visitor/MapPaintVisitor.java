@@ -104,6 +104,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
 		if(!isZoomOk(wayStyle))
 			return;
+		if(w.nodes.size() < 2)
+			return;
 
 		LineElemStyle l = null;
 		if(wayStyle!=null)

@@ -34,6 +34,7 @@ public class MainApplication extends Main {
 	 * display the frame.
 	 */
 	public MainApplication(JFrame mainFrame) {
+		super();
 		mainFrame.setContentPane(contentPane);
 		mainFrame.setJMenuBar(menu);
 		mainFrame.setBounds(bounds);
@@ -81,6 +82,15 @@ public class MainApplication extends Main {
 			args.put(key, v);
 		}
 
+		// Only show the splash screen if we don't print the help and exit
+		SplashScreen splash;
+		if (!argList.contains("--help") && !argList.contains("-?") && !argList.contains("-h")) {
+			splash = new SplashScreen();
+		} else {
+			splash = null;
+		}
+
+		splash.setStatus(tr("Reading preferences"));
 		// get the preferences.
 		final File prefDir = new File(Main.pref.getPreferencesDir());
 		// check if preferences directory has moved (TODO: Update code. Remove this after some time)
@@ -122,13 +132,15 @@ public class MainApplication extends Main {
 		if(args.containsKey("language"))
 			language = (String)(args.get("language").toArray()[0]);
 
+		splash.setStatus(tr("Activating updated plugins"));
 		if (!PluginDownloader.moveUpdatedPlugins()) {
 			JOptionPane.showMessageDialog(null,
-			        tr("Activating the updated plugins failed."),
+			        tr("Activating the updated plugins failed. Check if JOSM has the permission to overwrite the existing ones."),
 			        tr("Plugins"), JOptionPane.ERROR_MESSAGE);
 		}
 		
 		// load the early plugins
+		splash.setStatus(tr("Loading early plugins"));
 		Main.loadPlugins(true, language);
 
 		if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
@@ -158,14 +170,18 @@ public class MainApplication extends Main {
 			System.exit(0);
 		}
 
+		splash.setStatus(tr("Setting defaults"));
 		preConstructorInit(args);
+		splash.setStatus(tr("Creating main GUI"));
 		JFrame mainFrame = new JFrame(tr("Java OpenStreetMap - Editor"));
 		Main.parent = mainFrame;
 		final Main main = new MainApplication(mainFrame);
+		splash.setStatus(tr("Loading plugins"));
 		Main.loadPlugins(false, null);
 		toolbar.refreshToolbarControl();
 
 		mainFrame.setVisible(true);
+		splash.closeSplash();
 
 		if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
 			mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
