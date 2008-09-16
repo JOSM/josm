@@ -2261,6 +2261,9 @@
 			<label text="Edit a Tree" />
 			<key key="natural" value="tree" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="type" text="Type" default="" delete_if_empty="true" />
+			<text key="height" text="Height" default="" delete_if_empty="true" />
+			<text key="name:botanical" text="Botanical Name" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Spring" icon="presets/spring.png">
