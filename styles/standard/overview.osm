@@ -1606,7 +1606,7 @@
   </node>
   <node id="-84000" user="overview-creator" visible="true" lat="-0.00200" lon="0.00120">
     <tag k="oneway" v="any"/>
-    <tag k="name" v="any"/>
+    <tag k="name" v="(any)"/>
   </node>
   <node id="-84001" user="overview-creator" visible="true" lat="-0.00196" lon="0.00116"/>
   <node id="-84002" user="overview-creator" visible="true" lat="-0.00196" lon="0.00144"/>

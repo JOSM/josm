@@ -125,7 +125,7 @@
 			</xsl:element>
 			<xsl:element name="tag">
 				<xsl:attribute name="k">name</xsl:attribute>
-				<xsl:attribute name="v">any</xsl:attribute>
+				<xsl:attribute name="v">(any)</xsl:attribute>
 			</xsl:element>
 		</xsl:if>
 	</xsl:element>
