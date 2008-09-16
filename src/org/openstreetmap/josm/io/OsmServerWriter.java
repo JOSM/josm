@@ -443,6 +443,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			int retCode = activeConnection.getResponseCode();
 			/* When creating new, the returned value is the new id, otherwise it is the new version */
 			if (retCode == 200)
+			{
 				if(osm.id == 0)
 				{
 					osm.id = readId(activeConnection.getInputStream());
@@ -454,19 +455,25 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 					if( read_version > 0 )
 						osm.version = read_version;
 				}
-			System.out.println("got return: "+retCode+" with id "+osm.id);
-			String retMsg = activeConnection.getResponseMessage();
+			}
+			else
+			{
+				System.out.println("got return: "+retCode+" with id "+osm.id);
+			}
 			activeConnection.disconnect();
 			if (retCode == 410 && requestMethod.equals("DELETE"))
 				return; // everything fine.. was already deleted.
-			if (retCode != 200 && retCode != 412) {
-				if (retries >= 0) {
+			else if (retCode != 200)
+			{
+				if (retries >= 0 && retCode != 412)
+				{
 					retries--;
 					System.out.print("backing off for 10 seconds...");
 					Thread.sleep(10000);
 					System.out.println("retrying ("+retries+" left)");
 					sendRequestRetry(requestMethod, urlSuffix, osm, body, retries);
-				} else { 
+				} else {
+					String retMsg = activeConnection.getResponseMessage();
 					// Look for a detailed error message from the server
 					if (activeConnection.getHeaderField("Error") != null)
 						retMsg += "\n" + activeConnection.getHeaderField("Error");
