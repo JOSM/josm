@@ -552,7 +552,7 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'historic'"/>
 		<xsl:with-param name="column" select="10"/>
-		<xsl:with-param name="row" select="25"/>
+		<xsl:with-param name="row" select="19"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
