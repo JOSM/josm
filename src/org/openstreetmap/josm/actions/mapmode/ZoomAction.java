@@ -44,7 +44,7 @@ public class ZoomAction extends MapMode implements SelectionEnded {
 	 * @param mapFrame The MapFrame, whose zoom mode should be enabled.
 	 */
 	public ZoomAction(MapFrame mapFrame) {
-		super(tr("Zoom"), "zoom", tr("Zoom in by dragging. (Ctrl+up,left,down,right,',','.')"), KeyEvent.VK_Z, mapFrame, ImageProvider.getCursor("normal", "zoom"));
+		super(tr("Zoom"), "zoom", tr("Zoom and move map"), KeyEvent.VK_Z, mapFrame, ImageProvider.getCursor("normal", "zoom"));
 		mv = mapFrame.mapView;
 		selectionManager = new SelectionManager(this, true, mv);
 	}
@@ -71,6 +71,6 @@ public class ZoomAction extends MapMode implements SelectionEnded {
 	}
 	
 	@Override public String getModeHelpText() {
-		return tr("Zoom in by dragging.");
+		return tr("Zoom by dragging or Ctrl+. or Ctrl+,; move with Ctrl+up,left,down,right; move zoom with right button");
 	}
 }
