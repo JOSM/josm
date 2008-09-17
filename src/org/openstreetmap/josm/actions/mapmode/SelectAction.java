@@ -385,7 +385,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		} else if (mode == Mode.rotate) {
 			return tr("Release the mouse button to stop rotating.");
 		} else {
-			return tr("Move objects by dragging; Shift to add to selection; Shift-Ctrl to rotate selected; or change selection");
+			return tr("Move objects by dragging; Shift to add to selection (Ctrl to remove); Shift-Ctrl to rotate selected; or change selection");
 		}
 	}
 }
