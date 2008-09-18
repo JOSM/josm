@@ -319,9 +319,21 @@ public class RelationEditor extends JFrame {
 		buttonPanel.add(createButton(marktr("Select"),"select",
 		tr("Highlight the member from the current table row as JOSM's selection"), KeyEvent.VK_S, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int[] rows = memberTable.getSelectedRows();
-				ArrayList<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(rows.length);
-				for (int i : rows) { sel.add((OsmPrimitive)memberTable.getValueAt(i, 1)); }
+				ArrayList<OsmPrimitive> sel;
+				int cnt = memberTable.getSelectedRowCount();
+				if(cnt > 0)
+				{
+					sel = new ArrayList<OsmPrimitive>(cnt);
+					for (int i : memberTable.getSelectedRows())
+						sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
+				}
+				else
+				{
+					cnt = memberTable.getRowCount();
+					sel = new ArrayList<OsmPrimitive>(cnt);
+					for (int i = 0; i < cnt; ++i)
+						sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
+				}
 				Main.ds.setSelected(sel);
 			}
 		}));
