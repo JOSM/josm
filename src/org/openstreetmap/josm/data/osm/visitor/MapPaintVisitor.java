@@ -133,6 +133,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			int tmpWidth = (int) (100 /  (float) (circum / realWidth));
 			if (tmpWidth > width) width = tmpWidth;
 		}
+		if(w.selected)
+			color = selectedColor;
 
 		Node lastN;
 		if(l != null && l.overlays != null)
@@ -145,7 +147,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 					for(Node n : w.nodes)
 					{
 						if(lastN != null)
-							drawSeg(lastN, n, s.color != null ? s.color : color, false, s.getWidth(width), s.dashed);
+						{
+							drawSeg(lastN, n, s.color != null  && !w.selected ? s.color : color,
+							false, s.getWidth(width), s.dashed);
+						}
 						lastN = n;
 					}
 				}
@@ -156,7 +161,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		for(Node n : w.nodes)
 		{
 			if(lastN != null)
-				drawSeg(lastN, n, w.selected ? selectedColor : color, showDirection, width, dashed);
+				drawSeg(lastN, n, color, showDirection, width, dashed);
 			lastN = n;
 		}
 
@@ -170,7 +175,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 					for(Node n : w.nodes)
 					{
 						if(lastN != null)
-							drawSeg(lastN, n, s.color != null ? s.color : color, false, s.getWidth(width), s.dashed);
+						{
+							drawSeg(lastN, n, s.color != null && !w.selected ? s.color : color,
+							false, s.getWidth(width), s.dashed);
+						}
 						lastN = n;
 					}
 				}

@@ -1,8 +1,7 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
 
 public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle>
 {
@@ -15,7 +14,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
 	public enum WidthMode { ABSOLUTE, PERCENT, OFFSET };
 	public WidthMode widthMode;
 
-	public List<LineElemStyle> overlays;
+	public Collection<LineElemStyle> overlays;
 
 	public LineElemStyle(LineElemStyle s, long maxScale, long minScale) {
 		this.width = s.width;
@@ -30,7 +29,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
 		this.minScale = minScale;
 	}
 
-	public LineElemStyle(LineElemStyle s, List<LineElemStyle> overlays) {
+	public LineElemStyle(LineElemStyle s, Collection<LineElemStyle> overlays) {
 		this.width = s.width;
 		this.realWidth = s.realWidth;
 		this.color = s.color;

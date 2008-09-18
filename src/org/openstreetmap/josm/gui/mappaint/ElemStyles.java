@@ -116,7 +116,8 @@ public class ElemStyles
 			return null;
 		AreaElemStyle retArea = null;
 		LineElemStyle retLine = null;
-		List<LineElemStyle> over = new LinkedList<LineElemStyle>();
+		String linestring = null;
+		HashMap<String, LineElemStyle> over = new HashMap<String, LineElemStyle>();
 		Iterator<String> iterator = w.keys.keySet().iterator();
 		while(iterator.hasNext())
 		{
@@ -128,28 +129,39 @@ public class ElemStyles
 			if((styleArea = ss.areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
 				retArea = styleArea;
 			if((styleLine = ss.lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+			{
 				retLine = styleLine;
+				linestring = idx;
+			}
 			if((styleLine = ss.modifiers.get(idx)) != null)
-				over.add(styleLine);
+				over.put(idx, styleLine);
 			idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
 			if((styleArea = ss.areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
 				retArea = styleArea;
 			if((styleLine = ss.lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+			{
 				retLine = styleLine;
+				linestring = idx;
+			}
 			if((styleLine = ss.modifiers.get(idx)) != null)
-				over.add(styleLine);
+				over.put(idx, styleLine);
 			idx = "x" + key;
 			if((styleArea = ss.areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
 				retArea = styleArea;
 			if((styleLine = ss.lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+			{
 				retLine = styleLine;
+				linestring = idx;
+			}
 			if((styleLine = ss.modifiers.get(idx)) != null)
-				over.add(styleLine);
+				over.put(idx, styleLine);
 		}
+		over.remove(linestring);
 		if(over.size() != 0 && retLine != null)
 		{
-			Collections.sort(over);
-			retLine = new LineElemStyle(retLine, over);
+			List<LineElemStyle> s = new LinkedList<LineElemStyle>(over.values());
+			Collections.sort(s);
+			retLine = new LineElemStyle(retLine, s);
 		}
 		if(retArea != null)
 		{

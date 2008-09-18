@@ -50,11 +50,11 @@ public class ElemStyleHandler extends DefaultHandler
 		int i = colString.indexOf("#");
 		String colorString;
 		if(i < 0) // name only
-			colorString = Main.pref.get("color.mappaint."+colString);
+			colorString = Main.pref.get("color.mappaint."+styleName+"."+colString);
 		else if(i == 0) // value only
 			colorString = colString;
 		else // value and name
-			colorString = Main.pref.get("color.mappaint."+colString.substring(0,i), colString.substring(i));
+			colorString = Main.pref.get("color.mappaint."+styleName+"."+colString.substring(0,i), colString.substring(i));
 		return ColorHelper.html2color(colorString);
 	}
 
@@ -107,7 +107,7 @@ public class ElemStyleHandler extends DefaultHandler
 			}
 			else if (qName.equals("linemod"))
 			{
-				hadLineMod = inLine = true;
+				hadLineMod = inLineMod = true;
 				for (int count=0; count<atts.getLength(); count++)
 				{
 					if(atts.getQName(count).equals("width"))
@@ -115,32 +115,32 @@ public class ElemStyleHandler extends DefaultHandler
 						String val = atts.getValue(count);
 						if(val.startsWith("+"))
 						{
-							rule.line.width = Integer.parseInt(val.substring(1));
-							rule.line.widthMode = LineElemStyle.WidthMode.OFFSET;
+							rule.linemod.width = Integer.parseInt(val.substring(1));
+							rule.linemod.widthMode = LineElemStyle.WidthMode.OFFSET;
 						}
 						else if(val.startsWith("-"))
 						{
-							rule.line.width = Integer.parseInt(val);
-							rule.line.widthMode = LineElemStyle.WidthMode.OFFSET;
+							rule.linemod.width = Integer.parseInt(val);
+							rule.linemod.widthMode = LineElemStyle.WidthMode.OFFSET;
 						}
 						else if(val.endsWith("%"))
 						{
-							rule.line.width = Integer.parseInt(val.substring(0, val.length()-1));
-							rule.line.widthMode = LineElemStyle.WidthMode.PERCENT;
+							rule.linemod.width = Integer.parseInt(val.substring(0, val.length()-1));
+							rule.linemod.widthMode = LineElemStyle.WidthMode.PERCENT;
 						}
 						else
-							rule.line.width = Integer.parseInt(val);
+							rule.linemod.width = Integer.parseInt(val);
 					}
 					else if (atts.getQName(count).equals("colour"))
-						rule.line.color=convertColor(atts.getValue(count));
+						rule.linemod.color=convertColor(atts.getValue(count));
 					else if (atts.getQName(count).equals("realwidth"))
-						rule.line.realWidth=Integer.parseInt(atts.getValue(count));
+						rule.linemod.realWidth=Integer.parseInt(atts.getValue(count));
 					else if (atts.getQName(count).equals("dashed"))
-						rule.line.dashed=Boolean.parseBoolean(atts.getValue(count));
+						rule.linemod.dashed=Boolean.parseBoolean(atts.getValue(count));
 					else if(atts.getQName(count).equals("priority"))
-						rule.line.priority = Integer.parseInt(atts.getValue(count));
+						rule.linemod.priority = Integer.parseInt(atts.getValue(count));
 					else if(atts.getQName(count).equals("mode"))
-						rule.line.over = !atts.getValue(count).equals("under");
+						rule.linemod.over = !atts.getValue(count).equals("under");
 				}
 			}
 			else if (qName.equals("icon"))
@@ -179,7 +179,7 @@ public class ElemStyleHandler extends DefaultHandler
 				new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
 			if(hadLineMod)
 				styles.addModifier(styleName, rule.key, rule.value, rule.boolValue,
-				new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
+				new LineElemStyle(rule.linemod, rule.scaleMax, rule.scaleMin));
 			if(hadIcon)
 				styles.add(styleName, rule.key, rule.value, rule.boolValue,
 				new IconElemStyle(rule.icon, rule.scaleMax, rule.scaleMin));
@@ -194,6 +194,8 @@ public class ElemStyleHandler extends DefaultHandler
 			inCondition = false;
 		else if (inLine && qName.equals("line"))
 			inLine = false;
+		else if (inLineMod && qName.equals("linemod"))
+			inLineMod = false;
 		else if (inIcon && qName.equals("icon"))
 			inIcon = false;
 		else if (inArea && qName.equals("area"))
