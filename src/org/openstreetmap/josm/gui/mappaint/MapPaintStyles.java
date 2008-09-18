@@ -79,7 +79,7 @@ public class MapPaintStyles {
 			{
 //				System.out.println("mappaint: Using style file: \"" + f + "\"");
 				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-				ElemStyleHandler handler = new ElemStyleHandler();
+				ElemStyleHandler handler = new ElemStyleHandler(styleName);
 				xmlReader.setContentHandler(handler);
 				xmlReader.setErrorHandler(handler);
 //				temporary only!
@@ -100,7 +100,7 @@ public class MapPaintStyles {
 				try
 				{
 					XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-					ElemStyleHandler handler = new ElemStyleHandler();
+					ElemStyleHandler handler = new ElemStyleHandler(internalStyleName);
 					xmlReader.setContentHandler(handler);
 					xmlReader.setErrorHandler(handler);
 //					temporary only!

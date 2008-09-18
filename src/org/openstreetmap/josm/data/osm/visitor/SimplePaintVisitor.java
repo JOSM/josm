@@ -71,7 +71,7 @@ public class SimplePaintVisitor implements Visitor {
 	protected int unselectedNodeRadius;
 	protected int selectedNodeSize;
 	protected int unselectedNodeSize;
-	protected int defaultSegmentWidth = 2;
+	protected int defaultSegmentWidth;
 	protected int virtualNodeSize;
 	protected int virtualNodeSpace;
 	protected int segmentNumberSpace;

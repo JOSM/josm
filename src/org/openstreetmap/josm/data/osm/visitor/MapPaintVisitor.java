@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -45,12 +46,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	protected int currentWidth = 0;
 	protected Stroke currentStroke = null;
 	protected static final Font orderFont = new Font("Helvetica", Font.PLAIN, 8);
+	protected ElemStyles styles;
+	protected double circum;
 
 	protected boolean isZoomOk(ElemStyle e) {
 		if (!zoomLevelDisplay) /* show everything if the user wishes so */
 			return true;
-
-		double circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
 
 		if(e == null) /* the default for things that don't have a rule (show, if scale is smaller than 1500m) */
 			return (circum < 1500);
@@ -70,17 +71,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	 * @param n The node to draw.
 	 */
 	public void visit(Node n) {
-		IconElemStyle nodeStyle = MapPaintStyles.getStyles().get(n);
+		IconElemStyle nodeStyle = styles.get(n);
 		if (nodeStyle != null && isZoomOk(nodeStyle))
 			drawNode(n, nodeStyle.icon, nodeStyle.annotate);
-		else {
-			if (n.selected)
-				drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-			else if (n.tagged)
-				drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
-			else
-				drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
-		}
+		else if (n.selected)
+			drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+		else if (n.tagged)
+			drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
+		else
+			drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
 	}
 
 	/**
@@ -88,28 +87,27 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	 * @param w The way to draw.
 	 */
 	public void visit(Way w) {
-		double circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
+		if(w.nodes.size() < 2)
+			return;
 		// show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
 		// (even if the tag is negated as in oneway=false) or the way is selected
 		boolean showDirection = w.selected || ((!useRealWidth) && (showDirectionArrow
 		 && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
 
 		Color color = untaggedColor;
-		Color areacolor = untaggedColor;
 		int width = defaultSegmentWidth;
 		int realWidth = 0; //the real width of the element in meters
 		boolean dashed = false;
-		boolean area = false;
-		ElemStyle wayStyle = MapPaintStyles.getStyles().get(w);
+		ElemStyle wayStyle = styles.get(w);
 
 		if(!isZoomOk(wayStyle))
-			return;
-		if(w.nodes.size() < 2)
 			return;
 
 		LineElemStyle l = null;
 		if(wayStyle!=null)
 		{
+			Color areacolor = untaggedColor;
+			boolean area = false;
 			if(wayStyle instanceof LineElemStyle)
 				l = (LineElemStyle)wayStyle;
 			else if (wayStyle instanceof AreaElemStyle)
@@ -126,10 +124,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 				realWidth = l.realWidth;
 				dashed = l.dashed;
 			}
+			if (area && fillAreas)
+				drawWayAsArea(w, areacolor);
 		}
 
-		if (area && fillAreas)
-			drawWayAsArea(w, areacolor);
 		if (realWidth > 0 && useRealWidth && !showDirection)
 		{
 			int tmpWidth = (int) (100 /  (float) (circum / realWidth));
@@ -193,6 +191,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 				lastN = n;
 			}
 		}
+		displaySegments();
 	}
 
 	public void visit(Relation e) {
@@ -316,17 +315,28 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
 		fillAreas = Main.pref.getBoolean("mappaint.fillareas", true);
 		fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
+		circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
+		styles = MapPaintStyles.getStyles();
 
-		Collection<Way> noAreaWays = new LinkedList<Way>();
+		if(styles.hasAreas())
+		{
+			Collection<Way> noAreaWays = new LinkedList<Way>();
 
-		for (final OsmPrimitive osm : data.ways)
-			if (!osm.incomplete && !osm.deleted && MapPaintStyles.getStyles().isArea((Way)osm))
+			for (final OsmPrimitive osm : data.ways)
+				if (!osm.incomplete && !osm.deleted && styles.isArea((Way)osm))
+					osm.visit(this);
+				else if (!osm.deleted && !osm.incomplete)
+					noAreaWays.add((Way)osm);
+
+			for (final OsmPrimitive osm : noAreaWays)
 				osm.visit(this);
-			else if (!osm.deleted && !osm.incomplete)
-				noAreaWays.add((Way)osm);
-
-		for (final OsmPrimitive osm : noAreaWays)
-			osm.visit(this);
+		}
+		else
+		{
+			for (final OsmPrimitive osm : data.ways)
+				if (!osm.incomplete && !osm.deleted)
+					osm.visit(this);
+		}
 
 		for (final OsmPrimitive osm : data.getSelected())
 			if (!osm.incomplete && !osm.deleted){

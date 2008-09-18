@@ -13,6 +13,7 @@ public class ElemStyleHandler extends DefaultHandler
 	boolean inDoc, inRule, inCondition, inElemStyle, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
 	boolean hadLine, hadLineMod, hadIcon, hadArea;
 	ElemStyles styles;
+	String styleName;
 	RuleElem rule = new RuleElem();
 
 	class RuleElem {
@@ -37,7 +38,8 @@ public class ElemStyleHandler extends DefaultHandler
 		}
 	};
 
-	public ElemStyleHandler() {
+	public ElemStyleHandler(String name) {
+		styleName = name;
 		inDoc=inRule=inCondition=inElemStyle=inLine=inIcon=inArea=false;
 		rule.init();
 		styles = MapPaintStyles.getStyles();
@@ -173,16 +175,16 @@ public class ElemStyleHandler extends DefaultHandler
 		if (inRule && qName.equals("rule"))
 		{
 			if(hadLine)
-				styles.add(rule.key, rule.value, rule.boolValue,
+				styles.add(styleName, rule.key, rule.value, rule.boolValue,
 				new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
 			if(hadLineMod)
-				styles.addModifier(rule.key, rule.value, rule.boolValue,
+				styles.addModifier(styleName, rule.key, rule.value, rule.boolValue,
 				new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
 			if(hadIcon)
-				styles.add(rule.key, rule.value, rule.boolValue,
+				styles.add(styleName, rule.key, rule.value, rule.boolValue,
 				new IconElemStyle(rule.icon, rule.scaleMax, rule.scaleMin));
 			if(hadArea)
-				styles.add(rule.key, rule.value, rule.boolValue,
+				styles.add(styleName, rule.key, rule.value, rule.boolValue,
 				new AreaElemStyle(rule.area, rule.scaleMax, rule.scaleMin));
 			inRule = false;
 			hadLine = hadLineMod = hadIcon = hadArea = false;
