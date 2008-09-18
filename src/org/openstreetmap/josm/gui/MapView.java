@@ -163,8 +163,10 @@ public class MapView extends NavigatableComponent {
 		}
 		if (layer instanceof MarkerLayer && playHeadMarker == null)
 			playHeadMarker = PlayHeadMarker.create();
-		
-		layers.add(layers.size(), layer);
+		int pos = layers.size();
+		while(pos > 0 && layers.get(pos-1).background)
+			--pos;
+		layers.add(pos, layer);
 
 		// TODO: Deprecated
 		for (LayerChangeListener l : listeners)

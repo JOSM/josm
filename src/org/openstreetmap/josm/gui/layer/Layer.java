@@ -51,6 +51,12 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 	 * The visibility state of the layer.
 	 */
 	public boolean visible = true;
+
+	/**
+	 * The layer should be handled as a background layer in automatic handling
+	 */
+	public boolean background = false;
+
 	/**
 	 * The name of this layer.
 	 */
