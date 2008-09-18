@@ -106,7 +106,7 @@ public class SplashScreen extends JWindow {
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent event) {
 				try {
-					SwingUtilities.invokeAndWait(closerRunner);
+					closerRunner.run();
 				} catch (Exception e) {
 					e.printStackTrace();
 					// can catch InvocationTargetException
