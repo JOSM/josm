@@ -723,7 +723,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="waterway" v="riverbank"/>
-		<line width="1" colour="light_water#00005f"/>
+                <line width="1" colour="riverbank#0000cf" priority="10000"/>
+                <area colour="riverbank#0000cf" priority="10000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
