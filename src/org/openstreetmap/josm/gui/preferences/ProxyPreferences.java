@@ -40,8 +40,8 @@ public class ProxyPreferences implements PreferenceSetting {
 				proxyHost.setEnabled(proxyEnable.isSelected());
 				proxyPort.setEnabled(proxyEnable.isSelected());
 				proxyAnonymous.setEnabled(proxyEnable.isSelected());
-				proxyUser.setEnabled(proxyEnable.isSelected() && proxyAnonymous.isSelected());
-				proxyPass.setEnabled(proxyEnable.isSelected() && proxyAnonymous.isSelected());
+				proxyUser.setEnabled(proxyEnable.isSelected() && !proxyAnonymous.isSelected());
+				proxyPass.setEnabled(proxyEnable.isSelected() && !proxyAnonymous.isSelected());
 			}
 		});
 		proxyHost.setEnabled(Main.pref.getBoolean(PROXY_ENABLE));
@@ -52,8 +52,8 @@ public class ProxyPreferences implements PreferenceSetting {
 		proxyAnonymous.setSelected(Main.pref.getBoolean(PROXY_ANONYMOUS));
 		proxyAnonymous.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				proxyUser.setEnabled(proxyEnable.isSelected() && proxyAnonymous.isSelected());
-				proxyPass.setEnabled(proxyEnable.isSelected() && proxyAnonymous.isSelected());
+				proxyUser.setEnabled(proxyEnable.isSelected() && !proxyAnonymous.isSelected());
+				proxyPass.setEnabled(proxyEnable.isSelected() && !proxyAnonymous.isSelected());
 			}
 		});
 		proxyUser.setEnabled(Main.pref.getBoolean(PROXY_ENABLE) && (Main.pref.getBoolean(PROXY_ANONYMOUS)));
