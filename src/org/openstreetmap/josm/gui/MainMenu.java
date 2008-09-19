@@ -21,6 +21,7 @@ import org.openstreetmap.josm.actions.AlignInRectangleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
+import org.openstreetmap.josm.actions.CreateCircleAction;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
@@ -101,6 +102,7 @@ public class MainMenu extends JMenuBar {
 	public final JosmAction alignInCircle = new AlignInCircleAction();
 	public final JosmAction alignInLine = new AlignInLineAction();
 	public final JosmAction alignInRect = new AlignInRectangleAction();
+	public final JosmAction createCircle = new CreateCircleAction();
 	public final JosmAction mergeNodes = new MergeNodesAction();
 	public final JosmAction joinNodeWay = new JoinNodeWayAction();
 	public final JosmAction unglueNodes = new UnGlueAction();
@@ -227,6 +229,9 @@ public class MainMenu extends JMenuBar {
 		current.setAccelerator(alignInLine.shortCut);
 		current = toolsMenu.add(alignInRect);
 		current.setAccelerator(alignInRect.shortCut);
+		toolsMenu.addSeparator();
+		current = toolsMenu.add(createCircle);
+		current.setAccelerator(createCircle.shortCut);
 		toolsMenu.addSeparator();
 		current = toolsMenu.add(mergeNodes);
 		current.setAccelerator(mergeNodes.shortCut);
