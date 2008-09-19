@@ -13,7 +13,6 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -24,6 +23,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Show a splash screen so the user knows what is happening during startup.
@@ -51,7 +51,7 @@ public class SplashScreen extends JWindow {
 		innerContentPane.setLayout(new GridBagLayout());
 
 		// Add the logo
-		JLabel logo = new JLabel(new ImageIcon("images/logo.png"));
+		JLabel logo = new JLabel(ImageProvider.get("logo.png"));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridheight = 2;
 		innerContentPane.add(logo, gbc);
