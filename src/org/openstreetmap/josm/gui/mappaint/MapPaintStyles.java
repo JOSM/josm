@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Iterator;
 
 import javax.swing.ImageIcon;
@@ -12,108 +14,78 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
+import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 public class MapPaintStyles {
 
-	private static String styleDir;
-	private static String imageDir;
-	private static String internalImageDir;
-	private static Boolean isInternal = false;
 	private static ElemStyles styles = new ElemStyles();
+	private static String iconDirs;
 	
 	public static ElemStyles getStyles()
 	{
 		return styles;
 	}
 
-	public static ImageIcon getIcon(String name)
+	public static ImageIcon getIcon(String name, String styleName)
 	{
-		try {
-			if(isInternal)
-			{
-				String imageFile = imageDir+name;
-				File f = new File(imageFile);
-				if(f.exists())
-				{
-					//open icon from user directory
-					return new ImageIcon(imageFile);
-				}
-			}
-			URL path = Main.class.getResource(internalImageDir+name);
-			if(path == null)
-				path = Main.class.getResource("/images/styles/"+name);
-			if(path == null)
-			{
-				System.out.println("Mappaint: Icon " + name + " not found, using default icon");
-				path = Main.class.getResource(internalImageDir+"misc/no_icon.png");
-			}
-			return new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
-		}
-		catch (Exception e)
+		List<String> dirs = new LinkedList<String>();
+		for(String fileset : iconDirs.split(";"))
 		{
-			URL path = Main.class.getResource(internalImageDir+"incomming/amenity.png");
-			return new ImageIcon(Toolkit.getDefaultToolkit().createImage(path));
+			String[] a;
+			if(fileset.indexOf("=") >= 0)
+				a = fileset.split("=", 2);
+			else
+				a = new String[] {"", fileset};
+
+			/* non-prefixed path is generic path, always take it */
+			if(a[0].length() == 0 || styleName.equals(a[0]))
+				dirs.add(a[1]);
 		}
+		ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, name);		
+		if(i == null)
+		{
+			System.out.println("Mappaint-Style \""+styleName+"\" icon \"" + name + "\" not found.");
+			i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, "misc/no_icon.png");
+		}
+		return i;
 	}
 
 	public static void readFromPreferences() {
-		String styleName = Main.pref.get("mappaint.style", "standard");
-		// fallback to standard name for internal case, as we only have one internal style
-		String internalStyleName = "standard";
-		styleDir = Main.pref.get("mappaint.styledir", Main.pref.getPreferencesDir()+"plugins/mappaint/"+styleName+"/");
-		String elemStylesFile = styleDir+"elemstyles.xml";
-		imageDir = styleDir+"icons/";
-		internalImageDir = "/images/styles/"+internalStyleName+"/";
+		/* don't prefix icon path, as it should be generic */
+		String internalicon = "resource://images/styles/standard/;resource://images/styles/";
+		String internalfile = "standard=resource://styles/standard/elemstyles.xml";
 
-//		System.out.println("mappaint: Using style: " + styleName);
-//		System.out.println("mappaint: Using style dir: " + styleDir);
-//		System.out.println("mappaint: Using style file: " + elemStylesFile);
+		iconDirs = Main.pref.get("mappaint.iconpaths");
+		iconDirs = iconDirs == null || iconDirs.length() == 0 ? internalicon : iconDirs + ";" + internalicon;
 
-		File f = new File(elemStylesFile);
-		if (f.exists())
+		String file = Main.pref.get("mappaint.sources");
+		file = file == null || file.length() == 0 ? internalfile : internalfile + ";" + file;
+
+		for(String fileset : file.split(";"))
 		{
-			try// reading file from file system
+			try
 			{
-//				System.out.println("mappaint: Using style file: \"" + f + "\"");
+				String[] a;
+				if(fileset.indexOf("=") >= 0)
+					a = fileset.split("=", 2);
+				else
+					a = new String[] {"standard", fileset};
 				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-				ElemStyleHandler handler = new ElemStyleHandler(styleName);
+				ElemStyleHandler handler = new ElemStyleHandler(a[0]);
 				xmlReader.setContentHandler(handler);
 				xmlReader.setErrorHandler(handler);
-//				temporary only!
-				xmlReader.parse(new InputSource(new FileReader(f)));
+				xmlReader.parse(new InputSource(new MirroredInputStream(a[1])));
 			}
 			catch (Exception e)
 			{
-				throw new RuntimeException(e);
+				System.out.println("Mappaint-Style problems: \"" + fileset + "\"");
 			}
 		} 
-		else {// reading the builtin file from the plugin jar file
-			URL elemStylesPath = Main.class.getResource("/styles/"+internalStyleName+"/elemstyles.xml");
-
-//			System.out.println("mappaint: Using jar's elemstyles.xml: \"" + elemStylesPath + "\"");
-			if (elemStylesPath != null)
-			{
-				isInternal = true;
-				try
-				{
-					XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-					ElemStyleHandler handler = new ElemStyleHandler(internalStyleName);
-					xmlReader.setContentHandler(handler);
-					xmlReader.setErrorHandler(handler);
-//					temporary only!
-					xmlReader.parse(new InputSource(elemStylesPath.openStream()));
-				}
-				catch (Exception e)
-				{
-					throw new RuntimeException(e);
-				}
-			} else {
-				System.out.println("mappaint: Couldn't find style: \"" + styleDir + "elemstyles.xml\"");
-			}
-		}
+		iconDirs = null;
 	}
 
 }

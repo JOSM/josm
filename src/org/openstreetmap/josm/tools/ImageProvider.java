@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,11 +64,21 @@ public class ImageProvider {
 		return icon;
 	}
 
+	public static ImageIcon getIfAvailable(String subdir, String name)
+	{
+		return getIfAvailable((Collection<String>)null, null, subdir, name);
+	}
+	public static final ImageIcon getIfAvailable(String[] dirs, String id, String subdir, String name)
+	{
+		return getIfAvailable(Arrays.asList(dirs), id, subdir, name);
+	}
+
 	/**
 	 * Like {@link #get(String)}, but does not throw and return <code>null</code>
 	 * in case of nothing is found. Use this, if the image to retrieve is optional.
 	 */
-	public static ImageIcon getIfAvailable(String subdir, String name) {
+	public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name)
+	{
 		if (name == null)
 			return null;
 		if (subdir == null)
@@ -75,48 +87,81 @@ public class ImageProvider {
 			subdir += "/";
 		String ext = name.indexOf('.') != -1 ? "" : ".png";
 		String full_name = subdir+name+ext;
+		String cache_name = full_name;
+		/* cache separately */
+		if(dirs != null && dirs.size() > 0)
+			cache_name = "id:"+id+":"+full_name;
 
-		Image img = cache.get(full_name);
+		Image img = cache.get(cache_name);
 		if (img == null) {
 			// getImageUrl() does a ton of "stat()" calls and gets expensive
 			// and redundant when you have a whole ton of objects.  So,
 			// index the cache by the name of the icon we're looking for
 			// and don't bother to create a URL unless we're actually
 			// creating the image.
-			URL path = getImageUrl(full_name);
+			URL path = getImageUrl(full_name, dirs);
 			if (path == null)
 				return null;
 			img = Toolkit.getDefaultToolkit().createImage(path);
-			cache.put(full_name, img);
+			cache.put(cache_name, img);
 		}
 	
 		return new ImageIcon(img);
 	}
 
-	private static URL getImageUrl(String imageName) {
-	    URL path = null;
-	    // Try user-preference directory first
-    	try {
-    		if (new File(Main.pref.getPreferencesDir()+"images/"+imageName).exists())
-    			return new URL("file", "", Main.pref.getPreferencesDir()+"images/"+imageName);
-    	} catch (MalformedURLException e) {
-    	}
+	private static URL getImageUrl(String path, String name)
+	{
+		if(path.startsWith("resource://"))
+		{
+			String p = path.substring("resource://".length());
+			for (ClassLoader source : sources)
+			{
+				URL res;
+				if ((res = source.getResource(p+name)) != null)
+					return res;
+			}
+		}
+		else
+		{
+			try {
+				File f = new File(path, name);
+				if(f.exists())
+					return f.toURI().toURL();
+			} catch (MalformedURLException e) {}
+		}
+		return null;
+	}
 
-	    // Try plugins and josm classloader
-	    for (ClassLoader source : sources)
-			if ((path = source.getResource("images/"+imageName)) != null)
-				return path;
+	private static URL getImageUrl(String imageName, Collection<String> dirs)
+	{
+		URL u;
+		// Try passed directories first
+		if(dirs != null)
+		{
+			for (String name : dirs)
+			{
+				u = getImageUrl(name, imageName);
+				if(u != null) return u;
+			}
+		}
+		// Try user-preference directory
+		u = getImageUrl(Main.pref.getPreferencesDir()+"images", imageName);
+		if(u != null) return u;
 
-	    // Try all other ressource directories
-	    for (String location : Main.pref.getAllPossiblePreferenceDirs()) {
-	    	try {
-	    		if (new File(location+"images/"+imageName).exists())
-	    			return new URL("file", "", location+"images/"+imageName);
-	    	} catch (MalformedURLException e) {
-	    	}
-	    }
-	    return null;
-    }
+		// Try plugins and josm classloader
+		u = getImageUrl("resource://images/", imageName);
+		if(u != null) return u;
+
+		// Try all other ressource directories
+		for (String location : Main.pref.getAllPossiblePreferenceDirs())
+		{
+			u = getImageUrl(location+"images", imageName);
+			if(u != null) return u;
+			u = getImageUrl(location, imageName);
+			if(u != null) return u;
+		}
+		return null;
+	}
 
 	/**
 	 * Shortcut for get("", name);

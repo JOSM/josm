@@ -149,7 +149,7 @@ public class ElemStyleHandler extends DefaultHandler
 				for (int count=0; count<atts.getLength(); count++)
 				{
 					if (atts.getQName(count).equals("src"))
-						rule.icon.icon = MapPaintStyles.getIcon(atts.getValue(count));
+						rule.icon.icon = MapPaintStyles.getIcon(atts.getValue(count), styleName);
 					else if (atts.getQName(count).equals("annotate"))
 						rule.icon.annotate = Boolean.parseBoolean (atts.getValue(count));
 					else if(atts.getQName(count).equals("priority"))
