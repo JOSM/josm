@@ -119,10 +119,7 @@ public class OsmDataLayer extends Layer {
 
 	public final LinkedList<ModifiedChangedListener> listenerModified = new LinkedList<ModifiedChangedListener>();
 	public final LinkedList<DataChangeListener> listenerDataChanged = new LinkedList<DataChangeListener>();
-	
-	private SimplePaintVisitor wireframeMapPainter = new SimplePaintVisitor();
-	private MapPaintVisitor standardMapPainter = new MapPaintVisitor();
-	
+
 	/**
 	 * Construct a OsmDataLayer.
 	 */
@@ -165,19 +162,16 @@ public class OsmDataLayer extends Layer {
 			}
 		}
 		
-		if (Main.pref.getBoolean("draw.wireframe")) {
-			wireframeMapPainter.setGraphics(g);
-			wireframeMapPainter.setNavigatableComponent(mv);
-			wireframeMapPainter.inactive = inactive;
-			wireframeMapPainter.visitAll(data, virtual);
-		}
+	
+		SimplePaintVisitor painter;
+		if (Main.pref.getBoolean("draw.wireframe"))
+			painter = new SimplePaintVisitor();
 		else
-		{
-			standardMapPainter.setGraphics(g);
-			standardMapPainter.setNavigatableComponent(mv);
-			standardMapPainter.inactive = inactive;
-			standardMapPainter.visitAll(data, virtual);
-		}
+			painter = new MapPaintVisitor();
+		painter.setGraphics(g);
+		painter.setNavigatableComponent(mv);
+		painter.inactive = inactive;
+		painter.visitAll(data, virtual);
 		Main.map.conflictDialog.paintConflicts(g, mv);
 	}
 
