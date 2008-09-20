@@ -17,6 +17,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -143,4 +144,30 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 		repaint();
 	}
 	
+	/**
+	 * Returns the currently selected relation, or null.
+	 * 
+	 * @return the currently selected relation, or null
+	 */
+	public Relation getCurrentRelation() {
+		return (Relation) displaylist.getSelectedValue();
+	}
+
+	/**
+	 * Adds a selection listener to the relation list.
+	 * 
+	 * @param listener the listener to add
+	 */
+	public void addListSelectionListener(ListSelectionListener listener) {
+		displaylist.addListSelectionListener(listener);
+	}
+
+	/**
+	 * Removes a selection listener from the relation list.
+	 * 
+	 * @param listener the listener to remove
+	 */
+	public void removeListSelectionListener(ListSelectionListener listener) {
+		displaylist.removeListSelectionListener(listener);
+	}
 }

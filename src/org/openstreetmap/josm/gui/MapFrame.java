@@ -59,6 +59,10 @@ public class MapFrame extends JPanel implements Destroyable {
 
 	public ConflictDialog conflictDialog;
 	/**
+	 * The dialog that shows all relations and lets the user edit them.
+	 */
+	public RelationListDialog relationListDialog;
+	/**
 	 * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
 	 * instead of adding directly to this list.
 	 */
@@ -99,7 +103,7 @@ public class MapFrame extends JPanel implements Destroyable {
 		addToggleDialog(new UserListDialog());
 		addToggleDialog(conflictDialog = new ConflictDialog());
 		addToggleDialog(new CommandStackDialog(this));
-		addToggleDialog(new RelationListDialog());
+		addToggleDialog(relationListDialog = new RelationListDialog());
 
 		// status line below the map
 		statusLine = new MapStatus(this);
