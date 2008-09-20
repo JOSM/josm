@@ -325,7 +325,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
 		circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
 		styles = MapPaintStyles.getStyles();
-		orderFont = new Font("Helvetica", Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
+		orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
 		if(styles.hasAreas())
 		{
