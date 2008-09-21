@@ -17,6 +17,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
+import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
@@ -64,12 +65,17 @@ public final class ReverseWayAction extends JosmAction {
 			Way wnew = new Way(w);
 			Collections.reverse(wnew.nodes);
 			if (Main.pref.getBoolean("tag-correction.reverse-way", true)) {
-				final Collection<ChangePropertyCommand> changePropertyCommands = reverseWayTagCorrector
-				        .execute(wnew);
-				propertiesUpdated = propertiesUpdated
-				        || (changePropertyCommands != null && !changePropertyCommands
-				                .isEmpty());
-				c.addAll(changePropertyCommands);
+				try
+				{
+					final Collection<Command> changePropertyCommands = reverseWayTagCorrector.execute(wnew);
+					propertiesUpdated = propertiesUpdated
+				        || (changePropertyCommands != null && !changePropertyCommands.isEmpty());
+					c.addAll(changePropertyCommands);
+				}
+				catch(UserCancelException ex)
+				{
+					return;
+				}
 			}
 			c.add(new ChangeCommand(w, wnew));
 		}
