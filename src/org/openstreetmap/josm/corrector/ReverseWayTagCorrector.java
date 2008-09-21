@@ -113,7 +113,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 		for (Relation relation : Main.ds.relations) {
 			for (RelationMember member : relation.members) {
 				if (!member.member.realEqual(way, true)
-				        || member.role.isEmpty())
+				        || member.role.length() == 0)
 					continue;
 
 				boolean found = false;
