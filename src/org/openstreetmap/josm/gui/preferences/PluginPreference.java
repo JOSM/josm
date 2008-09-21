@@ -46,13 +46,13 @@ import org.openstreetmap.josm.tools.XmlObjectParser.Uniform;
 public class PluginPreference implements PreferenceSetting {
 
 	/**
-	 * Only the plugin name, it's jar location and the description.
+	 * Only the plugin name, its jar location and the description.
 	 * In other words, this is the minimal requirement the plugin preference page
 	 * needs to show the plugin as available
 	 * 
 	 * @author imi
 	 */
-	public static class PluginDescription implements Comparable {
+	public static class PluginDescription implements Comparable<Object> {
 		// Note: All the following need to be public instance variables of
 		// type String.  (Plugin description XMLs from the server are parsed
 		// with tools.XmlObjectParser, which uses reflection to access them.)

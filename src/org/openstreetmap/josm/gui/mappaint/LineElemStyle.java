@@ -11,7 +11,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
 	public boolean dashed;
 
 	public boolean over;
-	public enum WidthMode { ABSOLUTE, PERCENT, OFFSET };
+	public enum WidthMode { ABSOLUTE, PERCENT, OFFSET }
 	public WidthMode widthMode;
 
 	public Collection<LineElemStyle> overlays;
@@ -56,7 +56,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
 		over = true; // only used for line modifications
 		widthMode = WidthMode.ABSOLUTE;
 		overlays = null;
-	};
+	}
 
 	// get width for overlays
 	public int getWidth(int ref)

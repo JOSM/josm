@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -70,8 +69,8 @@ public class Bounds {
 	}
 	
 	/**
-	 * Returns the lat/lon bounding box as an object of type Rectangle2D.Double
-	 * @return
+	 * Converts the lat/lon bounding box to an object of type Rectangle2D.Double
+	 * @return the bounding box to Rectangle2D.Double
 	 */
 	public Rectangle2D.Double asRect() {
 		return new Rectangle2D.Double(min.lon(), min.lat(), max.lon()-min.lon(), max.lat()-min.lat());

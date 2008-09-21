@@ -67,13 +67,12 @@ public class MapStatus extends JPanel implements Helpful {
 	 */
 	class ImageLabel extends JPanel {
 		private JLabel tf; 
-		private JLabel lbl;
 		private int chars;
 		public ImageLabel(String img, String tooltip, int chars) {
 			super();
 			setLayout(new GridBagLayout());
 			setBackground(Color.decode("#b8cfe5"));
-			add(lbl = new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
+			add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
 			add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2,1,1,0));
 			setToolTipText(tooltip);
 			this.chars = chars;

@@ -36,7 +36,7 @@ public class ElemStyleHandler extends DefaultHandler
 			area.init();
 			icon.init();
 		}
-	};
+	}
 
 	public ElemStyleHandler(String name) {
 		styleName = name;

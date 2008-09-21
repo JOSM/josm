@@ -18,18 +18,15 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.border.EmptyBorder;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
 import org.openstreetmap.josm.actions.AboutAction;
 
 public class GettingStarted extends JPanel {
 
-    private JPanel panel;
     static private String content = "";    
 
     public class LinkGeneral extends JEditorPane implements HyperlinkListener {
-        private String action;
         public LinkGeneral(String text) {
             setContentType("text/html");
             setText(text);
@@ -72,7 +69,6 @@ public class GettingStarted extends JPanel {
 
             /* look for hrefs of the form wiki/MessageOfTheDay>123 where > can also be <,<=,>= and the number is the revision number */
             int start = 0;
-            boolean nothingIncluded = true;
             Pattern versionPattern = Pattern.compile("\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/)(MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
             Matcher matcher = versionPattern.matcher(motdcontent);
             matcher.reset();
@@ -118,13 +114,11 @@ public class GettingStarted extends JPanel {
                         }
                         if (message.indexOf(emptyIndicator) == -1) {
                             content += message.replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
-                            nothingIncluded = false;
                         }
                     } catch (IOException ioe) {
                         url = matcher.group(1) + matcher.group(2);
                         try {
                             content += wr.read(url).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
-                            nothingIncluded = false;
                         } catch (IOException ioe2) {
                         }            
                     }            

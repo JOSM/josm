@@ -47,7 +47,7 @@ public class AdvancedPreference implements PreferenceSetting {
 				boolean isSelected, boolean hasFocus, int row, int column)
 			{
 				JLabel label=new JLabel();
-				String s = defaults.get((String)value);
+				String s = defaults.get(value);
 				if(s != null)
 				{
 					if(s.equals(model.getValueAt(row, 1)))
@@ -59,7 +59,7 @@ public class AdvancedPreference implements PreferenceSetting {
 					label.setToolTipText(tr("Default value currently unknown (setting has not been used yet)."));
 				label.setText((String)value);
 				return label;
-			};
+			}
 		};
 		final JTable list = new JTable(model);
 		list.getColumn(tr("Key")).setCellRenderer(renderer);

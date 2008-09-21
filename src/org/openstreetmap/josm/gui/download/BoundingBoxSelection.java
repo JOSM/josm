@@ -98,7 +98,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 					}
 				}
 			}
-		};
+		}
 		
 		osmUrl.getDocument().addDocumentListener(new osmUrlRefresher());
 		

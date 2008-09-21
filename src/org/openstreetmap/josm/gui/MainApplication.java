@@ -51,7 +51,6 @@ public class MainApplication extends Main {
 	/**
 	 * Main application Startup
 	 */
-	@SuppressWarnings("deprecation")
 	public static void main(final String[] argArray) {
 		/////////////////////////////////////////////////////////////////////////
 		//                        TO ALL TRANSLATORS

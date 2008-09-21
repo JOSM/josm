@@ -1,8 +1,6 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.marktr;
-
 import java.awt.event.ActionListener;
 import java.awt.Insets;
 import javax.swing.Action;

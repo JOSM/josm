@@ -1,16 +1,12 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.io.BufferedReader;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -21,11 +17,6 @@ import org.openstreetmap.josm.Main;
  * Mirrors a file to a local file.
  * <p>
  * The file mirrored is only downloaded if it has been more than one day since last download
- *
- * @param url The URL of the remote file
- * @param destDir The destination dir of the mirrored file
- * @param maxTime The time interval, in seconds, to check if the file changed. If less than 0, it defaults to 1 week
- * @return The local file
  */
 public class MirroredInputStream extends InputStream {
 	InputStream fs = null;

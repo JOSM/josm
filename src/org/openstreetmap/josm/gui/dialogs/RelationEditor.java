@@ -218,10 +218,10 @@ public class RelationEditor extends JFrame {
 						// clicked ok!
 						if (RelationEditor.this.relation == null) {
 							Main.main.undoRedo.add(new AddCommand(clone));
-							Main.ds.fireSelectionChanged(Main.ds.getSelected());
+							DataSet.fireSelectionChanged(Main.ds.getSelected());
 						} else if (!RelationEditor.this.relation.realEqual(clone, true)) {
 							Main.main.undoRedo.add(new ChangeCommand(RelationEditor.this.relation, clone));
-							Main.ds.fireSelectionChanged(Main.ds.getSelected());
+							DataSet.fireSelectionChanged(Main.ds.getSelected());
 						}
 					}
 					setVisible(false);

@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.xml.sax.SAXException;
 

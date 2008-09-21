@@ -10,7 +10,7 @@ public interface PreferenceSetting {
 	void addGui(PreferenceDialog gui);
 
 	/**
-	 * Called, when OK is pressed to save the setting in the Preferences file.
+	 * Called when OK is pressed to save the setting in the preferences file.
 	 */
 	void ok();
 }

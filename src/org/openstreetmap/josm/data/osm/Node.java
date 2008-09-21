@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 

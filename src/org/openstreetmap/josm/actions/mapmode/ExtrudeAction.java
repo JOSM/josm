@@ -21,7 +21,6 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -67,12 +66,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 	private int initialMoveDelay = 200;
 
 	/**
-	 * The screen distance which needs to be travelled before something
-	 * counts as a move, in pixels
-	 */
-	private int initialMoveThreshold = 15;
-	private boolean initialMoveThresholdExceeded = false;
-	/**
 	 * Create a new SelectAction
 	 * @param mapFrame The MapFrame this action belongs to.
 	 */
@@ -81,8 +74,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 			KeyEvent.VK_X, mapFrame,
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Extrude/Extrude");
-		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {}
-		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","5")); } catch (NumberFormatException x) {}
+		initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
 		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
 	}
 
@@ -267,6 +259,4 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 			return tr("Drag a way segment to make a rectangle.");
 		}
 	}
-	
-
 }

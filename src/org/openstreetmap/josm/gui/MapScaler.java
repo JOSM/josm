@@ -14,16 +14,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.tools.ColorHelper;
 
 public class MapScaler extends JComponent implements Helpful {
 
 	private final NavigatableComponent mv;
-	private final Projection proj;
-
 	public MapScaler(NavigatableComponent mv, Projection proj) {
 		this.mv = mv;
-		this.proj = proj;
 		setSize(100,30);
 		setOpaque(false);
     }

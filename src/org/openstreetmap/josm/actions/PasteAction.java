@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import java.awt.event.MouseMotionListener;
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
@@ -55,7 +52,7 @@ public final class PasteAction extends JosmAction {
 			mPosition = Main.map.mapView.getCenter();
 		} else {
 			mPosition = Main.map.mapView.getEastNorth(Main.map.mapView.lastMEvent.getX(), Main.map.mapView.lastMEvent.getY());
-		};
+		}
 
 		double offsetEast  = mPosition.east() - (maxEast + minEast)/2.0;
 		double offsetNorth = mPosition.north() - (maxNorth + minNorth)/2.0;

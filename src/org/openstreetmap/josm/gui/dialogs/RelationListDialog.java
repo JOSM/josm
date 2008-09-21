@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -113,7 +114,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 	public void updateList() {
 		list.setSize(Main.ds.relations.size());
 		int i = 0;
-		for (OsmPrimitive e : Main.ds.sort(Main.ds.relations)) {
+		for (OsmPrimitive e : DataSet.sort(Main.ds.relations)) {
 			if (!e.deleted && !e.incomplete)
 				list.setElementAt(e, i++);
 		}
