@@ -17,19 +17,31 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 
 public abstract class TagCorrector<P extends OsmPrimitive> {
 
-	public abstract Collection<ChangePropertyCommand> execute(P primitive);
+	public abstract Collection<Command> execute(P primitive) 
+	    throws UserCancelException;
 
-	protected Collection<ChangePropertyCommand> applyCorrections(
+    private String[] applicationOptions = new String[] { 
+        tr("Apply selected changes"), 
+        tr("Don't apply changes"), 
+        tr("Cancel") 
+    };
+    
+	protected Collection<Command> applyCorrections(
 	        Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap,
-	        String description) {
+	        Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap,
+	        String description) throws UserCancelException {
 
 		boolean hasCorrections = false;
 		for (List<TagCorrection> tagCorrectionList : tagCorrectionsMap.values()) {
@@ -39,9 +51,22 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 			}
 		}
 
+		if (!hasCorrections)
+			for (List<RoleCorrection> roleCorrectionList : roleCorrectionMap
+			        .values()) {
+				if (!roleCorrectionList.isEmpty()) {
+					hasCorrections = true;
+					break;
+				}
+			}
+
 		if (hasCorrections) {
-			Collection<ChangePropertyCommand> changePropertyCommands = new ArrayList<ChangePropertyCommand>();
-			Map<OsmPrimitive, TagCorrectionTable> tableMap = new HashMap<OsmPrimitive, TagCorrectionTable>();
+			Collection<Command> commands = new ArrayList<Command>();
+			Map<OsmPrimitive, TagCorrectionTable> tagTableMap = 
+			    new HashMap<OsmPrimitive, TagCorrectionTable>();
+			Map<OsmPrimitive, RoleCorrectionTable> roleTableMap = 
+			    new HashMap<OsmPrimitive, RoleCorrectionTable>();
+
 			NameVisitor nameVisitor = new NameVisitor();
 
 			final JPanel p = new JPanel(new GridBagLayout());
@@ -62,46 +87,91 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 				if (tagCorrections.isEmpty())
 					continue;
 
-				final TagCorrectionTable table = TagCorrectionTable
-				        .create(tagCorrections);
+				primitive.visit(nameVisitor);
+
+				final JLabel propertiesLabel = new JLabel(tr("Properties of "));
+				p.add(propertiesLabel, GBC.std());
+
+				final JLabel primitiveLabel = new JLabel(
+				        nameVisitor.name + ":", nameVisitor.icon, JLabel.LEFT);
+				p.add(primitiveLabel, GBC.eol());
+
+				final TagCorrectionTable table = new TagCorrectionTable(
+				        tagCorrections);
 				final JScrollPane scrollPane = new JScrollPane(table);
-				tableMap.put(primitive, table);
+				p.add(scrollPane, GBC.eop());
+
+				tagTableMap.put(primitive, table);
+			}
+
+			for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
+				final List<RoleCorrection> roleCorrections = roleCorrectionMap
+				        .get(primitive);
+				if (roleCorrections.isEmpty())
+					continue;
 
 				primitive.visit(nameVisitor);
 
-				final JLabel label3 = new JLabel(nameVisitor.name + ":",
-				        nameVisitor.icon, JLabel.LEFT);
+				final JLabel rolesLabel = new JLabel(
+				        tr("Roles in relations refering to"));
+				p.add(rolesLabel, GBC.std());
 
-				p.add(label3, GBC.eol());
+				final JLabel primitiveLabel = new JLabel(
+				        nameVisitor.name + ":", nameVisitor.icon, JLabel.LEFT);
+				p.add(primitiveLabel, GBC.eol());
+
+				final RoleCorrectionTable table = new RoleCorrectionTable(
+				        roleCorrections);
+				final JScrollPane scrollPane = new JScrollPane(table);
 				p.add(scrollPane, GBC.eop());
+
+				roleTableMap.put(primitive, table);
 			}
 
-			int answer = JOptionPane.showConfirmDialog(Main.parent, p,
-			        tr("Automatic tag correction"),
-			        JOptionPane.OK_CANCEL_OPTION);
+			int answer = JOptionPane.showOptionDialog(Main.parent, p,
+                    tr("Automatic tag correction"), JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE, null, 
+                    applicationOptions, applicationOptions[0]);
 
-			if (answer == JOptionPane.OK_OPTION) {
+			if (answer == JOptionPane.YES_OPTION) {
 				for (OsmPrimitive primitive : tagCorrectionsMap.keySet()) {
 					List<TagCorrection> tagCorrections = tagCorrectionsMap
 					        .get(primitive);
 					for (int i = 0; i < tagCorrections.size(); i++) {
-						if (tableMap.get(primitive)
-						        .getTagCorrectionTableModel().getApply(i)) {
+						if (tagTableMap.get(primitive)
+						        .getCorrectionTableModel().getApply(i)) {
 							TagCorrection tagCorrection = tagCorrections.get(i);
 							if (tagCorrection.isKeyChanged())
-								changePropertyCommands
-								        .add(new ChangePropertyCommand(
-								                primitive,
-								                tagCorrection.oldKey, null));
-							changePropertyCommands
-							        .add(new ChangePropertyCommand(primitive,
-							                tagCorrection.newKey,
-							                tagCorrection.newValue));
+								commands.add(new ChangePropertyCommand(
+								        primitive, tagCorrection.oldKey, null));
+							commands.add(new ChangePropertyCommand(primitive,
+							        tagCorrection.newKey,
+							        tagCorrection.newValue));
 						}
 					}
 				}
+				for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
+					List<RoleCorrection> roleCorrections = roleCorrectionMap
+					        .get(primitive);
+					for (int i = 0; i < roleCorrections.size(); i++) {
+						if (roleTableMap.get(primitive)
+						        .getCorrectionTableModel().getApply(i)) {
+							RoleCorrection roleCorrection = roleCorrections
+							        .get(i);
+							Relation newRelation = new Relation(
+							        roleCorrection.relation);
+							for (RelationMember member : newRelation.members)
+								if (member.equals(roleCorrection.member))
+									member.role = roleCorrection.newRole;
+							commands.add(new ChangeCommand(
+							        roleCorrection.relation, newRelation));
+						}
+					}
+				}
+			} else if (answer != JOptionPane.NO_OPTION) {
+			    throw new UserCancelException();
 			}
-			return changePropertyCommands;
+			return commands;
 		}
 
 		return Collections.emptyList();

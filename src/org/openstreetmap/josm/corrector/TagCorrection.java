@@ -1,14 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.corrector;
 
-public class TagCorrection {
+public class TagCorrection implements Correction {
 
 	public final String oldKey;
 	public final String newKey;
 	public final String oldValue;
 	public final String newValue;
 
-	public TagCorrection(String oldKey, String oldValue, String newKey, String newValue) {
+	public TagCorrection(String oldKey, String oldValue, String newKey,
+            String newValue) {
 		this.oldKey = oldKey;
 		this.oldValue = oldValue;
 		this.newKey = newKey;

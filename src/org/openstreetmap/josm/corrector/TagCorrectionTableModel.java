@@ -3,34 +3,21 @@ package org.openstreetmap.josm.corrector;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.table.AbstractTableModel;
-
-public class TagCorrectionTableModel extends AbstractTableModel {
-
-	List<TagCorrection> tagCorrections;
-
-	private boolean[] apply;
+public class TagCorrectionTableModel extends CorrectionTableModel<TagCorrection> {
 
 	public TagCorrectionTableModel(List<TagCorrection> tagCorrections) {
-		this.tagCorrections = tagCorrections;
-		apply = new boolean[this.tagCorrections.size()];
-		Arrays.fill(apply, true);
+		super(tagCorrections);
 	}
 
+	@Override
 	public int getColumnCount() {
 		return 5;
 	}
 
-	@Override public Class<?> getColumnClass(int columnIndex) {
-		if (columnIndex == 4)
-			return Boolean.class;
-		return String.class;
-	}
-
-	@Override public String getColumnName(int colIndex) {
+	@Override
+	public String getCorrectionColumnName(int colIndex) {
 		switch (colIndex) {
 		case 0:
 			return tr("Old key");
@@ -40,19 +27,12 @@ public class TagCorrectionTableModel extends AbstractTableModel {
 			return tr("New key");
 		case 3:
 			return tr("New value");
-		case 4:
-			return tr("Apply?");
 		}
 		return null;
 	}
 
-	public int getRowCount() {
-		return tagCorrections.size();
-	}
-
-	public Object getValueAt(int rowIndex, int colIndex) {
-
-		TagCorrection tagCorrection = tagCorrections.get(rowIndex);
+    public Object getCorrectionValueAt(int rowIndex, int colIndex) {
+		TagCorrection tagCorrection = getCorrections().get(rowIndex);
 
 		switch (colIndex) {
 		case 0:
@@ -63,23 +43,14 @@ public class TagCorrectionTableModel extends AbstractTableModel {
 			return tagCorrection.newKey;
 		case 3:
 			return tagCorrection.newValue;
-		case 4:
-			return apply[rowIndex];
 		}
 		return null;
 	}
 
-	@Override public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return columnIndex == 4;
+	protected boolean isBoldCell(int row, int column) {
+		TagCorrection tagCorrection = getCorrections().get(row);
+		return (column == 2 && tagCorrection.isKeyChanged())
+		        || (column == 3 && tagCorrection.isValueChanged());
 	}
 
-	@Override public void setValueAt(Object aValue, int rowIndex,
-	        int columnIndex) {
-		if (columnIndex == 4 && aValue instanceof Boolean)
-			apply[rowIndex] = (Boolean)aValue;
-	}
-
-	public boolean getApply(int i) {
-		return apply[i];
-	}
 }
