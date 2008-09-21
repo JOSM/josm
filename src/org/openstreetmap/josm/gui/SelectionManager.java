@@ -229,17 +229,18 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 		}
 		
 		if (aspectRatio) {
-			// keep the aspect ration by shrinking the rectangle
+			/* Keep the aspect ratio by growing the rectangle; the
+			 * rectangle is always under the cursor. */
 			double aspectRatio = (double)nc.getWidth()/nc.getHeight();
-			if ((double)w/h > aspectRatio) {
+			if ((double)w/h < aspectRatio) {
 				int neww = (int)(h*aspectRatio);
 				if (mousePos.x < mousePosStart.x)
-					x += w-neww;
+					x += w - neww;
 				w = neww;
 			} else {
 				int newh = (int)(w/aspectRatio);
 				if (mousePos.y < mousePosStart.y)
-					y += h-newh;
+					y += h - newh;
 				h = newh;
 			}
 		}
