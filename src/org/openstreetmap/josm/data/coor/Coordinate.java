@@ -1,7 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
-import java.io.Serializable;
+import java.awt.geom.Point2D;
 
 /**
  * Base class of points of both coordinate systems.
@@ -14,64 +14,32 @@ import java.io.Serializable;
  *
  * @author imi
  */ 
-abstract class Coordinate implements Serializable {
+abstract class Coordinate extends Point2D {
 
-	/**
-	 * Either easting or latitude
-	 */
-	final double x;
-	/**
-	 * Either northing or longitude
-	 */
-	final double y;
-
+    protected double x;
+    protected double y;
+    
 	/**
 	 * Construct the point with latitude / longitude values.
-	 * The x/y values are left uninitialized.
 	 * 
 	 * @param x X coordinate of the point.
 	 * @param y Y coordinate of the point.
 	 */
 	Coordinate(double x, double y) {
-		this.x = x;
-		this.y = y;
+        this.x = x; this.y = y;
 	}
+    
+    public double getX() {
+        return x;
+    }
+    
+    public double getY() {
+        return y; 
+    }
+    
+    public void setLocation (double x, double y) {
+        this.x = x; 
+        this.y = y;
+    }
 
-	/**
-	 * Return the squared distance of the northing/easting values between 
-	 * this and the argument.
-	 * 
-	 * This method does NOT compute a great circle distance between two 
-	 * locations!
-	 *
-	 * @param other The other point to calculate the distance to.
-	 * @return The square of the distance between this and the other point,
-	 * 		regarding to the x/y values.
-	 */
-	public double distanceSq(Coordinate other) {
-		return (x-other.x)*(x-other.x)+(y-other.y)*(y-other.y);
-	}
-	
-	/** 
-	 * Return the distance of the northing/easting values between this and
-	 * the argument.
-	 * 
-	 * This method does NOT compute a great circle distance between two 
-	 * locations!
-	 * 
-	 * @param other The other point to calculate the distance to.
-	 * @return The square of the distance between this and the other point,
-	 * 		regarding to the x/y values.
-	 */
-	public double distance(Coordinate other) {
-		return Math.sqrt(distanceSq(other));
-	}
-
-	@Override public boolean equals(Object obj) {
-		return obj instanceof Coordinate ? x == ((Coordinate)obj).x && ((Coordinate)obj).y == y : false;
-	}
-
-	@Override public int hashCode() {
-		return (int)(x*65536+y*4096);
-	}
 }
