@@ -1201,14 +1201,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!--man_made tags -->
 
 	<rule>
-		<condition k="man_made" v="works"/>
-		<icon annotate="true" src="misc/landmark/works.png"/>
-		<area colour="manmade#d8d8d8"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="man_made" v="beacon"/>
 		<icon annotate="true" src="misc/landmark/beacon.png"/>
 		<area colour="manmade#d8d8d8"/>
@@ -1217,25 +1209,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="man_made" v="survey_point"/>
-		<icon annotate="true" src="misc/landmark/survey_point.png"/>
+		<condition k="man_made" v="crane"/>
 		<area colour="manmade#d8d8d8"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="man_made" v="tower"/>
-		<icon annotate="true" src="misc/landmark/tower.png"/>
-		<area colour="manmade#d8d8d8"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="man_made" v="water_tower"/>
-		<icon annotate="true" src="misc/landmark/water_tower.png"/>
-		<area colour="manmade#d8d8d8"/>
+		<icon annotate="true" src="misc/landmark/crane.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1249,24 +1225,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="man_made" v="reservoir_covered"/>
-		<icon annotate="true" src="misc/landmark/reservoir_covered.png"/>
-		<area colour="manmade#d8d8d8"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="man_made" v="lighthouse"/>
 		<icon annotate="true" src="misc/landmark/lighthouse.png"/>
-		<area colour="manmade#d8d8d8"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="man_made" v="windmill"/>
-		<icon annotate="true" src="misc/landmark/windmill.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1289,6 +1249,38 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="man_made" v="reservoir_covered"/>
+		<icon annotate="true" src="misc/landmark/reservoir_covered.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="surveillance"/>
+		<icon annotate="true" src="misc/surveillance.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="survey_point"/>
+		<icon annotate="true" src="misc/landmark/survey_point.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="tower"/>
+		<icon annotate="true" src="misc/landmark/tower.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="man_made" v="wastewater_plant"/>
 		<area colour="manmade#d8d8d8"/>
 		<icon annotate="true" src="misc/landmark/wastewater_plant.png"/>
@@ -1297,9 +1289,33 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="man_made" v="crane"/>
+		<condition k="man_made" v="watermill"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<area colour="manmade#d8d8d8"/>
-		<icon annotate="true" src="misc/landmark/crane.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="water_tower"/>
+		<icon annotate="true" src="misc/landmark/water_tower.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="windmill"/>
+		<icon annotate="true" src="misc/landmark/windmill.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="works"/>
+		<icon annotate="true" src="misc/landmark/works.png"/>
+		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1918,7 +1934,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="park_bench"/>
 		<area colour="amenity2#f7efb7"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="recreation/bench.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2143,7 +2159,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="shop" v="hairdresser"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="shopping/hairdresser.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2223,7 +2239,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="shop" v="tailor"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="shopping/tailor.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3470,36 +3486,36 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<!-- keep this generic rules at the end of the file, so more specialised rules fit first -->
 	<rule>
 		<condition k="building" b="yes"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="building#cb9999"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
+		<area colour="building#cb9999" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="church"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="building#cb9999"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
+		<area colour="building#cb9999" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="museum"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="building#cb9999"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
+		<area colour="building#cb9999" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="tower"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="building#cb9999"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
+		<area colour="building#cb9999" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="building" v="station"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="building#cb9999"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
+		<area colour="building#cb9999" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3507,6 +3523,20 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="area" b="yes"/>
 		<area colour="area#ffffff" priority="-10000"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="addr:housenumber"/>
+		<icon annotate="true" src="misc/housenumber.png" priority="-50000"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="addr:postcode"/>
+		<icon annotate="true" src="misc/housenumber.png" priority="-50000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
