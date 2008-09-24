@@ -200,7 +200,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="psv" v="no"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="vehicle/restrictions/psv.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1543,7 +1543,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="car_wash"/>
 		<area colour="amenity_traffic#f7efb7"/>
-		<icon annotate="true" src="transport/car.png"/>
+		<icon annotate="true" src="vehicle/car_wash.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2436,7 +2436,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="historic" v="wayside_cross"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="religion/wayside_cross.png"/>
 		<area colour="historic#663300"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2444,7 +2444,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="historic" v="wayside_shrine"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="religion/wayside_shrine.png"/>
 		<area colour="historic#663300"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2527,7 +2527,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="residential"/>
 		<area colour="residential#f0f0f0"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/landuse/residential.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2544,7 +2544,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="retail"/>
 		<area colour="retail#dbdbdb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="shopping/mall.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2552,7 +2552,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="commercial"/>
 		<area colour="retail#dbdbdb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/landuse/commercial.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2584,7 +2584,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="railway"/>
 		<area colour="railland#888888"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="transport/railway.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2600,7 +2600,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="military"/>
 		<area colour="military#b62c2c"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="vehicle/tank.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
