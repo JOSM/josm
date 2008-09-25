@@ -1810,14 +1810,29 @@
 	<group name="Amenities" icon="presets/telephone.png">
 		<item name="Toilets" icon="presets/toilet.png">
 			<key key="amenity" value="toilets" />
+			<check key="payment:none" text="None" default="off" delete_if_empty="true" />
+			<check key="payment:coins" text="Coins" default="off" delete_if_empty="true" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+			<text key="ref" text="Reference number" default="" delete_if_empty="true" />
+			<text key="note" text="Note" default="" delete_if_empty="true" />
+
 		</item>
 
 		<item name="Post Box" icon="presets/letter.png">
 			<key key="amenity" value="post_box" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Telephone" icon="presets/telephone.png">
 			<key key="amenity" value="telephone" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+			<check key="payment:none" text="None" default="off" delete_if_empty="true" />
+			<check key="payment:coins" text="Coins" default="off" delete_if_empty="true" />
+			<check key="payment:notes" text="Notes" default="off" delete_if_empty="true" />
+			<check key="payment:electronic_purses" text="Electronic purses and Charge cards" default="off" delete_if_empty="true" />
+			<check key="payment:debit_cards" text="Debit cards" default="off" delete_if_empty="true" />
+			<check key="payment:credit_cards" text="Credit cards" default="off" delete_if_empty="true" />
+			<check key="payment:telephone_cards" text="Telephone cards" default="off" delete_if_empty="true" />
 		</item>
 
 		<item name="Recycling" icon="presets/recycling.png">
@@ -1826,6 +1841,22 @@
 			<check key="recycling:glass" text="Glass" default="off" delete_if_empty="true" />
 			<check key="recycling:clothes" text="Clothes" default="off" delete_if_empty="true" />
 			<check key="recycling:batteries" text="Batteries" default="off" delete_if_empty="true" />
+		</item>
+
+		<item name="Vending machine" icon="presets/vending_machine.png">
+			<label text="Edit a Vending_machine" />
+			<key key="amenity" value="vending_machine" />
+			<combo key="vending" text="Vending pruducts" values="public_transport_tickets,public_transport_plans,parking_tickets,foot,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
+			<check key="payment:none" text="None" default="off" delete_if_empty="true" />
+			<check key="payment:coins" text="Coins" default="off" delete_if_empty="true" />
+			<check key="payment:notes" text="Notes" default="off" delete_if_empty="true" />
+			<check key="payment:electronic_purses" text="Electronic purses and Charge cards" default="off" delete_if_empty="true" />
+			<check key="payment:debit_cards" text="Debit cards" default="off" delete_if_empty="true" />
+			<check key="payment:credit_cards" text="Credit cards" default="off" delete_if_empty="true" />
+			<check key="payment:account_cards" text="Account or loyalty cards" default="off" delete_if_empty="true" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+			<text key="ref" text="Reference number" default="" delete_if_empty="true" />
+			<text key="note" text="Note" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Taxi" icon="presets/taxi.png">
