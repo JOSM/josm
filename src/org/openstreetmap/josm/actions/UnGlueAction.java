@@ -43,7 +43,7 @@ public class UnGlueAction extends JosmAction implements SelectionChangedListener
 	 * Create a new SplitWayAction.
 	 */
 	public UnGlueAction() {
-		super(tr("UnGlue Ways"), "unglueways", tr("Duplicate the selected node so each way using ist has its own copy."), KeyEvent.VK_G, 0, true);
+		super(tr("UnGlue Ways"), "unglueways", tr("Duplicate the selected node so each way using it has its own copy."), KeyEvent.VK_G, 0, true);
 		DataSet.selListeners.add(this);
 	}
 
