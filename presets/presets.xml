@@ -4,6 +4,7 @@
 		http://commons.wikimedia.org/wiki/Image:National_Park_Service_sample_pictographs.svg (various monochrome pictograms)
 		http://www.kde.org
 		http://openclipart.org/media/view/media/clip_art
+		http://www.sjjb.co.uk/mapicons/
 		-->
 
 <annotations>
@@ -1500,7 +1501,7 @@
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Gymnastics" icon="presets/empty.png">
+		<item name="Gymnastics" icon="presets/gymnastics.png">
 			<label text="Edit Gymnastics" />
 			<key key="sport" value="gymnastics" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1535,7 +1536,7 @@
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Skiing" icon="presets/skiing.png">
+		<item name="Skiing" icon="presets/skiing_downhill.png">
 			<label text="Edit Skiing" />
 			<key key="sport" value="skiing" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1573,7 +1574,7 @@
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Baseball" icon="styles/standard/sports/baseball.png">
+		<item name="Baseball" icon="presets/baseball.png">
 			<label text="Edit Baseball" />
 			<key key="sport" value="baseball" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1608,7 +1609,7 @@
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Cricket" icon="styles/standard/sports/cricket.png">
+		<item name="Cricket" icon="presets/cricket.png">
 			<label text="Edit Cricket" />
 			<key key="sport" value="cricket" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1871,7 +1872,7 @@
 	</group> <!-- Amenities -->
 
 	<group name="Cash" icon="presets/dollar.png">
-		<item name="Bank" icon="presets/dollar.png">
+		<item name="Bank" icon="presets/bank.png">
 			<label text="Edit Bank" />
 			<key key="amenity" value="bank" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
