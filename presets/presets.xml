@@ -1,6 +1,7 @@
 <!--
 		Pics have been derived from
 		http://commons.wikipedia.org (german street sign SVGs)
+		http://commons.wikimedia.org/wiki/Image:National_Park_Service_sample_pictographs.svg (various monochrome pictograms)
 		http://www.kde.org
 		http://openclipart.org/media/view/media/clip_art
 		-->
@@ -686,7 +687,7 @@
 			<text key="name" text="Exit Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Services" icon="presets/services.png">
+		<item name="Services" icon="presets/car_service.png">
 			<label text="Edit Service Station" />
 			<label text=" " />
 			<key key="highway" value="services" />
@@ -930,7 +931,7 @@
 
 		<separator/>
 
-		<item name="Boatyard" icon="styles/standard/nautical/boatyard.png">
+		<item name="Boatyard" icon="presets/boatyard.png">
 			<label text="Edit a Boatyard" />
 			<label text=" " />
 			<key key="waterway" value="boatyard" />
@@ -977,7 +978,7 @@
 			<key key="waterway" value="turning_point" />
 		</item>
 
-		<item name="Marina" icon="styles/standard/nautical/marina.png">
+		<item name="Marina" icon="presets/marina.png">
 			<label text="Edit Marina" />
 			<key key="leisure" value="marina" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -992,23 +993,23 @@
 
 	<separator/>
 
-	<group name="Aerialway" icon="styles/standard/transport/aerialway.png">
-		<item name="Chair Lift" icon="styles/standard/transport/aerialway/chair_lift.png">
+	<group name="Aerialway" icon="presets/aerialway.png">
+		<item name="Chair Lift" icon="presets/chair_lift.png">
 			<label text="Edit a Chair Lift" />
 			<key key="aerialway" value="chair_lift" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-		<item name="Drag Lift" icon="styles/standard/transport/aerialway/drag_lift.png">
+		<item name="Drag Lift" icon="presets/drag_lift.png">
 			<label text="Edit a Drag Lift" />
 			<key key="aerialway" value="drag_lift" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-		<item name="Cable Car" icon="styles/standard/transport/aerialway/cable_car.png">
+		<item name="Cable Car" icon="presets/cable_car.png">
 			<label text="Edit a Cable Car" />
 			<key key="aerialway" value="cable_car" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-		<item name="Station" icon="styles/standard/transport/aerialway/station.png">
+		<item name="Station" icon="presets/aerialway_station.png">
 			<label text="Edit a Station" />
 			<key key="aerialway" value="station" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1268,7 +1269,7 @@
 			<check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
 		</item>
 
-		<item name="Picnic Site" icon="styles/standard/recreation/picnic.png">
+		<item name="Picnic Site" icon="presets/picnic.png">
 			<label text="Edit Picnic Site" />
 			<key key="tourism" value="picnic_site" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1316,13 +1317,13 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Wayside Cross" icon="presets/empty.png">
+		<item name="Wayside Cross" icon="presets/wayside_cross.png">
 			<label text="Edit a Wayside Cross" />
 			<key key="historic" value="wayside_cross" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Wayside Shrine" icon="presets/empty.png">
+		<item name="Wayside Shrine" icon="presets/wayside_shrine.png">
 			<label text="Edit a Wayside Shrine" />
 			<key key="historic" value="wayside_shrine" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1330,7 +1331,7 @@
 	</group> <!-- Historic Places -->
 
 	<group name="Leisure" icon="presets/kindergarten.png">
-		<item name="Water Park" icon="styles/standard/recreation/water_park.png">
+		<item name="Water Park" icon="presets/swimming.png">
 			<label text="Edit Water Park" />
 			<key key="leisure" value="water_park" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1342,7 +1343,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Fishing" icon="styles/standard/sports/fishing.png">
+		<item name="Fishing" icon="presets/fishing.png">
 			<label text="Edit Fishing" />
 			<key key="leisure" value="fishing" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1405,7 +1406,7 @@
 			<combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Racetrack" icon="styles/standard/sports/track.png">
+		<item name="Racetrack" icon="presets/stadium.png">
 			<label text="Edit Racetrack" />
 			<key key="leisure" value="track" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1415,20 +1416,20 @@
 			<combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Golf Course" icon="styles/standard/sports/golf.png">
+		<item name="Golf Course" icon="presets/golf.png">
 			<label text="Edit Golf Course" />
 			<key key="leisure" value="golf_course" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Miniature Golf" icon="styles/standard/sports/golf.png">
+		<item name="Miniature Golf" icon="presets/golf.png">
 			<label text="Edit Miniature Golf" />
 			<key key="leisure" value="miniature_golf" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 	</group>
 	
-	<group name="Sport" icon="presets/canoe.png">
+	<group name="Sport" icon="presets/rowing.png">
 		<item name="Multi" icon="presets/empty.png">
 			<label text="Edit Multi" />
 			<key key="sport" value="multi" />
@@ -1593,14 +1594,14 @@
 			<combo key="leisure" text="type" values="golf_course,pitch,sports_centre,stadium,track" default="golf_course" delete_if_empty="true" />
 		</item>
 		
-		<item name="Boule" icon="styles/standard/sports/boule.png">
+		<item name="Boule" icon="presets/boule.png">
 			<label text="Edit Boule" />
 			<key key="sport" value="boules" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Bowls" icon="styles/standard/sports/boule.png">
+		<item name="Bowls" icon="presets/boule.png">
 			<label text="Edit Bowls" />
 			<key key="sport" value="bowls" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1727,7 +1728,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Prison" icon="styles/standard/public/administration/prison.png">
+		<item name="Prison" icon="presets/prison.png">
 			<label text="Edit Prison" />
 			<key key="amenity" value="prison" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1930,7 +1931,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Baker" icon="styles/standard/shopping/groceries/bakery.png">
+		<item name="Baker" icon="presets/baker.png">
 			<label text="Edit Baker" />
 			<key key="shop" value="bakery" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2137,7 +2138,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Quarry" icon="styles/standard/misc/landmark/mine.png">
+		<item name="Quarry" icon="presets/mine.png">
 			<label text="Edit Quarry Landuse" />
 			<label text=" " />
 			<key key="landuse" value="quarry" />
@@ -2467,7 +2468,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Crane" icon="styles/standard/misc/landmark/crane.png">
+		<item name="Crane" icon="presets/crane.png">
 			<label text="Edit Crane" />
 			<key key="man_made" value="crane" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
