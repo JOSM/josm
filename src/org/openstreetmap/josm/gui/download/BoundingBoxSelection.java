@@ -40,8 +40,8 @@ public class BoundingBoxSelection implements DownloadSelection {
 			new JTextField(11),
 			new JTextField(11) };
 	final JTextArea osmUrl = new JTextArea();
+	final JLabel showUrl = new JLabel();
 	String noteUrl = tr("You can paste an URL here to download the area.");
-	String oldUrl = "";
 	
 	final JLabel sizeCheck = new JLabel();
 	
@@ -83,19 +83,15 @@ public class BoundingBoxSelection implements DownloadSelection {
 			public void insertUpdate(DocumentEvent e) { dowork(); }
 			public void removeUpdate(DocumentEvent e) { dowork(); }
 			private void dowork() {
-				if(!oldUrl.equals(osmUrl.getText()))
-				{
-					Bounds b = osmurl2bounds(osmUrl.getText());
-					if (b != null) {
-						gui.minlon = b.min.lon();
-						gui.minlat = b.min.lat();
-						gui.maxlon = b.max.lon();
-						gui.maxlat = b.max.lat();
-						gui.boundingBoxChanged(BoundingBoxSelection.this);
-						updateBboxFields(gui);
-						updateSizeCheck(gui);
-						oldUrl = osmUrl.getText();
-					}
+				Bounds b = osmurl2bounds(osmUrl.getText());
+				if (b != null) {
+					gui.minlon = b.min.lon();
+					gui.minlat = b.min.lat();
+					gui.maxlon = b.max.lon();
+					gui.maxlat = b.max.lat();
+					gui.boundingBoxChanged(BoundingBoxSelection.this);
+					updateBboxFields(gui);
+					updateSizeCheck(gui);
 				}
 			}
 		}
@@ -131,6 +127,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 		
 		dlg.add(new JLabel(tr("URL from www.openstreetmap.org")), GBC.eol().insets(10,20,5,0));
 		dlg.add(osmUrl, GBC.eop().insets(10,0,5,0).fill());
+		dlg.add(showUrl, GBC.eop().insets(10,0,5,20));
 		dlg.add(sizeCheck, GBC.eop().insets(10,0,5,20));
 
 		gui.tabpane.addTab(tr("Bounding Box"), dlg);
@@ -168,9 +165,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 			size *= 2;
 			zoom++;
 		}
-		// setting old URL prevents refresh based on this URL
-		oldUrl = noteUrl+"\n"+"http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom;
-		osmUrl.setText(oldUrl);
+		showUrl.setText("http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom);
 	}
 	
 	private void updateSizeCheck(DownloadDialog gui) {
