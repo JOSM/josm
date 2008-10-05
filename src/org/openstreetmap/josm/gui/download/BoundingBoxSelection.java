@@ -91,6 +91,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 					gui.maxlat = b.max.lat();
 					gui.boundingBoxChanged(BoundingBoxSelection.this);
 					updateBboxFields(gui);
+					updateUrl(gui);
 					updateSizeCheck(gui);
 				}
 			}
