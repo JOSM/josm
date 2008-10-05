@@ -69,7 +69,7 @@ public class GettingStarted extends JPanel {
 
             /* look for hrefs of the form wiki/MessageOfTheDay>123 where > can also be <,<=,>= and the number is the revision number */
             int start = 0;
-            Pattern versionPattern = Pattern.compile("\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/)(MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
+            Pattern versionPattern = Pattern.compile("(?:\\<p\\>\\s*)?\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/)(MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>(?:\\s*\\</p\\>)?", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
             Matcher matcher = versionPattern.matcher(motdcontent);
             matcher.reset();
             while (matcher.find()) {
@@ -125,8 +125,7 @@ public class GettingStarted extends JPanel {
                 }
             }
             content += motdcontent.substring(start);
-            content = content.replace("<html>", "<html><style>\nbody { font-family: sans-serif; font-weight: bold; }\n</style>");
-            content = content.replace("<h1", "<h1 align=\"center\"");
+            content = content.replace("<html>", "<html><style type=\"text/css\">\nbody { font-family: sans-serif; font-weight: bold; }\nh1 {text-align: center;}</style>");
             /* replace the wiki title */ 
             content = content.replace("JOSM, the Java OpenStreetMap editor", tr("JOSM, the Java OpenStreetMap editor")); 
         }
