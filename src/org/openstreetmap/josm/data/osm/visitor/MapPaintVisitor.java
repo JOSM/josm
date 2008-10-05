@@ -13,6 +13,7 @@ import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import javax.swing.ImageIcon;
 
@@ -43,6 +44,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 	protected Font orderFont;
 	protected ElemStyles styles;
 	protected double circum;
+	protected String regionalNameOrder[];
 
 	protected boolean isZoomOk(ElemStyle e) {
 		if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -225,7 +227,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 		int w = icon.getIconWidth(), h=icon.getIconHeight();
 		icon.paintIcon ( Main.map.mapView, g, p.x-w/2, p.y-h/2 );
-		String name = (n.keys==null) ? null : n.keys.get("name");
+		String name = getNodeName(n);
 		if (name!=null && annotate)
 		{
 			g.setColor(textColor);
@@ -239,6 +241,17 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			g.setColor (  selectedColor );
 			g.drawRect (p.x-w/2-2,p.y-w/2-2, w+4, h+4);
 		}
+	}
+
+	protected String getNodeName(Node n) {
+		String name = null;
+		if (n.keys != null) {
+			for (int i = 0; i < regionalNameOrder.length; i++) {
+				name = n.keys.get(regionalNameOrder[i]);
+				if (name != null) break;
+			}
+		}
+		return name;
 	}
 
 	private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, boolean dashed) {
@@ -321,6 +334,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
 		styles = MapPaintStyles.getStyles();
 		orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
+		String currentLocale = Locale.getDefault().getLanguage();
+		regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name").split(";");
 
 		if(styles.hasAreas())
 		{
