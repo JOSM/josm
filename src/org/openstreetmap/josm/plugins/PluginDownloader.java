@@ -172,7 +172,7 @@ public class PluginDownloader {
 	public static boolean moveUpdatedPlugins() {
 		File pluginDir = Main.pref.getPluginsDirFile();
 		boolean ok = true; 		
-		if (pluginDir.exists() && pluginDir.isDirectory()) {
+		if (pluginDir.exists() && pluginDir.isDirectory() && pluginDir.canWrite()) {
 			final File[] files = pluginDir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 	                return name.endsWith(".new");
@@ -180,7 +180,7 @@ public class PluginDownloader {
 			for (File updatedPlugin : files) {
 				final String filePath = updatedPlugin.getPath();
 				File plugin = new File(filePath.substring(0, filePath.length() - 4));
-				ok = plugin.delete() && updatedPlugin.renameTo(plugin) && ok;
+				ok = (plugin.delete() || !plugin.exists()) && updatedPlugin.renameTo(plugin) && ok;
 			}
 		}
 		return ok;
