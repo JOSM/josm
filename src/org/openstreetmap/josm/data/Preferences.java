@@ -314,7 +314,7 @@ public class Preferences {
 			bookmarkFile.createNewFile();
 		PrintWriter out = new PrintWriter(new FileWriter(bookmarkFile));
 		for (Bookmark b : bookmarks) {
-			b.name.replace(',', '_');
+			b.name = b.name.replace(',', '_');
 			out.print(b.name+",");
 			for (int i = 0; i < b.latlon.length; ++i)
 				out.print(b.latlon[i]+(i<b.latlon.length-1?",":""));
