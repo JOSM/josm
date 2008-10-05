@@ -31,7 +31,14 @@ import org.openstreetmap.josm.tools.ColorHelper;
  * @author imi
  */
 public class Preferences {
-
+    
+    /**
+    * Internal storage for the preferenced directory. 
+    * Do not access this variable directly!
+    * @see #getPreferencesDirFile()
+    */
+    private File preferencesDirFile = null;
+     
 	public static interface PreferenceChangedListener {
 		void preferenceChanged(String key, String newValue);
 	}
@@ -79,12 +86,24 @@ public class Preferences {
 		return path + File.separator;
 	}
 
-	public File getPreferencesDirFile() {
-		if (System.getenv("APPDATA") != null)
-			return new File(System.getenv("APPDATA"), "JOSM");
-		return new File(System.getProperty("user.home"), ".josm");
-	}
-	
+    public File getPreferencesDirFile() {
+        if (preferencesDirFile != null)
+            return preferencesDirFile;
+        String path;
+        path = System.getProperty("josm.home");
+        if (path != null) {
+            preferencesDirFile = new File(path);
+        } else {
+            path = System.getenv("APPDATA");
+            if (path != null) {
+                preferencesDirFile = new File(path, "JOSM");
+            } else {
+                preferencesDirFile = new File(System.getProperty("user.home"), ".josm");
+            }
+        }
+        return preferencesDirFile;
+    }
+    
 	public File getPluginsDirFile() {
 		return new File(getPreferencesDirFile(), "plugins");
 	}
