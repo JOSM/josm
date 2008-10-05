@@ -15,6 +15,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import org.openstreetmap.josm.tools.ShortCut;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 
@@ -77,15 +79,37 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
 		nc.addMouseListener(this);
 		nc.addMouseMotionListener(this);
 		nc.addMouseWheelListener(this);
-		
-		String[] n = {",",".","up","right","down","left"};
-		int[] k = {KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD, KeyEvent.VK_UP, KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT};
 
 		if (contentPane != null) {
-			for (int i = 0; i < n.length; ++i) {
-				contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(k[i], KeyEvent.CTRL_DOWN_MASK), "MapMover.Zoomer."+n[i]);
-				contentPane.getActionMap().put("MapMover.Zoomer."+n[i], new ZoomerAction(n[i]));
-			}
+			contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				ShortCut.registerShortCut("system:movefocusright", tr("Map: Move right"), KeyEvent.VK_RIGHT, ShortCut.GROUP_HOTKEY).getKeyStroke(),
+				"MapMover.Zoomer.right");
+			contentPane.getActionMap().put("MapMover.Zoomer.right", new ZoomerAction("right"));
+
+			contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				ShortCut.registerShortCut("system:movefocusleft", tr("Map: Move left"), KeyEvent.VK_LEFT, ShortCut.GROUP_HOTKEY).getKeyStroke(),
+				"MapMover.Zoomer.left");
+			contentPane.getActionMap().put("MapMover.Zoomer.left", new ZoomerAction("left"));
+
+			contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				ShortCut.registerShortCut("system:movefocusup", tr("Map: Move up"), KeyEvent.VK_UP, ShortCut.GROUP_HOTKEY).getKeyStroke(),
+				"MapMover.Zoomer.up");
+			contentPane.getActionMap().put("MapMover.Zoomer.up", new ZoomerAction("up"));
+
+			contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				ShortCut.registerShortCut("system:movefocusdown", tr("Map: Move down"), KeyEvent.VK_DOWN, ShortCut.GROUP_HOTKEY).getKeyStroke(),
+				"MapMover.Zoomer.down");
+			contentPane.getActionMap().put("MapMover.Zoomer.down", new ZoomerAction("down"));
+
+			contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				ShortCut.registerShortCut("view:zoominalternate", tr("Map: Zoom in"), KeyEvent.VK_COMMA, ShortCut.GROUP_HOTKEY).getKeyStroke(),
+				"MapMover.Zoomer.in");
+			contentPane.getActionMap().put("MapMover.Zoomer.in", new ZoomerAction(","));
+
+			contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				ShortCut.registerShortCut("view:zoomoutalternate", tr("Map: Zoom out"), KeyEvent.VK_PERIOD, ShortCut.GROUP_HOTKEY).getKeyStroke(),
+				"MapMover.Zoomer.out");
+			contentPane.getActionMap().put("MapMover.Zoomer.out", new ZoomerAction("."));
 		}
 	}
 
@@ -168,7 +192,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
 		double newHalfHeight = h*zoomfactor - h/2;
 		double centerx = e.getX() - (e.getX()-w/2)*newHalfWidth*2/w;
 		double centery = e.getY() - (e.getY()-h/2)*newHalfHeight*2/h;
-		EastNorth newCenter = nc.getEastNorth((int)centerx, (int)centery); 
+		EastNorth newCenter = nc.getEastNorth((int)centerx, (int)centery);
 
 		nc.zoomTo(newCenter, nc.getScale()*zoom);
 	}

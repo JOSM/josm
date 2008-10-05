@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Exports data to gpx.
@@ -44,7 +45,8 @@ public class GpxExportAction extends DiskAccessAction {
 	private final Layer layer;
 
 	public GpxExportAction(Layer layer) {
-		super(tr("Export to GPX ..."), "exportgpx", tr("Export the data to GPX file."), KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK);
+		super(tr("Export to GPX ..."), "exportgpx", tr("Export the data to GPX file."),
+		ShortCut.registerShortCut("file:exportgpx", tr("Export to GPX"), KeyEvent.VK_E, ShortCut.GROUP_MENU));
 		this.layer = layer;
 	}
 
@@ -70,7 +72,7 @@ public class GpxExportAction extends DiskAccessAction {
 			fn += ".gpx";
 			file = new File(fn);
 		}
-		
+
 		// open the dialog asking for options
 		JPanel p = new JPanel(new GridBagLayout());
 
@@ -79,7 +81,7 @@ public class GpxExportAction extends DiskAccessAction {
 		desc.setWrapStyleWord(true);
 		desc.setLineWrap(true);
 		p.add(new JScrollPane(desc), GBC.eop().fill(GBC.BOTH));
-		
+
 		JCheckBox author = new JCheckBox(tr("Add author information"), Main.pref.getBoolean("lastAddAuthor", true));
 		author.setSelected(true);
 		p.add(author, GBC.eol());
@@ -104,7 +106,7 @@ public class GpxExportAction extends DiskAccessAction {
 		JLabel warning = new JLabel("<html><font size='-2'>&nbsp;</html");
 		p.add(warning, GBC.eol().fill(GBC.HORIZONTAL).insets(15,0,0,0));
 		addDependencies(author, authorName, email, copyright, predefined, copyrightYear, nameLabel, emailLabel, copyrightLabel, copyrightYearLabel, warning);
-		
+
 		p.add(new JLabel(tr("Keywords")), GBC.eol());
 		JTextField keywords = new JTextField();
 		p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
@@ -112,7 +114,7 @@ public class GpxExportAction extends DiskAccessAction {
 		int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Export options"), JOptionPane.OK_CANCEL_OPTION);
 		if (answer != JOptionPane.OK_OPTION)
 			return;
-		
+
 		Main.pref.put("lastAddAuthor", author.isSelected());
 		if (authorName.getText().length() != 0)
 			Main.pref.put("lastAuthorName", authorName.getText());
@@ -135,19 +137,19 @@ public class GpxExportAction extends DiskAccessAction {
 		} catch (IOException x) {
 			x.printStackTrace();
 			JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}", fn)+":\n"+x.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Add all those listeners to handle the enable state of the fields.
-	 * @param copyrightYearLabel 
-	 * @param copyrightLabel 
-	 * @param emailLabel 
-	 * @param nameLabel 
-	 * @param warning 
+	 * @param copyrightYearLabel
+	 * @param copyrightLabel
+	 * @param emailLabel
+	 * @param nameLabel
+	 * @param warning
 	 */
 	private static void addDependencies(
-			final JCheckBox author, 
+			final JCheckBox author,
 			final JTextField authorName,
 			final JTextField email,
 			final JTextField copyright,
@@ -158,7 +160,7 @@ public class GpxExportAction extends DiskAccessAction {
 			final JLabel copyrightLabel,
 			final JLabel copyrightYearLabel,
 			final JLabel warning) {
-		
+
 		ActionListener authorActionListener = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				boolean b = author.isSelected();
@@ -182,7 +184,7 @@ public class GpxExportAction extends DiskAccessAction {
 					}
 				};
 		authorName.addKeyListener(authorNameListener);
-		
+
 		predefined.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				JList l = new JList(new String[]{"Creative Commons By-SA", "public domain", "GNU Lesser Public License (LGPL)", "BSD License (MIT/X11)"});

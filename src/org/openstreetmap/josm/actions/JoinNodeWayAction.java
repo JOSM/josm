@@ -22,11 +22,12 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public class JoinNodeWayAction extends JosmAction {
 	public JoinNodeWayAction() {
-	    super(tr("Join node to way"), "joinnodeway",
-			tr("Join a node into the nearest way segments"), KeyEvent.VK_J, 0, true);
+	    super(tr("Join node to way"), "joinnodeway", tr("Join a node into the nearest way segments"),
+			ShortCut.registerShortCut("tools:joinnodeway", tr("Tool: Join node to way"), KeyEvent.VK_J, ShortCut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

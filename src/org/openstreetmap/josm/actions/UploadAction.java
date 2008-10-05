@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Action that opens a connection to the osm server and uploads all changes.
@@ -33,7 +34,7 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 public class UploadAction extends JosmAction {
-	
+
 	/** Upload Hook */
 	public interface UploadHook {
 		/**
@@ -45,12 +46,12 @@ public class UploadAction extends JosmAction {
 		 */
 		public boolean checkUpload(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete);
 	}
-	
+
 	/**
 	 * The list of upload hooks. These hooks will be called one after the other
 	 * when the user wants to upload data. Plugins can insert their own hooks here
 	 * if they want to be able to veto an upload.
-	 * 
+	 *
 	 * Be default, the standard upload dialog is the only element in the list.
 	 * Plugins should normally insert their code before that, so that the upload
 	 * dialog is the last thing shown before upload really starts; on occasion
@@ -59,7 +60,8 @@ public class UploadAction extends JosmAction {
 	public final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
 
 	public UploadAction() {
-		super(tr("Upload to OSM ..."), "upload", tr("Upload all changes to the OSM server."), KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true);
+		super(tr("Upload to OSM ..."), "upload", tr("Upload all changes to the OSM server."),
+		ShortCut.registerShortCut("file:upload", tr("File: Upload"), KeyEvent.VK_U, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
 
 		/**
 		 * Displays a screen where the actions that would be taken are displayed and
@@ -128,7 +130,7 @@ public class UploadAction extends JosmAction {
 			else if (osm.deleted && osm.id != 0)
 				delete.addFirst(osm);
 		}
-		
+
 		if (add.isEmpty() && update.isEmpty() && delete.isEmpty()) {
 			JOptionPane.showMessageDialog(Main.parent,tr("No changes to upload."));
 			return;
@@ -139,7 +141,7 @@ public class UploadAction extends JosmAction {
 		for(UploadHook hook : uploadHooks)
 			if(!hook.checkUpload(add, update, delete))
 				return;
-		
+
 		final OsmServerWriter server = new OsmServerWriter();
 		final Collection<OsmPrimitive> all = new LinkedList<OsmPrimitive>();
 		all.addAll(add);

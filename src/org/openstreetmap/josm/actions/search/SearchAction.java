@@ -21,6 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public class SearchAction extends JosmAction {
 
@@ -35,8 +36,8 @@ public class SearchAction extends JosmAction {
     private static SearchSetting lastSearch = null;
 
     public SearchAction() {
-        super(tr("Search ..."), "dialogs/search", tr("Search for objects."), KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK,
-                true);
+        super(tr("Search ..."), "dialogs/search", tr("Search for objects."),
+        ShortCut.registerShortCut("system:find", tr("Search..."), KeyEvent.VK_F, ShortCut.GROUP_HOTKEY), true);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -104,9 +105,9 @@ public class SearchAction extends JosmAction {
     }
 
     /**
-     * Adds the search specified by the settings in <code>s</code> to the 
+     * Adds the search specified by the settings in <code>s</code> to the
      * search history and performs the search.
-     * 
+     *
      * @param s
      */
     public static void searchWithHistory(SearchSetting s) {

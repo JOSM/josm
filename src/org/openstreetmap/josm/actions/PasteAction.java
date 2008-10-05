@@ -23,28 +23,28 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public final class PasteAction extends JosmAction {
 
     public PasteAction() {
-    	super(tr("Paste"), "paste",
-			tr("Paste contents of paste buffer."),
-			KeyEvent.VK_V, KeyEvent.CTRL_MASK, true);
-		setEnabled(false);
+    	super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
+			ShortCut.registerShortCut("system:paste", tr("Edit: Paste"), KeyEvent.VK_V, ShortCut.GROUP_MENU), true);
+			setEnabled(false);
     }
 
 	public void actionPerformed(ActionEvent e) {
 		DataSet pasteBuffer = Main.pasteBuffer;
 
-		/* Find the middle of the pasteBuffer area */ 
+		/* Find the middle of the pasteBuffer area */
 		double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
 		for (Node n : pasteBuffer.nodes) {
 			double east = n.eastNorth.east();
 			double north = n.eastNorth.north();
-			if (east > maxEast) { maxEast = east; } 
-			if (east < minEast) { minEast = east; } 
-			if (north > maxNorth) { maxNorth = north; } 
-			if (north < minNorth) { minNorth = north; } 
+			if (east > maxEast) { maxEast = east; }
+			if (east < minEast) { minEast = east; }
+			if (north > maxNorth) { maxNorth = north; }
+			if (north < minNorth) { minNorth = north; }
 		}
 
 		EastNorth mPosition;
@@ -56,10 +56,10 @@ public final class PasteAction extends JosmAction {
 
 		double offsetEast  = mPosition.east() - (maxEast + minEast)/2.0;
 		double offsetNorth = mPosition.north() - (maxNorth + minNorth)/2.0;
-		
-		HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>(); 
+
+		HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>();
 		  /* temporarily maps old nodes to new so we can do a true deep copy */
-		
+
 		/* do the deep copy of the paste buffer contents, leaving the pasteBuffer unchanged */
 		for (Node n : pasteBuffer.nodes) {
 			Node nnew = new Node(n);
@@ -95,7 +95,7 @@ public final class PasteAction extends JosmAction {
 			rnew.members.addAll(members);
 			map.put(r, rnew);
 		}
-		
+
 		/* Now execute the commands to add the dupicated contents of the paste buffer to the map */
 		Collection<OsmPrimitive> osms = map.values();
 		Collection<Command> clist = new LinkedList<Command>();

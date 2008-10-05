@@ -14,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Toggles the autoScale feature of the mapView
@@ -45,7 +46,7 @@ public class AutoScaleAction extends JosmAction {
 
     public AutoScaleAction(String mode) {
         super(tr("Zoom to {0}", tr(mode)), "dialogs/autoscale/" + mode, tr("Zoom the view to {0}.", tr(mode)),
-                AutoScaleAction.getModeShortcut(mode), 0, true);
+				ShortCut.registerShortCut("view:zoom"+mode, tr("View: Zoom to {0}", tr(mode)), getModeShortcut(mode), ShortCut.GROUP_EDIT), true);
         String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;
@@ -78,8 +79,8 @@ public class AutoScaleAction extends JosmAction {
             }
             for (OsmPrimitive osm : sel)
                 osm.visit(v);
-            // increase bbox by 0.001 degrees on each side. this is required 
-            // especially if the bbox contains one single node, but helpful 
+            // increase bbox by 0.001 degrees on each side. this is required
+            // especially if the bbox contains one single node, but helpful
             // in most other cases as well.
             v.enlargeBoundingBox();
         }

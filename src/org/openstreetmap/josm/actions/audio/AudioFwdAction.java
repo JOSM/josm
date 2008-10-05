@@ -10,13 +10,15 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public class AudioFwdAction extends JosmAction {
 
 	private double amount;
-	
+
 	public AudioFwdAction() {
-		super(tr("Forward"), "audio-fwd", tr("Jump forward"), KeyEvent.VK_F7, 0, true);
+		super(tr("Forward"), "audio-fwd", tr("Jump forward"),
+		ShortCut.registerShortCut("audio:forward", tr("Audio: Forward"), KeyEvent.VK_F7, ShortCut.GROUP_DIRECT), true);
 		try {
 			amount = Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
 		} catch (NumberFormatException e) {

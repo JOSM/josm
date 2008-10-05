@@ -7,12 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public final class ZoomOutAction extends JosmAction {
 
 	public ZoomOutAction() {
 		super(tr("Zoom out"), "dialogs/zoomout", tr("Zoom out"),
-		        KeyEvent.VK_MINUS, 0, true);
+		ShortCut.registerShortCut("view:zoomout", tr("View: Zoom out"), KeyEvent.VK_MINUS, ShortCut.GROUP_DIRECT), true);
 		setEnabled(true);
 	}
 

@@ -24,20 +24,22 @@ import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.io.NmeaReader;
 import org.openstreetmap.josm.io.OsmReader;
 import org.xml.sax.SAXException;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Open a file chooser dialog and select an file to import. Then call the gpx-import
  * driver. Finally open an internal frame into the main window with the gpx data shown.
- * 
+ *
  * @author imi
  */
 public class OpenAction extends DiskAccessAction {
-	
+
 	/**
 	 * Create an open action. The name is "Open a file".
 	 */
 	public OpenAction() {
-		super(tr("Open ..."), "open", tr("Open a file."), KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK);
+		super(tr("Open ..."), "open", tr("Open a file."),
+		ShortCut.registerShortCut("system:open", tr("File: Open..."), KeyEvent.VK_O, ShortCut.GROUP_MENU));
 	}
 
 	public void actionPerformed(ActionEvent e) {

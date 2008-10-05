@@ -39,16 +39,18 @@ import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Combines multiple ways into one.
- * 
+ *
  * @author Imi
  */
 public class CombineWayAction extends JosmAction implements SelectionChangedListener {
 
 	public CombineWayAction() {
-		super(tr("Combine Way"), "combineway", tr("Combine several ways into one."), KeyEvent.VK_C, 0, true);
+		super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
+		ShortCut.registerShortCut("tools:combineway", tr("Tool: Combine ways"), KeyEvent.VK_C, ShortCut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 

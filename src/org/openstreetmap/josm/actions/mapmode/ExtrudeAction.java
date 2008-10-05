@@ -29,9 +29,11 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ShortCut;
+
 /**
  * Makes a rectangle from a line, or modifies a rectangle.
- * 
+ *
  * This class currently contains some "sleeping" code copied from DrawAction (move and rotate)
  * which can eventually be removed, but it may also get activated here and removed in DrawAction.
  */
@@ -46,16 +48,16 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 	double xoff;
 	double yoff;
 	double distance;
-	
+
 	/**
 	 * The old cursor before the user pressed the mouse button.
 	 */
 	private Cursor oldCursor;
 	/**
-	 * The current position of the mouse 
+	 * The current position of the mouse
 	 */
 	private Point mousePos;
-	/** 
+	/**
 	 * The position of the mouse cursor when the drag action was initiated.
 	 */
 	private Point initialMousePos;
@@ -71,7 +73,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 	 */
 	public ExtrudeAction(MapFrame mapFrame) {
 		super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
-			KeyEvent.VK_X, mapFrame,
+				ShortCut.registerShortCut("mapmode:extrude", tr("Extrude mode"), KeyEvent.VK_X, ShortCut.GROUP_EDIT),
+			mapFrame,
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Extrude/Extrude");
 		initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
@@ -99,7 +102,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 			oldCursor = null;
 		}
 	}
-	
+
 	@Override public void enterMode() {
 		super.enterMode();
 		Main.map.mapView.addMouseListener(this);
@@ -121,7 +124,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 	 */
 	@Override public void mouseDragged(MouseEvent e) {
 		if (mode == Mode.select) return;
-		
+
 		// do not count anything as a move if it lasts less than 100 milliseconds.
 		if ((mode == Mode.EXTRUDE) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay)) return;
 
@@ -136,7 +139,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 			mousePos = e.getPoint();
 			return;
 		}
-		
+
 		Main.map.mapView.repaint();
 		mousePos = e.getPoint();
 
@@ -146,34 +149,34 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 		if (selectedSegment != null) {
 			Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
 			Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
-			
+
 			EastNorth en1 = n1.eastNorth;
 			EastNorth en2 = n2.eastNorth;
 			if (en1.east() < en2.east()) { en2 = en1; en1 = n2.eastNorth; }
 			EastNorth en3 = mv.getEastNorth(mousePos.x, mousePos.y);
-			
+
 			double u = ((en3.east()-en1.east())*(en2.east()-en1.east()) + (en3.north()-en1.north())*(en2.north()-en1.north()))/en2.distanceSq(en1);
 			// the point on the segment from which the distance to mouse pos is shortest
 			EastNorth base = new EastNorth(en1.east()+u*(en2.east()-en1.east()), en1.north()+u*(en2.north()-en1.north()));
-			
+
 			// the distance, in projection units, between the base point and the mouse cursor
 			double len = base.distance(en3);
-			
+
 			// find out the distance, in metres, between the base point and the mouse cursor
 			distance = Main.proj.eastNorth2latlon(base).greatCircleDistance(Main.proj.eastNorth2latlon(en3));
 			Main.map.statusLine.setDist(distance);
 			updateStatusLine();
-			
+
 			// compute the angle at which the segment is drawn
 			// and use it to compute the x and y offsets for the
-			// corner points. 
+			// corner points.
 			double sin_alpha = (en2.north()-en1.north())/en2.distance(en1);
-			
+
 			// this is a kludge because sometimes extrusion just goes the wrong direction
 			if ((en3.east()>base.east()) ^ (sin_alpha < 0)) len=-len;
 			xoff = sin_alpha * len;
 			yoff = Math.sqrt(1-sin_alpha*sin_alpha) * len;
-			
+
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setColor(selectedColor);
 			g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -182,15 +185,15 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 			Point p2=mv.getPoint(en2);
 			Point p3=mv.getPoint(en1.add(-xoff, -yoff));
 			Point p4=mv.getPoint(en2.add(-xoff, -yoff));
-			
+
 			b.moveTo(p1.x,p1.y); b.lineTo(p3.x, p3.y);
 			b.lineTo(p4.x, p4.y); b.lineTo(p2.x, p2.y);
 			b.lineTo(p1.x,p1.y);
 			g2.draw(b);
-			g2.setStroke(new BasicStroke(1));	
+			g2.setStroke(new BasicStroke(1));
 		}
 	}
-	
+
 	/**
 	 */
 	@Override public void mousePressed(MouseEvent e) {
@@ -200,9 +203,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 		// boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		// boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 		// boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-		
+
 		mouseDownTime = System.currentTimeMillis();
-		
+
 		selectedSegment =
 			Main.map.mapView.getNearestWaySegment(e.getPoint());
 
@@ -241,11 +244,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 			Command c = new SequenceCommand(tr("Extrude Way"), cmds);
 			Main.main.undoRedo.add(c);
 		}
-		
+
 		Main.map.mapView.removeTemporaryLayer(this);
 		mode = null;
 		updateStatusLine();
-		Main.map.mapView.repaint();	
+		Main.map.mapView.repaint();
 	}
 
 	@Override public String getModeHelpText() {

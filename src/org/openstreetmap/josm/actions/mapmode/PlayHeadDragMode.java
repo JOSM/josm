@@ -11,10 +11,11 @@ import java.awt.event.MouseEvent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Singleton marker class to track position of audio.
- * 
+ *
  * @author david.earl
  *
  */
@@ -24,12 +25,13 @@ public class PlayHeadDragMode extends MapMode {
 	private Point mousePos = null;
 	private Point mouseStart = null;
 	private PlayHeadMarker playHeadMarker = null;
-	
+
 	public PlayHeadDragMode(PlayHeadMarker m) {
-		super("play head drag", "playheaddrag", "play head trag", 0, Main.map, Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+		super("play head drag", "playheaddrag", "play head drag", null,
+		Main.map, Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 		playHeadMarker = m;
 	}
-	
+
 	@Override public void enterMode() {
 		super.enterMode();
 		Main.map.mapView.addMouseListener(this);
@@ -73,7 +75,7 @@ public class PlayHeadDragMode extends MapMode {
 		} else {
 			playHeadMarker.synchronize(en);
 		}
-		mousePos = null;	
+		mousePos = null;
 		dragging = false;
 
 	/*

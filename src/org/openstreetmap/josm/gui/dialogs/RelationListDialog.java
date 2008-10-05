@@ -31,11 +31,12 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and
- * delete them. 
- * 
+ * delete them.
+ *
  * We don't have such dialogs for nodes, segments, and ways, becaus those
  * objects are visible on the map and can be selected there. Relations are not.
  *
@@ -54,7 +55,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 	private JList displaylist = new JList(list);
 
 	public RelationListDialog() {
-		super(tr("Relations"), "relationlist", tr("Open a list of all relations."), KeyEvent.VK_R, 150);
+		super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
+		ShortCut.registerShortCut("subwindow:relations", tr("Toggle relations window"), KeyEvent.VK_R, ShortCut.GROUP_LAYER), 150);
 		displaylist.setCellRenderer(new OsmPrimitivRenderer());
 		displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		displaylist.addMouseListener(new MouseAdapter(){
@@ -70,29 +72,29 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 		add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel(new GridLayout(1,4));
-		
+
 		buttonPanel.add(new SideButton(marktr("New"), "addrelation", "Selection", tr("Create a new relation"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// call relation editor with null argument to create new relation
 				new RelationEditor(null).setVisible(true);
 			}
 		}), GBC.std());
-		
+
 		buttonPanel.add(new SideButton(marktr("Select"), "select", "Selection", tr("Select this relation"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// replace selection with the relation from the list
 				Main.ds.setSelected((Relation)displaylist.getSelectedValue());
 			}
 		}), GBC.std());
-		
+
 		buttonPanel.add(new SideButton(marktr("Edit"), "edit", "Selection", tr( "Open an editor for the selected relation"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Relation toEdit = (Relation) displaylist.getSelectedValue();
 				if (toEdit != null)
-					new RelationEditor(toEdit).setVisible(true);				
+					new RelationEditor(toEdit).setVisible(true);
 			}
 		}), GBC.std());
-		
+
 		buttonPanel.add(new SideButton(marktr("Delete"), "delete", "Selection", tr("Delete the selected relation"), new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Relation toDelete = (Relation) displaylist.getSelectedValue();
@@ -110,7 +112,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 		super.setVisible(b);
 		if (b) updateList();
 	}
-	
+
 	public void updateList() {
 		list.setSize(Main.ds.relations.size());
 		int i = 0;
@@ -120,7 +122,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 		}
 		list.setSize(i);
 	}
-	
+
 	public void activeLayerChange(Layer a, Layer b) {
 		if ((a == null || a instanceof OsmDataLayer) && b instanceof OsmDataLayer) {
 			if (a != null) ((OsmDataLayer)a).listenerDataChanged.remove(this);
@@ -129,7 +131,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 			repaint();
 		}
 	}
-	
+
 	public void layerRemoved(Layer a) {
 		if (a instanceof OsmDataLayer) {
 			((OsmDataLayer)a).listenerDataChanged.remove(this);
@@ -139,15 +141,15 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 		if (a instanceof OsmDataLayer) {
 			((OsmDataLayer)a).listenerDataChanged.add(this);
 		}
-	}	
+	}
 	public void dataChanged(OsmDataLayer l) {
 		updateList();
 		repaint();
 	}
-	
+
 	/**
 	 * Returns the currently selected relation, or null.
-	 * 
+	 *
 	 * @return the currently selected relation, or null
 	 */
 	public Relation getCurrentRelation() {
@@ -156,7 +158,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
 	/**
 	 * Adds a selection listener to the relation list.
-	 * 
+	 *
 	 * @param listener the listener to add
 	 */
 	public void addListSelectionListener(ListSelectionListener listener) {
@@ -165,7 +167,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
 	/**
 	 * Removes a selection listener from the relation list.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 */
 	public void removeListSelectionListener(ListSelectionListener listener) {

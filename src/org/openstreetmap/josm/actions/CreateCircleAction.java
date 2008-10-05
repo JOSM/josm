@@ -19,11 +19,14 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Create a new circle from three selected nodes--or a way with 3 nodes. (Useful for roundabouts)
+ *
  * Note: If a way is selected, it is changed. If nodes are selected a new way is created.
  *       So if you've got a way with 3 nodes it makes a difference between running this on the way or the nodes!
+ *
  * BTW: Someone might want to implement projection corrections for this...
  *
  * @author Henry Loenwind, based on much copy&Paste from other Actions.
@@ -31,7 +34,8 @@ import org.openstreetmap.josm.data.osm.Way;
 public final class CreateCircleAction extends JosmAction {
 
 	public CreateCircleAction() {
-		super(tr("Create Circle"), "createcircle", tr("Create a circle from three selected nodes."), KeyEvent.VK_O, KeyEvent.CTRL_MASK, true);
+		super(tr("Create Circle"), "createcircle", tr("Create a circle from three selected nodes."),
+		ShortCut.registerShortCut("tools:createcircle", tr("Tool: Create circle"), KeyEvent.VK_O, ShortCut.GROUP_EDIT), true);
 	}
 
 	private double calcang(double xc, double yc, double x, double y) {

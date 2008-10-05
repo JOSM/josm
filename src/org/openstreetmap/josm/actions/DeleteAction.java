@@ -7,12 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public final class DeleteAction extends JosmAction {
 
 	public DeleteAction() {
 		super(tr("Delete"), "dialogs/delete", tr("Delete selected objects."),
-		        KeyEvent.VK_DELETE, 0, true);
+		ShortCut.registerShortCut("system:delete", tr("Edit: Delete"), KeyEvent.VK_DELETE, ShortCut.GROUP_DIRECT), true);
 		setEnabled(true);
 	}
 

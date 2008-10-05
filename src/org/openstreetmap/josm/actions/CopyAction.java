@@ -23,15 +23,16 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public final class CopyAction extends JosmAction implements SelectionChangedListener {
 
 	private LinkedList<JosmAction> listeners;
-	
+
 	public CopyAction() {
 		super(tr("Copy"), "copy",
 				tr("Copy selected objects to paste buffer."),
-				KeyEvent.VK_C, KeyEvent.CTRL_MASK, true);
+				ShortCut.registerShortCut("system:copy", tr("Edit: Copy"), KeyEvent.VK_C, ShortCut.GROUP_MENU), true);
 		setEnabled(false);
 		DataSet.selListeners.add(this);
 		listeners = new LinkedList<JosmAction>();
@@ -40,12 +41,12 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 	@Override public void addListener(JosmAction a) {
 		listeners.add(a);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		Collection<OsmPrimitive> sel = Main.ds.getSelected();
-		if (sel.isEmpty()) { 
+		if (sel.isEmpty()) {
 			JOptionPane.showMessageDialog(Main.parent,
-					tr("Please select something to copy."));	
+					tr("Please select something to copy."));
 			return;
 		}
 
@@ -54,12 +55,12 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 		final HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>();
 		/* temporarily maps old nodes to new so we can do a true deep copy */
 
-		/* scan the selected objects, mapping them to copies; when copying a way or relation, 
+		/* scan the selected objects, mapping them to copies; when copying a way or relation,
 		 * the copy references the copies of their child objects */
 		new Visitor(){
 			public void visit(Node n) {
-				/* check if already in pasteBuffer - e.g. two ways are selected which share a node; 
-				 * or a way and a node in that way is selected, we'll see it twice, once via the 
+				/* check if already in pasteBuffer - e.g. two ways are selected which share a node;
+				 * or a way and a node in that way is selected, we'll see it twice, once via the
 				 * way and once directly; and so on. */
 				if (map.containsKey(n)) { return; }
 				Node nnew = new Node(n);
@@ -106,7 +107,7 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 
 		Main.pasteBuffer = pasteBuffer;
 		Main.main.menu.paste.setEnabled(true); /* now we have a paste buffer we can make paste available */
-		
+
 		for(JosmAction a : listeners) {
 			a.pasteBufferChanged(Main.pasteBuffer);
 		}

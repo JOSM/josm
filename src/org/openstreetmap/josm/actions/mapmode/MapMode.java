@@ -11,14 +11,15 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * A class implementing MapMode is able to be selected as an mode for map editing.
  * As example scrolling the map is a MapMode, connecting Nodes to new Ways
  * is another.
- * 
+ *
  * MapModes should register/deregister all necessary listeners on the map's view
- * control. 
+ * control.
  */
 abstract public class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
 	private final Cursor cursor;
@@ -27,6 +28,16 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
 	/**
 	 * Constructor for mapmodes without an menu
 	 */
+	public MapMode(String name, String iconName, String tooltip, ShortCut shortCut, MapFrame mapFrame, Cursor cursor) {
+		super(name, "mapmode/"+iconName, tooltip, shortCut, false);
+		this.cursor = cursor;
+		putValue("active", false);
+	}
+
+	/**
+	 * Constructor for mapmodes without an menu
+	 */
+	 @Deprecated
 	public MapMode(String name, String iconName, String tooltip, int keystroke, MapFrame mapFrame, Cursor cursor) {
 		super(name, "mapmode/"+iconName, tooltip, keystroke, 0, false);
 		this.cursor = cursor;
@@ -58,7 +69,7 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
 		Main.map.statusLine.setHelpText(getModeHelpText());
 		Main.map.statusLine.repaint();
 	}
-	
+
 	public String getModeHelpText() {
 		return "";
 	}

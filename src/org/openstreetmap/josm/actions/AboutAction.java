@@ -33,13 +33,14 @@ import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Nice about screen. I guess every application need one these days.. *sigh*
- * 
- * The REVISION resource is read and if present, it shows the revision 
+ *
+ * The REVISION resource is read and if present, it shows the revision
  * information of the jar-file.
- * 
+ *
  * @author imi
  */
 public class AboutAction extends JosmAction {
@@ -64,9 +65,9 @@ public class AboutAction extends JosmAction {
 	static public String getVersion() {
 		return version;
 	}
-	
+
 	public AboutAction() {
-		super(tr("About"), "about",tr("Display the about screen."), KeyEvent.VK_F1, KeyEvent.SHIFT_DOWN_MASK, true);
+		super(tr("About"), "about", tr("Display the about screen."), ShortCut.registerShortCut("system:about", tr("About..."), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

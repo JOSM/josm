@@ -16,39 +16,62 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Moves the selection
- * 
+ *
  * @author Frederik Ramm
  */
 public class MoveAction extends JosmAction {
 
 	public enum Direction { UP, LEFT, RIGHT, DOWN }
 	private Direction myDirection;
-	
+
+	// any better idea?
+	private static Object calltosupermustbefirststatementinconstructor(Direction dir, boolean text) {
+		ShortCut sc;
+		String directiontext;
+		if        (dir == Direction.UP)   {
+			directiontext = tr("up");
+			sc = ShortCut.registerShortCut("core:moveup",    tr("Move objects {0}", directiontext), KeyEvent.VK_UP,    ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+		} else if (dir == Direction.DOWN)  {
+			directiontext = tr("down");
+			sc = ShortCut.registerShortCut("core:movedown",  tr("Move objects {0}", directiontext), KeyEvent.VK_DOWN,  ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+		} else if (dir == Direction.LEFT)  {
+			directiontext = tr("left");
+			sc = ShortCut.registerShortCut("core:moveleft",  tr("Move objects {0}", directiontext), KeyEvent.VK_LEFT,  ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+		} else { //dir == Direction.RIGHT) {
+			directiontext = tr("right");
+			sc = ShortCut.registerShortCut("core:moveright", tr("Move objects {0}", directiontext), KeyEvent.VK_RIGHT, ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+		}
+		if (text) {
+			return directiontext;
+		} else {
+			return sc;
+		}
+	}
+
 	public MoveAction(Direction dir) {
-		super(tr("Move"), null, tr("Moves Objects"), 
-		(dir == Direction.UP) ? KeyEvent.VK_UP : 
-		(dir == Direction.DOWN) ? KeyEvent.VK_DOWN :
-		(dir == Direction.LEFT) ? KeyEvent.VK_LEFT :
-		KeyEvent.VK_RIGHT, 0, true);
+		super(tr("Move {0}", calltosupermustbefirststatementinconstructor(dir, true)), null,
+		      tr("Moves Objects {0}", calltosupermustbefirststatementinconstructor(dir, true)),
+		      (ShortCut)calltosupermustbefirststatementinconstructor(dir, false), true);
 		myDirection = dir;
 	}
 
 	public void actionPerformed(ActionEvent event) {
-		
+
 		// find out how many "real" units the objects have to be moved in order to
 		// achive an 1-pixel movement
-		
+
 		EastNorth en1 = Main.map.mapView.getEastNorth(100, 100);
 		EastNorth en2 = Main.map.mapView.getEastNorth(101, 101);
-		
+
 		double distx = en2.east() - en1.east();
 		double disty = en2.north() - en1.north();
-		
+
 		switch (myDirection) {
-		case UP: 
+		case UP:
 			distx = 0;
 			disty = -disty;
 			break;
@@ -61,10 +84,10 @@ public class MoveAction extends JosmAction {
 		default:
 			disty = 0;
 		}
-		
+
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
-		
+
 		Command c = !Main.main.undoRedo.commands.isEmpty()
 		? Main.main.undoRedo.commands.getLast() : null;
 

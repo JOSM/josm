@@ -28,12 +28,14 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.ServerSidePreferences;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public class MainApplet extends JApplet {
 
 	public static final class UploadPreferencesAction extends JosmAction {
 		public UploadPreferencesAction() {
-			super(tr("Upload Preferences"), "upload-preferences", tr("Upload the current preferences to the server"), KeyEvent.VK_U, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, true);
+			super(tr("Upload Preferences"), "upload-preferences", tr("Upload the current preferences to the server"),
+			ShortCut.registerShortCut("applet:uploadprefs", tr("Upload preferences"), KeyEvent.VK_U, ShortCut.GROUP_HOTKEY), true);
         }
 	    public void actionPerformed(ActionEvent e) {
 	    	((ServerSidePreferences)Main.pref).upload();
@@ -99,7 +101,7 @@ public class MainApplet extends JApplet {
 		Main.preConstructorInit(args);
 		Main.parent = this;
 		new MainCaller().postConstructorProcessCmdLine(args);
-		
+
 		MainMenu m = Main.main.menu; // shortcut
 
 		// remove offending stuff from JOSM (that would break the SecurityManager)

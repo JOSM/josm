@@ -5,8 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 
-
+@Deprecated
 public class ShortCutLabel {
+	@Deprecated
 	public static String name(int shortCut, int modifiers) {
 		if (shortCut == 0 && modifiers == 0)
 			return "";

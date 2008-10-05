@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * History dialog works like follows:
@@ -86,7 +87,8 @@ public class HistoryDialog extends ToggleDialog implements SelectionChangedListe
 	private JLabel notLoaded = new JLabel("<html><i>"+tr("Click Reload to refresh list")+"</i></html>");
 
 	public HistoryDialog() {
-		super(tr("History"), "history", tr("Display the history of all selected items."), KeyEvent.VK_H, 150);
+		super(tr("History"), "history", tr("Display the history of all selected items."),
+		ShortCut.registerShortCut("subwindow:history", tr("Toggle history window"), KeyEvent.VK_H, ShortCut.GROUP_LAYER), 150);
 		historyPane.setVisible(false);
 		notLoaded.setVisible(true);
 		notLoaded.setHorizontalAlignment(JLabel.CENTER);

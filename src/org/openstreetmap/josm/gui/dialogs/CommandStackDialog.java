@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public class CommandStackDialog extends ToggleDialog implements CommandQueueListener {
 
@@ -26,9 +27,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     private JTree tree = new JTree(treeModel);
 
 	public CommandStackDialog(final MapFrame mapFrame) {
-		super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."), KeyEvent.VK_O, 100);
+		super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
+		ShortCut.registerShortCut("subwindow:commandstack", tr("Toggle command stack"), KeyEvent.VK_O, ShortCut.GROUP_LAYER), 100);
 		Main.main.undoRedo.listenerCommands.add(this);
-			
+
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
 		tree.expandRow(0);

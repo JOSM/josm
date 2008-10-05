@@ -12,18 +12,19 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
- * Enable the zoom mode within the MapFrame. 
- * 
- * Holding down the left mouse button select a rectangle with the same aspect 
+ * Enable the zoom mode within the MapFrame.
+ *
+ * Holding down the left mouse button select a rectangle with the same aspect
  * ratio than the current map view.
  * Holding down left and right let the user move the former selected rectangle.
  * Releasing the left button zoom to the selection.
- * 
- * Rectangle selections with either height or width smaller than 3 pixels 
+ *
+ * Rectangle selections with either height or width smaller than 3 pixels
  * are ignored.
- * 
+ *
  * @author imi
  */
 public class ZoomAction extends MapMode implements SelectionEnded {
@@ -44,7 +45,9 @@ public class ZoomAction extends MapMode implements SelectionEnded {
 	 * @param mapFrame The MapFrame, whose zoom mode should be enabled.
 	 */
 	public ZoomAction(MapFrame mapFrame) {
-		super(tr("Zoom"), "zoom", tr("Zoom and move map"), KeyEvent.VK_Z, mapFrame, ImageProvider.getCursor("normal", "zoom"));
+		super(tr("Zoom"), "zoom", tr("Zoom and move map"),
+		ShortCut.registerShortCut("mapmode:zoom", tr("Zoom mode"), KeyEvent.VK_Z, ShortCut.GROUP_EDIT),
+		mapFrame, ImageProvider.getCursor("normal", "zoom"));
 		mv = mapFrame.mapView;
 		selectionManager = new SelectionManager(this, true, mv);
 	}
@@ -69,7 +72,7 @@ public class ZoomAction extends MapMode implements SelectionEnded {
 		super.exitMode();
 		selectionManager.unregister(mv);
 	}
-	
+
 	@Override public String getModeHelpText() {
 		return tr("Zoom by dragging or Ctrl+. or Ctrl+,; move with Ctrl+up,left,down,right; move zoom with right button");
 	}

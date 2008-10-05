@@ -16,6 +16,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Action that opens a connection to the osm server and downloads map data.
@@ -26,16 +27,17 @@ import org.openstreetmap.josm.tools.GBC;
  * @author imi
  */
 public class DownloadAction extends JosmAction {
-	
+
 	public DownloadDialog dialog;
-	
+
 	public DownloadAction() {
-		super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."), KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK, true);
+		super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."),
+		ShortCut.registerShortCut("file:download", tr("File: Download"), KeyEvent.VK_D, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		dialog = new DownloadDialog();
-		
+
 		JPanel downPanel = new JPanel(new GridBagLayout());
 		downPanel.add(dialog, GBC.eol().fill(GBC.BOTH));
 

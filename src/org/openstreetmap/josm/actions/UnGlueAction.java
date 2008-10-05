@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Dupe a node that is used my multiple ways, so each way has its own node.
@@ -43,7 +44,8 @@ public class UnGlueAction extends JosmAction implements SelectionChangedListener
 	 * Create a new SplitWayAction.
 	 */
 	public UnGlueAction() {
-		super(tr("UnGlue Ways"), "unglueways", tr("Duplicate the selected node so each way using it has its own copy."), KeyEvent.VK_G, 0, true);
+		super(tr("UnGlue Ways"), "unglueways", tr("Duplicate the selected node so each way using it has its own copy."),
+		ShortCut.registerShortCut("tools:unglue", tr("Tool: Unglue"), KeyEvent.VK_G, ShortCut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 
@@ -84,14 +86,14 @@ public class UnGlueAction extends JosmAction implements SelectionChangedListener
 	 * out from the selectionChanged listener).
 	 */
 	private boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
-		
+
 		int size = selection.size();
 		if (size < 1 || size > 2)
 			return false;
-		
+
 		selectedNode = null;
 		selectedWay = null;
-		
+
 		for (OsmPrimitive p : selection) {
 			if (p instanceof Node) {
 				selectedNode = (Node) p;
@@ -99,11 +101,11 @@ public class UnGlueAction extends JosmAction implements SelectionChangedListener
 					return size == 1 || selectedWay.nodes.contains(selectedNode);
 			} else if (p instanceof Way) {
 				selectedWay = (Way) p;
-				if (size == 2 && selectedNode != null) 
+				if (size == 2 && selectedNode != null)
 					return selectedWay.nodes.contains(selectedNode);
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -132,7 +134,7 @@ public class UnGlueAction extends JosmAction implements SelectionChangedListener
 
 		return firstway;
 	}
-	
+
 	/**
 	 * see above
 	 */
@@ -142,13 +144,13 @@ public class UnGlueAction extends JosmAction implements SelectionChangedListener
 		List<Node> newNodes = new LinkedList<Node>();
 
 		if (selectedWay == null) {
-			
+
 			boolean firstway = true;
 			// modify all ways containing the nodes
 			for (Way w : Main.ds.ways) {
 				if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
 				if (!w.nodes.contains(selectedNode)) continue;
-	
+
 				firstway = modifyWay(firstway, w, cmds, newNodes);
 			}
 		} else {

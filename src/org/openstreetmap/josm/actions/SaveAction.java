@@ -10,22 +10,24 @@ import java.io.File;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Export the data as an OSM xml file.
- * 
+ *
  * @author imi
  */
 public class SaveAction extends SaveActionBase {
-    
+
 	/**
 	 * Construct the action with "Save" as label.
 	 * @param layer Save this layer.
 	 */
 	public SaveAction(Layer layer) {
-		super(tr("Save"), "save", tr("Save the current data."), KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK, layer);
+		super(tr("Save"), "save", tr("Save the current data."),
+		ShortCut.registerShortCut("system:save", tr("File: Save"), KeyEvent.VK_S, ShortCut.GROUP_MENU), layer);
 	}
-	
+
 	@Override public File getFile(Layer layer) {
 		if (layer instanceof OsmDataLayer) {
 			File f = ((OsmDataLayer)layer).associatedFile;

@@ -51,12 +51,13 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  *
- */ 
+ */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
-		
+
 	private static Node lastUsedNode = null;
 	private double PHI=Math.toRadians(90);
 
@@ -67,21 +68,22 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	private boolean drawHelperLine;
 	private Point mousePos;
 	private Color selectedColor;
-	
+
 	private Node currentBaseNode;
 	private EastNorth currentMouseEastNorth;
-	
+
 	public DrawAction(MapFrame mapFrame) {
 		super(tr("Draw"), "node/autonode", tr("Draw nodes"),
-			KeyEvent.VK_A, mapFrame, getCursor());
+				ShortCut.registerShortCut("mapmode:draw", tr("Draw mode"), KeyEvent.VK_A, ShortCut.GROUP_EDIT),
+				mapFrame, getCursor());
 
 		// Add extra shortcut N
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), tr("Draw"));
-		
+			ShortCut.registerShortCut("mapmode:draw2", tr("Draw mode (2)"), KeyEvent.VK_N, ShortCut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
+
 		//putValue("help", "Action/AddNode/Autnode");
 		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
-		
+
 		drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
 	}
 
@@ -117,7 +119,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		} catch (SecurityException ex) {
 		}
 	}
-	
+
 	/**
 	 * redraw to (possibly) get rid of helper line if selection changes.
 	 */
@@ -143,7 +145,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	 * If user clicked with the left button, add a node at the current mouse
 	 * position.
 	 *
-	 * If in nodeway mode, insert the node into the way. 
+	 * If in nodeway mode, insert the node into the way.
 	 */
 	@Override public void mouseClicked(MouseEvent e) {
 
@@ -159,7 +161,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 		mousePos = e.getPoint();
-		
+
 		Collection<OsmPrimitive> selection = Main.ds.getSelected();
 		Collection<Command> cmds = new LinkedList<Command>();
 
@@ -167,11 +169,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 			replacedWays = new ArrayList<Way>();
 		boolean newNode = false;
 		Node n = null;
-		
+
 		if (!ctrl) {
 			n = Main.map.mapView.getNearestNode(mousePos);
 		}
-		
+
 		if (n != null) {
 			// user clicked on node
 			if (shift || selection.isEmpty()) {
@@ -181,7 +183,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 				Main.ds.setSelected(n);
 				return;
 			}
-			
+
 		} else {
 			// no node found in clicked area
 			n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
@@ -231,22 +233,22 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 				adjustNode(segSet, n);
 			}
 		}
-		
+
 		// This part decides whether or not a "segment" (i.e. a connection) is made to an
 		// existing node.
-		
+
 		// For a connection to be made, the user must either have a node selected (connection
 		// is made to that node), or he must have a way selected *and* one of the endpoints
 		// of that way must be the last used node (connection is made to last used node), or
 		// he must have a way and a node selected (connection is made to the selected node).
-		
+
 		boolean extendedWay = false;
 
 		if (!shift && selection.size() > 0 && selection.size() < 3) {
-			
+
 			Node selectedNode = null;
 			Way selectedWay = null;
-			
+
 			for (OsmPrimitive p : selection) {
 				if (p instanceof Node) {
 					if (selectedNode != null) return;
@@ -256,10 +258,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 					selectedWay = (Way) p;
 				}
 			}
-			
+
 			// the node from which we make a connection
 			Node n0 = null;
-			
+
 			if (selectedNode == null) {
 				if (selectedWay == null) return;
 				if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
@@ -270,17 +272,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 			} else {
 				if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
 					n0 = selectedNode;
-				}			
+				}
 			}
-			
+
 			if (n0 == null || n0 == n) {
 				return; // Don't create zero length way segments.
 			}
 
-			// Ok we know now that we'll insert a line segment, but will it connect to an 
+			// Ok we know now that we'll insert a line segment, but will it connect to an
 			// existing way or make a new way of its own? The "alt" modifier means that the
 			// user wants a new way.
-			
+
 			Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
 			if (way == null) {
 				way = new Way();
@@ -327,13 +329,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		}
 
 		Command c = new SequenceCommand(title, cmds);
-	
+
 		Main.main.undoRedo.add(c);
 		lastUsedNode = n;
 		computeHelperLine();
 		Main.map.mapView.repaint();
 	}
-	
+
 	@Override public void mouseMoved(MouseEvent e) {
 		if(!Main.map.mapView.isDrawableLayer())
 			return;
@@ -341,15 +343,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		// we copy ctrl/alt/shift from the event just in case our global
 		// AWTEvent didn't make it through the security manager. Unclear
 		// if that can ever happen but better be safe.
-		
+
 		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 		mousePos = e.getPoint();
-		
+
 		computeHelperLine();
 	}
-	
+
 	/**
 	 * This method prepares data required for painting the "helper line" from
 	 * the last used position to the mouse cursor. It duplicates some code from
@@ -362,7 +364,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 			currentBaseNode = null;
 			return;
 		}
-		
+
 		double distance = -1;
 		double angle = -1;
 
@@ -380,7 +382,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		if (!ctrl && mousePos != null) {
 			currentMouseNode = Main.map.mapView.getNearestNode(mousePos);
 		}
-		
+
 		if (currentMouseNode != null) {
 			// user clicked on node
 			if (selection.isEmpty()) return;
@@ -390,7 +392,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 			// no node found in clicked area
 			currentMouseEastNorth = Main.map.mapView.getEastNorth(mousePos.x, mousePos.y);
 		}
-		
+
 		for (OsmPrimitive p : selection) {
 			if (p instanceof Node) {
 				if (selectedNode != null) return;
@@ -400,11 +402,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 				selectedWay = (Way) p;
 			}
 		}
-		
+
 		// the node from which we make a connection
 		currentBaseNode = null;
 		Node previousNode = null;
-		
+
 		if (selectedNode == null) {
 			if (selectedWay == null) return;
 			if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
@@ -418,9 +420,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		} else {
 			if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
 				currentBaseNode = selectedNode;
-			}			
+			}
 		}
-		
+
 		if (currentBaseNode == null || currentBaseNode == currentMouseNode) {
 			return; // Don't create zero length way segments.
 		}
@@ -442,7 +444,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
 		Main.map.mapView.repaint();
 	}
-	
+
 	/**
 	 * Repaint on mouse exit so that the helper line goes away.
 	 */
@@ -452,9 +454,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		mousePos = e.getPoint();
 		Main.map.mapView.repaint();
 	}
-	
+
 	/**
-	 * @return If the node is the end of exactly one way, return this. 
+	 * @return If the node is the end of exactly one way, return this.
 	 * 	<code>null</code> otherwise.
 	 */
 	public static Way getWayForNode(Node n) {
@@ -490,27 +492,27 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 	/**
 	 * Adjusts the position of a node to lie on a segment (or a segment
 	 * intersection).
-	 * 
+	 *
 	 * If one or more than two segments are passed, the node is adjusted
 	 * to lie on the first segment that is passed.
-	 * 
+	 *
 	 * If two segments are passed, the node is adjusted to be at their
 	 * intersection.
-	 * 
+	 *
 	 * No action is taken if no segments are passed.
-	 * 
+	 *
 	 * @param segs the segments to use as a reference when adjusting
 	 * @param n the node to adjust
 	 */
 	private static void adjustNode(Collection<Pair<Node,Node>> segs, Node n) {
-		
+
 		switch (segs.size()) {
 		case 0:
 			return;
 		case 2:
 			// algorithm used here is a bit clumsy, anyone's welcome to replace
 			// it by something else. All it does it compute the intersection between
-			// the two segments and adjust the node position. The code doesnt 
+			// the two segments and adjust the node position. The code doesnt
 			Iterator<Pair<Node,Node>> i = segs.iterator();
 			Pair<Node,Node> seg = i.next();
 			EastNorth A = seg.a.eastNorth;
@@ -527,7 +529,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 					det(C.east(), C.north(), D.east(), D.north()), C.north() - D.north())/
 					det(A.east() - B.east(), A.north() - B.north(), C.east() - D.east(), C.north() - D.north())
 			);
-			
+
 			// only adjust to intersection if within 10 pixel of mouse click; otherwise
 			// fall through to default action.
 			// (for semi-parallel lines, intersection might be miles away!)
@@ -535,7 +537,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 				n.eastNorth = intersection;
 				return;
 			}
-		
+
 		default:
 			EastNorth P = n.eastNorth;
 			seg = segs.iterator().next();
@@ -550,32 +552,32 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 				B.north() + q * (A.north() - B.north()));
 		}
 	}
-	
+
 	// helper for adjustNode
 	static double det(double a, double b, double c, double d)
 	{
 		return a * d - b * c;
 	}
-	
+
 	public void paint(Graphics g, MapView mv) {
 
 		// don't draw line if disabled in prefs
 		if (!drawHelperLine) return;
-		
+
 		// sanity checks
 		if (Main.map.mapView == null) return;
 		if (mousePos == null) return;
-		
+
 		// if shift key is held ("no auto-connect"), don't draw a line
 		if (shift) return;
-		
+
 		// don't draw line if we don't know where from or where to
 		if (currentBaseNode == null) return;
 		if (currentMouseEastNorth == null) return;
-		
+
 		// don't draw line if mouse is outside window
 		if (!Main.map.mapView.getBounds().contains(mousePos)) return;
-		
+
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(selectedColor);
 		g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -584,33 +586,33 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 		Point p2=mv.getPoint(currentMouseEastNorth);
 
 		double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
-		
+
 		b.moveTo(p1.x,p1.y); b.lineTo(p2.x, p2.y);
-		
+
 		// if alt key is held ("start new way"), draw a little perpendicular line
 		if (alt) {
 			b.moveTo((int)(p1.x + 8*Math.cos(t+PHI)), (int)(p1.y + 8*Math.sin(t+PHI)));
 			b.lineTo((int)(p1.x + 8*Math.cos(t-PHI)), (int)(p1.y + 8*Math.sin(t-PHI)));
 		}
-		
+
 		g2.draw(b);
-		g2.setStroke(new BasicStroke(1));	
+		g2.setStroke(new BasicStroke(1));
 
 	}
-	
+
 	@Override public String getModeHelpText() {
 		String rv;
-		
+
 		if (currentBaseNode != null && !shift) {
 			if (mouseOnExistingNode) {
 				if (alt && /* FIXME: way exists */true)
 				    rv = tr("Click to create a new way to the existing node.");
-				else	
+				else
 					rv =tr("Click to make a connection to the existing node.");
 			} else {
 				if (alt && /* FIXME: way exists */true)
 				    rv = tr("Click to insert a node and create a new way.");
-				else	
+				else
 					rv = tr("Click to insert a new node and make a connection.");
 			}
 		}

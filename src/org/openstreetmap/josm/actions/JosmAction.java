@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
+import java.awt.event.InputEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -10,43 +11,91 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCutLabel;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Base class helper for all Actions in JOSM. Just to make the life easier.
- * 
+ *
  * destroy() from interface Destroyable is called e.g. for MapModes, when the last layer has
  * been removed and so the mapframe will be destroyed. For other JosmActions, destroy() may never
  * be called (currently).
- * 
+ *
  * @author imi
  */
 abstract public class JosmAction extends AbstractAction implements Destroyable {
 
+	@Deprecated
 	public KeyStroke shortCut;
+	protected ShortCut sc;
 
+	public ShortCut getShortCut() {
+		if (sc == null) {
+			sc = ShortCut.registerShortCut("core:none", "No Shortcut", 0, ShortCut.GROUP_NONE);
+			sc.setAutomatic(); // as this shortcut is shared by all action that don't want to have a shortcut,
+			                   // we shouldn't allow the user to change it...
+		}
+		return sc;
+	}
+
+	@Deprecated
 	public JosmAction(String name, String iconName, String tooltip, int shortCut, int modifier, boolean register) {
 		super(name, iconName == null ? null : ImageProvider.get(iconName));
 		setHelpId();
-		String scl = ShortCutLabel.name(shortCut, modifier);
-		putValue(SHORT_DESCRIPTION, "<html>"+tooltip+" <font size='-2'>"+scl+"</font>"+(scl.equals("")?"":"&nbsp;")+"</html>");
 		if (shortCut != 0) {
-			this.shortCut = KeyStroke.getKeyStroke(shortCut, modifier);
-			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(this.shortCut, name);
+			int group = ShortCut.GROUP_LAYER; //GROUP_NONE;
+			if (((modifier & InputEvent.CTRL_MASK) != 0) || ((modifier & InputEvent.CTRL_DOWN_MASK) != 0)) {
+				group = ShortCut.GROUP_MENU;
+			} else if (modifier == 0) {
+				group = ShortCut.GROUP_EDIT;
+			}
+			sc = ShortCut.registerShortCut("auto:"+name, name, shortCut, group);
+			this.shortCut = sc.getKeyStroke();
+			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
 			Main.contentPane.getActionMap().put(name, this);
 		}
-        putValue("toolbar", iconName);
-        if (register)
-        	Main.toolbar.register(this);
+		putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
+		putValue("toolbar", iconName);
+    if (register)
+    	Main.toolbar.register(this);
+	}
+
+	/**
+	 * The new super for all actions.
+	 *
+	 * Use this super constructor to setup your action. It takes 5 parameters:
+	 *
+	 * name - the action's text as displayed on the menu (if it is added to a menu)
+	 * iconName - the filename of the icon to use
+	 * tooltip - a longer description of the action that will be displayed in the tooltip. Please note
+	 *           that html is not supported for menu action on some platforms
+	 * shortCut - a ready-created shortcut object or null if you don't want a shortcut. But you always
+	 *            do want a shortcut, remember you can alway register it with group=none, so you
+	 *            won't be assigned a shurtcut unless the user configures one. If you pass null here,
+	 *            the user CANNOT configure a shortcut for your action.
+	 * register - register this action for the toolbar preferences?
+	 */
+	public JosmAction(String name, String iconName, String tooltip, ShortCut shortCut, boolean register) {
+		super(name, iconName == null ? null : ImageProvider.get(iconName));
+		setHelpId();
+		sc = shortCut;
+		if (sc != null) {
+			this.shortCut = sc.getKeyStroke();
+			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
+			Main.contentPane.getActionMap().put(name, this);
+		}
+		putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
+		putValue("toolbar", iconName);
+    if (register)
+    	Main.toolbar.register(this);
 	}
 
 	public void destroy() {
 		if (shortCut != null) {
-			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortCut);
-			Main.contentPane.getActionMap().remove(shortCut);
+			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
+			Main.contentPane.getActionMap().remove(sc.getKeyStroke());
 		}
 	}
-	
+
 	public JosmAction() {
 		setHelpId();
 	}
@@ -57,14 +106,14 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 	public void pasteBufferChanged(DataSet newPasteBuffer) {
 		return;
 	}
-	
+
 	/**
 	 * needs to be overridden to be useful
 	 */
 	public void addListener(JosmAction a) {
 		return;
 	}
-	
+
 	private void setHelpId() {
 		String helpId = "Action/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
 		if (helpId.endsWith("Action"))

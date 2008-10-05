@@ -9,17 +9,20 @@ import javax.swing.KeyStroke;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public class UnselectAllAction extends JosmAction {
 
 	public UnselectAllAction() {
 		super(tr("Unselect All"), "unselectall", tr("Unselect all objects."),
-		        KeyEvent.VK_U, 0, true);
+		ShortCut.registerShortCut("edit:unselectall", tr("Edit: Unselect all"), KeyEvent.VK_U, ShortCut.GROUP_EDIT), true);
+		// this is not really GROUP_EDIT, but users really would complain if the yhad to reconfigure because we put
+		// the correct group in
 
 		// Add extra shortcut C-S-a
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-		        KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK
-		                | KeyEvent.SHIFT_DOWN_MASK), tr("Unselect All"));
+		ShortCut.registerShortCut("edit:unselectall2", tr("Edit: Unselect all (2)"), KeyEvent.VK_A, ShortCut.GROUP_MENU).getKeyStroke(),
+		tr("Unselect All"));
 
 		// Add extra shortcut ESCAPE
 		/*
@@ -28,8 +31,8 @@ public class UnselectAllAction extends JosmAction {
 		 * for now this is a reasonable approximation.
 		 */
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-		        KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-		        tr("Unselect All"));
+		ShortCut.registerShortCut("edit:unselectall3", tr("Edit: Unselect all (3)"), KeyEvent.VK_ESCAPE, ShortCut.GROUP_DIRECT).getKeyStroke(),
+		tr("Unselect All"));
 	}
 
 	public void actionPerformed(ActionEvent e) {

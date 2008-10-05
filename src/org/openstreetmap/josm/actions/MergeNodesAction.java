@@ -39,19 +39,21 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.ShortCut;
 
 
 /**
  * Merge two or more nodes into one node.
  * (based on Combine ways)
- * 
+ *
  * @author Matthew Newton
  *
  */
 public class MergeNodesAction extends JosmAction implements SelectionChangedListener {
 
 	public MergeNodesAction() {
-		super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into one."), KeyEvent.VK_M, 0, true);
+		super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
+		ShortCut.registerShortCut("tools:mergenodes", tr("Tool: Merge nodes"), KeyEvent.VK_M, ShortCut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 

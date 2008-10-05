@@ -17,18 +17,20 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Aligns all selected nodes into a straight line (useful for
  * roads that should be straight, but have side roads and
  * therefore need multiple nodes)
- * 
+ *
  * @author Matthew Newton
  */
 public final class AlignInLineAction extends JosmAction {
 
 	public AlignInLineAction() {
-		super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes onto a line."), KeyEvent.VK_L, 0, true);
+		super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes onto a line."),
+		ShortCut.registerShortCut("tools:alignline", tr("Tool: Align in line"), KeyEvent.VK_L, ShortCut.GROUP_EDIT), true);
 	}
 
 	/**
@@ -45,7 +47,7 @@ public final class AlignInLineAction extends JosmAction {
 				nodes.add((Node)osm);
 				itnodes.add((Node)osm);
 			}
-		// special case if no single nodes are selected and exactly one way is: 
+		// special case if no single nodes are selected and exactly one way is:
 		// then use the way's nodes
 		if ((nodes.size() == 0) && (sel.size() == 1))
 			for (OsmPrimitive osm : sel)

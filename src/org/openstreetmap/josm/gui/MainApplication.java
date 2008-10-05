@@ -30,6 +30,11 @@ import org.openstreetmap.josm.tools.BugReportExceptionHandler;
  */
 public class MainApplication extends Main {
 	/**
+	 * Allow subclassing (see JOSM.java)
+	 */
+	public MainApplication() {}
+
+	/**
 	 * Construct an main frame, ready sized and operating. Does not
 	 * display the frame.
 	 */
@@ -64,6 +69,11 @@ public class MainApplication extends Main {
 		/////////////////////////////////////////////////////////////////////////
 
 		Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
+
+		// initialize the plaform hook, and
+		Main.determinePlatformHook();
+		// call the really early hook before we anything else
+		Main.platform.preStartupHook();
 
 		// construct argument table
 		List<String> argList = Arrays.asList(argArray);
@@ -137,12 +147,13 @@ public class MainApplication extends Main {
 			        tr("Activating the updated plugins failed. Check if JOSM has the permission to overwrite the existing ones."),
 			        tr("Plugins"), JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 		// load the early plugins
 		splash.setStatus(tr("Loading early plugins"));
 		Main.loadPlugins(true, language);
 
 		if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
+			// TODO: put in a platformHook for system that have no console by default
 			System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
 					tr("usage")+":\n"+
 					"\tjava -jar josm.jar <option> <option> <option>...\n\n"+
@@ -191,4 +202,5 @@ public class MainApplication extends Main {
 			}
 		});
 	}
+
 }

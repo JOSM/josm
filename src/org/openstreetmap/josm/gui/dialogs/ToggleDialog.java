@@ -26,6 +26,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * This class is a toggle dialog that can be turned on and off. It is attached
@@ -39,8 +40,8 @@ public class ToggleDialog extends JPanel implements Helpful {
 		public final String prefname;
 		public AbstractButton button;
 
-		private ToggleDialogAction(String name, String iconName, String tooltip, int shortCut, int modifier, String prefname) {
-			super(name, iconName, tooltip, shortCut, modifier, false);
+		private ToggleDialogAction(String name, String iconName, String tooltip, ShortCut shortCut, String prefname) {
+			super(name, iconName, tooltip, shortCut, false);
 			this.prefname = prefname;
 		}
 
@@ -61,11 +62,22 @@ public class ToggleDialog extends JPanel implements Helpful {
 	public JPanel parent;
 	private final JPanel titleBar = new JPanel(new GridBagLayout());
 
+	@Deprecated
 	public ToggleDialog(final String name, String iconName, String tooltip, int shortCut, int preferredHeight) {
 		super(new BorderLayout());
 		this.prefName = iconName;
+		ToggleDialogInit(name, iconName, tooltip, ShortCut.registerShortCut("auto:"+name, tooltip, shortCut, ShortCut.GROUP_LAYER), preferredHeight);
+	}
+
+	public ToggleDialog(final String name, String iconName, String tooltip, ShortCut shortCut, int preferredHeight) {
+		super(new BorderLayout());
+		this.prefName = iconName;
+		ToggleDialogInit(name, iconName, tooltip, shortCut, preferredHeight);
+	}
+
+	private void ToggleDialogInit(final String name, String iconName, String tooltip, ShortCut shortCut, int preferredHeight) {
 		setPreferredSize(new Dimension(330,preferredHeight));
-		action = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortCut, KeyEvent.ALT_MASK, iconName);
+		action = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortCut, iconName);
 		String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
 		action.putValue("help", helpId.substring(0, helpId.length()-6));
 		setLayout(new BorderLayout());

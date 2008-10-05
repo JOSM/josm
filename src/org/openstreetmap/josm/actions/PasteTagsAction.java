@@ -19,13 +19,14 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public final class PasteTagsAction extends JosmAction implements SelectionChangedListener {
 
 	public PasteTagsAction(JosmAction copyAction) {
 		super(tr("Paste Tags"), "pastetags",
 			tr("Apply tags of contents of paste buffer to all selected items."),
-			KeyEvent.VK_V, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK, true);
+			ShortCut.registerShortCut("system:pastestyle", tr("Edit: Paste tags"), KeyEvent.VK_V, ShortCut.GROUP_MENU), true);
 		DataSet.selListeners.add(this);
 		copyAction.addListener(this);
 		setEnabled(false);

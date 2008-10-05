@@ -8,11 +8,13 @@ import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public class AudioPrevAction extends JosmAction {
 
 	public AudioPrevAction() {
-		super(tr("Previous Marker"), "audio-prev", tr("Play previous marker."), KeyEvent.VK_F5, 0, true);
+		super(tr("Previous Marker"), "audio-prev", tr("Play previous marker."),
+		ShortCut.registerShortCut("audio:prev", tr("Audio: Previous"), KeyEvent.VK_F5, ShortCut.GROUP_DIRECT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

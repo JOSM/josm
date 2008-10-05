@@ -15,12 +15,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * An action that enables the user to delete nodes and other objects.
  *
- * The user can click on an object, which gets deleted if possible. When Ctrl is 
- * pressed when releasing the button, the objects and all its references are 
+ * The user can click on an object, which gets deleted if possible. When Ctrl is
+ * pressed when releasing the button, the objects and all its references are
  * deleted. The exact definition of "all its references" are in
  * {@link #deleteWithReferences deleteWithReferences}.
  *
@@ -29,7 +30,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * If the user enters the mapmode and any object is selected, all selected
  * objects that can be deleted will.
- * 
+ *
  * @author imi
  */
 public class DeleteAction extends MapMode {
@@ -40,10 +41,10 @@ public class DeleteAction extends MapMode {
 	 */
 	public DeleteAction(MapFrame mapFrame) {
 		super(tr("Delete Mode"),
-				"delete", 
-				tr("Delete nodes or ways."), 
-				KeyEvent.VK_D, 
-				mapFrame, 
+				"delete",
+				tr("Delete nodes or ways."),
+				ShortCut.registerShortCut("mapmode:delete", tr("Delete mode"), KeyEvent.VK_D, ShortCut.GROUP_EDIT),
+				mapFrame,
 				ImageProvider.getCursor("normal", "delete"));
 	}
 
@@ -57,7 +58,7 @@ public class DeleteAction extends MapMode {
 		Main.map.mapView.removeMouseListener(this);
 	}
 
-	
+
 	@Override public void actionPerformed(ActionEvent e) {
 		super.actionPerformed(e);
 		if(!Main.map.mapView.isDrawableLayer())
@@ -96,14 +97,14 @@ public class DeleteAction extends MapMode {
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 		boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-		
+
 		OsmPrimitive sel = Main.map.mapView.getNearestNode(e.getPoint());
 		Command c = null;
 		if (sel == null) {
 			WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
 			if (ws != null) {
 				if (shift) {
-					c = DeleteCommand.deleteWaySegment(ws); 
+					c = DeleteCommand.deleteWaySegment(ws);
 				} else if (ctrl) {
 					c = DeleteCommand.deleteWithReferences(Collections.singleton((OsmPrimitive)ws.way));
 				} else {
@@ -121,7 +122,7 @@ public class DeleteAction extends MapMode {
 
 		Main.map.mapView.repaint();
 	}
-	
+
 	@Override public String getModeHelpText() {
 		return tr("Click to delete. Shift: delete way segment. Alt: don't delete unused nodes when deleting a way. Ctrl: delete referring objects.");
 	}

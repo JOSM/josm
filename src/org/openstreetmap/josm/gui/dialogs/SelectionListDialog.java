@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * A small tool dialog for displaying the current selection. The selection manager
@@ -69,13 +70,14 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     private JMenuItem zoomToElement;
 
     /**
-     * If the selection changed event is triggered with newSelection equals 
-     * this element, the newSelection will not be added to the selection history 
+     * If the selection changed event is triggered with newSelection equals
+     * this element, the newSelection will not be added to the selection history
      */
     private Collection<? extends OsmPrimitive> historyIgnoreSelection = null;
 
     public SelectionListDialog() {
-        super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."), KeyEvent.VK_T, 150);
+        super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."),
+        ShortCut.registerShortCut("subwindow:selection", tr("Toggle selection window"), KeyEvent.VK_T, ShortCut.GROUP_LAYER), 150);
 
         selectionHistory = new LinkedList<Collection<? extends OsmPrimitive>>();
         popupMenu = new JPopupMenu();
@@ -190,7 +192,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     }
 
     /**
-     * Zooms to the element(s) selected in {@link #displaylist} 
+     * Zooms to the element(s) selected in {@link #displaylist}
      */
     public void zoomToSelectedElement() {
         BoundingXYVisitor box = new BoundingXYVisitor();
@@ -247,7 +249,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         if (selectionHistory != null && newSelection.size() > 0 && !newSelection.equals(historyIgnoreSelection)) {
             historyIgnoreSelection = null;
             try {
-                // Check if the newSelection has already been added to the history 
+                // Check if the newSelection has already been added to the history
                 Collection<? extends OsmPrimitive> first = selectionHistory.getFirst();
                 if (first.equals(newSelection))
                     return;
@@ -272,7 +274,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     /**
      * A specialized {@link JMenuItem} for presenting one entry of the selection history
-     *   
+     *
      * @author Jan Peter Stotz
      */
     protected class SelectionMenuItem extends JMenuItem implements ActionListener {
@@ -302,7 +304,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     /**
      * A specialized {@link JMenuItem} for presenting one entry of the search history
-     *   
+     *
      * @author Jan Peter Stotz
      */
     protected class SearchMenuItem extends JMenuItem implements ActionListener {

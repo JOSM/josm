@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.lang.reflect.*;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -25,7 +26,20 @@ public class LafPreference implements PreferenceSetting {
 
 	public void addGui(PreferenceDialog gui) {
 		lafCombo = new JComboBox(UIManager.getInstalledLookAndFeels());
-		
+
+		// let's try to load additional LookAndFeels and put them into the list
+		try {
+			Class Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+			Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
+			// no exception? Then Go!
+			lafCombo.addItem(
+				new UIManager.LookAndFeelInfo(((javax.swing.LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
+			);
+		} catch (Exception ex) {
+			// just ignore, Quaqua may not even be installed...
+			//System.out.println("Failed to load Quaqua: " + ex);
+		}
+
 		String laf = Main.pref.get("laf");
 		for (int i = 0; i < lafCombo.getItemCount(); ++i) {
 			if (((LookAndFeelInfo)lafCombo.getItemAt(i)).getClassName().equals(laf)) {

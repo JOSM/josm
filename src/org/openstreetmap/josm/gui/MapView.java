@@ -25,6 +25,7 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -83,16 +84,16 @@ public class MapView extends NavigatableComponent {
 	 * The layer from the layers list that is currently active.
 	 */
 	private Layer activeLayer;
-	
+
 	/**
 	 * The last event performed by mouse.
 	 */
 	public MouseEvent lastMEvent;
 
 	private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
-	
+
 	private BufferedImage offscreenBuffer;
-	
+
 	/**
 	 * The listener of the active layer changes.
 	 * @deprecated Use Layer.listener instead.
@@ -108,16 +109,27 @@ public class MapView extends NavigatableComponent {
 					new AutoScaleAction("data").actionPerformed(null);
 
 				new MapMover(MapView.this, Main.contentPane);
-				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, java.awt.event.InputEvent.SHIFT_MASK), "UP");
-				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, java.awt.event.InputEvent.SHIFT_MASK), "DOWN");
-				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, java.awt.event.InputEvent.SHIFT_MASK), "LEFT");
-				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, java.awt.event.InputEvent.SHIFT_MASK), "RIGHT");
-
-				Main.contentPane.getActionMap().put("UP", new MoveAction(MoveAction.Direction.UP));
-				Main.contentPane.getActionMap().put("DOWN", new MoveAction(MoveAction.Direction.DOWN));
-				Main.contentPane.getActionMap().put("LEFT", new MoveAction(MoveAction.Direction.LEFT));
-				Main.contentPane.getActionMap().put("RIGHT", new MoveAction(MoveAction.Direction.RIGHT));
-				
+				JosmAction mv;
+				mv = new MoveAction(MoveAction.Direction.UP);
+				if (mv.getShortCut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "UP");
+					Main.contentPane.getActionMap().put("UP", mv);
+				}
+				mv = new MoveAction(MoveAction.Direction.DOWN);
+				if (mv.getShortCut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "DOWN");
+					Main.contentPane.getActionMap().put("DOWN", mv);
+				}
+				mv = new MoveAction(MoveAction.Direction.LEFT);
+				if (mv.getShortCut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "LEFT");
+					Main.contentPane.getActionMap().put("LEFT", mv);
+				}
+				mv = new MoveAction(MoveAction.Direction.RIGHT);
+				if (mv.getShortCut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "RIGHT");
+					Main.contentPane.getActionMap().put("RIGHT", mv);
+				}
 
 				MapSlider zoomSlider = new MapSlider(MapView.this);
 				add(zoomSlider);
@@ -277,7 +289,7 @@ public class MapView extends NavigatableComponent {
 		for (MapViewPaintable mvp : temporaryLayers) {
 			mvp.paint(tempG, this);
 		}
-		
+
 		// draw world borders
 		tempG.setColor(Color.WHITE);
 		Bounds b = new Bounds();
@@ -289,7 +301,7 @@ public class MapView extends NavigatableComponent {
 		int y2 = Math.max(min.y, max.y);
 		if (x1 > 0 || y1 > 0 || x2 < getWidth() || y2 < getHeight())
 			tempG.drawRect(x1, y1, x2-x1+1, y2-y1+1);
-		
+
 		if (playHeadMarker != null)
 			playHeadMarker.paint(tempG, this);
 
@@ -434,12 +446,12 @@ public class MapView extends NavigatableComponent {
 		}
 		return false;
 	}
-	
+
 	public boolean addTemporaryLayer(MapViewPaintable mvp) {
 		if (temporaryLayers.contains(mvp)) return false;
 		return temporaryLayers.add(mvp);
 	}
-	
+
 	public boolean removeTemporaryLayer(MapViewPaintable mvp) {
 		return temporaryLayers.remove(mvp);
 	}

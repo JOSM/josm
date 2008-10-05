@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Aligns all selected nodes within a circle. (Useful for roundabouts)
@@ -28,7 +29,8 @@ import org.openstreetmap.josm.data.osm.Way;
 public final class AlignInCircleAction extends JosmAction {
 
 	public AlignInCircleAction() {
-		super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."), KeyEvent.VK_O, 0, true);
+		super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."),
+		ShortCut.registerShortCut("tools:aligncircle", tr("Tool: Align in circle"), KeyEvent.VK_O, ShortCut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -39,7 +41,7 @@ public final class AlignInCircleAction extends JosmAction {
 			if (osm instanceof Node)
 				nodes.add((Node)osm);
 
-		// special case if no single nodes are selected and exactly one way is: 
+		// special case if no single nodes are selected and exactly one way is:
 		// then use the way's nodes
 		if ((nodes.size() == 0) && (sel.size() == 1))
 			for (OsmPrimitive osm : sel)
@@ -66,7 +68,7 @@ public final class AlignInCircleAction extends JosmAction {
 		// Node "avn" now is central to all selected nodes.
 
 		// Now calculate the average distance to each node from the
-		// centre.  This method is ok as long as distances are short 
+		// centre.  This method is ok as long as distances are short
 		// relative to the distance from the N or S poles.
 		double distances[] = new double[nodes.size()];
 		double avdist = 0, latd, lond;

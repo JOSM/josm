@@ -58,6 +58,11 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.PlatformHook;
+import org.openstreetmap.josm.tools.PlatformHookUnixoid;
+import org.openstreetmap.josm.tools.PlatformHookWindows;
+import org.openstreetmap.josm.tools.PlatformHookOsx;
+import org.openstreetmap.josm.tools.ShortCut;
 
 abstract public class Main {
 	/**
@@ -132,6 +137,14 @@ abstract public class Main {
 	}
 
 	/**
+	 * Platform specific code goes in here.
+	 * Plugins may replace it, however, some hooks will be called before any plugins have been loeaded.
+	 * So if you need to hook into those early ones, split your class and send the one with the early hooks
+	 * to the JOSM team for inclusion.
+	 */
+	public static PlatformHook platform;
+
+	/**
 	 * Set or clear (if passed <code>null</code>) the map.
 	 */
 	public final void setMapFrame(final MapFrame map) {
@@ -177,19 +190,20 @@ abstract public class Main {
 			setMapFrame(null);
 	}
 
-
 	public Main() {
 		main = this;
+//		platform = determinePlatformHook();
+		platform.startupHook();
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.add(new GettingStarted(), BorderLayout.CENTER);
 		menu = new MainMenu();
 
 		undoRedo.listenerCommands.add(redoUndoListener);
-		
+
 		// creating toolbar
 		contentPane.add(toolbar.control, BorderLayout.NORTH);
 
-		contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "Help");
+		contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ShortCut.registerShortCut("system:help", tr("Help"), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT).getKeyStroke(), "Help");
 		contentPane.getActionMap().put("Help", menu.help);
 
 		TaggingPresetPreference.initialize();
@@ -234,7 +248,7 @@ abstract public class Main {
 			if(!lang.equals("en"))
 				plugins.add("lang-"+lang);
 		}
-		
+
 		if (plugins.isEmpty())
 			return;
 		SortedMap<Integer, Collection<PluginInformation>> p = new TreeMap<Integer, Collection<PluginInformation>>();
@@ -249,11 +263,11 @@ abstract public class Main {
 			} else {
 				if (early)
 					System.out.println("Plugin not found: "+pluginName); // do not translate
-				else	
+				else
 					JOptionPane.showMessageDialog(Main.parent, tr("Plugin not found: {0}.", pluginName));
 			}
 		}
-		
+
 		// iterate all plugins and collect all libraries of all plugins:
 		List<URL> allPluginLibraries = new ArrayList<URL>();
 		for (Collection<PluginInformation> c : p.values())
@@ -289,7 +303,7 @@ abstract public class Main {
 					if (remove) {
 						plugins.remove(info.name);
 						String plist = null;
-						for (String pn : plugins) { 
+						for (String pn : plugins) {
 							if (plist==null) plist=""; else plist=plist+",";
 							plist=plist+pn;
 						}
@@ -414,6 +428,7 @@ abstract public class Main {
 	}
 
 	public static boolean breakBecauseUnsavedChanges() {
+		ShortCut.savePrefs();
 		if (map != null) {
 			boolean modified = false;
 			boolean uploadedModified = false;
@@ -470,4 +485,22 @@ abstract public class Main {
 
 		main.menu.open.openFile(new File(s));
 	}
+
+	protected static void determinePlatformHook() {
+		String os = System.getProperty("os.name");
+		if (os == null) {
+			System.err.println("Your operating system has no name, so I'm guessing its some kind of *nix.");
+			platform = new PlatformHookUnixoid();
+		} else if (os.toLowerCase().startsWith("windows")) {
+			platform = new PlatformHookWindows();
+		} else if (os.equals("Linux") || os.equals("Solaris") || os.equals("SunOS") || os.equals("AIX") || os.equals("FreeBSD")) {
+			platform = new PlatformHookUnixoid();
+		} else if (os.toLowerCase().startsWith("mac os x")) {
+			platform = new PlatformHookOsx();
+		} else {
+			System.err.println("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
+			platform = new PlatformHookUnixoid();
+		}
+	}
+
 }

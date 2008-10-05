@@ -12,6 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
@@ -58,6 +59,7 @@ import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.DataSetChecker;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide
@@ -78,23 +80,23 @@ public class MainMenu extends JMenuBar {
 	public final DownloadAction download = new DownloadAction();
 	public final JosmAction upload = new UploadAction();
 	public final JosmAction exit = new ExitAction();
-    
+
 	/* Edit menu */
 	public final UndoAction undo = new UndoAction();
 	public final RedoAction redo = new RedoAction();
 	public final JosmAction copy = new CopyAction();
 	public final JosmAction paste = new PasteAction();
 	public final JosmAction delete = new DeleteAction();
-	public final JosmAction pasteTags = new PasteTagsAction(copy); 
-	public final JosmAction duplicate = new DuplicateAction(); 
+	public final JosmAction pasteTags = new PasteTagsAction(copy);
+	public final JosmAction duplicate = new DuplicateAction();
 	public final JosmAction selectAll = new SelectAllAction();
 	public final JosmAction unselectAll = new UnselectAllAction();
     /* crashes when loading data, if using JosmAction for search */
 	public final JosmAction search = new SearchAction();
 	public final JosmAction preferences = new PreferencesAction();
-        
+
 	/* View menu */
-    
+
 	/* Tools menu */
 	public final JosmAction splitWay = new SplitWayAction();
 	public final JosmAction combineWay = new CombineWayAction();
@@ -120,7 +122,7 @@ public class MainMenu extends JMenuBar {
 	public final HelpAction help = new HelpAction();
 	public final JosmAction about = new AboutAction();
 	public final HistoryInfoAction historyinfo = new HistoryInfoAction();
-	
+
 	public final JMenu fileMenu = new JMenu(tr("File"));
 	public final JMenu editMenu = new JMenu(tr("Edit"));
 	public final JMenu viewMenu = new JMenu(tr("View"));
@@ -128,155 +130,129 @@ public class MainMenu extends JMenuBar {
 	public final JMenu audioMenu = new JMenu(tr("Audio"));
 	public final JMenu presetsMenu = new JMenu(tr("Presets"));
 	public final JMenu helpMenu = new JMenu(tr("Help"));
-        
+
+	/**
+	 * Add a JosmAction to a menu.
+	 *
+	 * This method handles all the shortcut handling.
+	 * It also makes sure that actions that are handled by the
+	 * OS are not duplicated on the menu.
+	 */
+	public static void add(JMenu menu, JosmAction action) {
+		if (!action.getShortCut().getAutomatic()) {
+			JMenuItem menuitem = menu.add(action);
+			KeyStroke ks = action.getShortCut().getKeyStroke();
+			if (ks != null) {
+				menuitem.setAccelerator(ks);
+			}
+		}
+	}
+
+	/**
+	 * Add a menu to the main menu.
+	 *
+	 * This method handles all the shortcut handling.
+	 */
+	public void add(JMenu menu, int mnemonicKey, String shortName) {
+		ShortCut.registerShortCut("menu:"+shortName, shortName+" menu", mnemonicKey, ShortCut.GROUP_MNEMONIC).setMnemonic(menu);
+		add(menu);
+	}
 
 	public MainMenu() {
-        JMenuItem current;
-        
-		fileMenu.setMnemonic('F');
-		current = fileMenu.add(newAction);
-		current.setAccelerator(newAction.shortCut);
-		current = fileMenu.add(open);
-		current.setAccelerator(open.shortCut);
-		fileMenu.addSeparator();
-		current = fileMenu.add(save);
-		current.setAccelerator(save.shortCut);
-		current = fileMenu.add(saveAs);
-		current.setAccelerator(saveAs.shortCut);
-		current = fileMenu.add(gpxExport);
-		current.setAccelerator(gpxExport.shortCut);
-		fileMenu.addSeparator();
-		current = fileMenu.add(download);
-		current.setAccelerator(download.shortCut);
-		current = fileMenu.add(upload);
-		current.setAccelerator(upload.shortCut);
-		fileMenu.addSeparator();
-		current = fileMenu.add(exit);
-		current.setAccelerator(exit.shortCut);
-		add(fileMenu);
+		JMenuItem current;
 
-		editMenu.setMnemonic('E');
-		current = editMenu.add(undo);
-		current.setAccelerator(undo.shortCut);
-		current = editMenu.add(redo);
-		current.setAccelerator(redo.shortCut);
-		editMenu.addSeparator();
-		current = editMenu.add(copy);
-		current.setAccelerator(copy.shortCut);
-		current = editMenu.add(delete);
-		current.setAccelerator(delete.shortCut);
-		current = editMenu.add(paste);
-		current.setAccelerator(paste.shortCut);
-		current = editMenu.add(pasteTags);
-		current.setAccelerator(pasteTags.shortCut);
-		current = editMenu.add(duplicate);
-		current.setAccelerator(duplicate.shortCut);
-		editMenu.addSeparator();
-		current = editMenu.add(selectAll);
-		current.setAccelerator(selectAll.shortCut);
-		current = editMenu.add(unselectAll);
-		current.setAccelerator(unselectAll.shortCut);
-		editMenu.addSeparator();
-		current = editMenu.add(search);
-		current.setAccelerator(search.shortCut);
-		editMenu.addSeparator();
-		current = editMenu.add(preferences);
-		current.setAccelerator(preferences.shortCut);
-		add(editMenu);
-		
-		viewMenu.setMnemonic('V');
-        for (String mode : AutoScaleAction.modes) {
-            JosmAction autoScaleAction = new AutoScaleAction(mode);
-			current = viewMenu.add(autoScaleAction);
-		    current.setAccelerator(autoScaleAction.shortCut);
-        }
-        viewMenu.addSeparator();
-        JosmAction a = new ZoomOutAction();
-		viewMenu.add(a).setAccelerator(a.shortCut);
-		a = new ZoomInAction();
-		viewMenu.add(a).setAccelerator(a.shortCut);
+		add(fileMenu, newAction);
+		add(fileMenu, open);
+		fileMenu.addSeparator();
+		add(fileMenu, save);
+		add(fileMenu, saveAs);
+		add(fileMenu, gpxExport);
+		fileMenu.addSeparator();
+		add(fileMenu, download);
+		add(fileMenu, upload);
+		add(fileMenu, exit);
+		add(fileMenu, KeyEvent.VK_F, "file");
 
+		add(editMenu, undo);
+		add(editMenu, redo);
+		editMenu.addSeparator();
+		add(editMenu, copy);
+		add(editMenu, delete);
+		add(editMenu, paste);
+		add(editMenu, pasteTags);
+		add(editMenu, duplicate);
+		editMenu.addSeparator();
+		add(editMenu, selectAll);
+		add(editMenu, unselectAll);
+		editMenu.addSeparator();
+		add(editMenu, search);
+		editMenu.addSeparator();
+		add(editMenu, preferences);
+		add(editMenu, KeyEvent.VK_E, "edit");
+
+		for (String mode : AutoScaleAction.modes) {
+			JosmAction autoScaleAction = new AutoScaleAction(mode);
+			add(viewMenu, autoScaleAction);
+		}
 		viewMenu.addSeparator();
-
+		add(viewMenu, new ZoomOutAction());
+		add(viewMenu, new ZoomInAction());
+		viewMenu.addSeparator();
 		// TODO move code to an "action" like the others?
-        final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe view"));
+		final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe view"));
 		wireframe.setSelected(Main.pref.getBoolean("draw.wireframe", false));
-        wireframe.setAccelerator(KeyStroke.getKeyStroke("ctrl W"));
-        wireframe.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent ev) {
-        		Main.pref.put("draw.wireframe", wireframe.isSelected());
-        		if (Main.map != null) {
+		wireframe.setAccelerator(ShortCut.registerShortCut("menu:view:wireframe", "Toggle Wireframe view", KeyEvent.VK_W, ShortCut.GROUP_MENU).getKeyStroke());
+		wireframe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				Main.pref.put("draw.wireframe", wireframe.isSelected());
+				if (Main.map != null) {
 					Main.map.mapView.repaint();
 				}
-        	}
-        });
-        viewMenu.add(wireframe);
-        
-		add(viewMenu);
+			}
+		});
+		viewMenu.add(wireframe);
+		add(viewMenu, KeyEvent.VK_V, "view");
 
-		toolsMenu.setMnemonic('T');
-		current = toolsMenu.add(splitWay);
-		current.setAccelerator(splitWay.shortCut);
-		current = toolsMenu.add(combineWay);
-		current.setAccelerator(combineWay.shortCut);
+		add(toolsMenu, splitWay);
+		add(toolsMenu, combineWay);
 		toolsMenu.addSeparator();
-		current = toolsMenu.add(reverseWay);
-		current.setAccelerator(reverseWay.shortCut);
+		add(toolsMenu, reverseWay);
 		toolsMenu.addSeparator();
-		current = toolsMenu.add(alignInCircle);
-		current.setAccelerator(alignInCircle.shortCut);
-		current = toolsMenu.add(alignInLine);
-		current.setAccelerator(alignInLine.shortCut);
-		current = toolsMenu.add(alignInRect);
-		current.setAccelerator(alignInRect.shortCut);
+		add(toolsMenu, alignInCircle);
+		add(toolsMenu, alignInLine);
+		add(toolsMenu, alignInRect);
 		toolsMenu.addSeparator();
-		current = toolsMenu.add(createCircle);
-		current.setAccelerator(createCircle.shortCut);
+		add(toolsMenu, createCircle);
 		toolsMenu.addSeparator();
-		current = toolsMenu.add(mergeNodes);
-		current.setAccelerator(mergeNodes.shortCut);
-		current = toolsMenu.add(joinNodeWay);
-		current.setAccelerator(joinNodeWay.shortCut);
-		current = toolsMenu.add(unglueNodes);
-		current.setAccelerator(unglueNodes.shortCut);
-		add(toolsMenu);
+		add(toolsMenu, mergeNodes);
+		add(toolsMenu, joinNodeWay);
+		add(toolsMenu, unglueNodes);
+		add(toolsMenu, KeyEvent.VK_T, "tools");
 
 		if (! Main.pref.getBoolean("audio.menuinvisible")) {
-			audioMenu.setMnemonic('A');
-			current = audioMenu.add(audioPlayPause);
-			current.setAccelerator(audioPlayPause.shortCut);
-			current = audioMenu.add(audioNext);
-			current.setAccelerator(audioNext.shortCut);
-			current = audioMenu.add(audioPrev);
-			current.setAccelerator(audioPrev.shortCut);
-			current = audioMenu.add(audioFwd);
-			current.setAccelerator(audioFwd.shortCut);
-			current = audioMenu.add(audioBack);
-			current.setAccelerator(audioBack.shortCut);
-			current = audioMenu.add(audioSlower);
-			current.setAccelerator(audioSlower.shortCut);
-			current = audioMenu.add(audioFaster);
-			current.setAccelerator(audioFaster.shortCut);
-			add(audioMenu);
+			add(audioMenu, audioPlayPause);
+			add(audioMenu, audioNext);
+			add(audioMenu, audioPrev);
+			add(audioMenu, audioFwd);
+			add(audioMenu, audioBack);
+			add(audioMenu, audioSlower);
+			add(audioMenu, audioFaster);
+			add(audioMenu, KeyEvent.VK_A, "audio");
 		}
 
-		add(presetsMenu);
-		presetsMenu.setMnemonic('P');
-		
-		helpMenu.setMnemonic('H');
+		add(presetsMenu, KeyEvent.VK_P, "presets");
+
 		JMenuItem check = new JMenuItem("DEBUG: Check Dataset");
 		check.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				DataSetChecker.check();
-            }
+			}
 		});
-		current = helpMenu.add(check);
-		current = helpMenu.add(help);
-		//current.setAccelerator(help.shortCut);
-		current = helpMenu.add(about);
-		current.setAccelerator(about.shortCut);
-		current = helpMenu.add(historyinfo);
-		current.setAccelerator(historyinfo.shortCut);
-		add(helpMenu);
+		helpMenu.add(check);
+		current = helpMenu.add(help); // why is help not a JosmAction?
+		current.setAccelerator(ShortCut.registerShortCut("system:help", tr("Help"), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT).getKeyStroke());
+		add(helpMenu, about);
+		add(helpMenu, historyinfo);
+		add(helpMenu, KeyEvent.VK_H, "help");
     }
 }

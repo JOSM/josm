@@ -11,6 +11,9 @@ import org.openstreetmap.josm.Main;
 
 /**
  * Helper to open platform web browser on different platforms
+ *
+ * This now delegates the real work to a platform specific class.
+ *
  * @author Imi
  */
 public class OpenBrowser {
@@ -29,40 +32,12 @@ public class OpenBrowser {
 			}
 		}
 
-		String os = System.getProperty("os.name");
-		if (os == null)
-			return "unknown operating system";
 		try {
-			if (os != null && os.startsWith("Windows"))
-				windows(url);
-			else if (os.equals("Linux") || os.equals("Solaris") || os.equals("SunOS") || os.equals("AIX") || os.equals("FreeBSD"))
-				linux(url);
-			else if (os.equals("Mac OS") || os.equals("Mac OS X"))
-				mac(url);
-			else
-				return "unknown operating system";
+			Main.platform.openUrl(url);
 		} catch (IOException e) {
 			return e.getMessage();
 		}
 		return null;
 	}
 
-	private static void windows(String url) throws IOException {
-		Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
-	}
-
-	private static void linux(String url) {
-		String[] programs = {"gnome-open", "kfmclient openURL", "firefox"};
-		for (String program : programs) {
-			try {
-				Runtime.getRuntime().exec(program+" "+url);
-				return;
-			} catch (IOException e) {
-            }
-		}
-	}
-
-	private static void mac(String url) throws IOException {
-		Runtime.getRuntime().exec("open " + url);
-	}
 }

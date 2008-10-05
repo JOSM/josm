@@ -21,11 +21,18 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.GpxWriter;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public abstract class SaveActionBase extends DiskAccessAction {
 
 	private Layer layer;
 
+	public SaveActionBase(String name, String iconName, String tooltip, ShortCut shortCut, Layer layer) {
+		super(name, iconName, tooltip, shortCut);
+		this.layer = layer;
+	}
+
+	@Deprecated
 	public SaveActionBase(String name, String iconName, String tooltip, int shortCut, int modifiers, Layer layer) {
 		super(name, iconName, tooltip, shortCut, modifiers);
 		this.layer = layer;
@@ -78,7 +85,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 			return false;
 		}
 		if (!Main.map.conflictDialog.conflicts.isEmpty()) {
-			int answer = JOptionPane.showConfirmDialog(Main.parent, 
+			int answer = JOptionPane.showConfirmDialog(Main.parent,
 					tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"),tr("Conflicts"), JOptionPane.YES_NO_OPTION);
 			if (answer != JOptionPane.YES_OPTION)
 				return false;
@@ -215,9 +222,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
 	/**
 	 * Check the data set if it would be empty on save. It is empty, if it contains
-	 * no objects (after all objects that are created and deleted without being 
+	 * no objects (after all objects that are created and deleted without being
 	 * transfered to the server have been removed).
-	 *  
+	 *
 	 * @return <code>true</code>, if a save result in an empty data set.
 	 */
 	private boolean isDataSetEmpty(OsmDataLayer layer) {

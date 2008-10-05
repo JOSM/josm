@@ -32,10 +32,11 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Splits a way into multiple ways (all identical except for their node list).
- * 
+ *
  * Ways are just split at the selected nodes.  The nodes remain in their
  * original order.  Selected nodes at the end of a way are ignored.
  */
@@ -49,13 +50,14 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 	 * Create a new SplitWayAction.
 	 */
 	public SplitWayAction() {
-		super(tr("Split Way"), "splitway", tr("Split a way at the selected node."), KeyEvent.VK_P, 0, true);
+		super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
+		ShortCut.registerShortCut("tools:splitway", tr("Tool: Split way"), KeyEvent.VK_P, ShortCut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 
 	/**
 	 * Called when the action is executed.
-	 * 
+	 *
 	 * This method performs an expensive check whether the selection clearly defines one
 	 * of the split actions outlined above, and if yes, calls the splitWay method.
 	 */
@@ -84,7 +86,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 				// enties are not considered
 			}
 		};
-		
+
 		for (OsmPrimitive p : selection)
 			p.visit(splitVisitor);
 
@@ -110,7 +112,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 				}
 			}
 			if (wayOccurenceCounter.isEmpty()) {
-				JOptionPane.showMessageDialog(Main.parent, 
+				JOptionPane.showMessageDialog(Main.parent,
 						trn("The selected node is no inner part of any way.",
 								"The selected nodes are no inner part of any way.", selectedNodes.size()));
 				return;
@@ -139,7 +141,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 				nds.remove(n);
 			}
 			if (!nds.isEmpty()) {
-				JOptionPane.showMessageDialog(Main.parent, 
+				JOptionPane.showMessageDialog(Main.parent,
 						trn("The selected way does not contain the selected node.",
 								"The selected way does not contain all the selected nodes.", selectedNodes.size()));
 				return;
@@ -150,13 +152,13 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 		splitWay();
 	}
 
-	/** 
+	/**
 	 * Checks if the selection consists of something we can work with.
 	 * Checks only if the number and type of items selected looks good;
-	 * does not check whether the selected items are really a valid 
+	 * does not check whether the selected items are really a valid
 	 * input for splitting (this would be too expensive to be carried
 	 * out from the selectionChanged listener).
-	 */	
+	 */
 	private boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
 		boolean way = false;
 		boolean node = false;
@@ -229,9 +231,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 		// build a list of commands, and also a new selection list
 		Collection<Command> commandList = new ArrayList<Command>(wayChunks.size());
 		Collection<Way> newSelection = new ArrayList<Way>(wayChunks.size());
-		
+
 		Iterator<List<Node>> chunkIt = wayChunks.iterator();
-		
+
 		// First, change the original way
 		Way changedWay = new Way(selectedWay);
 		changedWay.nodes.clear();

@@ -8,11 +8,11 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Redoes the last command.
- * 
+ *
  * @author imi
  */
 public class RedoAction extends JosmAction {
@@ -21,7 +21,8 @@ public class RedoAction extends JosmAction {
 	 * Construct the action with "Redo" as label.
 	 */
 	public RedoAction() {
-		super(tr("Redo"), "redo", tr("Redo the last undone action."), KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK, true);
+		super(tr("Redo"), "redo", tr("Redo the last undone action."),
+		ShortCut.registerShortCut("system:redo", tr("Edit: Redo"), KeyEvent.VK_Y, ShortCut.GROUP_MENU), true);
 		setEnabled(false);
 	}
 

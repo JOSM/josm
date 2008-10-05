@@ -35,6 +35,8 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ShortCut;
+
 /**
  * Move is an action that can move all kind of OsmPrimitives (except keys for now).
  *
@@ -42,7 +44,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * If an unselected object is under the mouse when dragging, it becomes selected
  * and will be moved.
  * If no object is under the mouse, move all selected objects (if any)
- * 
+ *
  * @author imi
  */
 public class SelectAction extends MapMode implements SelectionEnded {
@@ -64,7 +66,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	private Point mousePos;
 	private SelectionManager selectionManager;
-	
+
 	/**
 	 * The time which needs to pass between click and release before something
 	 * counts as a move, in milliseconds
@@ -83,13 +85,14 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	public SelectAction(MapFrame mapFrame) {
 		super(tr("Select"), "move/move", tr("Select, move and rotate objects"),
-			KeyEvent.VK_S, mapFrame,
+			ShortCut.registerShortCut("mapmode:select", tr("Select mode"), KeyEvent.VK_S, ShortCut.GROUP_EDIT),
+			mapFrame,
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Move/Move");
-		selectionManager = new SelectionManager(this, false, mapFrame.mapView);		
+		selectionManager = new SelectionManager(this, false, mapFrame.mapView);
 		try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {}
 		try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","5")); } catch (NumberFormatException x) {}
-		
+
 	}
 
 	private static Cursor getCursor(String name, String mod, int def) {
@@ -113,7 +116,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			oldCursor = null;
 		}
 	}
-	
+
 	@Override public void enterMode() {
 		super.enterMode();
 		Main.map.mapView.addMouseListener(this);
@@ -152,7 +155,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			mousePos = e.getPoint();
 			return;
 		}
-		
+
 		if (!initialMoveThresholdExceeded) {
 			int dxp = mousePos.x - e.getX();
 			int dyp = mousePos.y - e.getY();
@@ -160,7 +163,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 			if (dp < initialMoveThreshold) return;
 			initialMoveThresholdExceeded = true;
 		}
-		
+
 		EastNorth mouseEN = Main.map.mapView.getEastNorth(e.getX(), e.getY());
 		EastNorth mouseStartEN = Main.map.mapView.getEastNorth(mousePos.x, mousePos.y);
 		double dx = mouseEN.east() - mouseStartEN.east();
@@ -183,9 +186,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		} else {
 			Collection<OsmPrimitive> selection = Main.ds.getSelected();
 			Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
-		
+
 			// when rotating, having only one node makes no sense - quit silently
-			if (mode == Mode.rotate && affectedNodes.size() < 2) 
+			if (mode == Mode.rotate && affectedNodes.size() < 2)
 				return;
 
 			Command c = !Main.main.undoRedo.commands.isEmpty()
@@ -231,7 +234,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		OsmPrimitive osm = c.getNearestNode(p);
 		virtualWay = null;
 		virtualNode = null;
-		
+
 		if (osm == null)
 		{
 			WaySegment nearestWaySeg = c.getNearestWaySegment(p);
@@ -256,7 +259,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 				}
 			}
 		}
-		if (osm == null) 
+		if (osm == null)
 			return Collections.emptySet();
 		return Collections.singleton(osm);
 	}
@@ -264,10 +267,10 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	/**
 	 * Look, whether any object is selected. If not, select the nearest node.
 	 * If there are no nodes in the dataset, do nothing.
-	 * 
+	 *
 	 * If the user did not press the left mouse button, do nothing.
-	 * 
-	 * Also remember the starting position of the movement and change the mouse 
+	 *
+	 * Also remember the starting position of the movement and change the mouse
 	 * cursor to movement.
 	 */
 	@Override public void mousePressed(MouseEvent e) {
@@ -277,7 +280,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
 		// boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 		boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-		
+
 		mouseDownTime = System.currentTimeMillis();
 		didMove = false;
 		initialMoveThresholdExceeded = false;
@@ -376,7 +379,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 		Main.ds.setSelected(curSel);
 		Main.map.mapView.repaint();
 	}
-	
+
 	@Override public String getModeHelpText() {
 		if (mode == Mode.select) {
 			return tr("Release the mouse button to select the objects in the rectangle.");

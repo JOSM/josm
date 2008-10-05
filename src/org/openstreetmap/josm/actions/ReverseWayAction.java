@@ -24,13 +24,13 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.ShortCut;
 
 public final class ReverseWayAction extends JosmAction {
 
 	public ReverseWayAction() {
-		super(tr("Reverse ways"), "wayflip",
-		        tr("Reverse the direction of all selected ways."),
-		        KeyEvent.VK_R, 0, true);
+		super(tr("Reverse ways"), "wayflip", tr("Reverse the direction of all selected ways."),
+		ShortCut.registerShortCut("tools:reverse", tr("Tool: Reverse way"), KeyEvent.VK_R, ShortCut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
