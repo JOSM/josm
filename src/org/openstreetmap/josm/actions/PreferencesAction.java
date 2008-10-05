@@ -41,10 +41,29 @@ public class PreferencesAction extends JosmAction {
 		JDialog dlg = pane.createDialog(Main.parent, tr("Preferences"));
 		dlg.setResizable(true);
 
-		if (dlg.getWidth() > 600)
-			dlg.setSize(600, dlg.getHeight());
-		if (dlg.getHeight() > 600)
-			dlg.setSize(dlg.getWidth(),600);
+//		if (dlg.getWidth() > 600)
+//			dlg.setSize(600, dlg.getHeight());
+//		if (dlg.getHeight() > 600)
+//			dlg.setSize(dlg.getWidth(),600);
+
+		int JOSMWidth = Main.parent.getWidth();
+		int JOSMHeight = Main.parent.getHeight();
+
+		if (JOSMWidth > 2000 && JOSMWidth >  JOSMHeight * 2)
+			// don't center on horizontal span monitor configurations (yes, can be selfish sometimes)
+			JOSMWidth /= 2;
+
+		int targetWidth = JOSMWidth / 2;
+		if (targetWidth < 600) targetWidth = 600;
+		if (targetWidth > 1200) targetWidth = 1200;
+		int targetHeight = (JOSMHeight * 3) / 4;
+		if (targetHeight < 600) targetHeight = 600;
+		if (targetHeight > 1200) targetHeight = 1200;
+
+		int targetX = Main.parent.getX() + JOSMWidth / 2 - targetWidth / 2;
+		int targetY = Main.parent.getY() + JOSMHeight / 2 - targetHeight / 2;
+
+		dlg.setBounds(targetX, targetY, targetWidth, targetHeight);
 
 		dlg.setVisible(true);
 		if (pane.getValue() instanceof Integer && (Integer)pane.getValue() == JOptionPane.OK_OPTION)
