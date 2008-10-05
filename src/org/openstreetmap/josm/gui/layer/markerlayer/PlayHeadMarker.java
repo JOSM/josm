@@ -186,7 +186,7 @@ public class PlayHeadMarker extends Marker {
 		 * layer, even if it is only one at the start of the track) to 
 		 * offset the audio from */ 
 		if (cw != null) {
-			if (recent != null || recent.parentLayer != null) {
+			if (recent != null && recent.parentLayer != null) {
 				for (Marker m : recent.parentLayer.data) {
 					if (m instanceof AudioMarker) {
 						AudioMarker a = (AudioMarker) m;
