@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -103,7 +104,8 @@ public class MapView extends NavigatableComponent {
 			@Override public void componentResized(ComponentEvent e) {
 				removeComponentListener(this);
 
-				new AutoScaleAction("data").actionPerformed(null);
+				if (!zoomToEditLayerBoundingBox())
+					new AutoScaleAction("data").actionPerformed(null);
 
 				new MapMover(MapView.this, Main.contentPane);
 				Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, java.awt.event.InputEvent.SHIFT_MASK), "UP");
@@ -402,6 +404,35 @@ public class MapView extends NavigatableComponent {
 			firePropertyChange("center", oldCenter, center);
 		if (oldScale != scale)
 			firePropertyChange("scale", oldScale, scale);
+	}
+
+	/**
+	 * Tries to zoom to the download boundingbox[es] of the current edit layer
+	 * (aka {@link OsmDataLayer}). If the edit layer has multiple download bounding
+	 * boxes it zooms to a large virtual bounding box containing all smaller ones.
+	 * This implementation can be used for resolving ticket #1461.
+	 *
+	 * @return <code>true</code> if a zoom operation has been performed
+	 * @author Jan Peter Stotz
+	 */
+	public boolean zoomToEditLayerBoundingBox() {
+		// workaround for #1461 (zoom to download bounding box instead of all data)
+		// In case we already have an existing data layer ...
+		Collection<DataSource> dataSources = Main.main.editLayer().data.dataSources;
+		// ... with bounding box[es] of data loaded from OSM or a file...
+		BoundingXYVisitor bbox = new BoundingXYVisitor();
+		for (DataSource ds : dataSources) {
+			if (ds.bounds != null) {
+				bbox.visit(Main.proj.latlon2eastNorth(ds.bounds.max));
+				bbox.visit(Main.proj.latlon2eastNorth(ds.bounds.min));
+			}
+			if (bbox.max != null && bbox.min != null && !bbox.max.equals(bbox.min)) {
+				// ... we zoom to it's bounding box
+				recalculateCenterScale(bbox);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean addTemporaryLayer(MapViewPaintable mvp) {
