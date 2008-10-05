@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,7 @@ import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -77,8 +79,29 @@ public class PluginPreference implements PreferenceSetting {
 	}
 
 	private Map<PluginDescription, Boolean> pluginMap;
-	private Box pluginPanel = Box.createVerticalBox();
 	private JPanel plugin;
+	private class MyBox extends Box {
+		int lastwidth;
+		int offset = 40;
+		public MyBox()
+		{
+			super(BoxLayout.Y_AXIS);
+		}
+		public int myGetWidth()
+		{
+			int w = plugin.getWidth()-offset;
+			if(w <= 0) w = 450;
+			lastwidth = w;
+			return w;
+		}
+		public void paint(Graphics g)
+		{
+			if(lastwidth != plugin.getWidth()-offset)
+				refreshPluginPanel(gui);
+			super.paint(g);
+		}
+	}
+	private MyBox pluginPanel = new MyBox();
 	private PreferenceDialog gui;
 
 	public void addGui(final PreferenceDialog gui) {
@@ -208,6 +231,7 @@ public class PluginPreference implements PreferenceSetting {
 		Collection<PluginDescription> availablePlugins = getAvailablePlugins();
 		pluginMap = new HashMap<PluginDescription, Boolean>();
 		pluginPanel.removeAll();
+		int width = pluginPanel.myGetWidth();
 
 		// the following could probably be done more elegantly?
 		Collection<String> enabledPlugins = null;
@@ -245,7 +269,7 @@ public class PluginPreference implements PreferenceSetting {
 			pluginCheck.setToolTipText(plugin.resource != null ? ""+plugin.resource : tr("Plugin bundled with JOSM"));
 			JLabel label = new JLabel("<html><i>"+(plugin.description==null?tr("no description available"):plugin.description)+"</i></html>");
 			label.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
-			label.setMaximumSize(new Dimension(450,1000));
+			label.setMaximumSize(new Dimension(width,1000));
 			pluginPanel.add(label);
 			pluginPanel.add(Box.createVerticalStrut(5));
 
