@@ -251,19 +251,19 @@ public class prefJPanel extends javax.swing.JPanel {
         editGroupPane.setBorder(javax.swing.BorderFactory.createTitledBorder(tr("Edit Shortcuts")));
         editGroupPane.setLayout(new java.awt.GridLayout(3, 5));
 
-        jLabel1.setText(tr("Primary"));
+        jLabel1.setText(tr("Primary modifier:"));
         editGroupPane.add(jLabel1);
 
         bxPrim1.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         editGroupPane.add(bxPrim1);
 
-        jLabel2.setText(tr("Secondary:"));
+        jLabel2.setText(tr("Secondary modifier:"));
         editGroupPane.add(jLabel2);
 
         bxSec1.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         editGroupPane.add(bxSec1);
 
-        jLabel3.setText(tr("Tertiary:"));
+        jLabel3.setText(tr("Tertiary modifier:"));
         editGroupPane.add(jLabel3);
 
         bxTer1.setModel(new javax.swing.DefaultComboBoxModel(modifList));
@@ -274,19 +274,19 @@ public class prefJPanel extends javax.swing.JPanel {
         menuGroupPane.setBorder(javax.swing.BorderFactory.createTitledBorder(tr("Menu Shortcuts")));
         menuGroupPane.setLayout(new java.awt.GridLayout(3, 5));
 
-        jLabel7.setText(tr("Primary"));
+        jLabel7.setText(tr("Primary modifier:"));
         menuGroupPane.add(jLabel7);
 
         bxPrim2.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         menuGroupPane.add(bxPrim2);
 
-        jLabel8.setText(tr("Secondary:"));
+        jLabel8.setText(tr("Secondary modifier:"));
         menuGroupPane.add(jLabel8);
 
         bxSec2.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         menuGroupPane.add(bxSec2);
 
-        jLabel9.setText(tr("Tertiary:"));
+        jLabel9.setText(tr("Tertiary modifier:"));
         menuGroupPane.add(jLabel9);
 
         bxTer2.setModel(new javax.swing.DefaultComboBoxModel(modifList));
@@ -297,19 +297,19 @@ public class prefJPanel extends javax.swing.JPanel {
         hotkeyGroupPane.setBorder(javax.swing.BorderFactory.createTitledBorder(tr("Hotkey Shortcuts")));
         hotkeyGroupPane.setLayout(new java.awt.GridLayout(3, 5));
 
-        jLabel10.setText(tr("Primary"));
+        jLabel10.setText(tr("Primary modifier:"));
         hotkeyGroupPane.add(jLabel10);
 
         bxPrim3.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         hotkeyGroupPane.add(bxPrim3);
 
-        jLabel11.setText(tr("Secondary:"));
+        jLabel11.setText(tr("Secondary modifier:"));
         hotkeyGroupPane.add(jLabel11);
 
         bxSec3.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         hotkeyGroupPane.add(bxSec3);
 
-        jLabel12.setText(tr("Tertiary:"));
+        jLabel12.setText(tr("Tertiary modifier:"));
         hotkeyGroupPane.add(jLabel12);
 
         bxTer3.setModel(new javax.swing.DefaultComboBoxModel(modifList));
@@ -320,19 +320,19 @@ public class prefJPanel extends javax.swing.JPanel {
         subwindowGroupPane.setBorder(javax.swing.BorderFactory.createTitledBorder(tr("Subwindow Shortcuts")));
         subwindowGroupPane.setLayout(new java.awt.GridLayout(3, 5));
 
-        jLabel13.setText(tr("Primary"));
+        jLabel13.setText(tr("Primary modifier:"));
         subwindowGroupPane.add(jLabel13);
 
         bxPrim4.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         subwindowGroupPane.add(bxPrim4);
 
-        jLabel14.setText(tr("Secondary:"));
+        jLabel14.setText(tr("Secondary modifier:"));
         subwindowGroupPane.add(jLabel14);
 
         bxSec4.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         subwindowGroupPane.add(bxSec4);
 
-        jLabel15.setText(tr("Tertiary:"));
+        jLabel15.setText(tr("Tertiary modifier:"));
         subwindowGroupPane.add(jLabel15);
 
         bxTer4.setModel(new javax.swing.DefaultComboBoxModel(modifList));
