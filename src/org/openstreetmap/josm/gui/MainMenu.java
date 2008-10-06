@@ -58,6 +58,7 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.data.DataSetChecker;
 import org.openstreetmap.josm.tools.ShortCut;
 
@@ -96,6 +97,7 @@ public class MainMenu extends JMenuBar {
 	public final JosmAction preferences = new PreferencesAction();
 
 	/* View menu */
+	public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
 
 	/* Tools menu */
 	public final JosmAction splitWay = new SplitWayAction();
