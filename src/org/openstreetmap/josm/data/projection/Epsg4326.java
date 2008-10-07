@@ -1,6 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.projection;
-
+import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 
@@ -20,7 +20,7 @@ public class Epsg4326 implements Projection {
 	}
 
 	@Override public String toString() {
-		return "EPSG:4326";
+		return tr("EPSG:4326");
 	}
 
     public String getCacheDirectoryName() {

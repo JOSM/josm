@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.projection;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -28,7 +30,7 @@ public class Mercator implements Projection {
 	}
 
 	@Override public String toString() {
-		return "Mercator";
+		return tr("Mercator");
 	}
 
     public String getCacheDirectoryName() {

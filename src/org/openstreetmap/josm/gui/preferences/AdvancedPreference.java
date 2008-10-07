@@ -91,11 +91,11 @@ public class AdvancedPreference implements PreferenceSetting {
 		add.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				JPanel p = new JPanel(new GridBagLayout());
-				p.add(new JLabel("Key"), GBC.std().insets(0,0,5,0));
+				p.add(new JLabel(tr("Key")), GBC.std().insets(0,0,5,0));
 				JTextField key = new JTextField(10);
 				JTextField value = new JTextField(10);
 				p.add(key, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
-				p.add(new JLabel("Value"), GBC.std().insets(0,0,5,0));
+				p.add(new JLabel(tr("Value")), GBC.std().insets(0,0,5,0));
 				p.add(value, GBC.eol().insets(5,0,0,0).fill(GBC.HORIZONTAL));
 				int answer = JOptionPane.showConfirmDialog(gui, p, tr("Enter a new key/value pair"), JOptionPane.OK_CANCEL_OPTION);
 				if (answer == JOptionPane.OK_OPTION)

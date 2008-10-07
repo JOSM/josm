@@ -103,7 +103,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 					URL revUrl = Main.class.getResource("/REVISION");
 					StringBuilder sb = new StringBuilder();
 					if (revUrl == null) {
-						sb.append("Development version. Unknown revision.");
+						sb.append(tr("Development version. Unknown revision."));
 						File f = new File("org/openstreetmap/josm/Main.class");
 						if (!f.exists())
 							f = new File("bin/org/openstreetmap/josm/Main.class");
@@ -131,7 +131,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(sb.toString()), new ClipboardOwner(){
 							public void lostOwnership(Clipboard clipboard, Transferable contents) {}
 						});
-						p.add(new JLabel(tr("The text has already been copied to your clipboard.")), GBC.eop());
+						p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
 					}
 					catch (RuntimeException x) {}
 
