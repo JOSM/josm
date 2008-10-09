@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.InputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -87,11 +88,23 @@ public class OpenAction extends DiskAccessAction {
 		String fn = file.getName();
 		if (ExtensionFileFilter.filters[ExtensionFileFilter.GPX].acceptName(fn)) {
 			GpxReader r = null;
+			InputStream is;
 			if (file.getName().endsWith(".gpx.gz")) {
-				r = new GpxReader(new GZIPInputStream(new FileInputStream(file)), file.getAbsoluteFile().getParentFile());
+				is = new GZIPInputStream(new FileInputStream(file));
 			} else {
-				r = new GpxReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
+				is = new FileInputStream(file);
 			}
+			// Workaround for SAX BOM bug
+			// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6206835
+			if(!((is.read()==0xef)&&(is.read()==0xbb)&&(is.read()==0xbf))) {
+				is.close();
+				if (file.getName().endsWith(".gpx.gz")) {
+					is = new GZIPInputStream(new FileInputStream(file));
+				} else {
+					is = new FileInputStream(file);
+				}
+			}
+			r = new GpxReader(is,file.getAbsoluteFile().getParentFile());
 			r.data.storageFile = file;
 			GpxLayer gpxLayer = new GpxLayer(r.data, fn);
 			Main.main.addLayer(gpxLayer);
