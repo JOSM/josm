@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginDownloader;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * Main window class application.
  *
@@ -43,6 +44,7 @@ public class MainApplication extends Main {
 		mainFrame.setContentPane(contentPane);
 		mainFrame.setJMenuBar(menu);
 		mainFrame.setBounds(bounds);
+		mainFrame.setIconImage(ImageProvider.get("logo.png").getImage());
 		mainFrame.addWindowListener(new WindowAdapter(){
 			@Override public void windowClosing(final WindowEvent arg0) {
 				if (Main.breakBecauseUnsavedChanges())
