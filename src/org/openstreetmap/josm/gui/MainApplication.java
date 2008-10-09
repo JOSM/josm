@@ -93,14 +93,35 @@ public class MainApplication extends Main {
 			args.put(key, v);
 		}
 
-		// Only show the splash screen if we don't print the help and exit
-		SplashScreen splash;
-		if (!argList.contains("--help") && !argList.contains("-?") && !argList.contains("-h")) {
-			splash = new SplashScreen();
-		} else {
-			splash = null;
+		if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
+			// TODO: put in a platformHook for system that have no console by default
+			System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
+					tr("usage")+":\n"+
+					"\tjava -jar josm.jar <option> <option> <option>...\n\n"+
+					tr("options")+":\n"+
+					"\t--help|-?|-h                              "+tr("Show this help")+"\n"+
+					"\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
+					"\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
+					"\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
+					"\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
+					"\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
+					"\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
+					"\t--no-fullscreen                           "+tr("Don't launch in fullscreen mode")+"\n"+
+					"\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
+					"\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
+					tr("examples")+":\n"+
+					"\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
+					"\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
+					"\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
+					"\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n\n"+
+
+					tr("Parameters are read in the order they are specified, so make sure you load\n"+
+					"some data before --selection")+"\n\n"+
+					tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
+			System.exit(0);
 		}
 
+		SplashScreen splash = new SplashScreen();
 		splash.setStatus(tr("Reading preferences"));
 		// get the preferences.
 		final File prefDir = new File(Main.pref.getPreferencesDir());
@@ -153,34 +174,6 @@ public class MainApplication extends Main {
 		// load the early plugins
 		splash.setStatus(tr("Loading early plugins"));
 		Main.loadPlugins(true, language);
-
-		if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
-			// TODO: put in a platformHook for system that have no console by default
-			System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
-					tr("usage")+":\n"+
-					"\tjava -jar josm.jar <option> <option> <option>...\n\n"+
-					tr("options")+":\n"+
-					"\t--help|-?|-h                              "+tr("Show this help")+"\n"+
-					"\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
-					"\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
-					"\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
-					"\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
-					"\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
-					"\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
-					"\t--no-fullscreen                           "+tr("Don't launch in fullscreen mode")+"\n"+
-					"\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
-					"\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
-					tr("examples")+":\n"+
-					"\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
-					"\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
-					"\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
-					"\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n\n"+
-
-					tr("Parameters are read in the order they are specified, so make sure you load\n"+
-					"some data before --selection")+"\n\n"+
-					tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
-			System.exit(0);
-		}
 
 		splash.setStatus(tr("Setting defaults"));
 		preConstructorInit(args);
