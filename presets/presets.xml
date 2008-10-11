@@ -1711,8 +1711,8 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Townhall" icon="presets/townhall.png">
-			<label text="Edit Townhall" />
+		<item name="Town hall" icon="presets/townhall.png">
+			<label text="Edit Town hall" />
 			<key key="amenity" value="townhall" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
@@ -1914,7 +1914,7 @@
 		<item name="Vending machine" icon="presets/vending_machine.png">
 			<label text="Edit a Vending_machine" />
 			<key key="amenity" value="vending_machine" />
-			<combo key="vending" text="Vending pruducts" values="public_transport_tickets,public_transport_plans,parking_tickets,foot,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
+			<combo key="vending" text="Vending products" values="public_transport_tickets,public_transport_plans,parking_tickets,food,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 			<text key="ref" text="Reference number" default="" delete_if_empty="true" />
 			<text key="note" text="Note" default="" delete_if_empty="true" />
@@ -2109,9 +2109,9 @@
 		</item>
 	</group> <!-- Boundaries -->
 
-	<group name="Landuse" icon="presets/landuse.png">
-		<item name="Grave Yard" icon="presets/graveyard.png">
-			<label text="Edit Grave Yard" />
+	<group name="Land use" icon="presets/landuse.png">
+		<item name="Graveyard" icon="presets/graveyard.png">
+			<label text="Edit Graveyard" />
 			<key key="amenity" value="grave_yard" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
