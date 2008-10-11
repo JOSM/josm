@@ -216,9 +216,9 @@ public class OsmWriter extends XmlWriter implements Visitor {
 			out.print(" user='"+XmlWriter.encode(osm.user.name)+"'");
 		}
 		out.print(" visible='"+osm.visible+"'");
-		if( osm.version != -1 )
-			out.print( " old_version='"+osm.version+"'");
-		if( this.changeset != null && this.changeset.id != 0)
-			out.print( " changeset='"+this.changeset.id+"'" );
+		if (osm.version != -1)
+			out.print(" version='"+osm.version+"'");
+		if (this.changeset != null && this.changeset.id != 0)
+			out.print(" changeset='"+this.changeset.id+"'" );
 	}
 }
