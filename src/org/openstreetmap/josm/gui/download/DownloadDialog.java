@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,7 @@ public class DownloadDialog extends JPanel {
 	public final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
 	public final JTabbedPane tabpane = new JTabbedPane();
 	public final JCheckBox newLayer;
+	public final JLabel sizeCheck = new JLabel();
 
 	public double minlon;
 	public double minlat;
@@ -137,6 +140,27 @@ public class DownloadDialog extends JPanel {
 		} catch (Exception ex) {
 			Main.pref.put("download.tab", "0");
 		}
+
+		Font labelFont = sizeCheck.getFont();
+		sizeCheck.setFont(labelFont.deriveFont(Font.PLAIN, labelFont.getSize()));
+		add(sizeCheck, GBC.eop().insets(0,5,5,10));
+	}
+
+	private void updateSizeCheck() {
+		double squareDegrees = (maxlon-minlon)*(maxlat-minlat);
+		double maxBboxSize = 0.25;
+		try {
+			Double.parseDouble(Main.pref.get("osm-server.max-request-area", "0.25"));
+		} catch (NumberFormatException nfe) {
+			maxBboxSize = 0.25;
+		}
+		if (squareDegrees > maxBboxSize) {
+			sizeCheck.setText(tr("Download area too large; will probably be rejected by server"));
+			sizeCheck.setForeground(Color.red);
+		} else {
+			sizeCheck.setText(tr("Download area ok, size probably acceptable to server"));
+			sizeCheck.setForeground(Color.darkGray);
+		}
 	}
 
 	/**
@@ -150,6 +174,7 @@ public class DownloadDialog extends JPanel {
 		for (DownloadSelection s : downloadSelections) {
 			if (s != eventSource) s.boundingBoxChanged(this);
 		}
+		updateSizeCheck();
 	}
 
 	/*

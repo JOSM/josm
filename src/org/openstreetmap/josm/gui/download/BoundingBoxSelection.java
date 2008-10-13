@@ -3,9 +3,7 @@ package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -43,8 +41,6 @@ public class BoundingBoxSelection implements DownloadSelection {
 	final JLabel showUrl = new JLabel();
 	String noteUrl = tr("You can paste an URL here to download the area.");
 	
-	final JLabel sizeCheck = new JLabel();
-	
 	public void addGui(final DownloadDialog gui) {
 
 		JPanel dlg = new JPanel(new GridBagLayout());
@@ -68,7 +64,6 @@ public class BoundingBoxSelection implements DownloadSelection {
 							// ignore
 						}
 						updateUrl(gui);
-						updateSizeCheck(gui);
 					}
 				});
 			}
@@ -92,7 +87,6 @@ public class BoundingBoxSelection implements DownloadSelection {
 					gui.boundingBoxChanged(BoundingBoxSelection.this);
 					updateBboxFields(gui);
 					updateUrl(gui);
-					updateSizeCheck(gui);
 				}
 			}
 		}
@@ -114,9 +108,6 @@ public class BoundingBoxSelection implements DownloadSelection {
 		osmUrl.setLineWrap(true);
 		osmUrl.setBorder(latlon[0].getBorder());
 		
-		Font labelFont = sizeCheck.getFont();
-		sizeCheck.setFont(labelFont.deriveFont(Font.PLAIN, labelFont.getSize()));
-		
 		dlg.add(new JLabel(tr("min lat")), GBC.std().insets(10,20,5,0));
 		dlg.add(latlon[0], GBC.std().insets(0,20,0,0));
 		dlg.add(new JLabel(tr("min lon")), GBC.std().insets(10,20,5,0));
@@ -128,8 +119,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 		
 		dlg.add(new JLabel(tr("URL from www.openstreetmap.org")), GBC.eol().insets(10,20,5,0));
 		dlg.add(osmUrl, GBC.eop().insets(10,0,5,0).fill());
-		dlg.add(showUrl, GBC.eop().insets(10,0,5,20));
-		dlg.add(sizeCheck, GBC.eop().insets(10,0,5,20));
+		dlg.add(showUrl, GBC.eop().insets(10,0,5,5));
 
 		gui.tabpane.addTab(tr("Bounding Box"), dlg);
 	}
@@ -140,7 +130,6 @@ public class BoundingBoxSelection implements DownloadSelection {
 	public void boundingBoxChanged(DownloadDialog gui) {
 		updateBboxFields(gui);
 		updateUrl(gui);
-		updateSizeCheck(gui);
 	}
 	
 	private void updateBboxFields(DownloadDialog gui) {
@@ -167,23 +156,6 @@ public class BoundingBoxSelection implements DownloadSelection {
 			zoom++;
 		}
 		showUrl.setText("http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom);
-	}
-	
-	private void updateSizeCheck(DownloadDialog gui) {
-		double squareDegrees = (gui.maxlon-gui.minlon)*(gui.maxlat-gui.minlat);
-		double maxBboxSize = 0.25;
-		try {
-			Double.parseDouble(Main.pref.get("osm-server.max-request-area", "0.25"));
-		} catch (NumberFormatException nfe) {
-			maxBboxSize = 0.25;
-		}
-		if (squareDegrees > maxBboxSize) {
-			sizeCheck.setText(tr("Download area too large; will probably be rejected by server"));
-			sizeCheck.setForeground(Color.red);
-		} else {
-			sizeCheck.setText(tr("Download area ok, size probably acceptable to server"));
-			sizeCheck.setForeground(Color.darkGray);
-		}
 	}
 	
 	public static Bounds osmurl2bounds(String url) {
