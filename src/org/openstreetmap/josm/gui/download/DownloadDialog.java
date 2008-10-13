@@ -147,14 +147,7 @@ public class DownloadDialog extends JPanel {
 	}
 
 	private void updateSizeCheck() {
-		double squareDegrees = (maxlon-minlon)*(maxlat-minlat);
-		double maxBboxSize = 0.25;
-		try {
-			Double.parseDouble(Main.pref.get("osm-server.max-request-area", "0.25"));
-		} catch (NumberFormatException nfe) {
-			maxBboxSize = 0.25;
-		}
-		if (squareDegrees > maxBboxSize) {
+		if ((maxlon-minlon)*(maxlat-minlat) > Main.pref.getDouble("osm-server.max-request-area", 0.25)) {
 			sizeCheck.setText(tr("Download area too large; will probably be rejected by server"));
 			sizeCheck.setForeground(Color.red);
 		} else {
