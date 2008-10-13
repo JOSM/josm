@@ -5,10 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,7 +31,7 @@ import org.openstreetmap.josm.tools.ShortCut;
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
-public class UserListDialog extends ToggleDialog implements SelectionChangedListener {
+public class UserListDialog extends ToggleDialog implements SelectionChangedListener, MouseListener{
 
 	/**
 	 * The display list.
@@ -54,7 +57,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 		userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		add(new JScrollPane(userTable), BorderLayout.CENTER);
 		selectionChanged(Main.ds.getSelected());
-
+		userTable.addMouseListener(this);
 		DataSet.selListeners.add(this);
 	}
 
@@ -106,5 +109,33 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 			data.addRow(new Object[] { uc.user.name, uc.count, uc.count * 100 / all });
 		}
 	}
+
+    public void mouseClicked(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount()==2) {
+            int index = userTable.getSelectedRow();
+            String userName = (String) data.getValueAt(index, 0);
+            if (userName==null) 
+                return;
+            Collection<OsmPrimitive> selected = Main.ds.getSelected();
+            Collection<OsmPrimitive> byUser = new LinkedList<OsmPrimitive>();
+            for (OsmPrimitive p : selected) {
+                if (p.user!= null && userName.equals(p.user.name))
+                    byUser.add(p);
+            }
+            Main.ds.setSelected(byUser);
+        }
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
 
 }
