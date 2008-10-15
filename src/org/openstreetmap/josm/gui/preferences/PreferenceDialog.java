@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.Main;
@@ -59,7 +60,8 @@ public class PreferenceDialog extends JTabbedPane {
 		descLabel.setFont(descLabel.getFont().deriveFont(Font.ITALIC));
 		p.add(descLabel, GBC.eol().insets(5,0,5,20).fill(GBC.HORIZONTAL));
 
-		addTab(null, ImageProvider.get("preferences", icon), p);
+        JScrollPane sp = new JScrollPane(p);
+		addTab(null, ImageProvider.get("preferences", icon), sp);
 		setToolTipTextAt(getTabCount()-1, "<html>"+desc+"</html>");
 		return p;
 	}
