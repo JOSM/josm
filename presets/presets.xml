@@ -4,7 +4,7 @@
 		http://commons.wikimedia.org/wiki/Image:National_Park_Service_sample_pictographs.svg (various monochrome pictograms)
 		http://www.kde.org
 		http://openclipart.org/media/view/media/clip_art
-		http://www.sjjb.co.uk/mapicons/
+		http://www.sjjb.co.uk/mapicons/ (meanwhile in osm svn)
 		-->
 
 <annotations>
@@ -808,6 +808,13 @@
 			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Preserved" icon="presets/rail_preserved.png">
+			<label text="Edit a Preserved Railway" />
+			<label text=" " />
+			<key key="railway" value="preserved"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Light Rail" icon="presets/rail_light.png">
 			<label text="Edit a Light Rail" />
 			<label text=" " />
@@ -850,13 +857,6 @@
 
 		<separator/>
 
-		<item name="Preserved" icon="presets/rail_preserved.png">
-			<label text="Edit a Preserved Railway" />
-			<label text=" " />
-			<key key="railway" value="preserved"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
 		<item name="Disused Rail" icon="presets/railway.png">
 			<label text="Edit a Disused Railway" />
 			<label text=" " />
@@ -867,9 +867,9 @@
 		<item name="Abandoned Rail" icon="presets/railway.png">
 			<key key="railway" value="abandoned"/>
 		</item>
-	</group> <!-- Railway -->
 
-	<group name="Railway Point" icon="presets/railwaypoint.png">
+		<separator/>
+
 		<item name="Level Crossing" icon="presets/level_crossing.png">
 			<key key="railway" value="level_crossing" />
 		</item>
@@ -881,7 +881,7 @@
 		<item name="Turntable" icon="presets/turntable.png">
 			<key key="railway" value="turntable" />
 		</item>
-	</group> <!-- Railway Point -->
+	</group> <!-- Railway -->
 
 	<separator/>
 
@@ -1095,7 +1095,26 @@
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-		
+
+		<item name="Tram Stop" icon="presets/tram.png">
+			<label text="Edit Tram Stop" />
+			<label text=" " />
+			<key key="railway" value="tram_stop" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Railway Platform" icon="presets/platform_rail.png">
+			<label text="Edit a railway platform" />
+			<key key="railway" value="platform"/>
+			<label text=" " />
+			<text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
+			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+			<check key="area" text="Area" default="off" delete_if_empty="true" />
+		</item>
+
 		<item name="Subway Entrance" icon="styles/standard/transport/underground.png">
 			<label text="Edit Subway Entrance" />
 			<label text=" " />
@@ -1107,17 +1126,9 @@
 			<check key="wheelchair" text="Wheelchair" default="off" delete_if_empty="true" />
 			<check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
 		</item>
-		
-		<item name="Tram Stop" icon="presets/tram.png">
-			<label text="Edit Tram Stop" />
-			<label text=" " />
-			<key key="railway" value="tram_stop" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-		
+
+		<separator/>
+
 		<item name="Bus Station" icon="presets/bus.png">
 			<label text="Edit a Bus Station" />
 			<key key="amenity" value="bus_station" />
@@ -1136,6 +1147,32 @@
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
+
+
+		<item name="Bus Platform" icon="presets/platform_bus.png">
+			<label text="Edit a bus platform" />
+			<key key="highway" value="platform"/>
+			<label text=" " />
+			<text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
+			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+			<check key="area" text="Area" default="off" delete_if_empty="true" />
+		</item>
+
+		<separator/>
+
+		<item name="Airport" icon="presets/plane.png">
+			<label text="Edit an airport" />
+			<key key="aeroway" value="aerodrome" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="ref" text="Reference" default="" delete_if_empty="true" />
+			<text key="iata" text="IATA" default="" delete_if_empty="true" />
+			<text key="icao" text="ICAO" default="" delete_if_empty="true" />
+		</item>
+
+
 	</group> <!-- Public Transport -->
 
 	<separator/>
