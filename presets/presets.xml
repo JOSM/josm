@@ -1084,6 +1084,7 @@
 			<label text="Optional Attributes:" />
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="uic_ref" text="UIC-Reference" default="" delete_if_empty="true" />
 		</item>
 		
 		<item name="Railway Halt" icon="presets/station.png">
