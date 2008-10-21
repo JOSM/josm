@@ -3,32 +3,16 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
-import java.awt.GridBagLayout;
-import java.awt.Dimension;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.table.TableModel;
 import javax.swing.table.AbstractTableModel;
 
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ShortCut;
 import org.openstreetmap.josm.gui.preferences.prefJPanel;
 
 public class ShortcutPreference implements PreferenceSetting {
-
-	private DefaultTableModel model;
 
 	public void addGui(PreferenceDialog gui) {
 		// icon source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
