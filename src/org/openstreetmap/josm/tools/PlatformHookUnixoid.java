@@ -6,10 +6,7 @@ import org.openstreetmap.josm.tools.ShortCut;
 import org.openstreetmap.josm.Main;
 
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
 import java.io.IOException;
-import javax.swing.KeyStroke;
 
 /**
   * see PlatformHook.java

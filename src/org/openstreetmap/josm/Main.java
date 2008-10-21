@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;

@@ -7,8 +7,6 @@ import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.Main;
 
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
 import java.io.IOException;
 
 /**

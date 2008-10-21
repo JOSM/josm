@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.preferences;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.lang.reflect.*;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;

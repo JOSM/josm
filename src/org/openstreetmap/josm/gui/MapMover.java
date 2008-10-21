@@ -14,7 +14,6 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import org.openstreetmap.josm.tools.ShortCut;
 import static org.openstreetmap.josm.tools.I18n.tr;
 

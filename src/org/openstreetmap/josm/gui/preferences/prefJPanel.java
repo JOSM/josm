@@ -5,9 +5,9 @@
  */
 
 package org.openstreetmap.josm.gui.preferences;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.table.TableModel;
-import javax.swing.table.AbstractTableModel;
 import java.awt.event.KeyEvent;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -98,7 +98,6 @@ public class prefJPanel extends javax.swing.JPanel {
     }
 
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         // Did I mention auto-generated? That's the reason we
         // have lots of properties here and not some arrays...

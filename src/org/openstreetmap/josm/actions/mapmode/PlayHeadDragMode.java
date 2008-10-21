@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
-import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * Singleton marker class to track position of audio.

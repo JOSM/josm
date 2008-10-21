@@ -4,9 +4,6 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.tools.ShortCut;
 
-import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
 import java.io.IOException;
 
 /**
