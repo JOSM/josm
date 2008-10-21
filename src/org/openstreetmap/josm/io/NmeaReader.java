@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -139,6 +140,9 @@ public class NmeaReader {
 				String nmea = nmeaAndChecksum[0];
 				// XXX: No need for it: String checksum = nmeaAndChecksum[1];
 				String[] e = nmea.split(",");
+				if (e.length == 0) {
+				    continue;
+				}
 				if (NMEA_TYPE.GPRMC.equals(e[TYPE])) {
 					LatLon latLon = parseLatLon(e);
 					if (latLon == null) {
@@ -156,7 +160,11 @@ public class NmeaReader {
 	}
 
 	private LatLon parseLatLon(String[] e) throws NumberFormatException {
-		String widthNorth = e[GPRMC.WIDTH_NORTH.position].trim();
+	    // If the array looks bogus don't try to get valuable information from it
+	    if (e.length != 13) {
+	        return null;
+	    }
+        String widthNorth = e[GPRMC.WIDTH_NORTH.position].trim();
 		String lengthEast = e[GPRMC.LENGTH_EAST.position].trim();
 		if ("".equals(widthNorth) || "".equals(lengthEast)) {
 			return null;
