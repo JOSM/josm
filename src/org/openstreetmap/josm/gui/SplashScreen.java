@@ -33,11 +33,16 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class SplashScreen extends JWindow {
 
 	private JLabel status;
+	private boolean visible;
 
 	private Runnable closerRunner;
 
-	public SplashScreen() {
+	public SplashScreen(boolean visible) {
 		super();
+		this.visible=visible;
+
+		if (!visible)
+			return;
 
 		// Add a nice border to the main splash screen
 		JPanel contentPane = (JPanel)this.getContentPane();
@@ -125,6 +130,8 @@ public class SplashScreen extends JWindow {
 	 *            the message to be displayed
 	 */
 	public void setStatus(String message) {
+		if (!visible)
+			return;
 		status.setText(message + " ...");
 	}
 
@@ -132,6 +139,8 @@ public class SplashScreen extends JWindow {
 	 * Closes the splashscreen. Call once you are done starting.
 	 */
 	public void closeSplash() {
+		if (!visible)
+			return;
 		try {
 			SwingUtilities.invokeAndWait(closerRunner);
 		} catch (Exception e) {

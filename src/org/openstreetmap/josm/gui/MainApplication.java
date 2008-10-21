@@ -121,8 +121,6 @@ public class MainApplication extends Main {
 			System.exit(0);
 		}
 
-		SplashScreen splash = new SplashScreen();
-		splash.setStatus(tr("Reading preferences"));
 		// get the preferences.
 		final File prefDir = new File(Main.pref.getPreferencesDir());
 		// check if preferences directory has moved (TODO: Update code. Remove this after some time)
@@ -160,6 +158,8 @@ public class MainApplication extends Main {
 			new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
 			Main.pref.save();
 		}
+		SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
+
 		String language = null;
 		if(args.containsKey("language"))
 			language = (String)(args.get("language").toArray()[0]);

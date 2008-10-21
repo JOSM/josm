@@ -29,6 +29,7 @@ public class DrawingPreference implements PreferenceSetting {
 	private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
 	private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
 	private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
+	private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
 
 	public void addGui(PreferenceDialog gui) {
 		// drawRawGpsLines
@@ -131,6 +132,11 @@ public class DrawingPreference implements PreferenceSetting {
 		inactive.setToolTipText(tr("Draw the inactive data layers in a different color."));
 		inactive.setSelected(Main.pref.getBoolean("draw.data.inactive_color", true));
 		gui.display.add(inactive, GBC.eop().insets(20,0,0,0));
+
+		// Show splash screen on startup
+		showSplashScreen.setToolTipText(tr("Show splash screen at startup"));
+		showSplashScreen.setSelected(Main.pref.getBoolean("draw.splashscreen", true));
+		gui.display.add(showSplashScreen, GBC.eop().insets(20, 0, 0, 0));
 	}
 
 	public void ok() {
@@ -147,6 +153,7 @@ public class DrawingPreference implements PreferenceSetting {
 		Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
 		Main.pref.put("draw.data.inactive_color", inactive.isSelected());
 		Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
+		Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
 		int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
 		if(virtualNodes.isSelected()) {	if (vn < 1) vn = 8; }
 		else { vn = 0; }
