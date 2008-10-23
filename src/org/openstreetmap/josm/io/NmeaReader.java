@@ -161,7 +161,8 @@ public class NmeaReader {
 
 	private LatLon parseLatLon(String[] e) throws NumberFormatException {
 	    // If the array looks bogus don't try to get valuable information from it
-	    if (e.length != 13) {
+	    // But remember that the array is stripped of checksum and GPRMC is only 12 elements and split strips empty trailing elements  
+	    if (e.length < 10) {
 	        return null;
 	    }
         String widthNorth = e[GPRMC.WIDTH_NORTH.position].trim();
