@@ -13,7 +13,7 @@ public final class ZoomOutAction extends JosmAction {
 
 	public ZoomOutAction() {
 		super(tr("Zoom out"), "dialogs/zoomout", tr("Zoom out"),
-		ShortCut.registerShortCut("view:zoomout", tr("View: Zoom out"), KeyEvent.VK_MINUS, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("view:zoomout", tr("View: {0}", tr("Zoom out")), KeyEvent.VK_MINUS, ShortCut.GROUP_DIRECT), true);
 		setEnabled(true);
 	}
 

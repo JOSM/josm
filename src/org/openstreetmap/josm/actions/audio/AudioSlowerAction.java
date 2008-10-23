@@ -10,6 +10,6 @@ public class AudioSlowerAction extends AudioFastSlowAction {
 
 	public AudioSlowerAction() {
 		super(tr("Slower"), "audio-slower", tr("Slower Forward"),
-		ShortCut.registerShortCut("audio:slower", tr("Audio: Slower"), KeyEvent.VK_F4, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("audio:slower", tr("Audio: {0}", tr("Slower")), KeyEvent.VK_F4, ShortCut.GROUP_DIRECT), true);
 	}
 }

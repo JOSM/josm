@@ -46,7 +46,7 @@ public class AutoScaleAction extends JosmAction {
 
     public AutoScaleAction(String mode) {
         super(tr("Zoom to {0}", tr(mode)), "dialogs/autoscale/" + mode, tr("Zoom the view to {0}.", tr(mode)),
-				ShortCut.registerShortCut("view:zoom"+mode, tr("View: Zoom to {0}", tr(mode)), getModeShortcut(mode), ShortCut.GROUP_EDIT), true);
+				ShortCut.registerShortCut("view:zoom"+mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))), getModeShortcut(mode), ShortCut.GROUP_EDIT), true);
         String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;

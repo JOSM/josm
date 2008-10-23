@@ -19,7 +19,7 @@ public class HistoryInfoAction extends JosmAction {
 
 	public HistoryInfoAction() {
 		super(tr("OSM History Information"), "about",tr("Display history information about OSM ways or nodes."),
-		ShortCut.registerShortCut("core:history", tr("Display history"), KeyEvent.VK_H, ShortCut.GROUP_HOTKEY), true);
+		ShortCut.registerShortCut("core:history", tr("OSM History Information"), KeyEvent.VK_H, ShortCut.GROUP_HOTKEY), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

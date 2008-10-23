@@ -18,7 +18,7 @@ public class AudioFwdAction extends JosmAction {
 
 	public AudioFwdAction() {
 		super(tr("Forward"), "audio-fwd", tr("Jump forward"),
-		ShortCut.registerShortCut("audio:forward", tr("Audio: Forward"), KeyEvent.VK_F7, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("audio:forward", tr("Audio: {0}", tr("Forward")), KeyEvent.VK_F7, ShortCut.GROUP_DIRECT), true);
 		try {
 			amount = Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
 		} catch (NumberFormatException e) {

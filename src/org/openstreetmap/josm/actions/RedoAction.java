@@ -21,7 +21,7 @@ public class RedoAction extends JosmAction {
 	 */
 	public RedoAction() {
 		super(tr("Redo"), "redo", tr("Redo the last undone action."),
-		ShortCut.registerShortCut("system:redo", tr("Edit: Redo"), KeyEvent.VK_Y, ShortCut.GROUP_MENU), true);
+		ShortCut.registerShortCut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, ShortCut.GROUP_MENU), true);
 		setEnabled(false);
 	}
 

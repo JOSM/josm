@@ -156,7 +156,7 @@ public class MainMenu extends JMenuBar {
 	 * This method handles all the shortcut handling.
 	 */
 	public void add(JMenu menu, int mnemonicKey, String shortName) {
-		ShortCut.registerShortCut("menu:"+shortName, shortName+" menu", mnemonicKey, ShortCut.GROUP_MNEMONIC).setMnemonic(menu);
+		ShortCut.registerShortCut("menu:"+shortName, tr("Menu: {0}", menu.getText()), mnemonicKey, ShortCut.GROUP_MNEMONIC).setMnemonic(menu);
 		add(menu);
 	}
 

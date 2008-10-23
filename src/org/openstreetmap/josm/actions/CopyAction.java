@@ -32,7 +32,7 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 	public CopyAction() {
 		super(tr("Copy"), "copy",
 				tr("Copy selected objects to paste buffer."),
-				ShortCut.registerShortCut("system:copy", tr("Edit: Copy"), KeyEvent.VK_C, ShortCut.GROUP_MENU), true);
+				ShortCut.registerShortCut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, ShortCut.GROUP_MENU), true);
 		setEnabled(false);
 		DataSet.selListeners.add(this);
 		listeners = new LinkedList<JosmAction>();

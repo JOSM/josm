@@ -29,7 +29,7 @@ public final class ReverseWayAction extends JosmAction {
 
 	public ReverseWayAction() {
 		super(tr("Reverse ways"), "wayflip", tr("Reverse the direction of all selected ways."),
-		ShortCut.registerShortCut("tools:reverse", tr("Tool: Reverse way"), KeyEvent.VK_R, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:reverse", tr("Tool: {0}", tr("Reverse ways")), KeyEvent.VK_R, ShortCut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

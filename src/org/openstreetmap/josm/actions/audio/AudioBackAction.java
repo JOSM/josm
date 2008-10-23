@@ -18,7 +18,7 @@ public class AudioBackAction extends JosmAction {
 
 	public AudioBackAction() {
 		super(tr("Back"), "audio-back", tr("Jump back."),
-		ShortCut.registerShortCut("audio:back", tr("Audio: Back"), KeyEvent.VK_F6, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("audio:back", tr("Audio: {0}", tr("Back")), KeyEvent.VK_F6, ShortCut.GROUP_DIRECT), true);
 		try {
 			amount = - Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
 		} catch (NumberFormatException e) {

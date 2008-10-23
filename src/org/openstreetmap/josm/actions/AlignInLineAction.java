@@ -30,7 +30,7 @@ public final class AlignInLineAction extends JosmAction {
 
 	public AlignInLineAction() {
 		super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes onto a line."),
-		ShortCut.registerShortCut("tools:alignline", tr("Tool: Align in line"), KeyEvent.VK_L, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, ShortCut.GROUP_EDIT), true);
 	}
 
 	/**

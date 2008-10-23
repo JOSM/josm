@@ -50,7 +50,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 
 	public CombineWayAction() {
 		super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
-		ShortCut.registerShortCut("tools:combineway", tr("Tool: Combine ways"), KeyEvent.VK_C, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, ShortCut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 

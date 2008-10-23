@@ -13,7 +13,7 @@ public final class ZoomInAction extends JosmAction {
 
 	public ZoomInAction() {
 		super(tr("Zoom in"), "dialogs/zoomin", tr("Zoom in"),
-		ShortCut.registerShortCut("view:zoomin", tr("View: Zoom in"), KeyEvent.VK_PLUS, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("view:zoomin", tr("View: {0}", tr("Zoom in")), KeyEvent.VK_PLUS, ShortCut.GROUP_DIRECT), true);
 		setEnabled(true);
 	}
 

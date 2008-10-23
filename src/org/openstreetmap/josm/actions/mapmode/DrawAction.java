@@ -73,12 +73,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
 	public DrawAction(MapFrame mapFrame) {
 		super(tr("Draw"), "node/autonode", tr("Draw nodes"),
-				ShortCut.registerShortCut("mapmode:draw", tr("Draw mode"), KeyEvent.VK_A, ShortCut.GROUP_EDIT),
+				ShortCut.registerShortCut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, ShortCut.GROUP_EDIT),
 				mapFrame, getCursor());
 
 		// Add extra shortcut N
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			ShortCut.registerShortCut("mapmode:draw2", tr("Draw mode (2)"), KeyEvent.VK_N, ShortCut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
+			ShortCut.registerShortCut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, ShortCut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
 
 		//putValue("help", "Action/AddNode/Autnode");
 		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);

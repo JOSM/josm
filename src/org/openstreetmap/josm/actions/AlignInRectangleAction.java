@@ -41,7 +41,7 @@ public final class AlignInRectangleAction extends JosmAction {
 
 	public AlignInRectangleAction() {
 		super(tr("Align Nodes in Rectangle"), "alignrect", tr("Move the selected nodes into a rectangle."),
-		ShortCut.registerShortCut("tools:alignrect", tr("Tool: Align in rectangle"), KeyEvent.VK_Q, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:alignrect", tr("Tool: {0}", tr("Align Nodes in Rectangle")), KeyEvent.VK_Q, ShortCut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

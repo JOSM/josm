@@ -29,7 +29,7 @@ public final class PasteAction extends JosmAction {
 
     public PasteAction() {
     	super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
-			ShortCut.registerShortCut("system:paste", tr("Edit: Paste"), KeyEvent.VK_V, ShortCut.GROUP_MENU), true);
+			ShortCut.registerShortCut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, ShortCut.GROUP_MENU), true);
 			setEnabled(false);
     }
 

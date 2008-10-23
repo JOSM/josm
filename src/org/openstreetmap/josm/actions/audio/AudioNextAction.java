@@ -14,7 +14,7 @@ public class AudioNextAction extends JosmAction {
 
 	public AudioNextAction() {
 		super(tr("Next Marker"), "audio-next", tr("Play next marker."),
-		ShortCut.registerShortCut("audio:next", tr("Audio: Next"), KeyEvent.VK_F8, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("audio:next", tr("Audio: {0}", tr("Next Marker")), KeyEvent.VK_F8, ShortCut.GROUP_DIRECT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

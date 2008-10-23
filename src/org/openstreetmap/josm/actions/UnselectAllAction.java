@@ -14,13 +14,13 @@ public class UnselectAllAction extends JosmAction {
 
 	public UnselectAllAction() {
 		super(tr("Unselect All"), "unselectall", tr("Unselect all objects."),
-		ShortCut.registerShortCut("edit:unselectall", tr("Edit: Unselect all"), KeyEvent.VK_U, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("edit:unselectall", tr("Edit: {0}", tr("Unselect All")), KeyEvent.VK_U, ShortCut.GROUP_EDIT), true);
 		// this is not really GROUP_EDIT, but users really would complain if the yhad to reconfigure because we put
 		// the correct group in
 
 		// Add extra shortcut C-S-a
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-		ShortCut.registerShortCut("edit:unselectall2", tr("Edit: Unselect all (2)"),
+		ShortCut.registerShortCut("edit:unselectallfocus", tr("Edit: {0}", tr("Unselect All (Focus)")),
 		KeyEvent.VK_A, ShortCut.GROUP_MENU, ShortCut.SHIFT_DEFAULT).getKeyStroke(),
 		tr("Unselect All"));
 
@@ -31,7 +31,8 @@ public class UnselectAllAction extends JosmAction {
 		 * for now this is a reasonable approximation.
 		 */
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-		ShortCut.registerShortCut("edit:unselectall3", tr("Edit: Unselect all (3)"), KeyEvent.VK_ESCAPE, ShortCut.GROUP_DIRECT).getKeyStroke(),
+		ShortCut.registerShortCut("edit:unselectallescape", tr("Edit: {0}", tr("Unselect All (Escape)")),
+		KeyEvent.VK_ESCAPE, ShortCut.GROUP_DIRECT).getKeyStroke(),
 		tr("Unselect All"));
 	}
 

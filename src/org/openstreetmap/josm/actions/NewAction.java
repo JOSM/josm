@@ -15,7 +15,7 @@ public class NewAction extends JosmAction {
 
 	public NewAction() {
 		super(tr("New"), "new", tr("Create a new map."),
-		ShortCut.registerShortCut("system:new", tr("File: New"), KeyEvent.VK_N, ShortCut.GROUP_MENU), true);
+		ShortCut.registerShortCut("system:new", tr("File: {0}", tr("New")), KeyEvent.VK_N, ShortCut.GROUP_MENU), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

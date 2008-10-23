@@ -43,7 +43,7 @@ public class DeleteAction extends MapMode {
 		super(tr("Delete Mode"),
 				"delete",
 				tr("Delete nodes or ways."),
-				ShortCut.registerShortCut("mapmode:delete", tr("Delete mode"), KeyEvent.VK_D, ShortCut.GROUP_EDIT),
+				ShortCut.registerShortCut("mapmode:delete", tr("Mode: Delete"), KeyEvent.VK_D, ShortCut.GROUP_EDIT),
 				mapFrame,
 				ImageProvider.getCursor("normal", "delete"));
 	}

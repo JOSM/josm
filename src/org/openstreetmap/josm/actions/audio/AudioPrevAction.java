@@ -14,7 +14,7 @@ public class AudioPrevAction extends JosmAction {
 
 	public AudioPrevAction() {
 		super(tr("Previous Marker"), "audio-prev", tr("Play previous marker."),
-		ShortCut.registerShortCut("audio:prev", tr("Audio: Previous"), KeyEvent.VK_F5, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("audio:prev", tr("Audio: {0}", tr("Previous Marker")), KeyEvent.VK_F5, ShortCut.GROUP_DIRECT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

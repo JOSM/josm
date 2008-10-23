@@ -51,7 +51,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 	 */
 	public SplitWayAction() {
 		super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
-		ShortCut.registerShortCut("tools:splitway", tr("Tool: Split way"), KeyEvent.VK_P, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, ShortCut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 

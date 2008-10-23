@@ -53,7 +53,7 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 
 	public MergeNodesAction() {
 		super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
-		ShortCut.registerShortCut("tools:mergenodes", tr("Tool: Merge nodes"), KeyEvent.VK_M, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, ShortCut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 

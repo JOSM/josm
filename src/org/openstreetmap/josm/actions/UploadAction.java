@@ -60,7 +60,7 @@ public class UploadAction extends JosmAction {
 
 	public UploadAction() {
 		super(tr("Upload to OSM ..."), "upload", tr("Upload all changes to the OSM server."),
-		ShortCut.registerShortCut("file:upload", tr("File: Upload"), KeyEvent.VK_U, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
+		ShortCut.registerShortCut("file:upload", tr("File: {0}", tr("Upload to OSM ...")), KeyEvent.VK_U, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
 
 		/**
 		 * Displays a screen where the actions that would be taken are displayed and

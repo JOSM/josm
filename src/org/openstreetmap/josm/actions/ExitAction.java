@@ -20,7 +20,7 @@ public class ExitAction extends JosmAction {
 	 */
 	public ExitAction() {
 		super(tr("Exit"), "exit", tr("Exit the application."),
-		ShortCut.registerShortCut("system:menuexit", tr("Quit JOSM"), KeyEvent.VK_Q, ShortCut.GROUP_MENU), true);
+		ShortCut.registerShortCut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, ShortCut.GROUP_MENU), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

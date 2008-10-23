@@ -16,7 +16,7 @@ public class AudioPlayPauseAction extends JosmAction {
 
 	public AudioPlayPauseAction() {
 		super(tr("Play/pause"), "audio-playpause", tr("Play/pause audio."),
-		ShortCut.registerShortCut("audio:pause", tr("Audio: Play/Pause"), KeyEvent.VK_PERIOD, ShortCut.GROUP_DIRECT), true);
+		ShortCut.registerShortCut("audio:pause", tr("Audio: {0}", tr("Play/pause")), KeyEvent.VK_PERIOD, ShortCut.GROUP_DIRECT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

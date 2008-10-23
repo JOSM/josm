@@ -19,7 +19,7 @@ public final class DuplicateAction extends JosmAction implements SelectionChange
     public DuplicateAction() {
     	super(tr("Duplicate"), "duplicate",
 			tr("Duplicate selection by copy and immediate paste."),
-			ShortCut.registerShortCut("system:duplicate", tr("Edit: Duplicate selection"), KeyEvent.VK_D, ShortCut.GROUP_MENU), true);
+			ShortCut.registerShortCut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, ShortCut.GROUP_MENU), true);
     	setEnabled(false);
 			DataSet.selListeners.add(this);
     }

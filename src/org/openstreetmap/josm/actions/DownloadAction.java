@@ -31,7 +31,7 @@ public class DownloadAction extends JosmAction {
 
 	public DownloadAction() {
 		super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."),
-		ShortCut.registerShortCut("file:download", tr("File: Download"), KeyEvent.VK_D, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
+		ShortCut.registerShortCut("file:download", tr("File: {0}", tr("Download from OSM ...")), KeyEvent.VK_D, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

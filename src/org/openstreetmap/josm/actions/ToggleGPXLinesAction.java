@@ -13,7 +13,7 @@ public class ToggleGPXLinesAction extends JosmAction {
 
 	public ToggleGPXLinesAction() {
 		super(tr("Toggle GPX Lines"), "gps-lines", tr("Toggles the global setting ''{0}''.", tr("Draw lines between raw gps points.")),
-		ShortCut.registerShortCut("view:gpxlines", tr("View: Toggle GPX lines"), KeyEvent.VK_X, ShortCut.GROUP_MENU), true);
+		ShortCut.registerShortCut("view:gpxlines", tr("View: {0}", tr("Toggle GPX Lines")), KeyEvent.VK_X, ShortCut.GROUP_MENU), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -85,7 +85,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	public SelectAction(MapFrame mapFrame) {
 		super(tr("Select"), "move/move", tr("Select, move and rotate objects"),
-			ShortCut.registerShortCut("mapmode:select", tr("Select mode"), KeyEvent.VK_S, ShortCut.GROUP_EDIT),
+			ShortCut.registerShortCut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, ShortCut.GROUP_EDIT),
 			mapFrame,
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Move/Move");

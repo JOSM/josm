@@ -159,7 +159,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 	 */
 	public LayerListDialog(MapFrame mapFrame) {
 		super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
-		ShortCut.registerShortCut("subwindow:layers", tr("Toggle layer window"), KeyEvent.VK_L, ShortCut.GROUP_LAYER), 100);
+		ShortCut.registerShortCut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, ShortCut.GROUP_LAYER), 100);
 		instance = new JList(model);
 		listScrollPane = new JScrollPane(instance);
 		add(listScrollPane, BorderLayout.CENTER);

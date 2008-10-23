@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.ShortCut;
 public class JoinNodeWayAction extends JosmAction {
 	public JoinNodeWayAction() {
 	    super(tr("Join node to way"), "joinnodeway", tr("Join a node into the nearest way segments"),
-			ShortCut.registerShortCut("tools:joinnodeway", tr("Tool: Join node to way"), KeyEvent.VK_J, ShortCut.GROUP_EDIT), true);
+			ShortCut.registerShortCut("tools:joinnodeway", tr("Tool: {0}", tr("Join node to way")), KeyEvent.VK_J, ShortCut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

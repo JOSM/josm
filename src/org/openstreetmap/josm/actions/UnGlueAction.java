@@ -44,7 +44,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
 	 */
 	public UnGlueAction() {
 		super(tr("UnGlue Ways"), "unglueways", tr("Duplicate nodes that are used by multiple ways."),
-		ShortCut.registerShortCut("tools:unglue", tr("Tool: Unglue"), KeyEvent.VK_G, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:unglue", tr("Tool: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, ShortCut.GROUP_EDIT), true);
 		//DataSet.selListeners.add(this);
 	}
 

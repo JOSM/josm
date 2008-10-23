@@ -52,7 +52,7 @@ public final class ConflictDialog extends ToggleDialog {
 
 	public ConflictDialog() {
 		super(tr("Conflict"), "conflict", tr("Merging conflicts."),
-		ShortCut.registerShortCut("subwindow:conflict", tr("Toggle conflict window"), KeyEvent.VK_C, ShortCut.GROUP_LAYER), 100);
+		ShortCut.registerShortCut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, ShortCut.GROUP_LAYER), 100);
 		displaylist.setCellRenderer(new OsmPrimitivRenderer());
 		displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		displaylist.addMouseListener(new MouseAdapter(){

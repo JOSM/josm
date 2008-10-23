@@ -45,7 +45,7 @@ public class GpxExportAction extends DiskAccessAction {
 
 	public GpxExportAction(Layer layer) {
 		super(tr("Export to GPX ..."), "exportgpx", tr("Export the data to GPX file."),
-		ShortCut.registerShortCut("file:exportgpx", tr("Export to GPX"), KeyEvent.VK_E, ShortCut.GROUP_MENU));
+		ShortCut.registerShortCut("file:exportgpx", tr("Export to GPX ..."), KeyEvent.VK_E, ShortCut.GROUP_MENU));
 		this.layer = layer;
 	}
 

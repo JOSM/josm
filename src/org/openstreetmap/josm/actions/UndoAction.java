@@ -21,7 +21,7 @@ public class UndoAction extends JosmAction {
 	 */
 	public UndoAction() {
 		super(tr("Undo"), "undo", tr("Undo the last action."),
-		ShortCut.registerShortCut("system:undo", tr("Edit: Undo"), KeyEvent.VK_Z, ShortCut.GROUP_MENU), true);
+		ShortCut.registerShortCut("system:undo", tr("Edit: {0}", tr("Undo")), KeyEvent.VK_Z, ShortCut.GROUP_MENU), true);
 		setEnabled(false);
 	}
 

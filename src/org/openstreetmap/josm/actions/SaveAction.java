@@ -24,7 +24,7 @@ public class SaveAction extends SaveActionBase {
 	 */
 	public SaveAction(Layer layer) {
 		super(tr("Save"), "save", tr("Save the current data."),
-		ShortCut.registerShortCut("system:save", tr("File: Save"), KeyEvent.VK_S, ShortCut.GROUP_MENU), layer);
+		ShortCut.registerShortCut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, ShortCut.GROUP_MENU), layer);
 	}
 
 	@Override public File getFile(Layer layer) {

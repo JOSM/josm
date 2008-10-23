@@ -421,7 +421,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	 */
 	public PropertiesDialog(MapFrame mapFrame) {
 		super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."),
-		ShortCut.registerShortCut("subwindow:properies", tr("Toggle properties window"), KeyEvent.VK_P,
+		ShortCut.registerShortCut("subwindow:properies", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
 		ShortCut.GROUP_LAYER, ShortCut.SHIFT_DEFAULT), 150);
 
 		// ---------------------------------------

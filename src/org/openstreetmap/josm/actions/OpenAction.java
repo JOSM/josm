@@ -39,7 +39,7 @@ public class OpenAction extends DiskAccessAction {
 	 */
 	public OpenAction() {
 		super(tr("Open ..."), "open", tr("Open a file."),
-		ShortCut.registerShortCut("system:open", tr("File: Open..."), KeyEvent.VK_O, ShortCut.GROUP_MENU));
+		ShortCut.registerShortCut("system:open", tr("File: {0}", tr("Open ...")), KeyEvent.VK_O, ShortCut.GROUP_MENU));
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -56,7 +56,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
 	public RelationListDialog() {
 		super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
-		ShortCut.registerShortCut("subwindow:relations", tr("Toggle relations window"), KeyEvent.VK_R, ShortCut.GROUP_LAYER), 150);
+		ShortCut.registerShortCut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R, ShortCut.GROUP_LAYER), 150);
 		displaylist.setCellRenderer(new OsmPrimitivRenderer());
 		displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		displaylist.addMouseListener(new MouseAdapter(){

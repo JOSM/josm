@@ -88,7 +88,7 @@ public class HistoryDialog extends ToggleDialog implements SelectionChangedListe
 
 	public HistoryDialog() {
 		super(tr("History"), "history", tr("Display the history of all selected items."),
-		ShortCut.registerShortCut("subwindow:history", tr("Toggle history window"), KeyEvent.VK_H,
+		ShortCut.registerShortCut("subwindow:history", tr("Toggle: {0}", tr("History")), KeyEvent.VK_H,
 		ShortCut.GROUP_LAYER, ShortCut.SHIFT_DEFAULT), 150);
 		historyPane.setVisible(false);
 		notLoaded.setVisible(true);

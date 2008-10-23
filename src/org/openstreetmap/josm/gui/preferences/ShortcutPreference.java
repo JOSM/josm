@@ -34,7 +34,8 @@ public class ShortcutPreference implements PreferenceSetting {
 
 	// Maybe move this to prefPanel? There's no need for it to be here.
 	private class scListModel extends AbstractTableModel {
-		private String[] columnNames = new String[]{tr("ID"),tr("Action"), tr("Group"), tr("Shortcut")};
+//		private String[] columnNames = new String[]{tr("Action"), tr("Shortcut"), tr("Group"), tr("ID")};
+		private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
 		private Collection<ShortCut> data;
 		public scListModel() {
 			data = ShortCut.listAll();
@@ -51,10 +52,10 @@ public class ShortcutPreference implements PreferenceSetting {
 		public Object getValueAt(int row, int col) {
 			ShortCut sc = (ShortCut)data.toArray()[row];
 			if (col == 0) {
-				return sc.getShortText();
-			} else if (col == 1) {
 				return sc.getLongText();
-			} else if (col == 2) {
+			} else if (col == 1) {
+				return sc.getKeyText();
+			} /*else if (col == 2) {
 				if (sc.getRequestedGroup() == ShortCut.GROUP_NONE) {
 					return tr("None");
 				} else if (sc.getRequestedGroup() == ShortCut.GROUP_HOTKEY) {
@@ -75,8 +76,8 @@ public class ShortcutPreference implements PreferenceSetting {
 					return tr("Unknown");
 				}
 			} else if (col == 3) {
-				return sc.getKeyText();
-			} else {
+				return sc.getShortText();
+			} */else {
 				// This is a kind of hack that allows the actions on the editing controls
 				// to access the underlying shortcut object without introducing another
 				// method. I opted to stay within the interface.
