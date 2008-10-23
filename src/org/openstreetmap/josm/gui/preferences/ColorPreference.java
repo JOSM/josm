@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -103,6 +103,7 @@ public class ColorPreference implements PreferenceSetting {
 				return false;
 			}
 		};
+		colors.setPreferredSize(new Dimension(200,200));
 		colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
 		colors.setDefaultRenderer(Object.class, new TableCellRenderer(){

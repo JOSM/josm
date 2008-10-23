@@ -196,7 +196,8 @@ public class ToolbarPreferences implements PreferenceSetting {
 		p.add(buttons);
 		p.add(right);
 
-		JPanel panel = gui.createPreferenceTab("toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
+		JPanel panel = gui.createPreferenceTab("toolbar", tr("Toolbar customization"), 
+		        tr("Customize the elements on the toolbar."), false);
 		panel.add(p, GBC.eol().fill(GBC.BOTH));
 
 		for (String s : getToolString()) {

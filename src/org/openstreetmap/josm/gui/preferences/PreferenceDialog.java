@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -44,7 +46,8 @@ public class PreferenceDialog extends JTabbedPane {
 
 	/**
 	 * Construct a JPanel for the preference settings. Layout is GridBagLayout
-	 * and a centered title label and the description are added.
+	 * and a centered title label and the description are added. The panel 
+	 * will be shown inside a {@link ScrollPane} 
 	 * @param icon The name of the icon.
 	 * @param title The title of this preference tab.
 	 * @param desc A description in one sentence for this tab. Will be displayed
@@ -52,20 +55,38 @@ public class PreferenceDialog extends JTabbedPane {
 	 * @return The created panel ready to add other controls.
 	 */
 	public JPanel createPreferenceTab(String icon, String title, String desc) {
-		JPanel p = new JPanel(new GridBagLayout());
-		p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		p.add(new JLabel(title), GBC.eol().anchor(GBC.CENTER).insets(0,5,0,10));
-
-		JLabel descLabel = new JLabel("<html>"+desc+"</html>");
-		descLabel.setFont(descLabel.getFont().deriveFont(Font.ITALIC));
-		p.add(descLabel, GBC.eol().insets(5,0,5,20).fill(GBC.HORIZONTAL));
-
-        JScrollPane sp = new JScrollPane(p);
-		addTab(null, ImageProvider.get("preferences", icon), sp);
-		setToolTipTextAt(getTabCount()-1, "<html>"+desc+"</html>");
-		return p;
+		return createPreferenceTab(icon, title, desc, true);
 	}
 
+    /**
+     * Construct a JPanel for the preference settings. Layout is GridBagLayout
+     * and a centered title label and the description are added.
+     * @param icon The name of the icon.
+     * @param title The title of this preference tab.
+     * @param desc A description in one sentence for this tab. Will be displayed
+     *      italic under the title.
+     * @param inScrollPane if <code>true</code> the added tab will show scroll bars 
+     *        if the panel content is larger than the available space
+     * @return The created panel ready to add other controls.
+     */
+    public JPanel createPreferenceTab(String icon, String title, String desc, boolean inScrollPane) {
+        JPanel p = new JPanel(new GridBagLayout());
+        p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        p.add(new JLabel(title), GBC.eol().anchor(GBC.CENTER).insets(0,5,0,10));
+
+        JLabel descLabel = new JLabel("<html>"+desc+"</html>");
+        descLabel.setFont(descLabel.getFont().deriveFont(Font.ITALIC));
+        p.add(descLabel, GBC.eol().insets(5,0,5,20).fill(GBC.HORIZONTAL));
+
+        JComponent tab = p;
+        if (inScrollPane) {
+            JScrollPane sp = new JScrollPane(p);
+            tab = sp;
+        }
+        addTab(null, ImageProvider.get("preferences", icon), tab);
+        setToolTipTextAt(getTabCount()-1, "<html>"+desc+"</html>");
+        return p;
+    }
 
 
 

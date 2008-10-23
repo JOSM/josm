@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -32,7 +33,8 @@ public class DrawingPreference implements PreferenceSetting {
 	private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
 
 	public void addGui(PreferenceDialog gui) {
-		// drawRawGpsLines
+	    gui.display.setPreferredSize(new Dimension(400,600));
+	    // drawRawGpsLines
 		drawRawGpsLines.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
                             forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());

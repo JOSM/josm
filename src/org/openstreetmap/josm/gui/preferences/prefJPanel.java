@@ -7,17 +7,20 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import javax.swing.table.TableModel;
+
 import java.awt.event.KeyEvent;
-import java.util.Map;
 import java.util.LinkedHashMap;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.ListSelectionModel;
-import org.openstreetmap.josm.tools.ShortCut;
+import java.util.Map;
+
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
+
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ShortCut;
 
 /**
  * This is the keyboard preferences content.
@@ -246,6 +249,7 @@ public class prefJPanel extends javax.swing.JPanel {
         // next is the modfier group tab.
         // Would be a nice array if I had done it by hand. But then, it would be finished next year or so...
         modifierTab.setLayout(new java.awt.GridLayout(0, 1));
+        JScrollPane modifierScroller = new JScrollPane(modifierTab);
 
         editGroupPane.setBorder(javax.swing.BorderFactory.createTitledBorder(tr("Edit Shortcuts")));
         editGroupPane.setLayout(new java.awt.GridLayout(3, 5));
@@ -351,9 +355,9 @@ public class prefJPanel extends javax.swing.JPanel {
 				bxSec4.setAction(action2);
 				bxTer4.setAction(action2);
 
-        modifierTab.add(subwindowGroupPane);
+		modifierTab.add(subwindowGroupPane);
 
-        prefTabPane.addTab(tr("Modifier Groups"), modifierTab);
+        prefTabPane.addTab(tr("Modifier Groups"), modifierScroller);
 
         add(prefTabPane);
     }

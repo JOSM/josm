@@ -28,7 +28,7 @@ public class LafPreference implements PreferenceSetting {
 
 		// let's try to load additional LookAndFeels and put them into the list
 		try {
-			Class Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+			Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
 			Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
 			// no exception? Then Go!
 			lafCombo.addItem(

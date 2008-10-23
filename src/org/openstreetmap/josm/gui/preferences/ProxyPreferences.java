@@ -27,11 +27,11 @@ public class ProxyPreferences implements PreferenceSetting {
 	public static final String PROXY_PASS = "proxy.pass";
 
 	private JCheckBox proxyEnable = new JCheckBox(tr("Enable proxy server"));
-	private JTextField proxyHost = new JTextField(50);
+	private JTextField proxyHost = new JTextField(20);
 	private JTextField proxyPort = new JTextField(5);
 	private JCheckBox proxyAnonymous = new JCheckBox(tr("Anonymous"));
-	private JTextField proxyUser = new JTextField(50);
-	private JPasswordField proxyPass = new JPasswordField(50);
+	private JTextField proxyUser = new JTextField(20);
+	private JPasswordField proxyPass = new JPasswordField(20);
 
 	public void addGui(PreferenceDialog gui) {
 		proxyEnable.setSelected(Main.pref.getBoolean(PROXY_ENABLE));

@@ -73,8 +73,7 @@ public class PluginPreference implements PreferenceSetting {
 		public int compareTo(Object n) {
 			if(n instanceof PluginDescription)
 				return name.compareToIgnoreCase(((PluginDescription)n).name);
-			else
-				return -1;
+			return -1;
 		}
 	}
 
@@ -106,7 +105,7 @@ public class PluginPreference implements PreferenceSetting {
 
 	public void addGui(final PreferenceDialog gui) {
 		this.gui = gui;
-		plugin = gui.createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."));
+		plugin = gui.createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."), false);
 		JScrollPane pluginPane = new JScrollPane(pluginPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		pluginPane.setBorder(null);
 		plugin.add(pluginPane, GBC.eol().fill(GBC.BOTH));

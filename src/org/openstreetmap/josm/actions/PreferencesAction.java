@@ -37,14 +37,14 @@ public class PreferencesAction extends JosmAction {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		PreferenceDialog prefDlg = new PreferenceDialog();
-		prefDlg.setMinimumSize(new Dimension(300,200));
+		prefDlg.setMinimumSize(new Dimension(400,300));
 		JPanel prefPanel = new JPanel(new GridBagLayout());
 		prefPanel.add(prefDlg, GBC.eol().fill(GBC.BOTH));
 
 		JOptionPane pane = new JOptionPane(prefPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 		JDialog dlg = pane.createDialog(Main.parent, tr("Preferences"));
 		dlg.setResizable(true);
-		dlg.setMinimumSize(new Dimension(400,300));
+		dlg.setMinimumSize(new Dimension(500,400));
 
 //		if (dlg.getWidth() > 600)
 //			dlg.setSize(600, dlg.getHeight());

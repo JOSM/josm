@@ -35,7 +35,8 @@ public class AdvancedPreference implements PreferenceSetting {
 	private DefaultTableModel model;
 
 	public void addGui(final PreferenceDialog gui) {
-		JPanel p = gui.createPreferenceTab("advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
+		JPanel p = gui.createPreferenceTab("advanced", tr("Advanced Preferences"), 
+		        tr("Setting Preference entries directly. Use with caution!"), false);
 
 		model = new DefaultTableModel(new String[]{tr("Key"), tr("Value")},0) {
 			@Override public boolean isCellEditable(int row, int column) {
