@@ -77,7 +77,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     public SelectionListDialog() {
         super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."),
-        ShortCut.registerShortCut("subwindow:selection", tr("Toggle selection window"), KeyEvent.VK_T, ShortCut.GROUP_LAYER), 150);
+        ShortCut.registerShortCut("subwindow:selection", tr("Toggle selection window"), KeyEvent.VK_T, ShortCut.GROUP_LAYER, ShortCut.SHIFT_DEFAULT), 150);
 
         selectionHistory = new LinkedList<Collection<? extends OsmPrimitive>>();
         popupMenu = new JPopupMenu();
