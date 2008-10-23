@@ -22,7 +22,7 @@ public class SaveAsAction extends SaveActionBase {
 	 */
 	public SaveAsAction(Layer layer) {
 		super(tr("Save as ..."), "save_as", tr("Save the current data to a new file."),
-		ShortCut.registerShortCut("system:saveas", tr("File: Save as..."), KeyEvent.VK_S, ShortCut.GROUP_MENU, ShortCut.SHIFT_CTRL), layer);
+		ShortCut.registerShortCut("system:saveas", tr("File: Save as..."), KeyEvent.VK_S, ShortCut.GROUP_MENU, ShortCut.SHIFT_DEFAULT), layer);
 	}
 
 	@Override protected File getFile(Layer layer) {

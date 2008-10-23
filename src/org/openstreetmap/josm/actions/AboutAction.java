@@ -67,7 +67,7 @@ public class AboutAction extends JosmAction {
 	}
 
 	public AboutAction() {
-		super(tr("About"), "about", tr("Display the about screen."), ShortCut.registerShortCut("system:about", tr("About..."), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT, ShortCut.SHIFT), true);
+		super(tr("About"), "about", tr("Display the about screen."), ShortCut.registerShortCut("system:about", tr("About..."), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT, ShortCut.SHIFT_DEFAULT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -28,9 +28,10 @@ import javax.swing.JOptionPane;
  *
  */
 public class ShortCut {
-	public static final int SHIFT = KeyEvent.SHIFT_DOWN_MASK;
-	public static final int CTRL = KeyEvent.CTRL_DOWN_MASK;
-	public static final int SHIFT_CTRL = KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
+//	public static final int SHIFT = KeyEvent.SHIFT_DOWN_MASK;
+//	public static final int CTRL = KeyEvent.CTRL_DOWN_MASK;
+//	public static final int SHIFT_CTRL = KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
+	public static final int SHIFT_DEFAULT = 1;
 	private String shortText;        // the unique ID of the shortcut
 	private String longText;         // a human readable description that will be shown in the preferences
 	private int requestedKey;        // the key, the caller requested
@@ -308,6 +309,7 @@ public class ShortCut {
 //		}
 		int i = 0;
 		for (ShortCut sc : ShortCuts.values()) {
+// TODO: Remove sc.getAssignedUser() when we fixed all internal conflicts
 			if (!sc.getAutomatic() && !sc.getReset() && sc.getAssignedUser()) {
 				Main.pref.put("shortcut.shortcut."+i, sc.asPrefString());
 				i++;
@@ -385,7 +387,10 @@ public class ShortCut {
 		}
 		Integer defaultModifier = Groups.get(requestedGroup + GROUPS_DEFAULT);
 		if(modifier != null) {
-			defaultModifier = modifier;
+			if(modifier == SHIFT_DEFAULT)
+				defaultModifier |= KeyEvent.SHIFT_MASK;
+			else
+				defaultModifier = modifier;
 		}
 		else if (defaultModifier == null) { // garbage in, no shortcurt out
 			defaultModifier = Groups.get(GROUP_NONE + GROUPS_DEFAULT);

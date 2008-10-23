@@ -26,7 +26,7 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
 	public PasteTagsAction(JosmAction copyAction) {
 		super(tr("Paste Tags"), "pastetags",
 			tr("Apply tags of contents of paste buffer to all selected items."),
-			ShortCut.registerShortCut("system:pastestyle", tr("Edit: Paste tags"), KeyEvent.VK_V, ShortCut.GROUP_MENU, ShortCut.SHIFT_CTRL), true);
+			ShortCut.registerShortCut("system:pastestyle", tr("Edit: Paste tags"), KeyEvent.VK_V, ShortCut.GROUP_MENU, ShortCut.SHIFT_DEFAULT), true);
 		DataSet.selListeners.add(this);
 		copyAction.addListener(this);
 		setEnabled(false);
