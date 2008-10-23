@@ -35,7 +35,7 @@ public final class CreateCircleAction extends JosmAction {
 
 	public CreateCircleAction() {
 		super(tr("Create Circle"), "createcircle", tr("Create a circle from three selected nodes."),
-		ShortCut.registerShortCut("tools:createcircle", tr("Tool: Create circle"), KeyEvent.VK_O, ShortCut.GROUP_EDIT), true);
+		ShortCut.registerShortCut("tools:createcircle", tr("Tool: Create circle"), KeyEvent.VK_O, ShortCut.GROUP_EDIT, ShortCut.SHIFT), true);
 	}
 
 	private double calcang(double xc, double yc, double x, double y) {

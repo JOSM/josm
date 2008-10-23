@@ -28,6 +28,9 @@ import javax.swing.JOptionPane;
  *
  */
 public class ShortCut {
+	public static final int SHIFT = KeyEvent.SHIFT_DOWN_MASK;
+	public static final int CTRL = KeyEvent.CTRL_DOWN_MASK;
+	public static final int SHIFT_CTRL = KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
 	private String shortText;        // the unique ID of the shortcut
 	private String longText;         // a human readable description that will be shown in the preferences
 	private int requestedKey;        // the key, the caller requested
@@ -305,7 +308,7 @@ public class ShortCut {
 //		}
 		int i = 0;
 		for (ShortCut sc : ShortCuts.values()) {
-			if (!sc.getAutomatic() && !sc.getReset()) {
+			if (!sc.getAutomatic() && !sc.getReset() && sc.getAssignedUser()) {
 				Main.pref.put("shortcut.shortcut."+i, sc.asPrefString());
 				i++;
 			}
@@ -315,18 +318,7 @@ public class ShortCut {
 
 	// this is used to register a shortcut that was read from the preferences
 	private static void registerShortCut(ShortCut sc) {
-		if (sc.getAssignedDefault()) { // a 100% default shortcut will go though unchanged -- unless the groups have been reconfigured
-			registerShortCut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(), sc.getRequestedGroup(), sc);
-		} else if (sc.getAssignedUser()) { // put a user configured shortcut in as-is -- unless there's a conflict
-			ShortCut potentialShortCut = findShortcut(sc.getAssignedKey(), sc.getAssignedModifier());
-			if (potentialShortCut == null) {
-				ShortCuts.put(sc.getShortText(), sc);
-			} else {
-				registerShortCut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(), sc.getRequestedGroup(), sc);
-			}
-		} else { // this shortcut was auto-moved before, re-register and warn if it changes
-			registerShortCut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(), sc.getRequestedGroup(), sc);
-		}
+		registerShortCut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(), sc.getRequestedGroup(), sc.getAssignedModifier(), sc);
 	}
 
 	/**
@@ -366,8 +358,16 @@ public class ShortCut {
 	 *                  modifiers your shortcut will get assigned. Use the GROUP_*
 	 *                  constants defined above.
 	 */
+	public static ShortCut registerShortCut(String shortText, String longText, int requestedKey, int requestedGroup, int modifier) {
+		return registerShortCut(shortText, longText, requestedKey, requestedGroup, modifier, null);
+	}
 	public static ShortCut registerShortCut(String shortText, String longText, int requestedKey, int requestedGroup) {
-		return registerShortCut(shortText, longText, requestedKey, requestedGroup, null);
+		return registerShortCut(shortText, longText, requestedKey, requestedGroup, null, null);
+	}
+
+	private static ShortCut registerShortCut(String shortText, String longText, int requestedKey, int requestedGroup,
+        ShortCut originalShortCut) {
+		return registerShortCut(shortText, longText, requestedKey, requestedGroup, null, originalShortCut);
 	}
 
 	// and now the workhorse. same parameters as above, just one more: if originalShortCut is not null and
@@ -375,7 +375,8 @@ public class ShortCut {
 	// This is used when registering shortcuts that have been visible to the user before (read: have been
 	// read from the preferences file). New shortcuts will never warn, even when they land on some funny
 	// random fallback key like Ctrl+Alt+Shift+Z for "File Open..." <g>
-	private static ShortCut registerShortCut(String shortText, String longText, int requestedKey, int requestedGroup, ShortCut originalShortCut) {
+	private static ShortCut registerShortCut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier,
+        ShortCut originalShortCut) {
 		doInit();
 		if (ShortCuts.containsKey(shortText)) { // a re-register? maybe a sc already read from the preferences?
 			ShortCut sc = ShortCuts.get(shortText);
@@ -383,7 +384,10 @@ public class ShortCut {
 			return sc;
 		}
 		Integer defaultModifier = Groups.get(requestedGroup + GROUPS_DEFAULT);
-		if (defaultModifier == null) { // garbage in, no shortcurt out
+		if(modifier != null) {
+			defaultModifier = modifier;
+		}
+		else if (defaultModifier == null) { // garbage in, no shortcurt out
 			defaultModifier = Groups.get(GROUP_NONE + GROUPS_DEFAULT);
 		}
 		ShortCut conflictsWith = null;

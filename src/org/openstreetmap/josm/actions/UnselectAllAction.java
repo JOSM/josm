@@ -20,7 +20,8 @@ public class UnselectAllAction extends JosmAction {
 
 		// Add extra shortcut C-S-a
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-		ShortCut.registerShortCut("edit:unselectall2", tr("Edit: Unselect all (2)"), KeyEvent.VK_A, ShortCut.GROUP_MENU).getKeyStroke(),
+		ShortCut.registerShortCut("edit:unselectall2", tr("Edit: Unselect all (2)"),
+		KeyEvent.VK_A, ShortCut.GROUP_MENU, ShortCut.SHIFT_CTRL).getKeyStroke(),
 		tr("Unselect All"));
 
 		// Add extra shortcut ESCAPE
