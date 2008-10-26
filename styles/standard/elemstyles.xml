@@ -1621,7 +1621,23 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="embassy"/>
+		<icon annotate="true" src="public.png"/>
+		<area colour="amenity2#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="townhall"/>
+		<icon annotate="true" src="public.png"/>
+		<area colour="amenity2#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="community_centre"/>
 		<icon annotate="true" src="public.png"/>
 		<area colour="amenity2#f7efb7"/>
 		<scale_min>1</scale_min>
@@ -1788,6 +1804,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="driving_school"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<area colour="amenity2#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="pharmacy"/>
 		<area colour="health#eeeeee"/>
 		<icon annotate="true" src="health/pharmacy.png"/>
@@ -1805,6 +1829,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="nursery"/>
+		<area colour="health#eeeeee"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="doctors"/>
 		<area colour="health#eeeeee"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
@@ -1940,7 +1972,23 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="bench"/>
+		<area colour="amenity2#f7efb7"/>
+		<icon annotate="true" src="recreation/bench.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="shelter"/>
+		<area colour="amenity2#f7efb7"/>
+		<icon annotate="true" src="accommodation/shelter.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="hunting_stand"/>
 		<area colour="amenity2#f7efb7"/>
 		<icon annotate="true" src="accommodation/shelter.png"/>
 		<scale_min>1</scale_min>
@@ -1950,6 +1998,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="wlan"/>
 		<icon annotate="true" src="wlan.png"/>
+		<area colour="amenity2#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="vending_machine"/>
+		<icon src="misc/no_icon.png"/>
 		<area colour="amenity2#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
