@@ -218,14 +218,14 @@ abstract public class Main {
 	 * Load all plugins specified in preferences. If the parameter is <code>true</code>, all
 	 * early plugins are loaded (before constructor).
 	 */
-	public static void loadPlugins(boolean early, String lang) {
+	public static void loadPlugins(boolean early) {
 		List<String> plugins = new LinkedList<String>();
 		if (Main.pref.hasKey("plugins"))
 			plugins.addAll(Arrays.asList(Main.pref.get("plugins").split(",")));
 		if (System.getProperty("josm.plugins") != null)
 			plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
 
-		String [] oldplugins = new String[]{"mappaint", "unglueplugin"};
+		String [] oldplugins = new String[] {"mappaint", "unglueplugin", "lang-de","lang-en_GB","lang-fr","lang-it","lang-pl","lang-ro","lang-ru"};
 		for(String p : oldplugins)
 		{
 			if(plugins.contains(p))
@@ -234,22 +234,10 @@ abstract public class Main {
 				System.out.println(tr("Warning - loading of {0} plugin was requested. This plugin is no longer required.", p));
 			}
 		}
-		if(lang != null)
-		{
-			for(String p : plugins)
-			{
-				if(p.startsWith("lang-"))
-				{
-					plugins.remove(p);
-					break;
-				}
-			}
-			if(!lang.equals("en"))
-				plugins.add("lang-"+lang);
-		}
 
 		if (plugins.isEmpty())
 			return;
+		
 		SortedMap<Integer, Collection<PluginInformation>> p = new TreeMap<Integer, Collection<PluginInformation>>();
 		for (String pluginName : plugins) {
 			PluginInformation info = PluginInformation.findPlugin(pluginName);

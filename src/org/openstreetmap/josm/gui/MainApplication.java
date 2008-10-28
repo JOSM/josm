@@ -2,7 +2,10 @@
 //Licence: GPL
 package org.openstreetmap.josm.gui;
 
+import org.xnap.commons.i18n.I18nFactory;
+import static org.openstreetmap.josm.tools.I18n.i18n;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
 
 import java.awt.EventQueue;
 import java.awt.Toolkit;
@@ -15,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -24,6 +28,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginDownloader;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
+
 /**
  * Main window class application.
  *
@@ -158,11 +163,24 @@ public class MainApplication extends Main {
 			new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
 			Main.pref.save();
 		}
-		SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
+		
 
-		String language = null;
-		if(args.containsKey("language"))
-			language = (String)(args.get("language").toArray()[0]);
+		String localeName = null; //The locale to use
+        
+		//Check if passed as parameter
+		if(args.containsKey("language")) 
+		    localeName = (String)(args.get("language").toArray()[0]);
+		
+		//TODO: Check preferences for language
+        
+		//If override then set new default locale - otherwise, override
+        if (localeName != null) {
+            Locale.setDefault(new Locale(localeName));
+        }
+        
+        i18n = I18nFactory.getI18n(MainApplication.class);
+		
+		SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
 
 		splash.setStatus(tr("Activating updated plugins"));
 		if (!PluginDownloader.moveUpdatedPlugins()) {
@@ -173,7 +191,7 @@ public class MainApplication extends Main {
 
 		// load the early plugins
 		splash.setStatus(tr("Loading early plugins"));
-		Main.loadPlugins(true, language);
+		Main.loadPlugins(true);
 
 		splash.setStatus(tr("Setting defaults"));
 		preConstructorInit(args);
@@ -182,7 +200,7 @@ public class MainApplication extends Main {
 		Main.parent = mainFrame;
 		final Main main = new MainApplication(mainFrame);
 		splash.setStatus(tr("Loading plugins"));
-		Main.loadPlugins(false, null);
+		Main.loadPlugins(false);
 		toolbar.refreshToolbarControl();
 
 		mainFrame.setVisible(true);

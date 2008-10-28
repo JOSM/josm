@@ -34,12 +34,12 @@ public class I18n {
 	public static final String trn(String text, String pluralText, long n, Object... objects) {
 		if (i18n == null)
 			return n == 1 ? tr(text, objects) : tr(pluralText, objects);
-			return i18n.trn(text, pluralText, n, objects);
+		return i18n.trn(text, pluralText, n, objects);
 	}
 
 	public static final String trn(String text, String pluralText, long n) {
 		if (i18n == null)
 			return n == 1 ? tr(text) : tr(pluralText);
-			return i18n.trn(text, pluralText, n);
+		return i18n.trn(text, pluralText, n);
 	}
 }
