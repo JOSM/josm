@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/gettext-commons-0.9.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jfcunit.jar"/>
+        <classpathentry kind="lib" path="lib/josm-translation.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

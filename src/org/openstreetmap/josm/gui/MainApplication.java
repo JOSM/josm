@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -178,7 +179,11 @@ public class MainApplication extends Main {
             Locale.setDefault(new Locale(localeName));
         }
         
-        i18n = I18nFactory.getI18n(MainApplication.class);
+        try {
+            i18n = I18nFactory.getI18n(MainApplication.class);
+        } catch (MissingResourceException ex) {
+            System.out.println("Unable to find translation for the locale: " + Locale.getDefault().getDisplayName() + " reverting to English.");
+        }
 		
 		SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
 
