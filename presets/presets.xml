@@ -724,7 +724,7 @@
 			<key key="highway" value="crossing" />
 		</item>
 
-		<item name="Bollard" icon="styles/standard/vehicle/restrictions/bollard.png">
+		<item name="Bollard" icon="presets/bollard.png">
 			<key key="barrier" value="bollard" />
 		</item>
 
@@ -761,15 +761,15 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Cattle Grid" icon="styles/standard/vehicle/cattle_grid.png">
+		<item name="Cattle Grid" icon="presets/cattle_grid.png">
 			<key key="highway" value="cattle_grid" />
 		</item>
 
-		<item name="Gate" icon="styles/standard/vehicle/gate.png">
+		<item name="Gate" icon="presets/gate.png">
 			<key key="highway" value="gate" />
 		</item>
 
-		<item name="Stile" icon="styles/standard/vehicle/stile.png">
+		<item name="Stile" icon="presets/stile.png">
 			<key key="highway" value="stile" />
 		</item>
 
@@ -968,7 +968,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Waterfall" icon="styles/standard/nautical/waterfall.png">
+		<item name="Waterfall" icon="presets/waterfall.png">
 			<label text="Edit a Waterfall" />
 			<label text=" " />
 			<key key="waterway" value="waterfall" />
@@ -1116,7 +1116,7 @@
 			<check key="area" text="Area" default="off" delete_if_empty="true" />
 		</item>
 
-		<item name="Subway Entrance" icon="styles/standard/transport/underground.png">
+		<item name="Subway Entrance" icon="presets/underground.png">
 			<label text="Edit Subway Entrance" />
 			<label text=" " />
 			<key key="railway" value="subway_entrance" />
@@ -1293,7 +1293,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Artwork" icon="styles/standard/public/arts_centre.png">
+		<item name="Artwork" icon="presets/arts_centre.png">
 			<label text="Edit Artwork" />
 			<key key="tourism" value="artwork" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1581,7 +1581,7 @@
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Shooting" icon="styles/standard/misc/landmark/range.png">
+		<item name="Shooting" icon="presets/range.png">
 			<label text="Edit Shooting" />
 			<key key="sport" value="shooting" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1633,14 +1633,14 @@
 			<combo key="leisure" text="type" values="golf_course,pitch,sports_centre,stadium,track" default="golf_course" delete_if_empty="true" />
 		</item>
 		
-		<item name="Boule" icon="styles/standard/sports/boule.png">
+		<item name="Boule" icon="presets/boule.png">
 			<label text="Edit Boule" />
 			<key key="sport" value="boules" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Bowls" icon="styles/standard/sports/boule.png">
+		<item name="Bowls" icon="presets/boule.png">
 			<label text="Edit Bowls" />
 			<key key="sport" value="bowls" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1682,7 +1682,7 @@
 			<combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Racquet" icon="styles/standard/sports/racquetball.png">
+		<item name="Racquet" icon="presets/racquetball.png">
 			<label text="Edit Racquet" />
 			<key key="sport" value="racquet" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1773,7 +1773,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Police" icon="styles/standard/public/police.png">
+		<item name="Police" icon="presets/police.png">
 			<label text="Edit Police" />
 			<key key="amenity" value="police" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1819,13 +1819,13 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Library" icon="styles/standard/shopping/rental/library.png">
+		<item name="Library" icon="presets/library.png">
 			<label text="Edit Library" />
 			<key key="amenity" value="library" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Arts Centre" icon="styles/standard/public/arts_centre.png">
+		<item name="Arts Centre" icon="presets/arts_centre.png">
 			<label text="Edit Arts Centre" />
 			<key key="amenity" value="arts_centre" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2074,14 +2074,14 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Locality" icon="styles/standard/places/locality.png">
+		<item name="Locality" icon="presets/locality.png">
 			<label text="Edit Locality" />
 			<label text=" " />
 			<key key="place" value="locality" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Island" icon="styles/standard/places/island.png">
+		<item name="Island" icon="presets/island.png">
 			<label text="Edit Island" />
 			<label text=" " />
 			<key key="place" value="island" />
@@ -2170,7 +2170,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Vineyard" icon="styles/standard/shopping/groceries/fruits.png">
+		<item name="Vineyard" icon="presets/fruits.png">
 			<label text="Edit Vineyard Landuse" />
 			<label text=" " />
 			<key key="landuse" value="vineyard" />
@@ -2348,13 +2348,13 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Glacier" icon="styles/standard/misc/landmark/glacier.png">
+		<item name="Glacier" icon="presets/glacier.png">
 			<label text="Edit Glacier" />
 			<key key="natural" value="glacier" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Volcano" icon="styles/standard/misc/landmark/volcano.png">
+		<item name="Volcano" icon="presets/volcano.png">
 			<label text="Edit Volcano" />
 			<key key="natural" value="volcano" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2489,7 +2489,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Pier" icon="styles/standard/misc/landmark/pier.png">
+		<item name="Pier" icon="presets/pier.png">
 			<label text="Edit Pier" />
 			<key key="man_made" value="pier" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
