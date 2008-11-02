@@ -3,11 +3,13 @@ package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
 import java.util.HashMap;
 
 import javax.swing.JLabel;
@@ -37,7 +39,7 @@ public class BoundingBoxSelection implements DownloadSelection {
 			new JTextField(11),
 			new JTextField(11) };
 	final JTextArea osmUrl = new JTextArea();
-	final JLabel showUrl = new JLabel();
+	final JTextArea showUrl = new JTextArea();
 	String noteUrl = tr("You can paste an URL here to download the area.");
 	
 	public void addGui(final DownloadDialog gui) {
@@ -119,6 +121,14 @@ public class BoundingBoxSelection implements DownloadSelection {
 		dlg.add(new JLabel(tr("URL from www.openstreetmap.org")), GBC.eol().insets(10,20,5,0));
 		dlg.add(osmUrl, GBC.eop().insets(10,0,5,0).fill());
 		dlg.add(showUrl, GBC.eop().insets(10,0,5,5));
+		showUrl.setEditable(false);
+		showUrl.setBackground(dlg.getBackground());
+		showUrl.addFocusListener(new FocusAdapter(){
+		   @Override
+		    public void focusGained(FocusEvent e) {
+		        showUrl.selectAll();
+		    } 
+		});
 
 		gui.tabpane.addTab(tr("Bounding Box"), dlg);
 	}
