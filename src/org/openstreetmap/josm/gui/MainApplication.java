@@ -172,13 +172,20 @@ public class MainApplication extends Main {
 		if(args.containsKey("language")) 
 		    localeName = (String)(args.get("language").toArray()[0]);
 		
-		//TODO: Check preferences for language
-        
-		//If override then set new default locale - otherwise, override
-        if (localeName != null) {
-            Locale.setDefault(new Locale(localeName));
-        }
-        
+		if (localeName == null) {
+			localeName = Main.pref.get("language", null);
+		}
+
+		if (localeName != null) {
+			Locale l;
+			int i = localeName.indexOf('_');
+			if (i > 0) {
+				l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
+			} else {
+				l = new Locale(localeName);
+			}
+			Locale.setDefault(l);
+		}
         try {
             i18n = I18nFactory.getI18n(MainApplication.class);
         } catch (MissingResourceException ex) {

@@ -122,6 +122,7 @@ public class PreferenceDialog extends JTabbedPane {
 	static {
 		// order is important!
 		settings.add(new LafPreference());
+		settings.add(new LanguagePreference());
 		settings.add(new DrawingPreference());
 		settings.add(new ColorPreference());
 		settings.add(new MapPaintPreference());

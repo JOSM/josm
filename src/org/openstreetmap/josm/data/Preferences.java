@@ -403,7 +403,7 @@ public class Preferences {
 
 	synchronized public Collection<String> getCollection(String key, Collection<String> def) {
 		String s = get(key);
-		if(s != null)
+		if(s != null && s.length() != 0)
 		{
 			/* handle old comma separated stuff - remove in future */
 			if(s.indexOf(',') >= 0)
