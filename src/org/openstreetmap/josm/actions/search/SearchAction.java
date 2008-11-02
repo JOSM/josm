@@ -65,6 +65,7 @@ public class SearchAction extends JosmAction {
                 + "<li><b>id:</b>... - object with given ID</li>"
                 + "<li><b>nodes:</b>... - object with given number of nodes</li>"
                 + "<li><b>modified</b> - all changed objects</li>"
+                + "<li><b>selected</b> - all selected objects</li>"
                 + "<li><b>incomplete</b> - all incomplete objects</li>"
                 + "<li>Use <b>|</b> or <b>OR</b> to combine with logical or</li>"
                 + "<li>Use <b>\"</b> to quote operators (e.g. if key contains :)</li>"
