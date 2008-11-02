@@ -220,8 +220,9 @@ abstract public class Main {
 	 */
 	public static void loadPlugins(boolean early) {
 		List<String> plugins = new LinkedList<String>();
-		if (Main.pref.hasKey("plugins"))
-			plugins.addAll(Arrays.asList(Main.pref.get("plugins").split(",")));
+		Collection<String> cp = Main.pref.getCollection("plugins", null);
+		if (cp != null)
+			plugins.addAll(cp);
 		if (System.getProperty("josm.plugins") != null)
 			plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
 
@@ -231,6 +232,7 @@ abstract public class Main {
 			if(plugins.contains(p))
 			{
 				plugins.remove(p);
+				Main.pref.removeFromCollection("plugins", p);
 				System.out.println(tr("Warning - loading of {0} plugin was requested. This plugin is no longer required.", p));
 			}
 		}

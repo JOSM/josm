@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -398,6 +399,44 @@ public class Preferences {
 			// fall out
 		}
 		return def;
+	}
+
+	synchronized public Collection<String> getCollection(String key, Collection<String> def) {
+		String s = get(key);
+		if(s != null)
+		{
+			/* handle old comma separated stuff - remove in future */
+			if(s.indexOf(',') >= 0)
+				return Arrays.asList(s.split(","));
+			else
+				return Arrays.asList(s.split(";"));
+		}
+		else if(def != null)
+			return def;
+		return null;
+	}
+	synchronized public void removeFromCollection(String key, String value) {
+		ArrayList<String> a = new ArrayList<String>(getCollection(key, null));
+		if(a != null)
+		{
+			a.remove(value);
+			putCollection(key, a);
+		}
+	}
+	synchronized public void putCollection(String key, Collection<String> val) {
+		String s = null;
+		if(val != null)
+		{
+			for(String a : val)
+			{
+				if(s != null)
+					s += ";" + a;
+				else
+					s = a;
+			}
+		}
+
+		put(key, s);
 	}
 
 	private void setSystemProperties() {
