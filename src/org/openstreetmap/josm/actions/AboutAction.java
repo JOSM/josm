@@ -55,11 +55,11 @@ public class AboutAction extends JosmAction {
 
 		Pattern versionPattern = Pattern.compile(".*?Revision: ([0-9]*).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
 		Matcher match = versionPattern.matcher(revision.getText());
-		version = match.matches() ? match.group(1) : "UNKNOWN";
+		version = match.matches() ? match.group(1) : tr("UNKNOWN");
 
 		Pattern timePattern = Pattern.compile(".*?Last Changed Date: ([^\n]*).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
 		match = timePattern.matcher(revision.getText());
-		time = match.matches() ? match.group(1) : "UNKNOWN";
+		time = match.matches() ? match.group(1) : tr("UNKNOWN");
 	}
 
 	static public String getVersion() {
@@ -148,7 +148,7 @@ public class AboutAction extends JosmAction {
 			s.close();
 		} catch (IOException x) {
 			x.printStackTrace();
-			return "UNKNOWN";
+			return tr("UNKNOWN");
 		}
 		return latest;
 	}

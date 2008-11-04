@@ -46,7 +46,7 @@ public class LanguagePreference implements PreferenceSetting {
 					boolean cellHasFocus) {
 				Locale l = (Locale) value;
 				return oldRenderer.getListCellRendererComponent(list,
-						l == AUTO_LANGUAGE ? "Default (Auto determined)" : l.getDisplayName(),
+						l == AUTO_LANGUAGE ? tr("Default (Auto determined)") : l.getDisplayName(),
 						index, isSelected, cellHasFocus);
 			}
 		});
