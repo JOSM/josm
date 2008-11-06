@@ -1819,7 +1819,7 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Library" icon="presets/library.png">
+		<item name="Library" icon="styles/standard/shopping/rental/library.png">
 			<label text="Edit Library" />
 			<key key="amenity" value="library" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
