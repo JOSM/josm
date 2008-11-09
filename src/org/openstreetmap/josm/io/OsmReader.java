@@ -86,7 +86,7 @@ public class OsmReader {
                osm.visible = visible;
                osm.version = version;
                osm.checkTagged();
-                        osm.checkDirectionTagged();
+               osm.checkDirectionTagged();
           }
      }
 

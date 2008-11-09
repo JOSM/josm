@@ -34,7 +34,7 @@ abstract class OsmServerReader extends OsmConnection {
 	protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
 		String version = Main.pref.get("osm-server.version", "0.5");
 		urlStr = Main.pref.get("osm-server.url")+"/"+version+"/" + urlStr;
-//		System.out.println("download: "+urlStr);
+		System.out.println("download: "+urlStr);
 		initAuthentication();
 		URL url = new URL(urlStr);
 		activeConnection = (HttpURLConnection)url.openConnection();

@@ -31,7 +31,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
 	 * All newly created ids and their primitive that uses it. This is a back reference
 	 * map to allow references to use the correnct primitives.
 	 */
-	private HashMap<OsmPrimitive, Long> usedNewIds = new HashMap<OsmPrimitive, Long>();
+	public HashMap<OsmPrimitive, Long> usedNewIds = new HashMap<OsmPrimitive, Long>();
 
 	private final boolean osmConform;
 	private final Changeset changeset;
@@ -130,7 +130,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
         }
 	}
 
-	private OsmWriter(PrintWriter out, boolean osmConform, Changeset changeset) {
+	public OsmWriter(PrintWriter out, boolean osmConform, Changeset changeset) {
 		super(out);
 		this.osmConform = osmConform;
 		this.changeset = changeset;
@@ -177,7 +177,6 @@ public class OsmWriter extends XmlWriter implements Visitor {
 		usedNewIds.put(osm, newIdCounter);
 		return osmConform ? 0 : newIdCounter--;
 	}
-
 
 	private void addTags(OsmPrimitive osm, String tagname, boolean tagOpen) {
 		if (osm.keys != null) {

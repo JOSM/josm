@@ -3,12 +3,17 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.xml.sax.SAXException;
@@ -72,6 +78,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 	private static final int MSECS_PER_MINUTE = MSECS_PER_SECOND * SECONDS_PER_MINUTE;
 
 	long uploadStartTime;
+    
 	public String timeLeft(int progress, int list_size) {
 		long now = System.currentTimeMillis();
 		long elapsed = now - uploadStartTime;
@@ -87,7 +94,8 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			time_left_str += "0";
 		time_left_str += Integer.toString(seconds_left);
 		return time_left_str;
-	}	
+	}
+    
 	public void uploadOsm(Collection<OsmPrimitive> list) throws SAXException {
 		processed = new LinkedList<OsmPrimitive>();
 		initAuthentication();
@@ -95,13 +103,17 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 		Main.pleaseWaitDlg.progress.setMaximum(list.size());
 		Main.pleaseWaitDlg.progress.setValue(0);
 		
+        // controls whether or not we open and close a changeset. API 0.6 requires changesets.
 		boolean useChangesets = Main.pref.get("osm-server.version", "0.5").equals("0.6");
-
+        
+        // controls whether or not we try and uplaod the whole bunch in one go
+        boolean useDiffUploads = Main.pref.getBoolean("osm-server.atomic-upload", 
+            Main.pref.get("osm-server.version", "0.5").equals("0.6"));
+        
 		String comment = null;
-		while( useChangesets && comment == null)
-		{
+		while (useChangesets && comment == null) {
 			comment = JOptionPane.showInputDialog(Main.parent, tr("Provide a brief comment as to the changes to you are uploading:"),
-		                                             tr("Commit comment"), JOptionPane.QUESTION_MESSAGE);
+		         tr("Commit comment"), JOptionPane.QUESTION_MESSAGE);
 			if( comment == null )
 				return;
 			/* Don't let people just hit enter */
@@ -110,34 +122,38 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 			comment = null;
 		}
 		try {
-			if( useChangesets && !startChangeset(10, comment) )
+			if (useChangesets && !startChangeset(10, comment))
 				return;
 		}
 		catch (OsmTransferException ex) {
-			dealWithTransferException (ex);
+			dealWithTransferException(ex);
 			return;
 		}
-		
-		NameVisitor v = new NameVisitor();
+	
 		try {
-			uploadStartTime = System.currentTimeMillis();
-			for (OsmPrimitive osm : list) {
-				if (cancel)
-					return;
-				osm.visit(v);
-				int progress = Main.pleaseWaitDlg.progress.getValue();
-				String time_left_str = timeLeft(progress, list.size());
-				Main.pleaseWaitDlg.currentAction.setText(tr("Upload {0} {1} (id: {2}) {3}% {4}/{5} ({6} left)...",
-					tr(v.className), v.name, osm.id, 100.0*progress/list.size(), progress, list.size(), time_left_str));
-				osm.visit(this);
-				Main.pleaseWaitDlg.progress.setValue(Main.pleaseWaitDlg.progress.getValue()+1);
-				Main.pleaseWaitDlg.progress.setValue(progress+1);
-			}
-				if( useChangesets ) 
-					stopChangeset(10);
+            if (useDiffUploads) {
+                uploadDiff(10, list);
+            } else {
+                NameVisitor v = new NameVisitor();
+                uploadStartTime = System.currentTimeMillis();
+                for (OsmPrimitive osm : list) {
+                    if (cancel)
+                        return;
+                    osm.visit(v);
+                    int progress = Main.pleaseWaitDlg.progress.getValue();
+                    String time_left_str = timeLeft(progress, list.size());
+                    Main.pleaseWaitDlg.currentAction.setText(tr("Upload {0} {1} (id: {2}) {3}% {4}/{5} ({6} left)...",
+                            tr(v.className), v.name, osm.id, 100.0*progress/list.size(), progress, list.size(), time_left_str));
+                    osm.visit(this);
+                    Main.pleaseWaitDlg.progress.setValue(progress+1);
+                }
+            }
+			if (useChangesets) 
+			    stopChangeset(10);
 		} catch (RuntimeException e) {
 			try {
-				if( useChangesets ) stopChangeset(10);
+				if (useChangesets) 
+                    stopChangeset(10);
 			}
 			catch (OsmTransferException ex) {
 				dealWithTransferException(ex);
@@ -210,24 +226,26 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 				return true;
 			}
 			if (retCode != 200 && retCode != 412) {
+                
 				if (retries >= 0) {
 					retries--;
 					System.out.print("backing off for 10 seconds...");
 					Thread.sleep(10000);
 					System.out.println("retrying ("+retries+" left)");
 					return startChangeset(retries, comment);
-				} else { 
-					// Look for a detailed error message from the server
-					if (activeConnection.getHeaderField("Error") != null)
-						retMsg += "\n" + activeConnection.getHeaderField("Error");
-
-					// Report our error
-					ByteArrayOutputStream o = new ByteArrayOutputStream();
-					OsmWriter.output(o, changeset);
-					System.out.println(new String(o.toByteArray(), "UTF-8").toString());
-					//throw new RuntimeException(retCode+" "+retMsg);
-					throw new OsmTransferException (retCode + " " + retMsg);
 				}
+                
+				// Look for a detailed error message from the server
+				if (activeConnection.getHeaderField("Error") != null)
+				    retMsg += "\n" + activeConnection.getHeaderField("Error");
+
+				// Report our error
+				ByteArrayOutputStream o = new ByteArrayOutputStream();
+				OsmWriter.output(o, changeset);
+				System.out.println(new String(o.toByteArray(), "UTF-8").toString());
+				//throw new RuntimeException(retCode+" "+retMsg);
+				throw new OsmTransferException (retCode + " " + retMsg);
+			
 			}
 		} catch (UnknownHostException e) {
 			//throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
@@ -264,7 +282,111 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 		}
 		return true;
 	}
+    
+    private void uploadDiff(int retries, Collection<OsmPrimitive> list) throws OsmTransferException {
+        
+        CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset);
 
+        for (OsmPrimitive osm : list) {
+            int progress = Main.pleaseWaitDlg.progress.getValue();
+            Main.pleaseWaitDlg.currentAction.setText(tr("Preparing..."));
+            if (cancel)
+                return;
+            osm.visit(duv);
+            Main.pleaseWaitDlg.progress.setValue(progress+1);
+        }
+        System.out.println("the document:\n");
+        String diff = duv.getDocument();
+        System.out.println(diff);
+        
+        Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
+        try {
+            if (cancel)
+                return; // assume cancel
+            String version = Main.pref.get("osm-server.version", "0.6");
+            URL url = new URL(
+                    Main.pref.get("osm-server.url") +
+                    "/" + version +
+                    "/" + "changeset" + 
+                    "/" + changeset.id +
+                    "/upload" );
+            System.out.print("upload to: "+url+ "..." );
+            activeConnection = (HttpURLConnection)url.openConnection();
+            activeConnection.setConnectTimeout(15000);
+            activeConnection.setRequestMethod("POST");
+            addAuth(activeConnection);
+            
+            activeConnection.setDoOutput(true);
+            PrintWriter out;
+            try {
+                out = new PrintWriter(new OutputStreamWriter(activeConnection.getOutputStream(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            out.print(diff);
+            out.close();
+            
+            activeConnection.connect();
+            System.out.println("connected");
+
+            int retCode = activeConnection.getResponseCode();
+            String retMsg = "";
+            
+            if (retCode == 200) {
+                DiffResultReader.parseDiffResult(activeConnection.getInputStream(), list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
+            } else if (retCode != 200 && retCode != 412) {
+                if (retries >= 0) {
+                    retries--;
+                    System.out.print("backing off for 10 seconds...");
+                    Thread.sleep(10000);
+                    System.out.println("retrying ("+retries+" left)");
+                    stopChangeset(retries);
+                } else { 
+                    // Look for a detailed error message from the server
+                    if (activeConnection.getHeaderField("Error") != null)
+                        retMsg += "\n" + activeConnection.getHeaderField("Error");
+
+                    // Report our error
+                    ByteArrayOutputStream o = new ByteArrayOutputStream();
+                    OsmWriter.output(o, changeset);
+                    System.out.println(new String(o.toByteArray(), "UTF-8").toString());
+                    //throw new RuntimeException(retCode+" "+retMsg);
+                    throw new OsmTransferException(retCode+" "+retMsg);
+                }
+            }
+        } catch (UnknownHostException e) {
+            //throw new RuntimeException(tr("Unknown host")+": "+e.getMessage(), e);
+            throw new OsmTransferException(tr("Unknown host")+": "+e.getMessage(), e);
+        } catch(SocketTimeoutException e) {
+            System.out.println(" timed out, retries left: " + retries);
+            if (cancel)
+                return; // assume cancel
+            if (retries-- > 0)
+                stopChangeset(retries);
+            else
+                //throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+                throw new OsmTransferException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+        } catch(ConnectException e) {
+            System.out.println(" timed out, retries left: " + retries);
+            if (cancel)
+                return; // assume cancel
+            if (retries-- > 0)
+                stopChangeset(retries);
+            else
+                //throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+                throw new OsmTransferException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+        } catch (Exception e) {
+            if (cancel)
+                return; // assume cancel
+            if (e instanceof OsmTransferException)
+                throw (OsmTransferException)e;
+            if (e instanceof RuntimeException)
+                throw (RuntimeException)e;
+            throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+        }
+    }
+    
+    
 	private void stopChangeset(int retries) throws OsmTransferException {
 		Main.pleaseWaitDlg.currentAction.setText(tr("Closing changeset..."));
 		try {
@@ -442,31 +564,23 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
 
 			int retCode = activeConnection.getResponseCode();
 			/* When creating new, the returned value is the new id, otherwise it is the new version */
-			if (retCode == 200)
-			{
-				if(osm.id == 0)
-				{
+			if (retCode == 200)	{
+				if (osm.id == 0) {
 					osm.id = readId(activeConnection.getInputStream());
 					osm.version = 1;
-				}
-				else
-				{
+				} else {
 					int read_version = (int)readId(activeConnection.getInputStream());
-					if( read_version > 0 )
+					if (read_version > 0)
 						osm.version = read_version;
 				}
-			}
-			else
-			{
+			} else {
 				System.out.println("got return: "+retCode+" with id "+osm.id);
 			}
 			activeConnection.disconnect();
 			if (retCode == 410 && requestMethod.equals("DELETE"))
 				return; // everything fine.. was already deleted.
-			else if (retCode != 200)
-			{
-				if (retries >= 0 && retCode != 412)
-				{
+			else if (retCode != 200) {
+				if (retries >= 0 && retCode != 412)	{
 					retries--;
 					System.out.print("backing off for 10 seconds...");
 					Thread.sleep(10000);
