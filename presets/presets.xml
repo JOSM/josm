@@ -786,105 +786,6 @@
 
 	<separator/>
 
-	<group name="Railway" icon="presets/railway.png">
-		<item name="Rail" icon="presets/railway.png">
-			<label text="Edit a Rail" />
-			<label text=" " />
-			<key key="railway" value="rail"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Narrow Gauge Rail" icon="presets/railway.png">
-			<label text="Edit a Narrow Gauge Rail" />
-			<label text=" " />
-			<key key="railway" value="narrow_gauge"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Monorail" icon="presets/railway.png">
-			<label text="Edit a Monorail" />
-			<label text=" " />
-			<key key="railway" value="monorail"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Preserved" icon="presets/rail_preserved.png">
-			<label text="Edit a Preserved Railway" />
-			<label text=" " />
-			<key key="railway" value="preserved"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Light Rail" icon="presets/rail_light.png">
-			<label text="Edit a Light Rail" />
-			<label text=" " />
-			<key key="railway" value="light_rail"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Subway" icon="presets/rail_light.png">
-			<label text="Edit a Subway" />
-			<label text=" " />
-			<key key="railway" value="subway"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Tram" icon="presets/tram.png">
-			<label text="Edit a Tram" />
-			<label text=" " />
-			<key key="railway" value="tram"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Bus Guideway" icon="presets/busway.png">
-			<label text="Edit a Bus Guideway" />
-			<label text=" " />
-			<key key="highway" value="bus_guideway" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-			<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-			<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-			<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-			<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-			<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-			<combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-			<text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
-		</item>
-
-		<separator/>
-
-		<item name="Disused Rail" icon="presets/railway.png">
-			<label text="Edit a Disused Railway" />
-			<label text=" " />
-			<key key="railway" value="disused"/>
-			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Abandoned Rail" icon="presets/railway.png">
-			<key key="railway" value="abandoned"/>
-		</item>
-
-		<separator/>
-
-		<item name="Level Crossing" icon="presets/level_crossing.png">
-			<key key="railway" value="level_crossing" />
-		</item>
-
-		<item name="Crossing" icon="presets/crossing.png">
-			<key key="railway" value="crossing" />
-		</item>
-
-		<item name="Turntable" icon="presets/turntable.png">
-			<key key="railway" value="turntable" />
-		</item>
-	</group> <!-- Railway -->
-
-	<separator/>
-
 	<group name="Waterway" icon="presets/waterway.png">
 		<item name="River" icon="presets/river.png">
 			<label text="Edit a River" />
@@ -993,6 +894,104 @@
 	</group> <!-- Waterway -->
 
 	<separator/>
+
+	<group name="Railway" icon="presets/railway.png">
+		<item name="Rail" icon="presets/railway.png">
+			<label text="Edit a Rail" />
+			<label text=" " />
+			<key key="railway" value="rail"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Narrow Gauge Rail" icon="presets/railway.png">
+			<label text="Edit a Narrow Gauge Rail" />
+			<label text=" " />
+			<key key="railway" value="narrow_gauge"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Monorail" icon="presets/railway.png">
+			<label text="Edit a Monorail" />
+			<label text=" " />
+			<key key="railway" value="monorail"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Preserved" icon="presets/rail_preserved.png">
+			<label text="Edit a Preserved Railway" />
+			<label text=" " />
+			<key key="railway" value="preserved"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Light Rail" icon="presets/rail_light.png">
+			<label text="Edit a Light Rail" />
+			<label text=" " />
+			<key key="railway" value="light_rail"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Subway" icon="presets/rail_light.png">
+			<label text="Edit a Subway" />
+			<label text=" " />
+			<key key="railway" value="subway"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Tram" icon="presets/tram.png">
+			<label text="Edit a Tram" />
+			<label text=" " />
+			<key key="railway" value="tram"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Bus Guideway" icon="presets/busway.png">
+			<label text="Edit a Bus Guideway" />
+			<label text=" " />
+			<key key="highway" value="bus_guideway" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+			<check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+			<check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+			<check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+			<check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+			<combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+			<combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
+			<text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
+			<text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+		</item>
+		
+		<separator/>
+		
+		<item name="Disused Rail" icon="presets/railway.png">
+			<label text="Edit a Disused Railway" />
+			<label text=" " />
+			<key key="railway" value="disused"/>
+			<combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Abandoned Rail" icon="presets/railway.png">
+			<key key="railway" value="abandoned"/>
+		</item>
+		
+		<separator/>
+		
+		<item name="Level Crossing" icon="presets/level_crossing.png">
+			<key key="railway" value="level_crossing" />
+		</item>
+		
+		<item name="Crossing" icon="presets/crossing.png">
+			<key key="railway" value="crossing" />
+		</item>
+		
+		<item name="Turntable" icon="presets/turntable.png">
+			<key key="railway" value="turntable" />
+		</item>
+	</group> <!-- Railway -->
+
 
 	<group name="Aerialway" icon="presets/aerialway.png">
 		<item name="Chair Lift" icon="presets/chair_lift.png">
@@ -1314,9 +1313,6 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Bench" icon="presets/bench.png">
-			<key key="amenity" value="bench" />
-		</item>
 	</group> <!-- Tourism -->
 
 	<group name="Historic Places" icon="presets/State_Tourist.png">
@@ -1712,31 +1708,7 @@
 	</group>
 
 	<separator/>
-	
-	<group name="Health" icon="presets/pharmacy.png">
-		<item name="Pharmacy" icon="presets/pharmacy.png">
-			<label text="Edit Pharmacy" />
-			<key key="amenity" value="pharmacy" />
-			<combo key="dispensing" text="Dispensing" values="yes,no" default="no" delete_if_empty="true" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
 
-		<item name="Hospital" icon="presets/hospital.png">
-			<label text="Edit Hospital" />
-			<key key="amenity" value="hospital" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Emergency Access Point" icon="presets/emergency_access_point.png">
-			<label text="Edit Emergency Access Point" />
-			<label text=" " />
-			<key key="highway" value="emergency_access_point" />
-			<text key="ref" text="Point Number" default="" delete_if_empty="true" />
-			<text key="phone" text="Phone Number" default="" delete_if_empty="true" />
-			<label text="(Use international code, like +12-345-67890)" />
-			<label text=" " />
-		</item>
-	</group> <!-- Health -->
 
 	<group name="Buildings" icon="presets/townhall.png">
 		<item name="Building" icon="presets/empty.png">
@@ -1845,7 +1817,127 @@
 			<combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
 		</item>
 
+		<separator/>
+		
+		<item name="Addresses" icon="presets/addresses.png">
+			<label text="Edit address information" />
+			<label text=" " />
+			<text key="addr:housenumber" text="House number" default="" delete_if_empty="true" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="addr:housename" text="House name" default="" delete_if_empty="true" />
+			<text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
+			<text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
+			<text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
+		</item>
+		
+		<item name="Address Interpolation" icon="presets/addresses.png">
+			<label text="Edit address interpolation" />
+			<label text=" " />
+			<combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all" default="odd" />
+		</item>
+
 	</group> <!-- Buildings -->
+
+	<group name="Man Made" icon="presets/works.png">
+		<item name="Works" icon="presets/works.png">
+			<label text="Edit Works" />
+			<key key="man_made" value="works" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Tower" icon="presets/tower.png">
+			<label text="Edit Tower" />
+			<key key="man_made" value="tower" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Water Tower" icon="presets/water_tower.png">
+			<label text="Edit Water Tower" />
+			<key key="man_made" value="water_tower" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Power Tower" icon="presets/power_tower.png">
+			<label text="Edit Power Tower" />
+			<key key="power" value="tower" />
+		</item>
+		
+		<item name="Power Generator" icon="presets/power_tower.png">
+			<label text="Edit Power Generator" />
+			<key key="power" value="generator" />
+			<combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear" default="" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Gasometer" icon="presets/gasometer.png">
+			<label text="Edit Gasometer" />
+			<key key="man_made" value="gasometer" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Covered Reservoir" icon="presets/reservoir_covered.png">
+			<label text="Edit Covered Reservoir" />
+			<key key="man_made" value="reservoir_covered" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Lighthouse" icon="presets/lighthouse.png">
+			<label text="Edit Lighthouse" />
+			<key key="man_made" value="lighthouse" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Windmill" icon="presets/windmill.png">
+			<label text="Edit Windmill" />
+			<key key="man_made" value="windmill" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Pier" icon="presets/pier.png">
+			<label text="Edit Pier" />
+			<key key="man_made" value="pier" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Pipeline" icon="presets/empty.png">
+			<label text="Edit Pipeline" />
+			<key key="man_made" value="pipeline" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Wastewater Plant" icon="presets/wastewater_plant.png">
+			<label text="Edit Wastewater Plant" />
+			<key key="man_made" value="wastewater_plant" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Crane" icon="presets/crane.png">
+			<label text="Edit Crane" />
+			<key key="man_made" value="crane" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Beacon" icon="presets/empty.png">
+			<label text="Edit Beacon" />
+			<key key="man_made" value="beacon" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Survey Point" icon="presets/survey_point.png">
+			<label text="Edit Survey Point" />
+			<key key="man_made" value="survey_point" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Surveillance" icon="presets/surveillance.png">
+			<label text="Edit Surveillance Camera" />
+			<key key="man_made" value="surveillance" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+	</group> <!-- Man Made -->
+
 
 	<group name="Amenities" icon="presets/telephone.png">
 
@@ -1883,6 +1975,18 @@
 			<check key="recycling:paper" text="Paper" default="off" delete_if_empty="true" />
 		</item>
 
+		<item name="Bench" icon="presets/bench.png">
+			<key key="amenity" value="bench" />
+		</item>
+
+		<item name="Hunting Stand" icon="presets/hunting_stand.png">
+			<label text="Edit a Hunting Stand" />
+			<key key="amenity" value="hunting_stand" />
+			<check key="shelter" text="Shelter" default="off" delete_if_empty="true" />
+			<check key="hide" text="Hide" default="off" delete_if_empty="true" />
+			<check key="lock" text="Lock" default="off" delete_if_empty="true" />
+			<combo key="height" text="Height" values="low,half,full,5,10,15,20" default="" delete_if_empty="true" />
+		</item>
 
 		<item name="Taxi" icon="presets/taxi.png">
 			<label text="Edit a Taxi station" />
@@ -1909,27 +2013,6 @@
 			<text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Amenities -->
-
-	<group name="Cash" icon="presets/dollar.png">
-		<item name="Bank" icon="presets/bank.png">
-			<label text="Edit Bank" />
-			<key key="amenity" value="bank" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<check key="atm" text="Automated Teller Machine" default="on" delete_if_empty="true" />
-		</item>
-
-		<item name="Money Exchange" icon="presets/coins.png">
-			<label text="Edit Money Exchange" />
-			<key key="amenity" value="bureau_de_change" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Automated Teller Machine" icon="presets/cash.png">
-			<label text="Edit Automated Teller Machine" />
-			<key key="amenity" value="atm" />
-			<text key="name" text="Provider" default="" delete_if_empty="true" />
-		</item>
-	</group> <!-- Cash -->
 
 	<group name="Shops" icon="presets/shopping.png">
 		<item name="Supermarket" icon="presets/shopping.png">
@@ -2001,6 +2084,53 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Shops -->
+
+	<group name="Cash" icon="presets/dollar.png">
+		<item name="Bank" icon="presets/bank.png">
+			<label text="Edit Bank" />
+			<key key="amenity" value="bank" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<check key="atm" text="Automated Teller Machine" default="on" delete_if_empty="true" />
+		</item>
+		
+		<item name="Money Exchange" icon="presets/coins.png">
+			<label text="Edit Money Exchange" />
+			<key key="amenity" value="bureau_de_change" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Automated Teller Machine" icon="presets/cash.png">
+			<label text="Edit Automated Teller Machine" />
+			<key key="amenity" value="atm" />
+			<text key="name" text="Provider" default="" delete_if_empty="true" />
+		</item>
+	</group> <!-- Cash -->
+
+
+	<group name="Health" icon="presets/pharmacy.png">
+		<item name="Pharmacy" icon="presets/pharmacy.png">
+			<label text="Edit Pharmacy" />
+			<key key="amenity" value="pharmacy" />
+			<combo key="dispensing" text="Dispensing" values="yes,no" default="no" delete_if_empty="true" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Hospital" icon="presets/hospital.png">
+			<label text="Edit Hospital" />
+			<key key="amenity" value="hospital" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Emergency Access Point" icon="presets/emergency_access_point.png">
+			<label text="Edit Emergency Access Point" />
+			<label text=" " />
+			<key key="highway" value="emergency_access_point" />
+			<text key="ref" text="Point Number" default="" delete_if_empty="true" />
+			<text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+			<label text="(Use international code, like +12-345-67890)" />
+			<label text=" " />
+		</item>
+	</group> <!-- Health -->
 
 	<separator/>
 
@@ -2089,26 +2219,6 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<separator/>
-
-		<item name="Addresses" icon="presets/addresses.png">
-			<label text="Edit address information" />
-			<label text=" " />
-			<text key="addr:housenumber" text="House number" default="" delete_if_empty="true" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="addr:housename" text="House name" default="" delete_if_empty="true" />
-			<text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
-			<text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
-			<text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
-		</item>
-
-		<item name="Address Interpolation" icon="presets/addresses.png">
-			<label text="Edit address interpolation" />
-			<label text=" " />
-			<combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all" default="odd" />
-		</item>
 	</group> <!-- Places -->
 
 	<group name="Boundaries" icon="presets/boundaries.png">
@@ -2435,101 +2545,4 @@
 		</item>
 	</group> <!-- Natural -->
 
-	<group name="Man Made" icon="presets/works.png">
-		<item name="Works" icon="presets/works.png">
-			<label text="Edit Works" />
-			<key key="man_made" value="works" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-		
-		<item name="Tower" icon="presets/tower.png">
-			<label text="Edit Tower" />
-			<key key="man_made" value="tower" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Water Tower" icon="presets/water_tower.png">
-			<label text="Edit Water Tower" />
-			<key key="man_made" value="water_tower" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Power Tower" icon="presets/power_tower.png">
-			<label text="Edit Power Tower" />
-			<key key="power" value="tower" />
-		</item>
-
-		<item name="Power Generator" icon="presets/power_tower.png">
-			<label text="Edit Power Generator" />
-			<key key="power" value="generator" />
-			<combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear" default="" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Gasometer" icon="presets/gasometer.png">
-			<label text="Edit Gasometer" />
-			<key key="man_made" value="gasometer" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Covered Reservoir" icon="presets/reservoir_covered.png">
-			<label text="Edit Covered Reservoir" />
-			<key key="man_made" value="reservoir_covered" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Lighthouse" icon="presets/lighthouse.png">
-			<label text="Edit Lighthouse" />
-			<key key="man_made" value="lighthouse" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Windmill" icon="presets/windmill.png">
-			<label text="Edit Windmill" />
-			<key key="man_made" value="windmill" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Pier" icon="presets/pier.png">
-			<label text="Edit Pier" />
-			<key key="man_made" value="pier" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Pipeline" icon="presets/empty.png">
-			<label text="Edit Pipeline" />
-			<key key="man_made" value="pipeline" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Wastewater Plant" icon="presets/wastewater_plant.png">
-			<label text="Edit Wastewater Plant" />
-			<key key="man_made" value="wastewater_plant" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Crane" icon="presets/crane.png">
-			<label text="Edit Crane" />
-			<key key="man_made" value="crane" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Beacon" icon="presets/empty.png">
-			<label text="Edit Beacon" />
-			<key key="man_made" value="beacon" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Survey Point" icon="presets/survey_point.png">
-			<label text="Edit Survey Point" />
-			<key key="man_made" value="survey_point" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Surveillance" icon="presets/surveillance.png">
-			<label text="Edit Surveillance Camera" />
-			<key key="man_made" value="surveillance" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-	</group> <!-- Man Made -->
 </annotations>
