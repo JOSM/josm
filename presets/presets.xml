@@ -1880,6 +1880,7 @@
 			<check key="recycling:glass" text="Glass" default="off" delete_if_empty="true" />
 			<check key="recycling:clothes" text="Clothes" default="off" delete_if_empty="true" />
 			<check key="recycling:batteries" text="Batteries" default="off" delete_if_empty="true" />
+			<check key="recycling:paper" text="Paper" default="off" delete_if_empty="true" />
 		</item>
 
 
