@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -246,6 +247,11 @@ abstract public class Main {
 			if (info != null) {
 				if (info.early != early)
 					continue;
+				if (info.mainversion != null && info.mainversion.compareTo(AboutAction.version) < 0)
+				{
+					JOptionPane.showMessageDialog(Main.parent, tr("Plugin requires JOSM update: {0}.", pluginName));
+					continue;
+				}
 				if (!p.containsKey(info.stage))
 					p.put(info.stage, new LinkedList<PluginInformation>());
 				p.get(info.stage).add(info);
@@ -254,6 +260,22 @@ abstract public class Main {
 					System.out.println("Plugin not found: "+pluginName); // do not translate
 				else
 					JOptionPane.showMessageDialog(Main.parent, tr("Plugin not found: {0}.", pluginName));
+			}
+		}
+
+		if(!early)
+		{
+			long tim = System.currentTimeMillis();
+			long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
+			Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 30*24*60*60);
+			if(last <= 0)
+			{
+				Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
+			}
+			else if(tim - last >= maxTime*1000*24*60*60)
+			{
+				long d = (tim - last)/(24*60*60*1000);
+				JOptionPane.showMessageDialog(Main.parent, tr("Last plugin update more than {0} days ago.", d));
 			}
 		}
 

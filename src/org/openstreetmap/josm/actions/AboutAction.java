@@ -51,13 +51,15 @@ public class AboutAction extends JosmAction {
 	private static String time;
 
 	static {
-		revision = loadFile(Main.class.getResource("/REVISION"));
+		URL u = Main.class.getResource("/REVISION");
+		if(u == null) u = Main.class.getResource("/META-INF/MANIFEST.MF");
+		revision = loadFile(u);
 
-		Pattern versionPattern = Pattern.compile(".*?Revision: ([0-9]*).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+		Pattern versionPattern = Pattern.compile(".*?(?:Revision|Main-Version): ([0-9]*).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
 		Matcher match = versionPattern.matcher(revision.getText());
 		version = match.matches() ? match.group(1) : tr("UNKNOWN");
 
-		Pattern timePattern = Pattern.compile(".*?Last Changed Date: ([^\n]*).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+		Pattern timePattern = Pattern.compile(".*?(?:Last Changed Date|Main-Date): ([^\n]*).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
 		match = timePattern.matcher(revision.getText());
 		time = match.matches() ? match.group(1) : tr("UNKNOWN");
 	}

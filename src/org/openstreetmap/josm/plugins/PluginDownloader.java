@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,6 +71,12 @@ public class PluginDownloader {
 
 	private static final Pattern wiki = Pattern.compile("^</td></tr><tr><td><a class=\"ext-link\" href=\"([^\"]*)\"><span class=\"icon\">([^<]*)</span></a></td><td>([^<]*)</td><td>([^<].*)</td><td>(.*)");
 
+	private final static String[] pluginSites = {"http://josm.openstreetmap.de/wiki/Plugins"};
+
+	public static Collection<String> getSites() {
+		return Main.pref.getCollection("pluginmanager.sites", Arrays.asList(pluginSites));
+	}
+
 	public static int downloadDescription() {
 		int count = 0;
 		for (String site : getSites()) {
@@ -93,10 +100,6 @@ public class PluginDownloader {
 		}
 		return count;
 	}
-
-	public static String[] getSites() {
-	    return Main.pref.get("pluginmanager.sites", "http://josm.openstreetmap.de/wiki/Plugins").split(" ");
-    }
 
 	private static CharSequence readXml(BufferedReader r) throws IOException {
 		StringBuilder b = new StringBuilder();

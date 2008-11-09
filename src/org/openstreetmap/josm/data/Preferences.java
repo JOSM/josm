@@ -387,6 +387,20 @@ public class Preferences {
 		return def;
 	}
 
+	synchronized public long getLong(String key, long def) {
+		putDefault(key, Long.toString(def));
+		String v = get(key);
+		if(null == v)
+			return def;
+
+		try {
+			return Long.parseLong(v);
+		} catch(NumberFormatException e) {
+			// fall out
+		}
+		return def;
+	}
+
 	synchronized public double getDouble(String key, double def) {
 		putDefault(key, Double.toString(def));
 		String v = get(key);
@@ -407,6 +421,9 @@ public class Preferences {
 		{
 			/* handle old comma separated stuff - remove in future */
 			if(s.indexOf(',') >= 0)
+				return Arrays.asList(s.split(","));
+			/* handle space separated stuff - remove in future */
+			else if(s.indexOf(' ') >= 0)
 				return Arrays.asList(s.split(","));
 			else
 				return Arrays.asList(s.split(";"));

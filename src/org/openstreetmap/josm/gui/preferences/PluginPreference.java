@@ -197,26 +197,36 @@ public class PluginPreference implements PreferenceSetting {
 
 	private void update() {
 		// refresh description
-		PluginDownloader.downloadDescription();
+		int num = PluginDownloader.downloadDescription();
+		Boolean done = false;
 		refreshPluginPanel(gui);
 
 		Set<PluginDescription> toUpdate = new HashSet<PluginDescription>();
 		StringBuilder toUpdateStr = new StringBuilder();
 		for (PluginProxy proxy : Main.plugins) {
 			PluginDescription description = findDescription(proxy.info.name);
-			if (description != null && (description.version == null || description.version.equals("")) ? (proxy.info.version != null && proxy.info.version.equals("")) : !description.version.equals(proxy.info.version)) {
+			if (description != null && (description.version == null || description.version.equals(""))
+			? (proxy.info.version != null && proxy.info.version.equals("")) : !description.version.equals(proxy.info.version)) {
 				toUpdate.add(description);
 				toUpdateStr.append(description.name+"\n");
 			}
 		}
 		if (toUpdate.isEmpty()) {
 			JOptionPane.showMessageDialog(Main.parent, tr("All installed plugins are up to date."));
-			return;
+			done = true;
 		}
-		int answer = JOptionPane.showConfirmDialog(Main.parent, tr("Update the following plugins:\n\n{0}", toUpdateStr.toString()), tr("Update"), JOptionPane.OK_CANCEL_OPTION);
-		if (answer != JOptionPane.OK_OPTION)
-			return;
-		PluginDownloader.update(toUpdate);
+		else
+		{
+			int answer = JOptionPane.showConfirmDialog(Main.parent, tr("Update the following plugins:\n\n{0}",
+			toUpdateStr.toString()), tr("Update"), JOptionPane.OK_CANCEL_OPTION);
+			if (answer == JOptionPane.OK_OPTION)
+			{
+				PluginDownloader.update(toUpdate);
+				done = true;
+			}
+		}
+		if(done && num >= 1)
+			Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
 	}
 
 	private PluginDescription findDescription(String name) {

@@ -31,6 +31,7 @@ public class PluginInformation {
 	
 	public final File file;
 	public final String name;
+	public final String mainversion;
 	public final String className;
 	public final String description;
 	public final boolean early;
@@ -80,6 +81,7 @@ public class PluginInformation {
 				String stageStr = attr.getValue("Plugin-Stage");
 				stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
 				version = attr.getValue("Plugin-Version");
+				mainversion = attr.getValue("Plugin-Mainversion");
 				author = attr.getValue("Author");
 
 				String classPath = attr.getValue(Attributes.Name.CLASS_PATH);
@@ -100,6 +102,7 @@ public class PluginInformation {
 			} else {
 				// resource-only plugin
 				className = null;
+				mainversion = null;
 				description = tr("unknown");
 				early = false;
 				stage = 50;
