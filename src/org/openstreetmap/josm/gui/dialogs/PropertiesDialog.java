@@ -652,7 +652,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
 		membershipData.setRowCount(0);
 
-		TreeMap<Relation, Collection<RelationMember>> roles = new TreeMap<Relation, Collection<RelationMember>>();
+		Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
 		for (Relation r : Main.ds.relations) {
 			if (!r.deleted && !r.incomplete) {
 				for (RelationMember m : r.members) {
