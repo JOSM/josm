@@ -1830,6 +1830,7 @@
 			<text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
 			<text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
 			<text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
+			<text key="addr:country" text="Country code" use_last_as_default="true" delete_if_empty="true" />
 		</item>
 		
 		<item name="Address Interpolation" icon="presets/addresses.png">
