@@ -215,6 +215,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			newkey = key;
 			value = null; // delete the key instead
 		}
+        if (newkey.equals("created_by"))
+        {
+            // we don't allow created_by to be changed.
+            return;
+        }
 		if (key.equals(newkey) || value == null)
 			Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
 		else {
@@ -231,7 +236,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 							if (map.containsKey(val)) {
 								map.get(val).add(osm);
 							} else {
-								Vector<OsmPrimitive> v = new 	Vector<OsmPrimitive>();
+								Vector<OsmPrimitive> v = new Vector<OsmPrimitive>();
 								v.add(osm);
 								map.put(val, v);
 							}
@@ -321,6 +326,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		String value = values.getEditor().getItem().toString();
 		if (value.equals(""))
 			return;
+        if (key.equals("created_by"))
+            return;
 		Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
 		Main.ds.fireSelectionChanged(sel);
 		selectionChanged(sel); // update table
