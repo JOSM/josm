@@ -266,7 +266,7 @@ public class ShortCut {
 			Main.platform.initShortCutGroups();
 			Main.pref.put("shortcut.groups.configured", true);
 		}
-		// pull in the gorups
+		// pull in the groups
 		for (int i = GROUP_NONE; i < GROUP__MAX+GROUPS_ALT2*2; i++) { // fill more groups, so registering with e.g. ALT2+MNEMONIC won't NPE
 			Groups.put(new Integer(i), new Integer(Main.pref.getInteger("shortcut.groups."+i, -1)));
 		}
@@ -388,7 +388,7 @@ public class ShortCut {
 		Integer defaultModifier = Groups.get(requestedGroup + GROUPS_DEFAULT);
 		if(modifier != null) {
 			if(modifier == SHIFT_DEFAULT)
-				defaultModifier |= KeyEvent.SHIFT_MASK;
+				defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
 			else
 				defaultModifier = modifier;
 		}
