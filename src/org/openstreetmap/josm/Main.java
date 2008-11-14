@@ -247,7 +247,7 @@ abstract public class Main {
 			if (info != null) {
 				if (info.early != early)
 					continue;
-				if (info.mainversion != null && info.mainversion.compareTo(AboutAction.version) < 0)
+				if (info.mainversion != null && info.mainversion.compareTo(AboutAction.version) > 0)
 				{
 					JOptionPane.showMessageDialog(Main.parent, tr("Plugin requires JOSM update: {0}.", pluginName));
 					continue;
