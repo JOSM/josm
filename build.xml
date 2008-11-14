@@ -18,13 +18,22 @@
 		<unjar dest="build">
 			<fileset refid="josm_required_libs" />
 		</unjar>
-    
-    <!-- translation -->
-    <unjar dest="build">
-      <fileset dir="lib">
-        <include name="josm-translation.jar" />
-      </fileset>
-    </unjar>
+
+		<!-- translation -->
+		<unjar dest="build">
+			<fileset dir="lib">
+				<include name="josm-translation.jar" />
+			</fileset>
+		</unjar>
+
+		<exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
+			<env key="LANG" value="C"/>
+			<arg value="info"/>
+			<arg value="--xml"/>
+			<arg value="."/>
+		</exec>
+		<xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
+		<delete file="REVISION"/>
 
 		<!-- images -->
 		<copy todir="build/images">
@@ -36,7 +45,11 @@
 			<fileset dir="presets" />
 		</copy>
 
-		<!-- styles -->
+		<copy file="CONTRIBUTION" todir="build"/>
+		<copy file="README" todir="build"/>
+		<copy file="LICENSE" todir="build"/>
+
+                <!-- styles -->
 		<copy file="styles/standard/elemstyles.xml" todir="build/styles/standard"/>
 
 		<!-- create josm-custom.jar -->
@@ -44,6 +57,8 @@
 		<jar destfile="dist/josm-custom.jar" basedir="build">
 			<manifest>
 				<attribute name="Main-class" value="JOSM" />
+				<attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
+				<attribute name="Main-Date" value="${version.entry.commit.date}"/>
 			</manifest>
 		</jar>
 	</target>
