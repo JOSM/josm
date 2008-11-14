@@ -337,8 +337,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 		String currentLocale = Locale.getDefault().getLanguage();
 		regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name").split(";");
 
-		if(styles.hasAreas())
-		{
+		if (styles.hasAreas()) {
 			Collection<Way> noAreaWays = new LinkedList<Way>();
 
 			for (final OsmPrimitive osm : data.ways)
@@ -368,7 +367,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 			if (!osm.incomplete && !osm.deleted)
 				osm.visit(this);
 
-		if(virtualNodeSize != 0)
+		if (virtualNodeSize != 0)
 		{
 			currentColor = nodeColor;
 			for (final OsmPrimitive osm : data.ways)
