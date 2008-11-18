@@ -174,12 +174,20 @@ public class OsmDataLayer extends Layer {
      * Draw nodes last to overlap the ways they belong to.
      */
     @Override public void paint(final Graphics g, final MapView mv) {
-        boolean inactive = Main.map.mapView.getActiveLayer() != this && Main.pref.getBoolean("draw.data.inactive_color", true);
+        boolean active = Main.map.mapView.getActiveLayer() == this;
+        boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && Main.map.mapView.useVirtualNodes();
-        if (Main.pref.getBoolean("draw.data.downloaded_area", true)) {
+        
+        // draw the hatched area for non-downloaded region. only draw if we're the active 
+        // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
+        if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.dataSources.isEmpty()) {
             // initialize area with current viewport
-            Area b = new Area(Main.map.mapView.getBounds());
-
+            Rectangle b = Main.map.mapView.getBounds();
+            // on some platforms viewport bounds seem to be offset from the left, 
+            // over-grow it just to be sure
+            b.grow(100, 100);
+            Area a = new Area(b);
+            
             // now succesively subtract downloaded areas
             for (DataSource src : data.dataSources) {
                 if (src.bounds != null && !src.bounds.min.equals(src.bounds.max)) {
@@ -188,13 +196,13 @@ public class OsmDataLayer extends Layer {
                     Point p1 = mv.getPoint(en1);
                     Point p2 = mv.getPoint(en2);
                     Rectangle r = new Rectangle(Math.min(p1.x, p2.x),Math.min(p1.y, p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));
-                    b.subtract(new Area(r));
+                    a.subtract(new Area(r));
                 }
             }
             
             // paint remainder
             ((Graphics2D)g).setPaint(hatched);
-            ((Graphics2D)g).fill(b);
+            ((Graphics2D)g).fill(a);
         }
     
         SimplePaintVisitor painter;
