@@ -6,8 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
@@ -127,8 +129,28 @@ public class OsmDataLayer extends Layer {
     /**
      * a paint texture for non-downloaded area
      */
-    private TexturePaint hatched;
+    private static TexturePaint hatched;
     
+    static {
+        createHatchTexture();
+    }
+
+    /**
+     * Initialize the hatch pattern used to paint the non-downloaded area
+     */
+    public static void createHatchTexture() {
+        BufferedImage bi = new BufferedImage(15, 15, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D big = bi.createGraphics();
+        big.setColor(Main.pref.getColor(marktr("background"), Color.BLACK));
+        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+        big.setComposite(comp);
+        big.fillRect(0,0,15,15);
+        big.setColor(Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW));
+        big.drawLine(0,15,15,0);
+        Rectangle r = new Rectangle(0, 0, 15,15);
+        hatched = new TexturePaint(bi, r);
+    }
+
     /**
      * Construct a OsmDataLayer.
      */
@@ -136,15 +158,6 @@ public class OsmDataLayer extends Layer {
         super(name);
         this.data = data;
         this.associatedFile = associatedFile;
-        
-        BufferedImage bi = new BufferedImage(15, 15, BufferedImage.TYPE_INT_RGB);
-        Graphics2D big = bi.createGraphics();
-        big.setColor(Main.pref.getColor(marktr("background"), Color.BLACK));
-        big.fillRect(0,0,15,15);
-        big.setColor(Main.pref.getColor(marktr("downloaded Area"), Color.YELLOW));
-        big.drawLine(0,15,15,0);
-        Rectangle r = new Rectangle(0, 0, 15,15);
-        hatched = new TexturePaint(bi, r);
     }
 
     /**

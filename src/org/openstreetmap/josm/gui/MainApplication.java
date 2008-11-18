@@ -164,7 +164,9 @@ public class MainApplication extends Main {
 			new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
 			Main.pref.save();
 		}
-		
+
+        // TODO remove this in early 2009 - just here to weed out color setting we don't use any more
+        Main.pref.put("downloaded Area", null);
 
 		String localeName = null; //The locale to use
         

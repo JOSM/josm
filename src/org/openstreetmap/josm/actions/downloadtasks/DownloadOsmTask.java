@@ -10,17 +10,23 @@ import javax.swing.JCheckBox;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.xml.sax.SAXException;
+
 
 /**
  * Open the download dialog and download the data.
  * Run in the worker thread.
  */
 public class DownloadOsmTask implements DownloadTask {
+
+    private static Bounds currentBounds;
 
 	private static class Task extends PleaseWaitRunnable {
 		private BoundingBoxDownloader reader;
@@ -40,8 +46,13 @@ public class DownloadOsmTask implements DownloadTask {
 		@Override protected void finish() {
 			if (dataSet == null)
 				return; // user cancelled download or error occoured
-			if (dataSet.allPrimitives().isEmpty())
+			if (dataSet.allPrimitives().isEmpty()) {
 				errorMessage = tr("No data imported.");
+                // need to synthesize a download bounds lest the visual indication of downloaded
+                // area doesn't work
+                dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
+            }
+
 			OsmDataLayer layer = new OsmDataLayer(dataSet, tr("Data Layer"), null);
 			if (newLayer)
 				Main.main.addLayer(layer);
@@ -68,6 +79,7 @@ public class DownloadOsmTask implements DownloadTask {
 		}
     
 		Task task = new Task(action != null && (action.dialog == null || action.dialog.newLayer.isSelected()), new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon));
+        currentBounds = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
 		Main.worker.execute(task);
     }
 

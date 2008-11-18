@@ -177,8 +177,7 @@ public class Preferences {
 		return all;
 	}
 
-	synchronized public Map<String, String> getDefaults()
-	{
+	synchronized public Map<String, String> getDefaults() {
 		return defaults;
 	}
 

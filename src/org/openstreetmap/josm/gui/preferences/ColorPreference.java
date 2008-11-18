@@ -29,6 +29,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -171,5 +172,6 @@ public class ColorPreference implements PreferenceSetting {
 			Color col = (Color)colors.getValueAt(i, 1);
 			Main.pref.put("color." + name, ColorHelper.color2html(col));
 		}
+        org.openstreetmap.josm.gui.layer.OsmDataLayer.createHatchTexture();
     }
 }
