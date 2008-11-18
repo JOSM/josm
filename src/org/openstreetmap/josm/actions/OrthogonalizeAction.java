@@ -40,7 +40,7 @@ public final class OrthogonalizeAction extends JosmAction {
 	public OrthogonalizeAction() {
         super(tr("Orthogonalize shape"), 
             "ortho", 
-            tr("Move nodes so all angles are 0/90/180/270deg"),
+            tr("Move nodes so all angles are 90 or 270deg"),
             Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize")), 
             KeyEvent.VK_Q, 
             Shortcut.GROUP_EDIT), true);
