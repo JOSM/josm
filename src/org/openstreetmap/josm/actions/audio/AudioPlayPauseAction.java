@@ -10,13 +10,13 @@ import java.net.URL;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioPlayer;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioPlayPauseAction extends JosmAction {
 
 	public AudioPlayPauseAction() {
 		super(tr("Play/pause"), "audio-playpause", tr("Play/pause audio."),
-		ShortCut.registerShortCut("audio:pause", tr("Audio: {0}", tr("Play/pause")), KeyEvent.VK_PERIOD, ShortCut.GROUP_DIRECT), true);
+		Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", tr("Play/pause")), KeyEvent.VK_PERIOD, Shortcut.GROUP_DIRECT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

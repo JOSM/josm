@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Export the data.
@@ -22,7 +22,7 @@ public class SaveAsAction extends SaveActionBase {
 	 */
 	public SaveAsAction(Layer layer) {
 		super(tr("Save as ..."), "save_as", tr("Save the current data to a new file."),
-		ShortCut.registerShortCut("system:saveas", tr("File: {0}", tr("Save as ...")), KeyEvent.VK_S, ShortCut.GROUP_MENU, ShortCut.SHIFT_DEFAULT), layer);
+		Shortcut.registerShortcut("system:saveas", tr("File: {0}", tr("Save as ...")), KeyEvent.VK_S, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), layer);
 	}
 
 	@Override protected File getFile(Layer layer) {

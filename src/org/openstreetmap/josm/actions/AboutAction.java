@@ -33,7 +33,7 @@ import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Nice about screen. I guess every application need one these days.. *sigh*
@@ -69,7 +69,7 @@ public class AboutAction extends JosmAction {
 	}
 
 	public AboutAction() {
-		super(tr("About"), "about", tr("Display the about screen."), ShortCut.registerShortCut("system:about", tr("About"), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT, ShortCut.SHIFT_DEFAULT), true);
+		super(tr("About"), "about", tr("Display the about screen."), Shortcut.registerShortcut("system:about", tr("About"), KeyEvent.VK_F1, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

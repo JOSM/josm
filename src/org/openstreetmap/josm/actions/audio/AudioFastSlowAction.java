@@ -6,13 +6,13 @@ import java.awt.event.ActionEvent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.tools.AudioPlayer;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 abstract public class AudioFastSlowAction extends JosmAction {
 
 	private double multiplier;
 
-	public AudioFastSlowAction(String name, String iconName, String tooltip, ShortCut shortcut, boolean fast) {
+	public AudioFastSlowAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean fast) {
 		super(name, iconName, tooltip, shortcut, true);
 		try {
 			multiplier = Double.parseDouble(Main.pref.get("audio.fastfwdmultiplier","1.3"));

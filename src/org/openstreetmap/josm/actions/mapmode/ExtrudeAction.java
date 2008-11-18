@@ -29,7 +29,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Makes a rectangle from a line, or modifies a rectangle.
@@ -73,7 +73,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 	 */
 	public ExtrudeAction(MapFrame mapFrame) {
 		super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
-				ShortCut.registerShortCut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, ShortCut.GROUP_EDIT),
+				Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
 			mapFrame,
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Extrude/Extrude");

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Moves the selection
@@ -30,20 +30,20 @@ public class MoveAction extends JosmAction {
 
 	// any better idea?
 	private static Object calltosupermustbefirststatementinconstructor(Direction dir, boolean text) {
-		ShortCut sc;
+		Shortcut sc;
 		String directiontext;
 		if        (dir == Direction.UP)   {
 			directiontext = tr("up");
-			sc = ShortCut.registerShortCut("core:moveup",    tr("Move objects {0}", directiontext), KeyEvent.VK_UP,    ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+			sc = Shortcut.registerShortcut("core:moveup",    tr("Move objects {0}", directiontext), KeyEvent.VK_UP,    Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
 		} else if (dir == Direction.DOWN)  {
 			directiontext = tr("down");
-			sc = ShortCut.registerShortCut("core:movedown",  tr("Move objects {0}", directiontext), KeyEvent.VK_DOWN,  ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+			sc = Shortcut.registerShortcut("core:movedown",  tr("Move objects {0}", directiontext), KeyEvent.VK_DOWN,  Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
 		} else if (dir == Direction.LEFT)  {
 			directiontext = tr("left");
-			sc = ShortCut.registerShortCut("core:moveleft",  tr("Move objects {0}", directiontext), KeyEvent.VK_LEFT,  ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+			sc = Shortcut.registerShortcut("core:moveleft",  tr("Move objects {0}", directiontext), KeyEvent.VK_LEFT,  Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
 		} else { //dir == Direction.RIGHT) {
 			directiontext = tr("right");
-			sc = ShortCut.registerShortCut("core:moveright", tr("Move objects {0}", directiontext), KeyEvent.VK_RIGHT, ShortCut.GROUPS_ALT1+ShortCut.GROUP_DIRECT);
+			sc = Shortcut.registerShortcut("core:moveright", tr("Move objects {0}", directiontext), KeyEvent.VK_RIGHT, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
 		}
 		if (text) {
 			return directiontext;
@@ -55,7 +55,7 @@ public class MoveAction extends JosmAction {
 	public MoveAction(Direction dir) {
 		super(tr("Move {0}", calltosupermustbefirststatementinconstructor(dir, true)), null,
 		      tr("Moves Objects {0}", calltosupermustbefirststatementinconstructor(dir, true)),
-		      (ShortCut)calltosupermustbefirststatementinconstructor(dir, false), true);
+		      (Shortcut)calltosupermustbefirststatementinconstructor(dir, false), true);
 		myDirection = dir;
 	}
 

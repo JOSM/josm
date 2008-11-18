@@ -24,7 +24,7 @@ import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.io.NmeaReader;
 import org.openstreetmap.josm.io.OsmReader;
 import org.xml.sax.SAXException;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Open a file chooser dialog and select an file to import. Then call the gpx-import
@@ -39,7 +39,7 @@ public class OpenAction extends DiskAccessAction {
 	 */
 	public OpenAction() {
 		super(tr("Open ..."), "open", tr("Open a file."),
-		ShortCut.registerShortCut("system:open", tr("File: {0}", tr("Open ...")), KeyEvent.VK_O, ShortCut.GROUP_MENU));
+		Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open ...")), KeyEvent.VK_O, Shortcut.GROUP_MENU));
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -32,7 +32,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Splits a way into multiple ways (all identical except for their node list).
@@ -51,7 +51,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 	 */
 	public SplitWayAction() {
 		super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
-		ShortCut.registerShortCut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, ShortCut.GROUP_EDIT), true);
+		Shortcut.registerShortcut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 

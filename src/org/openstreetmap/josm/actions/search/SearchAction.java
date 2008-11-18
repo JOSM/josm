@@ -21,7 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class SearchAction extends JosmAction {
 
@@ -37,7 +37,7 @@ public class SearchAction extends JosmAction {
 
     public SearchAction() {
         super(tr("Search ..."), "dialogs/search", tr("Search for objects."),
-        ShortCut.registerShortCut("system:find", tr("Search..."), KeyEvent.VK_F, ShortCut.GROUP_HOTKEY), true);
+        Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.GROUP_HOTKEY), true);
     }
 
     public void actionPerformed(ActionEvent e) {

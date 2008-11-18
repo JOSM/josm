@@ -50,7 +50,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  *
@@ -73,12 +73,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
 	public DrawAction(MapFrame mapFrame) {
 		super(tr("Draw"), "node/autonode", tr("Draw nodes"),
-				ShortCut.registerShortCut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, ShortCut.GROUP_EDIT),
+				Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.GROUP_EDIT),
 				mapFrame, getCursor());
 
 		// Add extra shortcut N
 		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			ShortCut.registerShortCut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, ShortCut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
+			Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
 
 		//putValue("help", "Action/AddNode/Autnode");
 		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);

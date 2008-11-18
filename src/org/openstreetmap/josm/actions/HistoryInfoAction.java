@@ -13,13 +13,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class HistoryInfoAction extends JosmAction {
 
 	public HistoryInfoAction() {
 		super(tr("OSM History Information"), "about",tr("Display history information about OSM ways or nodes."),
-		ShortCut.registerShortCut("core:history", tr("OSM History Information"), KeyEvent.VK_H, ShortCut.GROUP_HOTKEY), true);
+		Shortcut.registerShortcut("core:history", tr("OSM History Information"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Displays a dialog with all users who have last edited something in the
@@ -51,7 +51,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
 	public UserListDialog() {
 		super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
-		ShortCut.registerShortCut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, ShortCut.GROUP_LAYER, ShortCut.SHIFT_DEFAULT), 150);
+		Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
 		data.setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
 		userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

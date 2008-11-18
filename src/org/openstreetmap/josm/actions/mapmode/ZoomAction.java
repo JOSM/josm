@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Enable the zoom mode within the MapFrame.
@@ -46,7 +46,7 @@ public class ZoomAction extends MapMode implements SelectionEnded {
 	 */
 	public ZoomAction(MapFrame mapFrame) {
 		super(tr("Zoom"), "zoom", tr("Zoom and move map"),
-		ShortCut.registerShortCut("mapmode:zoom", tr("Mode: {0}", tr("Zoom")), KeyEvent.VK_Z, ShortCut.GROUP_EDIT),
+		Shortcut.registerShortcut("mapmode:zoom", tr("Mode: {0}", tr("Zoom")), KeyEvent.VK_Z, Shortcut.GROUP_EDIT),
 		mapFrame, ImageProvider.getCursor("normal", "zoom"));
 		mv = mapFrame.mapView;
 		selectionManager = new SelectionManager(this, true, mv);

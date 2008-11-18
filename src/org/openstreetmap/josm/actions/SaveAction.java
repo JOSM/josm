@@ -9,7 +9,7 @@ import java.io.File;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Export the data as an OSM xml file.
@@ -24,7 +24,7 @@ public class SaveAction extends SaveActionBase {
 	 */
 	public SaveAction(Layer layer) {
 		super(tr("Save"), "save", tr("Save the current data."),
-		ShortCut.registerShortCut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, ShortCut.GROUP_MENU), layer);
+		Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.GROUP_MENU), layer);
 	}
 
 	@Override public File getFile(Layer layer) {

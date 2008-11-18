@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 import java.io.IOException;
 
@@ -54,8 +54,8 @@ public interface PlatformHook {
 	public void openUrl(String url) throws IOException;
 
 	/**
-	  * The initShortCutGroups hook will be called by the
-	  * ShortCut class if it detects that there are no
+	  * The initShortcutGroups hook will be called by the
+	  * Shortcut class if it detects that there are no
 	  * groups in teh config file. So that will happen
 	  * once on each JOSM installation only.
 	  *
@@ -66,11 +66,11 @@ public interface PlatformHook {
 	  * data, not the internal structures! Also, do not try
 	  * to register any shortcuts from within.
 	  */
-	public void initShortCutGroups();
+	public void initShortcutGroups();
 
 	/**
-	  * The initSystemShortCuts hook will be called by the
-	  * ShortCut class after the modifier groups have been read
+	  * The initSystemShortcuts hook will be called by the
+	  * Shortcut class after the modifier groups have been read
 	  * from the config, but before any shortcuts are read from
 	  * it or registered from within the application.
 	  *
@@ -88,7 +88,7 @@ public interface PlatformHook {
 	  * on them to prevent the keyboard preferences from allowing the
 	  * user to change them.
 	  */
-	public void initSystemShortCuts();
+	public void initSystemShortcuts();
 
 	/**
 	  * The makeTooltip hook will be called whenever a tooltip for
@@ -101,5 +101,5 @@ public interface PlatformHook {
 	  * hook are LAFs that don't understand HTML, such as the OSX
 	  * LAFs.
 	  */
-	public String makeTooltip(String name, ShortCut sc);
+	public String makeTooltip(String name, Shortcut sc);
 }

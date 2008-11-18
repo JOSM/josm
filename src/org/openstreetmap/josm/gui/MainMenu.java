@@ -60,7 +60,7 @@ import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.data.DataSetChecker;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide
@@ -141,9 +141,9 @@ public class MainMenu extends JMenuBar {
 	 * OS are not duplicated on the menu.
 	 */
 	public static void add(JMenu menu, JosmAction action) {
-		if (!action.getShortCut().getAutomatic()) {
+		if (!action.getShortcut().getAutomatic()) {
 			JMenuItem menuitem = menu.add(action);
-			KeyStroke ks = action.getShortCut().getKeyStroke();
+			KeyStroke ks = action.getShortcut().getKeyStroke();
 			if (ks != null) {
 				menuitem.setAccelerator(ks);
 			}
@@ -156,7 +156,7 @@ public class MainMenu extends JMenuBar {
 	 * This method handles all the shortcut handling.
 	 */
 	public void add(JMenu menu, int mnemonicKey, String shortName) {
-		ShortCut.registerShortCut("menu:"+shortName, tr("Menu: {0}", menu.getText()), mnemonicKey, ShortCut.GROUP_MNEMONIC).setMnemonic(menu);
+		Shortcut.registerShortcut("menu:"+shortName, tr("Menu: {0}", menu.getText()), mnemonicKey, Shortcut.GROUP_MNEMONIC).setMnemonic(menu);
 		add(menu);
 	}
 
@@ -203,7 +203,7 @@ public class MainMenu extends JMenuBar {
 		// TODO move code to an "action" like the others?
 		final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe view"));
 		wireframe.setSelected(Main.pref.getBoolean("draw.wireframe", false));
-		wireframe.setAccelerator(ShortCut.registerShortCut("menu:view:wireframe", "Toggle Wireframe view", KeyEvent.VK_W, ShortCut.GROUP_MENU).getKeyStroke());
+		wireframe.setAccelerator(Shortcut.registerShortcut("menu:view:wireframe", "Toggle Wireframe view", KeyEvent.VK_W, Shortcut.GROUP_MENU).getKeyStroke());
 		wireframe.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				Main.pref.put("draw.wireframe", wireframe.isSelected());
@@ -252,7 +252,7 @@ public class MainMenu extends JMenuBar {
 		});
 		helpMenu.add(check);
 		current = helpMenu.add(help); // why is help not a JosmAction?
-		current.setAccelerator(ShortCut.registerShortCut("system:help", tr("Help"), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT).getKeyStroke());
+		current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.GROUP_DIRECT).getKeyStroke());
 		add(helpMenu, about);
 		add(helpMenu, historyinfo);
 		add(helpMenu, KeyEvent.VK_H, "help");

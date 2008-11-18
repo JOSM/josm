@@ -63,7 +63,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This dialog displays the properties of the current selected primitives.
@@ -428,8 +428,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	 */
 	public PropertiesDialog(MapFrame mapFrame) {
 		super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."),
-		ShortCut.registerShortCut("subwindow:properies", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
-		ShortCut.GROUP_LAYER, ShortCut.SHIFT_DEFAULT), 150);
+		Shortcut.registerShortcut("subwindow:properies", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
+		Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
 		// ---------------------------------------
 		// This drop-down is really deprecated but we offer people a chance to

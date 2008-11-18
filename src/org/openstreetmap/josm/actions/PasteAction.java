@@ -23,13 +23,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public final class PasteAction extends JosmAction {
 
     public PasteAction() {
     	super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
-			ShortCut.registerShortCut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, ShortCut.GROUP_MENU), true);
+			Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
 			setEnabled(false);
     }
 

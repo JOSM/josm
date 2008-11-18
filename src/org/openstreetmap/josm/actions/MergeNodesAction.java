@@ -39,7 +39,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 
 /**
@@ -53,7 +53,7 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 
 	public MergeNodesAction() {
 		super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
-		ShortCut.registerShortCut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, ShortCut.GROUP_EDIT), true);
+		Shortcut.registerShortcut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, Shortcut.GROUP_EDIT), true);
 		DataSet.selListeners.add(this);
 	}
 

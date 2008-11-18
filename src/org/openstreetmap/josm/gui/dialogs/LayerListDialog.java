@@ -39,7 +39,7 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A component that manages the list of all layers and react to selection changes
@@ -159,7 +159,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 	 */
 	public LayerListDialog(MapFrame mapFrame) {
 		super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
-		ShortCut.registerShortCut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, ShortCut.GROUP_LAYER), 100);
+		Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, Shortcut.GROUP_LAYER), 100);
 		instance = new JList(model);
 		listScrollPane = new JScrollPane(instance);
 		add(listScrollPane, BorderLayout.CENTER);

@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Exports data to gpx.
@@ -45,7 +45,7 @@ public class GpxExportAction extends DiskAccessAction {
 
 	public GpxExportAction(Layer layer) {
 		super(tr("Export to GPX ..."), "exportgpx", tr("Export the data to GPX file."),
-		ShortCut.registerShortCut("file:exportgpx", tr("Export to GPX ..."), KeyEvent.VK_E, ShortCut.GROUP_MENU));
+		Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX ..."), KeyEvent.VK_E, Shortcut.GROUP_MENU));
 		this.layer = layer;
 	}
 

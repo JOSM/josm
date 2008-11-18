@@ -11,7 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A class implementing MapMode is able to be selected as an mode for map editing.
@@ -28,8 +28,8 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
 	/**
 	 * Constructor for mapmodes without an menu
 	 */
-	public MapMode(String name, String iconName, String tooltip, ShortCut shortCut, MapFrame mapFrame, Cursor cursor) {
-		super(name, "mapmode/"+iconName, tooltip, shortCut, false);
+	public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
+		super(name, "mapmode/"+iconName, tooltip, shortcut, false);
 		this.cursor = cursor;
 		putValue("active", false);
 	}

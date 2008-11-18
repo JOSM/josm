@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * An action that enables the user to delete nodes and other objects.
@@ -43,7 +43,7 @@ public class DeleteAction extends MapMode {
 		super(tr("Delete Mode"),
 				"delete",
 				tr("Delete nodes or ways."),
-				ShortCut.registerShortCut("mapmode:delete", tr("Mode: {0}",tr("Delete")), KeyEvent.VK_D, ShortCut.GROUP_EDIT),
+				Shortcut.registerShortcut("mapmode:delete", tr("Mode: {0}",tr("Delete")), KeyEvent.VK_D, Shortcut.GROUP_EDIT),
 				mapFrame,
 				ImageProvider.getCursor("normal", "delete"));
 	}

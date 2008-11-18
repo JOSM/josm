@@ -12,14 +12,14 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public final class DuplicateAction extends JosmAction implements SelectionChangedListener {
 
     public DuplicateAction() {
     	super(tr("Duplicate"), "duplicate",
 			tr("Duplicate selection by copy and immediate paste."),
-			ShortCut.registerShortCut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, ShortCut.GROUP_MENU), true);
+			Shortcut.registerShortcut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, Shortcut.GROUP_MENU), true);
     	setEnabled(false);
 			DataSet.selListeners.add(this);
     }

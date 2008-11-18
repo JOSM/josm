@@ -7,13 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public final class ZoomInAction extends JosmAction {
 
 	public ZoomInAction() {
 		super(tr("Zoom in"), "dialogs/zoomin", tr("Zoom in"),
-		ShortCut.registerShortCut("view:zoomin", tr("View: {0}", tr("Zoom in")), KeyEvent.VK_PLUS, ShortCut.GROUP_DIRECT), true);
+		Shortcut.registerShortcut("view:zoomin", tr("View: {0}", tr("Zoom in")), KeyEvent.VK_PLUS, Shortcut.GROUP_DIRECT), true);
 		setEnabled(true);
 	}
 

@@ -25,7 +25,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This class is a toggle dialog that can be turned on and off. It is attached
@@ -39,8 +39,8 @@ public class ToggleDialog extends JPanel implements Helpful {
 		public final String prefname;
 		public AbstractButton button;
 
-		private ToggleDialogAction(String name, String iconName, String tooltip, ShortCut shortCut, String prefname) {
-			super(name, iconName, tooltip, shortCut, false);
+		private ToggleDialogAction(String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
+			super(name, iconName, tooltip, shortcut, false);
 			this.prefname = prefname;
 		}
 
@@ -62,21 +62,21 @@ public class ToggleDialog extends JPanel implements Helpful {
 	private final JPanel titleBar = new JPanel(new GridBagLayout());
 
 	@Deprecated
-	public ToggleDialog(final String name, String iconName, String tooltip, int shortCut, int preferredHeight) {
+	public ToggleDialog(final String name, String iconName, String tooltip, int shortcut, int preferredHeight) {
 		super(new BorderLayout());
 		this.prefName = iconName;
-		ToggleDialogInit(name, iconName, tooltip, ShortCut.registerShortCut("auto:"+name, tooltip, shortCut, ShortCut.GROUP_LAYER), preferredHeight);
+		ToggleDialogInit(name, iconName, tooltip, Shortcut.registerShortcut("auto:"+name, tooltip, shortcut, Shortcut.GROUP_LAYER), preferredHeight);
 	}
 
-	public ToggleDialog(final String name, String iconName, String tooltip, ShortCut shortCut, int preferredHeight) {
+	public ToggleDialog(final String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight) {
 		super(new BorderLayout());
 		this.prefName = iconName;
-		ToggleDialogInit(name, iconName, tooltip, shortCut, preferredHeight);
+		ToggleDialogInit(name, iconName, tooltip, shortcut, preferredHeight);
 	}
 
-	private void ToggleDialogInit(final String name, String iconName, String tooltip, ShortCut shortCut, int preferredHeight) {
+	private void ToggleDialogInit(final String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight) {
 		setPreferredSize(new Dimension(330,preferredHeight));
-		action = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortCut, iconName);
+		action = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, iconName);
 		String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
 		action.putValue("help", helpId.substring(0, helpId.length()-6));
 		setLayout(new BorderLayout());

@@ -62,7 +62,7 @@ import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 abstract public class Main {
 	/**
@@ -203,7 +203,7 @@ abstract public class Main {
 		// creating toolbar
 		contentPane.add(toolbar.control, BorderLayout.NORTH);
 
-		contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ShortCut.registerShortCut("system:help", tr("Help"), KeyEvent.VK_F1, ShortCut.GROUP_DIRECT).getKeyStroke(), "Help");
+		contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.GROUP_DIRECT).getKeyStroke(), "Help");
 		contentPane.getActionMap().put("Help", menu.help);
 
 		TaggingPresetPreference.initialize();
@@ -439,7 +439,7 @@ abstract public class Main {
 	}
 
 	public static boolean breakBecauseUnsavedChanges() {
-		ShortCut.savePrefs();
+		Shortcut.savePrefs();
 		if (map != null) {
 			boolean modified = false;
 			boolean uploadedModified = false;

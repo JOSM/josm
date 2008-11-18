@@ -11,7 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Base class helper for all Actions in JOSM. Just to make the life easier.
@@ -25,12 +25,12 @@ import org.openstreetmap.josm.tools.ShortCut;
 abstract public class JosmAction extends AbstractAction implements Destroyable {
 
 	@Deprecated
-	public KeyStroke shortCut;
-	protected ShortCut sc;
+	public KeyStroke shortcut;
+	protected Shortcut sc;
 
-	public ShortCut getShortCut() {
+	public Shortcut getShortcut() {
 		if (sc == null) {
-			sc = ShortCut.registerShortCut("core:none", "No Shortcut", 0, ShortCut.GROUP_NONE);
+			sc = Shortcut.registerShortcut("core:none", "No Shortcut", 0, Shortcut.GROUP_NONE);
 			sc.setAutomatic(); // as this shortcut is shared by all action that don't want to have a shortcut,
 			                   // we shouldn't allow the user to change it...
 		}
@@ -38,18 +38,18 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 	}
 
 	@Deprecated
-	public JosmAction(String name, String iconName, String tooltip, int shortCut, int modifier, boolean register) {
+	public JosmAction(String name, String iconName, String tooltip, int shortcut, int modifier, boolean register) {
 		super(name, iconName == null ? null : ImageProvider.get(iconName));
 		setHelpId();
-		if (shortCut != 0) {
-			int group = ShortCut.GROUP_LAYER; //GROUP_NONE;
+		if (shortcut != 0) {
+			int group = Shortcut.GROUP_LAYER; //GROUP_NONE;
 			if (((modifier & InputEvent.CTRL_MASK) != 0) || ((modifier & InputEvent.CTRL_DOWN_MASK) != 0)) {
-				group = ShortCut.GROUP_MENU;
+				group = Shortcut.GROUP_MENU;
 			} else if (modifier == 0) {
-				group = ShortCut.GROUP_EDIT;
+				group = Shortcut.GROUP_EDIT;
 			}
-			sc = ShortCut.registerShortCut("auto:"+name, name, shortCut, group);
-			this.shortCut = sc.getKeyStroke();
+			sc = Shortcut.registerShortcut("auto:"+name, name, shortcut, group);
+			this.shortcut = sc.getKeyStroke();
 			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
 			Main.contentPane.getActionMap().put(name, this);
 		}
@@ -68,18 +68,18 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 	 * iconName - the filename of the icon to use
 	 * tooltip - a longer description of the action that will be displayed in the tooltip. Please note
 	 *           that html is not supported for menu action on some platforms
-	 * shortCut - a ready-created shortcut object or null if you don't want a shortcut. But you always
+	 * shortcut - a ready-created shortcut object or null if you don't want a shortcut. But you always
 	 *            do want a shortcut, remember you can alway register it with group=none, so you
 	 *            won't be assigned a shurtcut unless the user configures one. If you pass null here,
 	 *            the user CANNOT configure a shortcut for your action.
 	 * register - register this action for the toolbar preferences?
 	 */
-	public JosmAction(String name, String iconName, String tooltip, ShortCut shortCut, boolean register) {
+	public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
 		super(name, iconName == null ? null : ImageProvider.get(iconName));
 		setHelpId();
-		sc = shortCut;
+		sc = shortcut;
 		if (sc != null) {
-			this.shortCut = sc.getKeyStroke();
+			this.shortcut = sc.getKeyStroke();
 			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
 			Main.contentPane.getActionMap().put(name, this);
 		}
@@ -90,7 +90,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 	}
 
 	public void destroy() {
-		if (shortCut != null) {
+		if (shortcut != null) {
 			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
 			Main.contentPane.getActionMap().remove(sc.getKeyStroke());
 		}

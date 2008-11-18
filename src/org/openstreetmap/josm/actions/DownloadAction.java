@@ -15,7 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Action that opens a connection to the osm server and downloads map data.
@@ -31,7 +31,7 @@ public class DownloadAction extends JosmAction {
 
 	public DownloadAction() {
 		super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."),
-		ShortCut.registerShortCut("file:download", tr("File: {0}", tr("Download from OSM ...")), KeyEvent.VK_D, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
+		Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM ...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

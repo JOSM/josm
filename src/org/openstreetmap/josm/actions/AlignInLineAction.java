@@ -17,7 +17,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Aligns all selected nodes into a straight line (useful for
@@ -30,7 +30,7 @@ public final class AlignInLineAction extends JosmAction {
 
 	public AlignInLineAction() {
 		super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes onto a line."),
-		ShortCut.registerShortCut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, ShortCut.GROUP_EDIT), true);
+		Shortcut.registerShortcut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, Shortcut.GROUP_EDIT), true);
 	}
 
 	/**

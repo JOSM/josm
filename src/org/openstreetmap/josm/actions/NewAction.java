@@ -9,13 +9,13 @@ import java.awt.event.KeyEvent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class NewAction extends JosmAction {
 
 	public NewAction() {
 		super(tr("New"), "new", tr("Create a new map."),
-		ShortCut.registerShortCut("system:new", tr("File: {0}", tr("New")), KeyEvent.VK_N, ShortCut.GROUP_MENU), true);
+		Shortcut.registerShortcut("system:new", tr("File: {0}", tr("New")), KeyEvent.VK_N, Shortcut.GROUP_MENU), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

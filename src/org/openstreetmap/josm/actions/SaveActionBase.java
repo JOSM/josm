@@ -21,20 +21,20 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.GpxWriter;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public abstract class SaveActionBase extends DiskAccessAction {
 
 	private Layer layer;
 
-	public SaveActionBase(String name, String iconName, String tooltip, ShortCut shortCut, Layer layer) {
-		super(name, iconName, tooltip, shortCut);
+	public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut, Layer layer) {
+		super(name, iconName, tooltip, shortcut);
 		this.layer = layer;
 	}
 
 	@Deprecated
-	public SaveActionBase(String name, String iconName, String tooltip, int shortCut, int modifiers, Layer layer) {
-		super(name, iconName, tooltip, shortCut, modifiers);
+	public SaveActionBase(String name, String iconName, String tooltip, int shortcut, int modifiers, Layer layer) {
+		super(name, iconName, tooltip, shortcut, modifiers);
 		this.layer = layer;
 	}
 

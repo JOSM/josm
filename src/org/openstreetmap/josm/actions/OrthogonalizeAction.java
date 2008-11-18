@@ -24,7 +24,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Align edges of a way so all angles are right angles. 
@@ -41,9 +41,9 @@ public final class OrthogonalizeAction extends JosmAction {
         super(tr("Orthogonalize shape"), 
             "ortho", 
             tr("Move nodes so all angles are 0/90/180/270deg"),
-            ShortCut.registerShortCut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize")), 
+            Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize")), 
             KeyEvent.VK_Q, 
-            ShortCut.GROUP_EDIT), true);
+            Shortcut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

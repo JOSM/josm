@@ -42,7 +42,7 @@ import org.openstreetmap.josm.gui.ConflictResolver;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public final class ConflictDialog extends ToggleDialog {
 
@@ -52,7 +52,7 @@ public final class ConflictDialog extends ToggleDialog {
 
 	public ConflictDialog() {
 		super(tr("Conflict"), "conflict", tr("Merging conflicts."),
-		ShortCut.registerShortCut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, ShortCut.GROUP_LAYER), 100);
+		Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
 		displaylist.setCellRenderer(new OsmPrimitivRenderer());
 		displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		displaylist.addMouseListener(new MouseAdapter(){

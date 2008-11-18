@@ -35,7 +35,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Move is an action that can move all kind of OsmPrimitives (except keys for now).
@@ -85,7 +85,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 	 */
 	public SelectAction(MapFrame mapFrame) {
 		super(tr("Select"), "move/move", tr("Select, move and rotate objects"),
-			ShortCut.registerShortCut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, ShortCut.GROUP_EDIT),
+			Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.GROUP_EDIT),
 			mapFrame,
 			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Move/Move");

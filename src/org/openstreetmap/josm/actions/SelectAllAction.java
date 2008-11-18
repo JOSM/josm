@@ -7,13 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class SelectAllAction extends JosmAction {
 
 	public SelectAllAction() {
 		super(tr("Select All"),"selectall", tr("Select all undeleted objects in the data layer. This selects incomplete objects too."),
-		ShortCut.registerShortCut("system:selectall", tr("Edit: {0}", tr("Select All")), KeyEvent.VK_A, ShortCut.GROUP_MENU), true);
+		Shortcut.registerShortcut("system:selectall", tr("Edit: {0}", tr("Select All")), KeyEvent.VK_A, Shortcut.GROUP_MENU), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

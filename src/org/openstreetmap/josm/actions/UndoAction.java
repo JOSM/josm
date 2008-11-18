@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Undoes the last command.
@@ -21,7 +21,7 @@ public class UndoAction extends JosmAction {
 	 */
 	public UndoAction() {
 		super(tr("Undo"), "undo", tr("Undo the last action."),
-		ShortCut.registerShortCut("system:undo", tr("Edit: {0}", tr("Undo")), KeyEvent.VK_Z, ShortCut.GROUP_MENU), true);
+		Shortcut.registerShortcut("system:undo", tr("Edit: {0}", tr("Undo")), KeyEvent.VK_Z, Shortcut.GROUP_MENU), true);
 		setEnabled(false);
 	}
 

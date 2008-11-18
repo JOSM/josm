@@ -109,23 +109,23 @@ public class MapView extends NavigatableComponent {
 				new MapMover(MapView.this, Main.contentPane);
 				JosmAction mv;
 				mv = new MoveAction(MoveAction.Direction.UP);
-				if (mv.getShortCut() != null) {
-					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "UP");
+				if (mv.getShortcut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "UP");
 					Main.contentPane.getActionMap().put("UP", mv);
 				}
 				mv = new MoveAction(MoveAction.Direction.DOWN);
-				if (mv.getShortCut() != null) {
-					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "DOWN");
+				if (mv.getShortcut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "DOWN");
 					Main.contentPane.getActionMap().put("DOWN", mv);
 				}
 				mv = new MoveAction(MoveAction.Direction.LEFT);
-				if (mv.getShortCut() != null) {
-					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "LEFT");
+				if (mv.getShortcut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "LEFT");
 					Main.contentPane.getActionMap().put("LEFT", mv);
 				}
 				mv = new MoveAction(MoveAction.Direction.RIGHT);
-				if (mv.getShortCut() != null) {
-					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortCut().getKeyStroke(), "RIGHT");
+				if (mv.getShortcut() != null) {
+					Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "RIGHT");
 					Main.contentPane.getActionMap().put("RIGHT", mv);
 				}
 

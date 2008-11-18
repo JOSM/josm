@@ -9,20 +9,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Helper class for all actions that access the disk
  */
 abstract public class DiskAccessAction extends JosmAction {
 
-	public DiskAccessAction(String name, String iconName, String tooltip, ShortCut shortCut) {
-		super(name, iconName, tooltip, shortCut, true);
+	public DiskAccessAction(String name, String iconName, String tooltip, Shortcut shortcut) {
+		super(name, iconName, tooltip, shortcut, true);
 	}
 
 	@Deprecated
-	public DiskAccessAction(String name, String iconName, String tooltip, int shortCut, int modifiers) {
-		super(name, iconName, tooltip, shortCut, modifiers, true);
+	public DiskAccessAction(String name, String iconName, String tooltip, int shortcut, int modifiers) {
+		super(name, iconName, tooltip, shortcut, modifiers, true);
 	}
 
 	protected static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title) {

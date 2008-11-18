@@ -31,7 +31,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and
@@ -56,7 +56,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
 	public RelationListDialog() {
 		super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
-		ShortCut.registerShortCut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R, ShortCut.GROUP_LAYER), 150);
+		Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R, Shortcut.GROUP_LAYER), 150);
 		displaylist.setCellRenderer(new OsmPrimitivRenderer());
 		displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		displaylist.addMouseListener(new MouseAdapter(){

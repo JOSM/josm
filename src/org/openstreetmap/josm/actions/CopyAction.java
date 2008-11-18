@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public final class CopyAction extends JosmAction implements SelectionChangedListener {
 
@@ -32,7 +32,7 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 	public CopyAction() {
 		super(tr("Copy"), "copy",
 				tr("Copy selected objects to paste buffer."),
-				ShortCut.registerShortCut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, ShortCut.GROUP_MENU), true);
+				Shortcut.registerShortcut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, Shortcut.GROUP_MENU), true);
 		setEnabled(false);
 		DataSet.selListeners.add(this);
 		listeners = new LinkedList<JosmAction>();

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Aligns all selected nodes within a circle. (Useful for roundabouts)
@@ -30,7 +30,7 @@ public final class AlignInCircleAction extends JosmAction {
 
 	public AlignInCircleAction() {
 		super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."),
-		ShortCut.registerShortCut("tools:aligncircle", tr("Tool: {0}", tr("Align Nodes in Circle")), KeyEvent.VK_O, ShortCut.GROUP_EDIT), true);
+		Shortcut.registerShortcut("tools:aligncircle", tr("Tool: {0}", tr("Align Nodes in Circle")), KeyEvent.VK_O, Shortcut.GROUP_EDIT), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

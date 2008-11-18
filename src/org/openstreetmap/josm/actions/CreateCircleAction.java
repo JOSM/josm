@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Create a new circle from three selected nodes--or a way with 3 nodes. (Useful for roundabouts)
@@ -35,7 +35,7 @@ public final class CreateCircleAction extends JosmAction {
 
 	public CreateCircleAction() {
 		super(tr("Create Circle"), "createcircle", tr("Create a circle from three selected nodes."),
-		ShortCut.registerShortCut("tools:createcircle", tr("Tool: {0}", tr("Create Circle")), KeyEvent.VK_O, ShortCut.GROUP_EDIT, ShortCut.SHIFT_DEFAULT), true);
+		Shortcut.registerShortcut("tools:createcircle", tr("Tool: {0}", tr("Create Circle")), KeyEvent.VK_O, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
 	}
 
 	private double calcang(double xc, double yc, double x, double y) {

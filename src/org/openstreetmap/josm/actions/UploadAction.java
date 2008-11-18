@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Action that opens a connection to the osm server and uploads all changes.
@@ -60,7 +60,7 @@ public class UploadAction extends JosmAction {
 
 	public UploadAction() {
 		super(tr("Upload to OSM ..."), "upload", tr("Upload all changes to the OSM server."),
-		ShortCut.registerShortCut("file:upload", tr("File: {0}", tr("Upload to OSM ...")), KeyEvent.VK_U, ShortCut.GROUPS_ALT1+ShortCut.GROUP_HOTKEY), true);
+		Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload to OSM ...")), KeyEvent.VK_U, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
 
 		/**
 		 * Displays a screen where the actions that would be taken are displayed and

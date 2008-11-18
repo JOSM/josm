@@ -14,7 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Toggles the autoScale feature of the mapView
@@ -46,7 +46,7 @@ public class AutoScaleAction extends JosmAction {
 
     public AutoScaleAction(String mode) {
         super(tr("Zoom to {0}", tr(mode)), "dialogs/autoscale/" + mode, tr("Zoom the view to {0}.", tr(mode)),
-				ShortCut.registerShortCut("view:zoom"+mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))), getModeShortcut(mode), ShortCut.GROUP_EDIT), true);
+				Shortcut.registerShortcut("view:zoom"+mode, tr("View: {0}", tr("Zoom to {0}", tr(mode))), getModeShortcut(mode), Shortcut.GROUP_EDIT), true);
         String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;

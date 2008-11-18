@@ -40,7 +40,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A small tool dialog for displaying the current selection. The selection manager
@@ -77,7 +77,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     public SelectionListDialog() {
         super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."),
-        ShortCut.registerShortCut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, ShortCut.GROUP_LAYER, ShortCut.SHIFT_DEFAULT), 150);
+        Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         selectionHistory = new LinkedList<Collection<? extends OsmPrimitive>>();
         popupMenu = new JPopupMenu();

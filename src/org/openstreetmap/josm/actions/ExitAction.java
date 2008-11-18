@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Exit the application. May ask for permission first (if something has changed).
@@ -20,7 +20,7 @@ public class ExitAction extends JosmAction {
 	 */
 	public ExitAction() {
 		super(tr("Exit"), "exit", tr("Exit the application."),
-		ShortCut.registerShortCut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, ShortCut.GROUP_MENU), true);
+		Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.GROUP_MENU), true);
 	}
 
 	public void actionPerformed(ActionEvent e) {

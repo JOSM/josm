@@ -10,7 +10,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioPlayer;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioBackAction extends JosmAction {
 
@@ -18,7 +18,7 @@ public class AudioBackAction extends JosmAction {
 
 	public AudioBackAction() {
 		super(tr("Back"), "audio-back", tr("Jump back."),
-		ShortCut.registerShortCut("audio:back", tr("Audio: {0}", tr("Back")), KeyEvent.VK_F6, ShortCut.GROUP_DIRECT), true);
+		Shortcut.registerShortcut("audio:back", tr("Audio: {0}", tr("Back")), KeyEvent.VK_F6, Shortcut.GROUP_DIRECT), true);
 		try {
 			amount = - Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
 		} catch (NumberFormatException e) {

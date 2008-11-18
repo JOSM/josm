@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Duplicate nodes that are used by multiple ways.
@@ -44,7 +44,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
 	 */
 	public UnGlueAction() {
 		super(tr("UnGlue Ways"), "unglueways", tr("Duplicate nodes that are used by multiple ways."),
-		ShortCut.registerShortCut("tools:unglue", tr("Tool: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, ShortCut.GROUP_EDIT), true);
+		Shortcut.registerShortcut("tools:unglue", tr("Tool: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, Shortcut.GROUP_EDIT), true);
 		//DataSet.selListeners.add(this);
 	}
 

@@ -20,7 +20,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.ShortCut;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This is the keyboard preferences content.
@@ -379,7 +379,7 @@ public class prefJPanel extends javax.swing.JPanel {
 			ListSelectionModel lsm = panel.shortcutTable.getSelectionModel(); // can't use e here
 			if (!lsm.isSelectionEmpty()) {
 				int row = lsm.getMinSelectionIndex();
-				ShortCut sc = (ShortCut)panel.model.getValueAt(row, -1);
+				Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
 				panel.cbDefault.setSelected(!sc.getAssignedUser());
 				panel.cbDisable.setSelected(sc.getKeyStroke() == null);
 				panel.cbShift.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.SHIFT_DOWN_MASK) != 0);
@@ -418,7 +418,7 @@ public class prefJPanel extends javax.swing.JPanel {
 			if (lsm != null && !lsm.isSelectionEmpty()) {
 				if (e != null) { // only if we've been called by a user action
 					int row = lsm.getMinSelectionIndex();
-					ShortCut sc = (ShortCut)panel.model.getValueAt(row, -1);
+					Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
 					sc.setAssignedUser(!panel.cbDefault.isSelected());
 					if (panel.cbDisable.isSelected()) {
 						sc.setAssignedModifier(-1);
@@ -462,40 +462,40 @@ public class prefJPanel extends javax.swing.JPanel {
 	// this handles the modifier groups
 	private class bxAction extends javax.swing.AbstractAction {
 		public void actionPerformed(java.awt.event.ActionEvent e) {
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_EDIT),    Integer.toString( modifInts[bxPrim1.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_EDIT),    Integer.toString( modifInts[ bxSec1.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_EDIT),    Integer.toString( modifInts[ bxTer1.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_EDIT),    Integer.toString( modifInts[bxPrim1.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_EDIT),    Integer.toString( modifInts[ bxSec1.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_EDIT),    Integer.toString( modifInts[ bxTer1.getSelectedIndex()] ));
 
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_MENU),    Integer.toString( modifInts[bxPrim2.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_MENU),    Integer.toString( modifInts[ bxSec2.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_MENU),    Integer.toString( modifInts[ bxTer2.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MENU),    Integer.toString( modifInts[bxPrim2.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_MENU),    Integer.toString( modifInts[ bxSec2.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_MENU),    Integer.toString( modifInts[ bxTer2.getSelectedIndex()] ));
 
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_HOTKEY),  Integer.toString( modifInts[bxPrim3.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_HOTKEY),  Integer.toString( modifInts[ bxSec3.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_HOTKEY),  Integer.toString( modifInts[ bxTer3.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_HOTKEY),  Integer.toString( modifInts[bxPrim3.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_HOTKEY),  Integer.toString( modifInts[ bxSec3.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_HOTKEY),  Integer.toString( modifInts[ bxTer3.getSelectedIndex()] ));
 
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_LAYER),   Integer.toString( modifInts[bxPrim4.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_LAYER),   Integer.toString( modifInts[ bxSec4.getSelectedIndex()] ));
-			Main.pref.put("shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_LAYER),   Integer.toString( modifInts[ bxTer4.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_LAYER),   Integer.toString( modifInts[bxPrim4.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_LAYER),   Integer.toString( modifInts[ bxSec4.getSelectedIndex()] ));
+			Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_LAYER),   Integer.toString( modifInts[ bxTer4.getSelectedIndex()] ));
 		}
 	}
 
 	private void initbx() {
-		setBx(bxPrim1, "shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_EDIT));
-		setBx(bxSec1,  "shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_EDIT));
-		setBx(bxTer1,  "shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_EDIT));
+		setBx(bxPrim1, "shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_EDIT));
+		setBx(bxSec1,  "shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_EDIT));
+		setBx(bxTer1,  "shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_EDIT));
 
-		setBx(bxPrim2, "shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_MENU));
-		setBx(bxSec2,  "shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_MENU));
-		setBx(bxTer2,  "shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_MENU));
+		setBx(bxPrim2, "shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MENU));
+		setBx(bxSec2,  "shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_MENU));
+		setBx(bxTer2,  "shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_MENU));
 
-		setBx(bxPrim3, "shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_HOTKEY));
-		setBx(bxSec3,  "shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_HOTKEY));
-		setBx(bxTer3,  "shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_HOTKEY));
+		setBx(bxPrim3, "shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_HOTKEY));
+		setBx(bxSec3,  "shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_HOTKEY));
+		setBx(bxTer3,  "shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_HOTKEY));
 
-		setBx(bxPrim4, "shortcut.groups."+(ShortCut.GROUPS_DEFAULT+ShortCut.GROUP_LAYER));
-		setBx(bxSec4,  "shortcut.groups."+(ShortCut.GROUPS_ALT1   +ShortCut.GROUP_LAYER));
-		setBx(bxTer4,  "shortcut.groups."+(ShortCut.GROUPS_ALT2   +ShortCut.GROUP_LAYER));
+		setBx(bxPrim4, "shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_LAYER));
+		setBx(bxSec4,  "shortcut.groups."+(Shortcut.GROUPS_ALT1   +Shortcut.GROUP_LAYER));
+		setBx(bxTer4,  "shortcut.groups."+(Shortcut.GROUPS_ALT2   +Shortcut.GROUP_LAYER));
 	}
 	private void setBx(javax.swing.JComboBox bx, String key) {
 		int target = Main.pref.getInteger(key, -1);
