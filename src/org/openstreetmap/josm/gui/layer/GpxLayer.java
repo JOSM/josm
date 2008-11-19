@@ -11,8 +11,11 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Date;
+import java.util.List;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 
@@ -38,6 +42,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,6 +55,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
@@ -62,6 +68,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.GpxWriter;
@@ -265,6 +272,7 @@ public class GpxLayer extends Layer {
 			importAudio,
 			markersFromNamedTrackpoints,
 			new JMenuItem(new ConvertToDataLayerAction()),
+            new JMenuItem(new DownloadAlongTrackAction()),
 			new JSeparator(),
 			new JMenuItem(new RenameLayerAction(associatedFile, this)),
 			new JSeparator(),
@@ -730,6 +738,167 @@ public class GpxLayer extends Layer {
 		}
 	}
 
+    /**
+     * Action that issues a series of download requests to the API, following the GPX track.
+     * 
+     * @author fred
+     */
+    public class DownloadAlongTrackAction extends AbstractAction {
+        public DownloadAlongTrackAction() {
+            super(tr("Download from OSM along this track"), ImageProvider.get("downloadalongtrack"));
+        }
+        public void actionPerformed(ActionEvent e) {
+            JPanel msg = new JPanel(new GridBagLayout());
+            JList buffer = new JList(new String[] { "50 metres", "500 metres", "5000 metres" });
+            JList maxRect = new JList(new String[] { "1 sq km", "5 sq km", "10 sq km", "20 sq km" });
+            
+            msg.add(new JLabel(tr("Download everything within:")), GBC.eol());
+            msg.add(buffer, GBC.eol());
+            msg.add(new JLabel(tr("Maximum area per request:")), GBC.eol());
+            msg.add(maxRect, GBC.eol());
+            
+            if (JOptionPane.showConfirmDialog(Main.parent, msg, 
+                tr("Download from OSM along this track"), 
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION) {
+                return;
+            
+            }
+
+            /*
+             * Find the average latitude for the data we're contemplating, so we can
+             * know how many metres per degree of longitude we have.
+             */
+            double latsum = 0;
+            int latcnt = 0;
+            
+            for (GpxTrack trk : data.tracks) {
+                for (Collection<WayPoint> segment : trk.trackSegs) {
+                    for (WayPoint p : segment) {
+                        latsum += p.latlon.lat();
+                        latcnt ++;
+                    }
+                }
+            }
+            
+            double avglat = latsum / latcnt;
+            double scale = Math.cos(Math.toRadians(avglat));
+
+            /*
+             * Compute buffer zone extents and maximum bounding box size. Note how the
+             * maximum we ever offer is a bbox area of 0.002, while the API theoretically
+             * supports 0.25, but as soon as you touch any built-up area, that kind of 
+             * bounding box will download forever and then stop because it has more than 
+             * 50k nodes.
+             */
+            double buffer_y;
+            double buffer_x;
+            switch(buffer.getSelectedIndex()) {
+            case 0: buffer_y = .0005; break;
+            case 1: buffer_y = .005; break;
+            default: buffer_y = .05;
+            }
+            buffer_x = buffer_y / scale;
+            
+            double max_area;
+            switch(maxRect.getSelectedIndex()) {
+            case 0: max_area = 0.0001 / scale; break;
+            case 1: max_area = 0.0005 / scale; break;
+            case 2: max_area = 0.001 / scale; break;
+            default: max_area = 0.002 / scale;
+            }
+
+            Area a = new Area();
+            Rectangle2D r = new Rectangle2D.Double();
+            
+            /*
+             * Collect the combined area of all gpx points plus buffer zones around them.
+             * This is rather inefficient (may take 20 seconds and more for large tracks);
+             * maybe it could be improved by disregarding points that lie really close to
+             * the previous point.
+             */
+            for (GpxTrack trk : data.tracks) {
+                for (Collection<WayPoint> segment : trk.trackSegs) {
+                    for (WayPoint p : segment) {
+                        // we add a buffer around the point.
+                        r.setRect(p.latlon.lon()-buffer_x, p.latlon.lat()-buffer_y, 2*buffer_x, 2*buffer_y);
+                        a.add(new Area(r));
+                    }
+                }
+            }
+            
+            /*
+             * Area "a" now contains the hull that we would like to download data for.
+             * however we can only download rectangles, so the following is an attemt at
+             * finding a number of rectangles to download.
+             *
+             * The idea is simply: Start out with the full bounding box. If it is too large,
+             * then split it in half and repeat recursively for each half until you arrive
+             * at something small enough to download. The algorithm is improved
+             * by always using the intersection between the rectangle and the actual desired
+             * area. For example, if you have a track that goes like this:
+             * +----+
+             * |   /|
+             * |  / |
+             * | /  |
+             * |/   |
+             * +----+
+             * then we would first look at downloading the whole rectangle (assume it's too big),
+             * after that we split it in half (upper and lower half), but we do *not* request the
+             * full upper and lower rectangle, only the part of the upper/lower rectangle that
+             * actually has something in it.
+             */
+            
+            List<Rectangle2D> toDownload = new ArrayList<Rectangle2D>();
+            
+            addToDownload(a, a.getBounds(), toDownload, max_area);
+            
+            msg = new JPanel(new GridBagLayout());
+                       
+            msg.add(new JLabel(tr("<html>This action will require {0} individual<br>download requests. Do you wish<br>to continue?</html>",
+                toDownload.size())), GBC.eol());
+            
+            if (JOptionPane.showConfirmDialog(Main.parent, msg, 
+                tr("Download from OSM along this track"), 
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+            
+            // FIXME: DownloadTask's "please wait" dialog should display the number of
+            // downloads left, and "cancel" needs to be honoured. An error along the way
+            // should abort the whole process.
+            DownloadTask osmTask = new DownloadOsmTask();
+            for (Rectangle2D td : toDownload) {
+               osmTask.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX());
+            }
+        }
+    }
+    
+    private static void addToDownload(Area a, Rectangle2D r, Collection<Rectangle2D> results, double max_area) {
+        Area tmp = new Area(r);
+        // intersect with sought-after area
+        tmp.intersect(a);
+        if (tmp.isEmpty()) return;
+        Rectangle2D bounds = tmp.getBounds2D();
+        if (bounds.getWidth() * bounds.getHeight() > max_area) {
+            // the rectangle gets too large; split it and make recursive call.
+            Rectangle2D r1;
+            Rectangle2D r2;
+            if (bounds.getWidth() > bounds.getHeight()) {
+                // rectangles that are wider than high are split into a left and right half,
+                r1 = new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth()/2, bounds.getHeight());
+                r2 = new Rectangle2D.Double(bounds.getX()+bounds.getWidth()/2, bounds.getY(), bounds.getWidth()/2, bounds.getHeight());
+            } else {
+                // others into a top and bottom half.
+                r1 = new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()/2);
+                r2 = new Rectangle2D.Double(bounds.getX(), bounds.getY()+bounds.getHeight()/2, bounds.getWidth(), bounds.getHeight()/2);
+            }
+            addToDownload(a, r1, results, max_area);
+            addToDownload(a, r2, results, max_area);
+        } else {
+            results.add(bounds);
+        }
+    }
+    
 	/**
 	 * Makes a new marker layer derived from this GpxLayer containing at least one
 	 * audio marker which the given audio file is associated with.
