@@ -115,7 +115,7 @@ public final class OrthogonalizeAction extends JosmAction {
         double align_to_heading = 0.0;
         boolean use_dirnodes = false;
 
-        if(dirnodes.size() == 2) { 
+        if (dirnodes.size() == 2) { 
             // When selection contains two nodes, use the nodes to compute a direction 
             // to align all ways to
             align_to_heading = normalize_angle(dirnodes.get(0).eastNorth.heading(dirnodes.get(1).eastNorth));
