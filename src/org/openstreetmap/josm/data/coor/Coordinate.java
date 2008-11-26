@@ -2,19 +2,21 @@
 package org.openstreetmap.josm.data.coor;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 /**
  * Base class of points of both coordinate systems.
  * 
- * The variables are default package protected to allow routines in the data package
- * to access them directly.
+ * The variables are default package protected to allow routines in the 
+ * data package to access them directly.
  * 
- * As the class itself is package protected too, it is not visible outside of the data
- * package. Routines there should only use LatLon or EastNorth
+ * As the class itself is package protected too, it is not visible 
+ * outside of the data package. Routines there should only use LatLon or 
+ * EastNorth.
  *
  * @author imi
  */ 
-abstract class Coordinate extends Point2D {
+abstract class Coordinate extends Point2D implements Serializable {
 
     protected double x;
     protected double y;
