@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,6 +11,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -119,8 +121,20 @@ public class SplashScreen extends JWindow {
 				}
 			}
 		});
+		
+        // Hide splashscreen when other window is created
+		Toolkit.getDefaultToolkit().addAWTEventListener(awtListener, AWTEvent.WINDOW_EVENT_MASK);
+		
 		setVisible(true);
 	}
+	
+	private AWTEventListener awtListener = new AWTEventListener() {
+		public void eventDispatched(AWTEvent event) {
+			if (event.getSource() != SplashScreen.this) {
+				closeSplash();
+			}
+		}		
+	};
 
 	/**
 	 * This method sets the status message. It should be called prior to
@@ -141,8 +155,9 @@ public class SplashScreen extends JWindow {
 	public void closeSplash() {
 		if (!visible)
 			return;
+		Toolkit.getDefaultToolkit().removeAWTEventListener(awtListener);
 		try {
-			SwingUtilities.invokeAndWait(closerRunner);
+			SwingUtilities.invokeLater(closerRunner);
 		} catch (Exception e) {
 			e.printStackTrace();
 			// can catch InvocationTargetException
