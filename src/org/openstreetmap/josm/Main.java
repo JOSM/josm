@@ -267,7 +267,7 @@ abstract public class Main {
 		{
 			long tim = System.currentTimeMillis();
 			long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
-			Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 30*24*60*60);
+			Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 30);
 			if(last <= 0)
 			{
 				Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
