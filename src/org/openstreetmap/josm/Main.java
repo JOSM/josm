@@ -180,7 +180,8 @@ abstract public class Main {
 	}
 
 	/**
-	 * Remove the specified layer from the map. If it is the last layer, remove the map as well.
+	 * Remove the specified layer from the map. If it is the last layer, 
+     * remove the map as well.
 	 */
 	public final void removeLayer(final Layer layer) {
 		map.mapView.removeLayer(layer);
@@ -216,8 +217,8 @@ abstract public class Main {
 	}
 
 	/**
-	 * Load all plugins specified in preferences. If the parameter is <code>true</code>, all
-	 * early plugins are loaded (before constructor).
+	 * Load all plugins specified in preferences. If the parameter is 
+     * <code>true</code>, all early plugins are loaded (before constructor).
 	 */
 	public static void loadPlugins(boolean early) {
 		List<String> plugins = new LinkedList<String>();
@@ -228,10 +229,8 @@ abstract public class Main {
 			plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
 
 		String [] oldplugins = new String[] {"mappaint", "unglueplugin", "lang-de","lang-en_GB","lang-fr","lang-it","lang-pl","lang-ro","lang-ru"};
-		for(String p : oldplugins)
-		{
-			if(plugins.contains(p))
-			{
+		for (String p : oldplugins) {
+			if (plugins.contains(p)) {
 				plugins.remove(p);
 				Main.pref.removeFromCollection("plugins", p);
 				System.out.println(tr("Warning - loading of {0} plugin was requested. This plugin is no longer required.", p));
@@ -247,8 +246,7 @@ abstract public class Main {
 			if (info != null) {
 				if (info.early != early)
 					continue;
-				if (info.mainversion != null && info.mainversion.compareTo(AboutAction.version) > 0)
-				{
+				if (info.mainversion != null && info.mainversion.compareTo(AboutAction.version) > 0) {
 					JOptionPane.showMessageDialog(Main.parent, tr("Plugin requires JOSM update: {0}.", pluginName));
 					continue;
 				}
@@ -263,19 +261,16 @@ abstract public class Main {
 			}
 		}
 
-		if(!early)
-		{
+		if (!early) {
 			long tim = System.currentTimeMillis();
 			long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
 			Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 30);
-			if(last <= 0)
-			{
+			if (last <= 0) {
 				Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
-			}
-			else if(tim - last >= maxTime*1000*24*60*60)
-			{
-				long d = (tim - last)/(24*60*60*1000);
-				JOptionPane.showMessageDialog(Main.parent, tr("Last plugin update more than {0} days ago.", d));
+			} else if (tim - last >= maxTime*1000l*24*60*60) {
+				long d = (tim - last)/(24*60*60*1000l);
+				JOptionPane.showMessageDialog(Main.parent, 
+                    tr("Last plugin update more than {0} days ago.", d));
 			}
 		}
 
@@ -347,18 +342,15 @@ abstract public class Main {
 		return map.mapView.editLayer;
 	}
 
-
-
-
 	/**
 	 * Use this to register shortcuts to
 	 */
 	public static final JPanel contentPane = new JPanel(new BorderLayout());
 
 
-	////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
 	//  Implementation part
-	////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
 
 	public static JPanel panel = new JPanel(new BorderLayout());
 

@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,15 +113,15 @@ public class PluginPreference implements PreferenceSetting {
 		plugin.add(GBC.glue(0,10), GBC.eol());
 		JButton morePlugins = new JButton(tr("Download List"));
 		morePlugins.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				int count = PluginDownloader.downloadDescription();
-				if (count > 0)
-					JOptionPane.showMessageDialog(Main.parent,
-							trn("Downloaded plugin information from {0} site",
-									"Downloaded plugin information from {0} sites", count, count));
-				else
-					JOptionPane.showMessageDialog(Main.parent, tr("No plugin information found."));
-				refreshPluginPanel(gui);
+		    public void actionPerformed(ActionEvent e) {
+		        int count = PluginDownloader.downloadDescription();
+		        if (count > 0)
+		            JOptionPane.showMessageDialog(Main.parent,
+		                trn("Downloaded plugin information from {0} site",
+		                    "Downloaded plugin information from {0} sites", count, count));
+		        else
+		            JOptionPane.showMessageDialog(Main.parent, tr("No plugin information found."));
+		        refreshPluginPanel(gui);
 			}
 		});
 		plugin.add(morePlugins, GBC.std().insets(0,0,10,0));
@@ -131,7 +132,6 @@ public class PluginPreference implements PreferenceSetting {
 				update();
 				refreshPluginPanel(gui);
 			}
-
 		});
 		plugin.add(update, GBC.std().insets(0,0,10,0));
 
@@ -140,7 +140,6 @@ public class PluginPreference implements PreferenceSetting {
 			public void actionPerformed(ActionEvent e) {
 				configureSites();
 			}
-
 		});
 		plugin.add(configureSites, GBC.std());
 
@@ -285,6 +284,25 @@ public class PluginPreference implements PreferenceSetting {
 			pluginMap.put(plugin, enabled);
 			pluginCheck.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
+                    // if user enabled a plugin, it is not loaded but found somewhere on disk: offer to delete jar
+                    if (pluginCheck.isSelected()) {
+                        PluginInformation plinfo = PluginInformation.findPlugin(plugin.name);
+                        if ((PluginInformation.getLoaded(plugin.name) == null) && (plinfo != null)) {
+                            try {
+                                int answer = JOptionPane.showConfirmDialog(Main.parent, 
+                                    tr("Plugin archive already available. Do you want to download current version by deleting existing archive?\n\n{0}",
+                                    plinfo.file.getCanonicalPath()), tr("Plugin already exists"), JOptionPane.OK_CANCEL_OPTION);
+                                if (answer == JOptionPane.OK_OPTION) {
+                                    if (!plinfo.file.delete()) {
+                                        JOptionPane.showMessageDialog(Main.parent, tr("Error deleting plugin file: {0}", plinfo.file.getCanonicalPath()));
+                                    }
+                                }
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                                JOptionPane.showMessageDialog(Main.parent, tr("Error deleting plugin file: {0}", e1.getMessage()));
+                            }
+                        }
+                    }
 					pluginMap.put(plugin, pluginCheck.isSelected());
 				}
 			});
