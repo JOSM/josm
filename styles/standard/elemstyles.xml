@@ -227,56 +227,56 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="maxweight" v="yes"/>
+		<condition k="maxweight"/>
 		<icon src="vehicle/restrictions/maxweight.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="maxheight" v="yes"/>
+		<condition k="maxheight"/>
 		<icon src="vehicle/restrictions/maxheight.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="maxwidth" v="yes"/>
+		<condition k="maxwidth"/>
 		<icon src="vehicle/restrictions/maxwidth.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="maxlength" v="yes"/>
+		<condition k="maxlength"/>
 		<icon src="vehicle/restrictions/maxlength.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="maxspeed" v="yes"/>
+		<condition k="maxspeed"/>
 		<icon src="vehicle/restrictions/speed.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="minspeed" v="yes"/>
+		<condition k="minspeed"/>
 		<icon src="vehicle/restrictions/minspeed.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="maxstay" v="yes"/>
+		<condition k="maxstay"/>
 		<icon src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="toll" v="yes"/>
+		<condition k="toll"/>
 		<icon src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -297,6 +297,12 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="speed_bump"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2005,7 +2011,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="vending_machine"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="transport/ticket-machine.png"/>
 		<area colour="amenity2#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
