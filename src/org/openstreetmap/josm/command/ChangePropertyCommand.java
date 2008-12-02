@@ -50,8 +50,7 @@ public class ChangePropertyCommand extends Command {
 		} else {
 			for (OsmPrimitive osm : objects) {
 				String val = osm.get(key);
-				if(val == null || !value.equals(val))
-				{
+				if (val == null || !value.equals(val)) {
 					this.objects.add(osm);
 				}
 			}
