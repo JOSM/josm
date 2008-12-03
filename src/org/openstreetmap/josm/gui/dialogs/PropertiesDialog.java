@@ -428,7 +428,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 	 */
 	public PropertiesDialog(MapFrame mapFrame) {
 		super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."),
-		Shortcut.registerShortcut("subwindow:properies", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
+		Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
 		Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
 		// ---------------------------------------
@@ -601,9 +601,20 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 			}
 		};
 
-		buttonPanel.add(new SideButton(marktr("Add"),"add","Properties",tr("Add a new key/value pair to all objects"), KeyEvent.VK_A, buttonAction));
-		buttonPanel.add(new SideButton(marktr("Edit"),"edit","Properties",tr("Edit the value of the selected key for all objects"), KeyEvent.VK_E, buttonAction));
-		buttonPanel.add(new SideButton(marktr("Delete"),"delete","Properties",tr("Delete the selected key in all objects"), KeyEvent.VK_D, buttonAction));
+		Shortcut s = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
+		Shortcut.GROUP_MNEMONIC);
+		buttonPanel.add(new SideButton(marktr("Add"),"add","Properties",
+                tr("Add a new key/value pair to all objects"), s, buttonAction));
+
+		s = Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_I,
+		Shortcut.GROUP_MNEMONIC);
+		buttonPanel.add(new SideButton(marktr("Edit"),"edit","Properties",
+                tr("Edit the value of the selected key for all objects"), s, buttonAction));
+
+		s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_Q,
+		Shortcut.GROUP_MNEMONIC);
+		buttonPanel.add(new SideButton(marktr("Delete"),"delete","Properties",
+                tr("Delete the selected key in all objects"), s, buttonAction));
 		add(buttonPanel, BorderLayout.SOUTH);
 
 		DataSet.selListeners.add(this);

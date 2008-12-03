@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Collection;
+import javax.swing.AbstractButton;
 import javax.swing.KeyStroke;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
@@ -175,6 +176,14 @@ public class Shortcut {
     public void setMnemonic(JMenu menu) {
         if (requestedGroup == GROUP_MNEMONIC && assignedModifier == groups.get(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             menu.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
+        }
+    }
+    /**
+     * use this to set a buttons's mnemonic
+     */
+    public void setMnemonic(AbstractButton button) {
+        if (requestedGroup == GROUP_MNEMONIC && assignedModifier == groups.get(requestedGroup + GROUPS_DEFAULT) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+            button.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
 
