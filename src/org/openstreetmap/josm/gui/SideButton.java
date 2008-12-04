@@ -6,6 +6,7 @@ import java.awt.Insets;
 import javax.swing.Action;
 import javax.swing.JButton;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -35,7 +36,11 @@ public class SideButton extends JButton {
 	{
 		super(tr(name), ImageProvider.get("dialogs", imagename));
 		if(shortcut != null)
+                {
 			shortcut.setMnemonic(this);
+                        if(tooltip != null)
+				tooltip = Main.platform.makeTooltip(tooltip, shortcut);
+                }
 		setup(name, property, tooltip, actionListener);
 	}
 	public SideButton(String name, String imagename, String property, String tooltip, ActionListener actionListener)
