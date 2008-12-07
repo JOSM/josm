@@ -1,8 +1,13 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Projection;
+
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
@@ -14,30 +19,72 @@ import java.text.NumberFormat;
  */
 public class LatLon extends Coordinate {
 
-	public LatLon(double lat, double lon) {
-		super(lon, lat);
-	}
+    private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
+    private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
+    private static DecimalFormat cDdFormatter = new DecimalFormat("###0.0000");
+    
+    /** 
+     * Possible ways to display coordinates 
+     */ 
+    public enum CoordinateFormat { 
+        DECIMAL_DEGREES {public String toString() {return tr("Decimal Degrees");}},  
+        DEGREES_MINUTES_SECONDS {public String toString() {return tr("Degrees Minutes Seconds");}}; 
+    } 
+    
+    public static String dms(double pCoordinate) { 
 
-	public double lat() {
-		return y;
-	}
+        double tAbsCoord = Math.abs(pCoordinate);
+        int tDegree = (int) tAbsCoord;
+        double tTmpMinutes = (tAbsCoord - tDegree) * 60;
+        int tMinutes = (int) tTmpMinutes;
+        double tSeconds = (tTmpMinutes - tMinutes) * 60;
 
-	public double lon() {
-		return x;
-	}
+        return tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'" 
+            + cDmsSecondFormatter.format(tSeconds) + "\"";
+    } 
 
-	/**
-	 * @return <code>true</code> if the other point has almost the same lat/lon
-	 * values, only differing by no more than
-	 * 1 / {@link org.openstreetmap.josm.data.projection.Projection#MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
-	 */
-	public boolean equalsEpsilon(LatLon other) {
-		final double p = 1/Projection.MAX_SERVER_PRECISION;
-		return Math.abs(lat()-other.lat()) <= p && Math.abs(lon()-other.lon()) <= p;
-	}
+    public LatLon(double lat, double lon) {
+        super(lon, lat);
+    }
 
-	/**
-	 * @return <code>true</code>, if the coordinate is outside the world, compared
+    public double lat() {
+        return y;
+    }
+    
+    public String latToString(CoordinateFormat d) {
+        switch(d) {
+        case DECIMAL_DEGREES: return cDdFormatter.format(y);
+        case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ? tr("S") : tr("N"));
+        default: return "ERR";
+        }
+    }
+    
+    public double lon() {
+        return x;
+    }
+    
+    public String lonToString(CoordinateFormat d) {
+        switch(d) {
+        case DECIMAL_DEGREES: return cDdFormatter.format(x);
+        case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ? tr("W") : tr("E"));
+        default: return "ERR";
+        }
+    }
+    
+  
+
+    /**
+     * @return <code>true</code> if the other point has almost the same lat/lon
+     * values, only differing by no more than
+     * 1 / {@link org.openstreetmap.josm.data.projection.Projection#MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
+     */
+    public boolean equalsEpsilon(LatLon other) {
+        final double p = 1/Projection.MAX_SERVER_PRECISION;
+        return Math.abs(lat()-other.lat()) <= p && Math.abs(lon()-other.lon()) <= p;
+    }
+
+    /**
+     * @return <code>true</code>, if the coordinate is outside the world, compared
 	 * by using lat/lon.
 	 */
 	public boolean isOutSideWorld() {

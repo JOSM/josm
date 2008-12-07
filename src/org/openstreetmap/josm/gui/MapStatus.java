@@ -88,11 +88,12 @@ public class MapStatus extends JPanel implements Helpful {
 		}
 	}
 
-    DecimalFormat latlon = new DecimalFormat("###0.0000");
-    ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 8);
+	LatLon.CoordinateFormat mCord;
+
+    ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
     ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
     JTextField helpText = new JTextField();
-    ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 7);
+    ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 10);
     ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
     ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
     ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 8);
@@ -253,7 +254,12 @@ public class MapStatus extends JPanel implements Helpful {
 	 */
 	public MapStatus(final MapFrame mapFrame) {
 		this.mv = mapFrame.mapView;
-
+		
+        try {
+            mCord = LatLon.CoordinateFormat.valueOf(Main.pref.get("coordinates"));
+        } catch (IllegalArgumentException iae) {
+            mCord =LatLon.CoordinateFormat.DECIMAL_DEGREES;
+        }
 		// Listen for mouse movements and set the position text field
 		mv.addMouseMotionListener(new MouseMotionListener(){
 			public void mouseDragged(MouseEvent e) {
@@ -262,11 +268,11 @@ public class MapStatus extends JPanel implements Helpful {
 			public void mouseMoved(MouseEvent e) {
 				if (mv.center == null)
 					return;
-				// Do not update the view, if ctrl is pressed.
+				// Do not update the view if ctrl is pressed.
 				if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
 					LatLon p = mv.getLatLon(e.getX(),e.getY());
-					latText.setText(latlon.format(p.lat()));
-					lonText.setText(latlon.format(p.lon()));
+					latText.setText(p.latToString(mCord));
+					lonText.setText(p.lonToString(mCord));
 				}
 			}
 		});

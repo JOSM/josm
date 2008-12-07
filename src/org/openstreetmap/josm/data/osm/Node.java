@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
 
@@ -20,6 +21,16 @@ public final class Node extends OsmPrimitive {
 	
 	public LatLon coor;
 	public volatile EastNorth eastNorth;
+    
+    private static CoordinateFormat mCord;
+    
+    static {
+        try {
+            mCord = LatLon.CoordinateFormat.valueOf(Main.pref.get("coordinates"));
+        } catch (IllegalArgumentException iae) {
+            mCord =LatLon.CoordinateFormat.DECIMAL_DEGREES;
+        }
+    }
 
 	/**
 	 * Create an incomplete Node object
@@ -77,12 +88,10 @@ public final class Node extends OsmPrimitive {
 		if (incomplete) {
 			name = tr("incomplete");
 		} else {
-			NumberFormat latLonFormat = new DecimalFormat("###0.0000000");
-
 			name = get("name");
 			if (name == null)
 				name = id == 0 ? "" : ""+id;
-			name += " ("+latLonFormat.format(coor.lat())+", "+latLonFormat.format(coor.lon())+")";
+			name += " (" + coor.latToString(mCord) + ", " + coor.lonToString(mCord) + ")";
 		}
 		return name;
 	}
