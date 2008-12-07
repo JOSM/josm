@@ -2068,6 +2068,12 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Hairdresser" icon="presets/empty.png">
+			<label text="Edit Hairdresser" />
+			<key key="shop" value="hairdresser" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Dry Cleaning" icon="presets/laundry.png">
 			<label text="Edit Dry Cleaning" />
 			<key key="shop" value="dry_cleaning" />
