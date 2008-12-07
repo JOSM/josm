@@ -1263,8 +1263,9 @@
 		</item>
 
 		<item name="Information point" icon="presets/information.png">
-			<label text="Edit Tourist Information" />
+			<label text="Edit Information Point" />
 			<key key="tourism" value="information" />
+			<combo key="information" text="type" values="office,map,citymap,hikingmap,bicyclemap,board,history,nature,wildlife,guidepost" default="" delete_if_empty="true" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
