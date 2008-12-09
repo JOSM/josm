@@ -3686,21 +3686,21 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="addr:interpolation" v="odd"/>
-		<line width="1" realwidth="1" dashed="true" colour="#1C86EE"/>
+		<line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="addr:interpolation" v="even"/>
-		<line width="1" realwidth="1" dashed="true" colour="#1C86EE"/>
+                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="addr:interpolation" v="all"/>
-		<line width="1" realwidth="1" dashed="true" colour="#1C86EE"/>
+                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
