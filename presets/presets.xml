@@ -1971,10 +1971,12 @@
 		<item name="Recycling" icon="presets/recycling.png">
 			<label text="Edit a Recycling station" />
 			<key key="amenity" value="recycling" />
-			<check key="recycling:glass" text="Glass" default="off" delete_if_empty="true" />
-			<check key="recycling:clothes" text="Clothes" default="off" delete_if_empty="true" />
 			<check key="recycling:batteries" text="Batteries" default="off" delete_if_empty="true" />
+			<check key="recycling:cans" text="Cans" default="off" delete_if_empty="true" />
+			<check key="recycling:clothes" text="Clothes" default="off" delete_if_empty="true" />
+			<check key="recycling:glass" text="Glass" default="off" delete_if_empty="true" />
 			<check key="recycling:paper" text="Paper" default="off" delete_if_empty="true" />
+			<check key="recycling:scrap_metal" text="Scrap Metal" default="off" delete_if_empty="true" />
 		</item>
 
 		<item name="Bench" icon="presets/bench.png">
