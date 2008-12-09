@@ -781,6 +781,7 @@
 			<label text="Optional Attributes:" />
 			<label text=" " />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="ele" text="Elevation" default="" delete_if_empty="true" />
 		</item>
 	</group> <!-- Waypoints -->
 
@@ -2467,18 +2468,21 @@
 			<label text="Edit Peak" />
 			<key key="natural" value="peak" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="ele" text="Elevation" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Glacier" icon="presets/glacier.png">
 			<label text="Edit Glacier" />
 			<key key="natural" value="glacier" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="ele" text="Elevation" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Volcano" icon="presets/volcano.png">
 			<label text="Edit Volcano" />
 			<key key="natural" value="volcano" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="ele" text="Elevation" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Cliff" icon="presets/empty.png">
