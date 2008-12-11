@@ -13,13 +13,16 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map.Entry;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -69,6 +72,11 @@ public class RelationEditor extends JFrame {
 	private final Relation clone;
 	private JLabel status;
 
+    /**
+     * True if the relation is ordered (API 0.6). False for API 0.5.
+     */
+    boolean ordered;
+
 	/**
 	 * The property data.
 	 */
@@ -99,6 +107,9 @@ public class RelationEditor extends JFrame {
 	private final JTable propertyTable = new JTable(propertyData);
 	private final JTable memberTable = new JTable(memberData);
 
+    // =================== FIXME FIXME FIXME =====================
+    // As soon as API 0.5 is dead, drop all the collation stuff from here ...
+    
 	/**
 	 * Collator for sorting the roles and entries of the member table.
 	 */
@@ -163,6 +174,9 @@ public class RelationEditor extends JFrame {
 		}
 	};
 
+    // =================== FIXME FIXME FIXME =====================
+    // ... until here, and also get rid of the "Collections.sort..." below.
+    
 	/**
 	 * Creates a new relation editor for the given relation. The relation
 	 * will be saved if the user selects "ok" in the editor.
@@ -191,13 +205,15 @@ public class RelationEditor extends JFrame {
 			tr("Edit relation #{0}", relation.id));
 		this.relation = relation;
 
+        ordered = Main.pref.get("osm-server.version", "0.5").equals("0.6");
+        
 		if (relation == null) {
 			// create a new relation
 			this.clone = new Relation();
 		} else {
 			// edit an existing relation
 			this.clone = new Relation(relation);
-			Collections.sort(this.clone.members, memberComparator);
+			if (!ordered) Collections.sort(this.clone.members, memberComparator);
 		}
 
 		getContentPane().setLayout(new BorderLayout());
@@ -277,15 +293,38 @@ public class RelationEditor extends JFrame {
 		});
 		memberTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
-
 		// combine both tables and wrap them in a scrollPane
 		JPanel bothTables = new JPanel();
 		bothTables.setLayout(new GridBagLayout());
 		bothTables.add(new JLabel(tr("Tags (empty value deletes tag)")), GBC.eol().fill(GBC.HORIZONTAL));
 		bothTables.add(new JScrollPane(propertyTable), GBC.eop().fill(GBC.BOTH));
 		bothTables.add(status = new JLabel(tr("Members")), GBC.eol().fill(GBC.HORIZONTAL));
-		bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
+        if (ordered) {
+            JPanel upDownPanel = new JPanel();
+            upDownPanel.setLayout(new BoxLayout(upDownPanel, BoxLayout.Y_AXIS));
 
+            
+
+            upDownPanel.add(createButton(null, "moveup", tr("Move the currently selected member(s) up"),
+                    KeyEvent.VK_U, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    moveMembers(-1);
+                }
+            }));
+            upDownPanel.add(createButton(null, "movedown", tr("Move the currently selected member(s) down"),
+                    KeyEvent.VK_N, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    moveMembers(1);
+                }
+            }));
+
+            
+            bothTables.add(new JScrollPane(memberTable), GBC.std().fill(GBC.BOTH));
+            bothTables.add(upDownPanel, GBC.eol().fill(GBC.VERTICAL));
+        } else {
+            bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
+        }
+        
 		JPanel buttonPanel = new JPanel(new GridLayout(1,3));
 
 		buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
@@ -296,7 +335,7 @@ public class RelationEditor extends JFrame {
 		}));
 
 		buttonPanel.add(createButton(marktr("Delete Selected"),"deleteselected",
-		tr("Delete all currently selected objects from releation"), KeyEvent.VK_R, new ActionListener() {
+		tr("Delete all currently selected objects from relation"), KeyEvent.VK_R, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				deleteSelected();
 			}
@@ -405,19 +444,31 @@ public class RelationEditor extends JFrame {
 	private void addSelected() {
 		for (OsmPrimitive p : Main.ds.getSelected()) {
 			boolean skip = false;
-			for (RelationMember rm : clone.members) {
-				if (rm.member == p || p == relation)
-				{
-					skip = true;
-					break;
-				}
-			}
-			if(!skip)
+            // ordered relations may have the same member multiple times.
+            // TODO: visual indication of the fact that one is there more than once?
+            if (!ordered)
+            {
+                for (RelationMember rm : clone.members) {
+                    if (rm.member == p || p == relation)
+                    {
+                        skip = true;
+                        break;
+                    }
+                }
+            }
+			if (!skip)
 			{
 				RelationMember em = new RelationMember();
 				em.member = p;
 				em.role = "";
-				clone.members.add(em);
+                // when working with ordered relations, we make an effort to
+                // add the element before the first selected member.
+                int[] rows = memberTable.getSelectedRows();
+                if (ordered && rows.length > 0) {
+                    clone.members.add(rows[0], em);
+                } else {
+                    clone.members.add(em);
+                }
 			}
 		}
 		refreshTables();
@@ -437,6 +488,45 @@ public class RelationEditor extends JFrame {
 			}
 		}
 		refreshTables();
+	}
+
+	private void moveMembers(int direction) {
+	    int[] rows = memberTable.getSelectedRows();
+        if (rows.length == 0) return;
+        
+        // check if user attempted to move anything beyond the boundary of the list
+        if (rows[0] + direction < 0) return;
+        if (rows[rows.length-1] + direction >= clone.members.size()) return;
+        
+        RelationMember m[] = new RelationMember[clone.members.size()];
+        
+        // first move all selected rows from the member list into a new array,
+        // displaced by the move amount
+        for (Integer i: rows) {
+            m[i+direction] = clone.members.get(i);
+            clone.members.set(i, null);            
+        }
+        
+        // now fill the empty spots in the destination array with the remaining
+        // elements.
+        int i = 0;
+        for (RelationMember rm : clone.members) {
+            if (rm != null) {
+                while (m[i] != null) i++;
+                m[i++] = rm;
+            }
+        }
+        
+        // and write the array back into the member list.
+        clone.members.clear();
+        clone.members.addAll(Arrays.asList(m));        
+	    refreshTables();
+        ListSelectionModel lsm = memberTable.getSelectionModel();
+        lsm.setValueIsAdjusting(true);
+        for (Integer j: rows) {
+            lsm.addSelectionInterval(j + direction, j + direction);
+        }
+        lsm.setValueIsAdjusting(false);
 	}
 
 	private void downloadRelationMembers() {
