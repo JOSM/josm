@@ -472,7 +472,7 @@ public class GeoImageLayer extends Layer {
 		p.add(new JLabel(tr("Enter shown date (mm/dd/yyyy HH:MM:SS)")), GBC.eol());
 		JTextField gpsText = new JTextField(dateFormat.format(new Date(exifDate.getTime()+delta)));
 		p.add(gpsText, GBC.eol().fill(GBC.HORIZONTAL));
-		p.add(new JLabel(tr("GPS unit timezome (difference to photo)")), GBC.eol());
+		p.add(new JLabel(tr("GPS unit timezone (difference to photo)")), GBC.eol());
 		String t = Main.pref.get("tagimages.gpstimezone", "0");
 		if (t.charAt(0) != '-')
 			t = "+"+t;
