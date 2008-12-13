@@ -745,8 +745,16 @@
 			<text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Signpost">
+			<key key="amenity" value="signpost" />
+		</item>
+		
 		<item name="Speed Camera" icon="presets/speed_camera.png">
 			<key key="highway" value="speed_camera" />
+		</item>
+		
+		<item name="Emergency Phone" icon="presets/telephone.png">
+			<key key="amenity" value="emergency_phone" />
 		</item>
 		
 		<separator/>
@@ -1105,6 +1113,12 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Ferry Terminal">
+			<label text="Edit Ferry Terminal" />
+			<key key="amenity" value="ferry_terminal" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
 		<item name="Slipway" icon="presets/slipway.png">
 			<label text="Edit Slipway" />
 			<key key="leisure" value="slipway" />
@@ -1249,6 +1263,14 @@
 			<label text="Edit Parking" />
 			<key key="amenity" value="parking" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<combo key="parking" text="Type" values="surface,multi-storey,underground" default="surface" delete_if_empty="true" />
+		</item>
+
+		<item name="Wash" icon="presets/car_wash.png">
+			<label text="Edit Car Wash" />
+			<key key="amenity" value="car_wash" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Shop" icon="presets/car_repair.png">
@@ -1256,7 +1278,7 @@
 			<key key="shop" value="car" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
-	</item>
+		</item>
 
 		<item name="Rental" icon="presets/car_rental.png">
 			<label text="Edit Car Rental" />
@@ -1379,6 +1401,14 @@
 
 		<separator/>
 
+		<item name="Taxi" icon="presets/taxi.png">
+			<label text="Edit a Taxi station" />
+			<key key="amenity" value="taxi" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<separator/>
+
 		<item name="Airport" icon="presets/plane.png">
 			<label text="Edit an airport" />
 			<key key="aeroway" value="aerodrome" />
@@ -1441,12 +1471,14 @@
 			<label text="Edit Restaurant" />
 			<key key="amenity" value="restaurant" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebap,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Fast Food" icon="presets/fastfood.png">
 			<label text="Edit Fast Food Restaurant" />
 			<key key="amenity" value="fast_food" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebap,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Cafe" icon="presets/cafe.png">
@@ -1947,9 +1979,9 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Fire Station" icon="presets/firebrigade.png">
-			<label text="Edit Fire Station" />
-			<key key="amenity" value="fire_station" />
+		<item name="Embassy">
+			<label text="Edit Embassy" />
+			<key key="amenity" value="embassy" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
@@ -1968,6 +2000,12 @@
 		<item name="Police" icon="presets/police.png">
 			<label text="Edit Police" />
 			<key key="amenity" value="police" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Fire Station" icon="presets/firebrigade.png">
+			<label text="Edit Fire Station" />
+			<key key="amenity" value="fire_station" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
@@ -2211,12 +2249,6 @@
 			<combo key="height" text="Height" values="low,half,full,5,10,15,20" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Taxi" icon="presets/taxi.png">
-			<label text="Edit a Taxi station" />
-			<key key="amenity" value="taxi" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-
 		<item name="Fountain" icon="presets/spring.png">
 			<label text="Edit a Fountain" />
 			<key key="amenity" value="fountain" />
@@ -2337,6 +2369,18 @@
 
 
 	<group name="Health" icon="presets/pharmacy.png">
+		<item name="Doctors">
+			<label text="Edit Doctors" />
+			<key key="amenity" value="doctors" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Dentist">
+			<label text="Edit Dentist" />
+			<key key="amenity" value="dentist" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
 		<item name="Pharmacy" icon="presets/pharmacy.png">
 			<label text="Edit Pharmacy" />
 			<key key="amenity" value="pharmacy" />
@@ -2359,6 +2403,13 @@
 			<label text="(Use international code, like +12-345-67890)" />
 			<label text=" " />
 		</item>
+
+		<item name="Veterinary">
+			<label text="Edit Veterinary" />
+			<key key="amenity" value="veterinary" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
 	</group> <!-- Health -->
 
 	<separator/>
