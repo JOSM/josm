@@ -785,6 +785,224 @@
 		</item>
 	</group> <!-- Waypoints -->
 
+
+
+	<group name="Barriers" icon="presets/bollard.png">
+		
+		<item name="Stile" icon="presets/empty.png">
+			<label text="Edit a Stile" />
+			<label text=" " />
+			<key key="barrier" value="stile" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
+		</item> <!-- stile -->
+		
+		<item name="Kissing Gate" icon="presets/empty.png">
+			<label text="Edit a Kissing Gate" />
+			<label text=" " />
+			<key key="barrier" value="kissing_gate" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
+		</item> <!-- kissing_gate -->
+		
+		<item name="Hampshire Gate" icon="presets/empty.png">
+			<label text="Edit a Hampshire Gate" />
+			<label text=" " />
+			<key key="barrier" value="hampshire_gate" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- hampshire_gate -->
+		
+		<item name="Bollard" icon="presets/empty.png">
+			<label text="Edit a bollard" />
+			<label text=" " />
+			<key key="barrier" value="bollard" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+		</item> <!-- bollard -->
+		
+		<item name="Drawbridge" icon="presets/empty.png">
+			<label text="Edit a Drawbridge" />
+			<label text=" " />
+			<key key="barrier" value="drawbridge" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- drawbridge -->
+		
+		<item name="Bus Trap" icon="presets/empty.png">
+			<key key="barrier" value="bus_trap" />
+		</item> <!-- bus_trap -->
+		
+		<item name="Cattle Grid" icon="presets/empty.png">
+			<label text="Edit a Cattle Grid" />
+			<label text=" " />
+			<key key="barrier" value="cattle_grid" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- cattle_grid -->
+		
+		<item name="Spikes" icon="presets/empty.png">
+			<label text="Edit a Spikes" />
+			<label text=" " />
+			<key key="barrier" value="spikes" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- spikes -->
+				
+		<item name="Porticullis" icon="presets/empty.png">
+			<label text="Edit a Porticullis" />
+			<label text=" " />
+			<key key="barrier" value="porticullis" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- porticullis -->
+		
+		
+		<item name="Gate" icon="presets/empty.png">
+			<label text="Edit a Gate" />
+			<label text=" " />
+			<key key="barrier" value="gate" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- gate -->
+		
+		<item name="Lift Gate" icon="presets/empty.png">
+			<label text="Edit a Lift Gate" />
+			<label text=" " />
+			<key key="barrier" value="lift_gate" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- lift_gate -->
+		
+		<item name="Sally Port" icon="presets/empty.png">
+			<label text="Edit a Sally Port" />
+			<label text=" " />
+			<key key="barrier" value="sally_port" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- sally_port -->
+		
+		<item name="Bump Gate" icon="presets/empty.png">
+			<label text="Edit a Bump Gate" />
+			<label text=" " />
+			<key key="barrier" value="bump_gate" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- bump_gate -->
+		
+		<item name="Hedge" icon="presets/empty.png">
+			<key key="barrier" value="hedge" />
+		</item> <!-- hedge -->
+		
+		<item name="Fence" icon="presets/empty.png">
+			<key key="barrier" value="fence" />
+		</item> <!-- fence -->
+		
+		<item name="Block" icon="presets/empty.png">
+			<key key="barrier" value="block" />
+		</item> <!-- block -->
+		
+		<item name="Wall" icon="presets/empty.png">
+			<key key="barrier" value="wall" />
+		</item> <!-- wall -->
+		
+		<item name="City Wall" icon="presets/empty.png">
+			<key key="barrier" value="city_wall" />
+		</item> <!-- city_wall -->
+		
+		<item name="Retaining Wall" icon="presets/empty.png">
+			<key key="barrier" value="retaining_wall" />
+		</item> <!-- retaining_wall -->
+		
+		<item name="Toll Booth" icon="presets/empty.png">
+			<key key="barrier" value="toll_booth" />
+		</item> <!-- toll_booth -->
+		
+		<item name="Border Control" icon="presets/empty.png">
+			<label text="Edit a Border Control" />
+			<label text=" " />
+			<key key="barrier" value="border_control" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- border_control -->
+		
+		<separator/>
+		
+		<item name="Entrance" icon="presets/empty.png">
+			<label text="Edit a Entrance" />
+			<label text=" " />
+			<key key="barrier" value="entrance" />
+			<label text="Allowed traffic:" />
+			<label text=" " />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
+			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+		</item> <!-- entrance -->
+		
+	</group> <!-- Barriers -->
+
+
+
+
+
+
 	<separator/>
 
 	<group name="Waterway" icon="presets/waterway.png">
