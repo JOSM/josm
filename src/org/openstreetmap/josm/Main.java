@@ -228,7 +228,9 @@ abstract public class Main {
         if (System.getProperty("josm.plugins") != null)
             plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
 
-        String [] oldplugins = new String[] {"mappaint", "unglueplugin", "lang-de","lang-en_GB","lang-fr","lang-it","lang-pl","lang-ro","lang-ru"};
+        String [] oldplugins = new String[] {"mappaint", "unglueplugin",
+        "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
+        "lang-ru", "ewmsplugin", "ywms"};
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
                 plugins.remove(p);
@@ -239,7 +241,7 @@ abstract public class Main {
 
         if (plugins.isEmpty())
             return;
-        
+
         SortedMap<Integer, Collection<PluginInformation>> p = new TreeMap<Integer, Collection<PluginInformation>>();
         for (String pluginName : plugins) {
             PluginInformation info = PluginInformation.findPlugin(pluginName);

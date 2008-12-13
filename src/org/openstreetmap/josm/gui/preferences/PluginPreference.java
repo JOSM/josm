@@ -242,15 +242,7 @@ public class PluginPreference implements PreferenceSetting {
 		int width = pluginPanel.myGetWidth();
 
 		// the following could probably be done more elegantly?
-		Collection<String> enabledPlugins = null;
-		String enabledProp = Main.pref.get("plugins");
-		if ((enabledProp == null) || ("".equals(enabledProp))) {
-			enabledPlugins = Collections.emptySet();
-		}
-		else
-		{
-			enabledPlugins = Arrays.asList(enabledProp.split(","));
-		}
+		Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
 		
 		for (final PluginDescription plugin : availablePlugins) {
 			boolean enabled = enabledPlugins.contains(plugin.name);
@@ -383,25 +375,20 @@ public class PluginPreference implements PreferenceSetting {
 
 		}
 
-		String plugins = "";
+		String oldPlugins = Main.pref.get("plugins");
+	        LinkedList<String> plugins = new LinkedList<String>();
 		Object pd[] = pluginMap.keySet().toArray();
 		Arrays.sort(pd);
 		for (Object d : pd) {
 			if (pluginMap.get(d))
-				plugins += ((PluginDescription)d).name + ",";
+				plugins.add(((PluginDescription)d).name);
 		}
-		if (plugins.endsWith(","))
-			plugins = plugins.substring(0, plugins.length()-1);
-		if (plugins.length() == 0)
-			plugins = null;
 
-		String oldPlugins = Main.pref.get("plugins");
+		Main.pref.putCollection("plugins", plugins);
+		String newPlugins = Main.pref.get("plugins");
 		if(oldPlugins == null && plugins == null)
 			return;
 		if(plugins == null || oldPlugins == null || !plugins.equals(oldPlugins))
-		{
-			Main.pref.put("plugins", plugins);
 			gui.requiresRestart = true;
-		}
 	}
 }
