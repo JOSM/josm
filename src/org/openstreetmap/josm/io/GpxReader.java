@@ -77,7 +77,7 @@ public class GpxReader {
 				parseCoord(atts.getValue("lon")));
 		}
 
-		@Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+		@Override public void startElement(String namespaceURI, String qName, String rqName, Attributes atts) throws SAXException {
 			switch(currentState) {
 			case init:
 				if (qName.equals("metadata")) {
@@ -180,7 +180,7 @@ public class GpxReader {
 			}
 		}
 
-		@Override public void endElement(String namespaceURI, String localName, String qName) {
+		@Override public void endElement(String namespaceURI, String qName, String rqName) {
 			switch (currentState) {
 			case metadata:
 				if (qName.equals("name") || qName.equals("desc") ||
@@ -294,8 +294,9 @@ public class GpxReader {
 		Parser parser = new Parser();
 		InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
 		try {
-			SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
-			data.storageFile = relativeMarkerPath;
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setNamespaceAware(true);
+			factory.newSAXParser().parse(inputSource, parser);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace(); // broken SAXException chaining
 			throw new SAXException(e);
