@@ -11,13 +11,15 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
@@ -48,11 +50,14 @@ public class Preferences {
 	 * Class holding one bookmarkentry.
 	 * @author imi
 	 */
-	public static class Bookmark {
+	public static class Bookmark implements Comparable<Bookmark> {
 		public String name;
 		public double[] latlon = new double[4]; // minlat, minlon, maxlat, maxlon
 		@Override public String toString() {
 			return name;
+		}
+		public int compareTo(Bookmark b) {
+			return name.toLowerCase().compareTo(b.name.toLowerCase());
 		}
 	}
 
@@ -289,22 +294,21 @@ public class Preferences {
 			bookmarkFile.createNewFile();
 		BufferedReader in = new BufferedReader(new FileReader(bookmarkFile));
 
-		Collection<Bookmark> bookmarks = new LinkedList<Bookmark>();
+		LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
+		// use pattern matches to scan text, as text may contain a "," itself
 		for (String line = in.readLine(); line != null; line = in.readLine()) {
-			StringTokenizer st = new StringTokenizer(line, ",");
-			if (st.countTokens() < 5)
-				continue;
-			Bookmark b = new Bookmark();
-			b.name = st.nextToken();
-			try {
+			Matcher m = Pattern.compile("^(.+),(-?\\d+.\\d+),(-?\\d+.\\d+),(-?\\d+.\\d+),(-?\\d+.\\d+)$").matcher(line);
+			if(m.matches())
+			{
+				Bookmark b = new Bookmark();
+				b.name = m.group(1);
 				for (int i = 0; i < b.latlon.length; ++i)
-					b.latlon[i] = Double.parseDouble(st.nextToken());
+					b.latlon[i] = Double.parseDouble(m.group(i+2));
 				bookmarks.add(b);
-			} catch (NumberFormatException x) {
-				// line not parsed
 			}
 		}
 		in.close();
+		Collections.sort(bookmarks);
 		return bookmarks;
 	}
 
@@ -314,7 +318,6 @@ public class Preferences {
 			bookmarkFile.createNewFile();
 		PrintWriter out = new PrintWriter(new FileWriter(bookmarkFile));
 		for (Bookmark b : bookmarks) {
-			b.name = b.name.replace(',', '_');
 			out.print(b.name+",");
 			for (int i = 0; i < b.latlon.length; ++i)
 				out.print(b.latlon[i]+(i<b.latlon.length-1?",":""));
