@@ -1530,6 +1530,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="parking" v="underground"/>
+		<icon annotate="true" src="vehicle/parking/underground.png" priority="10000"/>
+		<area colour="amenity_traffic#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="parking"/>
 		<icon annotate="true" src="vehicle/parking.png"/>
 		<area colour="amenity_traffic#f7efb7"/>
