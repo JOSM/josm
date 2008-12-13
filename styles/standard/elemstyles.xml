@@ -729,8 +729,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="waterway" v="riverbank"/>
-                <line width="1" colour="riverbank#0000cf" priority="10000"/>
-                <area colour="riverbank#0000cf" priority="10000"/>
+		<line width="1" colour="riverbank#0000cf" priority="10000"/>
+		<area colour="riverbank#0000cf" priority="10000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1163,7 +1163,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
-	<!--the power_source rules must be placed before the power=generator rule! -->
 	<rule>
 		<condition k="power_source" v="wind"/>
 		<icon annotate="true" src="misc/landmark/power/wind.png"/>
@@ -1198,7 +1197,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="power" v="generator"/>
-		<icon annotate="true" src="misc/landmark/power.png"/>
+		<icon annotate="true" src="misc/landmark/power.png" priority="-10000"/>
 		<area width="1" colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1523,6 +1522,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="parking" v="multi-storey"/>
+		<icon annotate="true" src="vehicle/parking/garage.png" priority="10000"/>
+		<area colour="amenity_traffic#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="parking"/>
 		<icon annotate="true" src="vehicle/parking.png"/>
 		<area colour="amenity_traffic#f7efb7"/>
@@ -1666,7 +1673,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
-	<!--the religion rules must be placed before the place_of_worship rule! -->
 	<rule>
 		<condition k="religion" v="bahai"/>
 		<icon annotate="true" src="religion/church/bahai.png"/>
@@ -1738,7 +1744,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="amenity" v="place_of_worship"/>
+		<condition k="amenity" v="place_of_worship" priority="-10000"/>
 		<icon annotate="true" src="religion.png"/>
 		<area colour="amenity2#f7efb7"/>
 		<scale_min>1</scale_min>
@@ -3386,6 +3392,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<!-- this will badly display otherwise well tagged footways and alike, so comment it out until we have better ways to display this in JOSM!
+	XXX - maybe it's possible to use linemod's here?
 	<rule>
 		<condition k="surface" v="paved"/>
 		<line width="1" realwidth="3" colour="street#c0c0c0"/>
@@ -3560,7 +3567,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 <!--"work in progress" tags -->
 
-	<!-- keep this generic rules at the end of the file, so more specialised rules fit first -->
 	<rule>
 		<condition k="building" b="yes"/>
 		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
@@ -3677,6 +3683,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+<!-- miscellaneous other tags, not fit elsewhere -->	
 	<rule>
 		<condition k="traffic_sign" v="city_limit"/>
 		<icon annotate="true" src="citylimit.png"/>
