@@ -699,17 +699,6 @@
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Toll Booth" icon="presets/toll_station.png">
-			<label text="Edit Toll Booth" />
-			<label text=" " />
-			<key key="highway" value="toll_booth" />
-			<label text=" " />
-			<label text="Optional Attributes:" />
-			<label text=" " />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<text key="operator" text="Operator" default="" delete_if_empty="true" />
-		</item>
-
 		<separator/>
 
 		<item name="Traffic Signal" icon="presets/traffic-light.png">
@@ -722,10 +711,6 @@
 
 		<item name="Zebra crossing" icon="presets/zebracrossing.png">
 			<key key="highway" value="crossing" />
-		</item>
-
-		<item name="Bollard" icon="presets/bollard.png">
-			<key key="barrier" value="bollard" />
 		</item>
 
 		<item name="Mini Roundabout" icon="presets/roundabout_left.png">
@@ -769,18 +754,6 @@
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Cattle Grid" icon="presets/cattle_grid.png">
-			<key key="highway" value="cattle_grid" />
-		</item>
-
-		<item name="Gate" icon="presets/gate.png">
-			<key key="highway" value="gate" />
-		</item>
-
-		<item name="Stile" icon="presets/stile.png">
-			<key key="highway" value="stile" />
-		</item>
-
 		<item name="Mountain Pass" icon="presets/mountain_pass.png">
 			<label text="Edit Mountain Pass" />
 			<label text=" " />
@@ -795,9 +768,9 @@
 
 
 
-	<group name="Barriers" icon="presets/bollard.png">
+	<group name="Barriers" icon="presets/barrier.png">
 		
-		<item name="Stile" icon="presets/empty.png">
+		<item name="Stile" icon="presets/stile.png">
 			<label text="Edit a Stile" />
 			<label text=" " />
 			<key key="barrier" value="stile" />
@@ -830,7 +803,7 @@
 			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
 		</item> <!-- hampshire_gate -->
 		
-		<item name="Bollard" icon="presets/empty.png">
+		<item name="Bollard" icon="presets/bollard.png">
 			<label text="Edit a bollard" />
 			<label text=" " />
 			<key key="barrier" value="bollard" />
@@ -859,7 +832,7 @@
 			<key key="barrier" value="bus_trap" />
 		</item> <!-- bus_trap -->
 		
-		<item name="Cattle Grid" icon="presets/empty.png">
+		<item name="Cattle Grid" icon="presets/cattle_grid.png">
 			<label text="Edit a Cattle Grid" />
 			<label text=" " />
 			<key key="barrier" value="cattle_grid" />
@@ -896,7 +869,7 @@
 		</item> <!-- porticullis -->
 		
 		
-		<item name="Gate" icon="presets/empty.png">
+		<item name="Gate" icon="presets/gate.png">
 			<label text="Edit a Gate" />
 			<label text=" " />
 			<key key="barrier" value="gate" />
@@ -972,8 +945,15 @@
 			<key key="barrier" value="retaining_wall" />
 		</item> <!-- retaining_wall -->
 		
-		<item name="Toll Booth" icon="presets/empty.png">
+		<item name="Toll Booth" icon="presets/toll_station.png">
+			<label text="Edit Toll Booth" />
+			<label text=" " />
 			<key key="barrier" value="toll_booth" />
+			<label text=" " />
+			<label text="Optional Attributes:" />
+			<label text=" " />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item> <!-- toll_booth -->
 		
 		<item name="Border Control" icon="presets/empty.png">
