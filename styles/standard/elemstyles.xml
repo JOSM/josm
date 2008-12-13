@@ -301,6 +301,42 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
+		<condition k="barrier" v="hedge"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="stile"/>
+		<icon annotate="true" src="vehicle/stile.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="fence"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="wood_fence"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="wire_fence"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="cycle_barrier"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
 		<condition k="barrier"/>
 		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
 		<scale_min>1</scale_min>
@@ -531,13 +567,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="highway" v="gate"/>
 		<icon annotate="true" src="vehicle/gate.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="highway" v="stile"/>
-		<icon annotate="true" src="vehicle/stile.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1984,14 +2013,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="amenity" v="park_bench"/>
-		<area colour="amenity2#f7efb7"/>
-		<icon annotate="true" src="recreation/bench.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="amenity" v="bench"/>
 		<area colour="amenity2#f7efb7"/>
 		<icon annotate="true" src="recreation/bench.png"/>
@@ -2029,6 +2050,13 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<area colour="amenity2#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="signpost"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
 	</rule>
 
 <!--shop tags -->
@@ -3634,6 +3662,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 <!--"deprecated" tags -->
 
+	<!-- historic=museum -> tourism=museum -->
 	<rule>
 		<condition k="historic" v="museum"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
@@ -3642,6 +3671,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<!-- man_made=power_wind -> power=generator and power_source=wind -->
 	<rule>
 		<condition k="man_made" v="power_wind"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
@@ -3650,6 +3680,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<!-- man_made=power_hydro -> power=generator and power_source=hydro -->
 	<rule>
 		<condition k="man_made" v="power_hydro"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
@@ -3658,6 +3689,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<!-- man_made=power_fossil -> power=generator and power_source=fossil -->
 	<rule>
 		<condition k="man_made" v="power_fossil"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
@@ -3666,6 +3698,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<!-- man_made=power_nuclear -> power=generator and power_source=nuclear -->
 	<rule>
 		<condition k="man_made" v="power_nuclear"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
@@ -3674,12 +3707,30 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<!-- highway classification now more detailed -->
 	<rule>
 		<condition k="highway" v="minor"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
+	</rule>
+
+	<!-- amenity=park_bench -> amenity=bench -->
+	<rule>
+		<condition k="amenity" v="park_bench"/>
+		<area colour="deprecated#ff0000"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<!-- highway=stile -> barrier=stile -->
+	<rule>
+		<condition k="highway" v="stile"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
 	</rule>
 
 	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
