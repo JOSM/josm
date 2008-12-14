@@ -383,7 +383,7 @@
 	<xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'barrier'"/>
 		<xsl:with-param name="column" select="3"/>
-		<xsl:with-param name="row" select="35"/>
+		<xsl:with-param name="row" select="30"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">

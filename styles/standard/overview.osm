@@ -1074,13 +1074,98 @@
     <tag k="junction" v="roundabout"/>
     <tag k="name" v="roundabout"/>
   </way>
-  <node id="-67000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00090">
+  <node id="-66000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00090">
     <tag k="tourism" v="information"/>
     <tag k="name" v="barrier"/>
   </node>
-  <node id="-67200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00090">
+  <node id="-66200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00090">
     <tag k="barrier" v="bollard"/>
     <tag k="name" v="bollard"/>
+  </node>
+  <node id="-66201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00086"/>
+  <node id="-66202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00114"/>
+  <node id="-66203" user="overview-creator" visible="true" lat="-0.00314" lon="0.00114"/>
+  <node id="-66204" user="overview-creator" visible="true" lat="-0.00314" lon="0.00086"/>
+  <way id="-66204" user="overview-creator" visible="true">
+    <nd ref="-66201"/>
+    <nd ref="-66202"/>
+    <nd ref="-66203"/>
+    <nd ref="-66204"/>
+    <nd ref="-66201"/>
+    <tag k="barrier" v="bollard"/>
+    <tag k="name" v="bollard"/>
+  </way>
+  <node id="-66400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00090">
+    <tag k="barrier" v="gate"/>
+    <tag k="name" v="gate"/>
+  </node>
+  <node id="-66401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00086"/>
+  <node id="-66402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00114"/>
+  <node id="-66403" user="overview-creator" visible="true" lat="-0.00324" lon="0.00114"/>
+  <node id="-66404" user="overview-creator" visible="true" lat="-0.00324" lon="0.00086"/>
+  <way id="-66404" user="overview-creator" visible="true">
+    <nd ref="-66401"/>
+    <nd ref="-66402"/>
+    <nd ref="-66403"/>
+    <nd ref="-66404"/>
+    <nd ref="-66401"/>
+    <tag k="barrier" v="gate"/>
+    <tag k="name" v="gate"/>
+  </way>
+  <node id="-66600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00090">
+    <tag k="barrier" v="speed_bump"/>
+    <tag k="name" v="speed_bump"/>
+  </node>
+  <node id="-66601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00086"/>
+  <node id="-66602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00114"/>
+  <node id="-66603" user="overview-creator" visible="true" lat="-0.00334" lon="0.00114"/>
+  <node id="-66604" user="overview-creator" visible="true" lat="-0.00334" lon="0.00086"/>
+  <way id="-66604" user="overview-creator" visible="true">
+    <nd ref="-66601"/>
+    <nd ref="-66602"/>
+    <nd ref="-66603"/>
+    <nd ref="-66604"/>
+    <nd ref="-66601"/>
+    <tag k="barrier" v="speed_bump"/>
+    <tag k="name" v="speed_bump"/>
+  </way>
+  <node id="-66800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00090">
+    <tag k="barrier" v="hedge"/>
+    <tag k="name" v="hedge"/>
+  </node>
+  <node id="-66801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00086"/>
+  <node id="-66802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00114"/>
+  <node id="-66803" user="overview-creator" visible="true" lat="-0.00344" lon="0.00114"/>
+  <node id="-66804" user="overview-creator" visible="true" lat="-0.00344" lon="0.00086"/>
+  <way id="-66804" user="overview-creator" visible="true">
+    <nd ref="-66801"/>
+    <nd ref="-66802"/>
+    <nd ref="-66803"/>
+    <nd ref="-66804"/>
+    <nd ref="-66801"/>
+    <tag k="barrier" v="hedge"/>
+    <tag k="name" v="hedge"/>
+  </way>
+  <node id="-67000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00090">
+    <tag k="barrier" v="stile"/>
+    <tag k="name" v="stile"/>
+  </node>
+  <node id="-67001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00086"/>
+  <node id="-67002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00114"/>
+  <node id="-67003" user="overview-creator" visible="true" lat="-0.00354" lon="0.00114"/>
+  <node id="-67004" user="overview-creator" visible="true" lat="-0.00354" lon="0.00086"/>
+  <way id="-67004" user="overview-creator" visible="true">
+    <nd ref="-67001"/>
+    <nd ref="-67002"/>
+    <nd ref="-67003"/>
+    <nd ref="-67004"/>
+    <nd ref="-67001"/>
+    <tag k="barrier" v="stile"/>
+    <tag k="name" v="stile"/>
+  </way>
+  <node id="-67200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00090">
+    <tag k="barrier" v="fence"/>
+    <tag k="name" v="fence"/>
   </node>
   <node id="-67201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00086"/>
   <node id="-67202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00114"/>
@@ -1092,12 +1177,12 @@
     <nd ref="-67203"/>
     <nd ref="-67204"/>
     <nd ref="-67201"/>
-    <tag k="barrier" v="bollard"/>
-    <tag k="name" v="bollard"/>
+    <tag k="barrier" v="fence"/>
+    <tag k="name" v="fence"/>
   </way>
   <node id="-67400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00090">
-    <tag k="barrier" v="gate"/>
-    <tag k="name" v="gate"/>
+    <tag k="barrier" v="wood_fence"/>
+    <tag k="name" v="wood_fence"/>
   </node>
   <node id="-67401" user="overview-creator" visible="true" lat="-0.00366" lon="0.00086"/>
   <node id="-67402" user="overview-creator" visible="true" lat="-0.00366" lon="0.00114"/>
@@ -1109,12 +1194,12 @@
     <nd ref="-67403"/>
     <nd ref="-67404"/>
     <nd ref="-67401"/>
-    <tag k="barrier" v="gate"/>
-    <tag k="name" v="gate"/>
+    <tag k="barrier" v="wood_fence"/>
+    <tag k="name" v="wood_fence"/>
   </way>
   <node id="-67600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00090">
-    <tag k="barrier" v="speed_bump"/>
-    <tag k="name" v="speed_bump"/>
+    <tag k="barrier" v="wire_fence"/>
+    <tag k="name" v="wire_fence"/>
   </node>
   <node id="-67601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00086"/>
   <node id="-67602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00114"/>
@@ -1126,12 +1211,12 @@
     <nd ref="-67603"/>
     <nd ref="-67604"/>
     <nd ref="-67601"/>
-    <tag k="barrier" v="speed_bump"/>
-    <tag k="name" v="speed_bump"/>
+    <tag k="barrier" v="wire_fence"/>
+    <tag k="name" v="wire_fence"/>
   </way>
   <node id="-67800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00090">
-    <tag k="barrier" v="hedge"/>
-    <tag k="name" v="hedge"/>
+    <tag k="barrier" v="cycle_barrier"/>
+    <tag k="name" v="cycle_barrier"/>
   </node>
   <node id="-67801" user="overview-creator" visible="true" lat="-0.00386" lon="0.00086"/>
   <node id="-67802" user="overview-creator" visible="true" lat="-0.00386" lon="0.00114"/>
@@ -1143,12 +1228,12 @@
     <nd ref="-67803"/>
     <nd ref="-67804"/>
     <nd ref="-67801"/>
-    <tag k="barrier" v="hedge"/>
-    <tag k="name" v="hedge"/>
+    <tag k="barrier" v="cycle_barrier"/>
+    <tag k="name" v="cycle_barrier"/>
   </way>
   <node id="-68000" user="overview-creator" visible="true" lat="-0.00400" lon="0.00090">
-    <tag k="barrier" v="stile"/>
-    <tag k="name" v="stile"/>
+    <tag k="barrier" v="any"/>
+    <tag k="name" v="(any)"/>
   </node>
   <node id="-68001" user="overview-creator" visible="true" lat="-0.00396" lon="0.00086"/>
   <node id="-68002" user="overview-creator" visible="true" lat="-0.00396" lon="0.00114"/>
@@ -1160,91 +1245,6 @@
     <nd ref="-68003"/>
     <nd ref="-68004"/>
     <nd ref="-68001"/>
-    <tag k="barrier" v="stile"/>
-    <tag k="name" v="stile"/>
-  </way>
-  <node id="-68200" user="overview-creator" visible="true" lat="-0.00410" lon="0.00090">
-    <tag k="barrier" v="fence"/>
-    <tag k="name" v="fence"/>
-  </node>
-  <node id="-68201" user="overview-creator" visible="true" lat="-0.00406" lon="0.00086"/>
-  <node id="-68202" user="overview-creator" visible="true" lat="-0.00406" lon="0.00114"/>
-  <node id="-68203" user="overview-creator" visible="true" lat="-0.00414" lon="0.00114"/>
-  <node id="-68204" user="overview-creator" visible="true" lat="-0.00414" lon="0.00086"/>
-  <way id="-68204" user="overview-creator" visible="true">
-    <nd ref="-68201"/>
-    <nd ref="-68202"/>
-    <nd ref="-68203"/>
-    <nd ref="-68204"/>
-    <nd ref="-68201"/>
-    <tag k="barrier" v="fence"/>
-    <tag k="name" v="fence"/>
-  </way>
-  <node id="-86000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00120">
-    <tag k="barrier" v="wood_fence"/>
-    <tag k="name" v="wood_fence"/>
-  </node>
-  <node id="-86001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00116"/>
-  <node id="-86002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00144"/>
-  <node id="-86003" user="overview-creator" visible="true" lat="-0.00304" lon="0.00144"/>
-  <node id="-86004" user="overview-creator" visible="true" lat="-0.00304" lon="0.00116"/>
-  <way id="-86004" user="overview-creator" visible="true">
-    <nd ref="-86001"/>
-    <nd ref="-86002"/>
-    <nd ref="-86003"/>
-    <nd ref="-86004"/>
-    <nd ref="-86001"/>
-    <tag k="barrier" v="wood_fence"/>
-    <tag k="name" v="wood_fence"/>
-  </way>
-  <node id="-86200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00120">
-    <tag k="barrier" v="wire_fence"/>
-    <tag k="name" v="wire_fence"/>
-  </node>
-  <node id="-86201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00116"/>
-  <node id="-86202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00144"/>
-  <node id="-86203" user="overview-creator" visible="true" lat="-0.00314" lon="0.00144"/>
-  <node id="-86204" user="overview-creator" visible="true" lat="-0.00314" lon="0.00116"/>
-  <way id="-86204" user="overview-creator" visible="true">
-    <nd ref="-86201"/>
-    <nd ref="-86202"/>
-    <nd ref="-86203"/>
-    <nd ref="-86204"/>
-    <nd ref="-86201"/>
-    <tag k="barrier" v="wire_fence"/>
-    <tag k="name" v="wire_fence"/>
-  </way>
-  <node id="-86400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00120">
-    <tag k="barrier" v="cycle_barrier"/>
-    <tag k="name" v="cycle_barrier"/>
-  </node>
-  <node id="-86401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00116"/>
-  <node id="-86402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00144"/>
-  <node id="-86403" user="overview-creator" visible="true" lat="-0.00324" lon="0.00144"/>
-  <node id="-86404" user="overview-creator" visible="true" lat="-0.00324" lon="0.00116"/>
-  <way id="-86404" user="overview-creator" visible="true">
-    <nd ref="-86401"/>
-    <nd ref="-86402"/>
-    <nd ref="-86403"/>
-    <nd ref="-86404"/>
-    <nd ref="-86401"/>
-    <tag k="barrier" v="cycle_barrier"/>
-    <tag k="name" v="cycle_barrier"/>
-  </way>
-  <node id="-86600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00120">
-    <tag k="barrier" v="any"/>
-    <tag k="name" v="(any)"/>
-  </node>
-  <node id="-86601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00116"/>
-  <node id="-86602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00144"/>
-  <node id="-86603" user="overview-creator" visible="true" lat="-0.00334" lon="0.00144"/>
-  <node id="-86604" user="overview-creator" visible="true" lat="-0.00334" lon="0.00116"/>
-  <way id="-86604" user="overview-creator" visible="true">
-    <nd ref="-86601"/>
-    <nd ref="-86602"/>
-    <nd ref="-86603"/>
-    <nd ref="-86604"/>
-    <nd ref="-86601"/>
     <tag k="barrier" v="any"/>
     <tag k="name" v="any"/>
   </way>
