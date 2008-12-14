@@ -7,6 +7,34 @@
 		http://www.sjjb.co.uk/mapicons/ (meanwhile in osm svn)
 		-->
 
+<!-- 
+label: simple static text label
+	text: the text to display
+	
+key: fixed key/value pair to be set
+	key: key to set
+	value: value to set
+	
+text: text box
+	key: key to set
+	text: fixed label to display
+	default: default string to display
+	delete_if_empty: true/false
+	
+combo: combo box, with multiple choices and possible to enter free form text
+	key: key to set
+	text: fixed label to display
+	values: comma seperated list of values
+	default: default string to display
+	delete_if_empty: true/false
+	
+check: checkbox
+	key: key to set
+	text: fixed label to display
+	default: ticked on/off
+	delete_if_empty: true/false
+-->
+		
 <annotations>
 	<group name="Streets" icon="presets/way_secondary.png">
 		<item name="Motorway" icon="presets/motorway.png">
@@ -1411,6 +1439,7 @@
 			<label text="Edit Hotel" />
 			<key key="tourism" value="hotel" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Motel" icon="presets/bed.png">
@@ -1435,6 +1464,13 @@
 			<label text="Edit Hostel" />
 			<key key="tourism" value="hostel" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Alpine Hut" icon="presets/hostel.png">
+			<label text="Edit Alpine Hut" />
+			<key key="tourism" value="alpine_hut" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="ele" text="Elevation" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Caravan Site" icon="presets/caravan2.png">
@@ -1522,6 +1558,7 @@
 			<label text="Edit Viewpoint" />
 			<key key="tourism" value="viewpoint" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<!--<check key="man_made" value="tower" text="Look-Out Tower" default="off" delete_if_empty="true" />-->
 		</item>
 
 		<item name="Theme Park" icon="presets/theme_park.png">
@@ -1549,6 +1586,7 @@
 			<label text="Edit Picnic Site" />
 			<key key="tourism" value="picnic_site" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
 		</item>
 
 	</group> <!-- Tourism -->
@@ -2112,7 +2150,7 @@
 		<item name="Power Generator" icon="presets/power_tower.png">
 			<label text="Edit Power Generator" />
 			<key key="power" value="generator" />
-			<combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear" default="" />
+			<combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear,coal,photovoltaic,gas" default="" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 		
