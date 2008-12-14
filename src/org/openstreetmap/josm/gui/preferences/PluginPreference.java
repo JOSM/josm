@@ -241,11 +241,10 @@ public class PluginPreference implements PreferenceSetting {
 		pluginPanel.removeAll();
 		int width = pluginPanel.myGetWidth();
 
-		// the following could probably be done more elegantly?
 		Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
 		
 		for (final PluginDescription plugin : availablePlugins) {
-			boolean enabled = enabledPlugins.contains(plugin.name);
+			boolean enabled = enabledPlugins != null && enabledPlugins.contains(plugin.name);
 			String remoteversion = plugin.version;
 			if(remoteversion == null || remoteversion.equals(""))
 				remoteversion = tr("unknown");
