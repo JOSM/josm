@@ -56,12 +56,7 @@ public class GettingStarted extends JPanel {
                     ")</h2>";
             }
 
-            int myVersion;
-            try {
-                myVersion = Integer.parseInt(AboutAction.getVersion());
-            } catch (NumberFormatException e) {
-                myVersion = 0;
-            }
+            int myVersion = AboutAction.getVersionNumber();
 
             Pattern commentPattern = Pattern.compile("\\<p\\>\\s*\\/\\*[^\\*]*\\*\\/\\s*\\<\\/p\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
             Matcher matcherComment = commentPattern.matcher(motdcontent);

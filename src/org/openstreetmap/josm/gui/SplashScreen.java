@@ -72,7 +72,7 @@ public class SplashScreen extends JWindow {
 		innerContentPane.add(caption, gbc);
 
 		// Add the version number
-		JLabel version = new JLabel(tr("Version {0}", AboutAction.version));
+		JLabel version = new JLabel(tr("Version {0}", AboutAction.getVersionString()));
 		gbc.gridy = 1;
 		gbc.insets = new Insets(0, 0, 0, 0);
 		innerContentPane.add(version, gbc);

@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -43,19 +44,30 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
+/**
+ * @author Stephan
+ *
+ */
 public class AboutAction extends JosmAction {
 
-	public static final String version;
+	private static final String version;
 
 	private final static JTextArea revision;
 	private static String time;
 
-	static {
-		URL u = Main.class.getResource("/REVISION");
-		if(u == null) u = Main.class.getResource("/META-INF/MANIFEST.MF");
+    static {
+        URL u = Main.class.getResource("/REVISION");
+        if(u == null) {
+            try {
+                u = new URL("jar:" + Main.class.getProtectionDomain().getCodeSource().getLocation().toString() 
+                        + "!/META-INF/MANIFEST.MF");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
 		revision = loadFile(u);
 
-		Pattern versionPattern = Pattern.compile(".*?(?:Revision|Main-Version): ([0-9]*).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+		Pattern versionPattern = Pattern.compile(".*?(?:Revision|Main-Version): ([0-9]*(?: SVN)?).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
 		Matcher match = versionPattern.matcher(revision.getText());
 		version = match.matches() ? match.group(1) : tr("UNKNOWN");
 
@@ -64,10 +76,37 @@ public class AboutAction extends JosmAction {
 		time = match.matches() ? match.group(1) : tr("UNKNOWN");
 	}
 
-	static public String getVersion() {
+	/**
+	 * Return string describing version.
+	 * Note that the strinc contains the version number plus an optional suffix of " SVN" to indicate an unofficial development build.
+	 * @return version string
+	 */
+	static public String getVersionString() {
 		return version;
 	}
 
+    /**
+     * Return the number part of the version string.
+     * @return integer part of version number or Integer.MAX_VALUE if not available
+     */
+    public static int getVersionNumber() {
+        int myVersion=Integer.MAX_VALUE;
+        try {
+            myVersion = Integer.parseInt(version.split(" ")[0]);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return myVersion;
+    }
+	
+    /**
+     * check whether the version is a development build out of SVN.
+     * @return true if it is a SVN unofficial build
+     */
+    public static boolean isDevelopmentVersion() {
+        return version.endsWith(" SVN");
+    }
+	
 	public AboutAction() {
 		super(tr("About"), "about", tr("Display the about screen."), Shortcut.registerShortcut("system:about", tr("About"), KeyEvent.VK_F1, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT), true);
 	}
