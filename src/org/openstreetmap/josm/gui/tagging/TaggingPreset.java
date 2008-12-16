@@ -137,6 +137,7 @@ public class TaggingPreset extends AbstractAction {
 				} else {
 					((JTextField)value).setText(default_);
 				}
+				originalValue = null;
 			} else if (usage.allSimilar()) {
 				// all objects use the same value
 				value = new JTextField();
