@@ -1272,6 +1272,7 @@ check: checkbox
 			<key key="amenity" value="parking" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<combo key="parking" text="Type" values="surface,multi-storey,underground,park_and_ride" default="surface" delete_if_empty="true" />
+			<combo key="disabled_spaces" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Wash" icon="presets/car_wash.png">
