@@ -4177,6 +4177,23 @@
     <tag k="parking" v="underground"/>
     <tag k="name" v="underground"/>
   </way>
+  <node id="-185000" user="overview-creator" visible="true" lat="-0.00250" lon="0.00270">
+    <tag k="parking" v="park_and_ride"/>
+    <tag k="name" v="park_and_ride"/>
+  </node>
+  <node id="-185001" user="overview-creator" visible="true" lat="-0.00246" lon="0.00266"/>
+  <node id="-185002" user="overview-creator" visible="true" lat="-0.00246" lon="0.00294"/>
+  <node id="-185003" user="overview-creator" visible="true" lat="-0.00254" lon="0.00294"/>
+  <node id="-185004" user="overview-creator" visible="true" lat="-0.00254" lon="0.00266"/>
+  <way id="-185004" user="overview-creator" visible="true">
+    <nd ref="-185001"/>
+    <nd ref="-185002"/>
+    <nd ref="-185003"/>
+    <nd ref="-185004"/>
+    <nd ref="-185001"/>
+    <tag k="parking" v="park_and_ride"/>
+    <tag k="name" v="park_and_ride"/>
+  </way>
   <node id="-200200" user="overview-creator" visible="true" lat="-0.00010" lon="0.00300">
     <tag k="tourism" v="information"/>
     <tag k="name" v="tourism"/>
