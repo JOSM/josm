@@ -34,6 +34,8 @@
 		</exec>
 		<xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
 		<delete file="REVISION"/>
+		<property name="version.entry.commit.revision" value="UNKNOWN"/>
+		<property name="version.entry.commit.date" value="UNKNOWN"/>
 
 		<!-- images -->
 		<copy todir="build/images">
