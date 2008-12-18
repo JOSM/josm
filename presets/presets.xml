@@ -984,7 +984,7 @@ check: checkbox
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item> <!-- toll_booth -->
 		
-		<item name="Border Control" icon="presets/empty.png">
+		<item name="Border Control" icon="presets/douane.png">
 			<label text="Edit a Border Control" />
 			<label text=" " />
 			<key key="barrier" value="border_control" />
