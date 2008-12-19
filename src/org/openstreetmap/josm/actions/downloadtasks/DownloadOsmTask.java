@@ -15,6 +15,8 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.io.OsmServerLocationReader;
+import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.xml.sax.SAXException;
@@ -29,11 +31,11 @@ public class DownloadOsmTask implements DownloadTask {
     private static Bounds currentBounds;
 
 	private static class Task extends PleaseWaitRunnable {
-		private BoundingBoxDownloader reader;
+		private OsmServerReader reader;
 		private DataSet dataSet;
 		private boolean newLayer;
 
-		public Task(boolean newLayer, BoundingBoxDownloader reader) {
+		public Task(boolean newLayer, OsmServerReader reader) {
 			super(tr("Downloading data"));
 			this.reader = reader;
 			this.newLayer = newLayer;
@@ -82,6 +84,14 @@ public class DownloadOsmTask implements DownloadTask {
         currentBounds = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
 		Main.worker.execute(task);
     }
+    
+    public void loadUrl(boolean new_layer, String url) {
+        Task task = new Task(new_layer, new OsmServerLocationReader(url));
+        Main.worker.execute(task);
+    }
+    
+    
+    
 
 	public JCheckBox getCheckBox() {
 	    return checkBox;

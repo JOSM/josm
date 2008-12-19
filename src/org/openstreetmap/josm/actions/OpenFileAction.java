@@ -32,12 +32,12 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class OpenAction extends DiskAccessAction {
+public class OpenFileAction extends DiskAccessAction {
 
 	/**
 	 * Create an open action. The name is "Open a file".
 	 */
-	public OpenAction() {
+	public OpenFileAction() {
 		super(tr("Open ..."), "open", tr("Open a file."),
 		Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open ...")), KeyEvent.VK_O, Shortcut.GROUP_MENU));
 	}

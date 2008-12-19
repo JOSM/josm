@@ -12,7 +12,9 @@ import java.util.zip.InflaterInputStream;
 import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.xml.sax.SAXException;
 
 /**
  * This DataReader reads directly from the REST API of the osm server.
@@ -23,7 +25,7 @@ import org.openstreetmap.josm.gui.PleaseWaitDialog;
  *
  * @author imi
  */
-abstract class OsmServerReader extends OsmConnection {
+public abstract class OsmServerReader extends OsmConnection {
 	/**
 	 * Open a connection to the given url and return a reader on the input stream
 	 * from that connection. In case of user cancel, return <code>null</code>.
@@ -34,6 +36,11 @@ abstract class OsmServerReader extends OsmConnection {
 	protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
 		String version = Main.pref.get("osm-server.version", "0.5");
 		urlStr = Main.pref.get("osm-server.url")+"/"+version+"/" + urlStr;
+        return getInputStreamRaw(urlStr, pleaseWaitDlg);
+    }
+    
+    protected InputStream getInputStreamRaw(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
+        
 		System.out.println("download: "+urlStr);
 		initAuthentication();
 		URL url = new URL(urlStr);
@@ -49,7 +56,7 @@ abstract class OsmServerReader extends OsmConnection {
 		activeConnection.setConnectTimeout(15000);
 		if (isAuthCancelled() && activeConnection.getResponseCode() == 401)
 			return null;
-		if( activeConnection.getResponseCode() == 500 )
+		if (activeConnection.getResponseCode() == 500)
 		{
 			throw new IOException(tr("Server returned internal error. Try a reduced area or retry after waiting some time."));
 		}
@@ -65,4 +72,7 @@ abstract class OsmServerReader extends OsmConnection {
 		}
 		return inputStream;
 	}
+    
+    public abstract DataSet parseOsm() throws SAXException, IOException;
+    
 }

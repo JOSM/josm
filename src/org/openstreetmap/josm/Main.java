@@ -483,7 +483,7 @@ abstract public class Main {
 
         if (s.startsWith("file:")) {
             try {
-                main.menu.open.openFile(new File(new URI(s)));
+                main.menu.openFile.openFile(new File(new URI(s)));
             } catch (URISyntaxException e) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed file url: \"{0}\"", s));
             }
@@ -500,7 +500,7 @@ abstract public class Main {
             }
         }
 
-        main.menu.open.openFile(new File(s));
+        main.menu.openFile.openFile(new File(s));
     }
 
     protected static void determinePlatformHook() {

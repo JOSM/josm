@@ -10,42 +10,23 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.xml.sax.SAXException;
 
-public class OsmServerObjectReader extends OsmServerReader {
-
-    public final static  String TYPE_WAY = "way";
-    public final static  String TYPE_REL = "relation";
-    public final static  String TYPE_NODE = "node";
-
-    long id;
-    String type;
-    boolean full;
+public class OsmServerLocationReader extends OsmServerReader {
+ 
+    String url;
     
-    public OsmServerObjectReader(long id, String type, boolean full) {
-        this.id = id;
-        this.type = type;
-        this.full = full;
+    public OsmServerLocationReader(String url) {
+        this.url = url;
     }
+    
     /**
-     * Method to download single objects from OSM server. ways, relations, nodes
-     * @param id Object ID
-     * @param type way node relation
-     * @param full download with or without child objects
-     * @return the data requested
-     * @throws SAXException
-     * @throws IOException
+     * Method to download OSM files from somewhere
      */
     public DataSet parseOsm() throws SAXException, IOException {
         try {
             Main.pleaseWaitDlg.progress.setValue(0);
-            Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
-            StringBuffer sb = new StringBuffer();
-            sb.append(type);
-            sb.append("/");
-            sb.append(id);
-            if (full)
-                sb.append("/full");
+            Main.pleaseWaitDlg.currentAction.setText(tr("Contacting Server..."));
 
-            final InputStream in = getInputStream(sb.toString(), Main.pleaseWaitDlg);
+            final InputStream in = getInputStreamRaw(url, Main.pleaseWaitDlg);
             if (in == null)
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));

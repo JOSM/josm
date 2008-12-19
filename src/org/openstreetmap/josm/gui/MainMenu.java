@@ -19,6 +19,7 @@ import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
+import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
@@ -35,7 +36,7 @@ import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.NewAction;
-import org.openstreetmap.josm.actions.OpenAction;
+import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
@@ -75,7 +76,8 @@ public class MainMenu extends JMenuBar {
 
     /* File menu */
     public final NewAction newAction = new NewAction();
-    public final OpenAction open = new OpenAction();
+    public final OpenFileAction openFile = new OpenFileAction();
+    public final OpenLocationAction openLocation = new OpenLocationAction();
     public final JosmAction save = new SaveAction(null);
     public final JosmAction saveAs = new SaveAsAction(null);
     public final JosmAction gpxExport = new GpxExportAction(null);
@@ -166,7 +168,8 @@ public class MainMenu extends JMenuBar {
         JMenuItem current;
 
         add(fileMenu, newAction);
-        add(fileMenu, open);
+        add(fileMenu, openFile);
+        add(fileMenu, openLocation);
         fileMenu.addSeparator();
         add(fileMenu, save);
         add(fileMenu, saveAs);

@@ -538,10 +538,9 @@ public class RelationEditor extends JFrame {
 			}
 		}
 		if (download) {
-			OsmServerObjectReader reader = new OsmServerObjectReader();
+			OsmServerObjectReader reader = new OsmServerObjectReader(clone.id, OsmServerObjectReader.TYPE_REL, true);
 			try {
-				DataSet dataSet = reader.parseOsm(clone.id,
-						OsmServerObjectReader.TYPE_REL, true);
+				DataSet dataSet = reader.parseOsm();
 				if (dataSet != null) {
 					final MergeVisitor visitor = new MergeVisitor(Main.main
 							.editLayer().data, dataSet);

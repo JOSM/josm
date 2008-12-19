@@ -107,7 +107,7 @@ public class MainApplet extends JApplet {
 		// remove offending stuff from JOSM (that would break the SecurityManager)
 		m.remove(m.fileMenu);
 		m.editMenu.add(new UploadPreferencesAction());
-		m.open.setEnabled(false);
+		m.openFile.setEnabled(false);
 		m.exit.setEnabled(false);
 		m.save.setEnabled(false);
 		m.saveAs.setEnabled(false);
