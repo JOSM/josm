@@ -43,6 +43,7 @@ public class DownloadDialog extends JPanel {
 		 * Execute the download.
 		 */
 		void download(DownloadAction action, double minlat, double minlon, double maxlat, double maxlon);
+        void loadUrl(boolean newLayer, String url);
 		/**
 		 * @return The checkbox presented to the user
 		 */
