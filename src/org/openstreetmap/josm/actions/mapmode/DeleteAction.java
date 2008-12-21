@@ -82,6 +82,7 @@ public class DeleteAction extends MapMode {
 			Main.main.undoRedo.add(c);
 		}
 
+		Main.ds.setSelected();
 		Main.map.repaint();
 	}
 
@@ -120,6 +121,7 @@ public class DeleteAction extends MapMode {
 			Main.main.undoRedo.add(c);
 		}
 
+		Main.ds.setSelected();
 		Main.map.mapView.repaint();
 	}
 
