@@ -53,6 +53,8 @@ public class PushbackTokenizer {
 				return "(";
 			case ')':
 				return ")";
+			case '|':
+				return "|";
 			case '"':
 				s = new StringBuilder(" ");
 				for (int nc = search.read(); nc != -1 && nc != '"'; nc = search.read())
@@ -69,7 +71,7 @@ public class PushbackTokenizer {
 					return " "+s.toString();
 				}
 				c = (char)next;
-				if (c == ' ' || c == '\t' || c == '"' || c == ':' || c == '(' || c == ')') {
+				if (c == ' ' || c == '\t' || c == '"' || c == ':' || c == '(' || c == ')' || c == '|') {
 					search.unread(next);
 					if (s.toString().equals("OR"))
 						return "|";
