@@ -80,4 +80,8 @@ public class DownloadGpsTask implements DownloadTask {
 	public String getPreferencesSuffix() {
 	    return "gps";
     }
+
+    public void loadUrl(boolean a,java.lang.String b) { 
+        // FIXME this is not currently used
+    }
 }
