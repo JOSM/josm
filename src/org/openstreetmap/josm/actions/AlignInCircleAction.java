@@ -186,9 +186,10 @@ public final class AlignInCircleAction extends JosmAction {
         // Get average position of circumcircles of the triangles of all triplets of neighbour nodes
         if (center == null) {
             center = new Node(new LatLon(0, 0));
-            Node n0, n1, n2, prvni, druhy;
-            n0 = (Node) nodes.toArray()[nodes.size() - 1];
-            n1 = (Node) nodes.toArray()[nodes.size() - 2];
+            center.eastNorth = new EastNorth(0, 0); // to be independent of projection
+            Node n0 = (Node) nodes.toArray()[nodes.size() - 1];
+            Node n1 = (Node) nodes.toArray()[nodes.size() - 2];
+            Node n2;
             for (Node n : nodes) {
                 n2 = n1;
                 n1 = n0;
