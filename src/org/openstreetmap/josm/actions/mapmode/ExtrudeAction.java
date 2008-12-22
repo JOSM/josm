@@ -75,7 +75,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 		super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
 				Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
 			mapFrame,
-			getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
+			getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
 		putValue("help", "Action/Extrude/Extrude");
 		initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
 		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
@@ -246,6 +246,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 		}
 
 		Main.map.mapView.removeTemporaryLayer(this);
+		selectedSegment = null;
 		mode = null;
 		updateStatusLine();
 		Main.map.mapView.repaint();
