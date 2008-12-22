@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -22,6 +20,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * An helper class that reads from a XML stream into specific objects.
  *
@@ -29,7 +29,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XmlObjectParser implements Iterable<Object> {
 
-	public static final String lang = tr("En:").toLowerCase();
+        public static final String lang = Main.getLanguageCode();
 	public static class Uniform<T> implements Iterable<T>{
 		private Iterator<Object> iterator;
 		/**

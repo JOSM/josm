@@ -67,6 +67,7 @@ public class GettingStarted extends JPanel {
             Pattern versionPattern = Pattern.compile("(?:\\<p\\>\\s*)?\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/)(MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>(?:\\s*\\</p\\>)?", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
             Matcher matcher = versionPattern.matcher(motdcontent);
             matcher.reset();
+            String languageCode = Main.getLanguageCodeU();
             while (matcher.find()) {
                 int targetVersion = Integer.parseInt(matcher.group(4));
                 String condition = matcher.group(3);
@@ -93,9 +94,6 @@ public class GettingStarted extends JPanel {
                 }
                 start = matcher.end();
                 if (included) {
-                    // translators: set this to a suitable language code to
-                    // be able to provide translations in the Wiki.
-                    String languageCode = tr("En:");
                     String url = matcher.group(1) + languageCode + matcher.group(2);
                     try {
                         String message = wr.read(url);

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -522,4 +523,13 @@ abstract public class Main {
         }
     }
 
+    static public String getLanguageCodeU()
+    {
+        String languageCode = Locale.getDefault().getLanguage();
+        return languageCode.substring(0,1).toUpperCase() + languageCode.substring(1) + ":";
+    }
+    static public String getLanguageCode()
+    {
+        return Locale.getDefault().getLanguage() + ":";
+    }
 }
