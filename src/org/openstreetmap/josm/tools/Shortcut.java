@@ -327,7 +327,13 @@ public class Shortcut {
 
     // this is used to register a shortcut that was read from the preferences
     private static void registerShortcut(Shortcut sc) {
-        registerShortcut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(), sc.getRequestedGroup(), sc.getAssignedModifier(), sc);
+        // put a user configured shortcut in as-is -- unless there's a conflict
+        if(sc.getAssignedUser() && findShortcut(sc.getAssignedKey(),
+        sc.getAssignedModifier()) == null)
+            shortcuts.put(sc.getShortText(), sc);
+        else
+            registerShortcut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(),
+            sc.getRequestedGroup(), sc.getAssignedModifier(), sc);
     }
 
     /**
@@ -393,7 +399,7 @@ public class Shortcut {
             else
                 defaultModifier = modifier;
         }
-        else if (defaultModifier == null) { // garbage in, no shortcurt out
+        else if (defaultModifier == null) { // garbage in, no shortcut out
             defaultModifier = groups.get(GROUP_NONE + GROUPS_DEFAULT);
         }
         Shortcut conflictsWith = null;
@@ -427,6 +433,7 @@ public class Shortcut {
         } else {
             potentialShortcut = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, true, false);
         }
+
         shortcuts.put(shortText, potentialShortcut);
         return potentialShortcut;
     }
