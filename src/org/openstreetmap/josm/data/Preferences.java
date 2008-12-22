@@ -468,13 +468,13 @@ public class Preferences {
 				sysProp.put("proxyUser", get(ProxyPreferences.PROXY_USER));
 				sysProp.put("proxyPassword", get(ProxyPreferences.PROXY_PASS));
 			}
-		} else {
+		}/* else {
 			sysProp.put("proxySet", "false");
 			sysProp.remove("http.proxyHost");
 			sysProp.remove("proxyPort");
 			sysProp.remove("proxyUser");
 			sysProp.remove("proxyPassword");
-		}
+		}*/
 		System.setProperties(sysProp);
 	}
 }
