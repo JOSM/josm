@@ -84,6 +84,7 @@ public final class Relation extends OsmPrimitive {
 			name += " (";
 			String nameTag = get("name");
 			if (nameTag == null) nameTag = get("ref");
+			if (nameTag == null) nameTag = get("note");
 			if (nameTag != null) name += "\"" + nameTag + "\", ";
 			int mbno = members.size();
 			name += trn("{0} member", "{0} members", mbno, mbno) + ")";
