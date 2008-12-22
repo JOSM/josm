@@ -17,6 +17,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -321,8 +323,23 @@ public class GeoImageLayer extends Layer {
 		next.addActionListener(nextprevAction);
 		cent.setSelected(false);
 
+		dlg.addComponentListener(new ComponentListener() {
+			boolean ignoreEvent = true;
+			public void componentHidden(ComponentEvent e) {}
+			public void componentMoved(ComponentEvent e) {}
+			public void componentResized(ComponentEvent ev) {
+				// we ignore the first resize event, as the picture is scaled already on load: 
+				if (scale.getModel().isSelected() && !ignoreEvent) {
+					((JLabel)vp.getView()).setIcon(loadScaledImage(e.image, Math.max(vp.getWidth(), vp.getHeight())));
+				}
+				ignoreEvent = false;
+            }
+			public void componentShown(ComponentEvent e) {}
+			
+		});
 		dlg.setModal(false);
 		dlg.setVisible(true);
+		dlg.setResizable(true); 
 	}
 
 	@Override public Icon getIcon() {
