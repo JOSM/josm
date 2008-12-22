@@ -1289,6 +1289,13 @@ check: checkbox
 			<text key="operator" text="Operator" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Repair" icon="presets/car_repair.png">
+			<label text="Edit Car Repair" />
+			<key key="shop" value="car_repair" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Rental" icon="presets/car_rental.png">
 			<label text="Edit Car Rental" />
 			<key key="amenity" value="car_rental" />
