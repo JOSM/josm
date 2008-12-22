@@ -49,9 +49,10 @@ public class MapFrame extends JPanel implements Destroyable {
 	public MapView mapView;
 	/**
 	 * The toolbar with the action icons. To add new toggle dialog actions, use addToggleDialog
-	 * instead of adding directly to this list.
+	 * instead of adding directly to this list. To add a new mode use addMapMode.
 	 */
 	public JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
+	public JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
 	/**
 	 * The status line below the map
 	 */
@@ -81,21 +82,18 @@ public class MapFrame extends JPanel implements Destroyable {
 
 		// toolbar
 		toolBarActions.setFloatable(false);
-		toolBarActions.add(new IconToggleButton(new ZoomAction(this)));
-		toolBarActions.add(new IconToggleButton(new SelectAction(this)));
-		toolBarActions.add(new IconToggleButton(new DrawAction(this)));
-		toolBarActions.add(new IconToggleButton(new DeleteAction(this)));
-		toolBarActions.add(new IconToggleButton(new ExtrudeAction(this)));
-		
-		for (Component c : toolBarActions.getComponents())
-			toolGroup.add((AbstractButton)c);
+		addMapMode(new IconToggleButton(new ZoomAction(this)));
+		addMapMode(new IconToggleButton(new SelectAction(this)));
+		addMapMode(new IconToggleButton(new DrawAction(this)));
+		addMapMode(new IconToggleButton(new DeleteAction(this)));
+		addMapMode(new IconToggleButton(new ExtrudeAction(this)));
+
 		toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
-		
-		toolBarActions.addSeparator();
-		
+
 		add(toggleDialogs, BorderLayout.EAST);
 		toggleDialogs.setLayout(new BoxLayout(toggleDialogs, BoxLayout.Y_AXIS));
 
+		toolBarToggle.setFloatable(false);
 		addToggleDialog(new LayerListDialog(this));
 		addToggleDialog(new PropertiesDialog(this));
 		addToggleDialog(new HistoryDialog());
@@ -117,6 +115,9 @@ public class MapFrame extends JPanel implements Destroyable {
 		for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
 			if (toolBarActions.getComponent(i) instanceof Destroyable)
 				((Destroyable)toolBarActions).destroy();
+		for (int i = 0; i < toolBarToggle.getComponentCount(); ++i)
+			if (toolBarToggle.getComponent(i) instanceof Destroyable)
+				((Destroyable)toolBarToggle).destroy();
 		
 		// remove menu entries
 		Main.main.menu.viewMenu.setVisible(false);
@@ -147,10 +148,14 @@ public class MapFrame extends JPanel implements Destroyable {
 		IconToggleButton button = new IconToggleButton(dlg.action);
 		dlg.action.button = button;
 		dlg.parent = toggleDialogs;
-		toolBarActions.add(button);
+		toolBarToggle.add(button);
 		toggleDialogs.add(dlg);
 	}
 
+	public void addMapMode(IconToggleButton b) {
+		toolBarActions.add(b);
+		toolGroup.add((AbstractButton)b);
+	}
 
 	/**
 	 * Fires an property changed event "visible".
@@ -186,7 +191,12 @@ public class MapFrame extends JPanel implements Destroyable {
 	 */
 	public void fillPanel(Container panel) {
 		panel.add(this, BorderLayout.CENTER);
-		panel.add(toolBarActions, BorderLayout.WEST);
+		JToolBar jb = new JToolBar(JToolBar.VERTICAL);
+		jb.setFloatable(false);
+		jb.add(toolBarActions);
+		jb.addSeparator();
+		jb.add(toolBarToggle);
+		panel.add(jb, BorderLayout.WEST);
 		if (statusLine != null)
 			panel.add(statusLine, BorderLayout.SOUTH);
 	}
