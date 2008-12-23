@@ -208,11 +208,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 		}
 
 		String value = values.getEditor().getItem().toString();
-		value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+		// is not Java 1.5
+		//value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
 		if (value.equals(""))
 			value = null; // delete the key
 		String newkey = keys.getEditor().getItem().toString();
-		newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
+		//newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
 		if (newkey.equals("")) {
 			newkey = key;
 			value = null; // delete the key instead

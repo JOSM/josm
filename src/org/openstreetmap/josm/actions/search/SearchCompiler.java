@@ -89,8 +89,9 @@ public class SearchCompiler {
 				return false;
 			String v1 = caseSensitive ? value : value.toLowerCase();
 			String v2 = caseSensitive ? this.value : this.value.toLowerCase();
- 			v1 = java.text.Normalizer.normalize(v1, java.text.Normalizer.Form.NFC);
- 			v2 = java.text.Normalizer.normalize(v2, java.text.Normalizer.Form.NFC);
+			// is not Java 1.5
+ 			//v1 = java.text.Normalizer.normalize(v1, java.text.Normalizer.Form.NFC);
+ 			//v2 = java.text.Normalizer.normalize(v2, java.text.Normalizer.Form.NFC);
 			return v1.indexOf(v2) != -1;
 		}
 		@Override public String toString() {return key+"="+value;}
@@ -103,16 +104,20 @@ public class SearchCompiler {
 			if (osm.keys == null)
 				return s.equals("");
 			String search = caseSensitive ? s : s.toLowerCase();
-			search = java.text.Normalizer.normalize(search, java.text.Normalizer.Form.NFC);
+			// is not Java 1.5
+			//search = java.text.Normalizer.normalize(search, java.text.Normalizer.Form.NFC);
 			for (Entry<String, String> e : osm.keys.entrySet()) {
 				String key = caseSensitive ? e.getKey() : e.getKey().toLowerCase();
 				String value = caseSensitive ? e.getValue() : e.getValue().toLowerCase();
-				value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+				// is not Java 1.5
+				//value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
 				if (key.indexOf(search) != -1 || value.indexOf(search) != -1)
 					return true;
 			}
 			if (osm.user != null) {
-				String name = java.text.Normalizer.normalize(osm.user.name, java.text.Normalizer.Form.NFC);
+				String name = osm.user.name;
+				// is not Java 1.5
+				//String name = java.text.Normalizer.normalize(name, java.text.Normalizer.Form.NFC);
 				if (!caseSensitive)
 					name = name.toLowerCase();
 				if (name.indexOf(search) != -1)
