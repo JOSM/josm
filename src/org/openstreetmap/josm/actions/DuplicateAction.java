@@ -17,19 +17,19 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class DuplicateAction extends JosmAction implements SelectionChangedListener {
 
     public DuplicateAction() {
-    	super(tr("Duplicate"), "duplicate",
-			tr("Duplicate selection by copy and immediate paste."),
-			Shortcut.registerShortcut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, Shortcut.GROUP_MENU), true);
-    	setEnabled(false);
-			DataSet.selListeners.add(this);
+        super(tr("Duplicate"), "duplicate",
+            tr("Duplicate selection by copy and immediate paste."),
+            Shortcut.registerShortcut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, Shortcut.GROUP_MENU), true);
+        setEnabled(false);
+            DataSet.selListeners.add(this);
     }
 
-	public void actionPerformed(ActionEvent e) {
-		Main.main.menu.copy.actionPerformed(e);
-		Main.main.menu.paste.actionPerformed(e);
+    public void actionPerformed(ActionEvent e) {
+        Main.main.menu.copy.actionPerformed(e);
+        Main.main.menu.paste.actionPerformed(e);
     }
 
-	public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-		setEnabled(! newSelection.isEmpty());
-	}
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        setEnabled(! newSelection.isEmpty());
+    }
 }

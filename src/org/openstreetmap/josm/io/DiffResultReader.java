@@ -40,18 +40,18 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  */
 public class DiffResultReader implements Visitor {
-    
+
     /**
      * mapping from old id to new id/version
      */
     private Map<String, Long[]> versions = new HashMap<String, Long[]>();
     private Collection<OsmPrimitive> processed;
-    private Map<OsmPrimitive,Long> newIdMap; 
+    private Map<OsmPrimitive,Long> newIdMap;
 
-    /** 
+    /**
      * List of protocol versions that will be accepted on reading
      */
-    
+
     private class Parser extends DefaultHandler {
 
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
@@ -80,7 +80,7 @@ public class DiffResultReader implements Visitor {
      *      the Reference is not found here, Main.ds is searched and a copy of the
      *  elemet found there is returned.
      */
-    public static void parseDiffResult(InputStream source, Collection<OsmPrimitive> osm, Collection<OsmPrimitive> processed, Map<OsmPrimitive,Long> newIdMap, PleaseWaitDialog pleaseWaitDlg) 
+    public static void parseDiffResult(InputStream source, Collection<OsmPrimitive> osm, Collection<OsmPrimitive> processed, Map<OsmPrimitive,Long> newIdMap, PleaseWaitDialog pleaseWaitDlg)
     throws SAXException, IOException {
 
        DiffResultReader drr = new DiffResultReader();
@@ -106,7 +106,7 @@ public class DiffResultReader implements Visitor {
            System.out.println("");
        }
     }
-    
+
     public void visit(Node n) {
         String key = "node:" + (newIdMap.containsKey(n) ? newIdMap.get(n) : n.id);
         System.out.println("key: "+key);
@@ -126,7 +126,7 @@ public class DiffResultReader implements Visitor {
             if (!w.deleted) {
                 w.id = nv[0]; w.version = nv[1].intValue();
             }
-        }        
+        }
     }
     public void visit(Relation r) {
         String key = "relation:" + (newIdMap.containsKey(r) ? newIdMap.get(r) : r.id);
@@ -136,6 +136,6 @@ public class DiffResultReader implements Visitor {
             if (!r.deleted) {
                 r.id = nv[0]; r.version = nv[1].intValue();
             }
-        }   
+        }
     }
 }

@@ -57,579 +57,579 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
 
-	private static Node lastUsedNode = null;
-	private double PHI=Math.toRadians(90);
+    private static Node lastUsedNode = null;
+    private double PHI=Math.toRadians(90);
 
-	private boolean ctrl;
-	private boolean alt;
-	private boolean shift;
-	private boolean mouseOnExistingNode;
-	private boolean drawHelperLine;
-	private Point mousePos;
-	private Color selectedColor;
+    private boolean ctrl;
+    private boolean alt;
+    private boolean shift;
+    private boolean mouseOnExistingNode;
+    private boolean drawHelperLine;
+    private Point mousePos;
+    private Color selectedColor;
 
-	private Node currentBaseNode;
-	private EastNorth currentMouseEastNorth;
+    private Node currentBaseNode;
+    private EastNorth currentMouseEastNorth;
 
-	public DrawAction(MapFrame mapFrame) {
-		super(tr("Draw"), "node/autonode", tr("Draw nodes"),
-				Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.GROUP_EDIT),
-				mapFrame, getCursor());
+    public DrawAction(MapFrame mapFrame) {
+        super(tr("Draw"), "node/autonode", tr("Draw nodes"),
+                Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.GROUP_EDIT),
+                mapFrame, getCursor());
 
-		// Add extra shortcut N
-		Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
+        // Add extra shortcut N
+        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
 
-		//putValue("help", "Action/AddNode/Autnode");
-		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
+        //putValue("help", "Action/AddNode/Autnode");
+        selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
 
-		drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
-	}
-
-	private static Cursor getCursor() {
-		try {
-	        return ImageProvider.getCursor("crosshair", null);
-        } catch (Exception e) {
-        }
-	    return Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+        drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
     }
 
-	@Override public void enterMode() {
-		super.enterMode();
-		Main.map.mapView.addMouseListener(this);
-		Main.map.mapView.addMouseMotionListener(this);
-		Main.map.mapView.addTemporaryLayer(this);
-		DataSet.selListeners.add(this);
-		try {
-			Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-		} catch (SecurityException ex) {
-		}
-		// would like to but haven't got mouse position yet:
-		// computeHelperLine(false, false, false);
-	}
-	@Override public void exitMode() {
-		super.exitMode();
-		Main.map.mapView.removeMouseListener(this);
-		Main.map.mapView.removeMouseMotionListener(this);
-		Main.map.mapView.removeTemporaryLayer(this);
-		DataSet.selListeners.remove(this);
-		try {
-			Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-		} catch (SecurityException ex) {
-		}
-	}
+    private static Cursor getCursor() {
+        try {
+            return ImageProvider.getCursor("crosshair", null);
+        } catch (Exception e) {
+        }
+        return Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+    }
 
-	/**
-	 * redraw to (possibly) get rid of helper line if selection changes.
-	 */
-	public void eventDispatched(AWTEvent event) {
-		if(!Main.map.mapView.isDrawableLayer())
-			return;
-		InputEvent e = (InputEvent) event;
-		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-		computeHelperLine();
-	}
-	/**
-	 * redraw to (possibly) get rid of helper line if selection changes.
-	 */
-	public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-		if(!Main.map.mapView.isDrawableLayer())
-			return;
-		computeHelperLine();
-	}
+    @Override public void enterMode() {
+        super.enterMode();
+        Main.map.mapView.addMouseListener(this);
+        Main.map.mapView.addMouseMotionListener(this);
+        Main.map.mapView.addTemporaryLayer(this);
+        DataSet.selListeners.add(this);
+        try {
+            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
+        } catch (SecurityException ex) {
+        }
+        // would like to but haven't got mouse position yet:
+        // computeHelperLine(false, false, false);
+    }
+    @Override public void exitMode() {
+        super.exitMode();
+        Main.map.mapView.removeMouseListener(this);
+        Main.map.mapView.removeMouseMotionListener(this);
+        Main.map.mapView.removeTemporaryLayer(this);
+        DataSet.selListeners.remove(this);
+        try {
+            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        } catch (SecurityException ex) {
+        }
+    }
 
-	/**
-	 * If user clicked with the left button, add a node at the current mouse
-	 * position.
-	 *
-	 * If in nodeway mode, insert the node into the way.
-	 */
-	@Override public void mouseClicked(MouseEvent e) {
+    /**
+     * redraw to (possibly) get rid of helper line if selection changes.
+     */
+    public void eventDispatched(AWTEvent event) {
+        if(!Main.map.mapView.isDrawableLayer())
+            return;
+        InputEvent e = (InputEvent) event;
+        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        computeHelperLine();
+    }
+    /**
+     * redraw to (possibly) get rid of helper line if selection changes.
+     */
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        if(!Main.map.mapView.isDrawableLayer())
+            return;
+        computeHelperLine();
+    }
 
-		if (e.getButton() != MouseEvent.BUTTON1)
-			return;
-		if(!Main.map.mapView.isDrawableLayer())
-			return;
+    /**
+     * If user clicked with the left button, add a node at the current mouse
+     * position.
+     *
+     * If in nodeway mode, insert the node into the way.
+     */
+    @Override public void mouseClicked(MouseEvent e) {
 
-		// we copy ctrl/alt/shift from the event just in case our global
-		// AWTEvent didn't make it through the security manager. Unclear
-		// if that can ever happen but better be safe.
-		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-		mousePos = e.getPoint();
+        if (e.getButton() != MouseEvent.BUTTON1)
+            return;
+        if(!Main.map.mapView.isDrawableLayer())
+            return;
 
-		Collection<OsmPrimitive> selection = Main.ds.getSelected();
-		Collection<Command> cmds = new LinkedList<Command>();
+        // we copy ctrl/alt/shift from the event just in case our global
+        // AWTEvent didn't make it through the security manager. Unclear
+        // if that can ever happen but better be safe.
+        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        mousePos = e.getPoint();
 
-		ArrayList<Way> reuseWays = new ArrayList<Way>(),
-			replacedWays = new ArrayList<Way>();
-		boolean newNode = false;
-		Node n = null;
+        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<Command> cmds = new LinkedList<Command>();
 
-		if (!ctrl) {
-			n = Main.map.mapView.getNearestNode(mousePos);
-		}
+        ArrayList<Way> reuseWays = new ArrayList<Way>(),
+            replacedWays = new ArrayList<Way>();
+        boolean newNode = false;
+        Node n = null;
 
-		if (n != null) {
-			// user clicked on node
-			if (shift || selection.isEmpty()) {
-				// select the clicked node and do nothing else
-				// (this is just a convenience option so that people don't
-				// have to switch modes)
-				Main.ds.setSelected(n);
-				return;
-			}
+        if (!ctrl) {
+            n = Main.map.mapView.getNearestNode(mousePos);
+        }
 
-		} else {
-			// no node found in clicked area
-			n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
-			if (n.coor.isOutSideWorld()) {
-				JOptionPane.showMessageDialog(Main.parent,
-					tr("Cannot add a node outside of the world."));
-				return;
-			}
-			newNode = true;
+        if (n != null) {
+            // user clicked on node
+            if (shift || selection.isEmpty()) {
+                // select the clicked node and do nothing else
+                // (this is just a convenience option so that people don't
+                // have to switch modes)
+                Main.ds.setSelected(n);
+                return;
+            }
 
-			cmds.add(new AddCommand(n));
+        } else {
+            // no node found in clicked area
+            n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
+            if (n.coor.isOutSideWorld()) {
+                JOptionPane.showMessageDialog(Main.parent,
+                    tr("Cannot add a node outside of the world."));
+                return;
+            }
+            newNode = true;
 
-			if (!ctrl) {
-				// Insert the node into all the nearby way segments
-				List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint());
-				Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
-				for (WaySegment ws : wss) {
-					List<Integer> is;
-					if (insertPoints.containsKey(ws.way)) {
-						is = insertPoints.get(ws.way);
-					} else {
-						is = new ArrayList<Integer>();
-						insertPoints.put(ws.way, is);
-					}
+            cmds.add(new AddCommand(n));
 
-					is.add(ws.lowerIndex);
-				}
+            if (!ctrl) {
+                // Insert the node into all the nearby way segments
+                List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint());
+                Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
+                for (WaySegment ws : wss) {
+                    List<Integer> is;
+                    if (insertPoints.containsKey(ws.way)) {
+                        is = insertPoints.get(ws.way);
+                    } else {
+                        is = new ArrayList<Integer>();
+                        insertPoints.put(ws.way, is);
+                    }
 
-				Set<Pair<Node,Node>> segSet = new HashSet<Pair<Node,Node>>();
+                    is.add(ws.lowerIndex);
+                }
 
-				for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
-					Way w = insertPoint.getKey();
-					List<Integer> is = insertPoint.getValue();
+                Set<Pair<Node,Node>> segSet = new HashSet<Pair<Node,Node>>();
 
-					Way wnew = new Way(w);
+                for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
+                    Way w = insertPoint.getKey();
+                    List<Integer> is = insertPoint.getValue();
 
-					pruneSuccsAndReverse(is);
-					for (int i : is) segSet.add(
-						Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
-					for (int i : is) wnew.nodes.add(i + 1, n);
+                    Way wnew = new Way(w);
 
-					cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
-					replacedWays.add(insertPoint.getKey());
-					reuseWays.add(wnew);
-				}
+                    pruneSuccsAndReverse(is);
+                    for (int i : is) segSet.add(
+                        Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
+                    for (int i : is) wnew.nodes.add(i + 1, n);
 
-				adjustNode(segSet, n);
-			}
-		}
+                    cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
+                    replacedWays.add(insertPoint.getKey());
+                    reuseWays.add(wnew);
+                }
 
-		// This part decides whether or not a "segment" (i.e. a connection) is made to an
-		// existing node.
+                adjustNode(segSet, n);
+            }
+        }
 
-		// For a connection to be made, the user must either have a node selected (connection
-		// is made to that node), or he must have a way selected *and* one of the endpoints
-		// of that way must be the last used node (connection is made to last used node), or
-		// he must have a way and a node selected (connection is made to the selected node).
+        // This part decides whether or not a "segment" (i.e. a connection) is made to an
+        // existing node.
 
-		boolean extendedWay = false;
+        // For a connection to be made, the user must either have a node selected (connection
+        // is made to that node), or he must have a way selected *and* one of the endpoints
+        // of that way must be the last used node (connection is made to last used node), or
+        // he must have a way and a node selected (connection is made to the selected node).
 
-		if (!shift && selection.size() > 0 && selection.size() < 3) {
+        boolean extendedWay = false;
 
-			Node selectedNode = null;
-			Way selectedWay = null;
+        if (!shift && selection.size() > 0 && selection.size() < 3) {
 
-			for (OsmPrimitive p : selection) {
-				if (p instanceof Node) {
-					if (selectedNode != null) return;
-					selectedNode = (Node) p;
-				} else if (p instanceof Way) {
-					if (selectedWay != null) return;
-					selectedWay = (Way) p;
-				}
-			}
+            Node selectedNode = null;
+            Way selectedWay = null;
 
-			// the node from which we make a connection
-			Node n0 = null;
+            for (OsmPrimitive p : selection) {
+                if (p instanceof Node) {
+                    if (selectedNode != null) return;
+                    selectedNode = (Node) p;
+                } else if (p instanceof Way) {
+                    if (selectedWay != null) return;
+                    selectedWay = (Way) p;
+                }
+            }
 
-			if (selectedNode == null) {
-				if (selectedWay == null) return;
-				if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
-					n0 = lastUsedNode;
-				}
-			} else if (selectedWay == null) {
-				n0 = selectedNode;
-			} else {
-				if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
-					n0 = selectedNode;
-				}
-			}
+            // the node from which we make a connection
+            Node n0 = null;
 
-			if (n0 == null || n0 == n) {
-				return; // Don't create zero length way segments.
-			}
+            if (selectedNode == null) {
+                if (selectedWay == null) return;
+                if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+                    n0 = lastUsedNode;
+                }
+            } else if (selectedWay == null) {
+                n0 = selectedNode;
+            } else {
+                if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+                    n0 = selectedNode;
+                }
+            }
 
-			// Ok we know now that we'll insert a line segment, but will it connect to an
-			// existing way or make a new way of its own? The "alt" modifier means that the
-			// user wants a new way.
+            if (n0 == null || n0 == n) {
+                return; // Don't create zero length way segments.
+            }
 
-			Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
-			if (way == null) {
-				way = new Way();
-				way.nodes.add(n0);
-				cmds.add(new AddCommand(way));
-			} else {
-				int i;
-				if ((i = replacedWays.indexOf(way)) != -1) {
-					way = reuseWays.get(i);
-				} else {
-					Way wnew = new Way(way);
-					cmds.add(new ChangeCommand(way, wnew));
-					way = wnew;
-				}
-			}
+            // Ok we know now that we'll insert a line segment, but will it connect to an
+            // existing way or make a new way of its own? The "alt" modifier means that the
+            // user wants a new way.
 
-			if (way.nodes.get(way.nodes.size() - 1) == n0) {
-				way.nodes.add(n);
-			} else {
-				way.nodes.add(0, n);
-			}
+            Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
+            if (way == null) {
+                way = new Way();
+                way.nodes.add(n0);
+                cmds.add(new AddCommand(way));
+            } else {
+                int i;
+                if ((i = replacedWays.indexOf(way)) != -1) {
+                    way = reuseWays.get(i);
+                } else {
+                    Way wnew = new Way(way);
+                    cmds.add(new ChangeCommand(way, wnew));
+                    way = wnew;
+                }
+            }
 
-			extendedWay = true;
-			Main.ds.setSelected(way);
-		}
+            if (way.nodes.get(way.nodes.size() - 1) == n0) {
+                way.nodes.add(n);
+            } else {
+                way.nodes.add(0, n);
+            }
 
-		String title;
-		if (!extendedWay && !newNode) {
-			return; // We didn't do anything.
-		} else if (!extendedWay) {
-			if (reuseWays.isEmpty()) {
-				title = tr("Add node");
-			} else {
-				title = tr("Add node into way");
-			}
-			for (Way w : reuseWays) w.selected = false;
-			Main.ds.setSelected(n);
-		} else if (!newNode) {
-			title = tr("Connect existing way to node");
-		} else if (reuseWays.isEmpty()) {
-			title = tr("Add a new node to an existing way");
-		} else {
-			title = tr("Add node into way and connect");
-		}
+            extendedWay = true;
+            Main.ds.setSelected(way);
+        }
 
-		Command c = new SequenceCommand(title, cmds);
+        String title;
+        if (!extendedWay && !newNode) {
+            return; // We didn't do anything.
+        } else if (!extendedWay) {
+            if (reuseWays.isEmpty()) {
+                title = tr("Add node");
+            } else {
+                title = tr("Add node into way");
+            }
+            for (Way w : reuseWays) w.selected = false;
+            Main.ds.setSelected(n);
+        } else if (!newNode) {
+            title = tr("Connect existing way to node");
+        } else if (reuseWays.isEmpty()) {
+            title = tr("Add a new node to an existing way");
+        } else {
+            title = tr("Add node into way and connect");
+        }
 
-		Main.main.undoRedo.add(c);
-		lastUsedNode = n;
-		computeHelperLine();
-		Main.map.mapView.repaint();
-	}
+        Command c = new SequenceCommand(title, cmds);
 
-	@Override public void mouseMoved(MouseEvent e) {
-		if(!Main.map.mapView.isDrawableLayer())
-			return;
+        Main.main.undoRedo.add(c);
+        lastUsedNode = n;
+        computeHelperLine();
+        Main.map.mapView.repaint();
+    }
 
-		// we copy ctrl/alt/shift from the event just in case our global
-		// AWTEvent didn't make it through the security manager. Unclear
-		// if that can ever happen but better be safe.
+    @Override public void mouseMoved(MouseEvent e) {
+        if(!Main.map.mapView.isDrawableLayer())
+            return;
 
-		ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-		alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-		shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-		mousePos = e.getPoint();
+        // we copy ctrl/alt/shift from the event just in case our global
+        // AWTEvent didn't make it through the security manager. Unclear
+        // if that can ever happen but better be safe.
 
-		computeHelperLine();
-	}
+        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        mousePos = e.getPoint();
 
-	/**
-	 * This method prepares data required for painting the "helper line" from
-	 * the last used position to the mouse cursor. It duplicates some code from
-	 * mouseClicked() (FIXME).
-	 */
-	private void computeHelperLine() {
-		if (mousePos == null) {
-			// Don't draw the line.
-			currentMouseEastNorth = null;
-			currentBaseNode = null;
-			return;
-		}
+        computeHelperLine();
+    }
 
-		double distance = -1;
-		double angle = -1;
+    /**
+     * This method prepares data required for painting the "helper line" from
+     * the last used position to the mouse cursor. It duplicates some code from
+     * mouseClicked() (FIXME).
+     */
+    private void computeHelperLine() {
+        if (mousePos == null) {
+            // Don't draw the line.
+            currentMouseEastNorth = null;
+            currentBaseNode = null;
+            return;
+        }
 
-		Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        double distance = -1;
+        double angle = -1;
 
-		Node selectedNode = null;
-		Way selectedWay = null;
-		Node currentMouseNode = null;
-		mouseOnExistingNode = false;
+        Collection<OsmPrimitive> selection = Main.ds.getSelected();
 
-		Main.map.statusLine.setAngle(-1);
-		Main.map.statusLine.setHeading(-1);
-		Main.map.statusLine.setDist(-1);
+        Node selectedNode = null;
+        Way selectedWay = null;
+        Node currentMouseNode = null;
+        mouseOnExistingNode = false;
 
-		if (!ctrl && mousePos != null) {
-			currentMouseNode = Main.map.mapView.getNearestNode(mousePos);
-		}
+        Main.map.statusLine.setAngle(-1);
+        Main.map.statusLine.setHeading(-1);
+        Main.map.statusLine.setDist(-1);
 
-		if (currentMouseNode != null) {
-			// user clicked on node
-			if (selection.isEmpty()) return;
-			currentMouseEastNorth = currentMouseNode.eastNorth;
-			mouseOnExistingNode = true;
-		} else {
-			// no node found in clicked area
-			currentMouseEastNorth = Main.map.mapView.getEastNorth(mousePos.x, mousePos.y);
-		}
+        if (!ctrl && mousePos != null) {
+            currentMouseNode = Main.map.mapView.getNearestNode(mousePos);
+        }
 
-		for (OsmPrimitive p : selection) {
-			if (p instanceof Node) {
-				if (selectedNode != null) return;
-				selectedNode = (Node) p;
-			} else if (p instanceof Way) {
-				if (selectedWay != null) return;
-				selectedWay = (Way) p;
-			}
-		}
+        if (currentMouseNode != null) {
+            // user clicked on node
+            if (selection.isEmpty()) return;
+            currentMouseEastNorth = currentMouseNode.eastNorth;
+            mouseOnExistingNode = true;
+        } else {
+            // no node found in clicked area
+            currentMouseEastNorth = Main.map.mapView.getEastNorth(mousePos.x, mousePos.y);
+        }
 
-		// the node from which we make a connection
-		currentBaseNode = null;
-		Node previousNode = null;
+        for (OsmPrimitive p : selection) {
+            if (p instanceof Node) {
+                if (selectedNode != null) return;
+                selectedNode = (Node) p;
+            } else if (p instanceof Way) {
+                if (selectedWay != null) return;
+                selectedWay = (Way) p;
+            }
+        }
 
-		if (selectedNode == null) {
-			if (selectedWay == null) return;
-			if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
-				currentBaseNode = lastUsedNode;
-				if (lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1) && selectedWay.nodes.size() > 1) {
-					previousNode = selectedWay.nodes.get(selectedWay.nodes.size()-2);
-				}
-			}
-		} else if (selectedWay == null) {
-			currentBaseNode = selectedNode;
-		} else {
-			if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
-				currentBaseNode = selectedNode;
-			}
-		}
+        // the node from which we make a connection
+        currentBaseNode = null;
+        Node previousNode = null;
 
-		if (currentBaseNode == null || currentBaseNode == currentMouseNode) {
-			return; // Don't create zero length way segments.
-		}
+        if (selectedNode == null) {
+            if (selectedWay == null) return;
+            if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+                currentBaseNode = lastUsedNode;
+                if (lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1) && selectedWay.nodes.size() > 1) {
+                    previousNode = selectedWay.nodes.get(selectedWay.nodes.size()-2);
+                }
+            }
+        } else if (selectedWay == null) {
+            currentBaseNode = selectedNode;
+        } else {
+            if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+                currentBaseNode = selectedNode;
+            }
+        }
 
-		// find out the distance, in metres, between the base point and the mouse cursor
-		LatLon mouseLatLon = Main.proj.eastNorth2latlon(currentMouseEastNorth);
-		distance = currentBaseNode.coor.greatCircleDistance(mouseLatLon);
-		double hdg = Math.toDegrees(currentBaseNode.coor.heading(mouseLatLon));
-		if (previousNode != null) {
-			angle = hdg - Math.toDegrees(previousNode.coor.heading(currentBaseNode.coor));
-			if (angle < 0) angle += 360;
-		}
-		Main.map.statusLine.setAngle(angle);
-		Main.map.statusLine.setHeading(hdg);
-		Main.map.statusLine.setDist(distance);
-		updateStatusLine();
+        if (currentBaseNode == null || currentBaseNode == currentMouseNode) {
+            return; // Don't create zero length way segments.
+        }
 
-		if (!drawHelperLine) return;
+        // find out the distance, in metres, between the base point and the mouse cursor
+        LatLon mouseLatLon = Main.proj.eastNorth2latlon(currentMouseEastNorth);
+        distance = currentBaseNode.coor.greatCircleDistance(mouseLatLon);
+        double hdg = Math.toDegrees(currentBaseNode.coor.heading(mouseLatLon));
+        if (previousNode != null) {
+            angle = hdg - Math.toDegrees(previousNode.coor.heading(currentBaseNode.coor));
+            if (angle < 0) angle += 360;
+        }
+        Main.map.statusLine.setAngle(angle);
+        Main.map.statusLine.setHeading(hdg);
+        Main.map.statusLine.setDist(distance);
+        updateStatusLine();
 
-		Main.map.mapView.repaint();
-	}
+        if (!drawHelperLine) return;
 
-	/**
-	 * Repaint on mouse exit so that the helper line goes away.
-	 */
-	@Override public void mouseExited(MouseEvent e) {
-		if(!Main.map.mapView.isDrawableLayer())
-			return;
-		mousePos = e.getPoint();
-		Main.map.mapView.repaint();
-	}
+        Main.map.mapView.repaint();
+    }
 
-	/**
-	 * @return If the node is the end of exactly one way, return this.
-	 * 	<code>null</code> otherwise.
-	 */
-	public static Way getWayForNode(Node n) {
-		Way way = null;
-		for (Way w : Main.ds.ways) {
-			if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
-			Node firstNode = w.nodes.get(0);
-			Node lastNode = w.nodes.get(w.nodes.size() - 1);
-			if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
-				if (way != null)
-					return null;
-				way = w;
-			}
-		}
-		return way;
-	}
+    /**
+     * Repaint on mouse exit so that the helper line goes away.
+     */
+    @Override public void mouseExited(MouseEvent e) {
+        if(!Main.map.mapView.isDrawableLayer())
+            return;
+        mousePos = e.getPoint();
+        Main.map.mapView.repaint();
+    }
 
-	private static void pruneSuccsAndReverse(List<Integer> is) {
-		//if (is.size() < 2) return;
+    /**
+     * @return If the node is the end of exactly one way, return this.
+     *  <code>null</code> otherwise.
+     */
+    public static Way getWayForNode(Node n) {
+        Way way = null;
+        for (Way w : Main.ds.ways) {
+            if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
+            Node firstNode = w.nodes.get(0);
+            Node lastNode = w.nodes.get(w.nodes.size() - 1);
+            if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
+                if (way != null)
+                    return null;
+                way = w;
+            }
+        }
+        return way;
+    }
 
-		HashSet<Integer> is2 = new HashSet<Integer>();
-		for (int i : is) {
-			if (!is2.contains(i - 1) && !is2.contains(i + 1)) {
-				is2.add(i);
-			}
-		}
-		is.clear();
-		is.addAll(is2);
-		Collections.sort(is);
-		Collections.reverse(is);
-	}
+    private static void pruneSuccsAndReverse(List<Integer> is) {
+        //if (is.size() < 2) return;
 
-	/**
-	 * Adjusts the position of a node to lie on a segment (or a segment
-	 * intersection).
-	 *
-	 * If one or more than two segments are passed, the node is adjusted
-	 * to lie on the first segment that is passed.
-	 *
-	 * If two segments are passed, the node is adjusted to be at their
-	 * intersection.
-	 *
-	 * No action is taken if no segments are passed.
-	 *
-	 * @param segs the segments to use as a reference when adjusting
-	 * @param n the node to adjust
-	 */
-	private static void adjustNode(Collection<Pair<Node,Node>> segs, Node n) {
+        HashSet<Integer> is2 = new HashSet<Integer>();
+        for (int i : is) {
+            if (!is2.contains(i - 1) && !is2.contains(i + 1)) {
+                is2.add(i);
+            }
+        }
+        is.clear();
+        is.addAll(is2);
+        Collections.sort(is);
+        Collections.reverse(is);
+    }
 
-		switch (segs.size()) {
-		case 0:
-			return;
-		case 2:
-			// This computes the intersection between
-			// the two segments and adjusts the node position. 
-			Iterator<Pair<Node,Node>> i = segs.iterator();
-			Pair<Node,Node> seg = i.next();
-			EastNorth A = seg.a.eastNorth;
-			EastNorth B = seg.b.eastNorth;
-			seg = i.next();
-			EastNorth C = seg.a.eastNorth;
-			EastNorth D = seg.b.eastNorth;
+    /**
+     * Adjusts the position of a node to lie on a segment (or a segment
+     * intersection).
+     *
+     * If one or more than two segments are passed, the node is adjusted
+     * to lie on the first segment that is passed.
+     *
+     * If two segments are passed, the node is adjusted to be at their
+     * intersection.
+     *
+     * No action is taken if no segments are passed.
+     *
+     * @param segs the segments to use as a reference when adjusting
+     * @param n the node to adjust
+     */
+    private static void adjustNode(Collection<Pair<Node,Node>> segs, Node n) {
 
-			double u=det(B.east() - A.east(), B.north() - A.north(), C.east() - D.east(), C.north() - D.north());
-			
-			// Check for parallel segments and do nothing if they are
-			// In practice this will probably only happen when a way has been duplicated
-			
-			if (u == 0) return;
-			
-			// q is a number between 0 and 1
-			// It is the point in the segment where the intersection occurs
-			// if the segment is scaled to lenght 1
-			
-			double q = det(B.north() - C.north(), B.east() - C.east(), D.north() - C.north(), D.east() - C.east()) / u;
-			EastNorth intersection = new EastNorth(
-					B.east() + q * (A.east() - B.east()),
-					B.north() + q * (A.north() - B.north()));
+        switch (segs.size()) {
+        case 0:
+            return;
+        case 2:
+            // This computes the intersection between
+            // the two segments and adjusts the node position.
+            Iterator<Pair<Node,Node>> i = segs.iterator();
+            Pair<Node,Node> seg = i.next();
+            EastNorth A = seg.a.eastNorth;
+            EastNorth B = seg.b.eastNorth;
+            seg = i.next();
+            EastNorth C = seg.a.eastNorth;
+            EastNorth D = seg.b.eastNorth;
 
-			int snapToIntersectionThreshold=0;
-			try { snapToIntersectionThreshold = Integer.parseInt(Main.pref.get("edit.snap-intersection-threshold","10")); } catch (NumberFormatException x) {}
+            double u=det(B.east() - A.east(), B.north() - A.north(), C.east() - D.east(), C.north() - D.north());
 
-			// only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
-			// fall through to default action.
-			// (for semi-parallel lines, intersection might be miles away!)
-			if (Main.map.mapView.getPoint(n.eastNorth).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
-				n.eastNorth = intersection;
-				return;
-			}
+            // Check for parallel segments and do nothing if they are
+            // In practice this will probably only happen when a way has been duplicated
 
-		default:
-			EastNorth P = n.eastNorth;
-			seg = segs.iterator().next();
-			A = seg.a.eastNorth;
-			B = seg.b.eastNorth;
-			double a = P.distanceSq(B);
-			double b = P.distanceSq(A);
-			double c = A.distanceSq(B);
+            if (u == 0) return;
+
+            // q is a number between 0 and 1
+            // It is the point in the segment where the intersection occurs
+            // if the segment is scaled to lenght 1
+
+            double q = det(B.north() - C.north(), B.east() - C.east(), D.north() - C.north(), D.east() - C.east()) / u;
+            EastNorth intersection = new EastNorth(
+                    B.east() + q * (A.east() - B.east()),
+                    B.north() + q * (A.north() - B.north()));
+
+            int snapToIntersectionThreshold=0;
+            try { snapToIntersectionThreshold = Integer.parseInt(Main.pref.get("edit.snap-intersection-threshold","10")); } catch (NumberFormatException x) {}
+
+            // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
+            // fall through to default action.
+            // (for semi-parallel lines, intersection might be miles away!)
+            if (Main.map.mapView.getPoint(n.eastNorth).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
+                n.eastNorth = intersection;
+                return;
+            }
+
+        default:
+            EastNorth P = n.eastNorth;
+            seg = segs.iterator().next();
+            A = seg.a.eastNorth;
+            B = seg.b.eastNorth;
+            double a = P.distanceSq(B);
+            double b = P.distanceSq(A);
+            double c = A.distanceSq(B);
             q = (a - b + c) / (2*c);
-			n.eastNorth = new EastNorth(
-				B.east() + q * (A.east() - B.east()),
-				B.north() + q * (A.north() - B.north()));
-		}
-	}
+            n.eastNorth = new EastNorth(
+                B.east() + q * (A.east() - B.east()),
+                B.north() + q * (A.north() - B.north()));
+        }
+    }
 
-	// helper for adjustNode
-	static double det(double a, double b, double c, double d)
-	{
-		return a * d - b * c;
-	}
+    // helper for adjustNode
+    static double det(double a, double b, double c, double d)
+    {
+        return a * d - b * c;
+    }
 
-	public void paint(Graphics g, MapView mv) {
+    public void paint(Graphics g, MapView mv) {
 
-		// don't draw line if disabled in prefs
-		if (!drawHelperLine) return;
+        // don't draw line if disabled in prefs
+        if (!drawHelperLine) return;
 
-		// sanity checks
-		if (Main.map.mapView == null) return;
-		if (mousePos == null) return;
+        // sanity checks
+        if (Main.map.mapView == null) return;
+        if (mousePos == null) return;
 
-		// if shift key is held ("no auto-connect"), don't draw a line
-		if (shift) return;
+        // if shift key is held ("no auto-connect"), don't draw a line
+        if (shift) return;
 
-		// don't draw line if we don't know where from or where to
-		if (currentBaseNode == null) return;
-		if (currentMouseEastNorth == null) return;
+        // don't draw line if we don't know where from or where to
+        if (currentBaseNode == null) return;
+        if (currentMouseEastNorth == null) return;
 
-		// don't draw line if mouse is outside window
-		if (!Main.map.mapView.getBounds().contains(mousePos)) return;
+        // don't draw line if mouse is outside window
+        if (!Main.map.mapView.getBounds().contains(mousePos)) return;
 
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setColor(selectedColor);
-		g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-		GeneralPath b = new GeneralPath();
-		Point p1=mv.getPoint(currentBaseNode.eastNorth);
-		Point p2=mv.getPoint(currentMouseEastNorth);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(selectedColor);
+        g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        GeneralPath b = new GeneralPath();
+        Point p1=mv.getPoint(currentBaseNode.eastNorth);
+        Point p2=mv.getPoint(currentMouseEastNorth);
 
-		double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
+        double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
 
-		b.moveTo(p1.x,p1.y); b.lineTo(p2.x, p2.y);
+        b.moveTo(p1.x,p1.y); b.lineTo(p2.x, p2.y);
 
-		// if alt key is held ("start new way"), draw a little perpendicular line
-		if (alt) {
-			b.moveTo((int)(p1.x + 8*Math.cos(t+PHI)), (int)(p1.y + 8*Math.sin(t+PHI)));
-			b.lineTo((int)(p1.x + 8*Math.cos(t-PHI)), (int)(p1.y + 8*Math.sin(t-PHI)));
-		}
+        // if alt key is held ("start new way"), draw a little perpendicular line
+        if (alt) {
+            b.moveTo((int)(p1.x + 8*Math.cos(t+PHI)), (int)(p1.y + 8*Math.sin(t+PHI)));
+            b.lineTo((int)(p1.x + 8*Math.cos(t-PHI)), (int)(p1.y + 8*Math.sin(t-PHI)));
+        }
 
-		g2.draw(b);
-		g2.setStroke(new BasicStroke(1));
+        g2.draw(b);
+        g2.setStroke(new BasicStroke(1));
 
-	}
+    }
 
-	@Override public String getModeHelpText() {
-		String rv;
+    @Override public String getModeHelpText() {
+        String rv;
 
-		if (currentBaseNode != null && !shift) {
-			if (mouseOnExistingNode) {
-				if (alt && /* FIXME: way exists */true)
-				    rv = tr("Click to create a new way to the existing node.");
-				else
-					rv =tr("Click to make a connection to the existing node.");
-			} else {
-				if (alt && /* FIXME: way exists */true)
-				    rv = tr("Click to insert a node and create a new way.");
-				else
-					rv = tr("Click to insert a new node and make a connection.");
-			}
-		}
-		else {
-			rv = tr("Click to insert a new node.");
-		}
+        if (currentBaseNode != null && !shift) {
+            if (mouseOnExistingNode) {
+                if (alt && /* FIXME: way exists */true)
+                    rv = tr("Click to create a new way to the existing node.");
+                else
+                    rv =tr("Click to make a connection to the existing node.");
+            } else {
+                if (alt && /* FIXME: way exists */true)
+                    rv = tr("Click to insert a node and create a new way.");
+                else
+                    rv = tr("Click to insert a new node and make a connection.");
+            }
+        }
+        else {
+            rv = tr("Click to insert a new node.");
+        }
 
-		//rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
-		//rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
-		return rv.toString();
-	}
+        //rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
+        //rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
+        return rv.toString();
+    }
 }

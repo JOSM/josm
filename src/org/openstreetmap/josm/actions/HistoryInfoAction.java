@@ -17,16 +17,16 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class HistoryInfoAction extends JosmAction {
 
-	public HistoryInfoAction() {
-		super(tr("OSM History Information"), "about",tr("Display history information about OSM ways or nodes."),
-		Shortcut.registerShortcut("core:history", tr("OSM History Information"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
-	}
+    public HistoryInfoAction() {
+        super(tr("OSM History Information"), "about",tr("Display history information about OSM ways or nodes."),
+        Shortcut.registerShortcut("core:history", tr("OSM History Information"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
                 new Visitor() {
                         public void visit(Node n) {
-				OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/node/" + n.id + "/history");
-			}
+                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/node/" + n.id + "/history");
+            }
 
                         public void visit(Way w) {
                                 OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/way/" + w.id + "/history");
@@ -42,6 +42,6 @@ public class HistoryInfoAction extends JosmAction {
                         }
                 }.visitAll();
 
-	}
+    }
 
 }

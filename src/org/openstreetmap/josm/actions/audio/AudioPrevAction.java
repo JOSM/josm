@@ -12,12 +12,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioPrevAction extends JosmAction {
 
-	public AudioPrevAction() {
-		super(tr("Previous Marker"), "audio-prev", tr("Play previous marker."),
-		Shortcut.registerShortcut("audio:prev", tr("Audio: {0}", tr("Previous Marker")), KeyEvent.VK_F5, Shortcut.GROUP_DIRECT), true);
-	}
+    public AudioPrevAction() {
+        super(tr("Previous Marker"), "audio-prev", tr("Play previous marker."),
+        Shortcut.registerShortcut("audio:prev", tr("Audio: {0}", tr("Previous Marker")), KeyEvent.VK_F5, Shortcut.GROUP_DIRECT), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		MarkerLayer.playPreviousMarker();
-	}
+    public void actionPerformed(ActionEvent e) {
+        MarkerLayer.playPreviousMarker();
+    }
 }

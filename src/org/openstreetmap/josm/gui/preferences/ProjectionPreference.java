@@ -18,45 +18,45 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements PreferenceSetting {
 
-	/**
-	 * Combobox with all projections available
-	 */
-	private JComboBox projectionCombo = new JComboBox(Projection.allProjections);
-	private JComboBox coordinatesCombo = new JComboBox(CoordinateFormat.values());
+    /**
+     * Combobox with all projections available
+     */
+    private JComboBox projectionCombo = new JComboBox(Projection.allProjections);
+    private JComboBox coordinatesCombo = new JComboBox(CoordinateFormat.values());
 
-	public void addGui(PreferenceDialog gui) {
-		
-	    for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
-	        if (projectionCombo.getItemAt(i).getClass().getName().equals(Main.pref.get("projection"))) {
-	            projectionCombo.setSelectedIndex(i);
-	            break;
-	        }
-	    }
+    public void addGui(PreferenceDialog gui) {
 
-	    for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
-	        if (((CoordinateFormat)coordinatesCombo.getItemAt(i)).name().equals(Main.pref.get("coordinates"))) {
-	            coordinatesCombo.setSelectedIndex(i);
-	            break;
-	        }
-	    }
+        for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
+            if (projectionCombo.getItemAt(i).getClass().getName().equals(Main.pref.get("projection"))) {
+                projectionCombo.setSelectedIndex(i);
+                break;
+            }
+        }
 
-		projectionCombo.addActionListener(gui.requireRestartAction);
+        for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
+            if (((CoordinateFormat)coordinatesCombo.getItemAt(i)).name().equals(Main.pref.get("coordinates"))) {
+                coordinatesCombo.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        projectionCombo.addActionListener(gui.requireRestartAction);
         coordinatesCombo.addActionListener(gui.requireRestartAction);
-		
-		JPanel projPanel = new JPanel();
-		projPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Map Projection")));
-		projPanel.setLayout(new GridBagLayout());
-		projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5,5,0,5));
-		projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-		projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-	    projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5,5,0,5));
-	    projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-	    projPanel.add(coordinatesCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-		gui.map.add(projPanel, GBC.eol().insets(0,0,0,10).fill(GBC.HORIZONTAL));
+
+        JPanel projPanel = new JPanel();
+        projPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Map Projection")));
+        projPanel.setLayout(new GridBagLayout());
+        projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5,5,0,5));
+        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
+        projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5,5,0,5));
+        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(coordinatesCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
+        gui.map.add(projPanel, GBC.eol().insets(0,0,0,10).fill(GBC.HORIZONTAL));
     }
 
-	public void ok() {
-		Main.pref.put("projection", projectionCombo.getSelectedItem().getClass().getName());
-		Main.pref.put("coordinates", ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name());
+    public void ok() {
+        Main.pref.put("projection", projectionCombo.getSelectedItem().getClass().getName());
+        Main.pref.put("coordinates", ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name());
     }
 }

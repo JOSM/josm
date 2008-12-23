@@ -11,13 +11,13 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.xml.sax.SAXException;
 
 public class OsmServerLocationReader extends OsmServerReader {
- 
+
     String url;
-    
+
     public OsmServerLocationReader(String url) {
         this.url = url;
     }
-    
+
     /**
      * Method to download OSM files from somewhere
      */

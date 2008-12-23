@@ -15,16 +15,16 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class ExitAction extends JosmAction {
-	/**
-	 * Construct the action with "Exit" as label
-	 */
-	public ExitAction() {
-		super(tr("Exit"), "exit", tr("Exit the application."),
-		Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.GROUP_MENU), true);
-	}
+    /**
+     * Construct the action with "Exit" as label
+     */
+    public ExitAction() {
+        super(tr("Exit"), "exit", tr("Exit the application."),
+        Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.GROUP_MENU), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		if (!Main.breakBecauseUnsavedChanges())
-			System.exit(0);
-	}
+    public void actionPerformed(ActionEvent e) {
+        if (!Main.breakBecauseUnsavedChanges())
+            System.exit(0);
+    }
 }

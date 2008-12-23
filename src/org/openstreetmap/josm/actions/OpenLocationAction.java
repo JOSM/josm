@@ -41,34 +41,34 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class OpenLocationAction extends JosmAction {
 
-	/**
-	 * Create an open action. The name is "Open a file".
-	 */
-	public OpenLocationAction() {
-		super(tr("Open Location..."), "openlocation", tr("Open a URL."),
-		Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.GROUP_MENU), true);
-	}
+    /**
+     * Create an open action. The name is "Open a file".
+     */
+    public OpenLocationAction() {
+        super(tr("Open Location..."), "openlocation", tr("Open a URL."),
+        Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.GROUP_MENU), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
 
-	    JCheckBox layer = new JCheckBox(tr("Separate Layer"));
-	    layer.setSelected(Main.pref.getBoolean("download.newlayer"));
-	    JPanel all = new JPanel(new GridBagLayout());
-	    all.add(new JLabel("Enter URL to download:"), GBC.eol());
-	    JTextField urltext = new JTextField(40);
-	    all.add(urltext, GBC.eol());
-	    all.add(layer, GBC.eol());
-	    int answer = JOptionPane.showConfirmDialog(Main.parent, all, tr("Download Location"), JOptionPane.OK_CANCEL_OPTION);
-	    if (answer != JOptionPane.OK_OPTION)
-	        return;
-	    openUrl(layer.isSelected(), urltext.getText());
-	}
+        JCheckBox layer = new JCheckBox(tr("Separate Layer"));
+        layer.setSelected(Main.pref.getBoolean("download.newlayer"));
+        JPanel all = new JPanel(new GridBagLayout());
+        all.add(new JLabel("Enter URL to download:"), GBC.eol());
+        JTextField urltext = new JTextField(40);
+        all.add(urltext, GBC.eol());
+        all.add(layer, GBC.eol());
+        int answer = JOptionPane.showConfirmDialog(Main.parent, all, tr("Download Location"), JOptionPane.OK_CANCEL_OPTION);
+        if (answer != JOptionPane.OK_OPTION)
+            return;
+        openUrl(layer.isSelected(), urltext.getText());
+    }
 
-	/**
-	 * Open the given file.
-	 */
-	public void openUrl(boolean new_layer, String url) {
-	    new DownloadOsmTask().loadUrl(new_layer, url);
-	}
+    /**
+     * Open the given file.
+     */
+    public void openUrl(boolean new_layer, String url) {
+        new DownloadOsmTask().loadUrl(new_layer, url);
+    }
 
 }

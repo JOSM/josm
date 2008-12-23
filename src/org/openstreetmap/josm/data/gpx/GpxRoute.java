@@ -7,5 +7,5 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public class GpxRoute extends WithAttributes {
-	public Collection<WayPoint> routePoints = new LinkedList<WayPoint>();
+    public Collection<WayPoint> routePoints = new LinkedList<WayPoint>();
 }

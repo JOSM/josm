@@ -181,7 +181,7 @@ abstract public class Main {
     }
 
     /**
-     * Remove the specified layer from the map. If it is the last layer, 
+     * Remove the specified layer from the map. If it is the last layer,
      * remove the map as well.
      */
     public final void removeLayer(final Layer layer) {
@@ -218,7 +218,7 @@ abstract public class Main {
     }
 
     /**
-     * Load all plugins specified in preferences. If the parameter is 
+     * Load all plugins specified in preferences. If the parameter is
      * <code>true</code>, all early plugins are loaded (before constructor).
      */
     public static void loadPlugins(boolean early) {
@@ -280,10 +280,10 @@ abstract public class Main {
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
             } else if (d > maxTime) {
-                JOptionPane.showMessageDialog(Main.parent, 
-                   "<html>" + 
+                JOptionPane.showMessageDialog(Main.parent,
+                   "<html>" +
                    tr("Last plugin update more than {0} days ago.", d) +
-                   "<br><em>" + 
+                   "<br><em>" +
                    tr("(You can change the number of days after which this warning appears<br>by setting the config option 'pluginmanager.warntime'.)") +
                    "</html>");
             }
@@ -511,8 +511,8 @@ abstract public class Main {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("windows")) {
             platform = new PlatformHookWindows();
-        } else if (os.equals("Linux") || os.equals("Solaris") || 
-            os.equals("SunOS") || os.equals("AIX") || 
+        } else if (os.equals("Linux") || os.equals("Solaris") ||
+            os.equals("SunOS") || os.equals("AIX") ||
             os.equals("FreeBSD") || os.equals("NetBSD") || os.equals("OpenBSD")) {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("mac os x")) {

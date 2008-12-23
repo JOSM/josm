@@ -16,19 +16,19 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class RedoAction extends JosmAction {
 
-	/**
-	 * Construct the action with "Redo" as label.
-	 */
-	public RedoAction() {
-		super(tr("Redo"), "redo", tr("Redo the last undone action."),
-		Shortcut.registerShortcut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, Shortcut.GROUP_MENU), true);
-		setEnabled(false);
-	}
+    /**
+     * Construct the action with "Redo" as label.
+     */
+    public RedoAction() {
+        super(tr("Redo"), "redo", tr("Redo the last undone action."),
+        Shortcut.registerShortcut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, Shortcut.GROUP_MENU), true);
+        setEnabled(false);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		if (Main.map == null)
-			return;
-		Main.map.repaint();
-		Main.main.undoRedo.redo();
-	}
+    public void actionPerformed(ActionEvent e) {
+        if (Main.map == null)
+            return;
+        Main.map.repaint();
+        Main.main.undoRedo.redo();
+    }
 }

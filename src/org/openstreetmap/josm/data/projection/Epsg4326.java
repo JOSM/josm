@@ -11,31 +11,31 @@ import org.openstreetmap.josm.data.coor.EastNorth;
  */
 public class Epsg4326 implements Projection {
 
-	public EastNorth latlon2eastNorth(LatLon p) {
-		return new EastNorth(p.lon(), p.lat());
-	}
+    public EastNorth latlon2eastNorth(LatLon p) {
+        return new EastNorth(p.lon(), p.lat());
+    }
 
-	public LatLon eastNorth2latlon(EastNorth p) {
-		return new LatLon(p.north(), p.east());
-	}
+    public LatLon eastNorth2latlon(EastNorth p) {
+        return new LatLon(p.north(), p.east());
+    }
 
-	@Override public String toString() {
-		return tr("EPSG:4326");
-	}
+    @Override public String toString() {
+        return tr("EPSG:4326");
+    }
 
     public String getCacheDirectoryName() {
         return "epsg4326";
     }
 
-	public double scaleFactor() {
-	    return 1.0/360;
+    public double scaleFactor() {
+        return 1.0/360;
     }
 
-	@Override public boolean equals(Object o) {
-		return o instanceof Epsg4326;
-	}
+    @Override public boolean equals(Object o) {
+        return o instanceof Epsg4326;
+    }
 
-	@Override public int hashCode() {
-		return Epsg4326.class.hashCode();
-	}
+    @Override public int hashCode() {
+        return Epsg4326.class.hashCode();
+    }
 }

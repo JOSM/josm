@@ -105,12 +105,12 @@ public class OsmReader {
       */
      private Map<OsmPrimitiveData, Collection<Long>> ways = new HashMap<OsmPrimitiveData, Collection<Long>>();
 
-     /** 
+     /**
       * Data structure for relation objects
       */
      private Map<OsmPrimitiveData, Collection<RelationMemberData>> relations = new HashMap<OsmPrimitiveData, Collection<RelationMemberData>>();
 
-     /** 
+     /**
       * List of protocol versions that will be accepted on reading
       */
      private HashSet<String> allowedVersions = new HashSet<String>();
@@ -132,11 +132,11 @@ public class OsmReader {
                          // save generator attribute for later use when creating DataSource objects
                          generator = atts.getValue("generator");
 
-                         
+
                     } else if (qName.equals("bound")) {
                          // old style bounds.
                          // TODO: remove this around 1st October 2008.
-                         // - this is a bit of a hack; since we still write out old style bound objects, 
+                         // - this is a bit of a hack; since we still write out old style bound objects,
                          // we don't want to load them both. so when writing, we add a "note" tag the our
                          // old-style bound, and when reading, ignore those with a "note".
                          String note = atts.getValue("note");
@@ -171,9 +171,9 @@ public class OsmReader {
                               DataSource src = new DataSource(bounds, origin);
                               ds.dataSources.add(src);
                          }
-                         
+
                     // ---- PARSING NODES AND WAYS ----
-                         
+
                     } else if (qName.equals("node")) {
                          current = new Node(new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon")));
                          readCommon(atts, current);
@@ -191,7 +191,7 @@ public class OsmReader {
                               throw new SAXException(tr("<nd> has zero ref"));
                          list.add(id);
 
-                    // ---- PARSING RELATIONS ----               
+                    // ---- PARSING RELATIONS ----
 
                     } else if (qName.equals("relation")) {
                          current = new OsmPrimitiveData();
@@ -206,14 +206,14 @@ public class OsmReader {
                          emd.id = getLong(atts, "ref");
                          emd.type=atts.getValue("type");
                          emd.relationMember.role = atts.getValue("role");
-                         
+
                          if (emd.id == 0)
                               throw new SAXException(tr("Incomplete <member> specification with ref=0"));
-                         
+
                          list.add(emd);
-                         
+
                     // ---- PARSING TAGS (applicable to all objects) ----
-                         
+
                     } else if (qName.equals("tag")) {
                          current.put(atts.getValue("k"), atts.getValue("v"));
                     }
@@ -230,19 +230,19 @@ public class OsmReader {
                return Double.parseDouble(atts.getValue(value));
           }
      }
-     
-     /** 
+
+     /**
       * Constructor initializes list of allowed protocol versions.
       */
      public OsmReader() {
           // first add the main server version
           allowedVersions.add(Main.pref.get("osm-server.version", "0.5"));
           // now also add all compatible versions
-          String[] additionalVersions = 
+          String[] additionalVersions =
                Main.pref.get("osm-server.additional-versions", "").split("/,/");
           if (additionalVersions.length == 1 && additionalVersions[0].length() == 0)
                additionalVersions = new String[] {};
-          allowedVersions.addAll(Arrays.asList(additionalVersions));     
+          allowedVersions.addAll(Arrays.asList(additionalVersions));
      }
 
      /**
@@ -266,14 +266,14 @@ public class OsmReader {
                */
                current.timestamp = time;
           }
-          
+
           // user attribute added in 0.4 API
           String user = atts.getValue("user");
           if (user != null) {
                // do not store literally; get object reference for string
                current.user = User.get(user);
           }
-          
+
           // visible attribute added in 0.4 API
           String visible = atts.getValue("visible");
           if (visible != null) {
@@ -341,13 +341,13 @@ public class OsmReader {
                e.getKey().copyTo(w);
                adder.visit(w);
           }
-          
+
      }
 
      /**
       * Return the Way object with the given id, or null if it doesn't
       * exist yet. This method only looks at ways stored in the data set.
-      * 
+      *
       * @param id
       * @return way object or null
       */
@@ -364,7 +364,7 @@ public class OsmReader {
      /**
       * Return the Relation object with the given id, or null if it doesn't
       * exist yet. This method only looks at relations stored in the data set.
-      * 
+      *
       * @param id
       * @return relation object or null
       */
@@ -379,14 +379,14 @@ public class OsmReader {
      }
 
      /**
-      * Create relations. This is slightly different than n/s/w because 
+      * Create relations. This is slightly different than n/s/w because
       * unlike other objects, relations may reference other relations; it
       * is not guaranteed that a referenced relation will have been created
       * before it is referenced. So we have to create all relations first,
       * and populate them later.
       */
      private void createRelations() {
-          
+
           // pass 1 - create all relations
           for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
                Relation en = new Relation();
@@ -398,7 +398,7 @@ public class OsmReader {
           for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
                Relation en = findRelation(e.getKey().id);
                if (en == null) throw new Error("Failed to create relation " + e.getKey().id);
-               
+
                for (RelationMemberData emd : e.getValue()) {
                     RelationMember em = emd.relationMember;
                     if (emd.type.equals("node")) {

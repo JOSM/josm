@@ -18,26 +18,26 @@ import org.openstreetmap.josm.Main;
  */
 public class OpenBrowser {
 
-	/**
-	 * @return <code>null</code> for success or a string in case of an error.
-	 */
-	public static String displayUrl(String url) {
-		if (Main.applet) {
-			try {
-				JApplet applet = (JApplet) Main.parent;
-				applet.getAppletContext().showDocument(new URL(url));
-				return null;
-			} catch (MalformedURLException mue) {
-				return mue.getMessage();
-			}
-		}
+    /**
+     * @return <code>null</code> for success or a string in case of an error.
+     */
+    public static String displayUrl(String url) {
+        if (Main.applet) {
+            try {
+                JApplet applet = (JApplet) Main.parent;
+                applet.getAppletContext().showDocument(new URL(url));
+                return null;
+            } catch (MalformedURLException mue) {
+                return mue.getMessage();
+            }
+        }
 
-		try {
-			Main.platform.openUrl(url);
-		} catch (IOException e) {
-			return e.getMessage();
-		}
-		return null;
-	}
+        try {
+            Main.platform.openUrl(url);
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+        return null;
+    }
 
 }

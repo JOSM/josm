@@ -39,228 +39,228 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
-	enum Mode { EXTRUDE, rotate, select }
-	private Mode mode = null;
-	private long mouseDownTime = 0;
-	private WaySegment selectedSegment = null;
-	private Color selectedColor;
+    enum Mode { EXTRUDE, rotate, select }
+    private Mode mode = null;
+    private long mouseDownTime = 0;
+    private WaySegment selectedSegment = null;
+    private Color selectedColor;
 
-	double xoff;
-	double yoff;
-	double distance;
+    double xoff;
+    double yoff;
+    double distance;
 
-	/**
-	 * The old cursor before the user pressed the mouse button.
-	 */
-	private Cursor oldCursor;
-	/**
-	 * The current position of the mouse
-	 */
-	private Point mousePos;
-	/**
-	 * The position of the mouse cursor when the drag action was initiated.
-	 */
-	private Point initialMousePos;
-	/**
-	 * The time which needs to pass between click and release before something
-	 * counts as a move, in milliseconds
-	 */
-	private int initialMoveDelay = 200;
+    /**
+     * The old cursor before the user pressed the mouse button.
+     */
+    private Cursor oldCursor;
+    /**
+     * The current position of the mouse
+     */
+    private Point mousePos;
+    /**
+     * The position of the mouse cursor when the drag action was initiated.
+     */
+    private Point initialMousePos;
+    /**
+     * The time which needs to pass between click and release before something
+     * counts as a move, in milliseconds
+     */
+    private int initialMoveDelay = 200;
 
-	/**
-	 * Create a new SelectAction
-	 * @param mapFrame The MapFrame this action belongs to.
-	 */
-	public ExtrudeAction(MapFrame mapFrame) {
-		super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
-				Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
-			mapFrame,
-			getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
-		putValue("help", "Action/Extrude/Extrude");
-		initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
-		selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
-	}
-
-	private static Cursor getCursor(String name, String mod, int def) {
-		try {
-	        return ImageProvider.getCursor(name, mod);
-        } catch (Exception e) {
-        }
-	    return Cursor.getPredefinedCursor(def);
+    /**
+     * Create a new SelectAction
+     * @param mapFrame The MapFrame this action belongs to.
+     */
+    public ExtrudeAction(MapFrame mapFrame) {
+        super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
+                Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
+            mapFrame,
+            getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
+        putValue("help", "Action/Extrude/Extrude");
+        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
+        selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
     }
 
-	private void setCursor(Cursor c) {
-		if (oldCursor == null) {
-			oldCursor = Main.map.mapView.getCursor();
-			Main.map.mapView.setCursor(c);
-		}
-	}
+    private static Cursor getCursor(String name, String mod, int def) {
+        try {
+            return ImageProvider.getCursor(name, mod);
+        } catch (Exception e) {
+        }
+        return Cursor.getPredefinedCursor(def);
+    }
 
-	private void restoreCursor() {
-		if (oldCursor != null) {
-			Main.map.mapView.setCursor(oldCursor);
-			oldCursor = null;
-		}
-	}
+    private void setCursor(Cursor c) {
+        if (oldCursor == null) {
+            oldCursor = Main.map.mapView.getCursor();
+            Main.map.mapView.setCursor(c);
+        }
+    }
 
-	@Override public void enterMode() {
-		super.enterMode();
-		Main.map.mapView.addMouseListener(this);
-		Main.map.mapView.addMouseMotionListener(this);
-	}
+    private void restoreCursor() {
+        if (oldCursor != null) {
+            Main.map.mapView.setCursor(oldCursor);
+            oldCursor = null;
+        }
+    }
 
-	@Override public void exitMode() {
-		super.exitMode();
-		Main.map.mapView.removeMouseListener(this);
-		Main.map.mapView.removeMouseMotionListener(this);
-		Main.map.mapView.removeTemporaryLayer(this);
+    @Override public void enterMode() {
+        super.enterMode();
+        Main.map.mapView.addMouseListener(this);
+        Main.map.mapView.addMouseMotionListener(this);
+    }
 
-	}
+    @Override public void exitMode() {
+        super.exitMode();
+        Main.map.mapView.removeMouseListener(this);
+        Main.map.mapView.removeMouseMotionListener(this);
+        Main.map.mapView.removeTemporaryLayer(this);
 
-	/**
-	 * If the left mouse button is pressed, move all currently selected
-	 * objects (if one of them is under the mouse) or the current one under the
-	 * mouse (which will become selected).
-	 */
-	@Override public void mouseDragged(MouseEvent e) {
-		if (mode == Mode.select) return;
+    }
 
-		// do not count anything as a move if it lasts less than 100 milliseconds.
-		if ((mode == Mode.EXTRUDE) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay)) return;
+    /**
+     * If the left mouse button is pressed, move all currently selected
+     * objects (if one of them is under the mouse) or the current one under the
+     * mouse (which will become selected).
+     */
+    @Override public void mouseDragged(MouseEvent e) {
+        if (mode == Mode.select) return;
 
-		if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
-			return;
+        // do not count anything as a move if it lasts less than 100 milliseconds.
+        if ((mode == Mode.EXTRUDE) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay)) return;
 
-		if (mode == Mode.EXTRUDE) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-		}
+        if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
+            return;
 
-		if (mousePos == null) {
-			mousePos = e.getPoint();
-			return;
-		}
+        if (mode == Mode.EXTRUDE) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+        }
 
-		Main.map.mapView.repaint();
-		mousePos = e.getPoint();
+        if (mousePos == null) {
+            mousePos = e.getPoint();
+            return;
+        }
 
-	}
+        Main.map.mapView.repaint();
+        mousePos = e.getPoint();
 
-	public void paint(Graphics g, MapView mv) {
-		if (selectedSegment != null) {
-			Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
-			Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
+    }
 
-			EastNorth en1 = n1.eastNorth;
-			EastNorth en2 = n2.eastNorth;
-			if (en1.east() < en2.east()) { en2 = en1; en1 = n2.eastNorth; }
-			EastNorth en3 = mv.getEastNorth(mousePos.x, mousePos.y);
+    public void paint(Graphics g, MapView mv) {
+        if (selectedSegment != null) {
+            Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
+            Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
 
-			double u = ((en3.east()-en1.east())*(en2.east()-en1.east()) + (en3.north()-en1.north())*(en2.north()-en1.north()))/en2.distanceSq(en1);
-			// the point on the segment from which the distance to mouse pos is shortest
-			EastNorth base = new EastNorth(en1.east()+u*(en2.east()-en1.east()), en1.north()+u*(en2.north()-en1.north()));
+            EastNorth en1 = n1.eastNorth;
+            EastNorth en2 = n2.eastNorth;
+            if (en1.east() < en2.east()) { en2 = en1; en1 = n2.eastNorth; }
+            EastNorth en3 = mv.getEastNorth(mousePos.x, mousePos.y);
 
-			// the distance, in projection units, between the base point and the mouse cursor
-			double len = base.distance(en3);
+            double u = ((en3.east()-en1.east())*(en2.east()-en1.east()) + (en3.north()-en1.north())*(en2.north()-en1.north()))/en2.distanceSq(en1);
+            // the point on the segment from which the distance to mouse pos is shortest
+            EastNorth base = new EastNorth(en1.east()+u*(en2.east()-en1.east()), en1.north()+u*(en2.north()-en1.north()));
 
-			// find out the distance, in metres, between the base point and the mouse cursor
-			distance = Main.proj.eastNorth2latlon(base).greatCircleDistance(Main.proj.eastNorth2latlon(en3));
-			Main.map.statusLine.setDist(distance);
-			updateStatusLine();
+            // the distance, in projection units, between the base point and the mouse cursor
+            double len = base.distance(en3);
 
-			// compute the angle at which the segment is drawn
-			// and use it to compute the x and y offsets for the
-			// corner points.
-			double sin_alpha = (en2.north()-en1.north())/en2.distance(en1);
+            // find out the distance, in metres, between the base point and the mouse cursor
+            distance = Main.proj.eastNorth2latlon(base).greatCircleDistance(Main.proj.eastNorth2latlon(en3));
+            Main.map.statusLine.setDist(distance);
+            updateStatusLine();
 
-			// this is a kludge because sometimes extrusion just goes the wrong direction
-			if ((en3.east()>base.east()) ^ (sin_alpha < 0)) len=-len;
-			xoff = sin_alpha * len;
-			yoff = Math.sqrt(1-sin_alpha*sin_alpha) * len;
+            // compute the angle at which the segment is drawn
+            // and use it to compute the x and y offsets for the
+            // corner points.
+            double sin_alpha = (en2.north()-en1.north())/en2.distance(en1);
 
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setColor(selectedColor);
-			g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-			GeneralPath b = new GeneralPath();
-			Point p1=mv.getPoint(en1);
-			Point p2=mv.getPoint(en2);
-			Point p3=mv.getPoint(en1.add(-xoff, -yoff));
-			Point p4=mv.getPoint(en2.add(-xoff, -yoff));
+            // this is a kludge because sometimes extrusion just goes the wrong direction
+            if ((en3.east()>base.east()) ^ (sin_alpha < 0)) len=-len;
+            xoff = sin_alpha * len;
+            yoff = Math.sqrt(1-sin_alpha*sin_alpha) * len;
 
-			b.moveTo(p1.x,p1.y); b.lineTo(p3.x, p3.y);
-			b.lineTo(p4.x, p4.y); b.lineTo(p2.x, p2.y);
-			b.lineTo(p1.x,p1.y);
-			g2.draw(b);
-			g2.setStroke(new BasicStroke(1));
-		}
-	}
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setColor(selectedColor);
+            g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            GeneralPath b = new GeneralPath();
+            Point p1=mv.getPoint(en1);
+            Point p2=mv.getPoint(en2);
+            Point p3=mv.getPoint(en1.add(-xoff, -yoff));
+            Point p4=mv.getPoint(en2.add(-xoff, -yoff));
 
-	/**
-	 */
-	@Override public void mousePressed(MouseEvent e) {
-		if (!(Boolean)this.getValue("active")) return;
-		if (e.getButton() != MouseEvent.BUTTON1)
-			return;
-		// boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-		// boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-		// boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+            b.moveTo(p1.x,p1.y); b.lineTo(p3.x, p3.y);
+            b.lineTo(p4.x, p4.y); b.lineTo(p2.x, p2.y);
+            b.lineTo(p1.x,p1.y);
+            g2.draw(b);
+            g2.setStroke(new BasicStroke(1));
+        }
+    }
 
-		mouseDownTime = System.currentTimeMillis();
+    /**
+     */
+    @Override public void mousePressed(MouseEvent e) {
+        if (!(Boolean)this.getValue("active")) return;
+        if (e.getButton() != MouseEvent.BUTTON1)
+            return;
+        // boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+        // boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        // boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 
-		selectedSegment =
-			Main.map.mapView.getNearestWaySegment(e.getPoint());
+        mouseDownTime = System.currentTimeMillis();
 
-		mode = (selectedSegment == null) ? Mode.select : Mode.EXTRUDE;
-		oldCursor = Main.map.mapView.getCursor();
+        selectedSegment =
+            Main.map.mapView.getNearestWaySegment(e.getPoint());
 
-		updateStatusLine();
-		Main.map.mapView.addTemporaryLayer(this);
-		Main.map.mapView.repaint();
+        mode = (selectedSegment == null) ? Mode.select : Mode.EXTRUDE;
+        oldCursor = Main.map.mapView.getCursor();
 
-		mousePos = e.getPoint();
-		initialMousePos = e.getPoint();
-	}
+        updateStatusLine();
+        Main.map.mapView.addTemporaryLayer(this);
+        Main.map.mapView.repaint();
 
-	/**
-	 * Restore the old mouse cursor.
-	 */
-	@Override public void mouseReleased(MouseEvent e) {
-		restoreCursor();
-		if (selectedSegment == null) return;
-		if (mousePos.distance(initialMousePos) > 10) {
-			Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
-			Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
-			EastNorth en3 = n2.eastNorth.add(-xoff, -yoff);
-			Node n3 = new Node(Main.proj.eastNorth2latlon(en3));
-			EastNorth en4 = n1.eastNorth.add(-xoff, -yoff);
-			Node n4 = new Node(Main.proj.eastNorth2latlon(en4));
-			Way wnew = new Way(selectedSegment.way);
-			wnew.nodes.add(selectedSegment.lowerIndex+1, n3);
-			wnew.nodes.add(selectedSegment.lowerIndex+1, n4);
-			if (wnew.nodes.size() == 4) wnew.nodes.add(n1);
-			Collection<Command> cmds = new LinkedList<Command>();
-			cmds.add(new AddCommand(n4));
-			cmds.add(new AddCommand(n3));
-			cmds.add(new ChangeCommand(selectedSegment.way, wnew));
-			Command c = new SequenceCommand(tr("Extrude Way"), cmds);
-			Main.main.undoRedo.add(c);
-		}
+        mousePos = e.getPoint();
+        initialMousePos = e.getPoint();
+    }
 
-		Main.map.mapView.removeTemporaryLayer(this);
-		selectedSegment = null;
-		mode = null;
-		updateStatusLine();
-		Main.map.mapView.repaint();
-	}
+    /**
+     * Restore the old mouse cursor.
+     */
+    @Override public void mouseReleased(MouseEvent e) {
+        restoreCursor();
+        if (selectedSegment == null) return;
+        if (mousePos.distance(initialMousePos) > 10) {
+            Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
+            Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
+            EastNorth en3 = n2.eastNorth.add(-xoff, -yoff);
+            Node n3 = new Node(Main.proj.eastNorth2latlon(en3));
+            EastNorth en4 = n1.eastNorth.add(-xoff, -yoff);
+            Node n4 = new Node(Main.proj.eastNorth2latlon(en4));
+            Way wnew = new Way(selectedSegment.way);
+            wnew.nodes.add(selectedSegment.lowerIndex+1, n3);
+            wnew.nodes.add(selectedSegment.lowerIndex+1, n4);
+            if (wnew.nodes.size() == 4) wnew.nodes.add(n1);
+            Collection<Command> cmds = new LinkedList<Command>();
+            cmds.add(new AddCommand(n4));
+            cmds.add(new AddCommand(n3));
+            cmds.add(new ChangeCommand(selectedSegment.way, wnew));
+            Command c = new SequenceCommand(tr("Extrude Way"), cmds);
+            Main.main.undoRedo.add(c);
+        }
 
-	@Override public String getModeHelpText() {
-		if (mode == Mode.select) {
-			return tr("Release the mouse button to select the objects in the rectangle.");
-		} else if (mode == Mode.EXTRUDE) {
-			return tr("Draw a rectangle of the desired size, then release the mouse button.");
-		} else if (mode == Mode.rotate) {
-			return tr("Release the mouse button to stop rotating.");
-		} else {
-			return tr("Drag a way segment to make a rectangle.");
-		}
-	}
+        Main.map.mapView.removeTemporaryLayer(this);
+        selectedSegment = null;
+        mode = null;
+        updateStatusLine();
+        Main.map.mapView.repaint();
+    }
+
+    @Override public String getModeHelpText() {
+        if (mode == Mode.select) {
+            return tr("Release the mouse button to select the objects in the rectangle.");
+        } else if (mode == Mode.EXTRUDE) {
+            return tr("Draw a rectangle of the desired size, then release the mouse button.");
+        } else if (mode == Mode.rotate) {
+            return tr("Release the mouse button to stop rotating.");
+        } else {
+            return tr("Drag a way segment to make a rectangle.");
+        }
+    }
 }

@@ -14,27 +14,27 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioPlayPauseAction extends JosmAction {
 
-	public AudioPlayPauseAction() {
-		super(tr("Play/pause"), "audio-playpause", tr("Play/pause audio."),
-		Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", tr("Play/pause")), KeyEvent.VK_PERIOD, Shortcut.GROUP_DIRECT), true);
-	}
+    public AudioPlayPauseAction() {
+        super(tr("Play/pause"), "audio-playpause", tr("Play/pause audio."),
+        Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", tr("Play/pause")), KeyEvent.VK_PERIOD, Shortcut.GROUP_DIRECT), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		URL url = AudioPlayer.url();
-		try {
-			if (AudioPlayer.paused() && url != null) {
-				AudioPlayer.play(url);
-			} else if (AudioPlayer.playing()){
-				if (AudioPlayer.speed() != 1.0)
-					AudioPlayer.play(url, AudioPlayer.position());
-				else
-					AudioPlayer.pause();
-			} else {
-				// find first audio marker to play
-				MarkerLayer.playAudio();
-			}
-		} catch (Exception ex) {
-			AudioPlayer.audioMalfunction(ex);
-		}
-	}
+    public void actionPerformed(ActionEvent e) {
+        URL url = AudioPlayer.url();
+        try {
+            if (AudioPlayer.paused() && url != null) {
+                AudioPlayer.play(url);
+            } else if (AudioPlayer.playing()){
+                if (AudioPlayer.speed() != 1.0)
+                    AudioPlayer.play(url, AudioPlayer.position());
+                else
+                    AudioPlayer.pause();
+            } else {
+                // find first audio marker to play
+                MarkerLayer.playAudio();
+            }
+        } catch (Exception ex) {
+            AudioPlayer.audioMalfunction(ex);
+        }
+    }
 }

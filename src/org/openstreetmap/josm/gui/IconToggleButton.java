@@ -17,32 +17,32 @@ import javax.swing.JToggleButton;
  */
 public class IconToggleButton extends JToggleButton implements PropertyChangeListener {
 
-	public boolean groupbutton;
+    public boolean groupbutton;
 
-	/**
-	 * Construct the toggle button with the given action.
-	 */
-	public IconToggleButton(Action action) {
-		super(action);
-		setText(null);
+    /**
+     * Construct the toggle button with the given action.
+     */
+    public IconToggleButton(Action action) {
+        super(action);
+        setText(null);
 
-		Object o = action.getValue(Action.SHORT_DESCRIPTION);
-		if (o != null)
-			setToolTipText(o.toString());
+        Object o = action.getValue(Action.SHORT_DESCRIPTION);
+        if (o != null)
+            setToolTipText(o.toString());
 
-		action.addPropertyChangeListener(this);
-		
-		addMouseListener(new MouseAdapter(){
-			@Override public void mousePressed(MouseEvent e) {
-				groupbutton = e.getX() > getWidth()/2 && e.getY() > getHeight()/2;
+        action.addPropertyChangeListener(this);
+
+        addMouseListener(new MouseAdapter(){
+            @Override public void mousePressed(MouseEvent e) {
+                groupbutton = e.getX() > getWidth()/2 && e.getY() > getHeight()/2;
             }
-		});
-	}
+        });
+    }
 
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals("active")) {
-			setSelected((Boolean)evt.getNewValue());
-			requestFocusInWindow();
-		}
-	}
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("active")) {
+            setSelected((Boolean)evt.getNewValue());
+            requestFocusInWindow();
+        }
+    }
 }

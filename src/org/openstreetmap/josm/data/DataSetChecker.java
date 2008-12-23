@@ -13,31 +13,31 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class DataSetChecker {
 
-	public static void check() {
-		if (Main.map == null)
-			return;
+    public static void check() {
+        if (Main.map == null)
+            return;
 
-		Set<OsmPrimitive> s = new HashSet<OsmPrimitive>();
-		for (Layer l : Main.map.mapView.getAllLayers()) {
-			if (l instanceof OsmDataLayer) {
-				for (OsmPrimitive osm : ((OsmDataLayer)l).data.allPrimitives()) {
-					if (s.contains(osm)) {
-		                JOptionPane.showMessageDialog(Main.parent, "cross references");
-		                return;
-					}
-					s.add(osm);
-				}
-			}
-		}
-		
-		if (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
-			OsmDataLayer l = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-			if (l.data != Main.ds) {
-				JOptionPane.showMessageDialog(Main.parent, "Main.ds / active layer mismatch");
-				return;
-			}
-		}
+        Set<OsmPrimitive> s = new HashSet<OsmPrimitive>();
+        for (Layer l : Main.map.mapView.getAllLayers()) {
+            if (l instanceof OsmDataLayer) {
+                for (OsmPrimitive osm : ((OsmDataLayer)l).data.allPrimitives()) {
+                    if (s.contains(osm)) {
+                        JOptionPane.showMessageDialog(Main.parent, "cross references");
+                        return;
+                    }
+                    s.add(osm);
+                }
+            }
+        }
 
-		JOptionPane.showMessageDialog(Main.parent, "working");
-	}
+        if (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
+            OsmDataLayer l = (OsmDataLayer)Main.map.mapView.getActiveLayer();
+            if (l.data != Main.ds) {
+                JOptionPane.showMessageDialog(Main.parent, "Main.ds / active layer mismatch");
+                return;
+            }
+        }
+
+        JOptionPane.showMessageDialog(Main.parent, "working");
+    }
 }

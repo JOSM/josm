@@ -19,62 +19,62 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 
 public class LanguagePreference implements PreferenceSetting {
-	/**
-	 * ComboBox with all available Translations
-	 */
-	private JComboBox langCombo;
-	private final Locale AUTO_LANGUAGE = null;
+    /**
+     * ComboBox with all available Translations
+     */
+    private JComboBox langCombo;
+    private final Locale AUTO_LANGUAGE = null;
 
-	public void addGui(PreferenceDialog gui) {
-		langCombo = new JComboBox(I18n.getAvailableTranslations());
-		langCombo.insertItemAt(AUTO_LANGUAGE, 0); // Default
-		langCombo.insertItemAt(Locale.ENGLISH, 1); // Built-in language
-		String ln = Main.pref.get("language");
-		langCombo.setSelectedIndex(0);
-		
-		if (ln != null) {
-			for (int i = 1; i < langCombo.getItemCount(); ++i) {
-				if (((Locale) langCombo.getItemAt(i)).toString().equals(ln)) {
-					langCombo.setSelectedIndex(i);
-					break;
-				}
-			}
-		}
+    public void addGui(PreferenceDialog gui) {
+        langCombo = new JComboBox(I18n.getAvailableTranslations());
+        langCombo.insertItemAt(AUTO_LANGUAGE, 0); // Default
+        langCombo.insertItemAt(Locale.ENGLISH, 1); // Built-in language
+        String ln = Main.pref.get("language");
+        langCombo.setSelectedIndex(0);
 
-		final ListCellRenderer oldRenderer = langCombo.getRenderer();
-		langCombo.setRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				Locale l = (Locale) value;
-				return oldRenderer.getListCellRendererComponent(list,
-						l == AUTO_LANGUAGE ? tr("Default (Auto determined)") : l.getDisplayName(),
-						index, isSelected, cellHasFocus);
-			}
-		});
-		langCombo.addActionListener(gui.requireRestartAction);
+        if (ln != null) {
+            for (int i = 1; i < langCombo.getItemCount(); ++i) {
+                if (((Locale) langCombo.getItemAt(i)).toString().equals(ln)) {
+                    langCombo.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
 
-		JPanel panel = null;
-		for(PreferenceSetting s : gui.settings)
-		{
-			if(s instanceof LafPreference)
-				panel = ((LafPreference)s).panel;
-		}
-		panel.add(new JLabel(tr("Language")), GBC.std().insets(20, 0, 0, 0));
-		panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-		panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
-		panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-	}
+        final ListCellRenderer oldRenderer = langCombo.getRenderer();
+        langCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+                Locale l = (Locale) value;
+                return oldRenderer.getListCellRendererComponent(list,
+                        l == AUTO_LANGUAGE ? tr("Default (Auto determined)") : l.getDisplayName(),
+                        index, isSelected, cellHasFocus);
+            }
+        });
+        langCombo.addActionListener(gui.requireRestartAction);
 
-	public void ok() {
-		if(langCombo.getSelectedItem() == null)
-		{
-			Main.pref.put("language", null);
-		}
-		else
-		{
-			String l = ((Locale)langCombo.getSelectedItem()).toString();
-			Main.pref.put("language", l);
-		}
-	}
+        JPanel panel = null;
+        for(PreferenceSetting s : gui.settings)
+        {
+            if(s instanceof LafPreference)
+                panel = ((LafPreference)s).panel;
+        }
+        panel.add(new JLabel(tr("Language")), GBC.std().insets(20, 0, 0, 0));
+        panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
+    }
+
+    public void ok() {
+        if(langCombo.getSelectedItem() == null)
+        {
+            Main.pref.put("language", null);
+        }
+        else
+        {
+            String l = ((Locale)langCombo.getSelectedItem()).toString();
+            Main.pref.put("language", l);
+        }
+    }
 }

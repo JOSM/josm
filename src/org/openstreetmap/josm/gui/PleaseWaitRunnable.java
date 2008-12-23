@@ -25,125 +25,125 @@ import org.xml.sax.SAXException;
  */
 public abstract class PleaseWaitRunnable implements Runnable {
 
-	public String errorMessage;
+    public String errorMessage;
 
-	private boolean closeDialogCalled = false;
-	private boolean cancelled = false;
+    private boolean closeDialogCalled = false;
+    private boolean cancelled = false;
 
-	private final String title;
+    private final String title;
 
-	/**
-	 * Create the runnable object with a given message for the user.
-	 */
-	public PleaseWaitRunnable(String title) {
-		this.title = title;
-		Main.pleaseWaitDlg.cancel.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if (!cancelled) {
-					cancelled = true;
-					cancel();
-				}
-			}
-		});
-		Main.pleaseWaitDlg.addWindowListener(new WindowAdapter(){
-			@Override public void windowClosing(WindowEvent e) {
-				if (!closeDialogCalled) {
-					if (!cancelled) {
-						cancelled = true;
-						cancel();
-					}
-					closeDialog();
-				}
-			}
-		});
-	}
+    /**
+     * Create the runnable object with a given message for the user.
+     */
+    public PleaseWaitRunnable(String title) {
+        this.title = title;
+        Main.pleaseWaitDlg.cancel.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                if (!cancelled) {
+                    cancelled = true;
+                    cancel();
+                }
+            }
+        });
+        Main.pleaseWaitDlg.addWindowListener(new WindowAdapter(){
+            @Override public void windowClosing(WindowEvent e) {
+                if (!closeDialogCalled) {
+                    if (!cancelled) {
+                        cancelled = true;
+                        cancel();
+                    }
+                    closeDialog();
+                }
+            }
+        });
+    }
 
-	public final void run() {
-		try {
-			if (cancelled)
-				return; // since realRun isn't executed, do not call to finish
+    public final void run() {
+        try {
+            if (cancelled)
+                return; // since realRun isn't executed, do not call to finish
 
-			// reset dialog state
-			Main.pleaseWaitDlg.setTitle(title);
-			errorMessage = null;
-			closeDialogCalled = false;
+            // reset dialog state
+            Main.pleaseWaitDlg.setTitle(title);
+            errorMessage = null;
+            closeDialogCalled = false;
 
-			// show the dialog
-			synchronized (this) {
-	            EventQueue.invokeLater(new Runnable() {
-	            	public void run() {
-	            		synchronized (PleaseWaitRunnable.this) {
-	            			PleaseWaitRunnable.this.notifyAll();
-	            		}
-	            		Main.pleaseWaitDlg.setVisible(true);
-	            	}
-	            });
-	            try {wait();} catch (InterruptedException e) {}
-			}
+            // show the dialog
+            synchronized (this) {
+                EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        synchronized (PleaseWaitRunnable.this) {
+                            PleaseWaitRunnable.this.notifyAll();
+                        }
+                        Main.pleaseWaitDlg.setVisible(true);
+                    }
+                });
+                try {wait();} catch (InterruptedException e) {}
+            }
 
-			realRun();
-		} catch (SAXException x) {
-			x.printStackTrace();
-			errorMessage = tr("Error while parsing")+": "+x.getMessage();
-		} catch (FileNotFoundException x) {
-			x.printStackTrace();
-			errorMessage = tr("File not found")+": "+x.getMessage();
-		} catch (IOException x) {
-			x.printStackTrace();
-			errorMessage = x.getMessage();
-		} finally {
-			closeDialog();
-		}
-	}
+            realRun();
+        } catch (SAXException x) {
+            x.printStackTrace();
+            errorMessage = tr("Error while parsing")+": "+x.getMessage();
+        } catch (FileNotFoundException x) {
+            x.printStackTrace();
+            errorMessage = tr("File not found")+": "+x.getMessage();
+        } catch (IOException x) {
+            x.printStackTrace();
+            errorMessage = x.getMessage();
+        } finally {
+            closeDialog();
+        }
+    }
 
-	/**
-	 * User pressed cancel button.
-	 */
-	protected abstract void cancel();
+    /**
+     * User pressed cancel button.
+     */
+    protected abstract void cancel();
 
-	/**
-	 * Called in the worker thread to do the actual work. When any of the
-	 * exception is thrown, a message box will be displayed and closeDialog
-	 * is called. finish() is called in any case.
-	 */
-	protected abstract void realRun() throws SAXException, IOException;
+    /**
+     * Called in the worker thread to do the actual work. When any of the
+     * exception is thrown, a message box will be displayed and closeDialog
+     * is called. finish() is called in any case.
+     */
+    protected abstract void realRun() throws SAXException, IOException;
 
-	/**
-	 * Finish up the data work. Is guaranteed to be called if realRun is called.
-	 * Finish is called in the gui thread just after the dialog disappeared.
-	 */
-	protected abstract void finish();
+    /**
+     * Finish up the data work. Is guaranteed to be called if realRun is called.
+     * Finish is called in the gui thread just after the dialog disappeared.
+     */
+    protected abstract void finish();
 
-	/**
-	 * Close the dialog. Usually called from worker thread.
-	 */
-	public void closeDialog() {
-		if (closeDialogCalled)
-			return;
-		closeDialogCalled  = true;
-		try {
-			Runnable runnable = new Runnable(){
-				public void run() {
-					try {
-						finish();
-					} finally {
-						Main.pleaseWaitDlg.setVisible(false);
-						Main.pleaseWaitDlg.dispose();
-					}
-					if (errorMessage != null)
-						JOptionPane.showMessageDialog(Main.parent, errorMessage);
-				}
-			};
+    /**
+     * Close the dialog. Usually called from worker thread.
+     */
+    public void closeDialog() {
+        if (closeDialogCalled)
+            return;
+        closeDialogCalled  = true;
+        try {
+            Runnable runnable = new Runnable(){
+                public void run() {
+                    try {
+                        finish();
+                    } finally {
+                        Main.pleaseWaitDlg.setVisible(false);
+                        Main.pleaseWaitDlg.dispose();
+                    }
+                    if (errorMessage != null)
+                        JOptionPane.showMessageDialog(Main.parent, errorMessage);
+                }
+            };
 
-			// make sure, this is called in the dispatcher thread ASAP
-			if (EventQueue.isDispatchThread())
-				runnable.run();
-			else
-				EventQueue.invokeAndWait(runnable);
+            // make sure, this is called in the dispatcher thread ASAP
+            if (EventQueue.isDispatchThread())
+                runnable.run();
+            else
+                EventQueue.invokeAndWait(runnable);
 
-		} catch (InterruptedException e) {
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (InterruptedException e) {
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

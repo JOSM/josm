@@ -3,6 +3,6 @@ package org.openstreetmap.josm.gui.layer;
 
 public interface DataChangeListener {
 
-	public void dataChanged(OsmDataLayer l);
-	
+    public void dataChanged(OsmDataLayer l);
+
 }

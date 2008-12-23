@@ -27,8 +27,8 @@ import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Align edges of a way so all angles are right angles. 
- * 
+ * Align edges of a way so all angles are right angles.
+ *
  * 1. Find orientation of all edges
  * 2. Compute main orientation, weighted by length of edge, normalized to angles between 0 and pi/2
  * 3. Rotate every edge around its center to align with main orientation or perpendicular to it
@@ -37,14 +37,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class OrthogonalizeAction extends JosmAction {
 
-	public OrthogonalizeAction() {
-        super(tr("Orthogonalize shape"), 
-            "ortho", 
+    public OrthogonalizeAction() {
+        super(tr("Orthogonalize shape"),
+            "ortho",
             tr("Move nodes so all angles are 90 or 270deg"),
-            Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize")), 
-            KeyEvent.VK_Q, 
+            Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize")),
+            KeyEvent.VK_Q,
             Shortcut.GROUP_EDIT), true);
-	}
+    }
 
     public void actionPerformed(ActionEvent e) {
 
@@ -59,7 +59,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 if(dirnodes.size() == 2) {
                     JOptionPane.showMessageDialog(Main.parent, tr("Only two nodes allowed"));
                     return;
-                } 
+                }
                 dirnodes.add((Node) osm);
                 continue;
             }
@@ -67,7 +67,7 @@ public final class OrthogonalizeAction extends JosmAction {
             if (!(osm instanceof Way)) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Selection must consist only of ways."));
                 return;
-            } 
+            }
 
             // Check if every way is made of at least four segments and closed
             Way way = (Way)osm;
@@ -77,7 +77,7 @@ public final class OrthogonalizeAction extends JosmAction {
             }
 
             // Check if every edge in the way is a definite edge of at least 45 degrees of direction change
-            // Otherwise, two segments could be turned into same direction and intersection would fail. 
+            // Otherwise, two segments could be turned into same direction and intersection would fail.
             // Or changes of shape would be too serious.
             for (int i1=0; i1 < way.nodes.size()-1; i1++) {
                 int i2 = (i1+1) % (way.nodes.size()-1);
@@ -115,15 +115,15 @@ public final class OrthogonalizeAction extends JosmAction {
         double align_to_heading = 0.0;
         boolean use_dirnodes = false;
 
-        if (dirnodes.size() == 2) { 
-            // When selection contains two nodes, use the nodes to compute a direction 
+        if (dirnodes.size() == 2) {
+            // When selection contains two nodes, use the nodes to compute a direction
             // to align all ways to
             align_to_heading = normalize_angle(dirnodes.get(0).eastNorth.heading(dirnodes.get(1).eastNorth));
             use_dirnodes = true;
         }
 
         for (OsmPrimitive osm : sel) {
-            if(!(osm instanceof Way)) 
+            if(!(osm instanceof Way))
                 continue;
 
             Way way = (Way)osm;
@@ -163,9 +163,9 @@ public final class OrthogonalizeAction extends JosmAction {
                 }
 
                 if (angle_diff_max > Math.PI/3) {
-                    // rearrange headings: everything < 0 gets PI/2-rotated 
+                    // rearrange headings: everything < 0 gets PI/2-rotated
                     for (int i=0; i < sides; i++) {
-                        if (headings[i] < 0) 
+                        if (headings[i] < 0)
                             headings[i] += Math.PI/2;
                     }
                 }
@@ -182,13 +182,13 @@ public final class OrthogonalizeAction extends JosmAction {
                     sum_weighted_headings += headings[i] * weights[i];
                     sum_weights += weights[i];
                 }
-                align_to_heading = normalize_angle(sum_weighted_headings/sum_weights); 
+                align_to_heading = normalize_angle(sum_weighted_headings/sum_weights);
             }
 
 
             for (int i=0; i < sides; i++) {
-                // Compute handy indices of three nodes to be used in one loop iteration. 
-                // We use segments (i1,i2) and (i2,i3), align them and compute the new 
+                // Compute handy indices of three nodes to be used in one loop iteration.
+                // We use segments (i1,i2) and (i2,i3), align them and compute the new
                 // position of the i2-node as the intersection of the realigned (i1,i2), (i2,i3) segments
                 // Not the most efficient algorithm, but we don't handle millions of nodes...
                 int i1 = i;
@@ -211,11 +211,11 @@ public final class OrthogonalizeAction extends JosmAction {
                 EastNorth D=en[i3].rotate(pivot2, delta2);
 
                 // compute intersection of segments
-                double u=det(B.east() - A.east(), B.north() - A.north(), 
+                double u=det(B.east() - A.east(), B.north() - A.north(),
                         C.east() - D.east(), C.north() - D.north());
 
                 // Check for parallel segments and do nothing if they are
-                // In practice this will probably only happen when a way has 
+                // In practice this will probably only happen when a way has
                 // been duplicated
 
                 if (u == 0) continue;
@@ -224,7 +224,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 // It is the point in the segment where the intersection occurs
                 // if the segment is scaled to length 1
 
-                double q = det(B.north() - C.north(), B.east() - C.east(), 
+                double q = det(B.north() - C.north(), B.east() - C.east(),
                         D.north() - C.north(), D.east() - C.east()) / u;
                 EastNorth intersection = new EastNorth(
                         B.east() + q * (A.east() - B.east()),
@@ -238,7 +238,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     double dy = intersection.north()-n.eastNorth.north();
                     cmds.add(new MoveCommand(n, dx, dy));
                 }
-            }  
+            }
         }
 
         if (cmds.size() > 0) {

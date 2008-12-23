@@ -20,105 +20,105 @@ import org.openstreetmap.josm.tools.Pair;
  */
 public final class Way extends OsmPrimitive {
 
-	/**
-	 * All way nodes in this way
-	 */
-	public final List<Node> nodes = new ArrayList<Node>();
+    /**
+     * All way nodes in this way
+     */
+    public final List<Node> nodes = new ArrayList<Node>();
 
-	public void visitNodes(Visitor v) {
-		for (Node n : this.nodes)
-			v.visit(n);
-	}
+    public void visitNodes(Visitor v) {
+        for (Node n : this.nodes)
+            v.visit(n);
+    }
 
-	public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
-		ArrayList<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
-		Node lastN = null;
-		for (Node n : this.nodes) {
+    public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
+        ArrayList<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
+        Node lastN = null;
+        for (Node n : this.nodes) {
             if (lastN == null) {
-        	    lastN = n;
-           		continue;
-	   	    }
-			Pair<Node,Node> np = new Pair<Node,Node>(lastN, n);
-           	if (sort) {
-           		Pair.sort(np);
-           	}
-           	chunkSet.add(np);
-	        lastN = n;
-		}
-		return chunkSet;
-	}
+                lastN = n;
+                continue;
+            }
+            Pair<Node,Node> np = new Pair<Node,Node>(lastN, n);
+            if (sort) {
+                Pair.sort(np);
+            }
+            chunkSet.add(np);
+            lastN = n;
+        }
+        return chunkSet;
+    }
 
 
-	@Override public void visit(Visitor visitor) {
-		visitor.visit(this);
-	}
+    @Override public void visit(Visitor visitor) {
+        visitor.visit(this);
+    }
 
-	/**
-	 * Create an identical clone of the argument (including the id)
-	 */
-	public Way(Way clone) {
-            cloneFrom(clone);            
-	}
-	
-	/**
-	 * Create an empty way without id. Use this only if you set meaningful 
-	 * values yourself.
-	 */
-	public Way() {
-	}
-	
-	/**
-	 * Create an incomplete Way.
-	 */
-	public Way(long id) {
-		this.id = id;
-		incomplete = true;
-	}
-	
-	@Override public void cloneFrom(OsmPrimitive osm) {
-		super.cloneFrom(osm);
-		nodes.clear();
-		nodes.addAll(((Way)osm).nodes);
+    /**
+     * Create an identical clone of the argument (including the id)
+     */
+    public Way(Way clone) {
+            cloneFrom(clone);
+    }
+
+    /**
+     * Create an empty way without id. Use this only if you set meaningful
+     * values yourself.
+     */
+    public Way() {
+    }
+
+    /**
+     * Create an incomplete Way.
+     */
+    public Way(long id) {
+        this.id = id;
+        incomplete = true;
+    }
+
+    @Override public void cloneFrom(OsmPrimitive osm) {
+        super.cloneFrom(osm);
+        nodes.clear();
+        nodes.addAll(((Way)osm).nodes);
                 checkDirectionTagged();
-	}
+    }
 
     @Override public String toString() {
         return "{Way id="+id+" version="+version+" nodes="+Arrays.toString(nodes.toArray())+"}";
     }
 
-	@Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-		return osm instanceof Way ? super.realEqual(osm, semanticOnly) && nodes.equals(((Way)osm).nodes) : false;
+    @Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
+        return osm instanceof Way ? super.realEqual(osm, semanticOnly) && nodes.equals(((Way)osm).nodes) : false;
     }
 
-	public int compareTo(OsmPrimitive o) {
-		if(o instanceof Relation)
-			return 1;
-		return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
-	}
+    public int compareTo(OsmPrimitive o) {
+        if(o instanceof Relation)
+            return 1;
+        return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
+    }
 
-	public String getName() {
-		String name;
-		if (incomplete) {
-			name = tr("incomplete");
-		} else {
-			name = get("name");
-			if (name == null) name = get("ref");
-			if (name == null) {
-				name = 
-					(get("highway") != null) ? tr("highway") :
-					(get("railway") != null) ? tr("railway") :
-					(get("waterway") != null) ? tr("waterway") :
-					(get("landuse") != null) ? tr("landuse") : "";
-			}
+    public String getName() {
+        String name;
+        if (incomplete) {
+            name = tr("incomplete");
+        } else {
+            name = get("name");
+            if (name == null) name = get("ref");
+            if (name == null) {
+                name =
+                    (get("highway") != null) ? tr("highway") :
+                    (get("railway") != null) ? tr("railway") :
+                    (get("waterway") != null) ? tr("waterway") :
+                    (get("landuse") != null) ? tr("landuse") : "";
+            }
 
-			int nodesNo = new HashSet<Node>(nodes).size();
-			name += trn(" ({0} node)", " ({0} nodes)", nodesNo, nodesNo);
-		}
-		return name;
-	}
+            int nodesNo = new HashSet<Node>(nodes).size();
+            name += trn(" ({0} node)", " ({0} nodes)", nodesNo, nodesNo);
+        }
+        return name;
+    }
 
-	@Deprecated
-	public boolean isIncomplete() {
-		return incomplete;
-	}
+    @Deprecated
+    public boolean isIncomplete() {
+        return incomplete;
+    }
 }

@@ -20,41 +20,41 @@ import org.openstreetmap.josm.data.Preferences;
  */
 public class BookmarkList extends JList {
 
-	/**
-	 * Create a bookmark list as well as the Buttons add and remove.
-	 */
-	public BookmarkList() {
-		setModel(new DefaultListModel());
-		load();
-		setVisibleRowCount(7);
-	}
+    /**
+     * Create a bookmark list as well as the Buttons add and remove.
+     */
+    public BookmarkList() {
+        setModel(new DefaultListModel());
+        load();
+        setVisibleRowCount(7);
+    }
 
-	/**
-	 * Loads the bookmarks from file.
-	 */
-	public void load() {
-		DefaultListModel model = (DefaultListModel)getModel();
-		model.removeAllElements();
-		try {
-			for (Preferences.Bookmark b : Main.pref.loadBookmarks())
-				model.addElement(b);
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Main.parent, tr("Could not read bookmarks.")+"\n"+e.getMessage());
-		}
-	}
+    /**
+     * Loads the bookmarks from file.
+     */
+    public void load() {
+        DefaultListModel model = (DefaultListModel)getModel();
+        model.removeAllElements();
+        try {
+            for (Preferences.Bookmark b : Main.pref.loadBookmarks())
+                model.addElement(b);
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(Main.parent, tr("Could not read bookmarks.")+"\n"+e.getMessage());
+        }
+    }
 
-	/**
-	 * Save all bookmarks to the preferences file
-	 */
-	public void save() {
-		try {
-			Collection<Preferences.Bookmark> bookmarks = new LinkedList<Preferences.Bookmark>();
-			for (Object o : ((DefaultListModel)getModel()).toArray())
-				bookmarks.add((Preferences.Bookmark)o);
-			Main.pref.saveBookmarks(bookmarks);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(Main.parent,tr("Could not write bookmark.")+"\n"+e.getMessage());
-		}
-	}
+    /**
+     * Save all bookmarks to the preferences file
+     */
+    public void save() {
+        try {
+            Collection<Preferences.Bookmark> bookmarks = new LinkedList<Preferences.Bookmark>();
+            for (Object o : ((DefaultListModel)getModel()).toArray())
+                bookmarks.add((Preferences.Bookmark)o);
+            Main.pref.saveBookmarks(bookmarks);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(Main.parent,tr("Could not write bookmark.")+"\n"+e.getMessage());
+        }
+    }
 }

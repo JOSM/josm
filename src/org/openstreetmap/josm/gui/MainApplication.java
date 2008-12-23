@@ -36,198 +36,198 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class MainApplication extends Main {
-	/**
-	 * Allow subclassing (see JOSM.java)
-	 */
-	public MainApplication() {}
+    /**
+     * Allow subclassing (see JOSM.java)
+     */
+    public MainApplication() {}
 
-	/**
-	 * Construct an main frame, ready sized and operating. Does not
-	 * display the frame.
-	 */
-	public MainApplication(JFrame mainFrame) {
-		super();
-		mainFrame.setContentPane(contentPane);
-		mainFrame.setJMenuBar(menu);
-		mainFrame.setBounds(bounds);
-		mainFrame.setIconImage(ImageProvider.get("logo.png").getImage());
-		mainFrame.addWindowListener(new WindowAdapter(){
-			@Override public void windowClosing(final WindowEvent arg0) {
-				if (Main.breakBecauseUnsavedChanges())
-					return;
-				System.exit(0);
-			}
-		});
-		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-	}
+    /**
+     * Construct an main frame, ready sized and operating. Does not
+     * display the frame.
+     */
+    public MainApplication(JFrame mainFrame) {
+        super();
+        mainFrame.setContentPane(contentPane);
+        mainFrame.setJMenuBar(menu);
+        mainFrame.setBounds(bounds);
+        mainFrame.setIconImage(ImageProvider.get("logo.png").getImage());
+        mainFrame.addWindowListener(new WindowAdapter(){
+            @Override public void windowClosing(final WindowEvent arg0) {
+                if (Main.breakBecauseUnsavedChanges())
+                    return;
+                System.exit(0);
+            }
+        });
+        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
 
-	/**
-	 * Main application Startup
-	 */
-	public static void main(final String[] argArray) {
-		/////////////////////////////////////////////////////////////////////////
-		//                        TO ALL TRANSLATORS
-		/////////////////////////////////////////////////////////////////////////
-		// Do not translate the early strings below until the locale is set up.
-		// (By the eager loaded plugins)
-		//
-		// These strings cannot be translated. That's life. Really. Sorry.
-		//
-		//                                                                 Imi.
-		/////////////////////////////////////////////////////////////////////////
+    /**
+     * Main application Startup
+     */
+    public static void main(final String[] argArray) {
+        /////////////////////////////////////////////////////////////////////////
+        //                        TO ALL TRANSLATORS
+        /////////////////////////////////////////////////////////////////////////
+        // Do not translate the early strings below until the locale is set up.
+        // (By the eager loaded plugins)
+        //
+        // These strings cannot be translated. That's life. Really. Sorry.
+        //
+        //                                                                 Imi.
+        /////////////////////////////////////////////////////////////////////////
 
-		Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
 
-		// initialize the plaform hook, and
-		Main.determinePlatformHook();
-		// call the really early hook before we anything else
-		Main.platform.preStartupHook();
+        // initialize the plaform hook, and
+        Main.determinePlatformHook();
+        // call the really early hook before we anything else
+        Main.platform.preStartupHook();
 
-		// construct argument table
-		List<String> argList = Arrays.asList(argArray);
-		final Map<String, Collection<String>> args = new HashMap<String, Collection<String>>();
-		for (String arg : argArray) {
-			if (!arg.startsWith("--"))
-				arg = "--download="+arg;
-			int i = arg.indexOf('=');
-			String key = i == -1 ? arg.substring(2) : arg.substring(2,i);
-			String value = i == -1 ? "" : arg.substring(i+1);
-			Collection<String> v = args.get(key);
-			if (v == null)
-				v = new LinkedList<String>();
-			v.add(value);
-			args.put(key, v);
-		}
+        // construct argument table
+        List<String> argList = Arrays.asList(argArray);
+        final Map<String, Collection<String>> args = new HashMap<String, Collection<String>>();
+        for (String arg : argArray) {
+            if (!arg.startsWith("--"))
+                arg = "--download="+arg;
+            int i = arg.indexOf('=');
+            String key = i == -1 ? arg.substring(2) : arg.substring(2,i);
+            String value = i == -1 ? "" : arg.substring(i+1);
+            Collection<String> v = args.get(key);
+            if (v == null)
+                v = new LinkedList<String>();
+            v.add(value);
+            args.put(key, v);
+        }
 
-		if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
-			// TODO: put in a platformHook for system that have no console by default
-			System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
-					tr("usage")+":\n"+
-					"\tjava -jar josm.jar <option> <option> <option>...\n\n"+
-					tr("options")+":\n"+
-					"\t--help|-?|-h                              "+tr("Show this help")+"\n"+
-					"\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
-					"\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
-					"\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
-					"\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
-					"\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
-					"\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
-					"\t--no-fullscreen                           "+tr("Don't launch in fullscreen mode")+"\n"+
-					"\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
-					"\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
-					tr("examples")+":\n"+
-					"\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
-					"\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
-					"\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
-					"\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n\n"+
+        if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
+            // TODO: put in a platformHook for system that have no console by default
+            System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
+                    tr("usage")+":\n"+
+                    "\tjava -jar josm.jar <option> <option> <option>...\n\n"+
+                    tr("options")+":\n"+
+                    "\t--help|-?|-h                              "+tr("Show this help")+"\n"+
+                    "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
+                    "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
+                    "\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
+                    "\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
+                    "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
+                    "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
+                    "\t--no-fullscreen                           "+tr("Don't launch in fullscreen mode")+"\n"+
+                    "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
+                    "\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
+                    tr("examples")+":\n"+
+                    "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
+                    "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
+                    "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
+                    "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n\n"+
 
-					tr("Parameters are read in the order they are specified, so make sure you load\n"+
-					"some data before --selection")+"\n\n"+
-					tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
-			System.exit(0);
-		}
+                    tr("Parameters are read in the order they are specified, so make sure you load\n"+
+                    "some data before --selection")+"\n\n"+
+                    tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
+            System.exit(0);
+        }
 
-		// get the preferences.
-		final File prefDir = new File(Main.pref.getPreferencesDir());
-		// check if preferences directory has moved (TODO: Update code. Remove this after some time)
-		File oldPrefDir = new File(System.getProperty("user.home"), ".josm");
-		if (!prefDir.isDirectory() && oldPrefDir.isDirectory()) {
-			if (oldPrefDir.renameTo(prefDir)) {
-				// do not translate this
-				JOptionPane.showMessageDialog(null, "The preference directory has been moved to "+prefDir);
-			} else {
-				JOptionPane.showMessageDialog(null, "The preference directory location has changed. Please move "+oldPrefDir+" to "+prefDir);
-			}
-		}
+        // get the preferences.
+        final File prefDir = new File(Main.pref.getPreferencesDir());
+        // check if preferences directory has moved (TODO: Update code. Remove this after some time)
+        File oldPrefDir = new File(System.getProperty("user.home"), ".josm");
+        if (!prefDir.isDirectory() && oldPrefDir.isDirectory()) {
+            if (oldPrefDir.renameTo(prefDir)) {
+                // do not translate this
+                JOptionPane.showMessageDialog(null, "The preference directory has been moved to "+prefDir);
+            } else {
+                JOptionPane.showMessageDialog(null, "The preference directory location has changed. Please move "+oldPrefDir+" to "+prefDir);
+            }
+        }
 
-		if (prefDir.exists() && !prefDir.isDirectory()) {
-			JOptionPane.showMessageDialog(null, "Cannot open preferences directory: "+Main.pref.getPreferencesDir());
-			return;
-		}
-		if (!prefDir.exists())
-			prefDir.mkdirs();
+        if (prefDir.exists() && !prefDir.isDirectory()) {
+            JOptionPane.showMessageDialog(null, "Cannot open preferences directory: "+Main.pref.getPreferencesDir());
+            return;
+        }
+        if (!prefDir.exists())
+            prefDir.mkdirs();
 
-		if (!new File(Main.pref.getPreferencesDir()+"preferences").exists()) {
-			Main.pref.resetToDefault();
-		}
+        if (!new File(Main.pref.getPreferencesDir()+"preferences").exists()) {
+            Main.pref.resetToDefault();
+        }
 
-		try {
-			if (args.containsKey("reset-preferences")) {
-				Main.pref.resetToDefault();
-			} else {
-				Main.pref.load();
-			}
-		} catch (final IOException e1) {
-			e1.printStackTrace();
-			String backup = Main.pref.getPreferencesDir() + "preferences.bak";
-			JOptionPane.showMessageDialog(null, "Preferences file had errors.  Making backup of old one to " + backup);
-			new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
-			Main.pref.save();
-		}
+        try {
+            if (args.containsKey("reset-preferences")) {
+                Main.pref.resetToDefault();
+            } else {
+                Main.pref.load();
+            }
+        } catch (final IOException e1) {
+            e1.printStackTrace();
+            String backup = Main.pref.getPreferencesDir() + "preferences.bak";
+            JOptionPane.showMessageDialog(null, "Preferences file had errors.  Making backup of old one to " + backup);
+            new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
+            Main.pref.save();
+        }
 
         // TODO remove this in early 2009 - just here to weed out color setting we don't use any more
         Main.pref.put("downloaded Area", null);
 
-		String localeName = null; //The locale to use
-        
-		//Check if passed as parameter
-		if(args.containsKey("language")) 
-		    localeName = (String)(args.get("language").toArray()[0]);
-		
-		if (localeName == null) {
-			localeName = Main.pref.get("language", null);
-		}
+        String localeName = null; //The locale to use
 
-		if (localeName != null) {
-			Locale l;
-			int i = localeName.indexOf('_');
-			if (i > 0) {
-				l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
-			} else {
-				l = new Locale(localeName);
-			}
-			Locale.setDefault(l);
-		}
+        //Check if passed as parameter
+        if(args.containsKey("language"))
+            localeName = (String)(args.get("language").toArray()[0]);
+
+        if (localeName == null) {
+            localeName = Main.pref.get("language", null);
+        }
+
+        if (localeName != null) {
+            Locale l;
+            int i = localeName.indexOf('_');
+            if (i > 0) {
+                l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
+            } else {
+                l = new Locale(localeName);
+            }
+            Locale.setDefault(l);
+        }
         try {
             i18n = I18nFactory.getI18n(MainApplication.class);
         } catch (MissingResourceException ex) {
             System.out.println("Unable to find translation for the locale: " + Locale.getDefault().getDisplayName() + " reverting to English.");
         }
-		
-		SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
 
-		splash.setStatus(tr("Activating updated plugins"));
-		if (!PluginDownloader.moveUpdatedPlugins()) {
-			JOptionPane.showMessageDialog(null,
-			        tr("Activating the updated plugins failed. Check if JOSM has the permission to overwrite the existing ones."),
-			        tr("Plugins"), JOptionPane.ERROR_MESSAGE);
-		}
+        SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
 
-		// load the early plugins
-		splash.setStatus(tr("Loading early plugins"));
-		Main.loadPlugins(true);
+        splash.setStatus(tr("Activating updated plugins"));
+        if (!PluginDownloader.moveUpdatedPlugins()) {
+            JOptionPane.showMessageDialog(null,
+                    tr("Activating the updated plugins failed. Check if JOSM has the permission to overwrite the existing ones."),
+                    tr("Plugins"), JOptionPane.ERROR_MESSAGE);
+        }
 
-		splash.setStatus(tr("Setting defaults"));
-		preConstructorInit(args);
-		splash.setStatus(tr("Creating main GUI"));
-		JFrame mainFrame = new JFrame(tr("Java OpenStreetMap - Editor"));
-		Main.parent = mainFrame;
-		final Main main = new MainApplication(mainFrame);
-		splash.setStatus(tr("Loading plugins"));
-		Main.loadPlugins(false);
-		toolbar.refreshToolbarControl();
+        // load the early plugins
+        splash.setStatus(tr("Loading early plugins"));
+        Main.loadPlugins(true);
 
-		mainFrame.setVisible(true);
-		splash.closeSplash();
+        splash.setStatus(tr("Setting defaults"));
+        preConstructorInit(args);
+        splash.setStatus(tr("Creating main GUI"));
+        JFrame mainFrame = new JFrame(tr("Java OpenStreetMap - Editor"));
+        Main.parent = mainFrame;
+        final Main main = new MainApplication(mainFrame);
+        splash.setStatus(tr("Loading plugins"));
+        Main.loadPlugins(false);
+        toolbar.refreshToolbarControl();
 
-		if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
-			mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        mainFrame.setVisible(true);
+        splash.closeSplash();
 
-		EventQueue.invokeLater(new Runnable(){
-			public void run() {
-				main.postConstructorProcessCmdLine(args);
-			}
-		});
-	}
+        if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
+            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        EventQueue.invokeLater(new Runnable(){
+            public void run() {
+                main.postConstructorProcessCmdLine(args);
+            }
+        });
+    }
 
 }

@@ -7,10 +7,10 @@ import org.openstreetmap.josm.gui.MapView;
 
 public interface MapViewPaintable {
 
-	/**
-	 * Paint the dataset using the engine set.
-	 * @param mv The object that can translate GeoPoints to screen coordinates.
-	 */
-	abstract public void paint(Graphics g, MapView mv);
+    /**
+     * Paint the dataset using the engine set.
+     * @param mv The object that can translate GeoPoints to screen coordinates.
+     */
+    abstract public void paint(Graphics g, MapView mv);
 
 }

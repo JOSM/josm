@@ -138,8 +138,8 @@ public class Shortcut {
      * Use this to register the shortcut with Swing
      */
     public KeyStroke getKeyStroke() {
-        if (assignedModifier != -1) 
-            return KeyStroke.getKeyStroke(assignedKey, assignedModifier);		
+        if (assignedModifier != -1)
+            return KeyStroke.getKeyStroke(assignedKey, assignedModifier);
         return null;
     }
 
@@ -350,7 +350,7 @@ public class Shortcut {
             // this always is a logic error in the hook
             System.err.println("CONFLICT WITH SYSTEM KEY "+shortText);
             return null;
-        } 
+        }
         potentialShortcut = new Shortcut(shortText, longText, key, GROUP_RESERVED, key, modifier, true, false);
         shortcuts.put(shortText, potentialShortcut);
         return potentialShortcut;
@@ -440,7 +440,7 @@ public class Shortcut {
 
     // a lengthy warning message
     private static void displayWarning(Shortcut conflictsWith, Shortcut potentialShortcut, String shortText, String longText) {
-        JOptionPane.showMessageDialog(Main.parent, 
+        JOptionPane.showMessageDialog(Main.parent,
                 tr("Setting the keyboard shortcut ''{0}'' for the action ''{1}'' ({2}) failed\n"+
                         "because the shortcut is already taken by the action ''{3}'' ({4}).\n\n",
                         conflictsWith.getKeyText(), longText, shortText,

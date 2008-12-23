@@ -12,18 +12,18 @@ import org.openstreetmap.josm.gui.dialogs.PropertiesDialog;
  * @author imi
  */
 public final class ForwardActionListener implements ActionListener {
-	public final TaggingPreset preset;
+    public final TaggingPreset preset;
 
-	private final PropertiesDialog propertiesDialog;
+    private final PropertiesDialog propertiesDialog;
 
-	public ForwardActionListener(PropertiesDialog propertiesDialog, TaggingPreset preset) {
-		this.propertiesDialog = propertiesDialog;
-		this.preset = preset;
-	}
+    public ForwardActionListener(PropertiesDialog propertiesDialog, TaggingPreset preset) {
+        this.propertiesDialog = propertiesDialog;
+        this.preset = preset;
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		this.propertiesDialog.taggingPresets.setSelectedIndex(0);
-		e.setSource(this);
-		preset.actionPerformed(e);
-	}
+    public void actionPerformed(ActionEvent e) {
+        this.propertiesDialog.taggingPresets.setSelectedIndex(0);
+        e.setSource(this);
+        preset.actionPerformed(e);
+    }
 }

@@ -11,12 +11,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class SelectAllAction extends JosmAction {
 
-	public SelectAllAction() {
-		super(tr("Select All"),"selectall", tr("Select all undeleted objects in the data layer. This selects incomplete objects too."),
-		Shortcut.registerShortcut("system:selectall", tr("Edit: {0}", tr("Select All")), KeyEvent.VK_A, Shortcut.GROUP_MENU), true);
-	}
+    public SelectAllAction() {
+        super(tr("Select All"),"selectall", tr("Select all undeleted objects in the data layer. This selects incomplete objects too."),
+        Shortcut.registerShortcut("system:selectall", tr("Edit: {0}", tr("Select All")), KeyEvent.VK_A, Shortcut.GROUP_MENU), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		Main.ds.setSelected(Main.ds.allNonDeletedPhysicalPrimitives());
-	}
+    public void actionPerformed(ActionEvent e) {
+        Main.ds.setSelected(Main.ds.allNonDeletedPhysicalPrimitives());
+    }
 }

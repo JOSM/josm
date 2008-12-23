@@ -67,9 +67,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide all menu
  * entries as member variables (sort of collect them).
- * 
+ *
  * It also provides possibilities to attach new menu entries (used by plugins).
- * 
+ *
  * @author Immanuel.Scholz
  */
 public class MainMenu extends JMenuBar {
@@ -139,7 +139,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Add a JosmAction to a menu.
-     * 
+     *
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      */
@@ -155,7 +155,7 @@ public class MainMenu extends JMenuBar {
 
     /**
      * Add a menu to the main menu.
-     * 
+     *
      * This method handles all the shortcut handling.
      */
     public void add(JMenu menu, int mnemonicKey, String shortName) {

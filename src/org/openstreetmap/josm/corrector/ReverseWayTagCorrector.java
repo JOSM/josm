@@ -21,16 +21,16 @@ import org.openstreetmap.josm.data.osm.Way;
 
 public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
-	private static class PrefixSuffixSwitcher {
+    private static class PrefixSuffixSwitcher {
 
-		private final String a;
-		private final String b;
-		private final Pattern startPattern;
-		private final Pattern endPattern;
+        private final String a;
+        private final String b;
+        private final Pattern startPattern;
+        private final Pattern endPattern;
 
-		private final String SEPARATOR = "[:_]?";
-		
-		public PrefixSuffixSwitcher(String a, String b) {
+        private final String SEPARATOR = "[:_]?";
+
+        public PrefixSuffixSwitcher(String a, String b) {
             this.a = a;
             this.b = b;
             startPattern = Pattern.compile(
@@ -39,102 +39,102 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             endPattern = Pattern.compile(
                     SEPARATOR + "(" + a + "|" + b + ")$",
                     Pattern.CASE_INSENSITIVE);
-		}
+        }
 
-		public String apply(String text) {
-			Matcher m = startPattern.matcher(text);
-			if (!m.lookingAt())
-				m = endPattern.matcher(text);
+        public String apply(String text) {
+            Matcher m = startPattern.matcher(text);
+            if (!m.lookingAt())
+                m = endPattern.matcher(text);
 
-			if (m.lookingAt()) {
-				String leftRight = m.group(1).toLowerCase();
+            if (m.lookingAt()) {
+                String leftRight = m.group(1).toLowerCase();
 
-				StringBuilder result = new StringBuilder();
-				result.append(text.substring(0, m.start(1)));
-				result.append(leftRight.equals(a) ? b : a);
-				result.append(text.substring(m.end(1)));
-				
-				return result.toString();
-			}
-			return text;
-		}
-	}
+                StringBuilder result = new StringBuilder();
+                result.append(text.substring(0, m.start(1)));
+                result.append(leftRight.equals(a) ? b : a);
+                result.append(text.substring(m.end(1)));
 
-	private static PrefixSuffixSwitcher[] prefixSuffixSwitchers = 
-	        new PrefixSuffixSwitcher[] {
-	            new PrefixSuffixSwitcher("left", "right"),
-	            new PrefixSuffixSwitcher("forward", "backward") 
-	        };
+                return result.toString();
+            }
+            return text;
+        }
+    }
 
-	@Override
-	public Collection<Command> execute(Way way) throws UserCancelException {
-		Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap = 
-		        new HashMap<OsmPrimitive, List<TagCorrection>>();
+    private static PrefixSuffixSwitcher[] prefixSuffixSwitchers =
+            new PrefixSuffixSwitcher[] {
+                new PrefixSuffixSwitcher("left", "right"),
+                new PrefixSuffixSwitcher("forward", "backward")
+            };
 
-		ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
-		primitives.add(way);
-		primitives.addAll(way.nodes);
+    @Override
+    public Collection<Command> execute(Way way) throws UserCancelException {
+        Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
+                new HashMap<OsmPrimitive, List<TagCorrection>>();
 
-		for (OsmPrimitive primitive : primitives) {
-			tagCorrectionsMap.put(primitive, new ArrayList<TagCorrection>());
+        ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
+        primitives.add(way);
+        primitives.addAll(way.nodes);
 
-			for (String key : primitive.keySet()) {
-				String newKey = key;
-				String value = primitive.get(key);
-				String newValue = value;
+        for (OsmPrimitive primitive : primitives) {
+            tagCorrectionsMap.put(primitive, new ArrayList<TagCorrection>());
 
-				if (key.equals("oneway")) {
-					if (value.equals("-1"))
-						newValue = OsmUtils.trueval;
-					else {
-						Boolean boolValue = OsmUtils.getOsmBoolean(value);
-						if (boolValue != null && boolValue.booleanValue()) {
-							newValue = "-1";
-						}
-					}
-				} else {
-					for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
-						newKey = prefixSuffixSwitcher.apply(key);
-						if (!key.equals(newKey))
-							break;
-					}
-				}
+            for (String key : primitive.keySet()) {
+                String newKey = key;
+                String value = primitive.get(key);
+                String newValue = value;
 
-				if (!key.equals(newKey) || !value.equals(newValue))
-					tagCorrectionsMap.get(primitive).add(
-					        new TagCorrection(key, value, newKey, newValue));
-			}
-		}
+                if (key.equals("oneway")) {
+                    if (value.equals("-1"))
+                        newValue = OsmUtils.trueval;
+                    else {
+                        Boolean boolValue = OsmUtils.getOsmBoolean(value);
+                        if (boolValue != null && boolValue.booleanValue()) {
+                            newValue = "-1";
+                        }
+                    }
+                } else {
+                    for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
+                        newKey = prefixSuffixSwitcher.apply(key);
+                        if (!key.equals(newKey))
+                            break;
+                    }
+                }
 
-		Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap = 
-		        new HashMap<OsmPrimitive, List<RoleCorrection>>();
-		roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
+                if (!key.equals(newKey) || !value.equals(newValue))
+                    tagCorrectionsMap.get(primitive).add(
+                            new TagCorrection(key, value, newKey, newValue));
+            }
+        }
 
-		for (Relation relation : Main.ds.relations) {
-			for (RelationMember member : relation.members) {
-				if (!member.member.realEqual(way, true)
-				        || member.role.length() == 0)
-					continue;
+        Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap =
+                new HashMap<OsmPrimitive, List<RoleCorrection>>();
+        roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
 
-				boolean found = false;
-				String newRole = null;
-				for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
-					newRole = prefixSuffixSwitcher.apply(member.role);
-					if (!newRole.equals(member.role)) {
-						found = true;
-						break;
-					}
-				}
+        for (Relation relation : Main.ds.relations) {
+            for (RelationMember member : relation.members) {
+                if (!member.member.realEqual(way, true)
+                        || member.role.length() == 0)
+                    continue;
 
-				if (found)
-					roleCorrectionMap.get(way).add(
-					        new RoleCorrection(relation, member, newRole));
-			}
-		}
+                boolean found = false;
+                String newRole = null;
+                for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
+                    newRole = prefixSuffixSwitcher.apply(member.role);
+                    if (!newRole.equals(member.role)) {
+                        found = true;
+                        break;
+                    }
+                }
 
-		return applyCorrections(tagCorrectionsMap, roleCorrectionMap,
-		        tr("When reverting this way, following changes to properties "
-		                + "of the way and its nodes are suggested in order "
-		                + "to maintain data consistency."));
-	}
+                if (found)
+                    roleCorrectionMap.get(way).add(
+                            new RoleCorrection(relation, member, newRole));
+            }
+        }
+
+        return applyCorrections(tagCorrectionsMap, roleCorrectionMap,
+                tr("When reverting this way, following changes to properties "
+                        + "of the way and its nodes are suggested in order "
+                        + "to maintain data consistency."));
+    }
 }

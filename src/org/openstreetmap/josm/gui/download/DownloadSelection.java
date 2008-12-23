@@ -3,15 +3,15 @@ package org.openstreetmap.josm.gui.download;
 
 
 public interface DownloadSelection {
-	/**
-	 * Add the GUI elements to the dialog. 
-	 */
-	void addGui(DownloadDialog gui);
+    /**
+     * Add the GUI elements to the dialog.
+     */
+    void addGui(DownloadDialog gui);
 
-	/** 
-	 * Update or clear display when a selection is made through another
-	 * DownloadSelection object
-	 */
-	void boundingBoxChanged(DownloadDialog gui);
-	
+    /**
+     * Update or clear display when a selection is made through another
+     * DownloadSelection object
+     */
+    void boundingBoxChanged(DownloadDialog gui);
+
 }

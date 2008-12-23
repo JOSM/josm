@@ -20,68 +20,68 @@ import org.xml.sax.SAXException;
 
 public class DownloadGpsTask implements DownloadTask {
 
-	private static class Task extends PleaseWaitRunnable {
-		private BoundingBoxDownloader reader;
-		private GpxData rawData;
-		private final boolean newLayer;
+    private static class Task extends PleaseWaitRunnable {
+        private BoundingBoxDownloader reader;
+        private GpxData rawData;
+        private final boolean newLayer;
 
-		public Task(boolean newLayer, BoundingBoxDownloader reader) {
-			super(tr("Downloading GPS data"));
-			this.reader = reader;
-			this.newLayer = newLayer;
-		}
-
-		@Override public void realRun() throws IOException, SAXException {
-			rawData = reader.parseRawGps();
-		}
-
-		@Override protected void finish() {
-			if (rawData == null)
-				return;
-                        rawData.recalculateBounds();
-                        Bounds b = rawData.bounds;
-						String name = b.min.lat() + " " + b.min.lon() + " x " + b.max.lat() + " " + b.max.lon();
-						GpxLayer layer = new GpxLayer(rawData, name);
-			if (newLayer || findMergeLayer() == null)
-	            Main.main.addLayer(layer);
-			else
-				findMergeLayer().mergeFrom(layer);
-		}
-
-		private Layer findMergeLayer() {
-			if (Main.map == null)
-				return null;
-	        Layer active = Main.map.mapView.getActiveLayer();
-	        if (active != null && active instanceof GpxLayer)
-	        	return active;
-	        for (Layer l : Main.map.mapView.getAllLayers())
-				if (l instanceof GpxLayer)
-	        		return l;
-	        return null;
+        public Task(boolean newLayer, BoundingBoxDownloader reader) {
+            super(tr("Downloading GPS data"));
+            this.reader = reader;
+            this.newLayer = newLayer;
         }
 
-		@Override protected void cancel() {
-			if (reader != null)
-				reader.cancel();
-		}
-	}
+        @Override public void realRun() throws IOException, SAXException {
+            rawData = reader.parseRawGps();
+        }
 
-	private JCheckBox checkBox = new JCheckBox(tr("Raw GPS data"));
+        @Override protected void finish() {
+            if (rawData == null)
+                return;
+                        rawData.recalculateBounds();
+                        Bounds b = rawData.bounds;
+                        String name = b.min.lat() + " " + b.min.lon() + " x " + b.max.lat() + " " + b.max.lon();
+                        GpxLayer layer = new GpxLayer(rawData, name);
+            if (newLayer || findMergeLayer() == null)
+                Main.main.addLayer(layer);
+            else
+                findMergeLayer().mergeFrom(layer);
+        }
 
-	public void download(DownloadAction action, double minlat, double minlon, double maxlat, double maxlon) {
-		Task task = new Task(action.dialog.newLayer.isSelected(), new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon));
-		Main.worker.execute(task);
-	}
+        private Layer findMergeLayer() {
+            if (Main.map == null)
+                return null;
+            Layer active = Main.map.mapView.getActiveLayer();
+            if (active != null && active instanceof GpxLayer)
+                return active;
+            for (Layer l : Main.map.mapView.getAllLayers())
+                if (l instanceof GpxLayer)
+                    return l;
+            return null;
+        }
 
-	public JCheckBox getCheckBox() {
-	    return checkBox;
+        @Override protected void cancel() {
+            if (reader != null)
+                reader.cancel();
+        }
     }
 
-	public String getPreferencesSuffix() {
-	    return "gps";
+    private JCheckBox checkBox = new JCheckBox(tr("Raw GPS data"));
+
+    public void download(DownloadAction action, double minlat, double minlon, double maxlat, double maxlon) {
+        Task task = new Task(action.dialog.newLayer.isSelected(), new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon));
+        Main.worker.execute(task);
     }
 
-    public void loadUrl(boolean a,java.lang.String b) { 
+    public JCheckBox getCheckBox() {
+        return checkBox;
+    }
+
+    public String getPreferencesSuffix() {
+        return "gps";
+    }
+
+    public void loadUrl(boolean a,java.lang.String b) {
         // FIXME this is not currently used
     }
 }

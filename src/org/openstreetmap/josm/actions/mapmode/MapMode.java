@@ -22,70 +22,70 @@ import org.openstreetmap.josm.tools.Shortcut;
  * control.
  */
 abstract public class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
-	private final Cursor cursor;
-	private Cursor oldCursor;
+    private final Cursor cursor;
+    private Cursor oldCursor;
 
-	/**
-	 * Constructor for mapmodes without an menu
-	 */
-	public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
-		super(name, "mapmode/"+iconName, tooltip, shortcut, false);
-		this.cursor = cursor;
-		putValue("active", false);
-	}
+    /**
+     * Constructor for mapmodes without an menu
+     */
+    public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
+        super(name, "mapmode/"+iconName, tooltip, shortcut, false);
+        this.cursor = cursor;
+        putValue("active", false);
+    }
 
-	/**
-	 * Constructor for mapmodes without an menu
-	 */
-	 @Deprecated
-	public MapMode(String name, String iconName, String tooltip, int keystroke, MapFrame mapFrame, Cursor cursor) {
-		super(name, "mapmode/"+iconName, tooltip, keystroke, 0, false);
-		this.cursor = cursor;
-		putValue("active", false);
-	}
+    /**
+     * Constructor for mapmodes without an menu
+     */
+     @Deprecated
+    public MapMode(String name, String iconName, String tooltip, int keystroke, MapFrame mapFrame, Cursor cursor) {
+        super(name, "mapmode/"+iconName, tooltip, keystroke, 0, false);
+        this.cursor = cursor;
+        putValue("active", false);
+    }
 
-	/**
-	 * Constructor for mapmodes with an menu (no shortcut will be registered)
-	 */
-	public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
-		putValue(NAME, name);
-		putValue(SMALL_ICON, ImageProvider.get("mapmode", iconName));
-		putValue(SHORT_DESCRIPTION, tooltip);
-		this.cursor = cursor;
-	}
+    /**
+     * Constructor for mapmodes with an menu (no shortcut will be registered)
+     */
+    public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
+        putValue(NAME, name);
+        putValue(SMALL_ICON, ImageProvider.get("mapmode", iconName));
+        putValue(SHORT_DESCRIPTION, tooltip);
+        this.cursor = cursor;
+    }
 
-	public void enterMode() {
-		putValue("active", true);
-		oldCursor = Main.map.mapView.getCursor();
-		Main.map.mapView.setCursor(cursor);
-		updateStatusLine();
-	}
-	public void exitMode() {
-		putValue("active", false);
-		Main.map.mapView.setCursor(oldCursor);
-	}
+    public void enterMode() {
+        putValue("active", true);
+        oldCursor = Main.map.mapView.getCursor();
+        Main.map.mapView.setCursor(cursor);
+        updateStatusLine();
+    }
+    public void exitMode() {
+        putValue("active", false);
+        Main.map.mapView.setCursor(oldCursor);
+    }
 
-	protected void updateStatusLine() {
-		Main.map.statusLine.setHelpText(getModeHelpText());
-		Main.map.statusLine.repaint();
-	}
+    protected void updateStatusLine() {
+        Main.map.statusLine.setHelpText(getModeHelpText());
+        Main.map.statusLine.repaint();
+    }
 
-	public String getModeHelpText() {
-		return "";
-	}
-	/**
-	 * Call selectMapMode(this) on the parent mapFrame.
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (Main.map != null)
-			Main.map.selectMapMode(this);
-	}
+    public String getModeHelpText() {
+        return "";
+    }
+    /**
+     * Call selectMapMode(this) on the parent mapFrame.
+     */
+    public void actionPerformed(ActionEvent e) {
+        if (Main.map != null)
+            Main.map.selectMapMode(this);
+    }
 
-	public void mouseReleased(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
-	public void mousePressed(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseMoved(MouseEvent e) {}
-	public void mouseDragged(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {}
 }

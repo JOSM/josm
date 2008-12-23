@@ -24,100 +24,100 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 abstract public class JosmAction extends AbstractAction implements Destroyable {
 
-	@Deprecated
-	public KeyStroke shortcut;
-	protected Shortcut sc;
+    @Deprecated
+    public KeyStroke shortcut;
+    protected Shortcut sc;
 
-	public Shortcut getShortcut() {
-		if (sc == null) {
-			sc = Shortcut.registerShortcut("core:none", "No Shortcut", 0, Shortcut.GROUP_NONE);
-			sc.setAutomatic(); // as this shortcut is shared by all action that don't want to have a shortcut,
-			                   // we shouldn't allow the user to change it...
-		}
-		return sc;
-	}
+    public Shortcut getShortcut() {
+        if (sc == null) {
+            sc = Shortcut.registerShortcut("core:none", "No Shortcut", 0, Shortcut.GROUP_NONE);
+            sc.setAutomatic(); // as this shortcut is shared by all action that don't want to have a shortcut,
+                               // we shouldn't allow the user to change it...
+        }
+        return sc;
+    }
 
-	@Deprecated
-	public JosmAction(String name, String iconName, String tooltip, int shortcut, int modifier, boolean register) {
-		super(name, iconName == null ? null : ImageProvider.get(iconName));
-		setHelpId();
-		if (shortcut != 0) {
-			int group = Shortcut.GROUP_LAYER; //GROUP_NONE;
-			if (((modifier & InputEvent.CTRL_MASK) != 0) || ((modifier & InputEvent.CTRL_DOWN_MASK) != 0)) {
-				group = Shortcut.GROUP_MENU;
-			} else if (modifier == 0) {
-				group = Shortcut.GROUP_EDIT;
-			}
-			sc = Shortcut.registerShortcut("auto:"+name, name, shortcut, group);
-			this.shortcut = sc.getKeyStroke();
-			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
-			Main.contentPane.getActionMap().put(name, this);
-		}
-		putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-		putValue("toolbar", iconName);
+    @Deprecated
+    public JosmAction(String name, String iconName, String tooltip, int shortcut, int modifier, boolean register) {
+        super(name, iconName == null ? null : ImageProvider.get(iconName));
+        setHelpId();
+        if (shortcut != 0) {
+            int group = Shortcut.GROUP_LAYER; //GROUP_NONE;
+            if (((modifier & InputEvent.CTRL_MASK) != 0) || ((modifier & InputEvent.CTRL_DOWN_MASK) != 0)) {
+                group = Shortcut.GROUP_MENU;
+            } else if (modifier == 0) {
+                group = Shortcut.GROUP_EDIT;
+            }
+            sc = Shortcut.registerShortcut("auto:"+name, name, shortcut, group);
+            this.shortcut = sc.getKeyStroke();
+            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
+            Main.contentPane.getActionMap().put(name, this);
+        }
+        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
+        putValue("toolbar", iconName);
     if (register)
-    	Main.toolbar.register(this);
-	}
+        Main.toolbar.register(this);
+    }
 
-	/**
-	 * The new super for all actions.
-	 *
-	 * Use this super constructor to setup your action. It takes 5 parameters:
-	 *
-	 * name - the action's text as displayed on the menu (if it is added to a menu)
-	 * iconName - the filename of the icon to use
-	 * tooltip - a longer description of the action that will be displayed in the tooltip. Please note
-	 *           that html is not supported for menu action on some platforms
-	 * shortcut - a ready-created shortcut object or null if you don't want a shortcut. But you always
-	 *            do want a shortcut, remember you can alway register it with group=none, so you
-	 *            won't be assigned a shurtcut unless the user configures one. If you pass null here,
-	 *            the user CANNOT configure a shortcut for your action.
-	 * register - register this action for the toolbar preferences?
-	 */
-	public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
-		super(name, iconName == null ? null : ImageProvider.get(iconName));
-		setHelpId();
-		sc = shortcut;
-		if (sc != null) {
-			this.shortcut = sc.getKeyStroke();
-			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
-			Main.contentPane.getActionMap().put(name, this);
-		}
-		putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-		putValue("toolbar", iconName);
+    /**
+     * The new super for all actions.
+     *
+     * Use this super constructor to setup your action. It takes 5 parameters:
+     *
+     * name - the action's text as displayed on the menu (if it is added to a menu)
+     * iconName - the filename of the icon to use
+     * tooltip - a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu action on some platforms
+     * shortcut - a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can alway register it with group=none, so you
+     *            won't be assigned a shurtcut unless the user configures one. If you pass null here,
+     *            the user CANNOT configure a shortcut for your action.
+     * register - register this action for the toolbar preferences?
+     */
+    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
+        super(name, iconName == null ? null : ImageProvider.get(iconName));
+        setHelpId();
+        sc = shortcut;
+        if (sc != null) {
+            this.shortcut = sc.getKeyStroke();
+            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
+            Main.contentPane.getActionMap().put(name, this);
+        }
+        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
+        putValue("toolbar", iconName);
     if (register)
-    	Main.toolbar.register(this);
-	}
+        Main.toolbar.register(this);
+    }
 
-	public void destroy() {
-		if (shortcut != null) {
-			Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
-			Main.contentPane.getActionMap().remove(sc.getKeyStroke());
-		}
-	}
+    public void destroy() {
+        if (shortcut != null) {
+            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
+            Main.contentPane.getActionMap().remove(sc.getKeyStroke());
+        }
+    }
 
-	public JosmAction() {
-		setHelpId();
-	}
+    public JosmAction() {
+        setHelpId();
+    }
 
-	/**
-	 * needs to be overridden to be useful
-	 */
-	public void pasteBufferChanged(DataSet newPasteBuffer) {
-		return;
-	}
+    /**
+     * needs to be overridden to be useful
+     */
+    public void pasteBufferChanged(DataSet newPasteBuffer) {
+        return;
+    }
 
-	/**
-	 * needs to be overridden to be useful
-	 */
-	public void addListener(JosmAction a) {
-		return;
-	}
+    /**
+     * needs to be overridden to be useful
+     */
+    public void addListener(JosmAction a) {
+        return;
+    }
 
-	private void setHelpId() {
-		String helpId = "Action/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
-		if (helpId.endsWith("Action"))
-			helpId = helpId.substring(0, helpId.length()-6);
-		putValue("help", helpId);
-	}
+    private void setHelpId() {
+        String helpId = "Action/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
+        if (helpId.endsWith("Action"))
+            helpId = helpId.substring(0, helpId.length()-6);
+        putValue("help", helpId);
+    }
 }

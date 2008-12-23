@@ -13,35 +13,35 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 
 /**
- * Command that basically replaces one OSM primitive by another of the 
+ * Command that basically replaces one OSM primitive by another of the
  * same type.
- *  
+ *
  * @author Imi
  */
 public class ChangeCommand extends Command {
 
-	private final OsmPrimitive osm;
-	private final OsmPrimitive newOsm;
+    private final OsmPrimitive osm;
+    private final OsmPrimitive newOsm;
 
-	public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
-		this.osm = osm;
-		this.newOsm = newOsm;
+    public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
+        this.osm = osm;
+        this.newOsm = newOsm;
     }
 
-	@Override public boolean executeCommand() {
-	    super.executeCommand();
-	    osm.cloneFrom(newOsm);
-	    osm.modified = true;
-		return true;
+    @Override public boolean executeCommand() {
+        super.executeCommand();
+        osm.cloneFrom(newOsm);
+        osm.modified = true;
+        return true;
     }
 
-	@Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
-		modified.add(osm);
+    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+        modified.add(osm);
     }
 
-	@Override public MutableTreeNode description() {
-		NameVisitor v = new NameVisitor();
-		osm.visit(v);
-		return new DefaultMutableTreeNode(new JLabel(tr("Change")+" "+tr(v.className)+" "+v.name, v.icon, JLabel.HORIZONTAL));
+    @Override public MutableTreeNode description() {
+        NameVisitor v = new NameVisitor();
+        osm.visit(v);
+        return new DefaultMutableTreeNode(new JLabel(tr("Change")+" "+tr(v.className)+" "+v.name, v.icon, JLabel.HORIZONTAL));
     }
 }

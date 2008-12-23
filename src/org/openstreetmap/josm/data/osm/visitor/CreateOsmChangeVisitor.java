@@ -15,9 +15,9 @@ import org.openstreetmap.josm.io.OsmWriter;
 
 /**
  * Creates an OsmChange document from JOSM edits.
- * See http://wiki.openstreetmap.org/index.php/OsmChange for a documentation of the 
+ * See http://wiki.openstreetmap.org/index.php/OsmChange for a documentation of the
  * OsmChange format.
- * 
+ *
  * @author fred
  *
  */
@@ -29,16 +29,16 @@ public class CreateOsmChangeVisitor implements Visitor {
     PrintWriter writer;
     StringWriter swriter;
     OsmWriter osmwriter;
-    
+
     public CreateOsmChangeVisitor(Changeset changeset) {
         writer = new PrintWriter(swriter = new StringWriter());
         writer.write("<osmChange version=\"");
         writer.write(Main.pref.get("osm-server.version", "0.6"));
-        writer.write("\" generator=\"JOSM\">\n"); 
+        writer.write("\" generator=\"JOSM\">\n");
         this.changeset = changeset;
         osmwriter = new OsmWriter(writer, false, changeset);
     }
-    
+
     public void visit(Node n) {
         if (n.deleted) {
             switchMode("delete");
@@ -54,7 +54,7 @@ public class CreateOsmChangeVisitor implements Visitor {
             n.visit(osmwriter);
         }
     }
-    
+
     public void visit(Way w) {
         if (w.deleted) {
             switchMode("delete");
@@ -68,9 +68,9 @@ public class CreateOsmChangeVisitor implements Visitor {
         } else {
             switchMode((w.id == 0) ? "create" : "modify");
             w.visit(osmwriter);
-        }        
+        }
     }
-    
+
     public void visit(Relation r) {
         if (r.deleted) {
             switchMode("delete");
@@ -84,9 +84,9 @@ public class CreateOsmChangeVisitor implements Visitor {
         } else {
             switchMode((r.id == 0) ? "create" : "modify");
             r.visit(osmwriter);
-        }           
+        }
     }
-    
+
     private void switchMode(String newMode) {
         if ((newMode != null && !newMode.equals(currentMode))||(newMode == null && currentMode != null)) {
             if (currentMode != null) {
@@ -104,12 +104,12 @@ public class CreateOsmChangeVisitor implements Visitor {
             currentMode = newMode;
         }
     }
-    
+
     public String getDocument() {
         switchMode(null);
         return swriter.toString() + "</osmChange>\n";
     }
-    
+
     public Map<OsmPrimitive,Long> getNewIdMap() {
         return osmwriter.usedNewIds;
     }

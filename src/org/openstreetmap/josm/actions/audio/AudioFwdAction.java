@@ -14,26 +14,26 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioFwdAction extends JosmAction {
 
-	private double amount;
+    private double amount;
 
-	public AudioFwdAction() {
-		super(tr("Forward"), "audio-fwd", tr("Jump forward"),
-		Shortcut.registerShortcut("audio:forward", tr("Audio: {0}", tr("Forward")), KeyEvent.VK_F7, Shortcut.GROUP_DIRECT), true);
-		try {
-			amount = Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
-		} catch (NumberFormatException e) {
-			amount = 10.0;
-		}
-	}
+    public AudioFwdAction() {
+        super(tr("Forward"), "audio-fwd", tr("Jump forward"),
+        Shortcut.registerShortcut("audio:forward", tr("Audio: {0}", tr("Forward")), KeyEvent.VK_F7, Shortcut.GROUP_DIRECT), true);
+        try {
+            amount = Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
+        } catch (NumberFormatException e) {
+            amount = 10.0;
+        }
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		try {
-			if (AudioPlayer.playing() || AudioPlayer.paused())
-				AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position() + amount);
-			else
-				MarkerLayer.playAudio();
-		} catch (Exception ex) {
-			AudioPlayer.audioMalfunction(ex);
-		}
-	}
+    public void actionPerformed(ActionEvent e) {
+        try {
+            if (AudioPlayer.playing() || AudioPlayer.paused())
+                AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position() + amount);
+            else
+                MarkerLayer.playAudio();
+        } catch (Exception ex) {
+            AudioPlayer.audioMalfunction(ex);
+        }
+    }
 }

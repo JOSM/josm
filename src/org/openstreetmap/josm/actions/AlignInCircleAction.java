@@ -23,15 +23,15 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Aligns all selected nodes within a circle. (Useful for roundabouts)
- * 
+ *
  * @author Matthew Newton
  * @author Petr Dlouhý
  */
 public final class AlignInCircleAction extends JosmAction {
 
     public AlignInCircleAction() {
-        super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."), 
-                Shortcut.registerShortcut("tools:aligncircle", tr("Tool: {0}", tr("Align Nodes in Circle")), 
+        super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."),
+                Shortcut.registerShortcut("tools:aligncircle", tr("Tool: {0}", tr("Align Nodes in Circle")),
                         KeyEvent.VK_O, Shortcut.GROUP_EDIT), true);
     }
 

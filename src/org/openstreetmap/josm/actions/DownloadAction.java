@@ -27,49 +27,49 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class DownloadAction extends JosmAction {
 
-	public DownloadDialog dialog;
+    public DownloadDialog dialog;
 
-	public DownloadAction() {
-		super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."),
-		Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM ...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
-	}
+    public DownloadAction() {
+        super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."),
+        Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM ...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		dialog = new DownloadDialog();
+    public void actionPerformed(ActionEvent e) {
+        dialog = new DownloadDialog();
 
-		JPanel downPanel = new JPanel(new GridBagLayout());
-		downPanel.add(dialog, GBC.eol().fill(GBC.BOTH));
+        JPanel downPanel = new JPanel(new GridBagLayout());
+        downPanel.add(dialog, GBC.eol().fill(GBC.BOTH));
 
-		JOptionPane pane = new JOptionPane(downPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		JDialog dlg = pane.createDialog(Main.parent, tr("Download"));
-		dlg.setResizable(true);
-		dialog.setOptionPane(pane);
+        JOptionPane pane = new JOptionPane(downPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        JDialog dlg = pane.createDialog(Main.parent, tr("Download"));
+        dlg.setResizable(true);
+        dialog.setOptionPane(pane);
 
-		if (dlg.getWidth() > 1000)
-			dlg.setSize(1000, dlg.getHeight());
-		if (dlg.getHeight() > 600)
-			dlg.setSize(dlg.getWidth(),600);
+        if (dlg.getWidth() > 1000)
+            dlg.setSize(1000, dlg.getHeight());
+        if (dlg.getHeight() > 600)
+            dlg.setSize(dlg.getWidth(),600);
 
-		boolean finish = false;
+        boolean finish = false;
         while (!finish) {
             dlg.setVisible(true);
             Main.pref.put("download.newlayer", dialog.newLayer.isSelected());
-        	if (pane.getValue() instanceof Integer && (Integer)pane.getValue() == JOptionPane.OK_OPTION) {
-        		Main.pref.put("download.tab", Integer.toString(dialog.getSelectedTab()));
-        		for (DownloadTask task : dialog.downloadTasks) {
-        			Main.pref.put("download."+task.getPreferencesSuffix(), task.getCheckBox().isSelected());
-        			if (task.getCheckBox().isSelected()) {
-        				task.download(this, dialog.minlat, dialog.minlon, dialog.maxlat, dialog.maxlon);
-        				finish = true;
-        			}
-        		}
-        	} else
-        		finish = true;
-        	if (!finish)
-        		JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one task to download"));
+            if (pane.getValue() instanceof Integer && (Integer)pane.getValue() == JOptionPane.OK_OPTION) {
+                Main.pref.put("download.tab", Integer.toString(dialog.getSelectedTab()));
+                for (DownloadTask task : dialog.downloadTasks) {
+                    Main.pref.put("download."+task.getPreferencesSuffix(), task.getCheckBox().isSelected());
+                    if (task.getCheckBox().isSelected()) {
+                        task.download(this, dialog.minlat, dialog.minlon, dialog.maxlat, dialog.maxlon);
+                        finish = true;
+                    }
+                }
+            } else
+                finish = true;
+            if (!finish)
+                JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one task to download"));
         }
 
                 dialog = null;
-		dlg.dispose();
-	}
+        dlg.dispose();
+    }
 }

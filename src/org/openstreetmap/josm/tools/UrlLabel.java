@@ -11,25 +11,25 @@ import javax.swing.event.HyperlinkListener;
  */
 public class UrlLabel extends JEditorPane implements HyperlinkListener {
 
-	private final String url;
+    private final String url;
 
-	public UrlLabel(String url) {
-		this (url, url);
-	}
+    public UrlLabel(String url) {
+        this (url, url);
+    }
 
-	public UrlLabel(String url, String description) {
-		this.url = url;
-		setContentType("text/html");
-		setText("<html><a href=\""+url+"\">"+description+"</a></html>");
-		setToolTipText(url);
-		setEditable(false);
-		setOpaque(false);
-		addHyperlinkListener(this);
-	}
+    public UrlLabel(String url, String description) {
+        this.url = url;
+        setContentType("text/html");
+        setText("<html><a href=\""+url+"\">"+description+"</a></html>");
+        setToolTipText(url);
+        setEditable(false);
+        setOpaque(false);
+        addHyperlinkListener(this);
+    }
 
-	public void hyperlinkUpdate(HyperlinkEvent e) {
-		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-			OpenBrowser.displayUrl(url);
-		}
-	}
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            OpenBrowser.displayUrl(url);
+        }
+    }
 }

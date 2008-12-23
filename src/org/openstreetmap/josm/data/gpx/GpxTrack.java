@@ -7,6 +7,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public class GpxTrack extends WithAttributes {
-	public Collection<Collection<WayPoint>> trackSegs
-		= new LinkedList<Collection<WayPoint>>();
+    public Collection<Collection<WayPoint>> trackSegs
+        = new LinkedList<Collection<WayPoint>>();
 }

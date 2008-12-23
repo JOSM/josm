@@ -34,170 +34,170 @@ import org.openstreetmap.josm.tools.Destroyable;
 /**
  * One Map frame with one dataset behind. This is the container gui class whose
  * display can be set to the different views.
- * 
+ *
  * @author imi
  */
 public class MapFrame extends JPanel implements Destroyable {
 
-	/**
-	 * The current mode, this frame operates.
-	 */
-	public MapMode mapMode;
-	/**
-	 * The view control displayed.
-	 */
-	public MapView mapView;
-	/**
-	 * The toolbar with the action icons. To add new toggle dialog actions, use addToggleDialog
-	 * instead of adding directly to this list. To add a new mode use addMapMode.
-	 */
-	public JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
-	public JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
-	/**
-	 * The status line below the map
-	 */
-	public MapStatus statusLine;
+    /**
+     * The current mode, this frame operates.
+     */
+    public MapMode mapMode;
+    /**
+     * The view control displayed.
+     */
+    public MapView mapView;
+    /**
+     * The toolbar with the action icons. To add new toggle dialog actions, use addToggleDialog
+     * instead of adding directly to this list. To add a new mode use addMapMode.
+     */
+    public JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
+    public JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
+    /**
+     * The status line below the map
+     */
+    public MapStatus statusLine;
 
-	public ConflictDialog conflictDialog;
-	/**
-	 * The dialog that shows all relations and lets the user edit them.
-	 */
-	public RelationListDialog relationListDialog;
-	/**
-	 * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
-	 * instead of adding directly to this list.
-	 */
-	public JPanel toggleDialogs = new JPanel();
+    public ConflictDialog conflictDialog;
+    /**
+     * The dialog that shows all relations and lets the user edit them.
+     */
+    public RelationListDialog relationListDialog;
+    /**
+     * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
+     * instead of adding directly to this list.
+     */
+    public JPanel toggleDialogs = new JPanel();
 
-	public final ButtonGroup toolGroup = new ButtonGroup();
+    public final ButtonGroup toolGroup = new ButtonGroup();
 
-	public MapFrame() {
-		setSize(400,400);
-		setLayout(new BorderLayout());
+    public MapFrame() {
+        setSize(400,400);
+        setLayout(new BorderLayout());
 
-		add(mapView = new MapView(), BorderLayout.CENTER);
+        add(mapView = new MapView(), BorderLayout.CENTER);
 
-		// show menu entry
-		Main.main.menu.viewMenu.setVisible(true);
+        // show menu entry
+        Main.main.menu.viewMenu.setVisible(true);
 
-		// toolbar
-		toolBarActions.setFloatable(false);
-		addMapMode(new IconToggleButton(new ZoomAction(this)));
-		addMapMode(new IconToggleButton(new SelectAction(this)));
-		addMapMode(new IconToggleButton(new DrawAction(this)));
-		addMapMode(new IconToggleButton(new DeleteAction(this)));
-		addMapMode(new IconToggleButton(new ExtrudeAction(this)));
+        // toolbar
+        toolBarActions.setFloatable(false);
+        addMapMode(new IconToggleButton(new ZoomAction(this)));
+        addMapMode(new IconToggleButton(new SelectAction(this)));
+        addMapMode(new IconToggleButton(new DrawAction(this)));
+        addMapMode(new IconToggleButton(new DeleteAction(this)));
+        addMapMode(new IconToggleButton(new ExtrudeAction(this)));
 
-		toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
+        toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 
-		add(toggleDialogs, BorderLayout.EAST);
-		toggleDialogs.setLayout(new BoxLayout(toggleDialogs, BoxLayout.Y_AXIS));
+        add(toggleDialogs, BorderLayout.EAST);
+        toggleDialogs.setLayout(new BoxLayout(toggleDialogs, BoxLayout.Y_AXIS));
 
-		toolBarToggle.setFloatable(false);
-		addToggleDialog(new LayerListDialog(this));
-		addToggleDialog(new PropertiesDialog(this));
-		addToggleDialog(new HistoryDialog());
-		addToggleDialog(new SelectionListDialog());
-		addToggleDialog(new UserListDialog());
-		addToggleDialog(conflictDialog = new ConflictDialog());
-		addToggleDialog(new CommandStackDialog(this));
-		addToggleDialog(relationListDialog = new RelationListDialog());
+        toolBarToggle.setFloatable(false);
+        addToggleDialog(new LayerListDialog(this));
+        addToggleDialog(new PropertiesDialog(this));
+        addToggleDialog(new HistoryDialog());
+        addToggleDialog(new SelectionListDialog());
+        addToggleDialog(new UserListDialog());
+        addToggleDialog(conflictDialog = new ConflictDialog());
+        addToggleDialog(new CommandStackDialog(this));
+        addToggleDialog(relationListDialog = new RelationListDialog());
 
-		// status line below the map
-		statusLine = new MapStatus(this);
-	}
-
-	/**
-	 * Called as some kind of destructor when the last layer has been removed.
-	 * Delegates the call to all Destroyables within this component (e.g. MapModes)
-	 */
-	public void destroy() {
-		for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
-			if (toolBarActions.getComponent(i) instanceof Destroyable)
-				((Destroyable)toolBarActions).destroy();
-		for (int i = 0; i < toolBarToggle.getComponentCount(); ++i)
-			if (toolBarToggle.getComponent(i) instanceof Destroyable)
-				((Destroyable)toolBarToggle).destroy();
-		
-		// remove menu entries
-		Main.main.menu.viewMenu.setVisible(false);
+        // status line below the map
+        statusLine = new MapStatus(this);
     }
 
-	public Action getDefaultButtonAction() {
-		return ((AbstractButton)toolBarActions.getComponent(0)).getAction();
-	}
+    /**
+     * Called as some kind of destructor when the last layer has been removed.
+     * Delegates the call to all Destroyables within this component (e.g. MapModes)
+     */
+    public void destroy() {
+        for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
+            if (toolBarActions.getComponent(i) instanceof Destroyable)
+                ((Destroyable)toolBarActions).destroy();
+        for (int i = 0; i < toolBarToggle.getComponentCount(); ++i)
+            if (toolBarToggle.getComponent(i) instanceof Destroyable)
+                ((Destroyable)toolBarToggle).destroy();
 
-	/**
-	 * Open all ToggleDialogs that have their preferences property set. Close all others.
-	 */
-	public void setVisibleDialogs() {
-		for (Component c : toggleDialogs.getComponents()) {
-			if (c instanceof ToggleDialog) {
-				boolean sel = Main.pref.getBoolean(((ToggleDialog)c).prefName+".visible");
-				((ToggleDialog)c).action.button.setSelected(sel);
-				c.setVisible(sel);
-			}
-		}
-	}
+        // remove menu entries
+        Main.main.menu.viewMenu.setVisible(false);
+    }
 
-	/**
-	 * Call this to add new toggle dialogs to the left button-list
-	 * @param dlg The toggle dialog. It must not be in the list already.
-	 */
-	public void addToggleDialog(ToggleDialog dlg) {
-		IconToggleButton button = new IconToggleButton(dlg.action);
-		dlg.action.button = button;
-		dlg.parent = toggleDialogs;
-		toolBarToggle.add(button);
-		toggleDialogs.add(dlg);
-	}
+    public Action getDefaultButtonAction() {
+        return ((AbstractButton)toolBarActions.getComponent(0)).getAction();
+    }
 
-	public void addMapMode(IconToggleButton b) {
-		toolBarActions.add(b);
-		toolGroup.add((AbstractButton)b);
-	}
+    /**
+     * Open all ToggleDialogs that have their preferences property set. Close all others.
+     */
+    public void setVisibleDialogs() {
+        for (Component c : toggleDialogs.getComponents()) {
+            if (c instanceof ToggleDialog) {
+                boolean sel = Main.pref.getBoolean(((ToggleDialog)c).prefName+".visible");
+                ((ToggleDialog)c).action.button.setSelected(sel);
+                c.setVisible(sel);
+            }
+        }
+    }
 
-	/**
-	 * Fires an property changed event "visible".
-	 */
-	@Override public void setVisible(boolean aFlag) {
-		boolean old = isVisible();
-		super.setVisible(aFlag);
-		if (old != aFlag)
-			firePropertyChange("visible", old, aFlag);
-	}
+    /**
+     * Call this to add new toggle dialogs to the left button-list
+     * @param dlg The toggle dialog. It must not be in the list already.
+     */
+    public void addToggleDialog(ToggleDialog dlg) {
+        IconToggleButton button = new IconToggleButton(dlg.action);
+        dlg.action.button = button;
+        dlg.parent = toggleDialogs;
+        toolBarToggle.add(button);
+        toggleDialogs.add(dlg);
+    }
+
+    public void addMapMode(IconToggleButton b) {
+        toolBarActions.add(b);
+        toolGroup.add((AbstractButton)b);
+    }
+
+    /**
+     * Fires an property changed event "visible".
+     */
+    @Override public void setVisible(boolean aFlag) {
+        boolean old = isVisible();
+        super.setVisible(aFlag);
+        if (old != aFlag)
+            firePropertyChange("visible", old, aFlag);
+    }
 
 
 
-	/**
-	 * Change the operating map mode for the view. Will call unregister on the
-	 * old MapMode and register on the new one.
-	 * @param mapMode	The new mode to set.
-	 */
-	public void selectMapMode(MapMode mapMode) {
-		if (mapMode == this.mapMode)
-			return;
-		if (this.mapMode != null)
-			this.mapMode.exitMode();
-		this.mapMode = mapMode;
-		mapMode.enterMode();
-	}
+    /**
+     * Change the operating map mode for the view. Will call unregister on the
+     * old MapMode and register on the new one.
+     * @param mapMode   The new mode to set.
+     */
+    public void selectMapMode(MapMode mapMode) {
+        if (mapMode == this.mapMode)
+            return;
+        if (this.mapMode != null)
+            this.mapMode.exitMode();
+        this.mapMode = mapMode;
+        mapMode.enterMode();
+    }
 
-	/**
-	 * Fill the given panel by adding all necessary components to the different
-	 * locations.
-	 * 
-	 * @param panel The container to fill. Must have an BorderLayout.
-	 */
-	public void fillPanel(Container panel) {
-		panel.add(this, BorderLayout.CENTER);
-		JToolBar jb = new JToolBar(JToolBar.VERTICAL);
-		jb.setFloatable(false);
-		jb.add(toolBarActions);
-		jb.addSeparator();
-		jb.add(toolBarToggle);
-		panel.add(jb, BorderLayout.WEST);
-		if (statusLine != null)
-			panel.add(statusLine, BorderLayout.SOUTH);
-	}
+    /**
+     * Fill the given panel by adding all necessary components to the different
+     * locations.
+     *
+     * @param panel The container to fill. Must have an BorderLayout.
+     */
+    public void fillPanel(Container panel) {
+        panel.add(this, BorderLayout.CENTER);
+        JToolBar jb = new JToolBar(JToolBar.VERTICAL);
+        jb.setFloatable(false);
+        jb.add(toolBarActions);
+        jb.addSeparator();
+        jb.add(toolBarToggle);
+        panel.add(jb, BorderLayout.WEST);
+        if (statusLine != null)
+            panel.add(statusLine, BorderLayout.SOUTH);
+    }
 }

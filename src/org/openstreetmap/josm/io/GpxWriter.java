@@ -96,9 +96,9 @@ public class GpxWriter extends XmlWriter {
     private void writeWayPoints() {
         for (WayPoint pnt : data.waypoints) {
             wayPoint(pnt, WAY_POINT);
-        }        
+        }
     }
-    
+
     private void writeRoutes() {
         for (GpxRoute rte : data.routes) {
             openln("rte");
@@ -109,7 +109,7 @@ public class GpxWriter extends XmlWriter {
             closeln("rte");
         }
     }
-    
+
     private void writeTracks() {
         for (GpxTrack trk : data.tracks) {
             open("trk");
@@ -139,7 +139,7 @@ public class GpxWriter extends XmlWriter {
         out.println(indent + "<" + tag + " " + attributes + ">");
         indent += "  ";
     }
-    
+
     private void inline(String tag, String attributes) {
         out.println(indent + "<" + tag + " " + attributes + " />");
     }
@@ -154,7 +154,7 @@ public class GpxWriter extends XmlWriter {
         out.println();
     }
 
-    /**       
+    /**
      * if content not null, open tag, write encoded content, and close tag
      * else do nothing.
      */
@@ -167,7 +167,7 @@ public class GpxWriter extends XmlWriter {
         }
     }
 
-    /**       
+    /**
      * output link
      */
     private void gpxLink(GpxLink link) {
@@ -179,7 +179,7 @@ public class GpxWriter extends XmlWriter {
         }
     }
 
-    /**       
+    /**
      * output a point
      */
     private void wayPoint(WayPoint pnt, int mode) {

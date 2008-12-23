@@ -19,7 +19,7 @@ public class OsmServerObjectReader extends OsmServerReader {
     long id;
     String type;
     boolean full;
-    
+
     public OsmServerObjectReader(long id, String type, boolean full) {
         this.id = id;
         this.type = type;

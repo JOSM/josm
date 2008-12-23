@@ -33,62 +33,62 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class UserListDialog extends ToggleDialog implements SelectionChangedListener, MouseListener{
 
-	/**
-	 * The display list.
-	 */
-	private final DefaultTableModel data = new DefaultTableModel() {
-		@Override public boolean isCellEditable(int row, int column) {
-			return false;
-		}
-		@Override public Class<?> getColumnClass(int columnIndex) {
-			return columnIndex == 0 ? String.class : Integer.class;
-		}
-	};
+    /**
+     * The display list.
+     */
+    private final DefaultTableModel data = new DefaultTableModel() {
+        @Override public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+        @Override public Class<?> getColumnClass(int columnIndex) {
+            return columnIndex == 0 ? String.class : Integer.class;
+        }
+    };
 
-	private JTable userTable = new JTable(data);
+    private JTable userTable = new JTable(data);
 
     private static User anonymousUser = User.get("(anonymous users)");
 
-	public UserListDialog() {
-		super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
-		Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+    public UserListDialog() {
+        super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
+        Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
-		data.setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
-		userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		add(new JScrollPane(userTable), BorderLayout.CENTER);
-		selectionChanged(Main.ds.getSelected());
-		userTable.addMouseListener(this);
-		DataSet.selListeners.add(this);
-	}
+        data.setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
+        userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        add(new JScrollPane(userTable), BorderLayout.CENTER);
+        selectionChanged(Main.ds.getSelected());
+        userTable.addMouseListener(this);
+        DataSet.selListeners.add(this);
+    }
 
-	@Override public void setVisible(boolean b) {
-		super.setVisible(b);
-		if (b)
-			selectionChanged(Main.ds.getSelected());
-	}
+    @Override public void setVisible(boolean b) {
+        super.setVisible(b);
+        if (b)
+            selectionChanged(Main.ds.getSelected());
+    }
 
-	/**
-	 * Called when the selection in the dataset changed.
-	 * @param newSelection The new selection array.
-	 */
-	public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-		if (!isVisible())
-			return;
+    /**
+     * Called when the selection in the dataset changed.
+     * @param newSelection The new selection array.
+     */
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        if (!isVisible())
+            return;
 
-		class UserCount {
-			User user;
-			int count;
-			UserCount(User user, int count) { this.user=user; this.count=count; }
-		}
+        class UserCount {
+            User user;
+            int count;
+            UserCount(User user, int count) { this.user=user; this.count=count; }
+        }
 
-		if (data == null)
-			return; // selection changed may be received in base class constructor before init
+        if (data == null)
+            return; // selection changed may be received in base class constructor before init
 
-		data.setRowCount(0);
+        data.setRowCount(0);
 
-		HashMap<User,UserCount> counters = new HashMap<User,UserCount>();
-		int all = 0;
-		for (OsmPrimitive p : newSelection) {
+        HashMap<User,UserCount> counters = new HashMap<User,UserCount>();
+        int all = 0;
+        for (OsmPrimitive p : newSelection) {
             User u = p.user;
             if (u == null) u = anonymousUser;
             UserCount uc = counters.get(u);
@@ -96,25 +96,25 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 counters.put(u, uc = new UserCount(u, 0));
             uc.count++;
             all++;
-		}
-		UserCount[] ucArr = new UserCount[counters.size()];
-		counters.values().toArray(ucArr);
-		Arrays.sort(ucArr, new Comparator<UserCount>() {
-			public int compare(UserCount a, UserCount b) {
-				return (a.count<b.count) ? 1 : (a.count>b.count) ? -1 : 0;
-			}
-		});
+        }
+        UserCount[] ucArr = new UserCount[counters.size()];
+        counters.values().toArray(ucArr);
+        Arrays.sort(ucArr, new Comparator<UserCount>() {
+            public int compare(UserCount a, UserCount b) {
+                return (a.count<b.count) ? 1 : (a.count>b.count) ? -1 : 0;
+            }
+        });
 
-		for (UserCount uc : ucArr) {
-			data.addRow(new Object[] { uc.user.name, uc.count, uc.count * 100 / all });
-		}
-	}
+        for (UserCount uc : ucArr) {
+            data.addRow(new Object[] { uc.user.name, uc.count, uc.count * 100 / all });
+        }
+    }
 
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount()==2) {
             int index = userTable.getSelectedRow();
             String userName = (String) data.getValueAt(index, 0);
-            if (userName==null) 
+            if (userName==null)
                 return;
             Collection<OsmPrimitive> selected = Main.ds.getSelected();
             Collection<OsmPrimitive> byUser = new LinkedList<OsmPrimitive>();

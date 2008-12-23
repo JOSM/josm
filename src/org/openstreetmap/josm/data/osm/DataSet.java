@@ -16,10 +16,10 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
  * osm database. DataSet's can be merged together, saved, (up/down/disk)loaded etc.
- * 
+ *
  * Note that DataSet is not an osm-primitive and so has no key association but a few members to
  * store some information.
- * 
+ *
  * @author imi
  */
 public class DataSet implements Cloneable {
@@ -32,7 +32,7 @@ public class DataSet implements Cloneable {
 
     /**
      * All ways (Streets etc.) in the DataSet.
-     * 
+     *
      * The way nodes are stored only in the way list.
      */
     public Collection<Way> ways = new LinkedList<Way>();
@@ -234,7 +234,7 @@ public class DataSet implements Cloneable {
     }
 
     // Provide well-defined sorting for collections of OsmPrimitives.
-    // FIXME: probably not a good place to put this code. 
+    // FIXME: probably not a good place to put this code.
     public static OsmPrimitive[] sort(Collection<? extends OsmPrimitive> list) {
         OsmPrimitive[] selArr = new OsmPrimitive[list.size()];
         final HashMap<Object, String> h = new HashMap<Object, String>();

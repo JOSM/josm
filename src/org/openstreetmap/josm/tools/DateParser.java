@@ -7,11 +7,11 @@ import java.util.Date;
 
 /**
  * Tries to parse a date as good as it can.
- * 
+ *
  * @author Immanuel.Scholz
  */
 public class DateParser {
-	public static Date parse(String d) throws ParseException {
-		return new PrimaryDateParser().parse(d);
-	}
+    public static Date parse(String d) throws ParseException {
+        return new PrimaryDateParser().parse(d);
+    }
 }

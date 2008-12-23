@@ -12,12 +12,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioNextAction extends JosmAction {
 
-	public AudioNextAction() {
-		super(tr("Next Marker"), "audio-next", tr("Play next marker."),
-		Shortcut.registerShortcut("audio:next", tr("Audio: {0}", tr("Next Marker")), KeyEvent.VK_F8, Shortcut.GROUP_DIRECT), true);
-	}
+    public AudioNextAction() {
+        super(tr("Next Marker"), "audio-next", tr("Play next marker."),
+        Shortcut.registerShortcut("audio:next", tr("Audio: {0}", tr("Next Marker")), KeyEvent.VK_F8, Shortcut.GROUP_DIRECT), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		MarkerLayer.playNextMarker();
-	}
+    public void actionPerformed(ActionEvent e) {
+        MarkerLayer.playNextMarker();
+    }
 }

@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
- * Calculates the total bounding rectangle of a series of {@link OsmPrimitive} objects, using the 
+ * Calculates the total bounding rectangle of a series of {@link OsmPrimitive} objects, using the
  * EastNorth values as reference.
  * @author imi
  */
@@ -60,10 +60,10 @@ public class BoundingXYVisitor implements Visitor {
     }
 
     /**
-     * Enlarges the calculated bounding box by 0.0001 degrees. 
+     * Enlarges the calculated bounding box by 0.0001 degrees.
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
-     *    
+     *
      * @param enlargeDegree
      */
     public void enlargeBoundingBox() {
@@ -71,10 +71,10 @@ public class BoundingXYVisitor implements Visitor {
     }
 
     /**
-     * Enlarges the calculated bounding box by the specified number of degrees. 
+     * Enlarges the calculated bounding box by the specified number of degrees.
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
-     *    
+     *
      * @param enlargeDegree
      */
     public void enlargeBoundingBox(double enlargeDegree) {

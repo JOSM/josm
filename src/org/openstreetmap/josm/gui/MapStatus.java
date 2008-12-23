@@ -56,39 +56,39 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class MapStatus extends JPanel implements Helpful {
 
-	/**
-	 * The MapView this status belongs to.
-	 */
-	final MapView mv;
-	
-	/** 
-	 * A small user interface component that consists of an image label and
-	 * a fixed text content to the right of the image.
-	 */
-	class ImageLabel extends JPanel {
-		private JLabel tf; 
-		private int chars;
-		public ImageLabel(String img, String tooltip, int chars) {
-			super();
-			setLayout(new GridBagLayout());
-			setBackground(Color.decode("#b8cfe5"));
-			add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
-			add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2,1,1,0));
-			setToolTipText(tooltip);
-			this.chars = chars;
-		}
-		public void setText(String t) {
-			tf.setText(t);
-		}
-		@Override public Dimension getPreferredSize() {
-			return new Dimension(25 + chars*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getPreferredSize().height);
-		}
-		@Override public Dimension getMinimumSize() {
-			return new Dimension(25 + chars*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getMinimumSize().height);	
-		}
-	}
+    /**
+     * The MapView this status belongs to.
+     */
+    final MapView mv;
 
-	LatLon.CoordinateFormat mCord;
+    /**
+     * A small user interface component that consists of an image label and
+     * a fixed text content to the right of the image.
+     */
+    class ImageLabel extends JPanel {
+        private JLabel tf;
+        private int chars;
+        public ImageLabel(String img, String tooltip, int chars) {
+            super();
+            setLayout(new GridBagLayout());
+            setBackground(Color.decode("#b8cfe5"));
+            add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0,1,1,0));
+            add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2,1,1,0));
+            setToolTipText(tooltip);
+            this.chars = chars;
+        }
+        public void setText(String t) {
+            tf.setText(t);
+        }
+        @Override public Dimension getPreferredSize() {
+            return new Dimension(25 + chars*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getPreferredSize().height);
+        }
+        @Override public Dimension getMinimumSize() {
+            return new Dimension(25 + chars*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getMinimumSize().height);
+        }
+    }
+
+    LatLon.CoordinateFormat mCord;
 
     ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
     ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
@@ -98,187 +98,187 @@ public class MapStatus extends JPanel implements Helpful {
     ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
     ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 8);
 
-	/**
-	 * The collector class that waits for notification and then update
-	 * the display objects.
-	 *
-	 * @author imi
-	 */
-	private final class Collector implements Runnable {
-		/**
-		 * The last object displayed in status line.
-		 */
-		Collection<OsmPrimitive> osmStatus;
-		/**
-		 * The old modifiers that was pressed the last time this collector ran.
-		 */
-		private int oldModifiers;
-		/**
-		 * The popup displayed to show additional information
-		 */
-		private Popup popup;
+    /**
+     * The collector class that waits for notification and then update
+     * the display objects.
+     *
+     * @author imi
+     */
+    private final class Collector implements Runnable {
+        /**
+         * The last object displayed in status line.
+         */
+        Collection<OsmPrimitive> osmStatus;
+        /**
+         * The old modifiers that was pressed the last time this collector ran.
+         */
+        private int oldModifiers;
+        /**
+         * The popup displayed to show additional information
+         */
+        private Popup popup;
 
-		private MapFrame parent;
+        private MapFrame parent;
 
-		public Collector(MapFrame parent) {
-			this.parent = parent;
-		}
+        public Collector(MapFrame parent) {
+            this.parent = parent;
+        }
 
-		/**
-		 * Execution function for the Collector.
-		 */
-		public void run() {
-			for (;;) {
-				MouseState ms = new MouseState();
-				synchronized (this) {
-					try {wait();} catch (InterruptedException e) {}
-					ms.modifiers = mouseState.modifiers;
-					ms.mousePos = mouseState.mousePos;
-				}
-				if (parent != Main.map)
-					return; // exit, if new parent.
-				if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0 || ms.mousePos == null)
-					continue; // freeze display when holding down ctrl
+        /**
+         * Execution function for the Collector.
+         */
+        public void run() {
+            for (;;) {
+                MouseState ms = new MouseState();
+                synchronized (this) {
+                    try {wait();} catch (InterruptedException e) {}
+                    ms.modifiers = mouseState.modifiers;
+                    ms.mousePos = mouseState.mousePos;
+                }
+                if (parent != Main.map)
+                    return; // exit, if new parent.
+                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0 || ms.mousePos == null)
+                    continue; // freeze display when holding down ctrl
 
-				if (mv.center == null)
-					continue;
+                if (mv.center == null)
+                    continue;
 
-				// This try/catch is a hack to stop the flooding bug reports about this.
-				// The exception needed to handle with in the first place, means that this
-				// access to the data need to be restarted, if the main thread modifies
-				// the data.
-				try {
-					OsmPrimitive osmNearest = null;
-					// Set the text label in the bottom status bar
-					osmNearest = mv.getNearest(ms.mousePos);
-					if (osmNearest != null) {
-						NameVisitor visitor = new NameVisitor();
-						osmNearest.visit(visitor);
-						nameText.setText(visitor.name);
-					} else
-						nameText.setText(tr("(no object)"));
+                // This try/catch is a hack to stop the flooding bug reports about this.
+                // The exception needed to handle with in the first place, means that this
+                // access to the data need to be restarted, if the main thread modifies
+                // the data.
+                try {
+                    OsmPrimitive osmNearest = null;
+                    // Set the text label in the bottom status bar
+                    osmNearest = mv.getNearest(ms.mousePos);
+                    if (osmNearest != null) {
+                        NameVisitor visitor = new NameVisitor();
+                        osmNearest.visit(visitor);
+                        nameText.setText(visitor.name);
+                    } else
+                        nameText.setText(tr("(no object)"));
 
-					// Popup Information
-					if ((ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0 ) {
-						Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
+                    // Popup Information
+                    if ((ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0 ) {
+                        Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
 
-						if (osms == null)
-							continue;
-						if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers)
-							continue;
+                        if (osms == null)
+                            continue;
+                        if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers)
+                            continue;
 
-						if (popup != null) {
-							try {
-	                            EventQueue.invokeAndWait(new Runnable() {
-	                                public void run() {
-	                                	popup.hide();
-	                                }
-	                            });
+                        if (popup != null) {
+                            try {
+                                EventQueue.invokeAndWait(new Runnable() {
+                                    public void run() {
+                                        popup.hide();
+                                    }
+                                });
                             } catch (InterruptedException e) {
                             } catch (InvocationTargetException e) {
-                            	throw new RuntimeException(e);
+                                throw new RuntimeException(e);
                             }
-						}
+                        }
 
-						JPanel c = new JPanel(new GridBagLayout());
-						for (final OsmPrimitive osm : osms) {
-							NameVisitor visitor = new NameVisitor();
-							osm.visit(visitor);
-							final StringBuilder text = new StringBuilder();
-							if (osm.id == 0 || osm.modified)
-								visitor.name = "<i><b>"+visitor.name+"*</b></i>";
-							text.append(visitor.name);
-							if (osm.id != 0)
-								text.append("<br>id="+osm.id);
-							for (Entry<String, String> e : osm.entrySet())
-								text.append("<br>"+e.getKey()+"="+e.getValue());
-							final JLabel l = new JLabel("<html>"+text.toString()+"</html>", visitor.icon, JLabel.HORIZONTAL);
-							l.setFont(l.getFont().deriveFont(Font.PLAIN));
-							l.setVerticalTextPosition(JLabel.TOP);
-							l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-							l.addMouseListener(new MouseAdapter(){
-								@Override public void mouseEntered(MouseEvent e) {
-									l.setText("<html><u color='blue'>"+text.toString()+"</u></html>");
-								}
-								@Override public void mouseExited(MouseEvent e) {
-									l.setText("<html>"+text.toString()+"</html>");
-								}
-								@Override public void mouseClicked(MouseEvent e) {
-									Main.ds.setSelected(osm);
-									mv.repaint();
-								}
-							});
-							c.add(l, GBC.eol());
-						}
+                        JPanel c = new JPanel(new GridBagLayout());
+                        for (final OsmPrimitive osm : osms) {
+                            NameVisitor visitor = new NameVisitor();
+                            osm.visit(visitor);
+                            final StringBuilder text = new StringBuilder();
+                            if (osm.id == 0 || osm.modified)
+                                visitor.name = "<i><b>"+visitor.name+"*</b></i>";
+                            text.append(visitor.name);
+                            if (osm.id != 0)
+                                text.append("<br>id="+osm.id);
+                            for (Entry<String, String> e : osm.entrySet())
+                                text.append("<br>"+e.getKey()+"="+e.getValue());
+                            final JLabel l = new JLabel("<html>"+text.toString()+"</html>", visitor.icon, JLabel.HORIZONTAL);
+                            l.setFont(l.getFont().deriveFont(Font.PLAIN));
+                            l.setVerticalTextPosition(JLabel.TOP);
+                            l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                            l.addMouseListener(new MouseAdapter(){
+                                @Override public void mouseEntered(MouseEvent e) {
+                                    l.setText("<html><u color='blue'>"+text.toString()+"</u></html>");
+                                }
+                                @Override public void mouseExited(MouseEvent e) {
+                                    l.setText("<html>"+text.toString()+"</html>");
+                                }
+                                @Override public void mouseClicked(MouseEvent e) {
+                                    Main.ds.setSelected(osm);
+                                    mv.repaint();
+                                }
+                            });
+                            c.add(l, GBC.eol());
+                        }
 
-						Point p = mv.getLocationOnScreen();
-						popup = PopupFactory.getSharedInstance().getPopup(mv, c, p.x+ms.mousePos.x+16, p.y+ms.mousePos.y+16);
-						final Popup staticPopup = popup;
-						EventQueue.invokeLater(new Runnable(){
-							public void run() {
-								staticPopup.show();
+                        Point p = mv.getLocationOnScreen();
+                        popup = PopupFactory.getSharedInstance().getPopup(mv, c, p.x+ms.mousePos.x+16, p.y+ms.mousePos.y+16);
+                        final Popup staticPopup = popup;
+                        EventQueue.invokeLater(new Runnable(){
+                            public void run() {
+                                staticPopup.show();
                             }
-						});
-					} else if (popup != null) {
-						final Popup staticPopup = popup;
-						popup = null;
-						EventQueue.invokeLater(new Runnable(){
-							public void run() {
-								staticPopup.hide();
+                        });
+                    } else if (popup != null) {
+                        final Popup staticPopup = popup;
+                        popup = null;
+                        EventQueue.invokeLater(new Runnable(){
+                            public void run() {
+                                staticPopup.hide();
                             }
-						});
-					}
-				} catch (ConcurrentModificationException x) {
-				} catch (NullPointerException x) {
-				}
-			}
-		}
-	}
+                        });
+                    }
+                } catch (ConcurrentModificationException x) {
+                } catch (NullPointerException x) {
+                }
+            }
+        }
+    }
 
-	/**
-	 * Everything, the collector is interested of. Access must be synchronized.
-	 * @author imi
-	 */
-	class MouseState {
-		Point mousePos;
-		int modifiers;
-	}
-	/**
-	 * The last sent mouse movement event.
-	 */
-	MouseState mouseState = new MouseState();
+    /**
+     * Everything, the collector is interested of. Access must be synchronized.
+     * @author imi
+     */
+    class MouseState {
+        Point mousePos;
+        int modifiers;
+    }
+    /**
+     * The last sent mouse movement event.
+     */
+    MouseState mouseState = new MouseState();
 
-	/**
-	 * Construct a new MapStatus and attach it to the map view.
-	 * @param mapFrame The MapFrame the status line is part of.
-	 */
-	public MapStatus(final MapFrame mapFrame) {
-		this.mv = mapFrame.mapView;
-		
+    /**
+     * Construct a new MapStatus and attach it to the map view.
+     * @param mapFrame The MapFrame the status line is part of.
+     */
+    public MapStatus(final MapFrame mapFrame) {
+        this.mv = mapFrame.mapView;
+
         try {
             mCord = LatLon.CoordinateFormat.valueOf(Main.pref.get("coordinates"));
         } catch (IllegalArgumentException iae) {
             mCord =LatLon.CoordinateFormat.DECIMAL_DEGREES;
         }
-		// Listen for mouse movements and set the position text field
-		mv.addMouseMotionListener(new MouseMotionListener(){
-			public void mouseDragged(MouseEvent e) {
-				mouseMoved(e);
-			}
-			public void mouseMoved(MouseEvent e) {
-				if (mv.center == null)
-					return;
-				// Do not update the view if ctrl is pressed.
-				if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
-					LatLon p = mv.getLatLon(e.getX(),e.getY());
-					latText.setText(p.latToString(mCord));
-					lonText.setText(p.lonToString(mCord));
-				}
-			}
-		});
+        // Listen for mouse movements and set the position text field
+        mv.addMouseMotionListener(new MouseMotionListener(){
+            public void mouseDragged(MouseEvent e) {
+                mouseMoved(e);
+            }
+            public void mouseMoved(MouseEvent e) {
+                if (mv.center == null)
+                    return;
+                // Do not update the view if ctrl is pressed.
+                if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
+                    LatLon p = mv.getLatLon(e.getX(),e.getY());
+                    latText.setText(p.latToString(mCord));
+                    lonText.setText(p.lonToString(mCord));
+                }
+            }
+        });
 
-		setLayout(new GridBagLayout());
-		setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
         add(latText, GBC.std());
         add(lonText, GBC.std().insets(3,0,0,0));
@@ -286,74 +286,74 @@ public class MapStatus extends JPanel implements Helpful {
         add(angleText, GBC.std().insets(3,0,0,0));
         add(distText, GBC.std().insets(3,0,0,0));
 
-		helpText.setEditable(false);
-		add(nameText, GBC.std().insets(3,0,0,0));
-		add(helpText, GBC.eol().insets(3,0,0,0).fill(GBC.HORIZONTAL));
-		
-		// The background thread
-		final Collector collector = new Collector(mapFrame);
-		new Thread(collector).start();
+        helpText.setEditable(false);
+        add(nameText, GBC.std().insets(3,0,0,0));
+        add(helpText, GBC.eol().insets(3,0,0,0).fill(GBC.HORIZONTAL));
 
-		// Listen to keyboard/mouse events for pressing/releasing alt key and
-		// inform the collector.
-		try {
-			Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener(){
-				public void eventDispatched(AWTEvent event) {
-					synchronized (collector) {
-						mouseState.modifiers = ((InputEvent)event).getModifiersEx();
-						if (event instanceof MouseEvent)
-							mouseState.mousePos = ((MouseEvent)event).getPoint();
-						collector.notify();
-					}
-				}
-			}, AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
-		} catch (SecurityException ex) {
-			mapFrame.mapView.addMouseMotionListener(new MouseMotionListener() {
-				public void mouseMoved(MouseEvent e) {
-					synchronized (collector) {
-						mouseState.modifiers = e.getModifiersEx();
-						mouseState.mousePos = e.getPoint();
-						collector.notify();
-					}
-				}
+        // The background thread
+        final Collector collector = new Collector(mapFrame);
+        new Thread(collector).start();
 
-				public void mouseDragged(MouseEvent e) {
-					mouseMoved(e);
-				}
-			});
+        // Listen to keyboard/mouse events for pressing/releasing alt key and
+        // inform the collector.
+        try {
+            Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener(){
+                public void eventDispatched(AWTEvent event) {
+                    synchronized (collector) {
+                        mouseState.modifiers = ((InputEvent)event).getModifiersEx();
+                        if (event instanceof MouseEvent)
+                            mouseState.mousePos = ((MouseEvent)event).getPoint();
+                        collector.notify();
+                    }
+                }
+            }, AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+        } catch (SecurityException ex) {
+            mapFrame.mapView.addMouseMotionListener(new MouseMotionListener() {
+                public void mouseMoved(MouseEvent e) {
+                    synchronized (collector) {
+                        mouseState.modifiers = e.getModifiersEx();
+                        mouseState.mousePos = e.getPoint();
+                        collector.notify();
+                    }
+                }
 
-			mapFrame.mapView.addKeyListener(new KeyAdapter() {
-				@Override public void keyPressed(KeyEvent e) {
-					synchronized (collector) {
-						mouseState.modifiers = e.getModifiersEx();
-						collector.notify();
-					}
-				}
+                public void mouseDragged(MouseEvent e) {
+                    mouseMoved(e);
+                }
+            });
 
-				@Override public void keyReleased(KeyEvent e) {
-					keyPressed(e);
-				}
-			});
-		}
-	}
+            mapFrame.mapView.addKeyListener(new KeyAdapter() {
+                @Override public void keyPressed(KeyEvent e) {
+                    synchronized (collector) {
+                        mouseState.modifiers = e.getModifiersEx();
+                        collector.notify();
+                    }
+                }
 
-	public String helpTopic() {
-		return "Statusline";
-	}
-	
-	public void setHelpText(String t) {
-		helpText.setText(t);
-		helpText.setToolTipText(t);
-	}
-	public void setAngle(double a) {
-		angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " °");
-	}
-	public void setHeading(double h) {
-		headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " °");
-	}
-	public void setDist(double dist) {
-		String text = dist > 1000 ? (Math.round(dist/100)/10.0)+" km" : Math.round(dist*10)/10.0 +" m";
-		distText.setText(dist < 0 ? "--" : text);
-	}
-	
+                @Override public void keyReleased(KeyEvent e) {
+                    keyPressed(e);
+                }
+            });
+        }
+    }
+
+    public String helpTopic() {
+        return "Statusline";
+    }
+
+    public void setHelpText(String t) {
+        helpText.setText(t);
+        helpText.setToolTipText(t);
+    }
+    public void setAngle(double a) {
+        angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " °");
+    }
+    public void setHeading(double h) {
+        headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " °");
+    }
+    public void setDist(double dist) {
+        String text = dist > 1000 ? (Math.round(dist/100)/10.0)+" km" : Math.round(dist*10)/10.0 +" m";
+        distText.setText(dist < 0 ? "--" : text);
+    }
+
 }

@@ -18,28 +18,28 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class SaveAction extends SaveActionBase {
 
-	/**
-	 * Construct the action with "Save" as label.
-	 * @param layer Save this layer.
-	 */
-	public SaveAction(Layer layer) {
-		super(tr("Save"), "save", tr("Save the current data."),
-		Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.GROUP_MENU), layer);
-	}
+    /**
+     * Construct the action with "Save" as label.
+     * @param layer Save this layer.
+     */
+    public SaveAction(Layer layer) {
+        super(tr("Save"), "save", tr("Save the current data."),
+        Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.GROUP_MENU), layer);
+    }
 
-	@Override public File getFile(Layer layer) {
-		if (layer instanceof OsmDataLayer) {
-			File f = ((OsmDataLayer)layer).associatedFile;
-			if (f != null) {
-				return f;
-			}
-		}
-		if (layer instanceof GpxLayer) {
-			File f = ((GpxLayer)layer).data.storageFile;
-			if (f != null) {
-				return f;
-			}
-		}
-		return openFileDialog(layer);
-	}
+    @Override public File getFile(Layer layer) {
+        if (layer instanceof OsmDataLayer) {
+            File f = ((OsmDataLayer)layer).associatedFile;
+            if (f != null) {
+                return f;
+            }
+        }
+        if (layer instanceof GpxLayer) {
+            File f = ((GpxLayer)layer).data.storageFile;
+            if (f != null) {
+                return f;
+            }
+        }
+        return openFileDialog(layer);
+    }
 }

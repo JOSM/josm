@@ -17,24 +17,24 @@ import com.drew.metadata.Tag;
  */
 public class ExifReader {
 
-	@SuppressWarnings("unchecked") public static Date readTime(File filename) throws ParseException {
-		Date date = null;
-		try {
-	        Metadata metadata = JpegMetadataReader.readMetadata(filename);
-	        for (Iterator<Directory> dirIt = metadata.getDirectoryIterator(); dirIt.hasNext();) {
-	            for (Iterator<Tag> tagIt = dirIt.next().getTagIterator(); tagIt.hasNext();) {
-	                Tag tag = tagIt.next();
-	                if (tag.getTagType() == 0x9003)
-	                	return DateParser.parse(tag.getDescription());
-	                if (tag.getTagType() == 0x132 || tag.getTagType() == 0x9004)
-	                	date = DateParser.parse(tag.getDescription());
-	            }
-	        }
-		} catch (ParseException e) {
-			throw e;
+    @SuppressWarnings("unchecked") public static Date readTime(File filename) throws ParseException {
+        Date date = null;
+        try {
+            Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            for (Iterator<Directory> dirIt = metadata.getDirectoryIterator(); dirIt.hasNext();) {
+                for (Iterator<Tag> tagIt = dirIt.next().getTagIterator(); tagIt.hasNext();) {
+                    Tag tag = tagIt.next();
+                    if (tag.getTagType() == 0x9003)
+                        return DateParser.parse(tag.getDescription());
+                    if (tag.getTagType() == 0x132 || tag.getTagType() == 0x9004)
+                        date = DateParser.parse(tag.getDescription());
+                }
+            }
+        } catch (ParseException e) {
+            throw e;
         } catch (Exception e) {
-	        e.printStackTrace();
+            e.printStackTrace();
         }
-		return date;
-	}
+        return date;
+    }
 }

@@ -104,14 +104,14 @@ public class DeleteCommand extends Command {
 
     /**
      * Delete the primitives and everything they reference.
-     * 
+     *
      * If a node is deleted, the node and all ways and relations the node is part of are deleted as
      * well.
-     * 
+     *
      * If a way is deleted, all relations the way is member of are also deleted.
-     * 
+     *
      * If a way is deleted, only the way and no nodes are deleted.
-     * 
+     *
      * @param selection The list of all object to be deleted.
      * @return command A command to perform the deletions, or null of there is nothing to delete.
      */
@@ -129,13 +129,13 @@ public class DeleteCommand extends Command {
 
     /**
      * Try to delete all given primitives.
-     * 
+     *
      * If a node is used by a way, it's removed from that way. If a node or a way is used by a
      * relation, inform the user and do not delete.
-     * 
+     *
      * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
      * they are part of a relation, inform the user and do not delete.
-     * 
+     *
      * @param selection The objects to delete.
      * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
      * @return command A command to perform the deletions, or null of there is nothing to delete.
@@ -340,9 +340,9 @@ public class DeleteCommand extends Command {
                             "<html>" +
                             // leave message in one tr() as there is a grammatical connection.
                             tr("You are about to delete nodes outside of the area you have downloaded." +
-                            "<br>" + 
+                            "<br>" +
                             "This can cause problems because other objects (that you don't see) might use them." +
-                            "<br>" + 
+                            "<br>" +
                             "Do you really want to delete?") + "</html>"));
                         return DontShowAgainInfo.show("delete_outside_nodes", msg, false, JOptionPane.YES_NO_OPTION, JOptionPane.YES_OPTION);
                     }

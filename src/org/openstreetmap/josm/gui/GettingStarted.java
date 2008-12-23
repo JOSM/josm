@@ -24,7 +24,7 @@ import org.openstreetmap.josm.actions.AboutAction;
 
 public class GettingStarted extends JPanel {
 
-    static private String content = "";    
+    static private String content = "";
 
     public class LinkGeneral extends JEditorPane implements HyperlinkListener {
         public LinkGeneral(String text) {
@@ -73,13 +73,13 @@ public class GettingStarted extends JPanel {
                 String condition = matcher.group(3);
                 boolean included = false;
                 if (condition.equals("%3E")) {
-                    if ((myVersion == 0 || myVersion > targetVersion) 
+                    if ((myVersion == 0 || myVersion > targetVersion)
                         /* && ! Main.pref.getBoolean("motd.gt."+targetVersion) */) {
                         /* Main.pref.put("motd.gt."+targetVersion, true); */
                         included = true;
                     }
                 } else if (condition.equals("%3E%3D")) {
-                    if ((myVersion == 0 || myVersion >= targetVersion) 
+                    if ((myVersion == 0 || myVersion >= targetVersion)
                         /* && ! Main.pref.getBoolean("motd.ge."+targetVersion) */) {
                         /* Main.pref.put("motd.ge."+targetVersion, true); */
                         included = true;
@@ -113,22 +113,22 @@ public class GettingStarted extends JPanel {
                         try {
                             content += wr.read(url).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
                         } catch (IOException ioe2) {
-                        }            
-                    }            
+                        }
+                    }
                 }
             }
             content += motdcontent.substring(start);
             content = content.replace("<html>", "<html><style type=\"text/css\">\nbody { font-family: sans-serif; font-weight: bold; }\nh1 {text-align: center;}</style>");
-            /* replace the wiki title */ 
-            content = content.replace("JOSM, the Java OpenStreetMap editor", tr("JOSM, the Java OpenStreetMap editor")); 
+            /* replace the wiki title */
+            content = content.replace("JOSM, the Java OpenStreetMap editor", tr("JOSM, the Java OpenStreetMap editor"));
         }
 
     }
-    
+
     public GettingStarted() {
         super(new BorderLayout());
         assignContent();
-                                
+
         // panel.add(GBC.glue(0,1), GBC.eol());
         //panel.setMinimumSize(new Dimension(400, 600));
         JScrollPane scroller = new JScrollPane(new LinkGeneral(content));

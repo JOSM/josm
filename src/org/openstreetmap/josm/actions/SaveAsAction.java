@@ -16,16 +16,16 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class SaveAsAction extends SaveActionBase {
 
-	/**
-	 * Construct the action with "Save" as label.
-	 * @param layer Save this layer.
-	 */
-	public SaveAsAction(Layer layer) {
-		super(tr("Save as ..."), "save_as", tr("Save the current data to a new file."),
-		Shortcut.registerShortcut("system:saveas", tr("File: {0}", tr("Save as ...")), KeyEvent.VK_S, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), layer);
-	}
+    /**
+     * Construct the action with "Save" as label.
+     * @param layer Save this layer.
+     */
+    public SaveAsAction(Layer layer) {
+        super(tr("Save as ..."), "save_as", tr("Save the current data to a new file."),
+        Shortcut.registerShortcut("system:saveas", tr("File: {0}", tr("Save as ...")), KeyEvent.VK_S, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), layer);
+    }
 
-	@Override protected File getFile(Layer layer) {
-		return openFileDialog(layer);
-	}
+    @Override protected File getFile(Layer layer) {
+        return openFileDialog(layer);
+    }
 }

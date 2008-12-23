@@ -20,19 +20,19 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class LayerListPopup extends JPopupMenu {
 
-	public final static class InfoAction extends AbstractAction {
-	    private final Layer layer;
-	    public InfoAction(Layer layer) {
-	    	super(tr("Info"), ImageProvider.get("info"));
-		    this.layer = layer;
-	    }
-	    public void actionPerformed(ActionEvent e) {
-	    	JOptionPane.showMessageDialog(Main.parent, layer.getInfoComponent());
-	    }
+    public final static class InfoAction extends AbstractAction {
+        private final Layer layer;
+        public InfoAction(Layer layer) {
+            super(tr("Info"), ImageProvider.get("info"));
+            this.layer = layer;
+        }
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(Main.parent, layer.getInfoComponent());
+        }
     }
 
-	public LayerListPopup(final JList layers, final Layer layer) {
-		for (Component c : layer.getMenuEntries())
-			add(c);
-	}
+    public LayerListPopup(final JList layers, final Layer layer) {
+        for (Component c : layer.getMenuEntries())
+            add(c);
+    }
 }

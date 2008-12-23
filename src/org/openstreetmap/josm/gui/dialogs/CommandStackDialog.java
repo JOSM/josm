@@ -23,56 +23,56 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class CommandStackDialog extends ToggleDialog implements CommandQueueListener {
 
-	private DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
+    private DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
     private JTree tree = new JTree(treeModel);
 
-	public CommandStackDialog(final MapFrame mapFrame) {
-		super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
-		Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}", tr("Command Stack")), KeyEvent.VK_O, Shortcut.GROUP_LAYER), 100);
-		Main.main.undoRedo.listenerCommands.add(this);
+    public CommandStackDialog(final MapFrame mapFrame) {
+        super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
+        Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}", tr("Command Stack")), KeyEvent.VK_O, Shortcut.GROUP_LAYER), 100);
+        Main.main.undoRedo.listenerCommands.add(this);
 
-		tree.setRootVisible(false);
-		tree.setShowsRootHandles(true);
-		tree.expandRow(0);
-		tree.setCellRenderer(new DefaultTreeCellRenderer(){
-			@Override public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-				super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-				DefaultMutableTreeNode v = (DefaultMutableTreeNode)value;
-				if (v.getUserObject() instanceof JLabel) {
-					JLabel l = (JLabel)v.getUserObject();
-					setIcon(l.getIcon());
-					setText(l.getText());
-				}
-				return this;
-			}
-		});
-		tree.setVisibleRowCount(8);
-		add(new JScrollPane(tree), BorderLayout.CENTER);
-	}
+        tree.setRootVisible(false);
+        tree.setShowsRootHandles(true);
+        tree.expandRow(0);
+        tree.setCellRenderer(new DefaultTreeCellRenderer(){
+            @Override public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+                DefaultMutableTreeNode v = (DefaultMutableTreeNode)value;
+                if (v.getUserObject() instanceof JLabel) {
+                    JLabel l = (JLabel)v.getUserObject();
+                    setIcon(l.getIcon());
+                    setText(l.getText());
+                }
+                return this;
+            }
+        });
+        tree.setVisibleRowCount(8);
+        add(new JScrollPane(tree), BorderLayout.CENTER);
+    }
 
-	@Override public void setVisible(boolean v) {
-		if (v)
-			buildList();
-		else if (tree != null)
-			treeModel.setRoot(new DefaultMutableTreeNode());
-		super.setVisible(v);
-	}
+    @Override public void setVisible(boolean v) {
+        if (v)
+            buildList();
+        else if (tree != null)
+            treeModel.setRoot(new DefaultMutableTreeNode());
+        super.setVisible(v);
+    }
 
-	private void buildList() {
-		if (Main.map == null || Main.map.mapView == null || Main.map.mapView.editLayer == null)
-			return;
-		Collection<Command> commands = Main.main.undoRedo.commands;
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-		for (Command c : commands)
-			root.add(c.description());
-		treeModel.setRoot(root);
-		tree.scrollRowToVisible(treeModel.getChildCount(root)-1);
-	}
+    private void buildList() {
+        if (Main.map == null || Main.map.mapView == null || Main.map.mapView.editLayer == null)
+            return;
+        Collection<Command> commands = Main.main.undoRedo.commands;
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        for (Command c : commands)
+            root.add(c.description());
+        treeModel.setRoot(root);
+        tree.scrollRowToVisible(treeModel.getChildCount(root)-1);
+    }
 
-	public void commandChanged(int queueSize, int redoSize) {
-		if (!isVisible())
-			return;
+    public void commandChanged(int queueSize, int redoSize) {
+        if (!isVisible())
+            return;
         treeModel.setRoot(new DefaultMutableTreeNode());
-		buildList();
+        buildList();
     }
 }

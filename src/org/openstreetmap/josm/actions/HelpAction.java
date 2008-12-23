@@ -41,175 +41,175 @@ import org.openstreetmap.josm.tools.WikiReader;
  */
 public class HelpAction extends AbstractAction {
 
-	public interface Helpful {
-		String helpTopic();
+    public interface Helpful {
+        String helpTopic();
     }
 
         private String languageCode = Main.getLanguageCodeU();
-	private JFrame helpBrowser = new JFrame(tr("JOSM Online Help"));
-	private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
-	private JEditorPane help = new JEditorPane();
-	private WikiReader reader = new WikiReader(baseurl);
-	private String url;
+    private JFrame helpBrowser = new JFrame(tr("JOSM Online Help"));
+    private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
+    private JEditorPane help = new JEditorPane();
+    private WikiReader reader = new WikiReader(baseurl);
+    private String url;
 
-	public HelpAction() {
-		super(tr("Help"), ImageProvider.get("help"));
-		help.setEditable(false);
-		help.addHyperlinkListener(new HyperlinkListener(){
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
-					return;
-				if (e.getURL() == null)
-					help.setText("<html>404 not found</html>");
-				else if (e.getURL().toString().startsWith(WikiReader.JOSM_EXTERN))
-					OpenBrowser.displayUrl("http://"+e.getURL().toString().substring(WikiReader.JOSM_EXTERN.length())+"?action=edit");
-				else
-					setHelpUrl(e.getURL().toString());
-			}
-		});
-		help.setContentType("text/html");
+    public HelpAction() {
+        super(tr("Help"), ImageProvider.get("help"));
+        help.setEditable(false);
+        help.addHyperlinkListener(new HyperlinkListener(){
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
+                    return;
+                if (e.getURL() == null)
+                    help.setText("<html>404 not found</html>");
+                else if (e.getURL().toString().startsWith(WikiReader.JOSM_EXTERN))
+                    OpenBrowser.displayUrl("http://"+e.getURL().toString().substring(WikiReader.JOSM_EXTERN.length())+"?action=edit");
+                else
+                    setHelpUrl(e.getURL().toString());
+            }
+        });
+        help.setContentType("text/html");
 
-		JPanel p = new JPanel(new BorderLayout());
-		helpBrowser.setContentPane(p);
+        JPanel p = new JPanel(new BorderLayout());
+        helpBrowser.setContentPane(p);
 
-		p.add(new JScrollPane(help), BorderLayout.CENTER);
-		String[] bounds = Main.pref.get("help.window.bounds", "0,0,800,600").split(",");
-		helpBrowser.setBounds(
-				Integer.parseInt(bounds[0]),
-				Integer.parseInt(bounds[1]),
-				Integer.parseInt(bounds[2]),
-				Integer.parseInt(bounds[3]));
+        p.add(new JScrollPane(help), BorderLayout.CENTER);
+        String[] bounds = Main.pref.get("help.window.bounds", "0,0,800,600").split(",");
+        helpBrowser.setBounds(
+                Integer.parseInt(bounds[0]),
+                Integer.parseInt(bounds[1]),
+                Integer.parseInt(bounds[2]),
+                Integer.parseInt(bounds[3]));
 
-		JPanel buttons = new JPanel();
-		p.add(buttons, BorderLayout.SOUTH);
-		createButton(buttons, tr("Open in Browser"));
-		createButton(buttons, tr("Edit"));
-		createButton(buttons, tr("Reload"));
+        JPanel buttons = new JPanel();
+        p.add(buttons, BorderLayout.SOUTH);
+        createButton(buttons, tr("Open in Browser"));
+        createButton(buttons, tr("Edit"));
+        createButton(buttons, tr("Reload"));
 
-		helpBrowser.addWindowListener(new WindowAdapter(){
-			@Override public void windowClosing(WindowEvent e) {
-				closeHelp();
-			}
-		});
+        helpBrowser.addWindowListener(new WindowAdapter(){
+            @Override public void windowClosing(WindowEvent e) {
+                closeHelp();
+            }
+        });
 
         help.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Close");
         help.getActionMap().put("Close", new AbstractAction(){
-			public void actionPerformed(ActionEvent e) {
-				closeHelp();
+            public void actionPerformed(ActionEvent e) {
+                closeHelp();
             }
         });
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		if (tr("Open in Browser").equals(e.getActionCommand())) {
-			OpenBrowser.displayUrl(url);
-		} else if (tr("Edit").equals(e.getActionCommand())) {
-			if (!url.startsWith(baseurl)) {
-				JOptionPane.showMessageDialog(Main.parent, tr("Can only edit help pages from JOSM Online Help"));
-				return;
-			}
-			OpenBrowser.displayUrl(url+"?action=edit");
-		} else if (tr("Reload").equals(e.getActionCommand())) {
-			setHelpUrl(url);
-		} else if (e.getActionCommand() == null) {
-			String topic = null;
-			Point mouse = Main.parent.getMousePosition();
-			if (mouse != null)
-				topic = contextSensitiveHelp(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
-			if (topic == null) {
-				helpBrowser.setVisible(false);
-				setHelpUrl(baseurl+"/wiki/Help");
-			} else
-				help(topic);
-		} else {
-			helpBrowser.setVisible(false);
-			setHelpUrl(baseurl+"/wiki/Help");
-		}
-	}
-
-	/**
-	 * @return The topic of the help. <code>null</code> for "don't know"
-	 */
-	private String contextSensitiveHelp(Object c) {
-		if (c instanceof Helpful)
-			return ((Helpful)c).helpTopic();
-		if (c instanceof JMenu)
-			return "Menu/"+((JMenu)c).getText();
-		if (c instanceof AbstractButton) {
-			AbstractButton b = (AbstractButton)c;
-			if (b.getClientProperty("help") != null)
-				return (String)b.getClientProperty("help");
-			return contextSensitiveHelp(((AbstractButton)c).getAction());
-		}
-		if (c instanceof Action)
-			return (String)((Action)c).getValue("help");
-		if (c instanceof Component)
-			return contextSensitiveHelp(((Component)c).getParent());
-		return null;
     }
 
-	/**
-	 * Displays the help (or browse on the already open help) on the online page
-	 * with the given help topic. Use this for larger help descriptions.
-	 */
-	public void help(String topic) {
-		helpBrowser.setVisible(false);
-		setHelpUrl(baseurl+"/wiki/Help/"+topic);
-	}
+    public void actionPerformed(ActionEvent e) {
+        if (tr("Open in Browser").equals(e.getActionCommand())) {
+            OpenBrowser.displayUrl(url);
+        } else if (tr("Edit").equals(e.getActionCommand())) {
+            if (!url.startsWith(baseurl)) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Can only edit help pages from JOSM Online Help"));
+                return;
+            }
+            OpenBrowser.displayUrl(url+"?action=edit");
+        } else if (tr("Reload").equals(e.getActionCommand())) {
+            setHelpUrl(url);
+        } else if (e.getActionCommand() == null) {
+            String topic = null;
+            Point mouse = Main.parent.getMousePosition();
+            if (mouse != null)
+                topic = contextSensitiveHelp(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
+            if (topic == null) {
+                helpBrowser.setVisible(false);
+                setHelpUrl(baseurl+"/wiki/Help");
+            } else
+                help(topic);
+        } else {
+            helpBrowser.setVisible(false);
+            setHelpUrl(baseurl+"/wiki/Help");
+        }
+    }
 
-	/**
-	 * Set the content of the help window to a specific text (in html format)
-	 * @param url The url this content is the representation of
-	 */
-	public void setHelpUrl(String url) {
-		int i = url.lastIndexOf("/")+1;
-		String title = url.substring(i);
-		if(!title.startsWith(languageCode))
-			title = languageCode + title;
-		String langurl = url.substring(0, i) + title;
-		if(langurl.equals(this.url) || langurl.equals(url))
-		{
-			this.url = url;
-			try {
-				help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
-			} catch (IOException ex) {
-				help.setText(tr("Error while loading page {0}",url));
-			}
-		}
-		else
-		{
-			try {
-				help.read(new StringReader(reader.read(langurl)), help.getEditorKit().createDefaultDocument());
-				String message = help.getText();
-				String le = "http://josm-extern." + langurl.substring(7);
-				if(message.indexOf("Describe &quot;") >= 0 && message.indexOf(le) >= 0)
-					throw new IOException();
-				this.url = langurl;
-			} catch (IOException e) {
-				this.url = url;
-				try {
-					help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
-				} catch (IOException ex) {
-					help.setText(tr("Error while loading page {0}",url));
-				}
-			}
-		}
-		helpBrowser.setVisible(true);
-	}
+    /**
+     * @return The topic of the help. <code>null</code> for "don't know"
+     */
+    private String contextSensitiveHelp(Object c) {
+        if (c instanceof Helpful)
+            return ((Helpful)c).helpTopic();
+        if (c instanceof JMenu)
+            return "Menu/"+((JMenu)c).getText();
+        if (c instanceof AbstractButton) {
+            AbstractButton b = (AbstractButton)c;
+            if (b.getClientProperty("help") != null)
+                return (String)b.getClientProperty("help");
+            return contextSensitiveHelp(((AbstractButton)c).getAction());
+        }
+        if (c instanceof Action)
+            return (String)((Action)c).getValue("help");
+        if (c instanceof Component)
+            return contextSensitiveHelp(((Component)c).getParent());
+        return null;
+    }
 
-	/**
-	 * Closes the help window
-	 */
-	public void closeHelp() {
-		String bounds = helpBrowser.getX()+","+helpBrowser.getY()+","+helpBrowser.getWidth()+","+helpBrowser.getHeight();
-		Main.pref.put("help.window.bounds", bounds);
-		helpBrowser.setVisible(false);
-	}
+    /**
+     * Displays the help (or browse on the already open help) on the online page
+     * with the given help topic. Use this for larger help descriptions.
+     */
+    public void help(String topic) {
+        helpBrowser.setVisible(false);
+        setHelpUrl(baseurl+"/wiki/Help/"+topic);
+    }
 
-	private void createButton(JPanel buttons, String name) {
-		JButton b = new JButton(tr(name));
-		b.setActionCommand(name);
-		b.addActionListener(this);
-		buttons.add(b);
-	}
+    /**
+     * Set the content of the help window to a specific text (in html format)
+     * @param url The url this content is the representation of
+     */
+    public void setHelpUrl(String url) {
+        int i = url.lastIndexOf("/")+1;
+        String title = url.substring(i);
+        if(!title.startsWith(languageCode))
+            title = languageCode + title;
+        String langurl = url.substring(0, i) + title;
+        if(langurl.equals(this.url) || langurl.equals(url))
+        {
+            this.url = url;
+            try {
+                help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
+            } catch (IOException ex) {
+                help.setText(tr("Error while loading page {0}",url));
+            }
+        }
+        else
+        {
+            try {
+                help.read(new StringReader(reader.read(langurl)), help.getEditorKit().createDefaultDocument());
+                String message = help.getText();
+                String le = "http://josm-extern." + langurl.substring(7);
+                if(message.indexOf("Describe &quot;") >= 0 && message.indexOf(le) >= 0)
+                    throw new IOException();
+                this.url = langurl;
+            } catch (IOException e) {
+                this.url = url;
+                try {
+                    help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
+                } catch (IOException ex) {
+                    help.setText(tr("Error while loading page {0}",url));
+                }
+            }
+        }
+        helpBrowser.setVisible(true);
+    }
+
+    /**
+     * Closes the help window
+     */
+    public void closeHelp() {
+        String bounds = helpBrowser.getX()+","+helpBrowser.getY()+","+helpBrowser.getWidth()+","+helpBrowser.getHeight();
+        Main.pref.put("help.window.bounds", bounds);
+        helpBrowser.setVisible(false);
+    }
+
+    private void createButton(JPanel buttons, String name) {
+        JButton b = new JButton(tr(name));
+        b.setActionCommand(name);
+        b.addActionListener(this);
+        buttons.add(b);
+    }
 }

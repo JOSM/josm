@@ -67,13 +67,13 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * A layer holding data from a specific dataset.
  * The data can be fully edited.
- * 
+ *
  * @author imi
  */
 public class OsmDataLayer extends Layer {
 
     public final static class DataCountVisitor implements Visitor {
-        public final int[] normal = new int[3];        
+        public final int[] normal = new int[3];
         public final int[] deleted = new int[3];
         public final String[] names = {"node", "way", "relation"};
 
@@ -130,7 +130,7 @@ public class OsmDataLayer extends Layer {
      * a paint texture for non-downloaded area
      */
     private static TexturePaint hatched;
-    
+
     static {
         createHatchTexture();
     }
@@ -177,17 +177,17 @@ public class OsmDataLayer extends Layer {
         boolean active = Main.map.mapView.getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && Main.map.mapView.useVirtualNodes();
-        
-        // draw the hatched area for non-downloaded region. only draw if we're the active 
+
+        // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
         if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.dataSources.isEmpty()) {
             // initialize area with current viewport
             Rectangle b = Main.map.mapView.getBounds();
-            // on some platforms viewport bounds seem to be offset from the left, 
+            // on some platforms viewport bounds seem to be offset from the left,
             // over-grow it just to be sure
             b.grow(100, 100);
             Area a = new Area(b);
-            
+
             // now succesively subtract downloaded areas
             for (DataSource src : data.dataSources) {
                 if (src.bounds != null && !src.bounds.min.equals(src.bounds.max)) {
@@ -199,12 +199,12 @@ public class OsmDataLayer extends Layer {
                     a.subtract(new Area(r));
                 }
             }
-            
+
             // paint remainder
             ((Graphics2D)g).setPaint(hatched);
             ((Graphics2D)g).fill(a);
         }
-    
+
         SimplePaintVisitor painter;
         if (Main.pref.getBoolean("draw.wireframe"))
             painter = new SimplePaintVisitor();
@@ -233,12 +233,12 @@ public class OsmDataLayer extends Layer {
         visitor.fixReferences();
 
         // copy the merged layer's data source info
-        for (DataSource src : ((OsmDataLayer)from).data.dataSources) 
+        for (DataSource src : ((OsmDataLayer)from).data.dataSources)
             data.dataSources.add(src);
         fireDataChange();
         // repaint to make sure new data is displayed properly.
         Main.map.mapView.repaint();
-        
+
         if (visitor.conflicts.isEmpty())
             return;
         final ConflictDialog dlg = Main.map.conflictDialog;
@@ -262,9 +262,9 @@ public class OsmDataLayer extends Layer {
      * Clean out the data behind the layer. This means clearing the redo/undo lists,
      * really deleting all deleted objects and reset the modified flags. This is done
      * after a successfull upload.
-     * 
-     * @param processed A list of all objects that were actually uploaded. 
-     *         May be <code>null</code>, which means nothing has been uploaded but 
+     *
+     * @param processed A list of all objects that were actually uploaded.
+     *         May be <code>null</code>, which means nothing has been uploaded but
      *         saved to disk instead. Note that an empty collection for "processed"
      *      means that an upload has been attempted but failed.
      */
@@ -273,7 +273,7 @@ public class OsmDataLayer extends Layer {
         // return immediately if an upload attempt failed
         if (processed != null && processed.isEmpty() && !dataAdded)
             return;
-        
+
         Main.main.undoRedo.clean();
 
         // if uploaded, clean the modified flags as well
@@ -299,7 +299,7 @@ public class OsmDataLayer extends Layer {
     /**
      * Clean the modified flag for the given iterator over a collection if it is in the
      * list of processed entries.
-     * 
+     *
      * @param it The iterator to change the modified and remove the items if deleted.
      * @param processed A list of all objects that have been successfully progressed.
      *         If the object in the iterator is not in the list, nothing will be changed on it.
@@ -414,8 +414,8 @@ public class OsmDataLayer extends Layer {
                 trkseg.add(wpt);
             }
         }
-        
-        // what is this loop meant to do? it creates waypoints but never 
+
+        // what is this loop meant to do? it creates waypoints but never
         // records them?
         for (Node n : data.nodes) {
             if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;

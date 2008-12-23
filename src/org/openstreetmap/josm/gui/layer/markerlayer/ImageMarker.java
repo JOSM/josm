@@ -25,67 +25,67 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * Marker representing an image. Uses a special icon, and when clicked,
  * displays an image view dialog. Re-uses some code from GeoImageLayer.
- * 
+ *
  * @author Frederik Ramm <frederik@remote.org>
  *
  */
 public class ImageMarker extends ButtonMarker {
 
-	public URL imageUrl;
+    public URL imageUrl;
 
-	public static ImageMarker create(LatLon ll, String url, MarkerLayer parentLayer, double time, double offset) {
-		try {
-			return new ImageMarker(ll, new URL(url), parentLayer, time, offset);
-		} catch (Exception ex) {
-			return null;
-		}
-	}
+    public static ImageMarker create(LatLon ll, String url, MarkerLayer parentLayer, double time, double offset) {
+        try {
+            return new ImageMarker(ll, new URL(url), parentLayer, time, offset);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
-	private ImageMarker(LatLon ll, URL imageUrl, MarkerLayer parentLayer, double time, double offset) {
-		super(ll, "photo.png", parentLayer, time, offset);
-		this.imageUrl = imageUrl;
-	}
+    private ImageMarker(LatLon ll, URL imageUrl, MarkerLayer parentLayer, double time, double offset) {
+        super(ll, "photo.png", parentLayer, time, offset);
+        this.imageUrl = imageUrl;
+    }
 
-	@Override public void actionPerformed(ActionEvent ev) {
-		final JPanel p = new JPanel(new BorderLayout());
-		final JScrollPane scroll = new JScrollPane(new JLabel(loadScaledImage(imageUrl, 580)));
-		final JViewport vp = scroll.getViewport();
-		p.add(scroll, BorderLayout.CENTER);
+    @Override public void actionPerformed(ActionEvent ev) {
+        final JPanel p = new JPanel(new BorderLayout());
+        final JScrollPane scroll = new JScrollPane(new JLabel(loadScaledImage(imageUrl, 580)));
+        final JViewport vp = scroll.getViewport();
+        p.add(scroll, BorderLayout.CENTER);
 
-		final JToggleButton scale = new JToggleButton(ImageProvider.get("misc", "rectangle"));
+        final JToggleButton scale = new JToggleButton(ImageProvider.get("misc", "rectangle"));
 
-		JPanel p2 = new JPanel();
-		p2.add(scale);
-		p.add(p2, BorderLayout.SOUTH);
-		scale.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent ev) {
-				p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				if (scale.getModel().isSelected())
-					((JLabel)vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
-				else
-					((JLabel)vp.getView()).setIcon(new ImageIcon(imageUrl));
-				p.setCursor(Cursor.getDefaultCursor());
-			}
-		});
-		scale.setSelected(true);
-		JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
-		JDialog dlg = pane.createDialog(Main.parent, imageUrl.toString());
-		dlg.setModal(false);
-		dlg.setVisible(true);
-	}
+        JPanel p2 = new JPanel();
+        p2.add(scale);
+        p.add(p2, BorderLayout.SOUTH);
+        scale.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent ev) {
+                p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                if (scale.getModel().isSelected())
+                    ((JLabel)vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
+                else
+                    ((JLabel)vp.getView()).setIcon(new ImageIcon(imageUrl));
+                p.setCursor(Cursor.getDefaultCursor());
+            }
+        });
+        scale.setSelected(true);
+        JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
+        JDialog dlg = pane.createDialog(Main.parent, imageUrl.toString());
+        dlg.setModal(false);
+        dlg.setVisible(true);
+    }
 
-	private static Icon loadScaledImage(URL u, int maxSize) {
-		Image img = new ImageIcon(u).getImage();
-		int w = img.getWidth(null);
-		int h = img.getHeight(null);
-		if (w>h) {
-			h = Math.round(maxSize*((float)h/w));
-			w = maxSize;
-		} else {
-			w = Math.round(maxSize*((float)w/h));
-			h = maxSize;
-		}
-		return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));
-	}
+    private static Icon loadScaledImage(URL u, int maxSize) {
+        Image img = new ImageIcon(u).getImage();
+        int w = img.getWidth(null);
+        int h = img.getHeight(null);
+        if (w>h) {
+            h = Math.round(maxSize*((float)h/w));
+            w = maxSize;
+        } else {
+            w = Math.round(maxSize*((float)w/h));
+            h = maxSize;
+        }
+        return new ImageIcon(img.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    }
 
 }

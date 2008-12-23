@@ -6,8 +6,8 @@ import java.util.List;
 public class TagCorrectionTable extends
         CorrectionTable<TagCorrectionTableModel> {
 
-	public TagCorrectionTable(List<TagCorrection> tagCorrections) {
-		super(new TagCorrectionTableModel(tagCorrections));
-	}
+    public TagCorrectionTable(List<TagCorrection> tagCorrections) {
+        super(new TagCorrectionTableModel(tagCorrections));
+    }
 
 }

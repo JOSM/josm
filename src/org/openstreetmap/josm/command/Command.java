@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * Classes implementing Command modify a dataset in a specific way. A command is
  * one atomic action on a specific dataset, such as move or delete.
  *
- * Remember that the command must be executable and undoable, even if the 
+ * Remember that the command must be executable and undoable, even if the
  * Main.ds has changed, so the command must save the dataset it operates on
  * if necessary.
  *
@@ -46,7 +46,7 @@ abstract public class Command {
       }
    }
 
-   private CloneVisitor orig; 
+   private CloneVisitor orig;
 
    protected DataSet ds;
 
@@ -69,10 +69,10 @@ abstract public class Command {
    }
 
    /**
-    * Undoes the command. 
+    * Undoes the command.
     * It can be assumed that all objects are in the same state they were before.
     * It can also be assumed that executeCommand was called exactly once before.
-    * 
+    *
     * This implementation undoes all objects stored by a former call to executeCommand.
     */
    public void undoCommand() {
@@ -121,7 +121,7 @@ abstract public class Command {
    /**
     * Fill in the changed data this command operates on.
     * Add to the lists, don't clear them.
-    * 
+    *
     * @param modified The modified primitives
     * @param deleted The deleted primitives
     * @param added The added primitives

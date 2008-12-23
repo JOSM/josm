@@ -12,51 +12,51 @@ import javax.swing.table.TableCellRenderer;
 public abstract class CorrectionTable<TM extends CorrectionTableModel<?>>
         extends JTable {
 
-	private static final int MAX_VISIBLE_LINES = 10;
+    private static final int MAX_VISIBLE_LINES = 10;
 
     public static class BoldRenderer extends JLabel implements
-	        TableCellRenderer {
+            TableCellRenderer {
 
-		public Component getTableCellRendererComponent(JTable table,
-		        Object value, boolean isSelected, boolean hasFocus, int row,
-		        int column) {
+        public Component getTableCellRendererComponent(JTable table,
+                Object value, boolean isSelected, boolean hasFocus, int row,
+                int column) {
 
-			Font f = getFont();
-			setFont(new Font(f.getName(), f.getStyle() | Font.BOLD, f.getSize()));
+            Font f = getFont();
+            setFont(new Font(f.getName(), f.getStyle() | Font.BOLD, f.getSize()));
 
-			setText((String)value);
+            setText((String)value);
 
-			return this;
-		}
-	}
+            return this;
+        }
+    }
 
-	private static BoldRenderer boldRenderer = null;
+    private static BoldRenderer boldRenderer = null;
 
-	protected CorrectionTable(TM correctionTableModel) {
-		super(correctionTableModel);
+    protected CorrectionTable(TM correctionTableModel) {
+        super(correctionTableModel);
 
-		final int correctionsSize = correctionTableModel.getCorrections().size();
-		final int lines = correctionsSize > MAX_VISIBLE_LINES ? MAX_VISIBLE_LINES
+        final int correctionsSize = correctionTableModel.getCorrections().size();
+        final int lines = correctionsSize > MAX_VISIBLE_LINES ? MAX_VISIBLE_LINES
                 : correctionsSize;
-		setPreferredScrollableViewportSize(new Dimension(400, lines
-		        * getRowHeight()));
-		getColumnModel().getColumn(correctionTableModel.getApplyColumn())
+        setPreferredScrollableViewportSize(new Dimension(400, lines
+                * getRowHeight()));
+        getColumnModel().getColumn(correctionTableModel.getApplyColumn())
                 .setPreferredWidth(40);
-		setRowSelectionAllowed(false);
-	}
+        setRowSelectionAllowed(false);
+    }
 
-	public TableCellRenderer getCellRenderer(int row, int column) {
-		if (getCorrectionTableModel().isBoldCell(row, column)) {
-			if (boldRenderer == null)
-				boldRenderer = new BoldRenderer();
-			return boldRenderer;
-		}
-		return super.getCellRenderer(row, column);
-	}
+    public TableCellRenderer getCellRenderer(int row, int column) {
+        if (getCorrectionTableModel().isBoldCell(row, column)) {
+            if (boldRenderer == null)
+                boldRenderer = new BoldRenderer();
+            return boldRenderer;
+        }
+        return super.getCellRenderer(row, column);
+    }
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public TM getCorrectionTableModel() {
-		return (TM)getModel();
-	}
+        return (TM)getModel();
+    }
 
 }

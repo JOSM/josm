@@ -18,12 +18,12 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
  * @author imi
  */
 public final class Node extends OsmPrimitive {
-	
-	public LatLon coor;
-	public volatile EastNorth eastNorth;
-    
+
+    public LatLon coor;
+    public volatile EastNorth eastNorth;
+
     private static CoordinateFormat mCord;
-    
+
     static {
         try {
             mCord = LatLon.CoordinateFormat.valueOf(Main.pref.get("coordinates"));
@@ -32,43 +32,43 @@ public final class Node extends OsmPrimitive {
         }
     }
 
-	/**
-	 * Create an incomplete Node object
-	 */
-	public Node(long id) {
-		this.id = id;
-		incomplete = true;
-	}
-	
-	/**
-	 * Create an identical clone of the argument (including the id)
-	 */
-	public Node(Node clone) {
-		cloneFrom(clone);
-	}
+    /**
+     * Create an incomplete Node object
+     */
+    public Node(long id) {
+        this.id = id;
+        incomplete = true;
+    }
 
-	public Node(LatLon latlon) {
-		this.coor = latlon;
-		eastNorth = Main.proj.latlon2eastNorth(latlon);
-	}
+    /**
+     * Create an identical clone of the argument (including the id)
+     */
+    public Node(Node clone) {
+        cloneFrom(clone);
+    }
 
-	@Override public void visit(Visitor visitor) {
-		visitor.visit(this);
-	}
-	
-	@Override public void cloneFrom(OsmPrimitive osm) {
-		super.cloneFrom(osm);
-		coor = ((Node)osm).coor;
-		eastNorth = ((Node)osm).eastNorth;
-	}
+    public Node(LatLon latlon) {
+        this.coor = latlon;
+        eastNorth = Main.proj.latlon2eastNorth(latlon);
+    }
 
-	@Override public String toString() {
-		if (coor == null) return "{Node id="+id+"}";
-		return "{Node id="+id+",version="+version+",lat="+coor.lat()+",lon="+coor.lon()+"}";
-	}
+    @Override public void visit(Visitor visitor) {
+        visitor.visit(this);
+    }
 
-	@Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-		if (osm instanceof Node) {
+    @Override public void cloneFrom(OsmPrimitive osm) {
+        super.cloneFrom(osm);
+        coor = ((Node)osm).coor;
+        eastNorth = ((Node)osm).eastNorth;
+    }
+
+    @Override public String toString() {
+        if (coor == null) return "{Node id="+id+"}";
+        return "{Node id="+id+",version="+version+",lat="+coor.lat()+",lon="+coor.lon()+"}";
+    }
+
+    @Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
+        if (osm instanceof Node) {
             if (super.realEqual(osm, semanticOnly)) {
                 if ((coor == null) && ((Node)osm).coor == null)
                     return true;
@@ -79,20 +79,20 @@ public final class Node extends OsmPrimitive {
         return false;
     }
 
-	public int compareTo(OsmPrimitive o) {
-	    return o instanceof Node ? Long.valueOf(id).compareTo(o.id) : 1;
-	}
+    public int compareTo(OsmPrimitive o) {
+        return o instanceof Node ? Long.valueOf(id).compareTo(o.id) : 1;
+    }
 
-	public String getName() {
-		String name;
-		if (incomplete) {
-			name = tr("incomplete");
-		} else {
-			name = get("name");
-			if (name == null)
-				name = id == 0 ? "" : ""+id;
-			name += " (" + coor.latToString(mCord) + ", " + coor.lonToString(mCord) + ")";
-		}
-		return name;
-	}
+    public String getName() {
+        String name;
+        if (incomplete) {
+            name = tr("incomplete");
+        } else {
+            name = get("name");
+            if (name == null)
+                name = id == 0 ? "" : ""+id;
+            name += " (" + coor.latToString(mCord) + ", " + coor.lonToString(mCord) + ")";
+        }
+        return name;
+    }
 }

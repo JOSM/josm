@@ -27,60 +27,60 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public final class ReverseWayAction extends JosmAction {
 
-	public ReverseWayAction() {
-		super(tr("Reverse ways"), "wayflip", tr("Reverse the direction of all selected ways."),
-		Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
-	}
+    public ReverseWayAction() {
+        super(tr("Reverse ways"), "wayflip", tr("Reverse the direction of all selected ways."),
+        Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		final Collection<Way> sel = new LinkedList<Way>();
-		new Visitor() {
-			public void visit(Node n) {
-			}
+    public void actionPerformed(ActionEvent e) {
+        final Collection<Way> sel = new LinkedList<Way>();
+        new Visitor() {
+            public void visit(Node n) {
+            }
 
-			public void visit(Way w) {
-				sel.add(w);
-			}
+            public void visit(Way w) {
+                sel.add(w);
+            }
 
-			public void visit(Relation e) {
-			}
+            public void visit(Relation e) {
+            }
 
-			public void visitAll() {
-				for (OsmPrimitive osm : Main.ds.getSelected())
-					osm.visit(this);
-			}
-		}.visitAll();
+            public void visitAll() {
+                for (OsmPrimitive osm : Main.ds.getSelected())
+                    osm.visit(this);
+            }
+        }.visitAll();
 
-		if (sel.isEmpty()) {
-			JOptionPane.showMessageDialog(Main.parent,
-			        tr("Please select at least one way."));
-			return;
-		}
+        if (sel.isEmpty()) {
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("Please select at least one way."));
+            return;
+        }
 
-		boolean propertiesUpdated = false;
-		ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
-		Collection<Command> c = new LinkedList<Command>();
-		for (Way w : sel) {
-			Way wnew = new Way(w);
-			Collections.reverse(wnew.nodes);
-			if (Main.pref.getBoolean("tag-correction.reverse-way", true)) {
-				try
-				{
-					final Collection<Command> changePropertyCommands = reverseWayTagCorrector.execute(wnew);
-					propertiesUpdated = propertiesUpdated
-				        || (changePropertyCommands != null && !changePropertyCommands.isEmpty());
-					c.addAll(changePropertyCommands);
-				}
-				catch(UserCancelException ex)
-				{
-					return;
-				}
-			}
-			c.add(new ChangeCommand(w, wnew));
-		}
-		Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
-		if (propertiesUpdated)
-			DataSet.fireSelectionChanged(Main.ds.getSelected());
-		Main.map.repaint();
-	}
+        boolean propertiesUpdated = false;
+        ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
+        Collection<Command> c = new LinkedList<Command>();
+        for (Way w : sel) {
+            Way wnew = new Way(w);
+            Collections.reverse(wnew.nodes);
+            if (Main.pref.getBoolean("tag-correction.reverse-way", true)) {
+                try
+                {
+                    final Collection<Command> changePropertyCommands = reverseWayTagCorrector.execute(wnew);
+                    propertiesUpdated = propertiesUpdated
+                        || (changePropertyCommands != null && !changePropertyCommands.isEmpty());
+                    c.addAll(changePropertyCommands);
+                }
+                catch(UserCancelException ex)
+                {
+                    return;
+                }
+            }
+            c.add(new ChangeCommand(w, wnew));
+        }
+        Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
+        if (propertiesUpdated)
+            DataSet.fireSelectionChanged(Main.ds.getSelected());
+        Main.map.repaint();
+    }
 }

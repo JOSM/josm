@@ -29,51 +29,51 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ZoomAction extends MapMode implements SelectionEnded {
 
-	/**
-	 * Shortcut to the mapview.
-	 */
-	private final MapView mv;
-	/**
-	 * Manager that manages the selection rectangle with the aspect ratio of the
-	 * MapView.
-	 */
-	private final SelectionManager selectionManager;
+    /**
+     * Shortcut to the mapview.
+     */
+    private final MapView mv;
+    /**
+     * Manager that manages the selection rectangle with the aspect ratio of the
+     * MapView.
+     */
+    private final SelectionManager selectionManager;
 
 
-	/**
-	 * Construct a ZoomAction without a label.
-	 * @param mapFrame The MapFrame, whose zoom mode should be enabled.
-	 */
-	public ZoomAction(MapFrame mapFrame) {
-		super(tr("Zoom"), "zoom", tr("Zoom and move map"),
-		Shortcut.registerShortcut("mapmode:zoom", tr("Mode: {0}", tr("Zoom")), KeyEvent.VK_Z, Shortcut.GROUP_EDIT),
-		mapFrame, ImageProvider.getCursor("normal", "zoom"));
-		mv = mapFrame.mapView;
-		selectionManager = new SelectionManager(this, true, mv);
-	}
+    /**
+     * Construct a ZoomAction without a label.
+     * @param mapFrame The MapFrame, whose zoom mode should be enabled.
+     */
+    public ZoomAction(MapFrame mapFrame) {
+        super(tr("Zoom"), "zoom", tr("Zoom and move map"),
+        Shortcut.registerShortcut("mapmode:zoom", tr("Mode: {0}", tr("Zoom")), KeyEvent.VK_Z, Shortcut.GROUP_EDIT),
+        mapFrame, ImageProvider.getCursor("normal", "zoom"));
+        mv = mapFrame.mapView;
+        selectionManager = new SelectionManager(this, true, mv);
+    }
 
-	/**
-	 * Zoom to the rectangle on the map.
-	 */
-	public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
-		if (r.width >= 3 && r.height >= 3) {
-			double scale = mv.getScale() * r.getWidth()/mv.getWidth();
-			EastNorth newCenter = mv.getEastNorth(r.x+r.width/2, r.y+r.height/2);
-			mv.zoomTo(newCenter, scale);
-		}
-	}
+    /**
+     * Zoom to the rectangle on the map.
+     */
+    public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
+        if (r.width >= 3 && r.height >= 3) {
+            double scale = mv.getScale() * r.getWidth()/mv.getWidth();
+            EastNorth newCenter = mv.getEastNorth(r.x+r.width/2, r.y+r.height/2);
+            mv.zoomTo(newCenter, scale);
+        }
+    }
 
-	@Override public void enterMode() {
-		super.enterMode();
-		selectionManager.register(mv);
-	}
+    @Override public void enterMode() {
+        super.enterMode();
+        selectionManager.register(mv);
+    }
 
-	@Override public void exitMode() {
-		super.exitMode();
-		selectionManager.unregister(mv);
-	}
+    @Override public void exitMode() {
+        super.exitMode();
+        selectionManager.unregister(mv);
+    }
 
-	@Override public String getModeHelpText() {
-		return tr("Zoom by dragging or Ctrl+. or Ctrl+,; move with Ctrl+up,left,down,right; move zoom with right button");
-	}
+    @Override public String getModeHelpText() {
+        return tr("Zoom by dragging or Ctrl+. or Ctrl+,; move with Ctrl+up,left,down,right; move zoom with right button");
+    }
 }

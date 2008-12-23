@@ -14,27 +14,27 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioBackAction extends JosmAction {
 
-	private double amount; // note, normally negative, i.e. jump backwards in time
+    private double amount; // note, normally negative, i.e. jump backwards in time
 
-	public AudioBackAction() {
-		super(tr("Back"), "audio-back", tr("Jump back."),
-		Shortcut.registerShortcut("audio:back", tr("Audio: {0}", tr("Back")), KeyEvent.VK_F6, Shortcut.GROUP_DIRECT), true);
-		try {
-			amount = - Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
-		} catch (NumberFormatException e) {
-			amount = 10.0;
-		}
-		this.putValue("help", "Action/Back");
-	}
+    public AudioBackAction() {
+        super(tr("Back"), "audio-back", tr("Jump back."),
+        Shortcut.registerShortcut("audio:back", tr("Audio: {0}", tr("Back")), KeyEvent.VK_F6, Shortcut.GROUP_DIRECT), true);
+        try {
+            amount = - Double.parseDouble(Main.pref.get("audio.forwardbackamount","10.0"));
+        } catch (NumberFormatException e) {
+            amount = 10.0;
+        }
+        this.putValue("help", "Action/Back");
+    }
 
-	public void actionPerformed(ActionEvent e) {
-		try {
-			if (AudioPlayer.playing() || AudioPlayer.paused())
-				AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position() + amount);
-			else
-				MarkerLayer.playAudio();
-		} catch (Exception ex) {
-			AudioPlayer.audioMalfunction(ex);
-		}
-	}
+    public void actionPerformed(ActionEvent e) {
+        try {
+            if (AudioPlayer.playing() || AudioPlayer.paused())
+                AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position() + amount);
+            else
+                MarkerLayer.playAudio();
+        } catch (Exception ex) {
+            AudioPlayer.audioMalfunction(ex);
+        }
+    }
 }

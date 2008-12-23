@@ -25,7 +25,7 @@ public class MyHttpHandler extends sun.net.www.protocol.http.Handler  {
                 this.proxy = proxy;
                 proxyPort = port;
             }
-  
+
             protected java.net.URLConnection openConnection(URL u, Proxy p)
                     throws IOException {
                 return new MyHttpURLConnection(u, p, this);

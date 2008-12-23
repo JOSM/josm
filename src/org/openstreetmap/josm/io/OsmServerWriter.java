@@ -78,7 +78,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
     private static final int MSECS_PER_MINUTE = MSECS_PER_SECOND * SECONDS_PER_MINUTE;
 
     long uploadStartTime;
-    
+
     public String timeLeft(int progress, int list_size) {
         long now = System.currentTimeMillis();
         long elapsed = now - uploadStartTime;
@@ -95,24 +95,24 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
         time_left_str += Integer.toString(seconds_left);
         return time_left_str;
     }
-    
+
     public void uploadOsm(Collection<OsmPrimitive> list) throws SAXException {
         processed = new LinkedList<OsmPrimitive>();
         initAuthentication();
 
         Main.pleaseWaitDlg.progress.setMaximum(list.size());
         Main.pleaseWaitDlg.progress.setValue(0);
-        
+
         // controls whether or not we open and close a changeset. API 0.6 requires changesets.
         boolean useChangesets = Main.pref.get("osm-server.version", "0.5").equals("0.6");
-        
+
         // controls whether or not we try and uplaod the whole bunch in one go
-        boolean useDiffUploads = Main.pref.getBoolean("osm-server.atomic-upload", 
+        boolean useDiffUploads = Main.pref.getBoolean("osm-server.atomic-upload",
             Main.pref.get("osm-server.version", "0.5").equals("0.6"));
-        
+
         String comment = null;
         while (useChangesets && comment == null) {
-            comment = JOptionPane.showInputDialog(Main.parent, 
+            comment = JOptionPane.showInputDialog(Main.parent,
                  tr("Provide a brief comment as to the changes to you are uploading:"),
                  tr("Commit comment"), JOptionPane.QUESTION_MESSAGE);
             if (comment == null)
@@ -130,7 +130,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             dealWithTransferException(ex);
             return;
         }
-    
+
         try {
             if (useDiffUploads) {
                 uploadDiff(10, list);
@@ -165,12 +165,12 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                 if (useChangesets) stopChangeset(10);
             }
             catch (OsmTransferException ex) {
-                dealWithTransferException(ex);    
+                dealWithTransferException(ex);
             }
             dealWithTransferException(e);
         }
     }
-    
+
     /* FIXME: This code is terrible, please fix it!!!! */
 
     /* Ok, this needs some explanation: The problem is that the code for
@@ -182,7 +182,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
      * handled in one place (preferably without recursion). While at you
      * can fix the issue where hitting cancel doesn't do anything while
      * retrying. - Mv0 Apr 2008
-     * 
+     *
      * Cancelling has an effect now, maybe it does not always catch on. Florian Heer, Aug 08
      */
     private boolean startChangeset(int retries, String comment) throws OsmTransferException {
@@ -197,19 +197,19 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             URL url = new URL(
                     Main.pref.get("osm-server.url") +
                     "/" + version +
-                    "/" + "changeset" + 
+                    "/" + "changeset" +
                     "/" + "create");
             System.out.print("upload to: "+url+ "..." );
             activeConnection = (HttpURLConnection)url.openConnection();
             activeConnection.setConnectTimeout(15000);
             activeConnection.setRequestMethod("PUT");
             addAuth(activeConnection);
-            
+
             activeConnection.setDoOutput(true);
             OutputStream out = activeConnection.getOutputStream();
             OsmWriter.output(out, changeset);
             out.close();
-            
+
             activeConnection.connect();
             System.out.println("connected");
 
@@ -223,7 +223,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                 throw new OsmTransferException(tr("Server does not support changesets"));
             }
             if (retCode != 200 && retCode != 412) {
-                
+
                 if (retries >= 0) {
                     retries--;
                     System.out.print("backing off for 10 seconds...");
@@ -231,7 +231,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                     System.out.println("retrying ("+retries+" left)");
                     return startChangeset(retries, comment);
                 }
-                
+
                 // Look for a detailed error message from the server
                 retMsg += "\n" + readString(activeConnection.getInputStream());
 
@@ -261,7 +261,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             else
                 throw new OsmTransferException (e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
         }
-        
+
         catch (Exception e) {
             if (cancel)
                 return false; // assume cancel
@@ -273,9 +273,9 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
         }
         return true;
     }
-    
+
     private void uploadDiff(int retries, Collection<OsmPrimitive> list) throws OsmTransferException {
-        
+
         CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset);
 
         for (OsmPrimitive osm : list) {
@@ -289,7 +289,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
         System.out.println("the document:\n");
         String diff = duv.getDocument();
         System.out.println(diff);
-        
+
         Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
         try {
             if (cancel)
@@ -298,7 +298,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             URL url = new URL(
                     Main.pref.get("osm-server.url") +
                     "/" + version +
-                    "/" + "changeset" + 
+                    "/" + "changeset" +
                     "/" + changeset.id +
                     "/upload" );
             System.out.print("upload to: "+url+ "..." );
@@ -306,7 +306,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             activeConnection.setConnectTimeout(15000);
             activeConnection.setRequestMethod("POST");
             addAuth(activeConnection);
-            
+
             activeConnection.setDoOutput(true);
             PrintWriter out;
             try {
@@ -316,13 +316,13 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             }
             out.print(diff);
             out.close();
-            
+
             activeConnection.connect();
             System.out.println("connected");
 
             int retCode = activeConnection.getResponseCode();
             String retMsg = "";
-            
+
             if (retCode == 200) {
                 DiffResultReader.parseDiffResult(activeConnection.getInputStream(), list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
             } else if (retCode != 200 && retCode != 412) {
@@ -332,7 +332,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                     Thread.sleep(10000);
                     System.out.println("retrying ("+retries+" left)");
                     stopChangeset(retries);
-                } else { 
+                } else {
                     // Look for a detailed error message from the server
                     retMsg += "\n" + readString(activeConnection.getInputStream());
 
@@ -371,8 +371,8 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
         }
     }
-    
-    
+
+
     private void stopChangeset(int retries) throws OsmTransferException {
         Main.pleaseWaitDlg.currentAction.setText(tr("Closing changeset..."));
         try {
@@ -382,7 +382,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             URL url = new URL(
                     Main.pref.get("osm-server.url") +
                     "/" + version +
-                    "/" + "changeset" + 
+                    "/" + "changeset" +
                     "/" + changeset.id +
                     "/close" );
             System.out.print("upload to: "+url+ "..." );
@@ -390,12 +390,12 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             activeConnection.setConnectTimeout(15000);
             activeConnection.setRequestMethod("PUT");
             addAuth(activeConnection);
-            
+
             activeConnection.setDoOutput(true);
             OutputStream out = activeConnection.getOutputStream();
             OsmWriter.output(out, changeset);
             out.close();
-            
+
             activeConnection.connect();
             System.out.println("connected");
 
@@ -414,10 +414,10 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                     Thread.sleep(10000);
                     System.out.println("retrying ("+retries+" left)");
                     stopChangeset(retries);
-                } else { 
+                } else {
                     // Look for a detailed error message from the server
                     retMsg += readString(activeConnection.getInputStream());
-                    
+
                     // Report our error
                     ByteArrayOutputStream o = new ByteArrayOutputStream();
                     OsmWriter.output(o, changeset);
@@ -489,7 +489,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
         }
         processed.add(e);
     }
-    
+
     /**
      * Read a long from the input stream and return it.
      */
@@ -539,7 +539,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             URL url = new URL(
                     new URL(Main.pref.get("osm-server.url") +
                     "/" + version + "/"),
-                    urlSuffix + 
+                    urlSuffix +
                     "/" + (osm.id==0 ? "create" : osm.id),
                     new MyHttpHandler());
             System.out.print("upload to: "+url+ "..." );
@@ -621,7 +621,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
         }
     }
-    
+
     private void sendRequest(String requestMethod, String urlSuffix,
             OsmPrimitive osm, boolean addBody)  {
         XmlWriter.OsmWriterInterface body = null;
@@ -635,7 +635,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             dealWithTransferException (e);
         }
     }
-    
+
     private void dealWithTransferException (OsmTransferException e) {
         Main.pleaseWaitDlg.currentAction.setText(tr("Transfer aborted due to error (will wait for 5 seconds):") + e.getMessage());
         cancel = true;
