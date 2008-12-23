@@ -4,11 +4,17 @@ package org.openstreetmap.josm.gui.preferences;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GridBagLayout;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -22,6 +28,9 @@ public class LafPreference implements PreferenceSetting {
 	 * ComboBox with all look and feels.
 	 */
 	private JComboBox lafCombo;
+	public JPanel panel = new JPanel(new GridBagLayout());
+	private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
+	private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
 
 	public void addGui(PreferenceDialog gui) {
 		lafCombo = new JComboBox(UIManager.getInstalledLookAndFeels());
@@ -55,13 +64,33 @@ public class LafPreference implements PreferenceSetting {
 		});
 		lafCombo.addActionListener(gui.requireRestartAction);
 
-		gui.display.add(new JLabel(tr("Look and Feel")), GBC.std());
-		gui.display.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-		gui.display.add(lafCombo, GBC.eol().fill(GBC.HORIZONTAL));
+		panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+
+		// Show splash screen on startup
+		showSplashScreen.setToolTipText(tr("Show splash screen at startup"));
+		showSplashScreen.setSelected(Main.pref.getBoolean("draw.splashscreen", true));
+		panel.add(showSplashScreen, GBC.eop().insets(20, 0, 0, 0));
+
+		// Show ID in selection
+		showID.setToolTipText(tr("Show object ID in selection lists"));
+		showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
+		panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
+
+		panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
+
+		panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
+		panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+		panel.add(lafCombo, GBC.eol().fill(GBC.HORIZONTAL));
+
+		JScrollPane scrollpane = new JScrollPane(panel);
+		scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
+		gui.displaycontent.addTab(tr("Look and Feel"), scrollpane);
 	}
 
 	public void ok() {
 		Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
+		Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
+		Main.pref.put("osm-primitives.showid", showID.isSelected());
     }
 
 }

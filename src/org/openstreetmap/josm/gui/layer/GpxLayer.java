@@ -385,6 +385,12 @@ public class GpxLayer extends Layer {
 		boolean large = Main.pref.getBoolean("draw.rawgps.large");                                // paint large dots for points
 		boolean colored = Main.pref.getBoolean("draw.rawgps.colors");                             // color the lines
 		boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");      // paint direction arrow with alternate math. may be faster
+		int delta = 0;
+		try {
+			delta = Integer.parseInt(Main.pref.get("draw.rawgps.min-arrow-distance", "0"));         // don't draw arrows nearer to each other than this
+		} catch (java.lang.NumberFormatException e) {
+			Main.pref.put("draw.rawgps.min-arrow-distance", "0");
+		}
 
 		/****************************************************************
 		 ********** STEP 2a - CHECK CACHE VALIDITY **********************
@@ -471,6 +477,7 @@ public class GpxLayer extends Layer {
 		 ****************************************************************/
 		if (lines && direction && !alternatedirection) {
 			Point old = null;
+			Point oldA = null; // last arrow painted
 			for (GpxTrack trk : data.tracks) {
 				for (Collection<WayPoint> segment : trk.trackSegs) {
 					for (WayPoint trkPnt : segment) {
@@ -479,13 +486,14 @@ public class GpxLayer extends Layer {
 						if (trkPnt.drawLine) {
 							Point screen = mv.getPoint(trkPnt.eastNorth);
 							// skip points that are on the same screenposition
-							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
+							if (old != null && (oldA == null || screen.x < oldA.x-delta || screen.x > oldA.x+delta || screen.y < oldA.y-delta || screen.y > oldA.y+delta)) {
 								g.setColor(trkPnt.speedLineColor);
 								double t = Math.atan2(screen.y-old.y, screen.x-old.x) + Math.PI;
 								g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t-PHI)), (int)(screen.y
 								+ 10*Math.sin(t-PHI)));
 								g.drawLine(screen.x,screen.y, (int)(screen.x + 10*Math.cos(t+PHI)), (int)(screen.y
 								+ 10*Math.sin(t+PHI)));
+								oldA = screen;
 							}
 							old = screen;
 						}
@@ -499,6 +507,7 @@ public class GpxLayer extends Layer {
 		 ****************************************************************/
 		if (lines && direction && alternatedirection) {
 			Point old = null;
+			Point oldA = null; // last arrow painted
 			for (GpxTrack trk : data.tracks) {
 				for (Collection<WayPoint> segment : trk.trackSegs) {
 					for (WayPoint trkPnt : segment) {
@@ -507,10 +516,11 @@ public class GpxLayer extends Layer {
 						if (trkPnt.drawLine) {
 							Point screen = mv.getPoint(trkPnt.eastNorth);
 							// skip points that are on the same screenposition
-							if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
+							if (old != null && (oldA == null || screen.x < oldA.x-delta || screen.x > oldA.x+delta || screen.y < oldA.y-delta || screen.y > oldA.y+delta)) {
 								g.setColor(trkPnt.speedLineColor);
 								g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y + dir[trkPnt.dir][1]);
 								g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][2], screen.y + dir[trkPnt.dir][3]);
+								oldA = screen;
 							}
 							old = screen;
 						}

@@ -44,6 +44,8 @@ public class PreferenceDialog extends JTabbedPane {
 	public final JPanel map = createPreferenceTab("map", I18n.tr("Map Settings"), I18n.tr("Settings for the map projection and data interpretation."));
 	public final JPanel audio = createPreferenceTab("audio", I18n.tr("Audio Settings"), I18n.tr("Settings for the audio player and audio markers."));
 
+  public final javax.swing.JTabbedPane displaycontent = new javax.swing.JTabbedPane();
+
 	/**
 	 * Construct a JPanel for the preference settings. Layout is GridBagLayout
 	 * and a centered title label and the description are added. The panel 
@@ -110,6 +112,7 @@ public class PreferenceDialog extends JTabbedPane {
 	 */
 	public PreferenceDialog() {
 		super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
+		display.add(displaycontent, GBC.eol().fill(GBC.BOTH));
 		for (Iterator<PreferenceSetting> it = settings.iterator(); it.hasNext();) {
 			try {
 	            it.next().addGui(this);
@@ -121,10 +124,10 @@ public class PreferenceDialog extends JTabbedPane {
 
 	static {
 		// order is important!
-		settings.add(new LafPreference());
-		settings.add(new LanguagePreference());
 		settings.add(new DrawingPreference());
 		settings.add(new ColorPreference());
+		settings.add(new LafPreference());
+		settings.add(new LanguagePreference());
 		settings.add(new MapPaintPreference());
 		settings.add(new ServerAccessPreference());
 		settings.add(new FilePreferences());

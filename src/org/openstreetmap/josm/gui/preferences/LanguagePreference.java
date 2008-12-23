@@ -6,10 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.util.Locale;
 
+import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import org.openstreetmap.josm.Main;
@@ -52,9 +54,16 @@ public class LanguagePreference implements PreferenceSetting {
 		});
 		langCombo.addActionListener(gui.requireRestartAction);
 
-		gui.display.add(new JLabel(tr("Language")), GBC.std());
-		gui.display.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-		gui.display.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
+		JPanel panel = null;
+		for(PreferenceSetting s : gui.settings)
+		{
+			if(s instanceof LafPreference)
+				panel = ((LafPreference)s).panel;
+		}
+		panel.add(new JLabel(tr("Language")), GBC.std().insets(20, 0, 0, 0));
+		panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+		panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
+		panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
 	}
 
 	public void ok() {

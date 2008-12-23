@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -21,11 +22,14 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
@@ -104,7 +108,6 @@ public class ColorPreference implements PreferenceSetting {
 				return false;
 			}
 		};
-		colors.setPreferredSize(new Dimension(200,200));
 		colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
 		colors.setDefaultRenderer(Object.class, new TableCellRenderer(){
@@ -136,9 +139,14 @@ public class ColorPreference implements PreferenceSetting {
 		});
 		colors.setToolTipText(tr("Colors used by different objects in JOSM."));
 		colors.setPreferredScrollableViewportSize(new Dimension(100,112));
-		gui.display.add(new JLabel(tr("Colors")), GBC.eol());
-		gui.display.add(new JScrollPane(colors), GBC.eol().fill(GBC.BOTH));
-		gui.display.add(colorEdit, GBC.eol().anchor(GBC.EAST));
+
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		JScrollPane scrollpane = new JScrollPane(colors);
+		scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
+		panel.add(scrollpane, GBC.eol().fill(GBC.BOTH));
+		panel.add(colorEdit, GBC.eol().anchor(GBC.EAST));
+		gui.displaycontent.addTab(tr("Colors"), panel);
     }
 
 	/**
