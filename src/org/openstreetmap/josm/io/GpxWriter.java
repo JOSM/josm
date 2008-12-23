@@ -127,7 +127,7 @@ public class GpxWriter extends XmlWriter {
 
     private void openln(String tag) {
         open(tag);
-        out.print("\n");
+        out.println();
     }
 
     private void open(String tag) {
@@ -151,7 +151,7 @@ public class GpxWriter extends XmlWriter {
 
     private void closeln(String tag) {
         close(tag);
-        out.print("\n");
+        out.println();
     }
 
     /**       
