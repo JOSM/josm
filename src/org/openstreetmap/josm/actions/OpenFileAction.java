@@ -118,21 +118,41 @@ public class OpenFileAction extends DiskAccessAction {
 			throw new IllegalStateException();
 		}
     }
+	
+	private void showNmeaInfobox(boolean success, NmeaReader r) {
+		String msg = tr("Coordinates imported: ") + r.getNumberOfCoordinates() + "\n" +
+		tr("Malformed sentences: ") + r.getParserMalformed() + "\n" +
+		tr("Checksum errors: ") + r.getParserChecksumErrors() + "\n";
+		if(!success) // don't scare the user unneccessarily
+			msg += tr("Unknown sentences: ") + r.getParserUnknown() + "\n";
+		msg += tr("Zero coordinates: ") + r.getParserZeroCoordinates();
+		if(success) {	
+			JOptionPane.showMessageDialog(
+				Main.parent, msg,
+				tr("NMEA import success"),JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(
+				Main.parent, msg,
+				tr("NMEA import faliure!"),JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
 	private void openFileAsNmea(File file) throws IOException, FileNotFoundException {
 		String fn = file.getName();
 		if (ExtensionFileFilter.filters[ExtensionFileFilter.NMEA].acceptName(fn)) {
 			NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
-			r.data.storageFile = file;
-			GpxLayer gpxLayer = new GpxLayer(r.data, fn);
-			Main.main.addLayer(gpxLayer);
-			if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
-				MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
-				if (ml.data.size() > 0) {
-					Main.main.addLayer(ml);
+			if(r.getNumberOfCoordinates()>0) {
+				r.data.storageFile = file;
+				GpxLayer gpxLayer = new GpxLayer(r.data, fn);
+				Main.main.addLayer(gpxLayer);
+				if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+					MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
+					if (ml.data.size() > 0) {
+						Main.main.addLayer(ml);
+					}
 				}
 			}
-
+			showNmeaInfobox(r.getNumberOfCoordinates()>0, r);
 		} else {
 			throw new IllegalStateException();
 		}

@@ -34,12 +34,14 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
 	/**
 	 * Convert the time stamp of the waypoint into seconds from the epoch
 	 */
+	public final static SimpleDateFormat GPXTIMEFMT = 
+		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); // ignore timezone
+	
 	public void setTime() {
 		if (! attr.containsKey("time")) {
 			return;
 		}
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ignore timezone
-		Date d = f.parse(attr.get("time").toString(), new ParsePosition(0));
+		Date d = GPXTIMEFMT.parse(attr.get("time").toString(), new ParsePosition(0));
 		if (d != null /* parsing ok */) {
 			time = d.getTime() / 1000.0; /* ms => seconds */
 		}
