@@ -195,6 +195,7 @@ public class MainApplication extends Main {
             {
                 System.out.println("Unable to find translation for the locale: "
                 + Locale.getDefault().getDisplayName() + " reverting to English.");
+                Locale.setDefault(Locale.ENGLISH);
             }
         }
 
