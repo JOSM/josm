@@ -191,7 +191,11 @@ public class MainApplication extends Main {
         try {
             i18n = I18nFactory.getI18n(MainApplication.class);
         } catch (MissingResourceException ex) {
-            System.out.println("Unable to find translation for the locale: " + Locale.getDefault().getDisplayName() + " reverting to English.");
+            if(!Locale.getDefault().getLanguage().equals("en"))
+            {
+                System.out.println("Unable to find translation for the locale: "
+                + Locale.getDefault().getDisplayName() + " reverting to English.");
+            }
         }
 
         SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
