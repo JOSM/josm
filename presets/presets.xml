@@ -2850,10 +2850,11 @@ check: checkbox
 			<combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Marsh" icon="presets/empty.png">
-			<label text="Edit Marsh" />
-			<key key="natural" value="marsh" />
+		<item name="Wetland" icon="presets/empty.png">
+			<label text="Edit Wetland" />
+			<key key="natural" value="wetland" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Coastline" icon="presets/empty.png">
