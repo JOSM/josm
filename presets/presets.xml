@@ -737,8 +737,13 @@ check: checkbox
 			<key key="highway" value="stop" />
 		</item>
 
-		<item name="Zebra crossing" icon="presets/zebracrossing.png">
+		<item name="Zebra Crossing" icon="presets/zebracrossing.png">
+			<label text="Edit a crossing" />
 			<key key="highway" value="crossing" />
+			<combo key="crossing" text="Type" values="uncontrolled,island" default="uncontrolled" />
+			<combo key="crossing_ref" text="Ref" values="zebra,pelican" default="zebra" />
+			<check key="foot" text="Foot" default="on" delete_if_empty="true" />
+			<check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
 		</item>
 
 		<item name="Mini Roundabout" icon="presets/roundabout_left.png">
