@@ -915,7 +915,7 @@ check: checkbox
 			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
 		</item> <!-- gate -->
 		
-		<item name="Lift Gate" icon="presets/empty.png">
+		<item name="Lift Gate" icon="presets/lift_gate.png">
 			<label text="Edit a Lift Gate" />
 			<label text=" " />
 			<key key="barrier" value="lift_gate" />
