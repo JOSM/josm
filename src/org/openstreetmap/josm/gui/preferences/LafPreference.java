@@ -28,7 +28,7 @@ public class LafPreference implements PreferenceSetting {
      * ComboBox with all look and feels.
      */
     private JComboBox lafCombo;
-    public JPanel panel = new JPanel(new GridBagLayout());
+    public JPanel panel;
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
 
@@ -64,6 +64,7 @@ public class LafPreference implements PreferenceSetting {
         });
         lafCombo.addActionListener(gui.requireRestartAction);
 
+        panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
         // Show splash screen on startup
