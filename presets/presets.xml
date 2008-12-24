@@ -2152,18 +2152,6 @@ check: checkbox
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Power Tower" icon="presets/power_tower.png">
-			<label text="Edit Power Tower" />
-			<key key="power" value="tower" />
-		</item>
-		
-		<item name="Power Generator" icon="presets/power_tower.png">
-			<label text="Edit Power Generator" />
-			<key key="power" value="generator" />
-			<combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear,coal,photovoltaic,gas" default="" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
-		</item>
-		
 		<item name="Gasometer" icon="presets/gasometer.png">
 			<label text="Edit Gasometer" />
 			<key key="man_made" value="gasometer" />
@@ -2229,6 +2217,43 @@ check: checkbox
 			<key key="man_made" value="surveillance" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
+		
+		<separator/>
+		
+		<item name="Power Generator" icon="presets/power.png">
+			<label text="Edit Power Generator" />
+			<key key="power" value="generator" />
+			<combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear,coal,photovoltaic,gas" default="" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Power Station" icon="presets/power.png">
+			<label text="Edit power station" />
+			<key key="power" value="station" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Power Sub Station" icon="presets/power.png">
+			<label text="Edit power sub station" />
+			<key key="power" value="sub_station" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+			<text key="ref" text="Line reference" default="" delete_if_empty="true" />
+		</item>
+		
+		<item name="Power Tower" icon="presets/power_tower.png">
+			<label text="Edit Power Tower" />
+			<key key="power" value="tower" />
+		</item>
+		
+		<item name="Power Line" icon="presets/power.png">
+			<label text="Edit power line" />
+			<key key="power" value="line" />
+			<text key="operator" text="Operator" default="" delete_if_empty="true" />
+			<text key="ref" text="Line reference" default="" delete_if_empty="true" />
+			<text key="voltage" text="Voltage" default="" delete_if_empty="true" />
+			<text key="wires" text="Amount of Wires" default="" delete_if_empty="true" />
+		</item>
+		
 	</group> <!-- Man Made -->
 
 
