@@ -2792,6 +2792,12 @@ check: checkbox
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
+		<item name="Cave Entrance" icon="presets/empty.png">
+			<label text="Edit Cave Entrance" />
+			<key key="natural" value="cave_entrance" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
 		<item name="Peak" icon="presets/peak.png">
 			<label text="Edit Peak" />
 			<key key="natural" value="peak" />
@@ -2811,12 +2817,6 @@ check: checkbox
 			<key key="natural" value="volcano" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 			<text key="ele" text="Elevation" default="" delete_if_empty="true" />
-		</item>
-
-		<item name="Cliff" icon="presets/empty.png">
-			<label text="Edit Cliff" />
-			<key key="natural" value="cliff" />
-			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Scree" icon="presets/empty.png">
@@ -2850,17 +2850,25 @@ check: checkbox
 			<combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Wetland" icon="presets/empty.png">
-			<label text="Edit Wetland" />
-			<key key="natural" value="wetland" />
+		<separator/>
+
+		<item name="Riverbank" icon="presets/waterway.png">
+			<label text="Edit a riverbank" />
+			<key key="waterway" value="riverbank" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Coastline" icon="presets/empty.png">
 			<label text="Edit Coastline" />
 			<key key="natural" value="coastline" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
+		</item>
+
+		<item name="Wetland" icon="presets/empty.png">
+			<label text="Edit Wetland" />
+			<key key="natural" value="wetland" />
+			<text key="name" text="Name" default="" delete_if_empty="true" />
+			<combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Mud" icon="presets/empty.png">
@@ -2880,12 +2888,13 @@ check: checkbox
 			<key key="natural" value="bay" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
-
-		<item name="Cave Entrance" icon="presets/empty.png">
-			<label text="Edit Cave Entrance" />
-			<key key="natural" value="cave_entrance" />
+		
+		<item name="Cliff" icon="presets/empty.png">
+			<label text="Edit Cliff" />
+			<key key="natural" value="cliff" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
+
 	</group> <!-- Natural -->
 
 </annotations>
