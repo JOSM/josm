@@ -198,9 +198,15 @@ public class MapFrame extends JPanel implements Destroyable {
         jb.add(toolBarActions);
         jb.addSeparator();
         jb.add(toolBarToggle);
-        panel.add(new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION),
-        BorderLayout.WEST);
-        if (statusLine != null)
+        if(Main.pref.getBoolean("sidetoolbar.visible", true))
+        {
+            if(Main.pref.getBoolean("sidetoolbar.scrollable", true))
+                panel.add(new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION),
+                BorderLayout.WEST);
+            else
+                panel.add(jb, BorderLayout.WEST);
+        }
+        if (statusLine != null && Main.pref.getBoolean("statusline.visible", true))
             panel.add(statusLine, BorderLayout.SOUTH);
     }
 }
