@@ -105,18 +105,6 @@ public class DataSet implements Cloneable {
     }
 
     /**
-     * Remove the selection of the whole dataset.
-     * @deprecated Use {@link #setSelected(Collection) setSelected} instead.
-     */
-    @Deprecated public void clearSelection() {
-        clearSelection(nodes);
-        clearSelection(ways);
-        clearSelection(relations);
-        Collection<OsmPrimitive> sel = Collections.emptyList();
-        fireSelectionChanged(sel);
-    }
-
-    /**
      * Return a list of all selected objects. Even keys are returned.
      * @return List of all selected objects.
      */

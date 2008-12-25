@@ -143,14 +143,16 @@ public class MainMenu extends JMenuBar {
      * This method handles all the shortcut handling. It also makes sure that actions that are
      * handled by the OS are not duplicated on the menu.
      */
-    public static void add(JMenu menu, JosmAction action) {
+    public static JMenuItem add(JMenu menu, JosmAction action) {
+        JMenuItem menuitem = null;
         if (!action.getShortcut().getAutomatic()) {
-            JMenuItem menuitem = menu.add(action);
+            menuitem = menu.add(action);
             KeyStroke ks = action.getShortcut().getKeyStroke();
             if (ks != null) {
                 menuitem.setAccelerator(ks);
             }
         }
+        return menuitem;
     }
 
     /**

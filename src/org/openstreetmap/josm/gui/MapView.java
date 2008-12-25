@@ -56,17 +56,6 @@ import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 public class MapView extends NavigatableComponent {
 
     /**
-     * Interface to notify listeners of the change of the active layer.
-     * @author imi
-     * @deprecated Use Layer.LayerChangeListener instead
-     */
-    @Deprecated public interface LayerChangeListener {
-        void activeLayerChange(Layer oldLayer, Layer newLayer);
-        void layerAdded(Layer newLayer);
-        void layerRemoved(Layer oldLayer);
-    }
-
-    /**
      * A list of all layers currently loaded.
      */
     private ArrayList<Layer> layers = new ArrayList<Layer>();
@@ -91,12 +80,6 @@ public class MapView extends NavigatableComponent {
     private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 
     private BufferedImage offscreenBuffer;
-
-    /**
-     * The listener of the active layer changes.
-     * @deprecated Use Layer.listener instead.
-     */
-    @Deprecated private Collection<LayerChangeListener> listeners = new LinkedList<LayerChangeListener>();
 
     public MapView() {
         addComponentListener(new ComponentAdapter(){
@@ -179,9 +162,6 @@ public class MapView extends NavigatableComponent {
             --pos;
         layers.add(pos, layer);
 
-        // TODO: Deprecated
-        for (LayerChangeListener l : listeners)
-            l.layerAdded(layer);
         for (Layer.LayerChangeListener l : Layer.listeners)
             l.layerAdded(layer);
         if (layer instanceof OsmDataLayer || activeLayer == null) {
@@ -213,9 +193,6 @@ public class MapView extends NavigatableComponent {
      */
     public void removeLayer(Layer layer) {
         if (layers.remove(layer)) {
-            // TODO: Deprecated
-            for (LayerChangeListener l : listeners)
-                l.layerRemoved(layer);
             for (Layer.LayerChangeListener l : Layer.listeners)
                 l.layerRemoved(layer);
         }
@@ -346,25 +323,6 @@ public class MapView extends NavigatableComponent {
     }
 
     /**
-     * Add a listener for changes of active layer.
-     * @param listener The listener that get added.
-     * @deprecated Use Layer.listener.add instead.
-     */
-    @Deprecated public void addLayerChangeListener(LayerChangeListener listener) {
-        if (listener != null)
-            listeners.add(listener);
-    }
-
-    /**
-     * Remove the listener.
-     * @param listener The listener that get removed from the list.
-     * @deprecated Use Layer.listener.remove instead
-     */
-    @Deprecated public void removeLayerChangeListener(LayerChangeListener listener) {
-        listeners.remove(listener);
-    }
-
-    /**
      * @return An unmodificable list of all layers
      */
     public Collection<Layer> getAllLayers() {
@@ -387,9 +345,6 @@ public class MapView extends NavigatableComponent {
         Layer old = activeLayer;
         activeLayer = layer;
         if (old != layer) {
-            // TODO: Deprecated
-            for (LayerChangeListener l : listeners)
-                l.activeLayerChange(old, layer);
             for (Layer.LayerChangeListener l : Layer.listeners)
                 l.activeLayerChange(old, layer);
         }

@@ -174,12 +174,11 @@ public class ColorPreference implements PreferenceSetting {
         }
     }
 
-    public void ok() {
+    public boolean ok() {
         for (int i = 0; i < colors.getRowCount(); ++i) {
-            String name = (String)colors.getValueAt(i, 0);
-            Color col = (Color)colors.getValueAt(i, 1);
-            Main.pref.put("color." + name, ColorHelper.color2html(col));
+            Main.pref.putColor((String)colors.getValueAt(i, 0), (Color)colors.getValueAt(i, 1));
         }
         org.openstreetmap.josm.gui.layer.OsmDataLayer.createHatchTexture();
+        return false;
     }
 }

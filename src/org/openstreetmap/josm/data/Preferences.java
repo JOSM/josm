@@ -207,7 +207,7 @@ public class Preferences {
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
     }
 
-    synchronized public void put(final String key, String value) {
+    synchronized public boolean put(final String key, String value) {
         String oldvalue = properties.get(key);
         if(value != null && value.length() == 0)
             value = null;
@@ -220,11 +220,21 @@ public class Preferences {
                 properties.put(key, value);
             save();
             firePreferenceChanged(key, value);
+            return true;
         }
+        return false;
     }
 
-    synchronized public void put(final String key, final boolean value) {
-        put(key, Boolean.toString(value));
+    synchronized public boolean put(final String key, final boolean value) {
+        return put(key, Boolean.toString(value));
+    }
+
+    synchronized public boolean putInteger(final String key, final Integer value) {
+        return put(key, Integer.toString(value));
+    }
+
+    synchronized public boolean putDouble(final String key, final Double value) {
+        return put(key, Double.toString(value));
     }
 
     private final void firePreferenceChanged(final String key, final String value) {
@@ -342,13 +352,6 @@ public class Preferences {
         return ColorHelper.html2color(colStr);
     }
 
-    // only for compatibility. Don't use any more.
-    @Deprecated
-    public static Color getPreferencesColor(String colName, Color def)
-    {
-        return Main.pref.getColor(colName, def);
-    }
-
     /**
      * Convenience method for accessing colour preferences.
      *
@@ -371,8 +374,8 @@ public class Preferences {
         return ColorHelper.html2color(colStr);
     }
 
-    synchronized public void putColor(String colName, Color val) {
-        put("color."+colName, val != null ? ColorHelper.color2html(val) : null);
+    synchronized public boolean putColor(String colName, Color val) {
+        return put("color."+colName, val != null ? ColorHelper.color2html(val) : null);
     }
 
     synchronized public int getInteger(String key, int def) {
@@ -430,9 +433,7 @@ public class Preferences {
             else
                 return Arrays.asList(s.split(";"));
         }
-        else if(def != null)
-            return def;
-        return null;
+        return def;
     }
     synchronized public void removeFromCollection(String key, String value) {
         ArrayList<String> a = new ArrayList<String>(getCollection(key, null));
@@ -442,7 +443,7 @@ public class Preferences {
             putCollection(key, a);
         }
     }
-    synchronized public void putCollection(String key, Collection<String> val) {
+    synchronized public boolean putCollection(String key, Collection<String> val) {
         String s = null;
         if(val != null)
         {
@@ -455,7 +456,7 @@ public class Preferences {
             }
         }
 
-        put(key, s);
+        return put(key, s);
     }
 
     private void setSystemProperties() {

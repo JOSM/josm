@@ -20,11 +20,6 @@ abstract public class DiskAccessAction extends JosmAction {
         super(name, iconName, tooltip, shortcut, true);
     }
 
-    @Deprecated
-    public DiskAccessAction(String name, String iconName, String tooltip, int shortcut, int modifiers) {
-        super(name, iconName, tooltip, shortcut, modifiers, true);
-    }
-
     protected static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title) {
         String curDir = Main.pref.get("lastDirectory");
         if (curDir.equals(""))

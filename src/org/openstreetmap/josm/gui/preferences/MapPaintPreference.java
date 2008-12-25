@@ -9,8 +9,8 @@ public class MapPaintPreference implements PreferenceSetting {
         // this is intended for a future configuration panel for mappaint!
     }
 
-    public void ok() {
-        // dummy
+    public boolean ok() {
+        return false; // dummy
     }
 
     /**

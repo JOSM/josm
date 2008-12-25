@@ -233,7 +233,7 @@ public class ToolbarPreferences implements PreferenceSetting {
         return b;
     }
 
-    public void ok() {
+    public boolean ok() {
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < selected.size(); ++i) {
             if (selected.get(i) == null)
@@ -249,6 +249,7 @@ public class ToolbarPreferences implements PreferenceSetting {
             s = "null";
         Main.pref.put("toolbar", s);
         refreshToolbarControl();
+        return false;
     }
 
     /**

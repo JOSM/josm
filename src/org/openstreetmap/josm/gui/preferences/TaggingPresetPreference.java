@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -43,19 +44,17 @@ public class TaggingPresetPreference implements PreferenceSetting {
         enableDefault = new JCheckBox(tr("Enable built-in defaults"),
                 Main.pref.getBoolean("taggingpreset.enable-defaults", true));
 
-        String annos = Main.pref.get("taggingpreset.sources");
-        StringTokenizer st = new StringTokenizer(annos, ";");
-        while (st.hasMoreTokens())
-            ((DefaultListModel)taggingPresetSources.getModel()).addElement(st.nextToken());
+        Collection<String> sources = Main.pref.getCollection("taggingpreset.sources", null);
+        if(sources != null)
+            for(String s : sources)
+                ((DefaultListModel)taggingPresetSources.getModel()).addElement(s);
 
         JButton addAnno = new JButton(tr("Add"));
         addAnno.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 String source = JOptionPane.showInputDialog(Main.parent, tr("Tagging preset source"));
-                if (source == null)
-                    return;
-                ((DefaultListModel)taggingPresetSources.getModel()).addElement(source);
-                gui.requiresRestart = true;
+                if (source != null)
+                    ((DefaultListModel)taggingPresetSources.getModel()).addElement(source);
             }
         });
 
@@ -66,10 +65,8 @@ public class TaggingPresetPreference implements PreferenceSetting {
                     JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
                 else {
                     String source = JOptionPane.showInputDialog(Main.parent, tr("Tagging preset source"), taggingPresetSources.getSelectedValue());
-                    if (source == null)
-                        return;
-                    ((DefaultListModel)taggingPresetSources.getModel()).setElementAt(source, taggingPresetSources.getSelectedIndex());
-                    gui.requiresRestart = true;
+                    if (source != null)
+                        ((DefaultListModel)taggingPresetSources.getModel()).setElementAt(source, taggingPresetSources.getSelectedIndex());
                 }
             }
         });
@@ -81,7 +78,6 @@ public class TaggingPresetPreference implements PreferenceSetting {
                     JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
                 else {
                     ((DefaultListModel)taggingPresetSources.getModel()).remove(taggingPresetSources.getSelectedIndex());
-                    gui.requiresRestart = true;
                 }
             }
         });
@@ -106,15 +102,20 @@ public class TaggingPresetPreference implements PreferenceSetting {
         gui.map.add(tpPanel, GBC.eol().fill(GBC.BOTH));
     }
 
-    public void ok() {
+    public boolean ok() {
         Main.pref.put("taggingpreset.enable-defaults", enableDefault.getSelectedObjects() != null);
-        if (taggingPresetSources.getModel().getSize() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < taggingPresetSources.getModel().getSize(); ++i)
-                sb.append(";"+taggingPresetSources.getModel().getElementAt(i));
-            Main.pref.put("taggingpreset.sources", sb.toString().substring(1));
-        } else
-            Main.pref.put("taggingpreset.sources", null);
+        int num = taggingPresetSources.getModel().getSize();
+        boolean restart;
+        if (num > 0)
+        {
+            ArrayList<String> l = new ArrayList<String>();
+            for (int i = 0; i < num; ++i)
+                l.add((String)taggingPresetSources.getModel().getElementAt(i));
+            restart = Main.pref.putCollection("taggingpreset.sources", l);
+        }
+        else
+            restart = Main.pref.putCollection("taggingpreset.sources", null);
+        return restart;
     }
 
     /**

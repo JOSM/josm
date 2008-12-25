@@ -40,9 +40,6 @@ public class ProjectionPreference implements PreferenceSetting {
             }
         }
 
-        projectionCombo.addActionListener(gui.requireRestartAction);
-        coordinatesCombo.addActionListener(gui.requireRestartAction);
-
         JPanel projPanel = new JPanel();
         projPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Map Projection")));
         projPanel.setLayout(new GridBagLayout());
@@ -55,8 +52,12 @@ public class ProjectionPreference implements PreferenceSetting {
         gui.map.add(projPanel, GBC.eol().insets(0,0,0,10).fill(GBC.HORIZONTAL));
     }
 
-    public void ok() {
-        Main.pref.put("projection", projectionCombo.getSelectedItem().getClass().getName());
-        Main.pref.put("coordinates", ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name());
+    public boolean ok() {
+        boolean restart = Main.pref.put("projection",
+        projectionCombo.getSelectedItem().getClass().getName());
+        if(Main.pref.put("coordinates",
+        ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name()))
+            restart = true;
+        return restart;
     }
 }

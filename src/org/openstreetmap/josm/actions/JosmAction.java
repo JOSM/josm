@@ -24,8 +24,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 abstract public class JosmAction extends AbstractAction implements Destroyable {
 
-    @Deprecated
-    public KeyStroke shortcut;
     protected Shortcut sc;
 
     public Shortcut getShortcut() {
@@ -35,28 +33,6 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
                                // we shouldn't allow the user to change it...
         }
         return sc;
-    }
-
-    @Deprecated
-    public JosmAction(String name, String iconName, String tooltip, int shortcut, int modifier, boolean register) {
-        super(name, iconName == null ? null : ImageProvider.get(iconName));
-        setHelpId();
-        if (shortcut != 0) {
-            int group = Shortcut.GROUP_LAYER; //GROUP_NONE;
-            if (((modifier & InputEvent.CTRL_MASK) != 0) || ((modifier & InputEvent.CTRL_DOWN_MASK) != 0)) {
-                group = Shortcut.GROUP_MENU;
-            } else if (modifier == 0) {
-                group = Shortcut.GROUP_EDIT;
-            }
-            sc = Shortcut.registerShortcut("auto:"+name, name, shortcut, group);
-            this.shortcut = sc.getKeyStroke();
-            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
-            Main.contentPane.getActionMap().put(name, this);
-        }
-        putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-        putValue("toolbar", iconName);
-    if (register)
-        Main.toolbar.register(this);
     }
 
     /**
@@ -79,7 +55,6 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         setHelpId();
         sc = shortcut;
         if (sc != null) {
-            this.shortcut = sc.getKeyStroke();
             Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
             Main.contentPane.getActionMap().put(name, this);
         }
@@ -90,7 +65,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     }
 
     public void destroy() {
-        if (shortcut != null) {
+        if (sc != null) {
             Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
             Main.contentPane.getActionMap().remove(sc.getKeyStroke());
         }

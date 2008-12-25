@@ -27,7 +27,8 @@ public class FilePreferences implements PreferenceSetting {
         gui.connection.add(keepBackup, GBC.eol().insets(20,0,0,0));
     }
 
-    public void ok() {
+    public boolean ok() {
         Main.pref.put("save.keepbackup", keepBackup.isSelected());
+        return false;
     }
 }

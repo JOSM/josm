@@ -62,7 +62,6 @@ public class LafPreference implements PreferenceSetting {
                 return oldRenderer.getListCellRendererComponent(list, ((LookAndFeelInfo)value).getName(), index, isSelected, cellHasFocus);
             }
         });
-        lafCombo.addActionListener(gui.requireRestartAction);
 
         panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -88,10 +87,10 @@ public class LafPreference implements PreferenceSetting {
         gui.displaycontent.addTab(tr("Look and Feel"), scrollpane);
     }
 
-    public void ok() {
-        Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
+    public boolean ok() {
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
         Main.pref.put("osm-primitives.showid", showID.isSelected());
+        return Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
     }
 
 }

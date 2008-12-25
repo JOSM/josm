@@ -133,7 +133,7 @@ public class AdvancedPreference implements PreferenceSetting {
         });
     }
 
-    public void ok() {
+    public boolean ok() {
         for (int i = 0; i < model.getRowCount(); ++i) {
             String value = model.getValueAt(i,1).toString();
             if(value.length() != 0)
@@ -147,6 +147,7 @@ public class AdvancedPreference implements PreferenceSetting {
         }
         for (Entry<String, String> e : orig.entrySet())
             Main.pref.put(e.getKey(), null);
+        return false;
     }
 
 

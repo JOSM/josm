@@ -52,7 +52,6 @@ public class LanguagePreference implements PreferenceSetting {
                         index, isSelected, cellHasFocus);
             }
         });
-        langCombo.addActionListener(gui.requireRestartAction);
 
         JPanel panel = null;
         for(PreferenceSetting s : gui.settings)
@@ -66,15 +65,11 @@ public class LanguagePreference implements PreferenceSetting {
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
     }
 
-    public void ok() {
+    public boolean ok() {
         if(langCombo.getSelectedItem() == null)
-        {
-            Main.pref.put("language", null);
-        }
+            return Main.pref.put("language", null);
         else
-        {
-            String l = ((Locale)langCombo.getSelectedItem()).toString();
-            Main.pref.put("language", l);
-        }
+            return Main.pref.put("language",
+            ((Locale)langCombo.getSelectedItem()).toString());
     }
 }

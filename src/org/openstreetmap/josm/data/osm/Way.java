@@ -116,9 +116,4 @@ public final class Way extends OsmPrimitive {
         }
         return name;
     }
-
-    @Deprecated
-    public boolean isIncomplete() {
-        return incomplete;
-    }
 }

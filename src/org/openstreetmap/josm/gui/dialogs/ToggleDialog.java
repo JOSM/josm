@@ -61,13 +61,6 @@ public class ToggleDialog extends JPanel implements Helpful {
     public JPanel parent;
     private final JPanel titleBar = new JPanel(new GridBagLayout());
 
-    @Deprecated
-    public ToggleDialog(final String name, String iconName, String tooltip, int shortcut, int preferredHeight) {
-        super(new BorderLayout());
-        this.prefName = iconName;
-        ToggleDialogInit(name, iconName, tooltip, Shortcut.registerShortcut("auto:"+name, tooltip, shortcut, Shortcut.GROUP_LAYER), preferredHeight);
-    }
-
     public ToggleDialog(final String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight) {
         super(new BorderLayout());
         this.prefName = iconName;

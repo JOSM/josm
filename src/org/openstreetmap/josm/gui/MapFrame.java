@@ -20,6 +20,7 @@ import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
+import org.openstreetmap.josm.gui.ScrollViewport;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
@@ -51,8 +52,8 @@ public class MapFrame extends JPanel implements Destroyable {
      * The toolbar with the action icons. To add new toggle dialog actions, use addToggleDialog
      * instead of adding directly to this list. To add a new mode use addMapMode.
      */
-    public JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
-    public JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
+    private JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
+    private JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
     /**
      * The status line below the map
      */
@@ -144,12 +145,13 @@ public class MapFrame extends JPanel implements Destroyable {
      * Call this to add new toggle dialogs to the left button-list
      * @param dlg The toggle dialog. It must not be in the list already.
      */
-    public void addToggleDialog(ToggleDialog dlg) {
+    public IconToggleButton addToggleDialog(ToggleDialog dlg) {
         IconToggleButton button = new IconToggleButton(dlg.action);
         dlg.action.button = button;
         dlg.parent = toggleDialogs;
         toolBarToggle.add(button);
         toggleDialogs.add(dlg);
+        return button;
     }
 
     public void addMapMode(IconToggleButton b) {
@@ -196,7 +198,8 @@ public class MapFrame extends JPanel implements Destroyable {
         jb.add(toolBarActions);
         jb.addSeparator();
         jb.add(toolBarToggle);
-        panel.add(jb, BorderLayout.WEST);
+        panel.add(new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION),
+        BorderLayout.WEST);
         if (statusLine != null)
             panel.add(statusLine, BorderLayout.SOUTH);
     }

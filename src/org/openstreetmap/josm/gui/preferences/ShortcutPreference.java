@@ -29,8 +29,9 @@ public class ShortcutPreference implements PreferenceSetting {
 
     }
 
-    public void ok() {
-   }
+    public boolean ok() {
+        return false;
+    }
 
     // Maybe move this to prefPanel? There's no need for it to be here.
     private class scListModel extends AbstractTableModel {
@@ -88,5 +89,4 @@ public class ShortcutPreference implements PreferenceSetting {
             return false;
         }
     }
-
 }

@@ -157,7 +157,7 @@ public class AudioPreference implements PreferenceSetting {
         gui.audio.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
     }
 
-    public void ok() {
+    public boolean ok() {
         Main.pref.put("audio.menuinvisible", ! audioMenuVisible.isSelected());
         Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());
         Main.pref.put("marker.buttonlabels", markerButtonLabels.isSelected());
@@ -170,5 +170,6 @@ public class AudioPreference implements PreferenceSetting {
         Main.pref.put("audio.fastfwdmultiplier", audioFastForwardMultiplier.getText());
         Main.pref.put("audio.leadin", audioLeadIn.getText());
         Main.pref.put("audio.calibration", audioCalibration.getText());
+        return false;
     }
 }

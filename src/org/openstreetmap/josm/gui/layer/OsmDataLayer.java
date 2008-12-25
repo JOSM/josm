@@ -103,13 +103,6 @@ public class OsmDataLayer extends Layer {
     }
 
     /**
-     * @deprecated Use Main.main.undoRedo.add(...) instead.
-     */
-    @Deprecated public void add(final Command c) {
-        Main.main.undoRedo.add(c);
-    }
-
-    /**
      * The data behind this layer.
      */
     public final DataSet data;

@@ -165,7 +165,7 @@ public class DrawingPreference implements PreferenceSetting {
         gui.displaycontent.addTab(tr("OSM Data"), scrollpane);
     }
 
-    public void ok() {
+    public boolean ok() {
         Main.pref.put("draw.rawgps.lines", drawRawGpsLines.isSelected());
         Main.pref.put("draw.rawgps.max-line-length", drawRawGpsMaxLineLength.getText());
         Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());
@@ -183,6 +183,7 @@ public class DrawingPreference implements PreferenceSetting {
         int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
         if(virtualNodes.isSelected()) { if (vn < 1) vn = 8; }
         else { vn = 0; }
-        Main.pref.put("mappaint.node.virtual-size", Integer.toString(vn));
+        Main.pref.putInteger("mappaint.node.virtual-size", vn);
+        return false;
     }
 }

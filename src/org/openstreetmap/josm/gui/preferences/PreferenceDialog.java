@@ -35,9 +35,6 @@ public class PreferenceDialog extends JTabbedPane {
 
     public final static Collection<PreferenceSetting> settings = new LinkedList<PreferenceSetting>();
 
-    public boolean requiresRestart = false;
-    public final RequireRestartAction requireRestartAction = new RequireRestartAction();
-
     // some common tabs
     public final JPanel display = createPreferenceTab("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."));
     public final JPanel connection = createPreferenceTab("connection", I18n.tr("Connection Settings"), I18n.tr("Connection Settings for the OSM server."));
@@ -90,17 +87,13 @@ public class PreferenceDialog extends JTabbedPane {
         return p;
     }
 
-
-
-    private final class RequireRestartAction implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            requiresRestart = true;
-        }
-    }
-
     public void ok() {
+        boolean requiresRestart = false;
         for (PreferenceSetting setting : settings)
-            setting.ok();
+        {
+            if(setting.ok())
+                requiresRestart = true;
+        }
         if (requiresRestart)
             JOptionPane.showMessageDialog(Main.parent,tr("You have to restart JOSM for some settings to take effect."));
         Main.parent.repaint();

@@ -32,12 +32,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
         this.layer = layer;
     }
 
-    @Deprecated
-    public SaveActionBase(String name, String iconName, String tooltip, int shortcut, int modifiers, Layer layer) {
-        super(name, iconName, tooltip, shortcut, modifiers);
-        this.layer = layer;
-    }
-
     public void actionPerformed(ActionEvent e) {
         Layer layer = this.layer;
         if (layer == null && Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer

@@ -50,12 +50,10 @@ public class ServerAccessPreference implements PreferenceSetting {
         gui.connection.add(warning, GBC.eop().fill(GBC.HORIZONTAL));
     }
 
-    public void ok() {
+    public boolean ok() {
         Main.pref.put("osm-server.url", osmDataServer.getText());
         Main.pref.put("osm-server.username", osmDataUsername.getText());
-        String pwd = String.valueOf(osmDataPassword.getPassword());
-        if (pwd.equals(""))
-            pwd = null;
-        Main.pref.put("osm-server.password", pwd);
+        Main.pref.put("osm-server.password", String.valueOf(osmDataPassword.getPassword()));
+        return false;
     }
 }

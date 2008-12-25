@@ -350,7 +350,7 @@ public class PluginPreference implements PreferenceSetting {
         return availablePlugins.values();
     }
 
-    public void ok() {
+    public boolean ok() {
         Collection<PluginDescription> toDownload = new LinkedList<PluginDescription>();
         String msg = "";
         for (Entry<PluginDescription, Boolean> entry : pluginMap.entrySet()) {
@@ -374,8 +374,7 @@ public class PluginPreference implements PreferenceSetting {
 
         }
 
-        String oldPlugins = Main.pref.get("plugins");
-            LinkedList<String> plugins = new LinkedList<String>();
+        LinkedList<String> plugins = new LinkedList<String>();
         Object pd[] = pluginMap.keySet().toArray();
         Arrays.sort(pd);
         for (Object d : pd) {
@@ -383,11 +382,6 @@ public class PluginPreference implements PreferenceSetting {
                 plugins.add(((PluginDescription)d).name);
         }
 
-        Main.pref.putCollection("plugins", plugins);
-        String newPlugins = Main.pref.get("plugins");
-        if(oldPlugins == null && plugins == null)
-            return;
-        if(plugins == null || oldPlugins == null || !plugins.equals(oldPlugins))
-            gui.requiresRestart = true;
+        return Main.pref.putCollection("plugins", plugins);
     }
 }

@@ -77,13 +77,13 @@ public class ProxyPreferences implements PreferenceSetting {
         gui.connection.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
     }
 
-    public void ok() {
+    public boolean ok() {
         Main.pref.put(PROXY_ENABLE, proxyEnable.isSelected());
         Main.pref.put(PROXY_HOST, proxyHost.getText());
         Main.pref.put(PROXY_PORT, proxyPort.getText());
         Main.pref.put(PROXY_ANONYMOUS, proxyAnonymous.isSelected());
         Main.pref.put(PROXY_USER, proxyUser.getText());
         Main.pref.put(PROXY_PASS, new String(proxyPass.getPassword()));
+        return false;
     }
-
 }
