@@ -125,7 +125,7 @@ public class MainApplet extends JApplet {
     }
 
     public static void main(String[] args) {
-        final JFrame frame = new JFrame("Java OpenStreetMap Applet");
+        final JFrame frame = new JFrame("Java OpenStreetMap Editor");
         MainApplet applet = new MainApplet();
         applet.setStub(new AppletStub() {
             public void appletResize(int w, int h) {

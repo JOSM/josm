@@ -50,7 +50,7 @@ public class GettingStarted extends JPanel {
                 motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay");
             } catch (IOException ioe) {
                 motdcontent = "<html><body>\n<h1>" +
-                    tr("JOSM, the Java OpenStreetMap editor") +
+                    "JOSM - " + tr("Java OpenStreetMap Editor") +
                     "</h1>\n<h2 align=\"center\">(" +
                     tr ("Message of the day not available") +
                     ")</h2>";
@@ -120,7 +120,7 @@ public class GettingStarted extends JPanel {
             content += motdcontent.substring(start);
             content = content.replace("<html>", "<html><style type=\"text/css\">\nbody { font-family: sans-serif; font-weight: bold; }\nh1 {text-align: center;}</style>");
             /* replace the wiki title */
-            content = content.replace("JOSM, the Java OpenStreetMap editor", tr("JOSM, the Java OpenStreetMap editor"));
+            content = content.replace("Java OpenStreetMap Editor", tr("Java OpenStreetMap Editor"));
         }
 
     }

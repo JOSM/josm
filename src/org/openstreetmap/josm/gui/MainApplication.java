@@ -215,7 +215,7 @@ public class MainApplication extends Main {
         splash.setStatus(tr("Setting defaults"));
         preConstructorInit(args);
         splash.setStatus(tr("Creating main GUI"));
-        JFrame mainFrame = new JFrame(tr("Java OpenStreetMap - Editor"));
+        JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
         final Main main = new MainApplication(mainFrame);
         splash.setStatus(tr("Loading plugins"));

@@ -118,15 +118,21 @@ public class AboutAction extends JosmAction {
         JTextArea contribution = loadFile(Main.class.getResource("/CONTRIBUTION"));
 
         JPanel info = new JPanel(new GridBagLayout());
-        info.add(new JLabel(tr("Java OpenStreetMap Editor Version {0}",version)), GBC.eol().fill(GBC.HORIZONTAL));
-        info.add(new JLabel(tr("last change at {0}",time)), GBC.eol().fill(GBC.HORIZONTAL));
-        info.add(new JLabel(tr("Java Version {0}",System.getProperty("java.version"))), GBC.eol().fill(GBC.HORIZONTAL));
+        JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
+        caption.setFont(new Font("Helvetica", Font.BOLD, 20));
+        info.add(caption, GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
         info.add(GBC.glue(0,10), GBC.eol());
-        info.add(new JLabel(tr("Homepage")), GBC.std().insets(0,0,10,0));
+        info.add(new JLabel(tr("Version {0}",version)), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
+        info.add(GBC.glue(0,5), GBC.eol());
+        info.add(new JLabel(tr("Last change at {0}",time)), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
+        info.add(GBC.glue(0,5), GBC.eol());
+        info.add(new JLabel(tr("Java Version {0}",System.getProperty("java.version"))), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
+        info.add(GBC.glue(0,10), GBC.eol());
+        info.add(new JLabel(tr("Homepage")), GBC.std().insets(10,0,10,0));
         info.add(new UrlLabel("http://josm.openstreetmap.de"), GBC.eol().fill(GBC.HORIZONTAL));
-        info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(0,0,10,0));
+        info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10,0,10,0));
         info.add(new UrlLabel("http://josm.openstreetmap.de/newticket"), GBC.eol().fill(GBC.HORIZONTAL));
-        info.add(new JLabel(tr("News about JOSM")), GBC.std().insets(0,0,10,0));
+        info.add(new JLabel(tr("News about JOSM")), GBC.std().insets(10,0,10,0));
         info.add(new UrlLabel("http://www.opengeodata.org/?cat=17"), GBC.eol().fill(GBC.HORIZONTAL));
 
         about.addTab(tr("Info"), info);

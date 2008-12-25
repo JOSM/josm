@@ -64,7 +64,7 @@ public class SplashScreen extends JWindow {
         innerContentPane.add(logo, gbc);
 
         // Add the name of this application
-        JLabel caption = new JLabel(tr("JOSM - Java OpenStreetMap Editor"));
+        JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
         caption.setFont(new Font("Helvetica", Font.BOLD, 20));
         gbc.gridheight = 1;
         gbc.gridx = 1;
@@ -164,5 +164,4 @@ public class SplashScreen extends JWindow {
             // can catch InterruptedException
         }
     }
-
 }

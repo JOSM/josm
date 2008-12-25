@@ -167,7 +167,8 @@ public class MapView extends NavigatableComponent {
             Main.ds = editLayer.data;
             editLayer.listenerModified.add(new ModifiedChangedListener(){
                 public void modifiedChanged(boolean value, OsmDataLayer source) {
-                    JOptionPane.getFrameForComponent(Main.parent).setTitle((value?"*":"")+tr("Java OpenStreetMap - Editor"));
+                    JOptionPane.getFrameForComponent(Main.parent).setTitle((value?"*":"")
+                    +tr("Java OpenStreetMap Editor"));
                 }
             });
         }
