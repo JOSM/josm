@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.InputEvent;
 
 import javax.swing.AbstractAction;
@@ -28,9 +30,10 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     public Shortcut getShortcut() {
         if (sc == null) {
-            sc = Shortcut.registerShortcut("core:none", "No Shortcut", 0, Shortcut.GROUP_NONE);
-            sc.setAutomatic(); // as this shortcut is shared by all action that don't want to have a shortcut,
-                               // we shouldn't allow the user to change it...
+            sc = Shortcut.registerShortcut("core:none", tr("No Shortcut"), 0, Shortcut.GROUP_NONE);
+            // as this shortcut is shared by all action that don't want to have a shortcut,
+            // we shouldn't allow the user to change it...
+            // this is handled by special name "core:none"
         }
         return sc;
     }

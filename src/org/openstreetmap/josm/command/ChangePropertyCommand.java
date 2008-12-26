@@ -88,13 +88,20 @@ public class ChangePropertyCommand extends Command {
     }
 
     @Override public MutableTreeNode description() {
-        String text = value == null ? tr( "Remove \"{0}\" for", key) : tr("Set {0}={1} for",key,value);
+        String text;
         if (objects.size() == 1) {
             NameVisitor v = new NameVisitor();
             objects.iterator().next().visit(v);
-            text += " "+tr(v.className)+" "+v.name;
-        } else
-            text += " "+objects.size()+" "+trn("object","objects",objects.size());
+            text = value == null
+            ? tr("Remove \"{0}\" for {1} ''{2}''", key, tr(v.className), v.name)
+            : tr("Set {0}={1} for {1} ''{2}''",key,value, tr(v.className), v.name);
+        }
+        else
+        {
+            text = value == null
+            ? tr("Remove \"{0}\" for {1} {2}", key, objects.size(), trn("object","objects",objects.size()))
+            : tr("Set {0}={1} for {1} {2}",key,value, objects.size(), trn("object","objects",objects.size()));
+        }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL));
         if (objects.size() == 1)
             return root;

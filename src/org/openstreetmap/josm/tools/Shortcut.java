@@ -100,6 +100,10 @@ public class Shortcut {
         return automatic;
     }
 
+    public boolean isChangeable() {
+        return !automatic && !shortText.equals("core:none");
+    }
+
     private boolean getReset() {
         return reset;
     }

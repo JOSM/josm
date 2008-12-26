@@ -391,7 +391,7 @@ public class prefJPanel extends javax.swing.JPanel {
                 } else {
                     tfKey.setSelectedItem(keyList.get(-1));
                 }
-                if (sc.getAutomatic()) {
+                if (sc.isChangeable()) {
                     panel.cbDefault.setEnabled(false);
                     panel.cbDisable.setEnabled(false);
                     panel.cbShift.setEnabled(false);
