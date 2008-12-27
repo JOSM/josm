@@ -15,6 +15,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -521,7 +522,12 @@ public class GeoImageLayer extends Layer {
     }
 
     private static Icon loadScaledImage(File f, int maxSize) {
-        Image img = new ImageIcon(f.getPath()).getImage();
+        Image img = Toolkit.getDefaultToolkit().createImage(f.getPath());
+        while (img.getWidth(null) < 0 || img.getHeight(null) < 0) {
+          try {
+            Thread.sleep(10);
+          } catch(InterruptedException ie) {}
+        }
         int w = img.getWidth(null);
         int h = img.getHeight(null);
         if (w>h) {
@@ -535,12 +541,16 @@ public class GeoImageLayer extends Layer {
     }
 
     private static BufferedImage createResizedCopy(Image originalImage,
-            int scaledWidth, int scaledHeight)
+    int scaledWidth, int scaledHeight)
     {
         BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = scaledBI.createGraphics();
-
-        g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null);
+        while (!g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null))
+        {
+          try {
+            Thread.sleep(10);
+          } catch(InterruptedException ie) {}
+        }
         g.dispose();
         return scaledBI;
     }
