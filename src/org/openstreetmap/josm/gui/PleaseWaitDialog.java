@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
@@ -36,5 +38,15 @@ public class PleaseWaitDialog extends JDialog {
         setContentPane(pane);
         setSize(Main.pref.getInteger("progressdialog.size",400),100);
         setLocationRelativeTo(Main.parent);
+        addComponentListener(new ComponentListener() {
+            public void componentHidden(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {}
+            public void componentShown(ComponentEvent e) {}
+            public void componentResized(ComponentEvent ev) {
+               int w = getWidth();
+               if(w > 200)
+                   Main.pref.putInteger("progressdialog.size",w);
+            }
+        });
     }
 }
