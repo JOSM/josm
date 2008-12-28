@@ -148,47 +148,40 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     public void paint(Graphics g, MapView mv) {
         if (selectedSegment != null) {
             Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
-            Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
+            Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex + 1);
 
             EastNorth en1 = n1.eastNorth;
             EastNorth en2 = n2.eastNorth;
-            if (en1.east() < en2.east()) { en2 = en1; en1 = n2.eastNorth; }
             EastNorth en3 = mv.getEastNorth(mousePos.x, mousePos.y);
 
-            double u = ((en3.east()-en1.east())*(en2.east()-en1.east()) + (en3.north()-en1.north())*(en2.north()-en1.north()))/en2.distanceSq(en1);
+            double u = ((en3.east() - en1.east()) * (en2.east() - en1.east()) +
+                        (en3.north() - en1.north()) * (en2.north() - en1.north())) /
+                       en2.distanceSq(en1);
             // the point on the segment from which the distance to mouse pos is shortest
-            EastNorth base = new EastNorth(en1.east()+u*(en2.east()-en1.east()), en1.north()+u*(en2.north()-en1.north()));
-
-            // the distance, in projection units, between the base point and the mouse cursor
-            double len = base.distance(en3);
+            EastNorth base = new EastNorth(en1.east() + u * (en2.east() - en1.east()),
+                                           en1.north() + u * (en2.north() - en1.north()));
 
             // find out the distance, in metres, between the base point and the mouse cursor
             distance = Main.proj.eastNorth2latlon(base).greatCircleDistance(Main.proj.eastNorth2latlon(en3));
             Main.map.statusLine.setDist(distance);
             updateStatusLine();
 
-            // compute the angle at which the segment is drawn
-            // and use it to compute the x and y offsets for the
-            // corner points.
-            double sin_alpha = (en2.north()-en1.north())/en2.distance(en1);
+            // compute vertical and horizontal components.
+            xoff = en3.east() - base.east();
+            yoff = en3.north() - base.north();
 
-            // this is a kludge because sometimes extrusion just goes the wrong direction
-            if ((en3.east()>base.east()) ^ (sin_alpha < 0)) len=-len;
-            xoff = sin_alpha * len;
-            yoff = Math.sqrt(1-sin_alpha*sin_alpha) * len;
-
-            Graphics2D g2 = (Graphics2D) g;
+            Graphics2D g2 = (Graphics2D)g;
             g2.setColor(selectedColor);
             g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             GeneralPath b = new GeneralPath();
-            Point p1=mv.getPoint(en1);
-            Point p2=mv.getPoint(en2);
-            Point p3=mv.getPoint(en1.add(-xoff, -yoff));
-            Point p4=mv.getPoint(en2.add(-xoff, -yoff));
+            Point p1 = mv.getPoint(en1);
+            Point p2 = mv.getPoint(en2);
+            Point p3 = mv.getPoint(en1.add(xoff, yoff));
+            Point p4 = mv.getPoint(en2.add(xoff, yoff));
 
-            b.moveTo(p1.x,p1.y); b.lineTo(p3.x, p3.y);
+            b.moveTo(p1.x, p1.y); b.lineTo(p3.x, p3.y);
             b.lineTo(p4.x, p4.y); b.lineTo(p2.x, p2.y);
-            b.lineTo(p1.x,p1.y);
+            b.lineTo(p1.x, p1.y);
             g2.draw(b);
             g2.setStroke(new BasicStroke(1));
         }
@@ -229,9 +222,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if (mousePos.distance(initialMousePos) > 10) {
             Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
             Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
-            EastNorth en3 = n2.eastNorth.add(-xoff, -yoff);
+            EastNorth en3 = n2.eastNorth.add(xoff, yoff);
             Node n3 = new Node(Main.proj.eastNorth2latlon(en3));
-            EastNorth en4 = n1.eastNorth.add(-xoff, -yoff);
+            EastNorth en4 = n1.eastNorth.add(xoff, yoff);
             Node n4 = new Node(Main.proj.eastNorth2latlon(en4));
             Way wnew = new Way(selectedSegment.way);
             wnew.nodes.add(selectedSegment.lowerIndex+1, n3);
