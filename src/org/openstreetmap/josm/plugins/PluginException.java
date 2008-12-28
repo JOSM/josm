@@ -15,7 +15,7 @@ public class PluginException extends RuntimeException {
     public final String name;
 
     public PluginException(PluginProxy plugin, String name, Throwable cause) {
-        super(tr("An error occured in plugin {0}", name), cause);
+        super(tr("An error occurred in plugin {0}", name), cause);
         this.plugin = plugin;
         this.name = name;
     }

@@ -85,6 +85,10 @@ public class AboutAction extends JosmAction {
         return version;
     }
 
+    static public String getTextBlock() {
+        return revision.getText();
+    }
+
     /**
      * Return the number part of the version string.
      * @return integer part of version number or Integer.MAX_VALUE if not available
@@ -104,7 +108,7 @@ public class AboutAction extends JosmAction {
      * @return true if it is a SVN unofficial build
      */
     public static boolean isDevelopmentVersion() {
-        return version.endsWith(" SVN");
+        return version.endsWith(" SVN") || version.equals(tr("UNKNOWN"));
     }
 
     public AboutAction() {

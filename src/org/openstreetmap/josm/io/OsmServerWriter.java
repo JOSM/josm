@@ -158,7 +158,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                 dealWithTransferException(ex);
             }
             e.printStackTrace();
-            throw new SAXException(tr("An error occoured: {0}",e.getMessage()));
+            throw new SAXException(tr("An error occurred: {0}",e.getMessage()));
         }
         catch (OsmTransferException e) {
             try {

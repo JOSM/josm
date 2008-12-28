@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginProxy;
 
@@ -100,42 +101,29 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     StringWriter stack = new StringWriter();
                     e.printStackTrace(new PrintWriter(stack));
 
-                    URL revUrl = Main.class.getResource("/REVISION");
-                    StringBuilder sb = new StringBuilder();
-                    if (revUrl == null) {
-                        sb.append(tr("Development version. Unknown revision."));
-                        File f = new File("org/openstreetmap/josm/Main.class");
-                        if (!f.exists())
-                            f = new File("bin/org/openstreetmap/josm/Main.class");
-                        if (!f.exists())
-                            f = new File("build/org/openstreetmap/josm/Main.class");
-                        if (f.exists()) {
-                            DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
-                            sb.append("\nMain.class build on "+sdf.format(new Date(f.lastModified())));
-                            sb.append("\n");
-                        }
-                    } else {
-                        BufferedReader in = new BufferedReader(new InputStreamReader(revUrl.openStream()));
-                        for (String line = in.readLine(); line != null; line = in.readLine()) {
-                            sb.append(line);
-                            sb.append('\n');
-                        }
+                    String text = AboutAction.getTextBlock();
+                    String pl = Main.pref.get("plugins");
+                    if(pl != null && pl.length() != 0)
+                        text += "Plugins: "+pl+"\n";
+                    for (final PluginProxy pp : Main.plugins) {
+                        text += "Plugin " + pp.info.name + (pp.info.version != null && !pp.info.version.equals("") ? " Version: "+pp.info.version+"\n" : "\n");
                     }
-                    sb.append("\n"+stack.getBuffer().toString());
+                    text += "\n" + stack.getBuffer().toString();
 
                     JPanel p = new JPanel(new GridBagLayout());
-                    p.add(new JLabel(tr("<html>Please report a ticket at {0}<br>" +
-                    "Include your steps to get to the error (as detailed as possible)!<br>" +
-                    "Be sure to include the following information:</html>", "http://josm.openstreetmap.de/newticket")), GBC.eol());
+                    p.add(new JLabel("<html>" + tr("Please report a ticket at {0}","http://josm.openstreetmap.de/newticket") +
+                    "<br>" + tr("Include your steps to get to the error (as detailed as possible)!") +
+                    "<br>" + tr("Try updating to the newest version of JOSM and all plugin before reporting a bug.") +
+                    "<br>" + tr("Be sure to include the following information:") + "</html>"), GBC.eol());
                     try {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(sb.toString()), new ClipboardOwner(){
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), new ClipboardOwner(){
                             public void lostOwnership(Clipboard clipboard, Transferable contents) {}
                         });
                         p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
                     }
                     catch (RuntimeException x) {}
 
-                    JTextArea info = new JTextArea(sb.toString(), 20, 60);
+                    JTextArea info = new JTextArea(text, 20, 60);
                     info.setCaretPosition(0);
                     info.setEditable(false);
                     p.add(new JScrollPane(info), GBC.eop());
