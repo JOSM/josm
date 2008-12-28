@@ -78,7 +78,8 @@ public class PluginPreference implements PreferenceSetting {
         }
     }
 
-    private Map<PluginDescription, Boolean> pluginMap;
+    private Map<String, Boolean> pluginMap;
+    private Map<String, PluginDescription> availablePlugins;
     private JPanel plugin;
     private class MyBox extends Box {
         int lastwidth;
@@ -203,9 +204,9 @@ public class PluginPreference implements PreferenceSetting {
         Set<PluginDescription> toUpdate = new HashSet<PluginDescription>();
         StringBuilder toUpdateStr = new StringBuilder();
         for (PluginProxy proxy : Main.plugins) {
-            PluginDescription description = findDescription(proxy.info.name);
-            if (description != null && (description.version == null || description.version.equals(""))
-            ? (proxy.info.version != null && proxy.info.version.equals("")) : !description.version.equals(proxy.info.version)) {
+            PluginDescription description = availablePlugins.get(proxy.info.name);
+            if (description != null && (description.version == null || description.version.equals("")) ?
+            (proxy.info.version != null && proxy.info.version.equals("")) : !description.version.equals(proxy.info.version)) {
                 toUpdate.add(description);
                 toUpdateStr.append(description.name+"\n");
             }
@@ -213,66 +214,64 @@ public class PluginPreference implements PreferenceSetting {
         if (toUpdate.isEmpty()) {
             JOptionPane.showMessageDialog(Main.parent, tr("All installed plugins are up to date."));
             done = true;
-        }
-        else
-        {
+        } else {
             int answer = JOptionPane.showConfirmDialog(Main.parent, tr("Update the following plugins:\n\n{0}",
             toUpdateStr.toString()), tr("Update"), JOptionPane.OK_CANCEL_OPTION);
-            if (answer == JOptionPane.OK_OPTION)
-            {
+            if (answer == JOptionPane.OK_OPTION) {
                 PluginDownloader.update(toUpdate);
                 done = true;
             }
         }
-        if(done && num >= 1)
+        if (done && num >= 1)
             Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
     }
 
-    private PluginDescription findDescription(String name) {
-        for (PluginDescription d : pluginMap.keySet())
-            if (d.name.equals(name))
-                return d;
-        return null;
-    }
-
     private void refreshPluginPanel(final PreferenceDialog gui) {
-        Collection<PluginDescription> availablePlugins = getAvailablePlugins();
-        pluginMap = new HashMap<PluginDescription, Boolean>();
+        availablePlugins = getAvailablePlugins();
+        Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
+
+        if (pluginMap == null)
+            pluginMap = new HashMap<String, Boolean>();
+        else
+            // Keep the map in bounds; possibly slightly pointless.
+            for (final String pname : pluginMap.keySet())
+                if (availablePlugins.get(pname) == null) pluginMap.remove(pname);
+
         pluginPanel.removeAll();
         int width = pluginPanel.myGetWidth();
 
-        Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
+        for (final PluginDescription plugin : availablePlugins.values()) {
+            boolean enabled = (enabledPlugins != null) && enabledPlugins.contains(plugin.name);
+            if (pluginMap.get(plugin.name) == null)
+                pluginMap.put(plugin.name, enabled);
 
-        for (final PluginDescription plugin : availablePlugins) {
-            boolean enabled = enabledPlugins != null && enabledPlugins.contains(plugin.name);
             String remoteversion = plugin.version;
-            if(remoteversion == null || remoteversion.equals(""))
+            if ((remoteversion == null) || remoteversion.equals(""))
                 remoteversion = tr("unknown");
 
             String localversion;
             PluginInformation p = PluginInformation.findPlugin(plugin.name);
-            if(p != null)
-            {
-                if(p.version != null && !p.version.equals(""))
+            if (p != null) {
+                if (p.version != null && !p.version.equals(""))
                     localversion = p.version;
                 else
                     localversion = tr("unknown");
                 localversion = " (" + localversion + ")";
-            }
-            else
+            } else
                 localversion = "";
 
-            final JCheckBox pluginCheck = new JCheckBox(tr("{0}: Version {1}{2}", plugin.name, remoteversion, localversion), enabled);
+            final JCheckBox pluginCheck = new JCheckBox(
+                    tr("{0}: Version {1}{2}", plugin.name, remoteversion, localversion),
+                    pluginMap.get(plugin.name));
             pluginPanel.add(pluginCheck);
 
-            pluginCheck.setToolTipText(plugin.resource != null ? ""+plugin.resource : tr("Plugin bundled with JOSM"));
-            JLabel label = new JLabel("<html><i>"+(plugin.description==null?tr("no description available"):plugin.description)+"</i></html>");
-            label.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
-            label.setMaximumSize(new Dimension(width,1000));
+            pluginCheck.setToolTipText(plugin.resource != null ? "" + plugin.resource : tr("Plugin bundled with JOSM"));
+            JLabel label = new JLabel("<html><i>" + (plugin.description == null ? tr("no description available") : plugin.description) + "</i></html>");
+            label.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+            label.setMaximumSize(new Dimension(width, 1000));
             pluginPanel.add(label);
             pluginPanel.add(Box.createVerticalStrut(5));
 
-            pluginMap.put(plugin, enabled);
             pluginCheck.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
                     // if user enabled a plugin, it is not loaded but found somewhere on disk: offer to delete jar
@@ -294,14 +293,14 @@ public class PluginPreference implements PreferenceSetting {
                             }
                         }
                     }
-                    pluginMap.put(plugin, pluginCheck.isSelected());
+                    pluginMap.put(plugin.name, pluginCheck.isSelected());
                 }
             });
         }
         plugin.updateUI();
     }
 
-    private Collection<PluginDescription> getAvailablePlugins() {
+    private Map<String, PluginDescription> getAvailablePlugins() {
         SortedMap<String, PluginDescription> availablePlugins = new TreeMap<String, PluginDescription>(new Comparator<String>(){
             public int compare(String o1, String o2) {
                 return o1.compareToIgnoreCase(o2);
@@ -347,16 +346,16 @@ public class PluginPreference implements PreferenceSetting {
                         proxy.info.file == null ? null :
                             PluginInformation.fileToURL(proxy.info.file).toString(),
                         proxy.info.version));
-        return availablePlugins.values();
+        return availablePlugins;
     }
 
     public boolean ok() {
         Collection<PluginDescription> toDownload = new LinkedList<PluginDescription>();
         String msg = "";
-        for (Entry<PluginDescription, Boolean> entry : pluginMap.entrySet()) {
-            if (entry.getValue() && PluginInformation.findPlugin(entry.getKey().name) == null) {
-                toDownload.add(entry.getKey());
-                msg += entry.getKey().name+"\n";
+        for (Entry<String, Boolean> entry : pluginMap.entrySet()) {
+            if (entry.getValue() && PluginInformation.findPlugin(entry.getKey()) == null) {
+                toDownload.add(availablePlugins.get(entry.getKey()));
+                msg += entry.getKey() + "\n";
             }
         }
         if (!toDownload.isEmpty()) {
@@ -366,20 +365,21 @@ public class PluginPreference implements PreferenceSetting {
                     JOptionPane.YES_NO_OPTION);
             if (answer != JOptionPane.OK_OPTION)
                 for (PluginDescription pd : toDownload)
-                    pluginMap.put(pd, false);
+                    pluginMap.put(pd.name, false);
             else
                 for (PluginDescription pd : toDownload)
                     if (!PluginDownloader.downloadPlugin(pd))
-                        pluginMap.put(pd, false);
+                        pluginMap.put(pd.name, false);
 
         }
 
         LinkedList<String> plugins = new LinkedList<String>();
-        Object pd[] = pluginMap.keySet().toArray();
-        Arrays.sort(pd);
-        for (Object d : pd) {
-            if (pluginMap.get(d))
-                plugins.add(((PluginDescription)d).name);
+        Object pds[] = pluginMap.keySet().toArray();
+        Arrays.sort(pds);
+        for (Object d : pds) {
+            PluginDescription pd = (PluginDescription)d;
+            if (pluginMap.get(pd.name))
+                plugins.add(pd.name);
         }
 
         return Main.pref.putCollection("plugins", plugins);
