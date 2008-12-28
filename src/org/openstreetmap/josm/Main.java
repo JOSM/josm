@@ -391,7 +391,12 @@ abstract public class Main {
         }
 
         try {
-            UIManager.setLookAndFeel(Main.pref.get("laf"));
+            try {
+              UIManager.setLookAndFeel(Main.pref.get("laf"));
+            }
+            catch (final javax.swing.UnsupportedLookAndFeelException e) {
+                System.out.println("Look and Feel not supported: " + Main.pref.get("laf"));
+            }
             toolbar = new ToolbarPreferences();
             contentPane.updateUI();
             panel.updateUI();

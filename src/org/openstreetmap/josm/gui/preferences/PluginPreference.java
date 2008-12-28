@@ -372,16 +372,13 @@ public class PluginPreference implements PreferenceSetting {
                         pluginMap.put(pd.name, false);
 
         }
-
         LinkedList<String> plugins = new LinkedList<String>();
-        Object pds[] = pluginMap.keySet().toArray();
-        Arrays.sort(pds);
-        for (Object d : pds) {
-            PluginDescription pd = (PluginDescription)d;
-            if (pluginMap.get(pd.name))
-                plugins.add(pd.name);
+        for (Map.Entry<String, Boolean> d : pluginMap.entrySet()) {
+            if (d.getValue())
+                plugins.add(d.getKey());
         }
 
+        Collections.sort(plugins);
         return Main.pref.putCollection("plugins", plugins);
     }
 }
