@@ -4,10 +4,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.Main;
 
@@ -45,22 +48,30 @@ public class ElemStyles
 
     public void add(String name, String k, String v, String b, LineElemStyle style)
     {
-        getStyleSet(name, true).lines.put(getKey(k,v,b), style);
+        String key = getKey(k,v,b);
+        style.code = key;
+        getStyleSet(name, true).lines.put(key, style);
     }
 
     public void addModifier(String name, String k, String v, String b, LineElemStyle style)
     {
-        getStyleSet(name, true).modifiers.put(getKey(k,v,b), style);
+        String key = getKey(k,v,b);
+        style.code = key;
+        getStyleSet(name, true).modifiers.put(key, style);
     }
 
     public void add(String name, String k, String v, String b, AreaElemStyle style)
     {
-        getStyleSet(name, true).areas.put(getKey(k,v,b), style);
+        String key = getKey(k,v,b);
+        style.code = key;
+        getStyleSet(name, true).areas.put(key, style);
     }
 
     public void add(String name, String k, String v, String b, IconElemStyle style)
     {
-        getStyleSet(name, true).icons.put(getKey(k,v,b), style);
+        String key = getKey(k,v,b);
+        style.code = key;
+        getStyleSet(name, true).icons.put(key, style);
     }
 
     private StyleSet getStyleSet(String name, boolean create)
@@ -108,20 +119,17 @@ public class ElemStyles
         return ret;
     }
 
-    public ElemStyle get(Way w)
+    private ElemStyle get(Map<String, String> keys, StyleSet ss)
     {
-        StyleSet ss = getStyleSet(null, false);
-        if(ss == null || w.keys == null)
-            return null;
         AreaElemStyle retArea = null;
         LineElemStyle retLine = null;
         String linestring = null;
         HashMap<String, LineElemStyle> over = new HashMap<String, LineElemStyle>();
-        Iterator<String> iterator = w.keys.keySet().iterator();
+        Iterator<String> iterator = keys.keySet().iterator();
         while(iterator.hasNext())
         {
             String key = iterator.next();
-            String val = w.keys.get(key);
+            String val = keys.get(key);
             AreaElemStyle styleArea;
             LineElemStyle styleLine;
             String idx = "n" + key + "=" + val;
@@ -172,24 +180,40 @@ public class ElemStyles
         return retLine;
     }
 
-    public boolean isArea(Way w)
+    public ElemStyle get(Way w)
     {
         StyleSet ss = getStyleSet(null, false);
-        if(ss != null && w.keys != null)
+        return (ss == null || w.keys == null) ? null : get(w.keys, ss);
+    }
+
+    public ElemStyle get(Relation r)
+    {
+        StyleSet ss = getStyleSet(null, false);
+        return (ss == null || r.keys == null) ? null : get(r.keys, ss);
+    }
+
+    private boolean isArea(Map<String, String> keys, StyleSet ss)
+    {
+        Iterator<String> iterator = keys.keySet().iterator();
+        while(iterator.hasNext())
         {
-            Iterator<String> iterator = w.keys.keySet().iterator();
-            while(iterator.hasNext())
-            {
-                String key = iterator.next();
-                String val = w.keys.get(key);
-                if(ss.areas.containsKey("n" + key + "=" + val)
-                || ss.areas.containsKey("n" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
-                || ss.areas.containsKey("x" + key))
-                    return true;
-            }
+            String key = iterator.next();
+            String val = keys.get(key);
+            if(ss.areas.containsKey("n" + key + "=" + val)
+            || ss.areas.containsKey("n" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
+            || ss.areas.containsKey("x" + key))
+                return true;
         }
         return false;
     }
+
+    public boolean isArea(OsmPrimitive o)
+    {
+        StyleSet ss = getStyleSet(null, false);
+        return (ss != null && o.keys != null && !(o instanceof Node))
+        ? isArea(o.keys, ss) : false;
+    }
+
     public boolean hasAreas()
     {
         StyleSet ss = getStyleSet(null, false);

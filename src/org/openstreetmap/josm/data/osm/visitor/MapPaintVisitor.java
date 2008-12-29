@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
@@ -45,6 +47,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected ElemStyles styles;
     protected double circum;
     protected String regionalNameOrder[];
+    protected Collection<Way> alreadyDrawnWays = new LinkedList<Way>();
+    protected Collection<Way> alreadyDrawnAreas = new LinkedList<Way>();
 
     protected boolean isZoomOk(ElemStyle e) {
         if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -86,45 +90,49 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     public void visit(Way w) {
         if(w.nodes.size() < 2)
             return;
-        // show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
-        // (even if the tag is negated as in oneway=false) or the way is selected
-        boolean showDirection = w.selected || ((!useRealWidth) && (showDirectionArrow
-         && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
 
-        Color color = untaggedColor;
-        int width = defaultSegmentWidth;
-        int realWidth = 0; //the real width of the element in meters
-        boolean dashed = false;
         ElemStyle wayStyle = styles.get(w);
 
         if(!isZoomOk(wayStyle))
             return;
 
         LineElemStyle l = null;
+        Color areacolor = untaggedColor;
         if(wayStyle!=null)
         {
-            Color areacolor = untaggedColor;
             boolean area = false;
             if(wayStyle instanceof LineElemStyle)
                 l = (LineElemStyle)wayStyle;
             else if (wayStyle instanceof AreaElemStyle)
             {
                 areacolor = ((AreaElemStyle)wayStyle).color;
-                color = areacolor;
                 l = ((AreaElemStyle)wayStyle).line;
                 area = true;
-            }
-            if(l != null)
-            {
-                color = l.color;
-                width = l.width;
-                realWidth = l.realWidth;
-                dashed = l.dashed;
             }
             if (area && fillAreas)
                 drawWayAsArea(w, areacolor);
         }
 
+        drawWay(w, l, areacolor);
+    }
+
+    public void drawWay(Way w, LineElemStyle l, Color color) {
+        // show direction arrows, if draw.segment.relevant_directions_only is not set,
+        // the way is tagged with a direction key
+        // (even if the tag is negated as in oneway=false) or the way is selected
+        boolean showDirection = w.selected || ((!useRealWidth) && (showDirectionArrow
+        && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
+        int width = defaultSegmentWidth;
+        int realWidth = 0; //the real width of the element in meters
+        boolean dashed = false;
+
+        if(l != null)
+        {
+            color = l.color;
+            width = l.width;
+            realWidth = l.realWidth;
+            dashed = l.dashed;
+        }
         if (realWidth > 0 && useRealWidth && !showDirection)
         {
             int tmpWidth = (int) (100 /  (float) (circum / realWidth));
@@ -199,11 +207,251 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         displaySegments();
     }
 
-    public void visit(Relation e) {
-        // relations are not (yet?) drawn.
+    public Collection<Way> joinWays(Collection<Way> join)
+    {
+        Collection<Way> res = new LinkedList<Way>();
+        Object[] joinArray = join.toArray();
+        int left = join.size();
+        while(left != 0)
+        {
+            Way w = null;
+            Boolean selected = false;
+            ArrayList<Node> n = null;
+            Boolean joined = true;
+            while(joined && left != 0)
+            {
+                joined = false;
+                for(int i = 0; i < joinArray.length && left != 0; ++i)
+                {
+                    if(joinArray[i] != null)
+                    {
+                        Way c = (Way)joinArray[i];
+                        if(w == null)
+                        { w = c; selected = w.selected; joinArray[i] = null; --left; }
+                        else
+                        {
+                            int mode = 0;
+                            int cl = c.nodes.size()-1;
+                            int nl;
+                            if(n == null)
+                            {
+                                nl = w.nodes.size()-1;
+                                if(w.nodes.get(nl) == c.nodes.get(0)) mode = 21;
+                                else if(w.nodes.get(nl) == c.nodes.get(cl)) mode = 22;
+                                else if(w.nodes.get(0) == c.nodes.get(0)) mode = 11;
+                                else if(w.nodes.get(0) == c.nodes.get(cl)) mode = 12;
+                            }
+                            else
+                            {
+                                nl = n.size()-1;
+                                if(n.get(nl) == c.nodes.get(0)) mode = 21;
+                                else if(n.get(0) == c.nodes.get(cl)) mode = 12;
+                                else if(n.get(0) == c.nodes.get(0)) mode = 11;
+                                else if(n.get(nl) == c.nodes.get(cl)) mode = 22;
+                            }
+                            if(mode != 0)
+                            {
+                                joinArray[i] = null;
+                                joined = true;
+                                if(c.selected) selected = true;
+                                --left;
+                                if(n == null) n = new ArrayList(w.nodes);
+System.out.println("old: " + n);
+System.out.println("new: " + c.nodes);
+                                n.remove((mode == 21 || mode == 22) ? nl : 0);
+                                if(mode == 21)
+                                    n.addAll(c.nodes);
+                                else if(mode == 12)
+                                    n.addAll(0, c.nodes);
+                                else if(mode == 22)
+                                {
+                                    for(Node node : c.nodes)
+                                        n.add(nl, node);
+System.out.println("ERROR: Joining way reversed: " + c);
+                                }
+                                else /* mode == 11 */
+                                {
+                                    for(Node node : c.nodes)
+                                        n.add(0, node);
+System.out.println("ERROR: Joining way reversed: " + c);
+                                }
+System.out.println("joined: " + n);
+                            }
+                        }
+                    }
+                } /* for(i = ... */
+            } /* while(joined) */
+            if(n != null)
+            {
+                w = new Way(w);
+                w.nodes.clear();
+                w.nodes.addAll(n);
+                w.selected = selected;
+            }
+            if(!w.isClosed())
+            {
+System.out.println("ERROR: multipolygon way is not closed." + w);
+            }
+            res.add(w);
+        } /* while(left != 0) */
+
+        return res;
     }
 
-    // This assumes that all segments are aligned in the same direction!
+    public void visit(Relation r) {
+        // draw multipolygon relations including their ways
+        // other relations are not (yet?) drawn.
+        if (r.incomplete) return;
+
+        if(!Main.pref.getBoolean("mappaint.multipolygon",false)) return;
+
+        if(!"multipolygon".equals(r.keys.get("type"))) return;
+
+        Collection<Way> inner = new LinkedList<Way>();
+        Collection<Way> outer = new LinkedList<Way>();
+        Collection<Way> innerclosed = new LinkedList<Way>();
+        Collection<Way> outerclosed = new LinkedList<Way>();
+
+        for (RelationMember m : r.members)
+        {
+            if (!m.member.incomplete && !m.member.deleted)
+            {
+                if(m.member instanceof Way)
+                {
+                    Way w = (Way) m.member;
+                    if(w.nodes.size() < 2)
+                    {
+System.out.println("ERROR: Way with less than two points " + w);
+                    }
+                    else if("inner".equals(m.role))
+                        inner.add(w);
+                    else if("outer".equals(m.role))
+                        outer.add(w);
+                    else
+                    {
+System.out.println("ERROR: No useful role for Way " + w);
+                        if(m.role == null || m.role.length() == 0)
+                            outer.add(w);
+                    }
+                }
+                else
+                {
+System.out.println("ERROR: Non-Way in multipolygon " + m.member);
+                }
+            }
+        }
+
+        ElemStyle wayStyle = styles.get(r);
+        /* find one wayStyle, prefer the style from Relation or take the first
+        one of outer rings */
+        if(wayStyle == null || !(wayStyle instanceof AreaElemStyle))
+        {
+            for (Way w : outer)
+            {
+               if(wayStyle == null || !(wayStyle instanceof AreaElemStyle))
+                   wayStyle = styles.get(w);
+            }
+        }
+
+        if(wayStyle != null && wayStyle instanceof AreaElemStyle)
+        {
+            Boolean zoomok = isZoomOk(wayStyle);
+            Collection<Way> join = new LinkedList<Way>();
+
+            /* parse all outer rings and join them */
+            for (Way w : outer)
+            {
+                if(w.isClosed()) outerclosed.add(w);
+                else join.add(w);
+            }
+            if(join.size() != 0)
+            {
+                for(Way w : joinWays(join))
+                    outerclosed.add(w);
+            }
+
+            /* parse all inner rings and join them */
+            join.clear();
+            for (Way w : inner)
+            {
+                if(w.isClosed()) innerclosed.add(w);
+                else join.add(w);
+            }
+            if(join.size() != 0)
+            {
+                for(Way w : joinWays(join))
+                    innerclosed.add(w);
+            }
+
+            /* handle inside out stuff */
+
+            if(zoomok) /* draw */
+            {
+                for (Way w : outerclosed)
+                {
+                    Color color = w.selected ? selectedColor
+                    : ((AreaElemStyle)wayStyle).color;
+                    Polygon polygon = new Polygon();
+                    Point pOuter = null;
+
+                    for (Node n : w.nodes)
+                    {
+                        pOuter = nc.getPoint(n.eastNorth);
+                        polygon.addPoint(pOuter.x,pOuter.y);
+                    }
+                    for (Way wInner : innerclosed)
+                    {
+                        for (Node n : wInner.nodes)
+                        {
+                            Point pInner = nc.getPoint(n.eastNorth);
+                            polygon.addPoint(pInner.x,pInner.y);
+                        }
+                        polygon.addPoint(pOuter.x,pOuter.y);
+                    }
+
+                    g.setColor(new Color( color.getRed(), color.getGreen(),
+                    color.getBlue(), fillAlpha));
+
+                    g.fillPolygon(polygon);
+                    alreadyDrawnAreas.add(w);
+                }
+            }
+            for (Way wInner : inner)
+            {
+                ElemStyle innerStyle = styles.get(wInner);
+                if(innerStyle == null)
+                {
+                    if(zoomok)
+                        drawWay(wInner, ((AreaElemStyle)wayStyle).line,
+                        ((AreaElemStyle)wayStyle).color);
+                    alreadyDrawnWays.add(wInner);
+                }
+                else if(wayStyle.equals(innerStyle))
+                {
+System.out.println("WARNING: Inner waystyle equals multipolygon for way " + wInner);
+                    alreadyDrawnAreas.add(wInner);
+                }
+            }
+            for (Way wOuter : outer)
+            {
+                ElemStyle outerStyle = styles.get(wOuter);
+                if(outerStyle == null)
+                {
+                    if(zoomok)
+                        drawWay(wOuter, ((AreaElemStyle)wayStyle).line,
+                        ((AreaElemStyle)wayStyle).color);
+                    alreadyDrawnWays.add(wOuter);
+                }
+                else
+                {
+                    if(!wayStyle.equals(outerStyle))
+System.out.println("ERROR: Outer waystyle does not match multipolygon for way " + wOuter);
+                    alreadyDrawnAreas.add(wOuter);
+                }
+            }
+        }
+    }
+
     protected void drawWayAsArea(Way w, Color color)
     {
         Polygon polygon = new Polygon();
@@ -337,15 +585,32 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         String currentLocale = Locale.getDefault().getLanguage();
         regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name").split(";");
 
-        if (styles.hasAreas()) {
+        if (fillAreas && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
-            for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.deleted && styles.isArea((Way)osm))
+            for (final Relation osm : data.relations)
+            {
+                if (!osm.deleted && !osm.selected)
+                {
                     osm.visit(this);
-                else if (!osm.deleted && !osm.incomplete)
-                    noAreaWays.add((Way)osm);
+                }
+            }
 
+            for (final Way osm : data.ways)
+            {
+                if (!osm.incomplete && !osm.deleted && !alreadyDrawnWays.contains(osm))
+                {
+                    if(styles.isArea((Way)osm) && !alreadyDrawnAreas.contains(osm))
+                        osm.visit(this);
+                    else
+                        noAreaWays.add((Way)osm);
+                }
+            }
+            // free that stuff
+            alreadyDrawnWays = null;
+            alreadyDrawnAreas = null;
+
+            fillAreas = false;
             for (final OsmPrimitive osm : noAreaWays)
                 osm.visit(this);
         }

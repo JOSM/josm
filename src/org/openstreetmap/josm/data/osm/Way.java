@@ -116,4 +116,9 @@ public final class Way extends OsmPrimitive {
         }
         return name;
     }
+
+    public Boolean isClosed() {
+        int s = nodes.size();
+        return s >= 3 && nodes.get(0) == nodes.get(s-1);
+    }
 }
