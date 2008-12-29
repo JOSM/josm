@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -27,16 +29,20 @@ import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.Scrollable;
+import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginDownloader;
@@ -44,6 +50,7 @@ import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.XmlObjectParser.Uniform;
 
 public class PluginPreference implements PreferenceSetting {
@@ -81,34 +88,14 @@ public class PluginPreference implements PreferenceSetting {
     private Map<String, Boolean> pluginMap;
     private Map<String, PluginDescription> availablePlugins;
     private JPanel plugin;
-    private class MyBox extends Box {
-        int lastwidth;
-        int offset = 40;
-        public MyBox()
-        {
-            super(BoxLayout.Y_AXIS);
-        }
-        public int myGetWidth()
-        {
-            int w = plugin.getWidth()-offset;
-            if(w <= 0) w = 450;
-            lastwidth = w;
-            return w;
-        }
-        public void paint(Graphics g)
-        {
-            if(lastwidth != plugin.getWidth()-offset)
-                refreshPluginPanel(gui);
-            super.paint(g);
-        }
-    }
-    private MyBox pluginPanel = new MyBox();
+    private JPanel pluginPanel = new NoHorizontalScrollPanel(new GridBagLayout());
     private PreferenceDialog gui;
+    private JScrollPane pluginPane;
 
     public void addGui(final PreferenceDialog gui) {
         this.gui = gui;
         plugin = gui.createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."), false);
-        JScrollPane pluginPane = new JScrollPane(pluginPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        pluginPane = new JScrollPane(pluginPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         pluginPane.setBorder(null);
         plugin.add(pluginPane, GBC.eol().fill(GBC.BOTH));
         plugin.add(GBC.glue(0,10), GBC.eol());
@@ -238,8 +225,12 @@ public class PluginPreference implements PreferenceSetting {
                 if (availablePlugins.get(pname) == null) pluginMap.remove(pname);
 
         pluginPanel.removeAll();
-        int width = pluginPanel.myGetWidth();
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+
+        int row = 0;
         for (final PluginDescription plugin : availablePlugins.values()) {
             boolean enabled = (enabledPlugins != null) && enabledPlugins.contains(plugin.name);
             if (pluginMap.get(plugin.name) == null)
@@ -263,14 +254,35 @@ public class PluginPreference implements PreferenceSetting {
             final JCheckBox pluginCheck = new JCheckBox(
                     tr("{0}: Version {1}{2}", plugin.name, remoteversion, localversion),
                     pluginMap.get(plugin.name));
-            pluginPanel.add(pluginCheck);
+            gbc.gridy = row++;
+            gbc.insets = new Insets(5,5,0,5);
+            gbc.weighty = 0.1;
+            gbc.fill = GridBagConstraints.NONE;
+            pluginPanel.add(pluginCheck, gbc);
 
-            pluginCheck.setToolTipText(plugin.resource != null ? "" + plugin.resource : tr("Plugin bundled with JOSM"));
-            JLabel label = new JLabel("<html><i>" + (plugin.description == null ? tr("no description available") : plugin.description) + "</i></html>");
-            label.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-            label.setMaximumSize(new Dimension(width, 1000));
-            pluginPanel.add(label);
-            pluginPanel.add(Box.createVerticalStrut(5));
+            pluginCheck.setToolTipText(plugin.resource != null ? ""+plugin.resource : tr("Plugin bundled with JOSM"));
+
+            JEditorPane description = new JEditorPane();
+            description.setContentType("text/html");
+            description.setEditable(false);
+            description.setText("<html><i>"+(plugin.description==null?tr("no description available"):plugin.description)+"</i></html>");
+            description.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+            description.setBackground(UIManager.getColor("Panel.background"));
+            description.addHyperlinkListener(new HyperlinkListener() {
+                public void hyperlinkUpdate(HyperlinkEvent e) {
+                    if(e.getEventType() == EventType.ACTIVATED) {
+                        OpenBrowser.displayUrl(e.getURL().toString());
+                    }
+                }
+            });
+
+            gbc.gridy = row++;
+            gbc.insets = new Insets(3,5,5,5);
+            gbc.weighty = 0.9;
+            gbc.weightx = 1.0;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            pluginPanel.add(description, gbc);
 
             pluginCheck.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
@@ -380,5 +392,31 @@ public class PluginPreference implements PreferenceSetting {
 
         Collections.sort(plugins);
         return Main.pref.putCollection("plugins", plugins);
+    }
+    
+    class NoHorizontalScrollPanel extends JPanel implements Scrollable {
+        public NoHorizontalScrollPanel(GridBagLayout gridBagLayout) {
+            super(gridBagLayout);
+        }
+
+        public Dimension getPreferredScrollableViewportSize() {
+            return super.getPreferredSize();
+        }
+
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 30;
+        }
+
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
+
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 10;
+        }
     }
 }
