@@ -200,7 +200,7 @@ public class ElemStyles
             String key = iterator.next();
             String val = keys.get(key);
             if(ss.areas.containsKey("n" + key + "=" + val)
-            || ss.areas.containsKey("n" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
+            || ss.areas.containsKey("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
             || ss.areas.containsKey("x" + key))
                 return true;
         }

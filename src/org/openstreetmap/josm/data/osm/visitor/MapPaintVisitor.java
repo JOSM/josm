@@ -256,8 +256,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                                 if(c.selected) selected = true;
                                 --left;
                                 if(n == null) n = new ArrayList(w.nodes);
-System.out.println("old: " + n);
-System.out.println("new: " + c.nodes);
                                 n.remove((mode == 21 || mode == 22) ? nl : 0);
                                 if(mode == 21)
                                     n.addAll(c.nodes);
@@ -267,15 +265,12 @@ System.out.println("new: " + c.nodes);
                                 {
                                     for(Node node : c.nodes)
                                         n.add(nl, node);
-System.out.println("ERROR: Joining way reversed: " + c);
                                 }
                                 else /* mode == 11 */
                                 {
                                     for(Node node : c.nodes)
                                         n.add(0, node);
-System.out.println("ERROR: Joining way reversed: " + c);
                                 }
-System.out.println("joined: " + n);
                             }
                         }
                     }
