@@ -113,7 +113,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
         String comment = null;
         while (useChangesets && comment == null) {
             comment = JOptionPane.showInputDialog(Main.parent,
-                 tr("Provide a brief comment as to the changes to you are uploading:"),
+                 tr("Provide a brief comment for the changes you are uploading:"),
                  tr("Commit comment"), JOptionPane.QUESTION_MESSAGE);
             if (comment == null)
                 return;

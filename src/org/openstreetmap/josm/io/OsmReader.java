@@ -200,7 +200,7 @@ public class OsmReader {
                     } else if (qName.equals("member")) {
                          Collection<RelationMemberData> list = relations.get(current);
                          if (list == null)
-                              throw new SAXException(tr("Found <member> tag on non-relation."));
+                              throw new SAXException(tr("Found <member> element in non-relation."));
                          RelationMemberData emd = new RelationMemberData();
                          emd.relationMember = new RelationMember();
                          emd.id = getLong(atts, "ref");
@@ -222,7 +222,7 @@ public class OsmReader {
                     throw new SAXException(x.getMessage(), x);
                } catch (NullPointerException x) {
                     x.printStackTrace(); // SAXException does not chain correctly
-                    throw new SAXException(tr("NullPointerException, Possibly some missing tags."), x);
+                    throw new SAXException(tr("NullPointerException, possibly some missing tags."), x);
                }
           }
 
@@ -459,7 +459,7 @@ public class OsmReader {
                osm.createRelations();
           } catch (NumberFormatException e) {
                e.printStackTrace();
-               throw new SAXException(tr("Illformed Node id"));
+               throw new SAXException(tr("Ill-formed node id"));
           }
 
           // clear all negative ids (new to this file)

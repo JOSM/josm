@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -303,15 +302,13 @@ public class RelationEditor extends JFrame {
             JPanel upDownPanel = new JPanel();
             upDownPanel.setLayout(new BoxLayout(upDownPanel, BoxLayout.Y_AXIS));
 
-
-
-            upDownPanel.add(createButton(null, "moveup", tr("Move the currently selected member(s) up"),
+            upDownPanel.add(createButton(null, "moveup", tr("Move the currently selected members up"),
                     KeyEvent.VK_U, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     moveMembers(-1);
                 }
             }));
-            upDownPanel.add(createButton(null, "movedown", tr("Move the currently selected member(s) down"),
+            upDownPanel.add(createButton(null, "movedown", tr("Move the currently selected members down"),
                     KeyEvent.VK_N, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     moveMembers(1);

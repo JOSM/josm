@@ -40,7 +40,7 @@ public final class OrthogonalizeAction extends JosmAction {
     public OrthogonalizeAction() {
         super(tr("Orthogonalize shape"),
             "ortho",
-            tr("Move nodes so all angles are 90 or 270deg"),
+            tr("Move nodes so all angles are 90 or 270 degree"),
             Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize")),
             KeyEvent.VK_Q,
             Shortcut.GROUP_EDIT), true);
@@ -72,7 +72,7 @@ public final class OrthogonalizeAction extends JosmAction {
             // Check if every way is made of at least four segments and closed
             Way way = (Way)osm;
             if ((way.nodes.size() < 5) || (!way.nodes.get(0).equals(way.nodes.get(way.nodes.size() - 1)))) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Please select closed way(s) of at least four nodes."));
+                JOptionPane.showMessageDialog(Main.parent, tr("Please select one ore more closed ways of at least four nodes."));
                 return;
             }
 

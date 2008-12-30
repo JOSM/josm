@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -285,13 +287,26 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             this.sel = sel;
             int ways = 0;
             int nodes = 0;
+            int relations = 0;
             for (OsmPrimitive o : sel) {
                 if (o instanceof Way)
                     ways++;
                 else if (o instanceof Node)
                     nodes++;
+                else if (o instanceof Relation)
+                    relations++;
             }
-            setText(String.format(tr("Selection: %d way(s) and %d node(s)"), new Object[] { ways, nodes }));
+            String text = "";
+            if(ways != 0)
+                text += (text.length() > 0 ? ", " : "")
+                + trn("{0} way", "{0} ways", ways, ways);
+            if(nodes != 0)
+                text += (text.length() > 0 ? ", " : "")
+                + trn("{0} node", "{0} nodes", nodes, nodes);
+            if(relations != 0)
+                text += (text.length() > 0 ? ", " : "")
+                + trn("{0} relation", "{0} relations", relations, relations);
+            setText(tr("Selection: {0}", text));
             addActionListener(this);
         }
 

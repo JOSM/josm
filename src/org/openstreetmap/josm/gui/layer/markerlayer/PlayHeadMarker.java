@@ -200,7 +200,7 @@ public class PlayHeadMarker extends Marker {
 
         if (ca == null) {
             /* Not close enough to track, or no audio marker found for some other reason */
-            JOptionPane.showMessageDialog(Main.parent, tr("You need to Drag the play head near to the GPX track whose associated sound track you were playing."));
+            JOptionPane.showMessageDialog(Main.parent, tr("You need to drag the play head near to the GPX track whose associated sound track you were playing."));
             endDrag(true);
         } else {
             eastNorth = cw.eastNorth;
@@ -248,7 +248,7 @@ public class PlayHeadMarker extends Marker {
             EastNorth enPlus25px = Main.map.mapView.getEastNorth(p.x+dropTolerance, p.y);
             WayPoint cw = recent.parentLayer.fromLayer.nearestPointOnTrack(en, enPlus25px.east() - en.east());
             if (cw == null) {
-                JOptionPane.showMessageDialog(Main.parent, tr("You need to SHIFT-Drag the play head onto an audio marker or onto the track point where you want to synchronize."));
+                JOptionPane.showMessageDialog(Main.parent, tr("You need to SHIFT-drag the play head onto an audio marker or onto the track point where you want to synchronize."));
                 endDrag(true);
                 return;
             }
@@ -258,7 +258,7 @@ public class PlayHeadMarker extends Marker {
         /* Actually do the synchronization */
         if(ca == null)
         {
-            JOptionPane.showMessageDialog(Main.parent,tr("Unable to create new Audio marker."));
+            JOptionPane.showMessageDialog(Main.parent,tr("Unable to create new audio marker."));
             endDrag(true);
         }
         else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {

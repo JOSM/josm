@@ -44,7 +44,7 @@ public class ServerAccessPreference implements PreferenceSetting {
         gui.connection.add(osmDataPassword, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,0));
         JLabel warning = new JLabel(tr("<html>" +
                 "WARNING: The password is stored in plain text in the preferences file.<br>" +
-                "The password is transfered in plain text to the server, encoded in the url.<br>" +
+                "The password is transfered in plain text to the server, encoded in the URL.<br>" +
         "<b>Do not use a valuable Password.</b></html>"));
         warning.setFont(warning.getFont().deriveFont(Font.ITALIC));
         gui.connection.add(warning, GBC.eop().fill(GBC.HORIZONTAL));

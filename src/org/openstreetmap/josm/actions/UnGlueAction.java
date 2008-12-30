@@ -85,9 +85,9 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
             }
             if (tmpNodes.size() < 1) {
                 if (selection.size() > 1) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("None of these nodes is glued to anything else."));
+                    JOptionPane.showMessageDialog(Main.parent, tr("None of these nodes are glued to anything else."));
                 } else {
-                    JOptionPane.showMessageDialog(Main.parent, tr("None of this way's nodes is glued to anything else."));
+                    JOptionPane.showMessageDialog(Main.parent, tr("None of this way's nodes are glued to anything else."));
                 }
             } else {
                 // and then do the work.

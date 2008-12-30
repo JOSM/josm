@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Instanced of this thread will display a "Please Wait" message in middle of JOSM
- * to indicate a progress beeing executed.
+ * to indicate a progress being executed.
  *
  * @author Imi
  */

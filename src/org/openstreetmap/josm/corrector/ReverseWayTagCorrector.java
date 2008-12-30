@@ -133,7 +133,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
 
         return applyCorrections(tagCorrectionsMap, roleCorrectionMap,
-                tr("When reverting this way, following changes to properties "
+                tr("When reversing this way, the following changes to properties "
                         + "of the way and its nodes are suggested in order "
                         + "to maintain data consistency."));
     }

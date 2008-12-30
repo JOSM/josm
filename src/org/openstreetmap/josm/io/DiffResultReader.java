@@ -69,7 +69,7 @@ public class DiffResultReader implements Visitor {
                 throw new SAXException(x.getMessage(), x);
             } catch (NullPointerException x) {
                 x.printStackTrace(); // SAXException does not chain correctly
-                throw new SAXException(tr("NullPointerException, Possibly some missing tags."), x);
+                throw new SAXException(tr("NullPointerException, possibly some missing tags."), x);
             }
         }
     }

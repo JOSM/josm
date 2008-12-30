@@ -54,9 +54,9 @@ public class MainApplet extends JApplet {
         {"username", tr("string"), tr("Name of the user.")},
         {"password", tr("string"), tr("OSM Password.")},
         {"geometry", tr("string"), tr("Resize the applet to the given geometry (format: WIDTHxHEIGHT)")},
-        {"download", tr("string;string;..."), tr("Download each. Can be x1,y1,x2,y2 an url containing lat=y&lon=x&zoom=z or a filename")},
-        {"downloadgps", tr("string;string;..."), tr("Download each as raw gps. Can be x1,y1,x2,y2 an url containing lat=y&lon=x&zoom=z or a filename")},
-        {"selection", tr("string;string;..."), tr("Add each to the initial selection. Can be a google-like search string or an url which returns osm-xml")},
+        {"download", tr("string;string;..."), tr("Download each. Can be x1,y1,x2,y2 an URL containing lat=y&lon=x&zoom=z or a filename")},
+        {"downloadgps", tr("string;string;..."), tr("Download each as raw gps. Can be x1,y1,x2,y2 an URL containing lat=y&lon=x&zoom=z or a filename")},
+        {"selection", tr("string;string;..."), tr("Add each to the initial selection. Can be a google-like search string or an URL which returns osm-xml")},
         {"reset-preferences", tr("any"),tr("If specified, reset the configuration instead of reading it.")}
     };
 

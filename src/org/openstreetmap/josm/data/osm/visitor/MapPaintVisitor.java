@@ -37,6 +37,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected boolean useRealWidth;
     protected boolean zoomLevelDisplay;
     protected boolean fillAreas;
+    protected boolean drawMultipolygon;
     protected int fillAlpha;
     protected Color untaggedColor;
     protected Color textColor;
@@ -47,8 +48,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected ElemStyles styles;
     protected double circum;
     protected String regionalNameOrder[];
-    protected Collection<Way> alreadyDrawnWays = new LinkedList<Way>();
-    protected Collection<Way> alreadyDrawnAreas = new LinkedList<Way>();
+    protected Boolean selectedCall;
+    protected Collection<OsmPrimitive> alreadyDrawn;
+    protected Collection<Way> alreadyDrawnAreas;
 
     protected boolean isZoomOk(ElemStyle e) {
         if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -72,9 +74,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * @param n The node to draw.
      */
     public void visit(Node n) {
-        IconElemStyle nodeStyle = styles.get(n);
+        IconElemStyle nodeStyle = (IconElemStyle)styles.get(n);
         if (nodeStyle != null && isZoomOk(nodeStyle))
-            drawNode(n, nodeStyle.icon, nodeStyle.annotate);
+            drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
         else if (n.selected)
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if (n.tagged)
@@ -113,10 +115,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 drawWayAsArea(w, areacolor);
         }
 
-        drawWay(w, l, areacolor);
+        drawWay(w, l, areacolor, w.selected);
     }
 
-    public void drawWay(Way w, LineElemStyle l, Color color) {
+    public void drawWay(Way w, LineElemStyle l, Color color, Boolean selected) {
         // show direction arrows, if draw.segment.relevant_directions_only is not set,
         // the way is tagged with a direction key
         // (even if the tag is negated as in oneway=false) or the way is selected
@@ -133,6 +135,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             realWidth = l.realWidth;
             dashed = l.dashed;
         }
+        if(selected)
+            color = selectedColor;
         if (realWidth > 0 && useRealWidth && !showDirection)
         {
             int tmpWidth = (int) (100 /  (float) (circum / realWidth));
@@ -293,14 +297,72 @@ System.out.println("ERROR: multipolygon way is not closed." + w);
         return res;
     }
 
+    public void drawSelected(OsmPrimitive osm, ElemStyle style, Boolean area,
+    Boolean areaselected)
+    {
+        if(osm instanceof Way)
+        {
+            if(style instanceof AreaElemStyle)
+            {
+                drawWay((Way)osm, ((AreaElemStyle)style).line, selectedColor, true);
+                if(area)
+                    drawWayAsArea((Way)osm, areaselected ? selectedColor
+                    : ((AreaElemStyle)style).color);
+            }
+            else
+            {
+                drawWay((Way)osm, (LineElemStyle)style, selectedColor, true);
+            }
+        }
+        else if(osm instanceof Node)
+        {
+            if(style != null && isZoomOk(style))
+                drawNode((Node)osm, ((IconElemStyle)style).icon,
+                ((IconElemStyle)style).annotate, true);
+            else
+                drawNode((Node)osm, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+        }
+    }
+
     public void visit(Relation r) {
         // draw multipolygon relations including their ways
-        // other relations are not (yet?) drawn.
-        if (r.incomplete) return;
-
-        if(!Main.pref.getBoolean("mappaint.multipolygon",false)) return;
-
-        if(!"multipolygon".equals(r.keys.get("type"))) return;
+        // other relations are only drawn when selected
+        if(r.selected)
+        {
+            if(selectedCall)
+            {
+                for (RelationMember m : r.members)
+                {
+                    /* second call - draw nodes */
+                    if (!m.member.incomplete && !m.member.deleted
+                    && m.member instanceof Node)
+                    {
+                        drawSelected(m.member, styles.get(m.member), true, true);
+                        alreadyDrawn.add(m.member);
+                    }
+                }
+                return;
+            }
+        }
+        Boolean isMultipolygon = "multipolygon".equals(r.keys.get("type"));
+        if (!drawMultipolygon || !isMultipolygon)
+        {
+            if(r.selected && !isMultipolygon)
+            {
+                for (RelationMember m : r.members)
+                {
+                    if (!m.member.incomplete && !m.member.deleted
+                    && !(m.member instanceof Relation))
+                    {
+                        /* nodes drawn on second call */
+                        if(!(m.member instanceof Node))
+                            drawSelected(m.member, styles.get(m.member), true, true);
+                        alreadyDrawn.add(m.member);
+                    }
+                }
+            }
+            return;
+        }
 
         Collection<Way> inner = new LinkedList<Way>();
         Collection<Way> outer = new LinkedList<Way>();
@@ -327,10 +389,13 @@ System.out.println("ERROR: Way with less than two points " + w);
 System.out.println("ERROR: No useful role for Way " + w);
                         if(m.role == null || m.role.length() == 0)
                             outer.add(w);
+                        else if(r.selected)
+                            drawSelected(m.member, styles.get(m.member), true, true);
                     }
                 }
                 else
                 {
+                    /* nodes drawn on second call */
 System.out.println("ERROR: Non-Way in multipolygon " + m.member);
                 }
             }
@@ -384,7 +449,7 @@ System.out.println("ERROR: Non-Way in multipolygon " + m.member);
             {
                 for (Way w : outerclosed)
                 {
-                    Color color = w.selected ? selectedColor
+                    Color color = (w.selected || r.selected) ? selectedColor
                     : ((AreaElemStyle)wayStyle).color;
                     Polygon polygon = new Polygon();
                     Point pOuter = null;
@@ -422,14 +487,27 @@ System.out.println("ERROR: Non-Way in multipolygon " + m.member);
                 if(innerStyle == null)
                 {
                     if(zoomok)
+                    {
                         drawWay(wInner, ((AreaElemStyle)wayStyle).line,
-                        ((AreaElemStyle)wayStyle).color);
-                    alreadyDrawnWays.add(wInner);
+                        ((AreaElemStyle)wayStyle).color, wInner.selected
+                        || r.selected);
+                    }
+                    alreadyDrawn.add(wInner);
                 }
-                else if(wayStyle.equals(innerStyle))
+                else
                 {
+                    if(r.selected)
+                    {
+                        drawSelected(wInner, innerStyle,
+                        !wayStyle.equals(innerStyle), wInner.selected);
+                        alreadyDrawn.add(wInner);
+                    }
+                    if(wayStyle.equals(innerStyle))
+                    {
 System.out.println("WARNING: Inner waystyle equals multipolygon for way " + wInner);
-                    alreadyDrawnAreas.add(wInner);
+                        if(!r.selected)
+                            alreadyDrawnAreas.add(wInner);
+                    }
                 }
             }
             for (Way wOuter : outer)
@@ -438,15 +516,27 @@ System.out.println("WARNING: Inner waystyle equals multipolygon for way " + wInn
                 if(outerStyle == null)
                 {
                     if(zoomok)
+                    {
                         drawWay(wOuter, ((AreaElemStyle)wayStyle).line,
-                        ((AreaElemStyle)wayStyle).color);
-                    alreadyDrawnWays.add(wOuter);
+                        ((AreaElemStyle)wayStyle).color, wOuter.selected
+                        || r.selected);
+                    }
+                    alreadyDrawn.add(wOuter);
                 }
                 else
                 {
-                    if(!wayStyle.equals(outerStyle))
+                    if(outerStyle instanceof AreaElemStyle
+                    && !wayStyle.equals(outerStyle))
+                    {
 System.out.println("ERROR: Outer waystyle does not match multipolygon for way " + wOuter);
-                    alreadyDrawnAreas.add(wOuter);
+                    }
+                    if(r.selected)
+                    {
+                        drawSelected(wOuter, outerStyle, false, false);
+                        alreadyDrawn.add(wOuter);
+                    }
+//                    else if(outerStyle instanceof AreaElemStyle)
+                        alreadyDrawnAreas.add(wOuter);
                 }
             }
         }
@@ -469,8 +559,7 @@ System.out.println("ERROR: Outer waystyle does not match multipolygon for way " 
         g.fillPolygon(polygon);
     }
 
-    // NEW
-    protected void drawNode(Node n, ImageIcon icon, boolean annotate) {
+    protected void drawNode(Node n, ImageIcon icon, boolean annotate, Boolean selected) {
         Point p = nc.getPoint(n.eastNorth);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
         int w = icon.getIconWidth(), h=icon.getIconHeight();
@@ -484,7 +573,7 @@ System.out.println("ERROR: Outer waystyle does not match multipolygon for way " 
             g.drawString (name, p.x+w/2+2, p.y+h/2+2);
             g.setFont(defaultFont);
         }
-        if (n.selected)
+        if (selected)
         {
             g.setColor (  selectedColor );
             g.drawRect (p.x-w/2-2,p.y-w/2-2, w+4, h+4);
@@ -581,24 +670,27 @@ System.out.println("ERROR: Outer waystyle does not match multipolygon for way " 
         fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
         circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
         styles = MapPaintStyles.getStyles();
+        drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
         regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name").split(";");
+
+        alreadyDrawn = new LinkedList<OsmPrimitive>();
+        alreadyDrawnAreas = new LinkedList<Way>();
+        selectedCall = false;
 
         if (fillAreas && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
             for (final Relation osm : data.relations)
             {
-                if (!osm.deleted && !osm.selected)
-                {
+                if(!osm.deleted && !osm.incomplete)
                     osm.visit(this);
-                }
             }
 
             for (final Way osm : data.ways)
             {
-                if (!osm.incomplete && !osm.deleted && !alreadyDrawnWays.contains(osm))
+                if (!osm.incomplete && !osm.deleted && !alreadyDrawn.contains(osm))
                 {
                     if(styles.isArea((Way)osm) && !alreadyDrawnAreas.contains(osm))
                         osm.visit(this);
@@ -606,8 +698,6 @@ System.out.println("ERROR: Outer waystyle does not match multipolygon for way " 
                         noAreaWays.add((Way)osm);
                 }
             }
-            // free that stuff
-            alreadyDrawnWays = null;
             alreadyDrawnAreas = null;
 
             fillAreas = false;
@@ -617,26 +707,30 @@ System.out.println("ERROR: Outer waystyle does not match multipolygon for way " 
         else
         {
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.deleted)
+                if (!osm.incomplete && !osm.deleted && !osm.selected)
                     osm.visit(this);
         }
 
-        for (final OsmPrimitive osm : data.getSelected())
-            if (!osm.incomplete && !osm.deleted){
+        selectedCall = true;
+        for (final OsmPrimitive osm : data.getSelected()) {
+            if (!osm.incomplete && !osm.deleted
+            && !(osm instanceof Node) && !alreadyDrawn.contains(osm))
                 osm.visit(this);
-            }
+        }
 
         displaySegments();
 
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.incomplete && !osm.deleted)
+            if (!osm.incomplete && !osm.deleted && !alreadyDrawn.contains(osm))
                 osm.visit(this);
+
+        alreadyDrawn = null;
 
         if (virtualNodeSize != 0)
         {
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.deleted)
+                if (!osm.incomplete && !osm.deleted)
                     visitVirtual((Way)osm);
             displaySegments(null);
         }

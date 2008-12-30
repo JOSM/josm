@@ -87,33 +87,29 @@ public class ElemStyles
         return s;
     }
 
-    public IconElemStyle get(Node n)
+    private ElemStyle getNode(Map<String, String> keys, StyleSet ss)
     {
-        StyleSet ss = getStyleSet(null, false);
         IconElemStyle ret = null;
-        if(ss != null && n.keys != null)
+        Iterator<String> iterator = keys.keySet().iterator();
+        while(iterator.hasNext())
         {
-            Iterator<String> iterator = n.keys.keySet().iterator();
-            while(iterator.hasNext())
+            String key = iterator.next();
+            String val = keys.get(key);
+            IconElemStyle style;
+            if((style = ss.icons.get("n" + key + "=" + val)) != null)
             {
-                String key = iterator.next();
-                String val = n.keys.get(key);
-                IconElemStyle style;
-                if((style = ss.icons.get("n" + key + "=" + val)) != null)
-                {
-                    if(ret == null || style.priority > ret.priority)
-                        ret = style;
-                }
-                if((style = ss.icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
-                {
-                    if(ret == null || style.priority > ret.priority)
-                        ret = style;
-                }
-                if((style = ss.icons.get("x" + key)) != null)
-                {
-                    if(ret == null || style.priority > ret.priority)
-                        ret = style;
-                }
+                if(ret == null || style.priority > ret.priority)
+                    ret = style;
+            }
+            if((style = ss.icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
+            {
+                if(ret == null || style.priority > ret.priority)
+                    ret = style;
+            }
+            if((style = ss.icons.get("x" + key)) != null)
+            {
+                if(ret == null || style.priority > ret.priority)
+                    ret = style;
             }
         }
         return ret;
@@ -180,16 +176,11 @@ public class ElemStyles
         return retLine;
     }
 
-    public ElemStyle get(Way w)
+    public ElemStyle get(OsmPrimitive osm)
     {
         StyleSet ss = getStyleSet(null, false);
-        return (ss == null || w.keys == null) ? null : get(w.keys, ss);
-    }
-
-    public ElemStyle get(Relation r)
-    {
-        StyleSet ss = getStyleSet(null, false);
-        return (ss == null || r.keys == null) ? null : get(r.keys, ss);
+        return (ss == null || osm.keys == null) ? null :
+        ((osm instanceof Node) ? getNode(osm.keys, ss) : get(osm.keys, ss));
     }
 
     private boolean isArea(Map<String, String> keys, StyleSet ss)

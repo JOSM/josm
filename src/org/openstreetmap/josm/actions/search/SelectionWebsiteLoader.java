@@ -54,10 +54,10 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not read from url: \"{0}\"",url));
+            JOptionPane.showMessageDialog(Main.parent, tr("Could not read from URL: \"{0}\"",url));
         } catch (SAXException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent,tr("Parsing error in url: \"{0}\"",url));
+            JOptionPane.showMessageDialog(Main.parent,tr("Parsing error in URL: \"{0}\"",url));
         }
     }
     @Override protected void cancel() {

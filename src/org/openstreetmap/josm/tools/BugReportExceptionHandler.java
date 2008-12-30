@@ -113,7 +113,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     JPanel p = new JPanel(new GridBagLayout());
                     p.add(new JLabel("<html>" + tr("Please report a ticket at {0}","http://josm.openstreetmap.de/newticket") +
                     "<br>" + tr("Include your steps to get to the error (as detailed as possible)!") +
-                    "<br>" + tr("Try updating to the newest version of JOSM and all plugin before reporting a bug.") +
+                    "<br>" + tr("Try updating to the newest version of JOSM and all plugins before reporting a bug.") +
                     "<br>" + tr("Be sure to include the following information:") + "</html>"), GBC.eol());
                     try {
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), new ClipboardOwner(){

@@ -478,7 +478,7 @@ abstract public class Main {
         if (s.startsWith("http:")) {
             final Bounds b = BoundingBoxSelection.osmurl2bounds(s);
             if (b == null)
-                JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed url: \"{0}\"", s));
+                JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed URL: \"{0}\"", s));
             else {
                 //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
                 DownloadTask osmTask = new DownloadOsmTask();
@@ -491,7 +491,7 @@ abstract public class Main {
             try {
                 main.menu.openFile.openFile(new File(new URI(s)));
             } catch (URISyntaxException e) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed file url: \"{0}\"", s));
+                JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed file URL: \"{0}\"", s));
             }
             return;
         }

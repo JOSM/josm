@@ -74,6 +74,6 @@ public class ZoomAction extends MapMode implements SelectionEnded {
     }
 
     @Override public String getModeHelpText() {
-        return tr("Zoom by dragging or Ctrl+. or Ctrl+,; move with Ctrl+up,left,down,right; move zoom with right button");
+        return tr("Zoom by dragging or Ctrl+. or Ctrl+,; move with Ctrl+up, left, down, right; move zoom with right button");
     }
 }

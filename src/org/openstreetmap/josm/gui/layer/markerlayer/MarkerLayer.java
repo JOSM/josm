@@ -225,7 +225,7 @@ public class MarkerLayer extends Layer {
             }
         });
 
-        JMenuItem moveaudio = new JMenuItem(tr("Make Audio Marker At Play Head"), ImageProvider.get("addmarkers"));
+        JMenuItem moveaudio = new JMenuItem(tr("Make Audio Marker at Play Head"), ImageProvider.get("addmarkers"));
         moveaudio.putClientProperty("help", "Action/MakeAudioMarkerAtPlayHead");
         moveaudio.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
