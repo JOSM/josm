@@ -1508,14 +1508,14 @@ check: checkbox
 			<label text="Edit Restaurant" />
 			<key key="amenity" value="restaurant" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebap,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
+			<combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Fast Food" icon="presets/fastfood.png">
 			<label text="Edit Fast Food Restaurant" />
 			<key key="amenity" value="fast_food" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
-			<combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebap,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
+			<combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
 		</item>
 
 		<item name="Cafe" icon="presets/cafe.png">
