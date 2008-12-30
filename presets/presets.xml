@@ -890,16 +890,16 @@ check: checkbox
 			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
 		</item> <!-- spikes -->
 				
-		<item name="Porticullis" icon="presets/empty.png">
-			<label text="Edit a Porticullis" />
+		<item name="Portcullis" icon="presets/empty.png">
+			<label text="Edit a Portcullis" />
 			<label text=" " />
-			<key key="barrier" value="porticullis" />
+			<key key="barrier" value="portcullis" />
 			<label text="Allowed traffic:" />
 			<label text=" " />
 			<check key="horse" text="Horse" default="off" delete_if_empty="true" />
 			<check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
 			<check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-		</item> <!-- porticullis -->
+		</item> <!-- portcullis -->
 		
 		
 		<item name="Gate" icon="presets/gate.png">

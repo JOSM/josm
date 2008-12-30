@@ -401,6 +401,11 @@ System.out.println("ERROR: Non-Way in multipolygon " + m.member);
                             Point pInner = nc.getPoint(n.eastNorth);
                             polygon.addPoint(pInner.x,pInner.y);
                         }
+                        if(!wInner.isClosed())
+                        {
+                            Point pInner = nc.getPoint(wInner.nodes.get(0).eastNorth);
+                            polygon.addPoint(pInner.x,pInner.y);
+                        }
                         polygon.addPoint(pOuter.x,pOuter.y);
                     }
 
