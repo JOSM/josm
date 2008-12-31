@@ -59,6 +59,16 @@ public class OsmReader {
       * The dataset to add parsed objects to.
       */
      private DataSet ds = new DataSet();
+     public DataSet getDs() { return ds; }
+
+     /**
+      * Record warnings.  If there were any data inconsistencies, append
+      * a newline-terminated string.
+      */
+     private String parseNotes = new String();
+     public String getParseNotes() {
+         return parseNotes;
+     }
 
      /**
       * The visitor to use to add the data to the set.
@@ -332,6 +342,7 @@ public class OsmReader {
                for (long id : e.getValue()) {
                     Node n = findNode(id);
                     if (n == null) {
+                         parseNotes += tr("Skipping a way because it includes a node that doesn't exist: {0}\n", id);
                          failed = true;
                          break;
                     }
@@ -434,6 +445,10 @@ public class OsmReader {
       *  elemet found there is returned.
       */
      public static DataSet parseDataSet(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
+          return parseDataSetOsm(source, ref, pleaseWaitDlg).ds;
+     }
+
+     public static OsmReader parseDataSetOsm(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
           OsmReader osm = new OsmReader();
           osm.references = ref == null ? new DataSet() : ref;
 
@@ -467,6 +482,6 @@ public class OsmReader {
                if (o.id < 0)
                     o.id = 0;
 
-          return osm.ds;
+          return osm;
      }
 }

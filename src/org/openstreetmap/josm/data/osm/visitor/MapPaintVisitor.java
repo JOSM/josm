@@ -344,10 +344,9 @@ System.out.println("ERROR: multipolygon way is not closed." + w);
                 return;
             }
         }
-        Boolean isMultipolygon = "multipolygon".equals(r.keys.get("type"));
-        if (!drawMultipolygon || !isMultipolygon)
+        if (!drawMultipolygon || !"multipolygon".equals(r.keys.get("type")))
         {
-            if(r.selected && !isMultipolygon)
+            if(r.selected)
             {
                 for (RelationMember m : r.members)
                 {

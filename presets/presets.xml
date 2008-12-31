@@ -763,7 +763,7 @@ check: checkbox
 			<text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Signpost">
+		<item name="Signpost" icon="presets/empty.png">
 			<key key="amenity" value="signpost" />
 		</item>
 		
@@ -1126,7 +1126,7 @@ check: checkbox
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Ferry Terminal">
+		<item name="Ferry Terminal" icon="presets/empty.png">
 			<label text="Edit Ferry Terminal" />
 			<key key="amenity" value="ferry_terminal" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1469,7 +1469,7 @@ check: checkbox
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Chalet">
+		<item name="Chalet" icon="presets/empty.png">
 			<label text="Edit Chalet" />
 			<key key="tourism" value="chalet" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2018,7 +2018,7 @@ check: checkbox
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 
-		<item name="Embassy">
+		<item name="Embassy" icon="presets/empty.png">
 			<label text="Edit Embassy" />
 			<key key="amenity" value="embassy" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2433,13 +2433,13 @@ check: checkbox
 
 
 	<group name="Health" icon="presets/pharmacy.png">
-		<item name="Doctors">
+		<item name="Doctors" icon="presets/empty.png">
 			<label text="Edit Doctors" />
 			<key key="amenity" value="doctors" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
 		</item>
 		
-		<item name="Dentist">
+		<item name="Dentist" icon="presets/empty.png">
 			<label text="Edit Dentist" />
 			<key key="amenity" value="dentist" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2468,7 +2468,7 @@ check: checkbox
 			<label text=" " />
 		</item>
 
-		<item name="Veterinary">
+		<item name="Veterinary" icon="presets/empty.png">
 			<label text="Edit Veterinary" />
 			<key key="amenity" value="veterinary" />
 			<text key="name" text="Name" default="" delete_if_empty="true" />

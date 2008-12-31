@@ -74,10 +74,20 @@ public class OpenFileAction extends DiskAccessAction {
     private void openAsData(File file) throws SAXException, IOException, FileNotFoundException {
         String fn = file.getName();
         if (ExtensionFileFilter.filters[ExtensionFileFilter.OSM].acceptName(fn)) {
-            DataSet dataSet = OsmReader.parseDataSet(new FileInputStream(file), null, Main.pleaseWaitDlg);
+            OsmReader osm = OsmReader.parseDataSetOsm(new FileInputStream(file), null, Main.pleaseWaitDlg);
+            DataSet dataSet = osm.getDs();
             OsmDataLayer layer = new OsmDataLayer(dataSet, file.getName(), file);
             Main.main.addLayer(layer);
             layer.fireDataChange();
+            if (osm.getParseNotes().length() != 0) {
+                /* display at most five lines */
+                String notes = osm.getParseNotes();
+                int j = 0;
+                for (int i = 0; i < 5; i++) {
+                    j = notes.indexOf('\n', j + 1);
+                }
+                JOptionPane.showMessageDialog(Main.parent, notes.substring(0, j));
+            }
         }
         else
             JOptionPane.showMessageDialog(Main.parent, fn+": "+tr("Unknown file extension: {0}", fn.substring(file.getName().lastIndexOf('.')+1)));

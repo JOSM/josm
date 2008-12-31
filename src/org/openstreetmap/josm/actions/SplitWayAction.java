@@ -113,8 +113,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             }
             if (wayOccurenceCounter.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
-                        trn("The selected node is no inner part of any way.",
-                                "The selected nodes are no inner part of any way.", selectedNodes.size()));
+                trn("The selected node is not in the middle of any way.",
+                "The selected nodes are not in the middle of any way.",
+                selectedNodes.size()));
                 return;
             }
 
