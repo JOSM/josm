@@ -392,7 +392,9 @@ abstract public class Main {
 
         try {
             try {
-              UIManager.setLookAndFeel(Main.pref.get("laf"));
+                String laf = Main.pref.get("laf");
+                if(laf != null && laf.length() > 0)
+                    UIManager.setLookAndFeel(laf);
             }
             catch (final javax.swing.UnsupportedLookAndFeelException e) {
                 System.out.println("Look and Feel not supported: " + Main.pref.get("laf"));
