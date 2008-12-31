@@ -344,7 +344,7 @@ System.out.println("ERROR: multipolygon way is not closed." + w);
                 return;
             }
         }
-        if (!drawMultipolygon || !"multipolygon".equals(r.keys.get("type")))
+        if (!drawMultipolygon || r.keys == null || !"multipolygon".equals(r.keys.get("type")))
         {
             if(r.selected)
             {
