@@ -461,42 +461,113 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     innerclosed.add(w);
             }
 
-            /* handle inside out stuff */
-
-            if(zoomok) /* draw */
+            if(outerclosed.size() == 0)
             {
+                r.putError(tr("No outer way for multipolygon ''{0}''.",
+                r.getName()), true);
+            }
+            else if(zoomok) /* draw */
+            {
+                class PolyData {
+                    public Polygon poly = new Polygon();
+                    public Way way;
+                    private Point p = null;
+                    private Collection<Polygon> inner = null;
+                    PolyData(Way w)
+                    {
+                        way = w;
+                        for (Node n : w.nodes)
+                        {
+                            p = nc.getPoint(n.eastNorth);
+                            poly.addPoint(p.x,p.y);
+                        }
+                    }
+                    public int contains(Polygon p)
+                    {
+                        int contains = p.npoints;
+                        for(int i = 0; i < p.npoints; ++i)
+                        {
+                            if(poly.contains(p.xpoints[i],p.ypoints[i]))
+                                --contains;
+                        }
+                        if(contains == 0) return 1; /* inside */
+                        if(contains == p.npoints) return 0; /* outside */
+                        return 2; /* mixed */
+                    }
+                    public void addInner(Polygon p)
+                    {
+                        if(inner == null)
+                            inner = new ArrayList<Polygon>();
+                        inner.add(p);
+                    }
+                    public Polygon get()
+                    {
+                        if(inner != null)
+                        {
+                            for (Polygon pp : inner)
+                            {
+                                for(int i = 0; i < pp.npoints; ++i)
+                                    poly.addPoint(pp.xpoints[i],pp.ypoints[i]);
+                                poly.addPoint(p.x,p.y);
+                            }
+                            inner = null;
+                        }
+                        return poly;
+                    }
+                }
+                LinkedList<PolyData> poly = new LinkedList<PolyData>();
                 for (Way w : outerclosed)
                 {
-                    Color color = (w.selected || r.selected) ? selectedColor
-                    : ((AreaElemStyle)wayStyle).color;
+                    poly.add(new PolyData(w));
+                }
+                for (Way wInner : innerclosed)
+                {
                     Polygon polygon = new Polygon();
-                    Point pOuter = null;
 
-                    for (Node n : w.nodes)
+                    for (Node n : wInner.nodes)
                     {
-                        pOuter = nc.getPoint(n.eastNorth);
-                        polygon.addPoint(pOuter.x,pOuter.y);
+                        Point pInner = nc.getPoint(n.eastNorth);
+                        polygon.addPoint(pInner.x,pInner.y);
                     }
-                    for (Way wInner : innerclosed)
+                    if(!wInner.isClosed())
                     {
-                        for (Node n : wInner.nodes)
-                        {
-                            Point pInner = nc.getPoint(n.eastNorth);
-                            polygon.addPoint(pInner.x,pInner.y);
-                        }
-                        if(!wInner.isClosed())
-                        {
-                            Point pInner = nc.getPoint(wInner.nodes.get(0).eastNorth);
-                            polygon.addPoint(pInner.x,pInner.y);
-                        }
-                        polygon.addPoint(pOuter.x,pOuter.y);
+                        Point pInner = nc.getPoint(wInner.nodes.get(0).eastNorth);
+                        polygon.addPoint(pInner.x,pInner.y);
                     }
-
+                    PolyData o = null;
+                    for (PolyData pd : poly)
+                    {
+                        Integer c = pd.contains(polygon);
+                        if(c >= 1)
+                        {
+                            if(c > 1 && pd.way.isClosed())
+                            {
+                                r.putError(tr("Intersection between ways ''{0}'' and ''{1}''.",
+                                pd.way.getName(), wInner.getName()), true);
+                            }
+                            if(o == null || o.contains(pd.poly) > 0)
+                                o = pd;
+                        }
+                    }
+                    if(o == null)
+                    {
+                        if(!incomplete)
+                        {
+                            r.putError(tr("Inner way ''{0}'' is outside.",
+                            wInner.getName()), true);
+                        }
+                        o = poly.get(0);
+                    }
+                    o.addInner(polygon);
+                }
+                for (PolyData pd : poly)
+                {
+                    Color color = (pd.way.selected || r.selected) ? selectedColor
+                    : ((AreaElemStyle)wayStyle).color;
                     g.setColor(new Color( color.getRed(), color.getGreen(),
                     color.getBlue(), fillAlpha));
 
-                    g.fillPolygon(polygon);
-                    alreadyDrawnAreas.add(w);
+                    g.fillPolygon(pd.get());
                 }
             }
             for (Way wInner : inner)
