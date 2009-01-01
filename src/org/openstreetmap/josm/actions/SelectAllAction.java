@@ -17,6 +17,6 @@ public class SelectAllAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        Main.ds.setSelected(Main.ds.allNonDeletedPhysicalPrimitives());
+        Main.ds.setSelected(Main.ds.allNonDeletedPrimitives());
     }
 }

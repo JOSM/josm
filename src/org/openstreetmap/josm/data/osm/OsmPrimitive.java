@@ -327,7 +327,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         if(errors == null)
             errors = new ArrayList<String>();
         String s = isError ? tr("Error: {0}", text) : tr("Warning: {0}", text);
-System.out.println(s);
         errors.add(s);
     }
     public void clearErrors()
