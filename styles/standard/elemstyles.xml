@@ -1895,7 +1895,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="doctors"/>
 		<area colour="health#eeeeee"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="health/doctor.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1903,7 +1903,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="dentist"/>
 		<area colour="health#eeeeee"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="health/dentist.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1911,7 +1911,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="veterinary"/>
 		<area colour="health#eeeeee"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="health/veterinary.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
