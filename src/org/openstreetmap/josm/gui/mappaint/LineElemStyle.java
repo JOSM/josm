@@ -42,6 +42,9 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         this.minScale = s.minScale;
 
         this.overlays = overlays;
+        this.code = s.code;
+        for (LineElemStyle o : overlays)
+            this.code += o.code;
     }
 
     public LineElemStyle() { init(); }

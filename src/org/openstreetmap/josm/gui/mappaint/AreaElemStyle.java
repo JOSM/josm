@@ -20,6 +20,7 @@ public class AreaElemStyle extends ElemStyle
         this.maxScale = a.maxScale;
         this.minScale = a.minScale;
         this.line = l;
+        this.code = a.code;
     }
 
     public AreaElemStyle() { init(); }
