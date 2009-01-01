@@ -77,7 +77,6 @@ public final class Relation extends OsmPrimitive {
             name = tr("incomplete");
         } else {
             name = get("type");
-            // FIXME add names of members
             if (name == null)
                 name = tr("relation");
 
@@ -88,6 +87,8 @@ public final class Relation extends OsmPrimitive {
             if (nameTag != null) name += "\"" + nameTag + "\", ";
             int mbno = members.size();
             name += trn("{0} member", "{0} members", mbno, mbno) + ")";
+            if(errors != null)
+                name = "*"+name;
         }
         return name;
     }

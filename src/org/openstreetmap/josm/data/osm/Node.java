@@ -90,7 +90,7 @@ public final class Node extends OsmPrimitive {
         } else {
             name = get("name");
             if (name == null)
-                name = id == 0 ? "" : ""+id;
+                name = id == 0 ? tr("node") : ""+id;
             name += " (" + coor.latToString(mCord) + ", " + coor.lonToString(mCord) + ")";
         }
         return name;

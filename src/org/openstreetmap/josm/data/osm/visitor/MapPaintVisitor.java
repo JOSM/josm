@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm.visitor;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -211,7 +212,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         displaySegments();
     }
 
-    public Collection<Way> joinWays(Collection<Way> join)
+    public Collection<Way> joinWays(Collection<Way> join, OsmPrimitive errs)
     {
         Collection<Way> res = new LinkedList<Way>();
         Object[] joinArray = join.toArray();
@@ -289,12 +290,31 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             if(!w.isClosed())
             {
-System.out.println("ERROR: multipolygon way is not closed." + w);
+                if(errs != null)
+                {
+                    errs.putError(tr("multipolygon way ''{0}'' is not closed.",
+                    w.getName()), true);
+                }
             }
             res.add(w);
         } /* while(left != 0) */
 
         return res;
+    }
+
+    public void drawSelectedRelation(Relation r)
+    {
+        for (RelationMember m : r.members)
+        {
+            if (!m.member.incomplete && !m.member.deleted
+            && !(m.member instanceof Relation))
+            {
+                /* nodes drawn on second call */
+                if(!(m.member instanceof Node))
+                    drawSelected(m.member, styles.get(m.member), true, true);
+                alreadyDrawn.add(m.member);
+            }
+        }
     }
 
     public void drawSelected(OsmPrimitive osm, ElemStyle style, Boolean area,
@@ -347,19 +367,7 @@ System.out.println("ERROR: multipolygon way is not closed." + w);
         if (!drawMultipolygon || r.keys == null || !"multipolygon".equals(r.keys.get("type")))
         {
             if(r.selected)
-            {
-                for (RelationMember m : r.members)
-                {
-                    if (!m.member.incomplete && !m.member.deleted
-                    && !(m.member instanceof Relation))
-                    {
-                        /* nodes drawn on second call */
-                        if(!(m.member instanceof Node))
-                            drawSelected(m.member, styles.get(m.member), true, true);
-                        alreadyDrawn.add(m.member);
-                    }
-                }
-            }
+                drawSelectedRelation(r);
             return;
         }
 
@@ -367,17 +375,26 @@ System.out.println("ERROR: multipolygon way is not closed." + w);
         Collection<Way> outer = new LinkedList<Way>();
         Collection<Way> innerclosed = new LinkedList<Way>();
         Collection<Way> outerclosed = new LinkedList<Way>();
+        Boolean incomplete = false;
+
+        r.clearErrors();
 
         for (RelationMember m : r.members)
         {
-            if (!m.member.incomplete && !m.member.deleted)
+            if(m.member.incomplete)
+                incomplete = true;
+            else if(m.member.deleted)
+                r.putError(tr("Deleted member ''{0}'' in relation.",
+                m.member.getName()), true);
+            else
             {
                 if(m.member instanceof Way)
                 {
                     Way w = (Way) m.member;
                     if(w.nodes.size() < 2)
                     {
-System.out.println("ERROR: Way with less than two points " + w);
+                        r.putError(tr("Way ''{0}'' with less than two points.",
+                        w.getName()), true);
                     }
                     else if("inner".equals(m.role))
                         inner.add(w);
@@ -385,7 +402,8 @@ System.out.println("ERROR: Way with less than two points " + w);
                         outer.add(w);
                     else
                     {
-System.out.println("ERROR: No useful role for Way " + w);
+                        r.putError(tr("No useful role ''{0}'' for Way ''{1}''.",
+                        m.role == null ? "" : m.role, w.getName()), true);
                         if(m.role == null || m.role.length() == 0)
                             outer.add(w);
                         else if(r.selected)
@@ -395,7 +413,8 @@ System.out.println("ERROR: No useful role for Way " + w);
                 else
                 {
                     /* nodes drawn on second call */
-System.out.println("ERROR: Non-Way in multipolygon " + m.member);
+                    r.putError(tr("Non-Way ''{0}'' in multipolygon.",
+                    m.member.getName()), true);
                 }
             }
         }
@@ -425,7 +444,7 @@ System.out.println("ERROR: Non-Way in multipolygon " + m.member);
             }
             if(join.size() != 0)
             {
-                for(Way w : joinWays(join))
+                for(Way w : joinWays(join, incomplete ? null : r))
                     outerclosed.add(w);
             }
 
@@ -438,7 +457,7 @@ System.out.println("ERROR: Non-Way in multipolygon " + m.member);
             }
             if(join.size() != 0)
             {
-                for(Way w : joinWays(join))
+                for(Way w : joinWays(join, incomplete ? null : r))
                     innerclosed.add(w);
             }
 
@@ -503,7 +522,8 @@ System.out.println("ERROR: Non-Way in multipolygon " + m.member);
                     }
                     if(wayStyle.equals(innerStyle))
                     {
-System.out.println("WARNING: Inner waystyle equals multipolygon for way " + wInner);
+                        r.putError(tr("Style for inner way ''{0}'' equals multipolygon.",
+                        wInner.getName()), false);
                         if(!r.selected)
                             alreadyDrawnAreas.add(wInner);
                     }
@@ -527,7 +547,8 @@ System.out.println("WARNING: Inner waystyle equals multipolygon for way " + wInn
                     if(outerStyle instanceof AreaElemStyle
                     && !wayStyle.equals(outerStyle))
                     {
-System.out.println("ERROR: Outer waystyle does not match multipolygon for way " + wOuter);
+                        r.putError(tr("Style for outer way ''{0}'' mismatches.",
+                        wOuter.getName()), true);
                     }
                     if(r.selected)
                     {
@@ -539,6 +560,8 @@ System.out.println("ERROR: Outer waystyle does not match multipolygon for way " 
                 }
             }
         }
+        else if(r.selected)
+            drawSelectedRelation(r);
     }
 
     protected void drawWayAsArea(Way w, Color color)

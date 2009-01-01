@@ -1,9 +1,12 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -33,6 +36,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * The key/value list for this primitive.
      */
     public Map<String, String> keys;
+
+    /**
+     * The key/value list for this primitive.
+     */
+    public Collection<String> errors;
 
     /**
      * Unique identifier in OSM. This is used to identify objects on the server.
@@ -312,5 +320,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
                 }
             }
         }
+    }
+
+    public void putError(String text, Boolean isError)
+    {
+        if(errors == null)
+            errors = new ArrayList<String>();
+        String s = isError ? tr("Error: {0}", text) : tr("Warning: {0}", text);
+System.out.println(s);
+        errors.add(s);
+    }
+    public void clearErrors()
+    {
+        errors = null;
     }
 }
