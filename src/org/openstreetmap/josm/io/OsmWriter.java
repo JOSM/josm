@@ -93,12 +93,6 @@ public class OsmWriter extends XmlWriter implements Visitor {
         @Override public void header(PrintWriter out) {
             super.header(out);
             for (DataSource s : ds.dataSources) {
-                // TODO: remove <bound> output after a grace period (1st October 08)
-                out.print("  <bound note='this tag is deprecated and only provided for backward compatiblity' box='"+
-                        s.bounds.min.lat()+","+
-                        s.bounds.min.lon()+","+
-                        s.bounds.max.lat()+","+
-                        s.bounds.max.lon()+"' ");
                 out.println("origin='"+XmlWriter.encode(s.origin)+"' />");
                 out.print("  <bounds minlat='" +
                         s.bounds.min.lat()+"' minlon='"+

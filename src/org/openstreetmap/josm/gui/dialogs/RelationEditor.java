@@ -158,7 +158,7 @@ public class RelationEditor extends JFrame {
     /**
      * Compare two OsmPrimitives.
      */
-    private static int compareMemebers(OsmPrimitive o1, OsmPrimitive o2) {
+    private static int compareMembers(OsmPrimitive o1, OsmPrimitive o2) {
         return collator.compare(o1.getName(), o2.getName());
     }
 
@@ -167,7 +167,7 @@ public class RelationEditor extends JFrame {
             int roleResult = compareRole(r1.role, r2.role);
 
             if (roleResult == 0)
-                roleResult = compareMemebers(r1.member, r2.member);
+                roleResult = compareMembers(r1.member, r2.member);
 
             return roleResult;
         }

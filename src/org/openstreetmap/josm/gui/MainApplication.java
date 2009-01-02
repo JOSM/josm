@@ -129,22 +129,13 @@ public class MainApplication extends Main {
 
         // get the preferences.
         final File prefDir = new File(Main.pref.getPreferencesDir());
-        // check if preferences directory has moved (TODO: Update code. Remove this after some time)
-        File oldPrefDir = new File(System.getProperty("user.home"), ".josm");
-        if (!prefDir.isDirectory() && oldPrefDir.isDirectory()) {
-            if (oldPrefDir.renameTo(prefDir)) {
-                // do not translate this
-                JOptionPane.showMessageDialog(null, "The preference directory has been moved to "+prefDir);
-            } else {
-                JOptionPane.showMessageDialog(null, "The preference directory location has changed. Please move "+oldPrefDir+" to "+prefDir);
+        if (prefDir.exists()) {
+            if(!prefDir.isDirectory()) {
+                JOptionPane.showMessageDialog(null, tr("Cannot open preferences directory: {0}",Main.pref.getPreferencesDir()));
+                return;
             }
         }
-
-        if (prefDir.exists() && !prefDir.isDirectory()) {
-            JOptionPane.showMessageDialog(null, "Cannot open preferences directory: "+Main.pref.getPreferencesDir());
-            return;
-        }
-        if (!prefDir.exists())
+        else
             prefDir.mkdirs();
 
         if (!new File(Main.pref.getPreferencesDir()+"preferences").exists()) {
@@ -160,13 +151,10 @@ public class MainApplication extends Main {
         } catch (final IOException e1) {
             e1.printStackTrace();
             String backup = Main.pref.getPreferencesDir() + "preferences.bak";
-            JOptionPane.showMessageDialog(null, "Preferences file had errors.  Making backup of old one to " + backup);
+            JOptionPane.showMessageDialog(null, tr("Preferences file had errors. Making backup of old one to {0}.", backup));
             new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
             Main.pref.save();
         }
-
-        // TODO remove this in early 2009 - just here to weed out color setting we don't use any more
-        Main.pref.put("downloaded Area", null);
 
         String localeName = null; //The locale to use
 

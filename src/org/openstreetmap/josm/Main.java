@@ -231,7 +231,7 @@ abstract public class Main {
 
         String [] oldplugins = new String[] {"mappaint", "unglueplugin",
         "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
-        "lang-ru", "ewmsplugin", "ywms"};
+        "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat"};
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
                 plugins.remove(p);

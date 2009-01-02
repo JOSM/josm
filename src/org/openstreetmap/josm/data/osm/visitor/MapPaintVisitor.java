@@ -306,7 +306,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     {
         for (RelationMember m : r.members)
         {
-            if (!m.member.incomplete && !m.member.deleted
+            if (m.member != null && !m.member.incomplete && !m.member.deleted
             && !(m.member instanceof Relation))
             {
                 /* nodes drawn on second call */
@@ -354,7 +354,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 for (RelationMember m : r.members)
                 {
                     /* second call - draw nodes */
-                    if (!m.member.incomplete && !m.member.deleted
+                    if (m.member != null && !m.member.incomplete && !m.member.deleted
                     && m.member instanceof Node)
                     {
                         drawSelected(m.member, styles.get(m.member), true, true);
@@ -381,11 +381,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (RelationMember m : r.members)
         {
-            if(m.member.incomplete)
-                incomplete = true;
+            if(m.member == null) /* Should not happen, must be a bug elsewhere */
+                r.putError(tr("Empty member in relation."), true);
             else if(m.member.deleted)
                 r.putError(tr("Deleted member ''{0}'' in relation.",
                 m.member.getName()), true);
+            else if(m.member.incomplete)
+                incomplete = true;
             else
             {
                 if(m.member instanceof Way)

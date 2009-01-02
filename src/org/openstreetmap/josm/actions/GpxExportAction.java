@@ -135,7 +135,7 @@ public class GpxExportAction extends DiskAccessAction {
             fo.close();
         } catch (IOException x) {
             x.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}", fn)+":\n"+x.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn,x.getMessage()), tr("Error"), JOptionPane.ERROR_MESSAGE);
         }
     }
 

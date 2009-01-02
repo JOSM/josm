@@ -87,9 +87,13 @@ public final class PasteAction extends JosmAction {
             rnew.id = 0;
             List<RelationMember> members = new ArrayList<RelationMember>();
             for (RelationMember m : r.members) {
-                RelationMember mnew = new RelationMember(m);
-                mnew.member = map.get(m.member);
-                members.add(mnew);
+                OsmPrimitive mo = map.get(m.member);
+                if(mo != null) /* TODO - This only prevents illegal data, but kills the relation */
+                {
+                    RelationMember mnew = new RelationMember(m);
+                    mnew.member = map.get(m.member);
+                    members.add(mnew);
+                }
             }
             rnew.members.clear();
             rnew.members.addAll(members);

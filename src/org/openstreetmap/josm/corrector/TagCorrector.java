@@ -75,13 +75,13 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             final JPanel p = new JPanel(new GridBagLayout());
 
             final JMultilineLabel label1 = new JMultilineLabel(description);
-            label1.setMaxWidth(400);
-            p.add(label1, GBC.eop());
+            label1.setMaxWidth(600);
+            p.add(label1, GBC.eop().anchor(GBC.CENTER));
 
             final JMultilineLabel label2 = new JMultilineLabel(
                     tr("Please select which property changes you want to apply."));
-            label2.setMaxWidth(400);
-            p.add(label2, GBC.eop());
+            label2.setMaxWidth(600);
+            p.add(label2, GBC.eop().anchor(GBC.CENTER));
 
             for (OsmPrimitive primitive : tagCorrectionsMap.keySet()) {
                 final List<TagCorrection> tagCorrections = tagCorrectionsMap
@@ -102,7 +102,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 final TagCorrectionTable table = new TagCorrectionTable(
                         tagCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
-                p.add(scrollPane, GBC.eop());
+                p.add(scrollPane, GBC.eop().fill(GBC.HORIZONTAL));
 
                 tagTableMap.put(primitive, table);
             }
@@ -126,7 +126,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 final RoleCorrectionTable table = new RoleCorrectionTable(
                         roleCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
-                p.add(scrollPane, GBC.eop());
+                p.add(scrollPane, GBC.eop().fill(GBC.HORIZONTAL));
 
                 roleTableMap.put(primitive, table);
             }
