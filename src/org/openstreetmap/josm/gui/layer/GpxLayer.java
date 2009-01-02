@@ -759,12 +759,20 @@ public class GpxLayer extends Layer {
         }
         public void actionPerformed(ActionEvent e) {
             JPanel msg = new JPanel(new GridBagLayout());
-            JList buffer = new JList(new String[] { "50 metres", "500 metres", "5000 metres" });
-            JList maxRect = new JList(new String[] { "1 sq km", "5 sq km", "10 sq km", "20 sq km" });
+            Integer dist[] = {5000, 500, 50};
+            Integer area[] = {20, 10, 5, 1};
 
             msg.add(new JLabel(tr("Download everything within:")), GBC.eol());
+            String s[] = new String[dist.length];
+            for(int i = 0; i < dist.length; ++i)
+                s[i] = tr("{0} meters", dist[i]);
+            JList buffer = new JList(s);
             msg.add(buffer, GBC.eol());
             msg.add(new JLabel(tr("Maximum area per request:")), GBC.eol());
+            s = new String[area.length];
+            for(int i = 0; i < area.length; ++i)
+                s[i] = tr("{0} sq km", area[i]);
+            JList maxRect = new JList(s);
             msg.add(maxRect, GBC.eol());
 
             if (JOptionPane.showConfirmDialog(Main.parent, msg,
@@ -800,22 +808,11 @@ public class GpxLayer extends Layer {
              * bounding box will download forever and then stop because it has more than
              * 50k nodes.
              */
-            double buffer_y;
-            double buffer_x;
-            switch(buffer.getSelectedIndex()) {
-            case 0: buffer_y = .0005; break;
-            case 1: buffer_y = .005; break;
-            default: buffer_y = .05;
-            }
-            buffer_x = buffer_y / scale;
-
-            double max_area;
-            switch(maxRect.getSelectedIndex()) {
-            case 0: max_area = 0.0001 / scale; break;
-            case 1: max_area = 0.0005 / scale; break;
-            case 2: max_area = 0.001 / scale; break;
-            default: max_area = 0.002 / scale;
-            }
+            Integer i = buffer.getSelectedIndex();
+            double buffer_y = dist[i < 0 ? 0 : i] / 1000.0;
+            double buffer_x = buffer_y / scale;
+            i = maxRect.getSelectedIndex();
+            double max_area = area[i < 0 ? 0 : i] / 10000.0 / scale;
 
             Area a = new Area();
             Rectangle2D r = new Rectangle2D.Double();
