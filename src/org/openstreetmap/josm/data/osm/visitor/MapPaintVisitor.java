@@ -750,6 +750,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 g.drawRect(p.x - radius, p.y - radius, size, size);
             } else
                 g.drawRect(p.x - radius, p.y - radius, size, size);
+
+			String name = getNodeName(n);
+			if (name!=null /* && annotate */)
+			{
+				g.setColor(textColor);
+				Font defaultFont = g.getFont();
+				g.setFont (orderFont);
+				g.drawString (name, p.x+radius+2, p.y+radius+2);
+				g.setFont(defaultFont);
+			}
         }
     }
 
@@ -768,7 +778,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
-        regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name").split(";");
+        regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name;ref;operator;brand").split(";");
 
         alreadyDrawn = new LinkedList<OsmPrimitive>();
         alreadyDrawnAreas = new LinkedList<Way>();
