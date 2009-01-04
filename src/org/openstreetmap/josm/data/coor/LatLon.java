@@ -71,8 +71,6 @@ public class LatLon extends Coordinate {
         }
     }
 
-
-
     /**
      * @return <code>true</code> if the other point has almost the same lat/lon
      * values, only differing by no more than
