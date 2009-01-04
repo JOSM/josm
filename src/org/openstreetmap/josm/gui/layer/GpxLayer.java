@@ -11,7 +11,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Area;
@@ -57,6 +56,7 @@ import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -779,7 +779,6 @@ public class GpxLayer extends Layer {
                 tr("Download from OSM along this track"),
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION) {
                 return;
-
             }
 
             /*
@@ -802,40 +801,43 @@ public class GpxLayer extends Layer {
             double scale = Math.cos(Math.toRadians(avglat));
 
             /*
-             * Compute buffer zone extents and maximum bounding box size. Note how the
+             * Compute buffer zone extents and maximum bounding box size. Note that the
              * maximum we ever offer is a bbox area of 0.002, while the API theoretically
              * supports 0.25, but as soon as you touch any built-up area, that kind of
              * bounding box will download forever and then stop because it has more than
              * 50k nodes.
              */
             Integer i = buffer.getSelectedIndex();
-            double buffer_y = dist[i < 0 ? 0 : i] / 1000.0;
+            int buffer_dist = dist[i < 0 ? 0 : i];
+            double buffer_y = buffer_dist / 100000.0;
             double buffer_x = buffer_y / scale;
             i = maxRect.getSelectedIndex();
             double max_area = area[i < 0 ? 0 : i] / 10000.0 / scale;
-
             Area a = new Area();
             Rectangle2D r = new Rectangle2D.Double();
 
             /*
              * Collect the combined area of all gpx points plus buffer zones around them.
-             * This is rather inefficient (may take 20 seconds and more for large tracks);
-             * maybe it could be improved by disregarding points that lie really close to
-             * the previous point.
+             * We ignore points that lie closer to the previous point than the given buffer
+             * size because otherwise this operation takes ages.
              */
+            LatLon previous = null;
             for (GpxTrack trk : data.tracks) {
                 for (Collection<WayPoint> segment : trk.trackSegs) {
                     for (WayPoint p : segment) {
-                        // we add a buffer around the point.
-                        r.setRect(p.latlon.lon()-buffer_x, p.latlon.lat()-buffer_y, 2*buffer_x, 2*buffer_y);
-                        a.add(new Area(r));
+                        if (previous == null || p.latlon.greatCircleDistance(previous) > buffer_dist) {
+                            // we add a buffer around the point.
+                            r.setRect(p.latlon.lon()-buffer_x, p.latlon.lat()-buffer_y, 2*buffer_x, 2*buffer_y);
+                            a.add(new Area(r));
+                            previous = p.latlon;
+                        }
                     }
                 }
             }
 
             /*
              * Area "a" now contains the hull that we would like to download data for.
-             * however we can only download rectangles, so the following is an attemt at
+             * however we can only download rectangles, so the following is an attempt at
              * finding a number of rectangles to download.
              *
              * The idea is simply: Start out with the full bounding box. If it is too large,
