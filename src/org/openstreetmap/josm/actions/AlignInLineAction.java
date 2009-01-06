@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class AlignInLineAction extends JosmAction {
 
     public AlignInLineAction() {
-        super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes onto a line."),
+        super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes in to a line."),
         Shortcut.registerShortcut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, Shortcut.GROUP_EDIT), true);
     }
 

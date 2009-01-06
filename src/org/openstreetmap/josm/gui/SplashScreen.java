@@ -146,7 +146,7 @@ public class SplashScreen extends JWindow {
     public void setStatus(String message) {
         if (!visible)
             return;
-        status.setText(message + " ...");
+        status.setText(message + "...");
     }
 
     /**

@@ -54,7 +54,7 @@ public class DrawingPreference implements PreferenceSetting {
             }
         });
         drawRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines"));
-        drawRawGpsLines.setToolTipText(tr("If your gps device draw too few lines, select this to draw lines along your way."));
+        drawRawGpsLines.setToolTipText(tr("If your gps device draws too few lines, select this to draw lines along your way."));
         panel.add(drawRawGpsLines, GBC.eol().insets(20,0,0,0));
 
         // drawRawGpsMaxLineLength

@@ -59,8 +59,8 @@ public class UploadAction extends JosmAction {
     public final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
 
     public UploadAction() {
-        super(tr("Upload to OSM ..."), "upload", tr("Upload all changes to the OSM server."),
-        Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload to OSM ...")), KeyEvent.VK_U, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
+        super(tr("Upload to OSM..."), "upload", tr("Upload all changes to the OSM server."),
+        Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload to OSM...")), KeyEvent.VK_U, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
 
         /**
          * Displays a screen where the actions that would be taken are displayed and

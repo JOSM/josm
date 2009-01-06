@@ -123,7 +123,7 @@ public class PluginPreference implements PreferenceSetting {
         });
         plugin.add(update, GBC.std().insets(0,0,10,0));
 
-        JButton configureSites = new JButton(tr("Configure Sites ..."));
+        JButton configureSites = new JButton(tr("Configure Sites..."));
         configureSites.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 configureSites();
@@ -292,7 +292,7 @@ public class PluginPreference implements PreferenceSetting {
                         if ((PluginInformation.getLoaded(plugin.name) == null) && (plinfo != null)) {
                             try {
                                 int answer = JOptionPane.showConfirmDialog(Main.parent,
-                                    tr("Plugin archive already available. Do you want to download current version by deleting existing archive?\n\n{0}",
+                                    tr("Plugin archive already available. Do you want to download the current version by deleting existing archive?\n\n{0}",
                                     plinfo.file.getCanonicalPath()), tr("Plugin already exists"), JOptionPane.OK_CANCEL_OPTION);
                                 if (answer == JOptionPane.OK_OPTION) {
                                     if (!plinfo.file.delete()) {

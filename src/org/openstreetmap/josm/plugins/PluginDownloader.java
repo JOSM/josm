@@ -140,7 +140,7 @@ public class PluginDownloader {
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(Main.parent, tr("The plugin {0} seem to be broken or could not be downloaded automatically.", pd.name));
+                JOptionPane.showMessageDialog(Main.parent, tr("The plugin {0} seems to be broken or could not be downloaded automatically.", pd.name));
             }
         }
         if (file.exists())

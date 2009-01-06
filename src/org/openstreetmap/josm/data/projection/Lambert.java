@@ -79,7 +79,7 @@ public class Lambert implements Projection {
         double lt = geo.lat(); // in radian
         double lg = geo.lon();
 
-        // check if longitude and latitude are inside the french Lambert zones
+        // check if longitude and latitude are inside the French Lambert zones
         currentZone = 0;
         boolean outOfLambertZones = false;
         if (lt >= zoneLimits[3] && lt <= cMaxLatZone1 && lg >= cMinLonZones && lg <= cMaxLonZones) {
@@ -110,7 +110,7 @@ public class Lambert implements Projection {
                         tr("The projection \"{0}\" is designed for\n"
                         + "latitudes between 46.1° and 57° only.\n"
                         + "Use another projection system if you are not using\n"
-                        + "a french WMS server.\n"
+                        + "a French WMS server.\n"
                         + "Do not upload any data after this message.", this.toString()));
                 dontDisplayErrors = true;
             }
@@ -123,7 +123,7 @@ public class Lambert implements Projection {
                 if ((currentZone < layoutZone && Math.abs(zoneLimits[currentZone] - lt) > cMaxOverlappingZones)
                         || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
                     JOptionPane.showMessageDialog(Main.parent,
-                                    tr("IMPORTANT : data positionned far away from\n"
+                                    tr("IMPORTANT : data positioned far away from\n"
                                             + "the current Lambert zone limits.\n"
                                             + "Do not upload any data after this message.\n"
                                             + "Undo your last action, Save your work \n"

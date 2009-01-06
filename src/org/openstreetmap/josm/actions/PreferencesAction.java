@@ -28,7 +28,7 @@ public class PreferencesAction extends JosmAction {
      * Create the preference action with "&Preferences" as label.
      */
     public PreferencesAction() {
-        super(tr("Preferences ..."), "preference", tr("Open a preferences page for global settings."),
+        super(tr("Preferences..."), "preference", tr("Open a preferences page for global settings."),
         Shortcut.registerShortcut("system:preferences", tr("Preferences"), KeyEvent.VK_F12, Shortcut.GROUP_DIRECT), true);
     }
 

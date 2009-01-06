@@ -36,7 +36,7 @@ public class SearchAction extends JosmAction {
     private static SearchSetting lastSearch = null;
 
     public SearchAction() {
-        super(tr("Search ..."), "dialogs/search", tr("Search for objects."),
+        super(tr("Search..."), "dialogs/search", tr("Search for objects."),
         Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.GROUP_HOTKEY), true);
     }
 

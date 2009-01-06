@@ -30,8 +30,8 @@ public class DownloadAction extends JosmAction {
     public DownloadDialog dialog;
 
     public DownloadAction() {
-        super(tr("Download from OSM ..."), "download", tr("Download map data from the OSM server."),
-        Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM ...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
+        super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
+        Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
     }
 
     public void actionPerformed(ActionEvent e) {
