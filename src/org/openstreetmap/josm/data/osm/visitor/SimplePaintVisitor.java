@@ -94,7 +94,7 @@ public class SimplePaintVisitor implements Visitor {
         incompleteColor = Main.pref.getColor(marktr("incomplete way"), darkerblue);
         backgroundColor = Main.pref.getColor(marktr("background"), Color.BLACK);
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
-        showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only");
+        showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
         selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size", 5) / 2;
         selectedNodeSize = selectedNodeRadius * 2;

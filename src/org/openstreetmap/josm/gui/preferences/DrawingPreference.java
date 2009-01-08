@@ -117,7 +117,7 @@ public class DrawingPreference implements PreferenceSetting {
         directionHint.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                             if (directionHint.isSelected()){
-                                interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only"));
+                                interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only", true));
                             }else{
                                 interestingDirections.setSelected(false);
                             }
@@ -130,7 +130,7 @@ public class DrawingPreference implements PreferenceSetting {
 
         // only interesting directions
         interestingDirections.setToolTipText(tr("Only interesting direction hints (e.g. with oneway tag)."));
-        interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only"));
+        interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only", true));
         interestingDirections.setEnabled(directionHint.isSelected());
         panel.add(interestingDirections, GBC.eop().insets(40,0,0,0));
 
