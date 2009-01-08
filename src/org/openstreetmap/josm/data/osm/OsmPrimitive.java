@@ -311,7 +311,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         hasDirectionKeys = false;
         if(directionKeys == null)
             directionKeys = new HashSet<String>(Arrays.asList(Main.pref.get("tags.direction",
-            "oneway;incline;incline_step;aerialway").split(";")));
+            "oneway;incline;incline_steep;aerialway").split(";")));
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
                 if (directionKeys.contains(e.getKey())) {
