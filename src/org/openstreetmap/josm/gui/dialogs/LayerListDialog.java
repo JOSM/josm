@@ -199,10 +199,8 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
 
         instance.addMouseListener(new MouseAdapter(){
             private void openPopup(MouseEvent e) {
-                Point p = listScrollPane.getMousePosition();
-                if (p == null)
-                    return; // user is faster than swing with mouse movement
-                int index = instance.locationToIndex(e.getPoint());
+                Point p = e.getPoint();
+                int index = instance.locationToIndex(p);
                 Layer layer = (Layer)instance.getModel().getElementAt(index);
                 LayerListPopup menu = new LayerListPopup(instance, layer);
                 menu.show(listScrollPane, p.x, p.y-3);

@@ -47,7 +47,7 @@ public class SearchAction extends JosmAction {
         }
         SearchSetting s = lastSearch;
         if (s == null)
-            s = new SearchSetting("", false, SearchMode.replace);
+            s = new SearchSetting("", false, false, SearchMode.replace);
         showSearchDialog(s);
     }
 
@@ -80,6 +80,7 @@ public class SearchAction extends JosmAction {
         bg.add(remove);
 
         JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
+        JCheckBox regexSearch   = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
 
         JPanel p = new JPanel(new GridBagLayout());
         p.add(label, GBC.eop());
@@ -88,6 +89,7 @@ public class SearchAction extends JosmAction {
         p.add(add, GBC.eol());
         p.add(remove, GBC.eop());
         p.add(caseSensitive, GBC.eol());
+        p.add(regexSearch, GBC.eol());
         JOptionPane pane = new JOptionPane(p, JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null) {
             @Override
             public void selectInitialValue() {
@@ -101,7 +103,7 @@ public class SearchAction extends JosmAction {
         // User pressed OK - let's perform the search
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
                 : (add.isSelected() ? SearchAction.SearchMode.add : SearchAction.SearchMode.remove);
-        SearchSetting setting = new SearchSetting(input.getText(), caseSensitive.isSelected(), mode);
+        SearchSetting setting = new SearchSetting(input.getText(), caseSensitive.isSelected(), regexSearch.isSelected(), mode);
         searchWithHistory(setting);
     }
 
@@ -116,15 +118,15 @@ public class SearchAction extends JosmAction {
         while (searchHistory.size() > SEARCH_HISTORY_SIZE)
             searchHistory.removeLast();
         lastSearch = s;
-        search(s.text, s.mode, s.caseSensitive);
+        search(s.text, s.mode, s.caseSensitive, s.regexSearch);
     }
 
     public static void searchWithoutHistory(SearchSetting s) {
         lastSearch = s;
-        search(s.text, s.mode, s.caseSensitive);
+        search(s.text, s.mode, s.caseSensitive, s.regexSearch);
     }
 
-    public static void search(String search, SearchMode mode, boolean caseSensitive) {
+    public static void search(String search, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
         if (search.startsWith("http://") || search.startsWith("ftp://") || search.startsWith("https://")
                 || search.startsWith("file:/")) {
             SelectionWebsiteLoader loader = new SelectionWebsiteLoader(search, mode);
@@ -135,7 +137,7 @@ public class SearchAction extends JosmAction {
         }
         try {
             Collection<OsmPrimitive> sel = Main.ds.getSelected();
-            SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive);
+            SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive, regexSearch);
             int foundMatches = 0;
             for (OsmPrimitive osm : Main.ds.allNonDeletedCompletePrimitives()) {
                 if (mode == SearchMode.replace) {
@@ -174,10 +176,12 @@ public class SearchAction extends JosmAction {
         String text;
         SearchMode mode;
         boolean caseSensitive;
+        boolean regexSearch;
 
-        public SearchSetting(String text, boolean caseSensitive, SearchMode mode) {
+        public SearchSetting(String text, boolean caseSensitive, boolean regexSearch, SearchMode mode) {
             super();
             this.caseSensitive = caseSensitive;
+            this.regexSearch = regexSearch;
             this.mode = mode;
             this.text = text;
         }
@@ -185,7 +189,8 @@ public class SearchAction extends JosmAction {
         @Override
         public String toString() {
             String cs = caseSensitive ? tr("CI") : tr("CS");
-            return "\"" + text + "\" (" + cs + ", " + mode + ")";
+            String rx = regexSearch ? (", " + tr("RX")) : "";
+            return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
         }
 
     }

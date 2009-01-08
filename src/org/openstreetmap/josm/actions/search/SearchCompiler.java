@@ -1,11 +1,15 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.search;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -20,15 +24,18 @@ import org.openstreetmap.josm.data.osm.Way;
 public class SearchCompiler {
 
     private boolean caseSensitive = false;
+    private boolean regexSearch = false;
+    private String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private PushbackTokenizer tokenizer;
 
-    public SearchCompiler(boolean caseSensitive, PushbackTokenizer tokenizer) {
+    public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
+        this.regexSearch = regexSearch;
         this.tokenizer = tokenizer;
     }
 
     abstract public static class Match {
-        abstract public boolean match(OsmPrimitive osm);
+        abstract public boolean match(OsmPrimitive osm) throws ParseError;
     }
 
     private static class Always extends Match {
@@ -40,7 +47,7 @@ public class SearchCompiler {
     private static class Not extends Match {
         private final Match match;
         public Not(Match match) {this.match = match;}
-        @Override public boolean match(OsmPrimitive osm) {
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
             return !match.match(osm);
         }
         @Override public String toString() {return "!"+match;}
@@ -50,7 +57,7 @@ public class SearchCompiler {
         private Match lhs;
         private Match rhs;
         public And(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
-        @Override public boolean match(OsmPrimitive osm) {
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
             return lhs.match(osm) && rhs.match(osm);
         }
         @Override public String toString() {return lhs+" && "+rhs;}
@@ -60,7 +67,7 @@ public class SearchCompiler {
         private Match lhs;
         private Match rhs;
         public Or(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
-        @Override public boolean match(OsmPrimitive osm) {
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
             return lhs.match(osm) || rhs.match(osm);
         }
         @Override public String toString() {return lhs+" || "+rhs;}
@@ -79,20 +86,82 @@ public class SearchCompiler {
         private String key;
         private String value;
         public KeyValue(String key, String value) {this.key = key; this.value = value; }
-        @Override public boolean match(OsmPrimitive osm) {
-            String value = null;
-            if (key.equals("timestamp"))
-                value = osm.getTimeStr();
-            else
-                value = osm.get(key);
-            if (value == null)
-                return false;
-            String v1 = caseSensitive ? value : value.toLowerCase();
-            String v2 = caseSensitive ? this.value : this.value.toLowerCase();
-            // is not Java 1.5
-            //v1 = java.text.Normalizer.normalize(v1, java.text.Normalizer.Form.NFC);
-            //v2 = java.text.Normalizer.normalize(v2, java.text.Normalizer.Form.NFC);
-            return v1.indexOf(v2) != -1;
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+
+            if (regexSearch) { 
+                if (osm.keys == null)
+                    return false;
+
+                /* The string search will just get a key like
+                 * 'highway' and look that up as osm.get(key). But
+                 * since we're doing a regex match we'll have to loop
+                 * over all the keys to see if they match our regex,
+                 * and only then try to match against the value
+                 */
+
+                Pattern searchKey   = null;
+                Pattern searchValue = null;
+
+                if (caseSensitive) {
+                    try {
+                        searchKey = Pattern.compile(key);
+                    } catch (PatternSyntaxException e) {
+                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    }
+                    try {
+                        searchValue = Pattern.compile(value);
+                    } catch (PatternSyntaxException e) {
+                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    }
+                } else {
+                    try {
+                        searchKey = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
+                    } catch (PatternSyntaxException e) {
+                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    }
+                    try {
+                        searchValue = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
+                    } catch (PatternSyntaxException e) {
+                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    }
+                }
+
+                for (Entry<String, String> e : osm.keys.entrySet()) {
+                    String k = e.getKey();
+                    String v = e.getValue();
+
+                    Matcher matcherKey = searchKey.matcher(k);
+                    boolean matchedKey = matcherKey.find();
+
+                    if (matchedKey) {
+                        Matcher matcherValue = searchValue.matcher(v);
+                        boolean matchedValue = matcherValue.find();
+
+                        if (matchedValue)
+                            return true;
+                    }
+                }
+            } else {
+                String value = null;
+
+                if (key.equals("timestamp"))
+                    value = osm.getTimeStr();
+                else
+                    value = osm.get(key);
+
+                if (value == null)
+                    return false;
+
+                String v1 = caseSensitive ? value : value.toLowerCase();
+                String v2 = caseSensitive ? this.value : this.value.toLowerCase();
+
+                // is not Java 1.5
+                //v1 = java.text.Normalizer.normalize(v1, java.text.Normalizer.Form.NFC);
+                //v2 = java.text.Normalizer.normalize(v2, java.text.Normalizer.Form.NFC);
+                return v1.indexOf(v2) != -1;
+            }
+
+            return false;
         }
         @Override public String toString() {return key+"="+value;}
     }
@@ -100,19 +169,60 @@ public class SearchCompiler {
     private class Any extends Match {
         private String s;
         public Any(String s) {this.s = s;}
-        @Override public boolean match(OsmPrimitive osm) {
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
             if (osm.keys == null)
                 return s.equals("");
-            String search = caseSensitive ? s : s.toLowerCase();
+
+            String search;
+            Pattern searchRegex = null;
+
+            if (regexSearch) {
+                search = s;
+                if (caseSensitive) {
+                    try {
+                        searchRegex = Pattern.compile(search);
+                    } catch (PatternSyntaxException e) {
+                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    }
+                } else {
+                    try {
+                        searchRegex = Pattern.compile(search, Pattern.CASE_INSENSITIVE);
+                    } catch (PatternSyntaxException e) {
+                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    }
+                }
+            } else {
+                search = caseSensitive ? s : s.toLowerCase();
+            }
+
             // is not Java 1.5
             //search = java.text.Normalizer.normalize(search, java.text.Normalizer.Form.NFC);
             for (Entry<String, String> e : osm.keys.entrySet()) {
-                String key = caseSensitive ? e.getKey() : e.getKey().toLowerCase();
-                String value = caseSensitive ? e.getValue() : e.getValue().toLowerCase();
-                // is not Java 1.5
-                //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
-                if (key.indexOf(search) != -1 || value.indexOf(search) != -1)
-                    return true;
+                if (regexSearch) {
+                    String key = e.getKey();
+                    String value = e.getValue();
+
+                    // is not Java 1.5
+                    //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+
+                    Matcher keyMatcher = searchRegex.matcher(key);
+                    Matcher valMatcher = searchRegex.matcher(value);
+
+                    boolean keyMatchFound = keyMatcher.find();
+                    boolean valMatchFound = valMatcher.find();
+
+                    if (keyMatchFound || valMatchFound)
+                        return true;
+                } else {
+                    String key = caseSensitive ? e.getKey() : e.getKey().toLowerCase();
+                    String value = caseSensitive ? e.getValue() : e.getValue().toLowerCase();
+
+                    // is not Java 1.5
+                    //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+
+                    if (key.indexOf(search) != -1 || value.indexOf(search) != -1)
+                        return true;
+                }
             }
             if (osm.user != null) {
                 String name = osm.user.name;
@@ -188,9 +298,9 @@ public class SearchCompiler {
         }
     }
 
-    public static Match compile(String searchStr, boolean caseSensitive)
+    public static Match compile(String searchStr, boolean caseSensitive, boolean regexSearch)
             throws ParseError {
-        return new SearchCompiler(caseSensitive,
+        return new SearchCompiler(caseSensitive, regexSearch,
                 new PushbackTokenizer(
                     new PushbackReader(new StringReader(searchStr))))
             .parse();
