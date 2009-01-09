@@ -93,13 +93,12 @@ public class OsmWriter extends XmlWriter implements Visitor {
         @Override public void header(PrintWriter out) {
             super.header(out);
             for (DataSource s : ds.dataSources) {
-                out.println("origin='"+XmlWriter.encode(s.origin)+"' />");
-                out.print("  <bounds minlat='" +
-                        s.bounds.min.lat()+"' minlon='"+
-                        s.bounds.min.lon()+"' maxlat='"+
-                        s.bounds.max.lat()+"' maxlon='"+
-                        s.bounds.max.lon()+"' ");
-                out.println("origin='"+XmlWriter.encode(s.origin)+"' />");
+                out.println("  <bounds minlat='"
+                + s.bounds.min.lat()+"' minlon='"
+                + s.bounds.min.lon()+"' maxlat='"
+                + s.bounds.max.lat()+"' maxlon='"
+                + s.bounds.max.lon()
+                +"' origin='"+XmlWriter.encode(s.origin)+"' />");
             }
         }
     }
