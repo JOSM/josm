@@ -285,6 +285,12 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
         upButton.setEnabled(sel > 0);
         downButton.setEnabled(sel >= 0 && sel < model.getSize()-1);
         deleteAction.setEnabled(!model.isEmpty());
+        
+        if(model.getSize() != 0) {
+            setTitle(tr("Layers: {0}", model.getSize()), true);
+        } else {
+            setTitle(tr("Layers"), false);
+        }
     }
 
     /**

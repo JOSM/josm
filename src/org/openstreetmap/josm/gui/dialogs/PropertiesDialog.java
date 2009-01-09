@@ -694,5 +694,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
 
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
-    }
+
+        if(propertyData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
+            setTitle(tr("Properties: {0} / Memberships: {1}", 
+                propertyData.getRowCount(), membershipData.getRowCount()), true);
+        } else {
+            setTitle(tr("Properties / Memberships"), false);
+        }
+
+	}
 }

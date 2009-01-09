@@ -129,6 +129,12 @@ public final class ConflictDialog extends ToggleDialog {
         for (OsmPrimitive osm : this.conflicts.keySet())
             if (osm instanceof Relation)
                 model.addElement(osm);
+
+        if(model.size() != 0) {
+            setTitle(tr("Conflicts: {0}", model.size()), true);
+        } else {
+            setTitle(tr("Conflicts"), false);
+        }
     }
 
     public final void add(Map<OsmPrimitive, OsmPrimitive> conflicts) {

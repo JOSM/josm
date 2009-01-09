@@ -121,6 +121,12 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                 list.setElementAt(e, i++);
         }
         list.setSize(i);
+
+        if(Main.ds.relations.size() != 0) {
+            setTitle(tr("Relations: {0}", Main.ds.relations.size()), true);
+        } else {
+            setTitle(tr("Relations"), false);
+        }
     }
 
     public void activeLayerChange(Layer a, Layer b) {

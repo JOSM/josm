@@ -108,6 +108,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         for (UserCount uc : ucArr) {
             data.addRow(new Object[] { uc.user.name, uc.count, uc.count * 100 / all });
         }
+
+        if(ucArr.length != 0) {
+            setTitle(tr("Authors: {0}", ucArr.length), true);
+        } else {
+            setTitle(tr("Authors"), false);
+        }
     }
 
     public void mouseClicked(MouseEvent e) {

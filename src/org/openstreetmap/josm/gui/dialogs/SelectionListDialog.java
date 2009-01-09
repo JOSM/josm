@@ -261,6 +261,24 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             while (selectionHistory.size() > SELECTION_HISTORY_SIZE)
                 selectionHistory.removeLast();
         }
+        
+        int ways = 0;
+        int nodes = 0;
+        int relations = 0;
+        for (OsmPrimitive o : newSelection) {
+            if (o instanceof Way)
+                ways++;
+            else if (o instanceof Node)
+                nodes++;
+            else if (o instanceof Relation)
+                relations++;
+        }
+
+        if( (nodes+ways+relations) != 0) {
+            setTitle(tr("Selection: Rel.: {0} / Ways: {1} / Nodes: {2}", relations, ways, nodes), true);
+        } else {
+            setTitle(tr("Selection"), false);
+        }
     }
 
     /**
