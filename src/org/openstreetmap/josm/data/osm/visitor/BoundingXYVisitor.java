@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.visitor;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -60,14 +61,14 @@ public class BoundingXYVisitor implements Visitor {
     }
 
     /**
-     * Enlarges the calculated bounding box by 0.0001 degrees.
+     * Enlarges the calculated bounding box by 0.002 degrees.
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
      *
      * @param enlargeDegree
      */
     public void enlargeBoundingBox() {
-        enlargeBoundingBox(0.0001);
+        enlargeBoundingBox(0.002);
     }
 
     /**
@@ -80,8 +81,9 @@ public class BoundingXYVisitor implements Visitor {
     public void enlargeBoundingBox(double enlargeDegree) {
         if (min == null || max == null)
             return;
-        EastNorth en = new EastNorth(enlargeDegree, enlargeDegree);
-        min = new EastNorth(min.east() - en.east(), min.north() - en.north());
-        max = new EastNorth(max.east() + en.east(), max.north() + en.north());
+        LatLon minLatlon = Main.proj.eastNorth2latlon(min);
+        min = Main.proj.latlon2eastNorth(new LatLon(minLatlon.lat() - enlargeDegree, minLatlon.lon() - enlargeDegree));
+        LatLon maxLatlon = Main.proj.eastNorth2latlon(max);
+        max = Main.proj.latlon2eastNorth(new LatLon(maxLatlon.lat() + enlargeDegree, maxLatlon.lon() + enlargeDegree));
     }
 }
