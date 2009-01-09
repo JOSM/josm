@@ -12,8 +12,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class ZoomInAction extends JosmAction {
 
     public ZoomInAction() {
-        super(tr("Zoom in"), "dialogs/zoomin", tr("Zoom in"),
-        Shortcut.registerShortcut("view:zoomin", tr("View: {0}", tr("Zoom in")), KeyEvent.VK_PLUS, Shortcut.GROUP_DIRECT), true);
+        super(tr("Zoom In"), "dialogs/zoomin", tr("Zoom In"),
+        Shortcut.registerShortcut("view:zoomin", tr("View: {0}", tr("Zoom In")), KeyEvent.VK_PLUS, Shortcut.GROUP_DIRECT), true);
         setEnabled(true);
     }
 

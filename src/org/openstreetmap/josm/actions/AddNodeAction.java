@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class AddNodeAction extends JosmAction {
 
     public AddNodeAction() {
-        super(tr("Add Node"), "addnode", tr("Add a node by entering latitude and longitude."),
+        super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude and longitude."),
         Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
         Shortcut.SHIFT_DEFAULT), true);
     }

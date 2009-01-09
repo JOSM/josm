@@ -21,8 +21,8 @@ public class SaveAsAction extends SaveActionBase {
      * @param layer Save this layer.
      */
     public SaveAsAction(Layer layer) {
-        super(tr("Save as..."), "save_as", tr("Save the current data to a new file."),
-        Shortcut.registerShortcut("system:saveas", tr("File: {0}", tr("Save as...")), KeyEvent.VK_S, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), layer);
+        super(tr("Save As..."), "save_as", tr("Save the current data to a new file."),
+        Shortcut.registerShortcut("system:saveas", tr("File: {0}", tr("Save As...")), KeyEvent.VK_S, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), layer);
     }
 
     @Override protected File getFile(Layer layer) {

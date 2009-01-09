@@ -38,10 +38,10 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class OrthogonalizeAction extends JosmAction {
 
     public OrthogonalizeAction() {
-        super(tr("Orthogonalize shape"),
+        super(tr("Orthogonalize Shape"),
             "ortho",
             tr("Move nodes so all angles are 90 or 270 degree"),
-            Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize")),
+            Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize Shape")),
             KeyEvent.VK_Q,
             Shortcut.GROUP_EDIT), true);
     }

@@ -15,8 +15,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class AudioPlayPauseAction extends JosmAction {
 
     public AudioPlayPauseAction() {
-        super(tr("Play/pause"), "audio-playpause", tr("Play/pause audio."),
-        Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", tr("Play/pause")), KeyEvent.VK_PERIOD, Shortcut.GROUP_DIRECT), true);
+        super(tr("Play/Pause"), "audio-playpause", tr("Play/pause audio."),
+        Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", tr("Play/Pause")), KeyEvent.VK_PERIOD, Shortcut.GROUP_DIRECT), true);
     }
 
     public void actionPerformed(ActionEvent e) {

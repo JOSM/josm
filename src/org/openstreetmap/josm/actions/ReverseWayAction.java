@@ -28,8 +28,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class ReverseWayAction extends JosmAction {
 
     public ReverseWayAction() {
-        super(tr("Reverse ways"), "wayflip", tr("Reverse the direction of all selected ways."),
-        Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
+        super(tr("Reverse Ways"), "wayflip", tr("Reverse the direction of all selected ways."),
+        Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse Ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -12,8 +12,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class ZoomOutAction extends JosmAction {
 
     public ZoomOutAction() {
-        super(tr("Zoom out"), "dialogs/zoomout", tr("Zoom out"),
-        Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom out")), KeyEvent.VK_MINUS, Shortcut.GROUP_DIRECT), true);
+        super(tr("Zoom Out"), "dialogs/zoomout", tr("Zoom Out"),
+        Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom Out")), KeyEvent.VK_MINUS, Shortcut.GROUP_DIRECT), true);
         setEnabled(true);
     }
 
