@@ -50,7 +50,7 @@ public abstract class OsmServerReader extends OsmConnection {
             return null;
         }
 
-        if (Boolean.parseBoolean(Main.pref.get("osm-server.use-compression", "true")))
+        if (Main.pref.getBoolean("osm-server.use-compression", true))
             activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
 
         activeConnection.setConnectTimeout(15000);

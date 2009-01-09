@@ -97,9 +97,9 @@ public class SimplePaintVisitor implements Visitor {
     }
 
     protected void getSettings(Boolean virtual) {
-        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
+        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
         showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
-        showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");
+        showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
         selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size", 5) / 2;
         selectedNodeSize = selectedNodeRadius * 2;
         unselectedNodeRadius = Main.pref.getInteger("mappaint.node.unselected-size", 3) / 2;

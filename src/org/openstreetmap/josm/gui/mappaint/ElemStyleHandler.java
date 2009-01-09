@@ -48,14 +48,15 @@ public class ElemStyleHandler extends DefaultHandler
     Color convertColor(String colString)
     {
         int i = colString.indexOf("#");
-        String colorString;
+        Color ret;
         if(i < 0) // name only
-            colorString = Main.pref.get("color.mappaint."+styleName+"."+colString);
+            ret = Main.pref.getColor("mappaint."+styleName+"."+colString, Color.red);
         else if(i == 0) // value only
-            colorString = colString;
+            ret = ColorHelper.html2color(colString);
         else // value and name
-            colorString = Main.pref.get("color.mappaint."+styleName+"."+colString.substring(0,i), colString.substring(i));
-        return ColorHelper.html2color(colorString);
+            ret = Main.pref.getColor("mappaint."+styleName+"."+colString.substring(0,i),
+            ColorHelper.html2color(colString.substring(i)));
+        return ret;
     }
 
     @Override public void startDocument() {

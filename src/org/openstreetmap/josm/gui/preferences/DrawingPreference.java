@@ -125,7 +125,7 @@ public class DrawingPreference implements PreferenceSetting {
             }
         });
         directionHint.setToolTipText(tr("Draw direction hints for way segments."));
-        directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction"));
+        directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction", true));
         panel.add(directionHint, GBC.eop().insets(20,0,0,0));
 
         // only interesting directions
@@ -136,12 +136,12 @@ public class DrawingPreference implements PreferenceSetting {
 
         // segment order number
         segmentOrderNumber.setToolTipText(tr("Draw the order numbers of all segments within their way."));
-        segmentOrderNumber.setSelected(Main.pref.getBoolean("draw.segment.order_number"));
+        segmentOrderNumber.setSelected(Main.pref.getBoolean("draw.segment.order_number", false));
         panel.add(segmentOrderNumber, GBC.eop().insets(20,0,0,0));
 
         // antialiasing
         useAntialiasing.setToolTipText(tr("Apply antialiasing to the map view resulting in a smoother appearance."));
-        useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing"));
+        useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing", false));
         panel.add(useAntialiasing, GBC.eop().insets(20,0,0,0));
 
         // downloaded area

@@ -245,7 +245,7 @@ public class MainMenu extends JMenuBar {
 
         add(presetsMenu, KeyEvent.VK_P, "presets");
 
-        if (!Main.pref.getBoolean("audio.menuinvisible")) {
+        if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
             add(audioMenu, audioPlayPause);
             add(audioMenu, audioNext);
             add(audioMenu, audioPrev);

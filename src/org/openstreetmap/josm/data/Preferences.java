@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -235,7 +236,9 @@ public class Preferences {
                 properties.remove(key);
             else
                 properties.put(key, value);
-            save();
+            String s = defaults.get(key);
+            if(s == null || !s.equals(value))
+                save();
             firePreferenceChanged(key, value);
             return true;
         }
@@ -264,11 +267,16 @@ public class Preferences {
      * in log.
      */
     public void save() {
+        /* currently unused, but may help to fix configuration issues in future */
+        properties.put("josm.version", AboutAction.getVersionString());
         try {
             setSystemProperties();
             final PrintWriter out = new PrintWriter(new FileWriter(getPreferencesDir() + "preferences"), false);
             for (final Entry<String, String> e : properties.entrySet()) {
-                out.println(e.getKey() + "=" + e.getValue());
+                String s = defaults.get(e.getKey());
+                /* don't save default values */
+                if(s == null || !s.equals(e.getValue()))
+                    out.println(e.getKey() + "=" + e.getValue());
             }
             out.close();
         } catch (final IOException e) {
@@ -299,18 +307,15 @@ public class Preferences {
 
     public final void resetToDefault() {
         properties.clear();
-        properties.put("projection", "org.openstreetmap.josm.data.projection.Epsg4326");
-        properties.put("draw.segment.direction", "true");
-        properties.put("draw.wireframe", "false");
-        properties.put("layerlist.visible", "true");
-        properties.put("propertiesdialog.visible", "true");
-        properties.put("selectionlist.visible", "true");
-        properties.put("commandstack.visible", "true");
-        properties.put("osm-server.url", "http://www.openstreetmap.org/api");
+        put("layerlist.visible", true);
+        put("propertiesdialog.visible", true);
+        put("selectionlist.visible", true);
+        put("commandstack.visible", true);
+        put("osm-server.url", "http://www.openstreetmap.org/api");
         if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
-            properties.put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
+            put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
         } else {
-            properties.put("laf", "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            put("laf", "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }
         save();
     }
@@ -424,6 +429,17 @@ public class Preferences {
             // fall out
         }
         return def;
+    }
+
+    synchronized public double getDouble(String key, String def) {
+        putDefault(key, def);
+        String v = get(key);
+        try {
+            return Double.parseDouble(v == null ? def : v);
+        } catch(NumberFormatException e) {
+            // fall out
+        }
+        return 0.0;
     }
 
     synchronized public Collection<String> getCollection(String key, Collection<String> def) {
