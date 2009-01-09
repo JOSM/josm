@@ -3,8 +3,10 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionListener;
 import java.awt.Insets;
+import java.awt.Image;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -17,9 +19,15 @@ public class SideButton extends JButton {
         doStyle();
         setText(null);
     }
+
+    private static ImageIcon smallIcon(String imagename) {
+        Image im = ImageProvider.get("dialogs", imagename).getImage();
+        return new ImageIcon(im.getScaledInstance(20 , 20, Image.SCALE_SMOOTH));
+    }
+
     public SideButton(String imagename, String property, String tooltip, ActionListener actionListener)
     {
-        super(ImageProvider.get("dialogs", imagename));
+        super(smallIcon(imagename));
         doStyle();
         setActionCommand(imagename);
         addActionListener(actionListener);
@@ -27,7 +35,7 @@ public class SideButton extends JButton {
     }
     public SideButton(String name, String imagename, String property, String tooltip, Shortcut shortcut, ActionListener actionListener)
     {
-        super(tr(name), ImageProvider.get("dialogs", imagename));
+        super(smallIcon(imagename));
         if(shortcut != null)
                 {
             shortcut.setMnemonic(this);
@@ -38,7 +46,7 @@ public class SideButton extends JButton {
     }
     public SideButton(String name, String imagename, String property, String tooltip, ActionListener actionListener)
     {
-        super(tr(name), ImageProvider.get("dialogs", imagename));
+        super(smallIcon(imagename));
         setup(name, property, tooltip, actionListener);
     }
     private void setup(String name, String property, String tooltip, ActionListener actionListener)
