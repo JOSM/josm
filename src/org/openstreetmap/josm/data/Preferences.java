@@ -186,7 +186,7 @@ public class Preferences {
     synchronized public TreeMap<String, String> getAllColors() {
         final TreeMap<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,String> e : defaults.entrySet())
-            if (e.getKey().startsWith("color."))
+            if (e.getKey().startsWith("color.") && e.getValue() != null)
                 all.put(e.getKey().substring(6), e.getValue());
         for (final Entry<String,String> e : properties.entrySet())
             if (e.getKey().startsWith("color."))
@@ -237,8 +237,7 @@ public class Preferences {
             else
                 properties.put(key, value);
             String s = defaults.get(key);
-            if(s == null || !s.equals(value))
-                save();
+            save();
             firePreferenceChanged(key, value);
             return true;
         }
