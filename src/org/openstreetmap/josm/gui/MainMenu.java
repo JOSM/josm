@@ -88,12 +88,11 @@ public class MainMenu extends JMenuBar {
     /* Edit menu */
     public final UndoAction undo = new UndoAction();
     public final RedoAction redo = new RedoAction();
-    public final AddNodeAction addnode = new AddNodeAction();
     public final JosmAction copy = new CopyAction();
     public final JosmAction paste = new PasteAction();
-    public final JosmAction delete = new DeleteAction();
     public final JosmAction pasteTags = new PasteTagsAction(copy);
     public final JosmAction duplicate = new DuplicateAction();
+    public final JosmAction delete = new DeleteAction();
     public final JosmAction selectAll = new SelectAllAction();
     public final JosmAction unselectAll = new UnselectAllAction();
     /* crashes when loading data, if using JosmAction for search */
@@ -110,10 +109,12 @@ public class MainMenu extends JMenuBar {
     public final JosmAction alignInCircle = new AlignInCircleAction();
     public final JosmAction alignInLine = new AlignInLineAction();
     public final JosmAction ortho = new OrthogonalizeAction();
+    public final AddNodeAction addnode = new AddNodeAction();
     public final JosmAction createCircle = new CreateCircleAction();
     public final JosmAction mergeNodes = new MergeNodesAction();
     public final JosmAction joinNodeWay = new JoinNodeWayAction();
     public final JosmAction unglueNodes = new UnGlueAction();
+    public final HistoryInfoAction historyinfo = new HistoryInfoAction();
 
     /* Audio menu */
     public final JosmAction audioPlayPause = new AudioPlayPauseAction();
@@ -127,7 +128,6 @@ public class MainMenu extends JMenuBar {
     /* Help menu */
     public final HelpAction help = new HelpAction();
     public final JosmAction about = new AboutAction();
-    public final HistoryInfoAction historyinfo = new HistoryInfoAction();
 
     public final JMenu fileMenu = new JMenu(tr("File"));
     public final JMenu editMenu = new JMenu(tr("Edit"));
@@ -179,18 +179,18 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, download);
         add(fileMenu, upload);
+        fileMenu.addSeparator();
         add(fileMenu, exit);
         add(fileMenu, KeyEvent.VK_F, "file");
 
         add(editMenu, undo);
         add(editMenu, redo);
         editMenu.addSeparator();
-        add(editMenu, addnode);
         add(editMenu, copy);
-        add(editMenu, delete);
         add(editMenu, paste);
         add(editMenu, pasteTags);
         add(editMenu, duplicate);
+        add(editMenu, delete);
         editMenu.addSeparator();
         add(editMenu, selectAll);
         add(editMenu, unselectAll);
@@ -200,16 +200,8 @@ public class MainMenu extends JMenuBar {
         add(editMenu, preferences);
         add(editMenu, KeyEvent.VK_E, "edit");
 
-        for (String mode : AutoScaleAction.modes) {
-            JosmAction autoScaleAction = new AutoScaleAction(mode);
-            add(viewMenu, autoScaleAction);
-        }
-        viewMenu.addSeparator();
-        add(viewMenu, new ZoomOutAction());
-        add(viewMenu, new ZoomInAction());
-        viewMenu.addSeparator();
         // TODO move code to an "action" like the others?
-        final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe view"));
+        final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe View"));
         wireframe.setSelected(Main.pref.getBoolean("draw.wireframe", false));
         wireframe.setAccelerator(Shortcut.registerShortcut("menu:view:wireframe", tr("Toggle Wireframe view"),
                 KeyEvent.VK_W, Shortcut.GROUP_MENU).getKeyStroke());
@@ -222,6 +214,14 @@ public class MainMenu extends JMenuBar {
             }
         });
         viewMenu.add(wireframe);
+        viewMenu.addSeparator();
+        add(viewMenu, new ZoomInAction());
+        add(viewMenu, new ZoomOutAction());
+        viewMenu.addSeparator();
+        for (String mode : AutoScaleAction.modes) {
+            JosmAction autoScaleAction = new AutoScaleAction(mode);
+            add(viewMenu, autoScaleAction);
+        }
         add(viewMenu, KeyEvent.VK_V, "view");
 
         add(toolsMenu, splitWay);
@@ -233,12 +233,17 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, alignInLine);
         add(toolsMenu, ortho);
         toolsMenu.addSeparator();
+        add(toolsMenu, addnode);
         add(toolsMenu, createCircle);
         toolsMenu.addSeparator();
         add(toolsMenu, mergeNodes);
         add(toolsMenu, joinNodeWay);
         add(toolsMenu, unglueNodes);
+        toolsMenu.addSeparator();
+        add(toolsMenu, historyinfo);
         add(toolsMenu, KeyEvent.VK_T, "tools");
+
+        add(presetsMenu, KeyEvent.VK_P, "presets");
 
         if (!Main.pref.getBoolean("audio.menuinvisible")) {
             add(audioMenu, audioPlayPause);
@@ -251,20 +256,18 @@ public class MainMenu extends JMenuBar {
             add(audioMenu, KeyEvent.VK_A, "audio");
         }
 
-        add(presetsMenu, KeyEvent.VK_P, "presets");
-
-        JMenuItem check = new JMenuItem("DEBUG: Check Dataset");
+		/* TODO: Anyone really using this feature? */
+        /*JMenuItem check = new JMenuItem("DEBUG: Check Dataset");
         check.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DataSetChecker.check();
             }
         });
-        helpMenu.add(check);
+        helpMenu.add(check);*/
         current = helpMenu.add(help); // why is help not a JosmAction?
         current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
                 Shortcut.GROUP_DIRECT).getKeyStroke());
         add(helpMenu, about);
-        add(helpMenu, historyinfo);
         add(helpMenu, KeyEvent.VK_H, "help");
     }
 }
