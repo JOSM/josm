@@ -45,7 +45,7 @@ public class HelpAction extends AbstractAction {
         String helpTopic();
     }
 
-        private String languageCode = Main.getLanguageCodeU();
+    private String languageCode = Main.getLanguageCodeU();
     private JFrame helpBrowser = new JFrame(tr("JOSM Online Help"));
     private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
     private JEditorPane help = new JEditorPane();

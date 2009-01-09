@@ -83,11 +83,11 @@ public class MapFrame extends JPanel implements Destroyable {
 
         // toolbar
         toolBarActions.setFloatable(false);
-        addMapMode(new IconToggleButton(new ZoomAction(this)));
         addMapMode(new IconToggleButton(new SelectAction(this)));
         addMapMode(new IconToggleButton(new DrawAction(this)));
-        addMapMode(new IconToggleButton(new DeleteAction(this)));
         addMapMode(new IconToggleButton(new ExtrudeAction(this)));
+        addMapMode(new IconToggleButton(new ZoomAction(this)));
+        addMapMode(new IconToggleButton(new DeleteAction(this)));
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 
