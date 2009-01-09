@@ -112,6 +112,7 @@ public class SimplePaintVisitor implements Visitor {
         virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
         virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
         segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
+        getColors();
 
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
             Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
