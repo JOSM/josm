@@ -751,34 +751,39 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             } else
                 g.drawRect(p.x - radius, p.y - radius, size, size);
 
-			String name = getNodeName(n);
-			if (name!=null /* && annotate */)
-			{
-				g.setColor(textColor);
-				Font defaultFont = g.getFont();
-				g.setFont (orderFont);
-				g.drawString (name, p.x+radius+2, p.y+radius+2);
-				g.setFont(defaultFont);
-			}
+            String name = getNodeName(n);
+            if (name!=null /* && annotate */)
+            {
+                g.setColor(textColor);
+                Font defaultFont = g.getFont();
+                g.setFont (orderFont);
+                g.drawString (name, p.x+radius+2, p.y+radius+2);
+                g.setFont(defaultFont);
+            }
         }
+    }
+
+    public void getColors()
+    {
+        super.getColors();
+        untaggedColor = Main.pref.getColor(marktr("untagged"),Color.GRAY);
+        textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
     }
 
     // NW 111106 Overridden from SimplePaintVisitor in josm-1.4-nw1
     // Shows areas before non-areas
     public void visitAll(DataSet data, Boolean virtual) {
-	
-		boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
-		long profilerStart = java.lang.System.currentTimeMillis();
-		long profilerLast = profilerStart;
-		int profilerN;
-		if(profiler)
-		{
-			System.out.println("Mappaint Profiler");
-		}
-		
+
+        boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
+        long profilerStart = java.lang.System.currentTimeMillis();
+        long profilerLast = profilerStart;
+        int profilerN;
+        if(profiler)
+        {
+            System.out.println("Mappaint Profiler");
+        }
+
         getSettings(virtual);
-        untaggedColor = Main.pref.getColor(marktr("untagged"),Color.GRAY);
-        textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
         fillAreas = Main.pref.getBoolean("mappaint.fillareas", true);
@@ -794,34 +799,34 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         alreadyDrawnAreas = new LinkedList<Way>();
         selectedCall = false;
 
-		if(profiler) 
-		{
-			System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
-			profilerLast = java.lang.System.currentTimeMillis();
-		}
-		
+        if(profiler) 
+        {
+            System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
+
         if (fillAreas && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
-			/*** RELATIONS ***/
-			profilerN = 0;
+            /*** RELATIONS ***/
+            profilerN = 0;
             for (final Relation osm : data.relations)
             {
                 if(!osm.deleted && !osm.incomplete)
-				{
+                {
                     osm.visit(this);
-					profilerN++;
-				}
+                    profilerN++;
+                }
             }
 
-			if(profiler) 
-			{
-				System.out.format("Relations: %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-				profilerLast = java.lang.System.currentTimeMillis();
-			}
-			
-			/*** AREAS ***/
-			profilerN = 0;
+            if(profiler) 
+            {
+                System.out.format("Relations: %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                profilerLast = java.lang.System.currentTimeMillis();
+            }
+
+            /*** AREAS ***/
+            profilerN = 0;
             for (final Way osm : data.ways)
             {
                 if (!osm.incomplete && !osm.deleted && !alreadyDrawn.contains(osm))
@@ -835,113 +840,113 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
             }
             alreadyDrawnAreas = null;
-			
-			if(profiler) 
-			{
-				System.out.format("Areas    : %4dms, n=%d\n",  (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-				profilerLast = java.lang.System.currentTimeMillis();
-			}
 
-			/*** WAYS ***/
-			profilerN = 0;
+            if(profiler)
+            {
+                System.out.format("Areas    : %4dms, n=%d\n",  (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                profilerLast = java.lang.System.currentTimeMillis();
+            }
+
+            /*** WAYS ***/
+            profilerN = 0;
             fillAreas = false;
             for (final OsmPrimitive osm : noAreaWays)
             {
                 osm.visit(this);
                 profilerN++;
             }
-			
-			if(profiler) 
-			{
-				System.out.format("Ways     : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-				profilerLast = java.lang.System.currentTimeMillis();
-			}
+
+            if(profiler)
+            {
+                System.out.format("Ways     : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                profilerLast = java.lang.System.currentTimeMillis();
+            }
         }
         else
         {
-			/*** WAYS (filling disabled)  ***/			
-			profilerN = 0;
+            /*** WAYS (filling disabled)  ***/
+            profilerN = 0;
             for (final OsmPrimitive osm : data.ways)
                 if (!osm.incomplete && !osm.deleted && !osm.selected)
-				{
+                {
                     osm.visit(this);
                     profilerN++;
-				}
-					
-			if(profiler) 
-			{
-				System.out.format("Ways     : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-				profilerLast = java.lang.System.currentTimeMillis();
-			}
+                }
+
+            if(profiler)
+            {
+                System.out.format("Ways     : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                profilerLast = java.lang.System.currentTimeMillis();
+            }
         }
 
-		/*** SELECTED  ***/
+        /*** SELECTED  ***/
         selectedCall = true;
-		profilerN = 0;
+        profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected()) {
             if (!osm.incomplete && !osm.deleted
             && !(osm instanceof Node) && !alreadyDrawn.contains(osm))
-			{
+            {
                 osm.visit(this);
-				profilerN++;
-			}
+                profilerN++;
+            }
         }
-		
-		if(profiler) 
-		{
-			System.out.format("Selected : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-			profilerLast = java.lang.System.currentTimeMillis();
-		}
 
-		/*** DISPLAY CACHED SEGMENTS (WAYS) NOW ***/
+        if(profiler)
+        {
+            System.out.format("Selected : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
+
+        /*** DISPLAY CACHED SEGMENTS (WAYS) NOW ***/
         displaySegments();
-		/*System.out.println("display segments " + (java.lang.System.currentTimeMillis()-profilerLast) + "ms");
-		profilerLast = java.lang.System.currentTimeMillis();*/
+        /*System.out.println("display segments " + (java.lang.System.currentTimeMillis()-profilerLast) + "ms");
+        profilerLast = java.lang.System.currentTimeMillis();*/
 
-		/*** NODES ***/
-		profilerN = 0;
+        /*** NODES ***/
+        profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
             if (!osm.incomplete && !osm.deleted && !alreadyDrawn.contains(osm))
             {
                 osm.visit(this);
-				profilerN++;
-			}
-				
-		if(profiler) 
-		{
-			System.out.format("Nodes    : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-			profilerLast = java.lang.System.currentTimeMillis();
-		}
+                profilerN++;
+            }
+
+        if(profiler)
+        {
+            System.out.format("Nodes    : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
 
         alreadyDrawn = null;
 
-		/*** VIRTUAL  ***/
+        /*** VIRTUAL  ***/
         if (virtualNodeSize != 0)
         {
-			profilerN = 0;
+            profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
                 if (!osm.incomplete && !osm.deleted)
-				{
+                {
                     visitVirtual((Way)osm);
-					profilerN++;
-				}
-					
-			if(profiler) 
-			{
-				System.out.format("Virtual  : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-				profilerLast = java.lang.System.currentTimeMillis();
-			}
-            
-			displaySegments(null);
-			/*System.out.println("display segments virtual " + (java.lang.System.currentTimeMillis()-profilerLast) + "ms");
-			profilerLast = java.lang.System.currentTimeMillis();*/
+                    profilerN++;
+                }
+
+            if(profiler)
+            {
+                System.out.format("Virtual  : %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                profilerLast = java.lang.System.currentTimeMillis();
+            }
+
+            displaySegments(null);
+            /*System.out.println("display segments virtual " + (java.lang.System.currentTimeMillis()-profilerLast) + "ms");
+            profilerLast = java.lang.System.currentTimeMillis();*/
         }
-		
-		if(profiler) 
-		{
-			System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
-		}
+
+        if(profiler)
+        {
+            System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
+        }
     }
 
     /**

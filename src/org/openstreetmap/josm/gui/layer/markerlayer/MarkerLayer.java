@@ -146,12 +146,17 @@ public class MarkerLayer extends Layer {
         return ImageProvider.get("layer", "marker_small");
     }
 
+    static public Color getColor(String name)
+    {
+        return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, Color.gray);
+    }
+
     @Override public void paint(Graphics g, MapView mv) {
         boolean mousePressedTmp = mousePressed;
         Point mousePos = mv.getMousePosition();
         String mkrTextShow = Main.pref.get("marker.show "+name, "show");
 
-        g.setColor(Main.pref.getColor(marktr("gps marker"), "layer "+name, Color.gray));
+        g.setColor(getColor(name));
 
         for (Marker mkr : data) {
             if (mousePos != null && mkr.containsPoint(mousePos)) {
@@ -190,7 +195,7 @@ public class MarkerLayer extends Layer {
         color.putClientProperty("help", "Action/LayerCustomizeColor");
         color.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps marker"), "layer "+name, Color.gray));
+                JColorChooser c = new JColorChooser(getColor(name));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
                 int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, options, options[0]);

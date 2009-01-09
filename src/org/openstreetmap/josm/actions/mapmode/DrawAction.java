@@ -81,7 +81,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
 
         //putValue("help", "Action/AddNode/Autnode");
-        selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
+        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
 
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
     }

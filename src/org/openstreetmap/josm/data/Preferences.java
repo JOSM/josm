@@ -182,6 +182,23 @@ public class Preferences {
         return all;
     }
 
+    synchronized public TreeMap<String, String> getAllColors() {
+        final TreeMap<String,String> all = new TreeMap<String,String>();
+        for (final Entry<String,String> e : defaults.entrySet())
+            if (e.getKey().startsWith("color."))
+                all.put(e.getKey().substring(6), e.getValue());
+        for (final Entry<String,String> e : properties.entrySet())
+            if (e.getKey().startsWith("color."))
+                all.put(e.getKey().substring(6), e.getValue());
+        for (final Entry<String,String> e : override.entrySet())
+            if (e.getKey().startsWith("color."))
+                if (e.getValue() == null)
+                    all.remove(e.getKey().substring(6));
+                else
+                    all.put(e.getKey().substring(6), e.getValue());
+        return all;
+    }
+
     synchronized public Map<String, String> getDefaults() {
         return defaults;
     }
@@ -344,12 +361,7 @@ public class Preferences {
      * @return a Color object for the configured colour, or the default value if none configured.
      */
     synchronized public Color getColor(String colName, Color def) {
-        String colStr = get("color."+colName);
-        if (colStr.equals("")) {
-            put("color."+colName, ColorHelper.color2html(def));
-            return def;
-        }
-        return ColorHelper.html2color(colStr);
+        return getColor(colName, null, def);
     }
 
     /**
@@ -361,17 +373,11 @@ public class Preferences {
      * @return a Color object for the configured colour, or the default value if none configured.
      */
     synchronized public Color getColor(String colName, String specName, Color def) {
-        String colStr = get("color."+specName);
-        if(colStr.equals(""))
-        {
-            colStr = get("color."+colName);
-            if (colStr.equals("")) {
-                put("color."+colName, ColorHelper.color2html(def));
-                return def;
-            }
-        }
         putDefault("color."+colName, ColorHelper.color2html(def));
-        return ColorHelper.html2color(colStr);
+        String colStr = specName != null ? get("color."+specName) : "";
+        if(colStr.equals(""))
+            colStr = get("color."+colName);
+        return colStr.equals("") ? def : ColorHelper.html2color(colStr);
     }
 
     synchronized public boolean putColor(String colName, Color val) {

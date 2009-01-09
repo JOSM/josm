@@ -84,15 +84,19 @@ public class SimplePaintVisitor implements Visitor {
 
     Rectangle bbox = new Rectangle();
 
-    protected void getSettings(Boolean virtual) {
-        inactiveColor = Main.pref.getColor(marktr("inactive"), Color.DARK_GRAY);
-        selectedColor = Main.pref.getColor(marktr("selected"), Color.WHITE);
-        nodeColor = Main.pref.getColor(marktr("node"), Color.RED);
+    public void getColors()
+    {
+        inactiveColor = Main.pref.getColor(marktr("inactive"), Color.darkGray);
+        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
+        nodeColor = Main.pref.getColor(marktr("node"), Color.yellow);
         dfltWayColor = Main.pref.getColor(marktr("way"), darkblue);
         relationColor = Main.pref.getColor(marktr("relation"), teal);
         untaggedWayColor = Main.pref.getColor(marktr("untagged way"), darkgreen);
         incompleteColor = Main.pref.getColor(marktr("incomplete way"), darkerblue);
         backgroundColor = Main.pref.getColor(marktr("background"), Color.BLACK);
+    }
+
+    protected void getSettings(Boolean virtual) {
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction");
         showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number");

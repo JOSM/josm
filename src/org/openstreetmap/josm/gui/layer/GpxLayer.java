@@ -107,6 +107,11 @@ public class GpxLayer extends Layer {
         return getToolTipText();
     }
 
+    static public Color getColor(String name)
+    {
+        return Main.pref.getColor(marktr("gps point"), name != null ? "layer "+name : null, Color.gray);
+    }
+
     @Override public Component[] getMenuEntries() {
         JMenuItem line = new JMenuItem(tr("Customize line drawing"), ImageProvider.get("mapmode/addsegment"));
         line.addActionListener(new ActionListener() {
@@ -141,7 +146,7 @@ public class GpxLayer extends Layer {
         color.putClientProperty("help", "Action/LayerCustomizeColor");
         color.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+name, Color.gray));
+                JColorChooser c = new JColorChooser(getColor(name));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
                 int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -369,7 +374,7 @@ public class GpxLayer extends Layer {
          ********** STEP 1 - GET CONFIG VALUES **************************
          ****************************************************************/
         // Long startTime = System.currentTimeMillis();
-        Color neutralColor = Main.pref.getColor(marktr("gps point"), "layer "+name, Color.GRAY);
+        Color neutralColor = getColor(name);
         boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");                     // also draw lines between points belonging to different segments
         boolean direction = Main.pref.getBoolean("draw.rawgps.direction");                        // draw direction arrows on the lines
         int maxLineLength = -1;

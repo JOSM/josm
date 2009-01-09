@@ -78,7 +78,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
         putValue("help", "Action/Extrude/Extrude");
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
-        selectedColor = Main.pref.getColor(marktr("selected"), Color.YELLOW);
+        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
     }
 
     private static Cursor getCursor(String name, String mod, int def) {

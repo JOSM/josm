@@ -32,8 +32,12 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
+import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.MapScaler;
+import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -94,14 +98,8 @@ public class ColorPreference implements PreferenceSetting {
     }
 
     public void addGui(final PreferenceDialog gui) {
-        // initial fill with colors from preferences:
-        Map<String,String> prefColorMap = new TreeMap<String, String>(Main.pref.getAllPrefix("color."));
-        fixColorPrefixes(prefColorMap);
-        Map<String,String> colorMap = new TreeMap<String, String>();
-        for(String key : prefColorMap.keySet()) {
-            colorMap.put(key.substring("color.".length()), prefColorMap.get(key));
-        }
-        setColorModel(colorMap);
+        fixColorPrefixes();
+        setColorModel(Main.pref.getAllColors());
 
         colors = new JTable(tableModel) {
             @Override public boolean isCellEditable(int row, int column) {
@@ -152,26 +150,11 @@ public class ColorPreference implements PreferenceSetting {
     /**
      * Add all missing color entries.
      */
-    private void fixColorPrefixes(Map<String, String> prefColorMap) {
-        String[] cp = {
-            marktr("background"), ColorHelper.color2html(Color.black),
-            marktr("node"), ColorHelper.color2html(Color.red),
-            marktr("way"), ColorHelper.color2html(SimplePaintVisitor.darkblue),
-            marktr("incomplete way"), ColorHelper.color2html(SimplePaintVisitor.darkerblue),
-            marktr("relation"), ColorHelper.color2html(SimplePaintVisitor.teal),
-            marktr("selected"), ColorHelper.color2html(Color.white),
-            marktr("gps marker"), ColorHelper.color2html(Color.gray),
-            marktr("gps point"), ColorHelper.color2html(Color.gray),
-            marktr("conflict"), ColorHelper.color2html(Color.gray),
-            marktr("scale"), ColorHelper.color2html(Color.white),
-            marktr("inactive"), ColorHelper.color2html(Color.darkGray),
-        };
-        for (int i = 0; i < cp.length/2; ++i)
-        {
-            if (!Main.pref.hasKey("color."+cp[i*2]))
-                Main.pref.put("color."+cp[i*2], cp[i*2+1]);
-            Main.pref.putDefault("color."+cp[i*2], cp[i*2+1]);
-        }
+    private void fixColorPrefixes() {
+        (new MapPaintVisitor()).getColors();
+        MarkerLayer.getColor(null);
+        MapScaler.getColor();
+        ConflictDialog.getColor();
     }
 
     public boolean ok() {
