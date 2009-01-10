@@ -359,14 +359,14 @@ public class SimplePaintVisitor implements Visitor {
 
     protected boolean isPolygonVisible(Polygon polygon) {
         Rectangle bounds = polygon.getBounds();
-		if (bounds.x > nc.getWidth()) return false;
-		else if (bounds.y > nc.getHeight()) return false;
-		else if (bounds.x + polygon.getBounds().width < 0) return false;
-		else if (bounds.y + polygon.getBounds().height < 0) return false;
-        
+        if (bounds.x > nc.getWidth()) return false;
+        else if (bounds.y > nc.getHeight()) return false;
+        else if (bounds.x + bounds.width < 0) return false;
+        else if (bounds.y + bounds.height < 0) return false;
+
         return true;
     }
-        
+
     public void setGraphics(Graphics g) {
         this.g = g;
     }

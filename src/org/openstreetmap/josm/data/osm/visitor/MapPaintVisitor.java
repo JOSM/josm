@@ -78,7 +78,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         // check, if the node is visible at all
         Point p = nc.getPoint(n.eastNorth);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
-        
+
         IconElemStyle nodeStyle = (IconElemStyle)styles.get(n);
         if (nodeStyle != null && isZoomOk(nodeStyle))
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
@@ -99,15 +99,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return;
 
         // check, if the way is visible at all
-        Polygon polygon = new Polygon();
-        for (Node n : w.nodes)
-        {
-            Point p = nc.getPoint(n.eastNorth);
-            polygon.addPoint(p.x,p.y);
-        }
+        Polygon polygon = getPolygon(w);
         if(!isPolygonVisible(polygon))
             return;
-        
+
         ElemStyle wayStyle = styles.get(w);
 
         if(!isZoomOk(wayStyle))
@@ -124,7 +119,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 areacolor = ((AreaElemStyle)wayStyle).color;
                 l = ((AreaElemStyle)wayStyle).line;
                 if (fillAreas)
-                    drawWayAsArea(w, areacolor);
+                    drawArea(polygon, w.selected ? selectedColor : areacolor);
             }
         }
 
@@ -341,7 +336,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 drawWay((Way)osm, ((AreaElemStyle)style).line, selectedColor, true);
                 if(area)
-                    drawWayAsArea((Way)osm, areaselected ? selectedColor
+                    drawArea(getPolygon((Way)osm), areaselected ? selectedColor
                     : ((AreaElemStyle)style).color);
             }
             else
@@ -579,12 +574,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
                 for (PolyData pd : poly)
                 {
-                    Color color = (pd.way.selected || r.selected) ? selectedColor
-                    : ((AreaElemStyle)wayStyle).color;
-                    g.setColor(new Color( color.getRed(), color.getGreen(),
-                    color.getBlue(), fillAlpha));
-
-                    g.fillPolygon(pd.get());
+                    drawArea(pd.get(), (pd.way.selected || r.selected) ? selectedColor
+                    : ((AreaElemStyle)wayStyle).color);
                 }
             }
             for (Way wInner : inner)
@@ -652,7 +643,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             drawSelectedRelation(r);
     }
 
-    protected void drawWayAsArea(Way w, Color color)
+    protected Polygon getPolygon(Way w)
     {
         Polygon polygon = new Polygon();
 
@@ -661,11 +652,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             Point p = nc.getPoint(n.eastNorth);
             polygon.addPoint(p.x,p.y);
         }
+        return polygon;
+    }
 
-        Color mycolor = w.selected ? selectedColor : color;
+    protected void drawArea(Polygon polygon, Color color)
+    {
         // set the opacity (alpha) level of the filled polygon
-        g.setColor(new Color( mycolor.getRed(), mycolor.getGreen(), mycolor.getBlue(), fillAlpha));
-
+        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
     }
 
@@ -813,11 +806,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         alreadyDrawn = new LinkedList<OsmPrimitive>();
         alreadyDrawnAreas = new LinkedList<Way>();
         selectedCall = false;
-        
+
         // update the style name, just in case the user changed it in the meantime
         styles.updateStyleName();
-        
-        if(profiler) 
+
+        if(profiler)
         {
             System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
             profilerLast = java.lang.System.currentTimeMillis();
@@ -837,7 +830,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
             }
 
-            if(profiler) 
+            if(profiler)
             {
                 System.out.format("Relations: %4dms, n=%d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
                 profilerLast = java.lang.System.currentTimeMillis();
