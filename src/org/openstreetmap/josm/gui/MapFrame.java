@@ -78,6 +78,8 @@ public class MapFrame extends JPanel implements Destroyable {
 
         add(mapView = new MapView(), BorderLayout.CENTER);
 
+        new FileDrop(mapView);
+
         // show menu entry
         Main.main.menu.viewMenu.setVisible(true);
 

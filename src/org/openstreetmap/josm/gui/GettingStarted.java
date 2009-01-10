@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 
 import javax.swing.JScrollPane;
 import javax.swing.JEditorPane;
@@ -131,8 +132,11 @@ public class GettingStarted extends JPanel {
 
         // panel.add(GBC.glue(0,1), GBC.eol());
         //panel.setMinimumSize(new Dimension(400, 600));
-        JScrollPane scroller = new JScrollPane(new LinkGeneral(content));
+        Component linkGeneral = new LinkGeneral(content);
+        JScrollPane scroller = new JScrollPane(linkGeneral);
         scroller.setViewportBorder(new EmptyBorder(10,100,10,100));
         add(scroller, BorderLayout.CENTER);
+
+        new FileDrop(linkGeneral);
     }
 }
