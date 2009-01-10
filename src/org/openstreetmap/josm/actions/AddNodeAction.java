@@ -47,7 +47,7 @@ public final class AddNodeAction extends JosmAction {
 
     public AddNodeAction() {
         super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude and longitude."),
-        Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
+        Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
         Shortcut.SHIFT_DEFAULT), true);
     }
 
@@ -70,7 +70,7 @@ public final class AddNodeAction extends JosmAction {
 
         while(nnew == null) {
             JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-            pane.createDialog(Main.parent, tr("Add Node")).setVisible(true);
+            pane.createDialog(Main.parent, tr("Add Node...")).setVisible(true);
             if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
                 return;
             try {
