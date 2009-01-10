@@ -85,7 +85,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         // show the minimize button
         final JLabel minimize = new JLabel(ImageProvider.get("misc", "normal"));
         titleBar.add(minimize);
-        
+
         // scale down the dialog icon
         ImageIcon inIcon = ImageProvider.get("dialogs", iconName);
         ImageIcon smallIcon = new ImageIcon(inIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
@@ -108,7 +108,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                         }
                     }
                 }
-                
+
                 Main.pref.put(action.prefname+".minimized", !nowVisible);
                 if(nowVisible == true) {
                     setPreferredSize(new Dimension(330,preferredHeight));
