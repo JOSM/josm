@@ -356,6 +356,23 @@ public class TaggingPreset extends AbstractAction {
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
 
+    public static class Optional extends Item {
+        // TODO: Draw a box around optional stuff
+        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            p.add(new JLabel(" "), GBC.eol()); // space
+            p.add(new JLabel(tr("Optional Attributes:")), GBC.eol());
+            p.add(new JLabel(" "), GBC.eol()); // space
+        }
+        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+    }
+
+    public static class Space extends Item {
+        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            p.add(new JLabel(" "), GBC.eol()); // space
+        }
+        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+    }
+
     public static class Key extends Item {
         public String key;
         public String value;
@@ -440,9 +457,11 @@ public class TaggingPreset extends AbstractAction {
         parser.mapOnStart("separator", TaggingPresetSeparator.class);
         parser.mapBoth("group", TaggingPresetMenu.class);
         parser.map("text", Text.class);
+        parser.mapOnStart("optional", Optional.class);
         parser.map("check", Check.class);
         parser.map("combo", Combo.class);
         parser.map("label", Label.class);
+        parser.map("space", Space.class);
         parser.map("key", Key.class);
         LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
         TaggingPresetMenu lastmenu = null;
