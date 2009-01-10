@@ -33,7 +33,8 @@ public interface Projection {
     public static Projection[] allProjections = new Projection[]{
         new Epsg4326(),
         new Mercator(),
-        new Lambert()
+        new Lambert(),
+        new LambertEST()
     };
 
     /**

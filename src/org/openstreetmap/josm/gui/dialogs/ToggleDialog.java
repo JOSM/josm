@@ -195,7 +195,7 @@ public class ToggleDialog extends JPanel implements Helpful {
 
         // show the close button
         JButton close = new JButton(ImageProvider.get("misc", "close"));
-        close.setToolTipText(tr("Close this panel. You can reopen it with the buttons in the left toolbar"));
+        close.setToolTipText(tr("Close this panel. You can reopen it with the buttons in the left toolbar."));
         close.setBorder(BorderFactory.createEmptyBorder());
         final ActionListener closeActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {

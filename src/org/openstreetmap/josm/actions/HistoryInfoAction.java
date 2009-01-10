@@ -22,39 +22,40 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class HistoryInfoAction extends JosmAction {
 
     public HistoryInfoAction() {
-        super(tr("History of Node/Way"), "about",tr("Display history information about OSM ways or nodes."),
-        Shortcut.registerShortcut("core:history", tr("History of Node/Way"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
+        super(tr("History of Element"), "about",
+        tr("Display history information about OSM ways or nodes."),
+        Shortcut.registerShortcut("core:history",
+        tr("History of Element"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
     }
 
     public void actionPerformed(ActionEvent e) {
-                final Collection<Object> sel = new LinkedList<Object>();
-                new Visitor() {
-                        public void visit(Node n) {
-                                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/node/" + n.id + "/history");
-                                sel.add(n);
-                        }
+        final Collection<Object> sel = new LinkedList<Object>();
+        new Visitor() {
+            public void visit(Node n) {
+                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/node/" + n.id + "/history");
+                sel.add(n);
+            }
 
-                        public void visit(Way w) {
-                                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/way/" + w.id + "/history");
-                                sel.add(w);
-                        }
+            public void visit(Way w) {
+                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/way/" + w.id + "/history");
+                sel.add(w);
+            }
 
-                        public void visit(Relation e) {
-                                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/relation/" + e.id + "/history");
-                                sel.add(e);
-                        }
+            public void visit(Relation e) {
+                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/relation/" + e.id + "/history");
+                sel.add(e);
+            }
 
-                        public void visitAll() {
-                                for (OsmPrimitive osm : Main.ds.getSelected())
-                                        osm.visit(this);
-                        }
-                }.visitAll();
+            public void visitAll() {
+                for (OsmPrimitive osm : Main.ds.getSelected())
+                    osm.visit(this);
+            }
+        }.visitAll();
 
-                if (sel.isEmpty()) {
-					JOptionPane.showMessageDialog(Main.parent,
-							tr("Please select at least one node or way."));
-					return;
-                }
+        if (sel.isEmpty()) {
+            JOptionPane.showMessageDialog(Main.parent,
+            tr("Please select at least one node, way or relation."));
+                return;
+        }
     }
-
 }
