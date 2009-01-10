@@ -30,10 +30,17 @@ public class ElemStyles
         }
     }
     HashMap<String, StyleSet> styleSet;
+    String styleName;
 
     public ElemStyles()
     {
         styleSet = new HashMap<String, StyleSet>();
+        updateStyleName();
+    }
+
+    public void updateStyleName() {
+        // Main.pref.get() is slow when done thousands of times, do it once here and cache it
+        styleName = Main.pref.get("mappaint.style", "standard");
     }
 
     private String getKey(String k, String v, String b)
@@ -77,7 +84,7 @@ public class ElemStyles
     private StyleSet getStyleSet(String name, boolean create)
     {
         if(name == null)
-            name = Main.pref.get("mappaint.style", "standard");
+            name = styleName;
         StyleSet s = styleSet.get(name);
         if(create && s == null)
         {

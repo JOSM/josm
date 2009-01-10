@@ -75,6 +75,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * @param n The node to draw.
      */
     public void visit(Node n) {
+        // check, if the node is visible at all
+        Point p = nc.getPoint(n.eastNorth);
+        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
+        
         IconElemStyle nodeStyle = (IconElemStyle)styles.get(n);
         if (nodeStyle != null && isZoomOk(nodeStyle))
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
@@ -94,6 +98,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(w.nodes.size() < 2)
             return;
 
+        // check, if the way is visible at all
+        Polygon polygon = new Polygon();
+        for (Node n : w.nodes)
+        {
+            Point p = nc.getPoint(n.eastNorth);
+            polygon.addPoint(p.x,p.y);
+        }
+        if(!isPolygonVisible(polygon))
+            return;
+        
         ElemStyle wayStyle = styles.get(w);
 
         if(!isZoomOk(wayStyle))
@@ -103,17 +117,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Color areacolor = untaggedColor;
         if(wayStyle!=null)
         {
-            boolean area = false;
             if(wayStyle instanceof LineElemStyle)
                 l = (LineElemStyle)wayStyle;
             else if (wayStyle instanceof AreaElemStyle)
             {
                 areacolor = ((AreaElemStyle)wayStyle).color;
                 l = ((AreaElemStyle)wayStyle).line;
-                area = true;
+                if (fillAreas)
+                    drawWayAsArea(w, areacolor);
             }
-            if (area && fillAreas)
-                drawWayAsArea(w, areacolor);
         }
 
         drawWay(w, l, areacolor, w.selected);
@@ -128,6 +140,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         int width = defaultSegmentWidth;
         int realWidth = 0; //the real width of the element in meters
         boolean dashed = false;
+        Node lastN;
 
         if(l != null)
         {
@@ -146,7 +159,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(w.selected)
             color = selectedColor;
 
-        Node lastN;
+        // draw overlays under the way
         if(l != null && l.overlays != null)
         {
             for(LineElemStyle s : l.overlays)
@@ -167,6 +180,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
         }
 
+        // draw the way
         lastN = null;
         for(Node n : w.nodes)
         {
@@ -175,6 +189,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             lastN = n;
         }
 
+        // draw overlays above the way
         if(l != null && l.overlays != null)
         {
             for(LineElemStyle s : l.overlays)
@@ -798,7 +813,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         alreadyDrawn = new LinkedList<OsmPrimitive>();
         alreadyDrawnAreas = new LinkedList<Way>();
         selectedCall = false;
-
+        
+        // update the style name, just in case the user changed it in the meantime
+        styles.updateStyleName();
+        
         if(profiler) 
         {
             System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));

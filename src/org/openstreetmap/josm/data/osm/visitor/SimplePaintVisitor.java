@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
@@ -356,6 +357,16 @@ public class SimplePaintVisitor implements Visitor {
         return true;
     }
 
+    protected boolean isPolygonVisible(Polygon polygon) {
+        Rectangle bounds = polygon.getBounds();
+		if (bounds.x > nc.getWidth()) return false;
+		else if (bounds.y > nc.getHeight()) return false;
+		else if (bounds.x + polygon.getBounds().width < 0) return false;
+		else if (bounds.y + polygon.getBounds().height < 0) return false;
+        
+        return true;
+    }
+        
     public void setGraphics(Graphics g) {
         this.g = g;
     }
