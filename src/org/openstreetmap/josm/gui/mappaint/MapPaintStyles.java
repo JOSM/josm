@@ -48,21 +48,24 @@ public class MapPaintStyles {
     }
 
     public static void readFromPreferences() {
+        String[] a = null;
+        
         /* don't prefix icon path, as it should be generic */
         String internalicon = "resource://images/styles/standard/;resource://images/styles/";
         String internalfile = "standard=resource://styles/standard/elemstyles.xml";
 
-        iconDirs = Main.pref.get("mappaint.iconpaths");
-        iconDirs = iconDirs == null || iconDirs.length() == 0 ? internalicon : iconDirs + ";" + internalicon;
+        iconDirs = Main.pref.get("mappaint.icon.sources");
+        if(Main.pref.getBoolean("mappaint.icon.enable-defaults", true))
+            iconDirs = iconDirs == null || iconDirs.length() == 0 ? internalicon : iconDirs + ";" + internalicon;
 
-        String file = Main.pref.get("mappaint.sources");
-        file = file == null || file.length() == 0 ? internalfile : internalfile + ";" + file;
+        String file = Main.pref.get("mappaint.style.sources");
+        if(Main.pref.getBoolean("mappaint.style.enable-defaults", true))
+            file = (file == null || file.length() == 0) ? internalfile : internalfile + ";" + file;
 
         for(String fileset : file.split(";"))
         {
             try
             {
-                String[] a;
                 if(fileset.indexOf("=") >= 0)
                     a = fileset.split("=", 2);
                 else
@@ -75,7 +78,8 @@ public class MapPaintStyles {
             }
             catch (Exception e)
             {
-                System.out.println("Mappaint-Style problems: \"" + fileset + "\"");
+                System.out.println("Mappaint-Style \"" + a[0] + "\" file \"" + a[1] + "\"");
+                System.out.println("Mappaint-Style problems: " + e);
             }
         }
         iconDirs = null;
