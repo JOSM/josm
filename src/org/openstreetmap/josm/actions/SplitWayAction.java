@@ -249,7 +249,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             if (selectedWay.keys != null) {
                 wayToAdd.keys = new HashMap<String, String>(selectedWay.keys);
                 wayToAdd.checkTagged();
-                                wayToAdd.checkDirectionTagged();
+                wayToAdd.checkDirectionTagged();
             }
             newWays.add(wayToAdd);
             wayToAdd.nodes.addAll(chunkIt.next());
