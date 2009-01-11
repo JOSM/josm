@@ -61,7 +61,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
         private final Layer layer;
 
         public DeleteLayerAction(Layer layer) {
-            super(tr("Delete"), ImageProvider.get("dialogs", "delete"));
+            super(tr("Delete"), SideButton.makeIcon("delete"));
             putValue(SHORT_DESCRIPTION, tr("Delete the selected layer."));
             putValue("help", "Action/LayerDelete");
             this.layer = layer;
@@ -97,7 +97,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
         private final Layer layer;
 
         public ShowHideLayerAction(Layer layer) {
-            super(tr("Show/Hide"), ImageProvider.get("dialogs", "showhide"));
+            super(tr("Show/Hide"), SideButton.makeIcon("showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", "Action/LayerShowHide");
             this.layer = layer;
@@ -253,7 +253,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
         buttonPanel.add(new SideButton(new ShowHideLayerAction(null)));
         buttonPanel.add(new SideButton(deleteAction));
 
-        mergeButton = new SideButton("Merge", "mergedown", "LayerList", tr("Merge the layer directly below into the selected layer."),
+        mergeButton = new SideButton("mergedown", "LayerList", tr("Merge the layer directly below into the selected layer."),
         new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 Layer lTo = (Layer)instance.getSelectedValue();
@@ -264,7 +264,6 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
                 mapView.repaint();
             }
         });
-        mergeButton.setText(null);
         buttonPanel.add(mergeButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
@@ -285,7 +284,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
         upButton.setEnabled(sel > 0);
         downButton.setEnabled(sel >= 0 && sel < model.getSize()-1);
         deleteAction.setEnabled(!model.isEmpty());
-        
+
         if(model.getSize() != 0) {
             setTitle(tr("Layers: {0}", model.getSize()), true);
         } else {

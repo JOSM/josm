@@ -20,14 +20,14 @@ public class SideButton extends JButton {
         setText(null);
     }
 
-    private static ImageIcon smallIcon(String imagename) {
+    public static ImageIcon makeIcon(String imagename) {
         Image im = ImageProvider.get("dialogs", imagename).getImage();
         return new ImageIcon(im.getScaledInstance(20 , 20, Image.SCALE_SMOOTH));
     }
 
     public SideButton(String imagename, String property, String tooltip, ActionListener actionListener)
     {
-        super(smallIcon(imagename));
+        super(makeIcon(imagename));
         doStyle();
         setActionCommand(imagename);
         addActionListener(actionListener);
@@ -35,18 +35,18 @@ public class SideButton extends JButton {
     }
     public SideButton(String name, String imagename, String property, String tooltip, Shortcut shortcut, ActionListener actionListener)
     {
-        super(smallIcon(imagename));
+        super(tr(name), makeIcon(imagename));
         if(shortcut != null)
-                {
+        {
             shortcut.setMnemonic(this);
-                        if(tooltip != null)
+            if(tooltip != null)
                 tooltip = Main.platform.makeTooltip(tooltip, shortcut);
-                }
+        }
         setup(name, property, tooltip, actionListener);
     }
     public SideButton(String name, String imagename, String property, String tooltip, ActionListener actionListener)
     {
-        super(smallIcon(imagename));
+        super(tr(name), makeIcon(imagename));
         setup(name, property, tooltip, actionListener);
     }
     private void setup(String name, String property, String tooltip, ActionListener actionListener)
