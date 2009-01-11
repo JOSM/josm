@@ -20,6 +20,12 @@ public class SideButton extends JButton {
         setText(null);
     }
 
+    public SideButton(Action action, String imagename)
+    {
+        this(action);
+        setIcon(makeIcon(imagename));
+    }
+
     public static ImageIcon makeIcon(String imagename) {
         Image im = ImageProvider.get("dialogs", imagename).getImage();
         return new ImageIcon(im.getScaledInstance(20 , 20, Image.SCALE_SMOOTH));
