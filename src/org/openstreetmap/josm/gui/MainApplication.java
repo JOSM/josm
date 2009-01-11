@@ -45,8 +45,8 @@ public class MainApplication extends Main {
      * Construct an main frame, ready sized and operating. Does not
      * display the frame.
      */
-    public MainApplication(JFrame mainFrame) {
-        super();
+    public MainApplication(JFrame mainFrame, SplashScreen splash) {
+        super(splash);
         mainFrame.setContentPane(contentPane);
         mainFrame.setJMenuBar(menu);
         mainFrame.setBounds(bounds);
@@ -205,7 +205,7 @@ public class MainApplication extends Main {
         splash.setStatus(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
-        final Main main = new MainApplication(mainFrame);
+        final Main main = new MainApplication(mainFrame, splash);
         splash.setStatus(tr("Loading plugins"));
         Main.loadPlugins(false);
         toolbar.refreshToolbarControl();

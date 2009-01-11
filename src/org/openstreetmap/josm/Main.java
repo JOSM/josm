@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.download.BoundingBoxSelection;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -193,11 +194,18 @@ abstract public class Main {
     }
 
     public Main() {
+        this(null);
+    }
+    
+    public Main(SplashScreen splash) {
         main = this;
 //        platform = determinePlatformHook();
         platform.startupHook();
         contentPane.add(panel, BorderLayout.CENTER);
+        if(splash != null) splash.setStatus(tr("Download \"Message of the day\""));
         panel.add(new GettingStarted(), BorderLayout.CENTER);
+        
+        if(splash != null) splash.setStatus(tr("Creating main GUI"));
         menu = new MainMenu();
 
         undoRedo.listenerCommands.add(redoUndoListener);
