@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -67,21 +68,24 @@ public class ColorPreference implements PreferenceSetting {
             tableModel.removeRow(0);
         }
         // fill model with colors:
-        List<String> colorKeyList = new ArrayList<String>();
-        List<String> colorKeyList_mappaint = new ArrayList<String>();
+        Map<String, String> colorKeyList = new TreeMap<String, String>();
+        Map<String, String> colorKeyList_mappaint = new TreeMap<String, String>();
         for(String key : colorMap.keySet()) {
             if(key.startsWith("mappaint."))
-                colorKeyList_mappaint.add(key);
+                colorKeyList_mappaint.put(getName(key), key);
             else
-                colorKeyList.add(key);
+                colorKeyList.put(getName(key), key);
         }
-        Collections.sort(colorKeyList);
-        Collections.sort(colorKeyList_mappaint);
-        colorKeyList.addAll(colorKeyList_mappaint);
-        for (String key : colorKeyList) {
+        for (Entry k : colorKeyList.entrySet()) {
             Vector<Object> row = new Vector<Object>(2);
-            row.add(key);
-            row.add(ColorHelper.html2color(colorMap.get(key)));
+            row.add(k.getValue());
+            row.add(ColorHelper.html2color(colorMap.get(k.getValue())));
+            tableModel.addRow(row);
+        }
+        for (Entry k : colorKeyList_mappaint.entrySet()) {
+            Vector<Object> row = new Vector<Object>(2);
+            row.add(k.getValue());
+            row.add(ColorHelper.html2color(colorMap.get(k.getValue())));
             tableModel.addRow(row);
         }
         if(this.colors != null) {
@@ -105,6 +109,18 @@ public class ColorPreference implements PreferenceSetting {
         return colorMap;
     }
 
+    private String getName(String o)
+    {
+        try
+        {
+            Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
+            m.matches();
+            return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
+        }
+        catch (Exception e) {}
+        return tr(o);
+    }
+
     public void addGui(final PreferenceDialog gui) {
         fixColorPrefixes();
         setColorModel(Main.pref.getAllColors());
@@ -125,17 +141,6 @@ public class ColorPreference implements PreferenceSetting {
                     return l;
                 }
                 return oldColorsRenderer.getTableCellRendererComponent(t,getName(o.toString()),selected,focus,row,column);
-            }
-            private String getName(String o)
-            {
-                try
-                {
-                    Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
-                    m.matches();
-                    return tr("Paint style {0}: {1}", m.group(1), m.group(2));
-                }
-                catch (Exception e) {}
-                return tr(o);
             }
         });
         colors.getColumnModel().getColumn(1).setWidth(100);
