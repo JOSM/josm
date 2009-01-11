@@ -77,7 +77,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(!useStyleCache)
             return (styles != null) ? (IconElemStyle)styles.get(osm) : null;
 
-        if(osm.mappaintStyle == null) {
+        if(osm.mappaintStyle == null && styles != null) {
             osm.mappaintStyle =  styles.get(osm);
             osm.isMappaintArea = styles.isArea(osm);
         }
@@ -88,7 +88,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(!useStyleCache)
             return styles.isArea((Way)osm);
 
-        if(osm.mappaintStyle == null) {
+        if(osm.mappaintStyle == null && styles != null) {
             osm.mappaintStyle = styles.get(osm);
             osm.isMappaintArea = styles.isArea(osm);
         }
