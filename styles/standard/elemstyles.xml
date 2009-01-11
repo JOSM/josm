@@ -443,7 +443,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="track"/>
-		<line width="1" realwidth="3" colour="track#006600" priority="-10000"/>
+		<line width="1" realwidth="3" colour="highway_track#006600" priority="-10000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>20000</scale_max>
@@ -708,7 +708,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade1"/>
-		<line width="1" realwidth="3" dashed="true" colour="track#006600"/>
+		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -716,7 +716,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade2"/>
-		<line width="1" realwidth="3" dashed="true" colour="track#006600"/>
+		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -724,7 +724,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade3"/>
-		<line width="1" realwidth="3" dashed="true" colour="track#006600"/>
+		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -732,7 +732,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade4"/>
-		<line width="1" realwidth="3" dashed="true" colour="track#006600"/>
+		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -740,7 +740,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade5"/>
-		<line width="1" realwidth="3" dashed="true" colour="track#006600"/>
+		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1044,7 +1044,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aeroway" v="aerodrome"/>
-		<line width="2" colour="aeroway1#660000" dashed="true"/>
+		<line width="2" colour="aeroway#660000" dashed="true"/>
 		<icon annotate="true" src="transport/airport.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1060,7 +1060,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aeroway" v="helipad"/>
-		<area colour="aeroway2#330000"/>
+		<area colour="aeroway_dark#330000"/>
 		<icon annotate="true" src="transport/airport/helipad.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1068,7 +1068,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aeroway" v="runway"/>
-		<line width="3" colour="aeroway2#330000"/>
+		<line width="3" colour="aeroway_dark#330000"/>
 		<icon annotate="true" src="transport/airport.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1076,7 +1076,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aeroway" v="taxiway"/>
-		<line width="2" colour="aeroway1#660000"/>
+		<line width="2" colour="aeroway#660000"/>
 		<icon annotate="true" src="transport/airport.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1084,7 +1084,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aeroway" v="apron"/>
-		<area colour="aeroway3#990000"/>
+		<area colour="aeroway_light#990000"/>
 		<icon annotate="true" src="transport/airport.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1641,7 +1641,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="telephone"/>
 		<icon annotate="true" src="public/telephone.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1649,7 +1649,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="emergency_phone"/>
 		<icon annotate="true" src="vehicle/emergency_phone.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1657,7 +1657,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="toilets"/>
 		<icon annotate="true" src="public/toilets.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1665,7 +1665,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="recycling"/>
 		<icon annotate="true" src="public/recycling.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1673,7 +1673,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="public_building"/>
 		<icon annotate="true" src="public.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1681,7 +1681,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="embassy"/>
 		<icon annotate="true" src="public.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1689,7 +1689,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="townhall"/>
 		<icon annotate="true" src="public.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1697,7 +1697,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="community_centre"/>
 		<icon annotate="true" src="public.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1791,7 +1791,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="place_of_worship" priority="-10000"/>
 		<icon annotate="true" src="religion.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1799,14 +1799,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="grave_yard"/>
 		<icon annotate="true" src="religion/cemetery.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="amenity" v="crematorium"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1815,7 +1815,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="post_office"/>
 		<icon annotate="true" src="public/post_office.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1823,7 +1823,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="post_box"/>
 		<icon annotate="true" src="public/post_box.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1831,7 +1831,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="school"/>
 		<icon annotate="true" src="education/school.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1839,7 +1839,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="university"/>
 		<icon annotate="true" src="education/university.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1847,7 +1847,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="college"/>
 		<icon annotate="true" src="education/college.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1855,7 +1855,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="kindergarten"/>
 		<icon annotate="true" src="education/kindergarten.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1863,7 +1863,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="driving_school"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1918,7 +1918,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="library"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="shopping/rental/library.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1926,7 +1926,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="police"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="public/police.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1934,7 +1934,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="fire_station"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="public/firebrigade.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1943,7 +1943,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="bus_station"/>
 		<icon annotate="true" src="transport/bus.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1951,14 +1951,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="ferry_terminal"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="amenity" v="theatre"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="recreation/theater.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1966,7 +1966,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="cinema"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="recreation/cinema.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1974,7 +1974,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="arts_centre"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="public/arts_centre.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1982,7 +1982,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="courthouse"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="public/administration/court_of_law.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1990,7 +1990,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="prison"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="public/administration/prison.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1998,7 +1998,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="bank"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="money/bank.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2006,7 +2006,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="bureau_de_change"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="money/exchange.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2014,7 +2014,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="atm"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="money/atm.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2022,7 +2022,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="bench"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="recreation/bench.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2030,7 +2030,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="shelter"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="accommodation/shelter.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2038,7 +2038,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="hunting_stand"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="accommodation/shelter.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2047,7 +2047,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="wlan"/>
 		<icon annotate="true" src="wlan.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2055,7 +2055,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="vending_machine"/>
 		<icon src="transport/ticket-machine.png"/>
-		<area colour="amenity2#f7efb7"/>
+		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
