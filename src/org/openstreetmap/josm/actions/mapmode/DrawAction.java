@@ -535,8 +535,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     B.east() + q * (A.east() - B.east()),
                     B.north() + q * (A.north() - B.north()));
 
-            int snapToIntersectionThreshold=0;
-            try { snapToIntersectionThreshold = Integer.parseInt(Main.pref.get("edit.snap-intersection-threshold","10")); } catch (NumberFormatException x) {}
+            int snapToIntersectionThreshold
+            = Main.pref.getInteger("edit.snap-intersection-threshold",10);
 
             // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
             // fall through to default action.

@@ -377,12 +377,8 @@ public class GpxLayer extends Layer {
         Color neutralColor = getColor(name);
         boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");                     // also draw lines between points belonging to different segments
         boolean direction = Main.pref.getBoolean("draw.rawgps.direction");                        // draw direction arrows on the lines
-        int maxLineLength = -1;
-        try {
-            maxLineLength = Integer.parseInt(Main.pref.get("draw.rawgps.max-line-length", "-1"));   // don't draw lines if longer than x meters
-        } catch (java.lang.NumberFormatException e) {
-            Main.pref.put("draw.rawgps.max-line-length", "-1");
-        }
+        int maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", -1);
+        // don't draw lines if longer than x meters
         boolean lines = Main.pref.getBoolean("draw.rawgps.lines");                                // draw line between points, global setting
         String linesKey = "draw.rawgps.lines.layer "+name;
         if (Main.pref.hasKey(linesKey))
@@ -390,12 +386,8 @@ public class GpxLayer extends Layer {
         boolean large = Main.pref.getBoolean("draw.rawgps.large");                                // paint large dots for points
         boolean colored = Main.pref.getBoolean("draw.rawgps.colors");                             // color the lines
         boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");      // paint direction arrow with alternate math. may be faster
-        int delta = 0;
-        try {
-            delta = Integer.parseInt(Main.pref.get("draw.rawgps.min-arrow-distance", "0"));         // don't draw arrows nearer to each other than this
-        } catch (java.lang.NumberFormatException e) {
-            Main.pref.put("draw.rawgps.min-arrow-distance", "0");
-        }
+        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
+        // don't draw arrows nearer to each other than this
 
         /****************************************************************
          ********** STEP 2a - CHECK CACHE VALIDITY **********************

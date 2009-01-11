@@ -144,7 +144,7 @@ public class AudioPreference implements PreferenceSetting {
         gui.audio.add(new JLabel(tr("Fast forward multiplier")), GBC.std());
         gui.audio.add(audioFastForwardMultiplier, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
-        audioLeadIn.setText(Main.pref.get("audio.leadin", "1"));
+        audioLeadIn.setText(Main.pref.get("audio.leadin", "1.0"));
         audioLeadIn.setToolTipText(tr("Playback starts this number of seconds before (or after, if negative) the audio track position requested"));
         gui.audio.add(new JLabel(tr("Lead-in time (seconds)")), GBC.std());
         gui.audio.add(audioLeadIn, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));

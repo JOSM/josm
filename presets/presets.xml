@@ -134,6 +134,7 @@ check: checkbox
             </optional>
         </item>
         <item name="Secondary" icon="presets/way_secondary.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=secondary"/>
             <label text="Edit a Secondary Road" />
             <space />
             <key key="highway" value="secondary" />

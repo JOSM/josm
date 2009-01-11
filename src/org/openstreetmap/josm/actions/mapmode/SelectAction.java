@@ -72,13 +72,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * The time which needs to pass between click and release before something
      * counts as a move, in milliseconds
      */
-    private int initialMoveDelay = 200;
+    private int initialMoveDelay;
 
     /**
      * The screen distance which needs to be travelled before something
      * counts as a move, in pixels
      */
-    private int initialMoveThreshold = 15;
+    private int initialMoveThreshold;
     private boolean initialMoveThresholdExceeded = false;
     /**
      * Create a new SelectAction
@@ -91,9 +91,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
             getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
         putValue("help", "Action/Move/Move");
         selectionManager = new SelectionManager(this, false, mapFrame.mapView);
-        try { initialMoveDelay = Integer.parseInt(Main.pref.get("edit.initial-move-delay","200")); } catch (NumberFormatException x) {}
-        try { initialMoveThreshold = Integer.parseInt(Main.pref.get("edit.initial-move-threshold","5")); } catch (NumberFormatException x) {}
-
+        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
+        initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold",5);
     }
 
     private static Cursor getCursor(String name, String mod, int def) {

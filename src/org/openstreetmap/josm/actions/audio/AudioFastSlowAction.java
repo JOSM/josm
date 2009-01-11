@@ -14,11 +14,7 @@ abstract public class AudioFastSlowAction extends JosmAction {
 
     public AudioFastSlowAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean fast) {
         super(name, iconName, tooltip, shortcut, true);
-        try {
-            multiplier = Double.parseDouble(Main.pref.get("audio.fastfwdmultiplier","1.3"));
-        } catch (NumberFormatException e) {
-            multiplier = 1.3;
-        }
+        multiplier = Main.pref.getDouble("audio.fastfwdmultiplier","1.3");
         if (! fast)
             multiplier = 1.0 / multiplier;
     }

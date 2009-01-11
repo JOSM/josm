@@ -137,9 +137,9 @@ public class DownloadDialog extends JPanel {
         add(tabpane, GBC.eol().fill());
 
         try {
-            tabpane.setSelectedIndex(Integer.parseInt(Main.pref.get("download.tab", "0")));
+            tabpane.setSelectedIndex(Main.pref.getInteger("download.tab", 0));
         } catch (Exception ex) {
-            Main.pref.put("download.tab", "0");
+            Main.pref.putInteger("download.tab", 0);
         }
 
         Font labelFont = sizeCheck.getFont();

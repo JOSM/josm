@@ -69,7 +69,7 @@ public final class CreateCircleAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        int numberOfNodesInCircle = Integer.parseInt(Main.pref.get("createcircle.nodecount", "8"));
+        int numberOfNodesInCircle = Main.pref.getInteger("createcircle.nodecount", 8);
         if (numberOfNodesInCircle < 1) {
             numberOfNodesInCircle = 1;
         } else if (numberOfNodesInCircle > 100) {

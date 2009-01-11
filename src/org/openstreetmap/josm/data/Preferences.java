@@ -432,11 +432,9 @@ public class Preferences {
     synchronized public double getDouble(String key, String def) {
         putDefault(key, def);
         String v = get(key);
-        try {
-            return Double.parseDouble(v == null ? def : v);
-        } catch(NumberFormatException e) {
-            // fall out
-        }
+        if(v != null && v.length() != 0)
+            try { return Double.parseDouble(v); } catch(NumberFormatException e) {}
+        try { return Double.parseDouble(def); } catch(NumberFormatException e) {}
         return 0.0;
     }
 

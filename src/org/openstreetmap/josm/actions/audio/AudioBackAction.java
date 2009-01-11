@@ -14,19 +14,17 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioBackAction extends JosmAction {
 
-    private double amount; // note, normally negative, i.e. jump backwards in time
-
     public AudioBackAction() {
         super(tr("Back"), "audio-back", tr("Jump back."),
         Shortcut.registerShortcut("audio:back", tr("Audio: {0}", tr("Back")), KeyEvent.VK_F6, Shortcut.GROUP_DIRECT), true);
-        amount = -Main.pref.getDouble("audio.forwardbackamount","10.0");
         this.putValue("help", "Action/Back");
     }
 
     public void actionPerformed(ActionEvent e) {
         try {
             if (AudioPlayer.playing() || AudioPlayer.paused())
-                AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position() + amount);
+                AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position()
+                - Main.pref.getDouble("audio.forwardbackamount","10.0"));
             else
                 MarkerLayer.playAudio();
         } catch (Exception ex) {

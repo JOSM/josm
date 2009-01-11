@@ -45,7 +45,7 @@ public class PlayHeadMarker extends Marker {
     private EastNorth oldEastNorth;
     private boolean enabled;
     private boolean wasPlaying = false;
-    private int dropTolerance = 50; /* pixels */
+    private int dropTolerance; /* pixels */
 
     public static PlayHeadMarker create() {
         if (playHead == null) {
@@ -64,8 +64,7 @@ public class PlayHeadMarker extends Marker {
               null, -1.0, 0.0);
         enabled = Main.pref.getBoolean("marker.traceaudio", true);
         if (! enabled) return;
-        try { dropTolerance = Integer.parseInt(Main.pref.get("marker.playHeadDropTolerance", "50")); }
-        catch(NumberFormatException x) { dropTolerance = 50; }
+        dropTolerance = Main.pref.getInteger("marker.playHeadDropTolerance", 50);
         Main.map.mapView.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent ev) {
                 Point p = ev.getPoint();
@@ -86,7 +85,8 @@ public class PlayHeadMarker extends Marker {
 
     @Override public boolean containsPoint(Point p) {
         Point screen = Main.map.mapView.getPoint(eastNorth);
-        Rectangle r = new Rectangle(screen.x, screen.y, symbol.getIconWidth(), symbol.getIconHeight());
+        Rectangle r = new Rectangle(screen.x, screen.y, symbol.getIconWidth(),
+        symbol.getIconHeight());
         return r.contains(p);
     }
 

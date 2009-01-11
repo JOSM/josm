@@ -196,16 +196,8 @@ public class AudioPlayer extends Thread {
         state = State.INITIALIZING;
         command = new Execute();
         playingUrl = null;
-        try {
-            leadIn = Double.parseDouble(Main.pref.get("audio.leadin", "1.0" /* default, seconds */));
-        } catch (NumberFormatException e) {
-            leadIn = 1.0; // failed to parse
-        }
-        try {
-            calibration = Double.parseDouble(Main.pref.get("audio.calibration", "1.0" /* default, ratio */));
-        } catch (NumberFormatException e) {
-            calibration = 1.0; // failed to parse
-        }
+        leadIn = Main.pref.getDouble("audio.leadin", "1.0" /* default, seconds */);
+        calibration = Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
         start();
         while (state == State.INITIALIZING) { yield(); }
     }

@@ -13,19 +13,16 @@ import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioFwdAction extends JosmAction {
-
-    private double amount;
-
     public AudioFwdAction() {
         super(tr("Forward"), "audio-fwd", tr("Jump forward"),
         Shortcut.registerShortcut("audio:forward", tr("Audio: {0}", tr("Forward")), KeyEvent.VK_F7, Shortcut.GROUP_DIRECT), true);
-        amount = Main.pref.getDouble("audio.forwardbackamount","10.0");
     }
 
     public void actionPerformed(ActionEvent e) {
         try {
             if (AudioPlayer.playing() || AudioPlayer.paused())
-                AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position() + amount);
+                AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position()
+                + Main.pref.getDouble("audio.forwardbackamount","10.0"));
             else
                 MarkerLayer.playAudio();
         } catch (Exception ex) {

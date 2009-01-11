@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -42,6 +44,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -178,7 +181,7 @@ public class TaggingPreset extends AbstractAction {
         public String key;
         public String text;
         public String locale_text;
-        public boolean default_ = false; // not used!
+        public boolean default_ = false; // only used for tagless objects
         public boolean use_last_as_default = false;
 
         private QuadStateCheckBox check;
@@ -195,13 +198,20 @@ public class TaggingPreset extends AbstractAction {
             String oneValue = null;
             for (String s : usage.values) oneValue = s;
             if (usage.values.size() < 2 && (oneValue == null || OsmUtils.trueval.equals(oneValue) || OsmUtils.falseval.equals(oneValue))) {
+                if(default_)
+                {
+                    for (OsmPrimitive s : sel)
+                        if(s.keys != null && s.keys.size() > 0) default_ = false;
+                }
+
                 // all selected objects share the same value which is either true or false or unset,
                 // we can display a standard check box.
                 initialState = OsmUtils.trueval.equals(oneValue) ?
                             QuadStateCheckBox.State.SELECTED :
                             OsmUtils.falseval.equals(oneValue) ?
                             QuadStateCheckBox.State.NOT_SELECTED :
-                            QuadStateCheckBox.State.UNSET;
+                            default_ ? QuadStateCheckBox.State.SELECTED
+                            : QuadStateCheckBox.State.UNSET;
                 check = new QuadStateCheckBox(locale_text, initialState,
                         new QuadStateCheckBox.State[] {
                         QuadStateCheckBox.State.SELECTED,
@@ -356,6 +366,25 @@ public class TaggingPreset extends AbstractAction {
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
 
+    public static class Link extends Item {
+        public String href;
+        public String text;
+        public String locale_text;
+
+        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            if(locale_text == null)
+                locale_text = text == null ? tr("Open map features in browser") : tr(text);
+            JButton b = new JButton(locale_text);
+            b.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    OpenBrowser.displayUrl(href);
+                }
+            });
+            p.add(b, GBC.eol().anchor(GBC.EAST));
+        }
+        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+    }
+
     public static class Optional extends Item {
         // TODO: Draw a box around optional stuff
         @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
@@ -457,6 +486,7 @@ public class TaggingPreset extends AbstractAction {
         parser.mapOnStart("separator", TaggingPresetSeparator.class);
         parser.mapBoth("group", TaggingPresetMenu.class);
         parser.map("text", Text.class);
+        parser.map("link", Link.class);
         parser.mapOnStart("optional", Optional.class);
         parser.map("check", Check.class);
         parser.map("combo", Combo.class);
