@@ -97,6 +97,7 @@ public class OsmReader {
                osm.version = version;
                osm.checkTagged();
                osm.checkDirectionTagged();
+               osm.mappaintStyle = null;
           }
      }
 

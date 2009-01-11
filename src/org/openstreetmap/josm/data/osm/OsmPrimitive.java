@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.DateParser;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 
 
 /**
@@ -138,6 +139,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      */
     private static Collection<String> directionKeys = null;
 
+	
+    /* mappaint style cache */
+    public ElemStyle mappaintStyle = null;
+    public boolean isMappaintArea = false;
+	
     /**
      * Implementation of the visitor scheme. Subclasses have to call the correct
      * visitor function.
@@ -213,6 +219,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         }
         checkTagged();
         checkDirectionTagged();
+        mappaintStyle = null;
     }
     /**
      * Remove the given key from the list.
@@ -225,6 +232,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         }
         checkTagged();
         checkDirectionTagged();
+        mappaintStyle = null;
     }
 
     public String getName() {
@@ -261,6 +269,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         version = osm.version;
         tagged = osm.tagged;
         incomplete = osm.incomplete;
+        mappaintStyle = null;
     }
 
     /**
