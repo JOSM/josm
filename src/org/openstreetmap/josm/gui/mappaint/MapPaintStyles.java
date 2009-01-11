@@ -49,10 +49,10 @@ public class MapPaintStyles {
 
     public static void readFromPreferences() {
         String[] a = null;
-        
+
         /* don't prefix icon path, as it should be generic */
         String internalicon = "resource://images/styles/standard/;resource://images/styles/";
-        String internalfile = "standard=resource://styles/standard/elemstyles.xml";
+        String internalfile = "resource://styles/standard/elemstyles.xml";
 
         iconDirs = Main.pref.get("mappaint.icon.sources");
         if(Main.pref.getBoolean("mappaint.icon.enable-defaults", true))
@@ -69,7 +69,7 @@ public class MapPaintStyles {
                 if(fileset.indexOf("=") >= 0)
                     a = fileset.split("=", 2);
                 else
-                    a = new String[] {"standard", fileset};
+                    a = new String[] {null, fileset};
                 XMLReader xmlReader = XMLReaderFactory.createXMLReader();
                 ElemStyleHandler handler = new ElemStyleHandler(a[0]);
                 xmlReader.setContentHandler(handler);

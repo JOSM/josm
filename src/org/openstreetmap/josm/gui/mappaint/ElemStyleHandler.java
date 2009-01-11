@@ -72,6 +72,15 @@ public class ElemStyleHandler extends DefaultHandler
         {
             if (qName.equals("rule"))
                 inRule=true;
+            else if (qName.equals("rules"))
+            {
+                if(styleName == null)
+                {
+                    String n = atts.getValue("name");
+                    if(n == null) n = "standard";
+                    styleName = n;
+                }
+            }
             else if (qName.equals("scale_max"))
                 inScaleMax = true;
             else if (qName.equals("scale_min"))

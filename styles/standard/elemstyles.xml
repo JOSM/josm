@@ -44,7 +44,7 @@ If a key/value pair matches more than one rule, the "rule that wins" is unpredic
 in case they have same priority! Using priority settings helps to solve conflicts.
 -->
 
-<rules>
+<rules name="standard">
 
 	<!-- mark some specials that should be fixed - they are already the default and therefore shouldn't be tagged -->
 	<rule>
