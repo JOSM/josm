@@ -121,39 +121,113 @@ public class SimplePaintVisitor implements Visitor {
     }
 
     public void visitAll(DataSet data, Boolean virtual) {
+        boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
+        long profilerStart = java.lang.System.currentTimeMillis();
+        long profilerLast = profilerStart;
+        int profilerN = 0;
+        if(profiler)
+            System.out.println("Simplepaint Profiler");
+
         getSettings(virtual);
+        
+        if(profiler) 
+        {
+            System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
+        
         // draw tagged ways first, then untagged ways. takes
         // time to iterate through list twice, OTOH does not
         // require changing the colour while painting...
+        profilerN = 0;
         for (final OsmPrimitive osm : data.relations)
             if (!osm.deleted && !osm.selected)
+            {
                 osm.visit(this);
+                profilerN++;
+            }
 
+        if(profiler)
+        {
+            System.out.format("Relations: %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
+
+        profilerN = 0;
         for (final OsmPrimitive osm : data.ways)
             if (!osm.deleted && !osm.selected && osm.tagged)
+            {
                 osm.visit(this);
+                profilerN++;
+            }
         displaySegments();
 
         for (final OsmPrimitive osm : data.ways)
             if (!osm.deleted && !osm.selected && !osm.tagged)
+            {
                 osm.visit(this);
+                profilerN++;
+            }
         displaySegments();
 
+        if(profiler)
+        {
+            System.out.format("Ways     : %4dms, n=%5d\n",
+                (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
+
+        profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected())
             if (!osm.deleted)
+            {
                 osm.visit(this);
+                profilerN++;
+            }
         displaySegments();
 
+        if(profiler)
+        {
+            System.out.format("Selected : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
+
+        profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
             if (!osm.deleted && !osm.selected)
+            {
                 osm.visit(this);
+                profilerN++;
+            }
+        if(profiler)
+        {
+            System.out.format("Nodes    : %4dms, n=%5d\n",
+                (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            profilerLast = java.lang.System.currentTimeMillis();
+        }
+
         if(virtualNodeSize != 0)
         {
+            profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
                 if (!osm.deleted)
-                    visitVirtual((Way)osm);
+                    {
+                        visitVirtual((Way)osm);
+                        profilerN++;
+                    }
             displaySegments();
+
+            if(profiler)
+            {
+                System.out.format("Virtual  : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                profilerLast = java.lang.System.currentTimeMillis();
+            }
+        }
+
+        if(profiler)
+        {
+            System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
         }
     }
 
