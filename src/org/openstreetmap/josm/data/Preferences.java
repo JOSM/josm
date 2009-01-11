@@ -229,14 +229,13 @@ public class Preferences {
         String oldvalue = properties.get(key);
         if(value != null && value.length() == 0)
             value = null;
-        if(!((oldvalue == null && value == null) || (value != null
-        && oldvalue != null && oldvalue.equals(value))))
+        if(!((oldvalue == null && (value == null || value.equals(defaults.get(key))))
+        || (value != null && oldvalue != null && oldvalue.equals(value))))
         {
             if (value == null)
                 properties.remove(key);
             else
                 properties.put(key, value);
-            String s = defaults.get(key);
             save();
             firePreferenceChanged(key, value);
             return true;

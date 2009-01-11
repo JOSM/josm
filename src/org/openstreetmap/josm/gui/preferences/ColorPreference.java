@@ -182,10 +182,16 @@ public class ColorPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
+        Boolean ret = false;
         for (int i = 0; i < colors.getRowCount(); ++i) {
-            Main.pref.putColor((String)colors.getValueAt(i, 0), (Color)colors.getValueAt(i, 1));
+            String key = (String)colors.getValueAt(i, 0);
+            if(Main.pref.putColor(key, (Color)colors.getValueAt(i, 1)))
+            {
+                if(key.startsWith("mappaint."))
+                    ret = true;
+            }
         }
         org.openstreetmap.josm.gui.layer.OsmDataLayer.createHatchTexture();
-        return false;
+        return ret;
     }
 }
