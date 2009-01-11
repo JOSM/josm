@@ -46,7 +46,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected int currentWidth = 0;
     protected Stroke currentStroke = null;
     protected Font orderFont;
-    protected ElemStyles styles;
+    protected ElemStyles.StyleSet styles;
     protected double circum;
     protected String regionalNameOrder[];
     protected Boolean selectedCall;
@@ -77,9 +77,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     public void visit(Node n) {
         // check, if the node is visible at all
         Point p = nc.getPoint(n.eastNorth);
-        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
+        if ((!selectedCall && n.selected) || (p.x < 0) || (p.y < 0)
+        || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
-        IconElemStyle nodeStyle = (IconElemStyle)styles.get(n);
+        IconElemStyle nodeStyle = styles != null ? (IconElemStyle)styles.get(n) : null;
         if (nodeStyle != null && isZoomOk(nodeStyle))
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
         else if (n.selected)
@@ -95,7 +96,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * @param w The way to draw.
      */
     public void visit(Way w) {
-        if(w.nodes.size() < 2)
+        if(w.nodes.size() < 2 && (!selectedCall && w.selected))
             return;
 
         // check, if the way is visible at all
@@ -103,7 +104,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(!isPolygonVisible(polygon))
             return;
 
-        ElemStyle wayStyle = styles.get(w);
+        ElemStyle wayStyle = styles != null ? styles.get(w) : null;
 
         if(!isZoomOk(wayStyle))
             return;
@@ -321,7 +322,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 /* nodes drawn on second call */
                 if(!(m.member instanceof Node))
-                    drawSelected(m.member, styles.get(m.member), true, true);
+                    drawSelected(m.member, styles != null ? styles.get(m.member)
+                    : null, true, true);
                 alreadyDrawn.add(m.member);
             }
         }
@@ -367,7 +369,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     if (m.member != null && !m.member.incomplete && !m.member.deleted
                     && m.member instanceof Node)
                     {
-                        drawSelected(m.member, styles.get(m.member), true, true);
+                        drawSelected(m.member, styles != null ? styles.get(m.member) : null, true, true);
                         alreadyDrawn.add(m.member);
                     }
                 }
@@ -419,7 +421,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         if(m.role == null || m.role.length() == 0)
                             outer.add(w);
                         else if(r.selected)
-                            drawSelected(m.member, styles.get(m.member), true, true);
+                            drawSelected(m.member, styles != null ? styles.get(m.member) : null, true, true);
                     }
                 }
                 else
@@ -431,10 +433,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
         }
 
-        ElemStyle wayStyle = styles.get(r);
+        ElemStyle wayStyle = styles != null ? styles.get(r) : null;
         /* find one wayStyle, prefer the style from Relation or take the first
         one of outer rings */
-        if(wayStyle == null || !(wayStyle instanceof AreaElemStyle))
+        if(styles != null && (wayStyle == null || !(wayStyle instanceof AreaElemStyle)))
         {
             for (Way w : outer)
             {
@@ -778,7 +780,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
     }
 
-    // NW 111106 Overridden from SimplePaintVisitor in josm-1.4-nw1
     // Shows areas before non-areas
     public void visitAll(DataSet data, Boolean virtual) {
 
@@ -797,7 +798,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         fillAreas = Main.pref.getBoolean("mappaint.fillareas", true);
         fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
         circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
-        styles = MapPaintStyles.getStyles();
+        styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
@@ -807,16 +808,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         alreadyDrawnAreas = new LinkedList<Way>();
         selectedCall = false;
 
-        // update the style name, just in case the user changed it in the meantime
-        styles.updateStyleName();
-
         if(profiler)
         {
             System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
             profilerLast = java.lang.System.currentTimeMillis();
         }
 
-        if (fillAreas && styles.hasAreas()) {
+        if (fillAreas && styles != null && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
             /*** RELATIONS ***/

@@ -16,11 +16,11 @@ import org.openstreetmap.josm.Main;
 
 public class ElemStyles
 {
-    private class StyleSet {
-        HashMap<String, IconElemStyle> icons;
-        HashMap<String, LineElemStyle> lines;
-        HashMap<String, AreaElemStyle> areas;
-        HashMap<String, LineElemStyle> modifiers;
+    public class StyleSet {
+        private HashMap<String, IconElemStyle> icons;
+        private HashMap<String, LineElemStyle> lines;
+        private HashMap<String, AreaElemStyle> areas;
+        private HashMap<String, LineElemStyle> modifiers;
         public StyleSet()
         {
             icons = new HashMap<String, IconElemStyle>();
@@ -28,19 +28,128 @@ public class ElemStyles
             modifiers = new HashMap<String, LineElemStyle>();
             areas = new HashMap<String, AreaElemStyle>();
         }
-    }
-    HashMap<String, StyleSet> styleSet;
-    String styleName;
+        private ElemStyle getNode(Map<String, String> keys)
+        {
+            IconElemStyle ret = null;
+            Iterator<String> iterator = keys.keySet().iterator();
+            while(iterator.hasNext())
+            {
+                String key = iterator.next();
+                String val = keys.get(key);
+                IconElemStyle style;
+                if((style = icons.get("n" + key + "=" + val)) != null)
+                {
+                    if(ret == null || style.priority > ret.priority)
+                        ret = style;
+                }
+                if((style = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
+                {
+                    if(ret == null || style.priority > ret.priority)
+                        ret = style;
+                }
+                if((style = icons.get("x" + key)) != null)
+                {
+                    if(ret == null || style.priority > ret.priority)
+                        ret = style;
+                }
+            }
+            return ret;
+        }
+        private ElemStyle get(Map<String, String> keys)
+        {
+            AreaElemStyle retArea = null;
+            LineElemStyle retLine = null;
+            String linestring = null;
+            HashMap<String, LineElemStyle> over = new HashMap<String, LineElemStyle>();
+            Iterator<String> iterator = keys.keySet().iterator();
+            while(iterator.hasNext())
+            {
+                String key = iterator.next();
+                String val = keys.get(key);
+                AreaElemStyle styleArea;
+                LineElemStyle styleLine;
+                String idx = "n" + key + "=" + val;
+                if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+                    retArea = styleArea;
+                if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+                {
+                    retLine = styleLine;
+                    linestring = idx;
+                }
+                if((styleLine = modifiers.get(idx)) != null)
+                    over.put(idx, styleLine);
+                idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
+                if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+                    retArea = styleArea;
+                if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+                {
+                    retLine = styleLine;
+                    linestring = idx;
+                }
+                if((styleLine = modifiers.get(idx)) != null)
+                    over.put(idx, styleLine);
+                idx = "x" + key;
+                if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+                    retArea = styleArea;
+                if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+                {
+                    retLine = styleLine;
+                    linestring = idx;
+                }
+                if((styleLine = modifiers.get(idx)) != null)
+                    over.put(idx, styleLine);
+            }
+            over.remove(linestring);
+            if(over.size() != 0 && retLine != null)
+            {
+                List<LineElemStyle> s = new LinkedList<LineElemStyle>(over.values());
+                Collections.sort(s);
+                retLine = new LineElemStyle(retLine, s);
+            }
+            if(retArea != null)
+            {
+                if(retLine != null)
+                    return new AreaElemStyle(retArea, retLine);
+                else
+                    return retArea;
+            }
+            return retLine;
+        }
 
+        public ElemStyle get(OsmPrimitive osm)
+        {
+            return (osm.keys == null) ? null :
+            ((osm instanceof Node) ? getNode(osm.keys) : get(osm.keys));
+        }
+
+        public boolean isArea(OsmPrimitive o)
+        {
+            if(o.keys != null && !(o instanceof Node))
+            {
+                Iterator<String> iterator = o.keys.keySet().iterator();
+                while(iterator.hasNext())
+                {
+                    String key = iterator.next();
+                    String val = o.keys.get(key);
+                    if(areas.containsKey("n" + key + "=" + val)
+                    || areas.containsKey("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
+                    || areas.containsKey("x" + key))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean hasAreas()
+        {
+            return areas.size() > 0;
+        }
+    }
+
+    HashMap<String, StyleSet> styleSet;
     public ElemStyles()
     {
         styleSet = new HashMap<String, StyleSet>();
-        updateStyleName();
-    }
-
-    public void updateStyleName() {
-        // Main.pref.get() is slow when done thousands of times, do it once here and cache it
-        styleName = Main.pref.get("mappaint.style", "standard");
     }
 
     private String getKey(String k, String v, String b)
@@ -84,7 +193,8 @@ public class ElemStyles
     private StyleSet getStyleSet(String name, boolean create)
     {
         if(name == null)
-            name = styleName;
+            name = Main.pref.get("mappaint.style", "standard");
+
         StyleSet s = styleSet.get(name);
         if(create && s == null)
         {
@@ -94,127 +204,9 @@ public class ElemStyles
         return s;
     }
 
-    private ElemStyle getNode(Map<String, String> keys, StyleSet ss)
+    /* called from class users, never return null */
+    public StyleSet getStyleSet()
     {
-        IconElemStyle ret = null;
-        Iterator<String> iterator = keys.keySet().iterator();
-        while(iterator.hasNext())
-        {
-            String key = iterator.next();
-            String val = keys.get(key);
-            IconElemStyle style;
-            if((style = ss.icons.get("n" + key + "=" + val)) != null)
-            {
-                if(ret == null || style.priority > ret.priority)
-                    ret = style;
-            }
-            if((style = ss.icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
-            {
-                if(ret == null || style.priority > ret.priority)
-                    ret = style;
-            }
-            if((style = ss.icons.get("x" + key)) != null)
-            {
-                if(ret == null || style.priority > ret.priority)
-                    ret = style;
-            }
-        }
-        return ret;
-    }
-
-    private ElemStyle get(Map<String, String> keys, StyleSet ss)
-    {
-        AreaElemStyle retArea = null;
-        LineElemStyle retLine = null;
-        String linestring = null;
-        HashMap<String, LineElemStyle> over = new HashMap<String, LineElemStyle>();
-        Iterator<String> iterator = keys.keySet().iterator();
-        while(iterator.hasNext())
-        {
-            String key = iterator.next();
-            String val = keys.get(key);
-            AreaElemStyle styleArea;
-            LineElemStyle styleLine;
-            String idx = "n" + key + "=" + val;
-            if((styleArea = ss.areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
-                retArea = styleArea;
-            if((styleLine = ss.lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
-            {
-                retLine = styleLine;
-                linestring = idx;
-            }
-            if((styleLine = ss.modifiers.get(idx)) != null)
-                over.put(idx, styleLine);
-            idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
-            if((styleArea = ss.areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
-                retArea = styleArea;
-            if((styleLine = ss.lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
-            {
-                retLine = styleLine;
-                linestring = idx;
-            }
-            if((styleLine = ss.modifiers.get(idx)) != null)
-                over.put(idx, styleLine);
-            idx = "x" + key;
-            if((styleArea = ss.areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
-                retArea = styleArea;
-            if((styleLine = ss.lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
-            {
-                retLine = styleLine;
-                linestring = idx;
-            }
-            if((styleLine = ss.modifiers.get(idx)) != null)
-                over.put(idx, styleLine);
-        }
-        over.remove(linestring);
-        if(over.size() != 0 && retLine != null)
-        {
-            List<LineElemStyle> s = new LinkedList<LineElemStyle>(over.values());
-            Collections.sort(s);
-            retLine = new LineElemStyle(retLine, s);
-        }
-        if(retArea != null)
-        {
-            if(retLine != null)
-                return new AreaElemStyle(retArea, retLine);
-            else
-                return retArea;
-        }
-        return retLine;
-    }
-
-    public ElemStyle get(OsmPrimitive osm)
-    {
-        StyleSet ss = getStyleSet(null, false);
-        return (ss == null || osm.keys == null) ? null :
-        ((osm instanceof Node) ? getNode(osm.keys, ss) : get(osm.keys, ss));
-    }
-
-    private boolean isArea(Map<String, String> keys, StyleSet ss)
-    {
-        Iterator<String> iterator = keys.keySet().iterator();
-        while(iterator.hasNext())
-        {
-            String key = iterator.next();
-            String val = keys.get(key);
-            if(ss.areas.containsKey("n" + key + "=" + val)
-            || ss.areas.containsKey("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
-            || ss.areas.containsKey("x" + key))
-                return true;
-        }
-        return false;
-    }
-
-    public boolean isArea(OsmPrimitive o)
-    {
-        StyleSet ss = getStyleSet(null, false);
-        return (ss != null && o.keys != null && !(o instanceof Node))
-        ? isArea(o.keys, ss) : false;
-    }
-
-    public boolean hasAreas()
-    {
-        StyleSet ss = getStyleSet(null, false);
-        return ss != null && ss.areas.size() > 0;
+        return getStyleSet(null, false);
     }
 }
