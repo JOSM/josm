@@ -244,12 +244,10 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
             }
         };
 
-        upButton = new SideButton("Up", "up", "LayerList", tr("Move the selected layer one row up."), upDown);
-        upButton.setText(null);
+        upButton = new SideButton("up", "LayerList", tr("Move the selected layer one row up."), upDown);
         buttonPanel.add(upButton);
 
-        downButton = new SideButton("Down", "down", "LayerList", tr("Move the selected layer one row down."), upDown);
-        downButton.setText(null);
+        downButton = new SideButton("down", "LayerList", tr("Move the selected layer one row down."), upDown);
         buttonPanel.add(downButton);
 
         buttonPanel.add(new SideButton(new ShowHideLayerAction(null), "showhide"));
