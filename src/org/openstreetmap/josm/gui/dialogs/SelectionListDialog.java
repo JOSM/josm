@@ -275,7 +275,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         }
 
         if( (nodes+ways+relations) != 0) {
-            setTitle(tr("Selection: Rel.: {0} / Ways: {1} / Nodes: {2}", relations, ways, nodes), true);
+            setTitle(tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", relations, ways, nodes), true);
         } else {
             setTitle(tr("Selection"), false);
         }
