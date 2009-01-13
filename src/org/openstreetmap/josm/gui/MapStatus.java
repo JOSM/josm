@@ -14,6 +14,7 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -299,11 +300,14 @@ public class MapStatus extends JPanel implements Helpful {
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener(){
                 public void eventDispatched(AWTEvent event) {
-                    synchronized (collector) {
-                        mouseState.modifiers = ((InputEvent)event).getModifiersEx();
-                        if (event instanceof MouseEvent)
-                            mouseState.mousePos = ((MouseEvent)event).getPoint();
-                        collector.notify();
+                    if (event instanceof ComponentEvent &&
+                        ((ComponentEvent)event).getComponent() == mapFrame.mapView) {
+                        synchronized (collector) {
+                            mouseState.modifiers = ((InputEvent)event).getModifiersEx();
+                            if (event instanceof MouseEvent)
+                                mouseState.mousePos = ((MouseEvent)event).getPoint();
+                            collector.notify();
+                        }
                     }
                 }
             }, AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
