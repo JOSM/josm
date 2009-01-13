@@ -167,6 +167,7 @@ public class MainApplication extends Main {
         }
 
         if (localeName != null) {
+            if(localeName.equals("he")) localeName = "iw_IL";
             Locale l;
             int i = localeName.indexOf('_');
             if (i > 0) {
