@@ -13,6 +13,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * The center of the mercator projection is always the 0 grad
  * coordinate.
  *
+ * See also USGS Bulletin 1532
+ * (http://egsc.usgs.gov/isb/pubs/factsheets/fs08799.html)
+ *
  * @author imi
  */
 public class Mercator implements Projection {
