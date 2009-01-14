@@ -38,10 +38,26 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      */
     public Map<String, String> keys;
 
-    /**
-     * The key/value list for this primitive.
-     */
+    /* mappaint data */
+    public ElemStyle mappaintStyle = null;
+    public boolean isMappaintArea = false;
+    public Integer mappaintVisibleCode = 0;
+    public Integer mappaintDrawnCode = 0;
+    public Integer mappaintDrawnAreaCode = 0;
     public Collection<String> errors;
+
+    public void putError(String text, Boolean isError)
+    {
+        if(errors == null)
+            errors = new ArrayList<String>();
+        String s = isError ? tr("Error: {0}", text) : tr("Warning: {0}", text);
+        errors.add(s);
+    }
+    public void clearErrors()
+    {
+        errors = null;
+    }
+    /* end of mappaint data */
 
     /**
      * Unique identifier in OSM. This is used to identify objects on the server.
@@ -139,11 +155,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      */
     private static Collection<String> directionKeys = null;
 
-	
-    /* mappaint style cache */
-    public ElemStyle mappaintStyle = null;
-    public boolean isMappaintArea = false;
-	
     /**
      * Implementation of the visitor scheme. Subclasses have to call the correct
      * visitor function.
@@ -329,17 +340,5 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
                 }
             }
         }
-    }
-
-    public void putError(String text, Boolean isError)
-    {
-        if(errors == null)
-            errors = new ArrayList<String>();
-        String s = isError ? tr("Error: {0}", text) : tr("Warning: {0}", text);
-        errors.add(s);
-    }
-    public void clearErrors()
-    {
-        errors = null;
     }
 }

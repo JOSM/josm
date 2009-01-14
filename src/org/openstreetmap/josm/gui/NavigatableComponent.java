@@ -69,6 +69,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Return a ID which is unique as long as viewport dimensions are the same
+     */
+    public Integer getViewID()
+    {
+        String x = center.east() + "_" + center.north() + "_" + scale + "_" +
+        getWidth() + "_" + getHeight();
+        java.util.zip.CRC32 id = new java.util.zip.CRC32();
+        id.update(x.getBytes());
+        return new Long(id.getValue()).intValue();
+    }
+
+    /**
      * Return the current scale value.
      * @return The scale value currently used in display
      */

@@ -39,6 +39,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected boolean zoomLevelDisplay;
     protected boolean fillAreas;
     protected boolean drawMultipolygon;
+    protected boolean showName;
     protected int fillAlpha;
     protected Color untaggedColor;
     protected Color textColor;
@@ -50,13 +51,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected double circum;
     protected String regionalNameOrder[];
     protected Boolean selectedCall;
-    protected Collection<OsmPrimitive> alreadyDrawn;
-    protected Collection<Way> alreadyDrawnAreas;
     protected Boolean useStyleCache;
-    
+    private static int paintid = 0;
+    private static int viewid = 0;
+
     protected int profilerVisibleNodes;
     protected int profilerVisibleWays;
     protected int profilerVisibleAreas;
+    protected int profilerSegments;
+    protected int profilerVisibleSegments;
+    protected boolean profilerOmitDraw;
 
     protected boolean isZoomOk(ElemStyle e) {
         if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -104,12 +108,20 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     public void visit(Node n) {
         // check, if the node is visible at all
         Point p = nc.getPoint(n.eastNorth);
-        if ((!selectedCall && n.selected) || (p.x < 0) || (p.y < 0)
-        || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
-        
+        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight()))
+        {
+            n.mappaintVisibleCode = viewid;
+            return;
+        }
+        n.mappaintVisibleCode = 0;
+
         profilerVisibleNodes++;
         
         IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(n);
+
+        if(profilerOmitDraw)
+            return;
+            
         if (nodeStyle != null && isZoomOk(nodeStyle))
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
         else if (n.selected)
@@ -125,40 +137,56 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * @param w The way to draw.
      */
     public void visit(Way w) {
-        if(w.nodes.size() < 2 && (!selectedCall && w.selected))
+        if(w.nodes.size() < 2)
+        {
+            w.mappaintVisibleCode = viewid;
             return;
+        }
 
         // check, if the way is visible at all
         Polygon polygon = getPolygon(w);
         if(!isPolygonVisible(polygon))
+        {
+            w.mappaintVisibleCode = viewid;
             return;
-            
+        }
+
         ElemStyle wayStyle = getPrimitiveStyle(w);
 
         if(!isZoomOk(wayStyle))
+        {
+            w.mappaintVisibleCode = viewid;
             return;
+        }
+
+        w.mappaintVisibleCode = 0;
 
         if(wayStyle==null)
         {
             // way without style
             profilerVisibleWays++;
-            drawWay(w, null, untaggedColor, w.selected);
+            if(!profilerOmitDraw)
+                drawWay(w, null, untaggedColor, w.selected);
         }
         else if(wayStyle instanceof LineElemStyle)
         {
             // way with line style
             profilerVisibleWays++;
-            drawWay(w, (LineElemStyle)wayStyle, untaggedColor, w.selected);
+            if(!profilerOmitDraw)
+                drawWay(w, (LineElemStyle)wayStyle, untaggedColor, w.selected);
         }
         else if (wayStyle instanceof AreaElemStyle)
         {
             // way with area style
-            if (fillAreas)
+            if(!profilerOmitDraw)
             {
-                profilerVisibleAreas++;
-                drawArea(polygon, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
+                if (fillAreas)
+                {
+                    profilerVisibleAreas++;
+                    drawArea(polygon, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
+                }
+                drawWay(w, ((AreaElemStyle)wayStyle).line, ((AreaElemStyle)wayStyle).color, w.selected);
             }
-            drawWay(w, ((AreaElemStyle)wayStyle).line, ((AreaElemStyle)wayStyle).color, w.selected);
         }
     }
 
@@ -359,7 +387,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(!(m.member instanceof Node))
                     drawSelected(m.member, styles != null ? styles.get(m.member)
                     : null, true, true);
-                alreadyDrawn.add(m.member);
             }
         }
     }
@@ -389,27 +416,31 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             else
                 drawNode((Node)osm, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         }
+        osm.mappaintDrawnCode = paintid;
     }
 
     public void visit(Relation r) {
+   
+        r.mappaintVisibleCode = 0;
+        /* TODO implement visible handling for relations too */
+
+        // TODO: is it possible to do this like the nodes/ways code?
+        if(profilerOmitDraw)
+            return;
+
         // draw multipolygon relations including their ways
         // other relations are only drawn when selected
-        if(r.selected)
+        if(r.selected && selectedCall)
         {
-            if(selectedCall)
+            for (RelationMember m : r.members)
             {
-                for (RelationMember m : r.members)
+                if (m.member != null && !m.member.incomplete && !m.member.deleted
+                && m.member instanceof Node)
                 {
-                    /* second call - draw nodes */
-                    if (m.member != null && !m.member.incomplete && !m.member.deleted
-                    && m.member instanceof Node)
-                    {
-                        drawSelected(m.member, styles != null ? styles.get(m.member) : null, true, true);
-                        alreadyDrawn.add(m.member);
-                    }
+                    drawSelected(m.member, styles != null ? styles.get(m.member) : null, true, true);
                 }
-                return;
             }
+            return;
         }
         if (!drawMultipolygon || r.keys == null || !"multipolygon".equals(r.keys.get("type")))
         {
@@ -428,7 +459,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (RelationMember m : r.members)
         {
-            if(m.member == null) /* Should not happen, must be a bug elsewhere */
+            if(m.member == null) 
                 r.putError(tr("Empty member in relation."), true);
             else if(m.member.deleted)
                 r.putError(tr("Deleted member ''{0}'' in relation.",
@@ -461,7 +492,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
                 else
                 {
-                    /* nodes drawn on second call */
                     r.putError(tr("Non-Way ''{0}'' in multipolygon.",
                     m.member.getName()), true);
                 }
@@ -469,8 +499,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
 
         ElemStyle wayStyle = styles != null ? styles.get(r) : null;
-        /* find one wayStyle, prefer the style from Relation or take the first
-        one of outer rings */
         if(styles != null && (wayStyle == null || !(wayStyle instanceof AreaElemStyle)))
         {
             for (Way w : outer)
@@ -485,7 +513,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             Boolean zoomok = isZoomOk(wayStyle);
             Collection<Way> join = new LinkedList<Way>();
 
-            /* parse all outer rings and join them */
             for (Way w : outer)
             {
                 if(w.isClosed()) outerclosed.add(w);
@@ -497,7 +524,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     outerclosed.add(w);
             }
 
-            /* parse all inner rings and join them */
             join.clear();
             for (Way w : inner)
             {
@@ -515,7 +541,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 r.putError(tr("No outer way for multipolygon ''{0}''.",
                 r.getName()), true);
             }
-            else if(zoomok) /* draw */
+            else if(zoomok) 
             {
                 class PolyData {
                     public Polygon poly = new Polygon();
@@ -539,9 +565,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                             if(poly.contains(p.xpoints[i],p.ypoints[i]))
                                 --contains;
                         }
-                        if(contains == 0) return 1; /* inside */
-                        if(contains == p.npoints) return 0; /* outside */
-                        return 2; /* mixed */
+                        if(contains == 0) return 1; 
+                        if(contains == p.npoints) return 0; 
+                        return 2; 
                     }
                     public void addInner(Polygon p)
                     {
@@ -626,7 +652,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         ((AreaElemStyle)wayStyle).color, wInner.selected
                         || r.selected);
                     }
-                    alreadyDrawn.add(wInner);
+                    wInner.mappaintDrawnCode = paintid;
                 }
                 else
                 {
@@ -634,14 +660,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     {
                         drawSelected(wInner, innerStyle,
                         !wayStyle.equals(innerStyle), wInner.selected);
-                        alreadyDrawn.add(wInner);
                     }
                     if(wayStyle.equals(innerStyle))
                     {
                         r.putError(tr("Style for inner way ''{0}'' equals multipolygon.",
                         wInner.getName()), false);
                         if(!r.selected)
-                            alreadyDrawnAreas.add(wInner);
+                            wInner.mappaintDrawnAreaCode = paintid;
                     }
                 }
             }
@@ -656,7 +681,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         ((AreaElemStyle)wayStyle).color, wOuter.selected
                         || r.selected);
                     }
-                    alreadyDrawn.add(wOuter);
+                    wOuter.mappaintDrawnCode = paintid;
                 }
                 else
                 {
@@ -669,10 +694,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     if(r.selected)
                     {
                         drawSelected(wOuter, outerStyle, false, false);
-                        alreadyDrawn.add(wOuter);
                     }
-//                    else if(outerStyle instanceof AreaElemStyle)
-                        alreadyDrawnAreas.add(wOuter);
+                    else if(outerStyle instanceof AreaElemStyle)
+                        wOuter.mappaintDrawnAreaCode = paintid;
                 }
             }
         }
@@ -704,14 +728,17 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
         int w = icon.getIconWidth(), h=icon.getIconHeight();
         icon.paintIcon ( Main.map.mapView, g, p.x-w/2, p.y-h/2 );
-        String name = getNodeName(n);
-        if (name!=null && annotate)
+        if(showName)
         {
-            g.setColor(textColor);
-            Font defaultFont = g.getFont();
-            g.setFont (orderFont);
-            g.drawString (name, p.x+w/2+2, p.y+h/2+2);
-            g.setFont(defaultFont);
+            String name = getNodeName(n);
+            if (name!=null && annotate)
+            {
+                g.setColor(textColor);
+                Font defaultFont = g.getFont();
+                g.setFont (orderFont);
+                g.drawString (name, p.x+w/2+2, p.y+h/2+2);
+                g.setFont(defaultFont);
+            }
         }
         if (selected)
         {
@@ -732,6 +759,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, boolean dashed) {
+        profilerSegments++;
         if (col != currentColor || width != currentWidth || dashed != currentDashed) {
             displaySegments(col, width, dashed);
         }
@@ -741,6 +769,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if (!isSegmentVisible(p1, p2)) {
             return;
         }
+        profilerVisibleSegments++;
         currentPath.moveTo(p1.x, p1.y);
         currentPath.lineTo(p2.x, p2.y);
 
@@ -796,14 +825,17 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             } else
                 g.drawRect(p.x - radius, p.y - radius, size, size);
 
-            String name = getNodeName(n);
-            if (name!=null /* && annotate */)
+            if(showName)
             {
-                g.setColor(textColor);
-                Font defaultFont = g.getFont();
-                g.setFont (orderFont);
-                g.drawString (name, p.x+radius+2, p.y+radius+2);
-                g.setFont(defaultFont);
+                String name = getNodeName(n);
+                if (name!=null /* && annotate */)
+                {
+                    g.setColor(textColor);
+                    Font defaultFont = g.getFont();
+                    g.setFont (orderFont);
+                    g.drawString (name, p.x+radius+2, p.y+radius+2);
+                    g.setFont(defaultFont);
+                }
             }
         }
     }
@@ -819,9 +851,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     public void visitAll(DataSet data, Boolean virtual) {
 
         boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
+        profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
+        
         useStyleCache = Main.pref.getBoolean("mappaint.cache",true);
         fillAreas = Main.pref.getBoolean("mappaint.fillareas", true);
         fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
+        showName = Main.pref.getBoolean("mappaint.showname", true);
 
         long profilerStart = java.lang.System.currentTimeMillis();
         long profilerLast = profilerStart;
@@ -837,18 +872,20 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
         circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
         styles = MapPaintStyles.getStyles().getStyleSet();
-        drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",false);
+        drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
         regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name;ref;operator;brand").split(";");
 
-        alreadyDrawn = new LinkedList<OsmPrimitive>();
-        alreadyDrawnAreas = new LinkedList<Way>();
         selectedCall = false;
-        
+        ++paintid;
+        viewid = nc.getViewID();
+
         profilerVisibleNodes = 0;
         profilerVisibleWays = 0;
         profilerVisibleAreas = 0;
+        profilerSegments = 0;
+        profilerVisibleSegments = 0;
 
         if(profiler)
         {
@@ -863,7 +900,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             profilerN = 0;
             for (final Relation osm : data.relations)
             {
-                if(!osm.deleted && !osm.incomplete)
+                if(!osm.deleted && !osm.incomplete && osm.mappaintVisibleCode != viewid)
                 {
                     osm.visit(this);
                     profilerN++;
@@ -872,7 +909,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Relations: %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                System.out.format("Relations: %4dms, calls=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
 
@@ -880,11 +917,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             profilerN = 0;
             for (final Way osm : data.ways)
             {
-                //if (!osm.incomplete && !osm.deleted && !alreadyDrawn.contains(osm))
-                if (!osm.incomplete && !osm.deleted)
+                if (!osm.incomplete && !osm.deleted
+                && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
                 {
-                    //if(styles.isArea((Way)osm) && !alreadyDrawnAreas.contains(osm))
-                    if(isPrimitiveArea(osm))
+                    if(isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid)
                     {
                         osm.visit(this);
                         profilerN++;
@@ -892,11 +928,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         noAreaWays.add((Way)osm);
                 }
             }
-            alreadyDrawnAreas = null;
 
             if(profiler)
             {
-                System.out.format("Areas    : %4dms, n=%5d, visible=%d\n",
+                System.out.format("Areas    : %4dms, calls=%5d, visible=%d\n",
                     (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleAreas);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
@@ -912,7 +947,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Ways     : %4dms, n=%5d, visible=%d\n",
+                System.out.format("Ways     : %4dms, calls=%5d, visible=%d\n",
                     (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
@@ -922,7 +957,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** WAYS (filling disabled)  ***/
             profilerN = 0;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.deleted && !osm.selected)
+                if (!osm.incomplete && !osm.deleted && !osm.selected
+                && osm.mappaintVisibleCode != viewid )
                 {
                     osm.visit(this);
                     profilerN++;
@@ -930,7 +966,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Ways     : %4dms, n=%5d, visible=%d\n", 
+                System.out.format("Ways     : %4dms, calls=%5d, visible=%d\n",
                     (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
@@ -940,9 +976,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         selectedCall = true;
         profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected()) {
-            if (!osm.incomplete && !osm.deleted
-            //&& !(osm instanceof Node) && !alreadyDrawn.contains(osm))
-            && !(osm instanceof Node))
+            if (!osm.incomplete && !osm.deleted && !(osm instanceof Node)
+            && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);
                 profilerN++;
@@ -951,7 +986,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(profiler)
         {
-            System.out.format("Selected : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            System.out.format("Selected : %4dms, calls=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
             profilerLast = java.lang.System.currentTimeMillis();
         }
 
@@ -966,8 +1001,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /*** NODES ***/
         profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            //if (!osm.incomplete && !osm.deleted && !alreadyDrawn.contains(osm))
-            if (!osm.incomplete && !osm.deleted)
+            if (!osm.incomplete && !osm.deleted
+            && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);
                 profilerN++;
@@ -975,12 +1010,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(profiler)
         {
-            System.out.format("Nodes    : %4dms, n=%5d, visible=%d\n",
+            System.out.format("Nodes    : %4dms, calls=%5d, visible=%d\n",
                 (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleNodes);
             profilerLast = java.lang.System.currentTimeMillis();
         }
-
-        alreadyDrawn = null;
 
         /*** VIRTUAL  ***/
         if (virtualNodeSize != 0)
@@ -988,15 +1021,18 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.deleted)
+                if (!osm.incomplete && !osm.deleted
+                && osm.mappaintVisibleCode != viewid )
                 {
-                    visitVirtual((Way)osm);
+                    // TODO: move this into the SimplePaint code?
+                    if(!profilerOmitDraw)
+                        visitVirtual((Way)osm);
                     profilerN++;
                 }
 
             if(profiler)
             {
-                System.out.format("Virtual  : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                System.out.format("Virtual  : %4dms, calls=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
 
@@ -1010,6 +1046,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(profiler)
         {
+            System.out.format("Segments :         calls=%5d, visible=%d\n", profilerSegments, profilerVisibleSegments);
             System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
         }
     }
