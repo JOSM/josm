@@ -31,6 +31,7 @@ public class LafPreference implements PreferenceSetting {
     public JPanel panel;
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
+    private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
 
     public void addGui(PreferenceDialog gui) {
         lafCombo = new JComboBox(UIManager.getInstalledLookAndFeels());
@@ -76,6 +77,10 @@ public class LafPreference implements PreferenceSetting {
         showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
         panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
 
+        drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
+        drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
+        panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
@@ -90,6 +95,7 @@ public class LafPreference implements PreferenceSetting {
     public boolean ok() {
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
         Main.pref.put("osm-primitives.showid", showID.isSelected());
+        Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
         return Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
     }
 

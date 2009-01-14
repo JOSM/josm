@@ -79,11 +79,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // Add extra shortcut N
         Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
             Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
-
-        //putValue("help", "Action/AddNode/Autnode");
-        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
-
-        drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
     }
 
     private static Cursor getCursor() {
@@ -96,6 +91,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     @Override public void enterMode() {
         super.enterMode();
+        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
+        drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
+
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         Main.map.mapView.addTemporaryLayer(this);
