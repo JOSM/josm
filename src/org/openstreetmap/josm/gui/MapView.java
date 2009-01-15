@@ -235,6 +235,14 @@ public class MapView extends NavigatableComponent {
             layers.add(pos, layer);
     }
 
+
+    public int getLayerPos(Layer layer) {
+        int curLayerPos = layers.indexOf(layer);
+        if (curLayerPos == -1)
+            throw new IllegalArgumentException(tr("layer not in list."));
+        return curLayerPos;
+    }
+
     /**
      * Draw the component.
      */
