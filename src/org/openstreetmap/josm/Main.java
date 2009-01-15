@@ -394,7 +394,7 @@ abstract public class Main {
             Main.proj = (Projection)Class.forName(Main.pref.get("projection")).newInstance();
         } catch (final Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, tr("The projection could not be read from preferences. Using EPSG:4263."));
+            JOptionPane.showMessageDialog(null, tr("The projection could not be read from preferences. Using EPSG:4326"));
             Main.proj = new Epsg4326();
         }
 
