@@ -40,10 +40,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
-    public boolean isMappaintArea = false;
     public Integer mappaintVisibleCode = 0;
     public Integer mappaintDrawnCode = 0;
-    public Integer mappaintDrawnAreaCode = 0;
     public Collection<String> errors;
 
     public void putError(String text, Boolean isError)

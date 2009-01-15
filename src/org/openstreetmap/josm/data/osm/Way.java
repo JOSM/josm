@@ -25,6 +25,11 @@ public final class Way extends OsmPrimitive {
      */
     public final List<Node> nodes = new ArrayList<Node>();
 
+    /* mappaint data */
+    public boolean isMappaintArea = false;
+    public Integer mappaintDrawnAreaCode = 0;
+    /* end of mappaint data */
+    
     public void visitNodes(Visitor v) {
         for (Node n : this.nodes)
             v.visit(n);

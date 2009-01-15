@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -37,9 +38,11 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 public class MapPaintVisitor extends SimplePaintVisitor {
     protected boolean useRealWidth;
     protected boolean zoomLevelDisplay;
-    protected boolean fillAreas;
+    protected int fillAreas;
     protected boolean drawMultipolygon;
-    protected boolean showName;
+    protected int showNames;
+    protected int showIcons;
+    protected int useStrokes;
     protected int fillAlpha;
     protected Color untaggedColor;
     protected Color textColor;
@@ -49,6 +52,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected Font orderFont;
     protected ElemStyles.StyleSet styles;
     protected double circum;
+    protected double dist;
     protected String regionalNameOrder[];
     protected Boolean selectedCall;
     protected Boolean useStyleCache;
@@ -83,18 +87,20 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(osm.mappaintStyle == null && styles != null) {
             osm.mappaintStyle =  styles.get(osm);
-            osm.isMappaintArea = styles.isArea(osm);
+            if(osm instanceof Way)
+                ((Way)osm).isMappaintArea = styles.isArea(osm);
         }
         return osm.mappaintStyle;
     }
 
-    public boolean isPrimitiveArea(OsmPrimitive osm) {
+    public boolean isPrimitiveArea(Way osm) {
         if(!useStyleCache)
-            return styles.isArea((Way)osm);
+            return styles.isArea(osm);
 
         if(osm.mappaintStyle == null && styles != null) {
             osm.mappaintStyle = styles.get(osm);
-            osm.isMappaintArea = styles.isArea(osm);
+            if(osm instanceof Way)
+                osm.isMappaintArea = styles.isArea(osm);
         }
         return osm.isMappaintArea;
     }
@@ -122,7 +128,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(profilerOmitDraw)
             return;
 
-        if (nodeStyle != null && isZoomOk(nodeStyle))
+        if (nodeStyle != null && isZoomOk(nodeStyle) && showIcons > dist)
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
         else if (n.selected)
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
@@ -160,7 +166,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
 
         w.mappaintVisibleCode = 0;
-        if(fillAreas)
+        if(fillAreas > dist)
             w.clearErrors();
 
         if(wayStyle==null)
@@ -182,7 +188,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             // way with area style
             if(!profilerOmitDraw)
             {
-                if (fillAreas)
+                if (fillAreas > dist)
                 {
                     profilerVisibleAreas++;
                     drawArea(polygon, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
@@ -748,7 +754,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
         int w = icon.getIconWidth(), h=icon.getIconHeight();
         icon.paintIcon ( Main.map.mapView, g, p.x-w/2, p.y-h/2 );
-        if(showName)
+        if(showNames > dist)
         {
             String name = getNodeName(n);
             if (name!=null && annotate)
@@ -809,14 +815,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if (currentPath != null) {
             Graphics2D g2d = (Graphics2D)g;
             g2d.setColor(inactive ? inactiveColor : currentColor);
-            if (currentStroke == null) {
+            if (currentStroke == null && useStrokes > dist) {
                 if (currentDashed)
                     g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,new float[] {9},0));
                 else
                     g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             }
             g2d.draw(currentPath);
-            g2d.setStroke(new BasicStroke(1));
+            if(useStrokes > dist)
+                g2d.setStroke(new BasicStroke(1));
 
             currentPath = new GeneralPath();
             currentColor = newColor;
@@ -845,7 +852,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             } else
                 g.drawRect(p.x - radius, p.y - radius, size, size);
 
-            if(showName)
+            if(showNames > dist)
             {
                 String name = getNodeName(n);
                 if (name!=null /* && annotate */)
@@ -874,9 +881,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
         
         useStyleCache = Main.pref.getBoolean("mappaint.cache",true);
-        fillAreas = Main.pref.getBoolean("mappaint.fillareas", true);
+        fillAreas = Main.pref.getInteger("mappaint.fillareas", 100000);
         fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
-        showName = Main.pref.getBoolean("mappaint.showname", true);
+        showNames = Main.pref.getInteger("mappaint.shownames", 100000);
+        showIcons = Main.pref.getInteger("mappaint.showicons", 100000);
+        useStrokes = Main.pref.getInteger("mappaint.strokes", 100000);
 
         long profilerStart = java.lang.System.currentTimeMillis();
         long profilerLast = profilerStart;
@@ -884,7 +893,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(profiler)
             System.out.println("Mappaint Profiler (" +
                 (useStyleCache ? "cache=true, " : "cache=false, ") +
-                (fillAreas ? "fillareas=true, " : "fillareas=false, ") +
+                "fillareas " + fillAreas + ", " +
                 "fillalpha=" + fillAlpha + "%)");
 
         getSettings(virtual);
@@ -907,13 +916,18 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         profilerSegments = 0;
         profilerVisibleSegments = 0;
 
+        LatLon ll1 = nc.getLatLon(0,0);
+        LatLon ll2 = nc.getLatLon(100,0);
+        dist = ll1.greatCircleDistance(ll2);
+        System.out.format("Circum   : %4f Dist: %f\n", circum, dist);
+        
         if(profiler)
         {
             System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
             profilerLast = java.lang.System.currentTimeMillis();
         }
 
-        if (fillAreas && styles != null && styles.hasAreas()) {
+        if (fillAreas > dist && styles != null && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
             /*** RELATIONS ***/
@@ -958,7 +972,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             /*** WAYS ***/
             profilerN = 0;
-            fillAreas = false;
+            fillAreas = 0;
             for (final OsmPrimitive osm : noAreaWays)
             {
                 osm.visit(this);
