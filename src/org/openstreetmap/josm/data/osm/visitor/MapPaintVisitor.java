@@ -116,12 +116,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         n.mappaintVisibleCode = 0;
 
         profilerVisibleNodes++;
-        
+
         IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(n);
 
         if(profilerOmitDraw)
             return;
-            
+
         if (nodeStyle != null && isZoomOk(nodeStyle))
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
         else if (n.selected)
@@ -160,6 +160,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
 
         w.mappaintVisibleCode = 0;
+        if(fillAreas)
+            w.clearErrors();
 
         if(wayStyle==null)
         {
@@ -184,6 +186,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 {
                     profilerVisibleAreas++;
                     drawArea(polygon, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
+                    if(!w.isClosed())
+                        w.putError(tr("Area style way is not closed."), true);
                 }
                 drawWay(w, ((AreaElemStyle)wayStyle).line, ((AreaElemStyle)wayStyle).color, w.selected);
             }
@@ -420,7 +424,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     public void visit(Relation r) {
-   
+
         r.mappaintVisibleCode = 0;
         /* TODO implement visible handling for relations too */
 
@@ -511,6 +515,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(wayStyle != null && wayStyle instanceof AreaElemStyle)
         {
             Boolean zoomok = isZoomOk(wayStyle);
+            Boolean visible = false;
             Collection<Way> join = new LinkedList<Way>();
 
             for (Way w : outer)
@@ -540,8 +545,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 r.putError(tr("No outer way for multipolygon ''{0}''.",
                 r.getName()), true);
+                visible = true; /* prevent killing remaining ways */
             }
-            else if(zoomok) 
+            else if(zoomok)
             {
                 class PolyData {
                     public Polygon poly = new Polygon();
@@ -637,16 +643,30 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
                 for (PolyData pd : poly)
                 {
-                    drawArea(pd.get(), (pd.way.selected || r.selected) ? selectedColor
-                    : ((AreaElemStyle)wayStyle).color);
+                    if(isPolygonVisible(pd.get()))
+                    {
+                        drawArea(pd.get(), (pd.way.selected || r.selected) ? selectedColor
+                        : ((AreaElemStyle)wayStyle).color);
+                        visible = true;
+                    }
                 }
+            }
+            if(!visible) /* nothing visible, so disable relation and all its ways */
+            {
+                r.mappaintVisibleCode = viewid;
+                for (Way wInner : inner)
+                    wInner.mappaintVisibleCode = viewid;
+                for (Way wOuter : outer)
+                    wOuter.mappaintVisibleCode = viewid;
+                return;
             }
             for (Way wInner : inner)
             {
                 ElemStyle innerStyle = styles.get(wInner);
                 if(innerStyle == null)
                 {
-                    if(zoomok)
+                    if(zoomok && (wInner.mappaintDrawnCode != paintid
+                    || outer.size() == 0))
                     {
                         drawWay(wInner, ((AreaElemStyle)wayStyle).line,
                         ((AreaElemStyle)wayStyle).color, wInner.selected
