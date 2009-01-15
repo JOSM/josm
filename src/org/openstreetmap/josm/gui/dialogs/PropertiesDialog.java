@@ -18,6 +18,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.String;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -207,12 +208,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return;
         }
 
-        String value = values.getEditor().getItem().toString();
+        String value = values.getEditor().getItem().toString().trim();
         // is not Java 1.5
         //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
         if (value.equals(""))
             value = null; // delete the key
-        String newkey = keys.getEditor().getItem().toString();
+        String newkey = keys.getEditor().getItem().toString().trim();
         //newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
         if (newkey.equals("")) {
             newkey = key;
@@ -258,6 +259,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Main.ds.fireSelectionChanged(sel);
         selectionChanged(sel); // update whole table
         Main.parent.repaint(); // repaint all - drawing could have been changed
+
+        if(!key.equals(newkey)) {
+            for(int i=0; i < propertyTable.getRowCount(); i++)
+                if(propertyData.getValueAt(i, 0).toString() == newkey) {
+                    row=i;
+                    break;
+                }
+        }
+        propertyTable.changeSelection(row, 0, false, false);
     }
 
     /**
@@ -325,8 +335,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         pane.createDialog(Main.parent, tr("Change values?")).setVisible(true);
         if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
             return;
-        String key = keys.getEditor().getItem().toString();
-        String value = values.getEditor().getItem().toString();
+        String key = keys.getEditor().getItem().toString().trim();
+        String value = values.getEditor().getItem().toString().trim();
         if (value.equals(""))
             return;
         if (key.equals("created_by"))
@@ -391,6 +401,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
         Main.ds.fireSelectionChanged(sel);
         selectionChanged(sel); // update table
+          
+        int rowCount = propertyTable.getRowCount();
+        propertyTable.changeSelection((row < rowCount ? row : (rowCount-1)), 0, false, false);
     }
 
     /**
@@ -702,5 +715,5 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             setTitle(tr("Properties / Memberships"), false);
         }
 
-	}
+    }
 }
