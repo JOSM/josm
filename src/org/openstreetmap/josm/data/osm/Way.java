@@ -114,6 +114,8 @@ public final class Way extends OsmPrimitive {
             int nodesNo = new HashSet<Node>(nodes).size();
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
+            if(errors != null)
+                name = "*"+name;
         }
         return name;
     }
