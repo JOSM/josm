@@ -103,6 +103,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
                     String text = AboutAction.getTextBlock();
                     String pl = Main.pref.get("plugins");
+                    text += "Java version: " + System.getProperty("java.version")+"\n";
                     if(pl != null && pl.length() != 0)
                         text += "Plugins: "+pl+"\n";
                     for (final PluginProxy pp : Main.plugins) {
@@ -161,14 +162,8 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
             if (c.contains("wmsplugin.") || c.contains(".WMSLayer"))
                 return "wmsplugin";
-            if (c.contains("landsat.") || c.contains(".LandsatLayer"))
-                return "landsat";
             if (c.contains("livegps."))
                 return "livegps";
-            if (c.contains("mappaint."))
-                return "mappaint";
-            if (c.contains("annotationtester."))
-                return "annotation-tester";
             if (c.startsWith("UtilsPlugin."))
                 return "UtilsPlugin";
 
