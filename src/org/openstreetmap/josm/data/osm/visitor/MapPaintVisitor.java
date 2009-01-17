@@ -677,7 +677,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 {
                     if(isPolygonVisible(pd.get()))
                     {
-                        drawArea(pd.way, (pd.way.selected || r.selected) ? selectedColor
+                        drawAreaPolygon(pd.get(), (pd.way.selected || r.selected) ? selectedColor
                         : ((AreaElemStyle)wayStyle).color);
                         visible = true;
                     }
@@ -772,6 +772,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     {
         Polygon polygon = getPolygon(w);
         
+        // set the opacity (alpha) level of the filled polygon
+        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
+        g.fillPolygon(polygon);
+    }
+
+    protected void drawAreaPolygon(Polygon polygon, Color color)
+    {
         // set the opacity (alpha) level of the filled polygon
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
