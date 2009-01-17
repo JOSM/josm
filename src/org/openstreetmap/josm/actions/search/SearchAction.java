@@ -54,23 +54,6 @@ public class SearchAction extends JosmAction {
     public void showSearchDialog(SearchSetting initialValues) {
         JLabel label = new JLabel(tr("Please enter a search string."));
         final JTextField input = new JTextField(initialValues.text);
-        input.setToolTipText(tr("<html>Fulltext search:<ul>"
-                + "<li><b>Baker Street</b> - 'Baker' and 'Street' in any key or name.</li>"
-                + "<li><b>\"Baker Street\"</b> - 'Baker Street' in any key or name.</li>"
-                + "<li><b>name:Bak</b> - 'Bak' anywhere in the name.</li>"
-                + "<li><b>-name:Bak</b> - not 'Bak' in the name.</li>"
-                + "<li><b>foot:</b> - key=foot set to any value.</li>" + "<li>Special targets:</li>"
-                + "<li><b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)</li>"
-                + "<li><b>user:</b>... - all objects changed by user</li>"
-                + "<li><b>id:</b>... - object with given ID</li>"
-                + "<li><b>nodes:</b>... - object with given number of nodes</li>"
-                + "<li><b>modified</b> - all changed objects</li>"
-                + "<li><b>selected</b> - all selected objects</li>"
-                + "<li><b>incomplete</b> - all incomplete objects</li>"
-                + "<li>Use <b>|</b> or <b>OR</b> to combine with logical or</li>"
-                + "<li>Use <b>\"</b> to quote operators (e.g. if key contains :)</li>"
-                + "<li>Use <b>(</b> and <b>)</b> to group expressions</li>" + "</ul></html>"));
-
         JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
         JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);
         JRadioButton remove = new JRadioButton(tr("remove from selection"), initialValues.mode == SearchMode.remove);
@@ -82,14 +65,39 @@ public class SearchAction extends JosmAction {
         JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
         JCheckBox regexSearch   = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
 
-        JPanel p = new JPanel(new GridBagLayout());
-        p.add(label, GBC.eop());
-        p.add(input, GBC.eop().fill(GBC.HORIZONTAL));
-        p.add(replace, GBC.eol());
-        p.add(add, GBC.eol());
-        p.add(remove, GBC.eop());
-        p.add(caseSensitive, GBC.eol());
-        p.add(regexSearch, GBC.eol());
+        JPanel left = new JPanel(new GridBagLayout());
+        left.add(label, GBC.eop());
+        left.add(input, GBC.eop().fill(GBC.HORIZONTAL));
+        left.add(replace, GBC.eol());
+        left.add(add, GBC.eol());
+        left.add(remove, GBC.eop());
+        left.add(caseSensitive, GBC.eol());
+        left.add(regexSearch, GBC.eol());
+
+        JPanel right = new JPanel();
+        right.add(new JLabel("<html><ul>"
+                + "<li>"+tr("<b>Baker Street</b> - 'Baker' and 'Street' in any key or name.")+"</li>"
+                + "<li>"+tr("<b>\"Baker Street\"</b> - 'Baker Street' in any key or name.")+"</li>"
+                + "<li>"+tr("<b>name:Bak</b> - 'Bak' anywhere in the name.")+"</li>"
+                + "<li>"+tr("<b>-name:Bak</b> - not 'Bak' in the name.")+"</li>"
+                + "<li>"+tr("<b>foot:</b> - key=foot set to any value.")+"</li>"
+                + "<li>"+tr("<u>Special targets:</u>")+"</li>"
+                + "<li>"+tr("<b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)")+"</li>"
+                + "<li>"+tr("<b>user:</b>... - all objects changed by user")+"</li>"
+                + "<li>"+tr("<b>id:</b>... - object with given ID")+"</li>"
+                + "<li>"+tr("<b>nodes:</b>... - object with given number of nodes")+"</li>"
+                + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
+                + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
+                + "<li>"+tr("<b>incomplete</b> - all incomplete objects")+"</li>"
+                + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"
+                + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains :)")+"</li>"
+                + "<li>"+tr("Use <b>(</b> and <b>)</b> to group expressions")+"</li>"
+                + "</ul></html>"));
+
+        final JPanel p = new JPanel();
+        p.add(left);
+        p.add(right);
+
         JOptionPane pane = new JOptionPane(p, JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null) {
             @Override
             public void selectInitialValue() {
