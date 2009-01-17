@@ -54,8 +54,11 @@ public class ToggleDialog extends JPanel implements Helpful {
         public void actionPerformed(ActionEvent e) {
             if (e != null && !(e.getSource() instanceof AbstractButton))
                 button.setSelected(!button.isSelected());
-            setVisible(button.isSelected());
-            Main.pref.put(prefname+".visible", button.isSelected());
+            Boolean selected = button.isSelected();
+            setVisible(selected);
+            Main.pref.put(prefname+".visible", selected);
+            if(!selected && winadapter != null)
+                winadapter.windowClosing(null);
         }
     }
 
@@ -66,6 +69,7 @@ public class ToggleDialog extends JPanel implements Helpful {
     public final String prefName;
 
     public JPanel parent;
+    WindowAdapter winadapter;
     private final JPanel titleBar = new JPanel(new GridBagLayout());
     public JLabel label = new JLabel();
 
@@ -119,9 +123,12 @@ public class ToggleDialog extends JPanel implements Helpful {
                     setMaximumSize(new Dimension(330,20));
                     minimize.setIcon(ImageProvider.get("misc", "minimized"));
                 }
-                // doLayout() - workaround
-                parent.setVisible(false);
-                parent.setVisible(true);
+                if(parent != null)
+                {
+                    // doLayout() - workaround
+                    parent.setVisible(false);
+                    parent.setVisible(true);
+                }
             }
         };
         //hide.addActionListener(hideActionListener);
@@ -133,7 +140,7 @@ public class ToggleDialog extends JPanel implements Helpful {
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
             public void mousePressed(MouseEvent e) {}
-        public void mouseReleased(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {}
         };
         titleBar.addMouseListener(titleMouseListener);
 
@@ -156,20 +163,21 @@ public class ToggleDialog extends JPanel implements Helpful {
                 try {f.setAlwaysOnTop(true);} catch (SecurityException e1) {}
                 parent.remove(ToggleDialog.this);
                 f.getContentPane().add(ToggleDialog.this);
-                f.addWindowListener(new WindowAdapter(){
+                f.addWindowListener((winadapter = new WindowAdapter(){
                     @Override public void windowClosing(WindowEvent e) {
-                        titleBar.setVisible(true);
                         f.getContentPane().removeAll();
-                        parent.add(ToggleDialog.this);
                         f.dispose();
+                        winadapter = null;
 
                         // doLayout() - workaround
                         setVisible(false);
-                        setVisible(true);
-
+                        parent.add(ToggleDialog.this);
+                        if(Main.pref.getBoolean(action.prefname+".visible"))
+                            setVisible(true);
+                        titleBar.setVisible(true);
                         Main.pref.put(action.prefname+".docked", true);
                     }
-                });
+                }));
                 f.addComponentListener(new ComponentAdapter(){
                     @Override public void componentMoved(ComponentEvent e) {
                         Main.pref.put(action.prefname+".bounds", f.getX()+","+f.getY()+","+f.getWidth()+","+f.getHeight());
