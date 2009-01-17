@@ -86,6 +86,7 @@ public class GpxLayer extends Layer {
     private int computeCacheMaxLineLengthUsed;
     private Color computeCacheColorUsed;
     private boolean computeCacheColored;
+    private int computeCacheColorTracksTune;
 
     public GpxLayer(GpxData d) {
         super((String) d.attr.get("name"));
@@ -388,18 +389,20 @@ public class GpxLayer extends Layer {
         boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");      // paint direction arrow with alternate math. may be faster
         int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
         // don't draw arrows nearer to each other than this
-
+        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45); // allows to tweak line coloring for different speed levels.
         /****************************************************************
          ********** STEP 2a - CHECK CACHE VALIDITY **********************
          ****************************************************************/
         if (computeCacheInSync && ((computeCacheMaxLineLengthUsed != maxLineLength) ||
                                    (!neutralColor.equals(computeCacheColorUsed)) ||
-                                   (computeCacheColored != colored))) {
+                                   (computeCacheColored != colored) ||
+                                   (computeCacheColorTracksTune != colorTracksTune))) {
 //          System.out.println("(re-)computing gpx line styles, reason: CCIS=" + computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) + " CCCU=" +  (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" + (computeCacheColored != colored));
             computeCacheMaxLineLengthUsed = maxLineLength;
             computeCacheInSync = false;
             computeCacheColorUsed = neutralColor;
             computeCacheColored = colored;
+            computeCacheColorTracksTune = colorTracksTune;
         }
 
         /****************************************************************
@@ -420,13 +423,14 @@ public class GpxLayer extends Layer {
                             double dist = trkPnt.latlon.greatCircleDistance(oldWp.latlon);
                             double dtime = trkPnt.time - oldWp.time;
                             double vel = dist/dtime;
+                            double velColor = vel/colorTracksTune*255;
 
                             if (!colored) {
                                 trkPnt.speedLineColor = neutralColor;
-                            } else if (dtime <= 0 || vel < 0 || vel > 36) { // attn: bad case first
+                            } else if (dtime <= 0 || vel < 0 || velColor > 255) { // attn: bad case first
                                 trkPnt.speedLineColor = colors[255];
                             } else {
-                                trkPnt.speedLineColor = colors[(int) (7*vel)];
+                                trkPnt.speedLineColor = colors[(int) (velColor)];
                             }
                             if (maxLineLength == -1 || dist <= maxLineLength) {
                                 trkPnt.drawLine = true;

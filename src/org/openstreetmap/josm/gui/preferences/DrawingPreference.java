@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
@@ -26,6 +27,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
     private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
     private JCheckBox colorTracks = new JCheckBox(tr("Color tracks by velocity."));
+    private JComboBox colorTracksTune = new JComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
     private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
     private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
@@ -51,6 +53,7 @@ public class DrawingPreference implements PreferenceSetting {
                             drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
                             drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
                             colorTracks.setEnabled(drawRawGpsLines.isSelected());
+                            colorTracksTune.setEnabled(colorTracks.isSelected() && drawRawGpsLines.isSelected());
             }
         });
         drawRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines"));
@@ -96,11 +99,23 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         // colorTracks
+        colorTracks.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                            colorTracksTune.setEnabled(colorTracks.isSelected() && drawRawGpsLines.isSelected());
+            }
+        });
         colorTracks.setSelected(Main.pref.getBoolean("draw.rawgps.colors"));
         colorTracks.setToolTipText(tr("Choose the hue for the track color by the velocity at that point."));
         colorTracks.setEnabled(drawRawGpsLines.isSelected());
-        panel.add(colorTracks, GBC.eop().insets(40,0,0,0));
-
+        panel.add(colorTracks, GBC.std().insets(40,0,0,0));
+        
+        // color Tracks by Velocity Tune
+        int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
+        colorTracksTune.setSelectedIndex(ccts==10 ? 2 : (ccts==20 ? 1 : 0));
+        colorTracksTune.setToolTipText(tr("Allows to tune the track coloring for different average speeds."));
+        colorTracksTune.setEnabled(colorTracks.isSelected() && colorTracks.isEnabled());
+        panel.add(colorTracksTune, GBC.eop().insets(5,0,0,5));
+        
         // largeGpsPoints
         largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large"));
         largeGpsPoints.setToolTipText(tr("Draw larger dots for the GPS points."));
@@ -173,6 +188,8 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.rawgps.alternatedirection", drawGpsArrowsFast.isSelected());
         Main.pref.put("draw.rawgps.min-arrow-distance", drawGpsArrowsMinDist.getText());
         Main.pref.put("draw.rawgps.colors", colorTracks.isSelected());
+        int ccti=colorTracksTune.getSelectedIndex();
+        Main.pref.putInteger("draw.rawgps.colorTracksTune", ccti==2 ? 10 : (ccti==1 ? 20 : 45));
         Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
         Main.pref.put("draw.segment.direction", directionHint.isSelected());
         Main.pref.put("draw.segment.relevant_directions_only", interestingDirections.isSelected());
