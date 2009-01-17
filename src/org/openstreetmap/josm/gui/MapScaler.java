@@ -28,7 +28,7 @@ public class MapScaler extends JComponent implements Helpful {
         LatLon ll1 = mv.getLatLon(0,0);
         LatLon ll2 = mv.getLatLon(100,0);
         double dist = ll1.greatCircleDistance(ll2);
-        String text = dist > 1000 ? Math.round(dist/100)/10 +" km" : (dist >= 1
+        String text = dist >= 2000 ? Math.round(dist/100)/10 +" km" : (dist >= 1
         ? Math.round(dist*10)/10 +" m" : "< 1 m");
         Rectangle2D bound = g.getFontMetrics().getStringBounds(text, g);
         g.setColor(getColor());
