@@ -419,8 +419,11 @@ abstract public class Main {
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
 
         Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+	String geometry = Main.pref.get("gui.geometry");
         if (args.containsKey("geometry")) {
-            String geometry = args.get("geometry").iterator().next();
+            geometry = args.get("geometry").iterator().next();
+	}
+	if (geometry.length() != 0) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(geometry);
             if (m.matches()) {
                 int w = Integer.valueOf(m.group(1));
@@ -435,6 +438,10 @@ abstract public class Main {
                         y = screenDimension.height - y - h;
                 }
                 bounds = new Rectangle(x,y,w,h);
+		if(!Main.pref.get("gui.geometry").equals(geometry)) {
+		    // remember this geometry
+		    Main.pref.put("gui.geometry", geometry);
+		}
             } else
                 System.out.println("Ignoring malformed geometry: "+geometry);
         }
@@ -546,5 +553,19 @@ abstract public class Main {
     static public String getLanguageCode()
     {
         return Locale.getDefault().getLanguage() + ":";
+    }
+
+    static public void saveGuiGeometry() {
+	// if the gui.geometry preference is already set,
+	// save the current window geometry
+	String curGeometryPref = pref.get("gui.geometry");
+	if(curGeometryPref.length() != 0) {
+	    Rectangle bounds = parent.getBounds();
+	    pref.put("gui.geometry",
+		     (int)bounds.getWidth() +
+		     "x" + (int)bounds.getHeight() +
+		     "+" + (int)bounds.getX() +
+		     "+" + (int)bounds.getY());
+	}
     }
 }

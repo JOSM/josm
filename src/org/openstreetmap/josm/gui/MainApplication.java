@@ -55,6 +55,7 @@ public class MainApplication extends Main {
             @Override public void windowClosing(final WindowEvent arg0) {
                 if (Main.breakBecauseUnsavedChanges())
                     return;
+                Main.saveGuiGeometry();
                 System.exit(0);
             }
         });
@@ -214,7 +215,7 @@ public class MainApplication extends Main {
         mainFrame.setVisible(true);
         splash.closeSplash();
 
-        if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
+        if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Main.pref.get("gui.geometry") == null && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         EventQueue.invokeLater(new Runnable(){

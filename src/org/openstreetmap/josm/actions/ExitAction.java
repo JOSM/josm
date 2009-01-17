@@ -24,7 +24,9 @@ public class ExitAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (!Main.breakBecauseUnsavedChanges())
+        if (!Main.breakBecauseUnsavedChanges()) {
+            Main.saveGuiGeometry();
             System.exit(0);
+	}
     }
 }
