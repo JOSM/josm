@@ -63,6 +63,7 @@ public class SimplePaintVisitor implements Visitor {
     protected Color backgroundColor;
     protected boolean showDirectionArrow;
     protected boolean showRelevantDirectionsOnly;
+    protected boolean showHeadArrowOnly;
     protected boolean showOrderNumber;
     protected boolean fillSelectedNode;
     protected boolean fillUnselectedNode;
@@ -100,6 +101,7 @@ public class SimplePaintVisitor implements Visitor {
     protected void getSettings(Boolean virtual) {
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
         showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
+        showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
         selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size", 5) / 2;
         selectedNodeSize = selectedNodeRadius * 2;
@@ -291,6 +293,9 @@ public class SimplePaintVisitor implements Visitor {
 
         boolean showThisDirectionArrow = w.selected
         || (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
+        // head only takes over control if the option is true,
+        // the direction should be shown at all and not only because it's selected
+        boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !w.selected && showHeadArrowOnly;
         Color wayColor;
 
         if (inactive) {
@@ -306,7 +311,8 @@ public class SimplePaintVisitor implements Visitor {
             Point lastP = nc.getPoint(it.next().eastNorth);
             for (int orderNumber = 1; it.hasNext(); orderNumber++) {
                 Point p = nc.getPoint(it.next().eastNorth);
-                drawSegment(lastP, p, w.selected && !inactive ? selectedColor : wayColor, showThisDirectionArrow);
+                drawSegment(lastP, p, w.selected && !inactive ? selectedColor : wayColor, 
+                    showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
                 if (showOrderNumber)
                     drawOrderNumber(lastP, p, orderNumber);
                 lastP = p;

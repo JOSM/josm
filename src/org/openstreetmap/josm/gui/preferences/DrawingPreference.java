@@ -33,6 +33,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
     private JTextField drawGpsArrowsMinDist = new JTextField(8);
     private JCheckBox interestingDirections = new JCheckBox(tr("Only interesting direction hints (e.g. with oneway tag)."));
+    private JCheckBox headArrow = new JCheckBox(tr("Only on the head of a way."));
     private JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
     private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
     private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
@@ -131,12 +132,15 @@ public class DrawingPreference implements PreferenceSetting {
         // directionHint
         directionHint.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                            if (directionHint.isSelected()){
-                                interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only", true));
-                            }else{
-                                interestingDirections.setSelected(false);
-                            }
-                            interestingDirections.setEnabled(directionHint.isSelected());
+                if (directionHint.isSelected()){
+                    interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only", true));
+                    headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
+                }else{
+                    interestingDirections.setSelected(false);
+                    headArrow.setSelected(false);
+                }
+                interestingDirections.setEnabled(directionHint.isSelected());
+                headArrow.setEnabled(directionHint.isSelected());
             }
         });
         directionHint.setToolTipText(tr("Draw direction hints for way segments."));
@@ -148,6 +152,12 @@ public class DrawingPreference implements PreferenceSetting {
         interestingDirections.setSelected(Main.pref.getBoolean("draw.segment.relevant_directions_only", true));
         interestingDirections.setEnabled(directionHint.isSelected());
         panel.add(interestingDirections, GBC.eop().insets(40,0,0,0));
+
+        // only on the head of a way
+        headArrow.setToolTipText(tr("Only on the head of a way."));
+        headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
+        headArrow.setEnabled(directionHint.isSelected());
+        panel.add(headArrow, GBC.eop().insets(40, 0, 0, 0));
 
         // segment order number
         segmentOrderNumber.setToolTipText(tr("Draw the order numbers of all segments within their way."));
@@ -193,6 +203,7 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
         Main.pref.put("draw.segment.direction", directionHint.isSelected());
         Main.pref.put("draw.segment.relevant_directions_only", interestingDirections.isSelected());
+        Main.pref.put("draw.segment.head_only", headArrow.isSelected());
         Main.pref.put("draw.segment.order_number", segmentOrderNumber.isSelected());
         Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
         Main.pref.put("draw.data.inactive_color", inactive.isSelected());

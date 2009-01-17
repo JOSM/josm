@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 
@@ -224,6 +225,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         // (even if the tag is negated as in oneway=false) or the way is selected
         boolean showDirection = w.selected || ((!useRealWidth) && (showDirectionArrow
         && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
+        // head only takes over control if the option is true,
+        // the direction should be shown at all and not only because it's selected
+        boolean showOnlyHeadArrowOnly = showDirection && !w.selected && showHeadArrowOnly;
         int width = defaultSegmentWidth;
         int realWidth = 0; //the real width of the element in meters
         boolean dashed = false;
@@ -269,10 +273,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         // draw the way
         lastN = null;
-        for(Node n : w.nodes)
+        Iterator<Node> it = w.nodes.iterator();
+        while (it.hasNext())
         {
+            Node n = it.next();
             if(lastN != null)
-                drawSeg(lastN, n, color, showDirection, width, dashed);
+                drawSeg(lastN, n, color,
+                    showOnlyHeadArrowOnly ? !it.hasNext() : showDirection, width, dashed);
             lastN = n;
         }
 
