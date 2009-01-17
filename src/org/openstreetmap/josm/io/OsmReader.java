@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,6 +50,14 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Imi
  */
 public class OsmReader {
+
+     static long tagsN = 0;
+     static long nodesN = 0;
+     static long waysN = 0;
+     static long relationsN = 0;
+     static long membersN = 0;
+
+     static InputStream currSource;
 
      /**
       * This is used as (readonly) source for finding missing references when not transferred in the
@@ -132,9 +142,23 @@ public class OsmReader {
            */
           private OsmPrimitive current;
           private String generator;
-
+          int n = 0;
+          
           @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
                try {
+                    if(n%100000 == 0) {
+                        try {
+                            FileInputStream fis = (FileInputStream)currSource;
+                            FileChannel channel = fis.getChannel();
+                            double perc = (((double)channel.position()) / ((double)channel.size()) * 100.0);
+                            System.out.format(" " + (int)perc + "%%");
+                        }
+                        catch(IOException e) {
+                            System.out.format("Error reading file position " + e);
+                        }
+                    }
+                    n++;                    
+
                     if (qName.equals("osm")) {
                          if (atts == null)
                               throw new SAXException(tr("Unknown version"));
@@ -186,10 +210,12 @@ public class OsmReader {
                     // ---- PARSING NODES AND WAYS ----
 
                     } else if (qName.equals("node")) {
+                         nodesN++;
                          current = new Node(new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon")));
                          readCommon(atts, current);
                          nodes.put(current.id, (Node)current);
                     } else if (qName.equals("way")) {
+                         waysN++;
                          current = new OsmPrimitiveData();
                          readCommon(atts, current);
                          ways.put((OsmPrimitiveData)current, new ArrayList<Long>());
@@ -205,10 +231,12 @@ public class OsmReader {
                     // ---- PARSING RELATIONS ----
 
                     } else if (qName.equals("relation")) {
+                         relationsN++;
                          current = new OsmPrimitiveData();
                          readCommon(atts, current);
                          relations.put((OsmPrimitiveData)current, new LinkedList<RelationMemberData>());
                     } else if (qName.equals("member")) {
+                         membersN++;
                          Collection<RelationMemberData> list = relations.get(current);
                          if (list == null)
                               throw new SAXException(tr("Found <member> element in non-relation."));
@@ -226,6 +254,7 @@ public class OsmReader {
                     // ---- PARSING TAGS (applicable to all objects) ----
 
                     } else if (qName.equals("tag")) {
+                         tagsN++;
                          current.put(atts.getValue("k"), atts.getValue("v"));
                     }
                } catch (NumberFormatException x) {
@@ -364,9 +393,6 @@ public class OsmReader {
       * @return way object or null
       */
      private Way findWay(long id) {
-          for (Way wy : ds.ways)
-               if (wy.id == id)
-                    return wy;
           for (Way wy : Main.ds.ways)
                if (wy.id == id)
                     return wy;
@@ -406,6 +432,11 @@ public class OsmReader {
                adder.visit(en);
           }
 
+          // Cache the ways here for much better search performance
+          HashMap hm = new HashMap(10000);
+          for (Way wy : ds.ways)
+            hm.put(wy.id, wy);
+          
           // pass 2 - sort out members
           for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
                Relation en = findRelation(e.getKey().id);
@@ -420,7 +451,9 @@ public class OsmReader {
                               adder.visit((Node)em.member);
                          }
                     } else if (emd.type.equals("way")) {
-                         em.member = findWay(emd.id);
+                         em.member = (OsmPrimitive)hm.get(emd.id);
+                         if (em.member == null)
+                            em.member = findWay(emd.id);
                          if (em.member == null) {
                               em.member = new Way(emd.id);
                               adder.visit((Way)em.member);
@@ -437,6 +470,7 @@ public class OsmReader {
                     en.members.add(em);
                }
           }
+          hm = null;
      }
 
      /**
@@ -453,6 +487,9 @@ public class OsmReader {
           OsmReader osm = new OsmReader();
           osm.references = ref == null ? new DataSet() : ref;
 
+          
+          currSource = source;
+          
           // phase 1: Parse nodes and read in raw ways
           InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
           try {
@@ -462,10 +499,9 @@ public class OsmReader {
              throw new SAXException(e1);
         }
 
-        if (pleaseWaitDlg != null) {
-               pleaseWaitDlg.progress.setValue(0);
-               pleaseWaitDlg.currentAction.setText(tr("Preparing data..."));
-          }
+          System.out.println("");
+          System.out.println("Parser finished: Tags " + tagsN + " Nodes " + nodesN + " Ways " + waysN + 
+            " Relations " + relationsN + " Members " + membersN);
 
           for (Node n : osm.nodes.values())
                osm.adder.visit(n);
@@ -483,6 +519,8 @@ public class OsmReader {
                if (o.id < 0)
                     o.id = 0;
 
+          System.out.println("File loaded!");
+          
           return osm;
      }
 }
