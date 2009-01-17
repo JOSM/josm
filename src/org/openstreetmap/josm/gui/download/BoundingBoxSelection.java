@@ -164,7 +164,13 @@ public class BoundingBoxSelection implements DownloadSelection {
             size *= 2;
             zoom++;
         }
-        showUrl.setText("http://www.openstreetmap.org/index.html?mlat="+lat+"&mlon="+lon+"&zoom="+zoom);
+        // Truncate lat and lon to something more sensible
+        int decimals = (int) Math.pow(10, (zoom / 3));
+        lat = Math.round(lat * decimals);
+        lat /= decimals;
+        lon = Math.round(lon * decimals);
+        lon /= decimals;
+        showUrl.setText("http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
     }
 
     public static Bounds osmurl2bounds(String url) {
