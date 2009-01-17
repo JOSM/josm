@@ -49,4 +49,8 @@ public class PleaseWaitDialog extends JDialog {
             }
         });
     }
+    
+    public void setIndeterminate(boolean newValue) {
+        progressBar.setIndeterminate(newValue);
+    }
 }

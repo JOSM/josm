@@ -500,6 +500,9 @@ public class OsmReader {
              e1.printStackTrace(); // broken SAXException chaining
              throw new SAXException(e1);
         }
+            
+          Main.pleaseWaitDlg.currentAction.setText(tr("Prepare OSM data..."));
+          Main.pleaseWaitDlg.setIndeterminate(true); 
 
           System.out.println("");
           System.out.println("Parser finished: Tags " + tagsN + " Nodes " + nodesN + " Ways " + waysN + 
@@ -521,7 +524,9 @@ public class OsmReader {
                if (o.id < 0)
                     o.id = 0;
 
-          System.out.println("File loaded!");
+          System.out.println("Data loaded!");
+          Main.pleaseWaitDlg.setIndeterminate(false); 
+          Main.pleaseWaitDlg.progress.setValue(0); 
           
           return osm;
      }
