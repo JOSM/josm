@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -58,6 +59,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected Boolean useStyleCache;
     private static int paintid = 0;
     private static int viewid = 0;
+    private EastNorth minEN;
+    private EastNorth maxEN;
 
     protected int profilerVisibleNodes;
     protected int profilerVisibleWays;
@@ -113,8 +116,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      */
     public void visit(Node n) {
         // check, if the node is visible at all
-        Point p = nc.getPoint(n.eastNorth);
-        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight()))
+        if((n.eastNorth.east()  > maxEN.east() ) ||
+           (n.eastNorth.north() > maxEN.north()) ||
+           (n.eastNorth.east()  < minEN.east() ) ||
+           (n.eastNorth.north() < minEN.north()))
         {
             n.mappaintVisibleCode = viewid;
             return;
@@ -148,8 +153,23 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
 
         // check, if the way is visible at all
-        Polygon polygon = getPolygon(w);
-        if(!isPolygonVisible(polygon))
+        double minx = 10000;
+        double maxx = -10000;
+        double miny = 10000;
+        double maxy = -10000;
+
+        for (Node n : w.nodes)
+        {
+            if(n.eastNorth.east() > maxx) maxx = n.eastNorth.east();
+            if(n.eastNorth.north() > maxy) maxy = n.eastNorth.north();
+            if(n.eastNorth.east() < minx) minx = n.eastNorth.east();
+            if(n.eastNorth.north() < miny) miny = n.eastNorth.north();
+        }
+        
+        if ((minx > maxEN.east()) ||
+            (miny > maxEN.north()) ||
+            (maxx < minEN.east()) ||
+            (maxy < minEN.north()))
         {
             w.mappaintVisibleCode = viewid;
             return;
@@ -189,7 +209,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if (fillAreas > dist)
                 {
                     profilerVisibleAreas++;
-                    drawArea(polygon, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
+                    drawArea(w, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
                     if(!w.isClosed())
                         w.putError(tr("Area style way is not closed."), true);
                 }
@@ -408,7 +428,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 drawWay((Way)osm, ((AreaElemStyle)style).line, selectedColor, true);
                 if(area)
-                    drawArea(getPolygon((Way)osm), areaselected ? selectedColor
+                    drawArea((Way)osm, areaselected ? selectedColor
                     : ((AreaElemStyle)style).color);
             }
             else
@@ -649,7 +669,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 {
                     if(isPolygonVisible(pd.get()))
                     {
-                        drawArea(pd.get(), (pd.way.selected || r.selected) ? selectedColor
+                        drawArea(pd.way, (pd.way.selected || r.selected) ? selectedColor
                         : ((AreaElemStyle)wayStyle).color);
                         visible = true;
                     }
@@ -740,8 +760,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return polygon;
     }
 
-    protected void drawArea(Polygon polygon, Color color)
+    protected void drawArea(Way w, Color color)
     {
+        Polygon polygon = getPolygon(w);
+        
         // set the opacity (alpha) level of the filled polygon
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
@@ -871,12 +893,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
     }
 
-    /*public void getColors()
+    public void getColors()
     {
         super.getColors();
         untaggedColor = Main.pref.getColor(marktr("untagged"),Color.GRAY);
         textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
-    }*/
+    }
 
     // Shows areas before non-areas
     public void visitAll(DataSet data, Boolean virtual) {
@@ -909,6 +931,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
         regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name;ref;operator;brand").split(";");
+        minEN = nc.getEastNorth(0,nc.getHeight()-1);
+        maxEN = nc.getEastNorth(nc.getWidth()-1,0);
+        
 
         selectedCall = false;
         ++paintid;
