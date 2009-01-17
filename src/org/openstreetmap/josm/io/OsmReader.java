@@ -153,6 +153,8 @@ public class OsmReader {
                             double perc = (((double)channel.position()) / ((double)channel.size()) * 100.0);
                             System.out.format(" " + (int)perc + "%%");
                         }
+                        catch(java.lang.ClassCastException cce) {
+                        }
                         catch(IOException e) {
                             System.out.format("Error reading file position " + e);
                         }
