@@ -5,6 +5,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,87 +44,105 @@ public class GettingStarted extends JPanel {
     }
 
     private void assignContent() {
-        if (content.length() == 0) {
-            String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
-            WikiReader wr = new WikiReader(baseurl);
-            String motdcontent = "";
-            try {
-                motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay");
-            } catch (IOException ioe) {
-                motdcontent = "<html><body>\n<h1>" +
-                    "JOSM - " + tr("Java OpenStreetMap Editor") +
-                    "</h1>\n<h2 align=\"center\">(" +
-                    tr ("Message of the day not available") +
-                    ")</h2>";
-            }
+        if (content.length() > 0 && Main.pref.getBoolean("help.displaymotd", true)) return;
 
-            int myVersion = AboutAction.getVersionNumber();
-
-            Pattern commentPattern = Pattern.compile("\\<p\\>\\s*\\/\\*[^\\*]*\\*\\/\\s*\\<\\/p\\>", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
-            Matcher matcherComment = commentPattern.matcher(motdcontent);
-            motdcontent = matcherComment.replaceAll("");
-
-            /* look for hrefs of the form wiki/MessageOfTheDay>123 where > can also be <,<=,>= and the number is the revision number */
-            int start = 0;
-            Pattern versionPattern = Pattern.compile("(?:\\<p\\>\\s*)?\\<a[^\\>]*href\\=\\\"([^\\\"]*\\/wiki\\/)(MessageOfTheDay(\\%3E%3D|%3C%3D|\\%3E|\\%3C)([0-9]+))\\\"[^\\>]*\\>[^\\<]*\\<\\/a\\>(?:\\s*\\</p\\>)?", Pattern.CASE_INSENSITIVE|Pattern.DOTALL|Pattern.MULTILINE);
-            Matcher matcher = versionPattern.matcher(motdcontent);
-            matcher.reset();
-            String languageCode = Main.getLanguageCodeU();
-            while (matcher.find()) {
-                int targetVersion = Integer.parseInt(matcher.group(4));
-                String condition = matcher.group(3);
-                boolean included = false;
-                if (condition.equals("%3E")) {
-                    if ((myVersion == 0 || myVersion > targetVersion)
-                        /* && ! Main.pref.getBoolean("motd.gt."+targetVersion) */) {
-                        /* Main.pref.put("motd.gt."+targetVersion, true); */
-                        included = true;
-                    }
-                } else if (condition.equals("%3E%3D")) {
-                    if ((myVersion == 0 || myVersion >= targetVersion)
-                        /* && ! Main.pref.getBoolean("motd.ge."+targetVersion) */) {
-                        /* Main.pref.put("motd.ge."+targetVersion, true); */
-                        included = true;
-                    }
-                } else if (condition.equals("%3C")) {
-                    included = myVersion < targetVersion;
-                } else {
-                     included = myVersion <= targetVersion;
-                }
-                if (matcher.start() > start) {
-                    content += motdcontent.substring(start, matcher.start() - 1);
-                }
-                start = matcher.end();
-                if (included) {
-                    String url = matcher.group(1) + languageCode + matcher.group(2);
-                    try {
-                        String message = wr.read(url);
-                        // a return containing the article name indicates that the page didn't
-                        // exist in the Wiki.
-                        String emptyIndicator = "Describe \"" + languageCode + "MessageOfTheDay";
-                        if (message.indexOf(emptyIndicator) >= 0) {
-                            url = matcher.group(1) + matcher.group(2);
-                            message = wr.read(url);
-                            emptyIndicator = "Describe \"MessageOfTheDay";
-                        }
-                        if (message.indexOf(emptyIndicator) == -1) {
-                            content += message.replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
-                        }
-                    } catch (IOException ioe) {
-                        url = matcher.group(1) + matcher.group(2);
-                        try {
-                            content += wr.read(url).replace("<html>", "").replace("</html>", "").replace("<div id=\"searchable\">", "").replace("</div>", "");
-                        } catch (IOException ioe2) {
-                        }
-                    }
-                }
-            }
-            content += motdcontent.substring(start);
-            content = content.replace("<html>", "<html><style type=\"text/css\">\nbody { font-family: sans-serif; font-weight: bold; }\nh1 {text-align: center;}</style>");
-            /* replace the wiki title */
-            content = content.replace("Java OpenStreetMap Editor", tr("Java OpenStreetMap Editor"));
+        String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
+        WikiReader wr = new WikiReader(baseurl);
+        String motdcontent = "";
+        try {
+            motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay?format=txt");
+        } catch (IOException ioe) {
+            motdcontent = "<html><body>\n<h1>" +
+                "JOSM - " + tr("Java OpenStreetMap Editor") +
+                "</h1>\n<h2 align=\"center\">(" +
+                tr ("Message of the day not available") +
+                ")</h2>";
         }
 
+        int myVersion = AboutAction.getVersionNumber();
+        String languageCode = Main.getLanguageCodeU();
+
+        // Finds wiki links like (underscores inserted for readability): [wiki:LANGCODE:messageoftheday_CONDITON_REVISION LANGCODE]
+        // Langcode usually consists of two letters describing the language and may be omitted
+        // Condition may be one of the following: >  <  <=  =>
+        // Revision is the JOSM version
+        Pattern versionPattern = Pattern.compile("\\[wiki:(?:[A-Z]+:)?MessageOfTheDay(\\>\\=|\\<\\=|\\<|\\>)([0-9]+)\\s*([A-Z]*)\\]", Pattern.CASE_INSENSITIVE);
+        // 1=condition, 2=targetVersion, 3=lang
+        Matcher matcher = versionPattern.matcher(motdcontent);
+        matcher.reset();
+
+        ArrayList<Object> links = new ArrayList<Object>();
+        String linksList="";
+        while (matcher.find()) {
+            // Discards all but the selected locale and non-localized links
+            if(!(matcher.group(3)+":").equals(languageCode) && !matcher.group(3).equals(""))
+                continue;
+
+            links.add(new String[] {matcher.group(1), matcher.group(2), matcher.group(3)});
+            linksList += matcher.group(1)+matcher.group(2)+matcher.group(3)+": ";
+        }
+
+        for(int i=0; i < links.size(); i++) {
+            String[] obj = (String[])links.get(i);
+            int targetVersion = Integer.parseInt(obj[1]);
+            String condition = obj[0];
+            Boolean isLocalized = !obj[2].equals("");
+
+            // Prefer localized over non-localized links, if they're otherwise the same
+            if(!isLocalized && linksList.indexOf(condition+obj[1]+languageCode+" ") >= 0)
+                continue;
+
+            boolean included = false;
+
+            if(myVersion == 0)
+              included = true;
+            else if(condition.equals(">="))
+              included=myVersion >= targetVersion;
+            else if(condition.equals(">"))
+              included = myVersion > targetVersion;
+            else if(condition.equals("<"))
+              included=myVersion < targetVersion;
+            else
+              included = myVersion <= targetVersion;
+
+            if(!included) continue;
+
+            Boolean isHelp = targetVersion == 1;
+
+            String urlStart = baseurl + "/wiki/";
+            String urlEnd = "MessageOfTheDay" + condition + targetVersion + (isHelp ? "" : "?format=txt");
+
+            try {
+                // If we hit a non-localized link here, we already know there's no translated version available
+                String message = isLocalized ? wr.read(urlStart + languageCode + urlEnd) : "";
+                // Look for non-localized version
+                if (message.equals(""))
+                    message = wr.read(urlStart + urlEnd);
+
+                if (!message.equals(""))
+                    if(isHelp)
+                        content += message;
+                    else
+                        content += "<ul><li>"+ message.substring(8)+"</li></ul>";
+            } catch (IOException ioe) {
+                try {
+                    if(isHelp)
+                        content += wr.read(urlStart + urlEnd);
+                    else
+                        content += "<ul><li>"+wr.read(urlStart + urlEnd).substring(8)+"</li></ul>";
+                } catch (IOException ioe2) {
+                }
+            }
+        }
+
+        content = "<html>\n"+
+            "<style type=\"text/css\">\n"+
+            "body { font-family: sans-serif; font-weight: bold; }\n"+
+            "h1 {text-align: center;}\n"+
+            "</style>\n"+
+            "<h1>JOSM - " + tr("Java OpenStreetMap Editor") + "</h1>\n"+
+            content+"\n"+
+            "</html>";
     }
 
     public GettingStarted() {

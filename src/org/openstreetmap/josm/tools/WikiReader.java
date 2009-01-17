@@ -31,7 +31,7 @@ public class WikiReader {
      */
     public String read(String url) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream(), "utf-8"));
-        if (url.startsWith(baseurl))
+        if (url.startsWith(baseurl) && !url.endsWith("?format=txt"))
             return readFromTrac(in, url);
         return readNormal(in);
     }
