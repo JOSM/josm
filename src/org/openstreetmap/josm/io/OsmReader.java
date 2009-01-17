@@ -303,7 +303,7 @@ public class OsmReader {
                     current.timestamp = DateParser.parse(time);
                } catch (ParseException e) {
                     e.printStackTrace();
-                    throw new SAXException(tr("Couldn't read time format \"{0}\".",time));
+                    throw new SAXException(tr("Couldn''t read time format \"{0}\".",time));
                }
                */
                current.timestamp = time;
@@ -374,7 +374,7 @@ public class OsmReader {
                for (long id : e.getValue()) {
                     Node n = findNode(id);
                     if (n == null) {
-                         parseNotes += tr("Skipping a way because it includes a node that doesn't exist: {0}\n", id);
+                         parseNotes += tr("Skipping a way because it includes a node that doesn''t exist: {0}\n", id);
                          failed = true;
                          break;
                     }
