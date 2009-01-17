@@ -920,7 +920,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         showNames = Main.pref.getInteger("mappaint.shownames", 100000);
         showIcons = Main.pref.getInteger("mappaint.showicons", 100000);
         useStrokes = Main.pref.getInteger("mappaint.strokes", 100000);
-
+        LatLon ll1 = nc.getLatLon(0,0);
+        LatLon ll2 = nc.getLatLon(100,0);
+        dist = ll1.greatCircleDistance(ll2);
+        
         long profilerStart = java.lang.System.currentTimeMillis();
         long profilerLast = profilerStart;
         int profilerN;
@@ -928,7 +931,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             System.out.println("Mappaint Profiler (" +
                 (useStyleCache ? "cache=true, " : "cache=false, ") +
                 "fillareas " + fillAreas + ", " +
-                "fillalpha=" + fillAlpha + "%)");
+                "fillalpha=" + fillAlpha + "%, " +
+                "dist=" + (int)dist + "m)");
 
         getSettings(virtual);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
@@ -953,14 +957,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         profilerSegments = 0;
         profilerVisibleSegments = 0;
 
-        LatLon ll1 = nc.getLatLon(0,0);
-        LatLon ll2 = nc.getLatLon(100,0);
-        dist = ll1.greatCircleDistance(ll2);
-        System.out.format("Circum   : %4f Dist: %f\n", circum, dist);
-        
         if(profiler)
         {
-            System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
+            System.out.format("Prepare  : %5dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
             profilerLast = java.lang.System.currentTimeMillis();
         }
 
@@ -980,7 +979,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Relations: %4dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                System.out.format("Relations: %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
 
@@ -1002,7 +1001,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Areas    : %4dms, calls=%7d, visible=%d\n",
+                System.out.format("Areas    : %5dms, calls=%7d, visible=%d\n",
                     (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleAreas);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
@@ -1018,7 +1017,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Ways     : %4dms, calls=%7d, visible=%d\n",
+                System.out.format("Ways     : %5dms, calls=%7d, visible=%d\n",
                     (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
@@ -1037,7 +1036,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Ways     : %4dms, calls=%7d, visible=%d\n",
+                System.out.format("Ways     : %5dms, calls=%7d, visible=%d\n",
                     (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
@@ -1057,7 +1056,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(profiler)
         {
-            System.out.format("Selected : %4dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            System.out.format("Selected : %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
             profilerLast = java.lang.System.currentTimeMillis();
         }
 
@@ -1076,7 +1075,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(profiler)
         {
-            System.out.format("Nodes    : %4dms, calls=%7d, visible=%d\n",
+            System.out.format("Nodes    : %5dms, calls=%7d, visible=%d\n",
                 (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleNodes);
             profilerLast = java.lang.System.currentTimeMillis();
         }
@@ -1098,7 +1097,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             if(profiler)
             {
-                System.out.format("Virtual  : %4dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+                System.out.format("Virtual  : %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
                 profilerLast = java.lang.System.currentTimeMillis();
             }
 
@@ -1107,8 +1106,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(profiler)
         {
-            System.out.format("Segments :         calls=%7d, visible=%d\n", profilerSegments, profilerVisibleSegments);
-            System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
+            System.out.format("Segments :          calls=%7d, visible=%d\n", profilerSegments, profilerVisibleSegments);
+            System.out.format("All      : %5dms\n", (profilerLast-profilerStart));
         }
     }
 
