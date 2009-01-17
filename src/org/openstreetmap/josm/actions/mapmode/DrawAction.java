@@ -33,6 +33,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -166,6 +167,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             replacedWays = new ArrayList<Way>();
         boolean newNode = false;
         Node n = null;
+        boolean wayIsFinished = false;
 
         if (!ctrl) {
             n = Main.map.mapView.getNearestNode(mousePos);
@@ -279,8 +281,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // Ok we know now that we'll insert a line segment, but will it connect to an
             // existing way or make a new way of its own? The "alt" modifier means that the
             // user wants a new way.
-
             Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
+
+            // Don't allow creation of self-overlapping ways
+            if(way != null) {
+                int nodeCount=0;
+                for (Node p : way.nodes) 
+                    if(p.equals(n0)) nodeCount++;
+                if(nodeCount > 1) way = null;
+            }
+
             if (way == null) {
                 way = new Way();
                 way.nodes.add(n0);
@@ -296,6 +306,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
             }
 
+            // Connected to a node that's already in the way
+            if(way != null && way.nodes.contains(n)) {
+                System.out.println("Stop drawing, node is part of current way");
+                wayIsFinished = true;
+                selection.clear();
+                //Main.map.selectMapMode(new SelectAction(Main.map));
+            }
+            
+            // Add new node to way
             if (way.nodes.get(way.nodes.size() - 1) == n0) {
                 way.nodes.add(n);
             } else {
@@ -328,7 +347,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Command c = new SequenceCommand(title, cmds);
 
         Main.main.undoRedo.add(c);
-        lastUsedNode = n;
+        if(!wayIsFinished) lastUsedNode = n;
         computeHelperLine();
         Main.map.mapView.repaint();
     }
