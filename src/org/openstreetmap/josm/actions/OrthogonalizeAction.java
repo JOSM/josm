@@ -72,7 +72,7 @@ public final class OrthogonalizeAction extends JosmAction {
             // Check if every way is made of at least four segments and closed
             Way way = (Way)osm;
             if ((way.nodes.size() < 5) || (!way.nodes.get(0).equals(way.nodes.get(way.nodes.size() - 1)))) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Please select one ore more closed ways of at least four nodes."));
+                JOptionPane.showMessageDialog(Main.parent, tr("Please select one or more closed ways of at least four nodes."));
                 return;
             }
 
