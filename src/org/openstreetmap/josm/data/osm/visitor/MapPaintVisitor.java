@@ -413,13 +413,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 /* nodes drawn on second call */
                 if(!(m.member instanceof Node))
-                    drawSelected(m.member, styles != null ? styles.get(m.member)
+                    drawSelectedMember(m.member, styles != null ? styles.get(m.member)
                     : null, true, true);
             }
         }
     }
 
-    public void drawSelected(OsmPrimitive osm, ElemStyle style, Boolean area,
+    public void drawSelectedMember(OsmPrimitive osm, ElemStyle style, Boolean area,
     Boolean areaselected)
     {
         if(osm instanceof Way)
@@ -458,6 +458,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         // draw multipolygon relations including their ways
         // other relations are only drawn when selected
+        
+        // we are in the "draw selected" phase
+        // TODO: is it necessary to check for r.selected?
         if(r.selected && selectedCall)
         {
             for (RelationMember m : r.members)
@@ -465,18 +468,23 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if (m.member != null && !m.member.incomplete && !m.member.deleted
                 && m.member instanceof Node)
                 {
-                    drawSelected(m.member, styles != null ? styles.get(m.member) : null, true, true);
+                    drawSelectedMember(m.member, styles != null ? styles.get(m.member) : null, true, true);
                 }
             }
             return;
         }
-        if (!drawMultipolygon || r.keys == null || !"multipolygon".equals(r.keys.get("type")))
+        
+        if (drawMultipolygon && r.keys != null && "multipolygon".equals(r.keys.get("type")))
         {
-            if(r.selected)
-                drawSelectedRelation(r);
+            drawMultipolygon(r);
             return;
         }
+        
+        if(r.selected)
+            drawSelectedRelation(r);
+    }
 
+    public void drawMultipolygon(Relation r) {
         Collection<Way> inner = new LinkedList<Way>();
         Collection<Way> outer = new LinkedList<Way>();
         Collection<Way> innerclosed = new LinkedList<Way>();
@@ -515,7 +523,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         if(m.role == null || m.role.length() == 0)
                             outer.add(w);
                         else if(r.selected)
-                            drawSelected(m.member, styles != null ? styles.get(m.member) : null, true, true);
+                            drawSelectedMember(m.member, styles != null ? styles.get(m.member) : null, true, true);
                     }
                 }
                 else
@@ -702,7 +710,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 {
                     if(r.selected)
                     {
-                        drawSelected(wInner, innerStyle,
+                        drawSelectedMember(wInner, innerStyle,
                         !wayStyle.equals(innerStyle), wInner.selected);
                     }
                     if(wayStyle.equals(innerStyle))
@@ -737,7 +745,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     }
                     if(r.selected)
                     {
-                        drawSelected(wOuter, outerStyle, false, false);
+                        drawSelectedMember(wOuter, outerStyle, false, false);
                     }
                     else if(outerStyle instanceof AreaElemStyle)
                         wOuter.mappaintDrawnAreaCode = paintid;
@@ -1055,11 +1063,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         /*** DISPLAY CACHED SEGMENTS (WAYS) NOW ***/
         displaySegments();
-        /*if(profiler)
-        {
-            System.out.format("DS       : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
-            profilerLast = java.lang.System.currentTimeMillis();
-        }*/
 
         /*** NODES ***/
         profilerN = 0;
@@ -1100,11 +1103,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
 
             displaySegments(null);
-            /*if(profiler)
-            {
-                System.out.format("VirtualDS: %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
-                profilerLast = java.lang.System.currentTimeMillis();
-            }*/
         }
 
         if(profiler)
