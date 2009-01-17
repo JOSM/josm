@@ -56,6 +56,7 @@ public class OpenFileAction extends DiskAccessAction {
      */
     public void openFile(File file) {
         try {
+            System.out.println("Open file: " + file.getAbsolutePath() + " (" + file.length() + " bytes)");
             if (asGpxData(file.getName()))
                 openFileAsGpx(file);
             else if (asNmeaData(file.getName()))
