@@ -45,6 +45,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected int fillAreas;
     protected boolean drawMultipolygon;
     protected boolean drawRestriction;
+    protected boolean leftHandTraffic;
     protected boolean restrictionDebug;
     protected int showNames;
     protected int showIcons;
@@ -659,11 +660,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         double dx = (pFrom.x >= pVia.x) ? (pFrom.x - pVia.x) : (pVia.x - pFrom.x);
         double dy = (pFrom.y >= pVia.y) ? (pFrom.y - pVia.y) : (pVia.y - pFrom.y);
         
+        double fromAngle;
         if(dx == 0.0) {
-            System.out.println("dx " + dx);
-            return;
+            fromAngle = Math.PI/2;
+        } else {
+            fromAngle = Math.atan(dy / dx);
         }
-        double fromAngle = Math.atan(dy / dx);
         double fromAngleDeg = Math.toDegrees(fromAngle);
 
         double vx = distanceFromVia * Math.cos(fromAngle);
@@ -683,23 +685,43 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         double iconAngle = 0;
 
         if(pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
-            vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
-            vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+            if(leftHandTraffic) {
+                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
+                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+            } else {
+                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
+                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+            }
             iconAngle = 270+fromAngleDeg;
         }
         if(pFrom.x < pVia.x && pFrom.y >= pVia.y) {
-            vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
-            vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+            if(leftHandTraffic) {
+                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
+                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+            } else {
+                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
+                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
+            }
             iconAngle = 90-fromAngleDeg;
         }
         if(pFrom.x < pVia.x && pFrom.y < pVia.y) {
-            vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
-            vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+            if(leftHandTraffic) {
+                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
+                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+            } else {
+                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
+                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+            }
             iconAngle = 90+fromAngleDeg;
         }
         if(pFrom.x >= pVia.x && pFrom.y < pVia.y) {
-            vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg+180));
-            vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg+180));
+            if(leftHandTraffic) {
+                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
+                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
+             } else {
+                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
+                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+            }
             iconAngle = 270-fromAngleDeg;
         }
         
@@ -1192,6 +1214,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction",false);
         restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
+        leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
         regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name;ref;operator;brand").split(";");
