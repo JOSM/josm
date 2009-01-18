@@ -277,6 +277,12 @@ public class RelationEditor extends JFrame {
                 }
             }
         });
+        ListSelectionModel lsm2 = propertyTable.getSelectionModel();
+        lsm2.addListSelectionListener(new ListSelectionListener() {
+            @Override public void valueChanged(ListSelectionEvent e) {
+                Main.ds.setSelected(RelationEditor.this.relation);
+            }
+        });
         propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         // setting up the member table
