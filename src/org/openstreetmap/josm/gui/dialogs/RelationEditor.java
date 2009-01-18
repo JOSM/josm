@@ -373,7 +373,7 @@ public class RelationEditor extends JFrame {
                 Main.ds.setSelected(sel);
             }
         }));
-        buttonPanel.add(createButton(marktr("Download Members"),"down",
+        buttonPanel.add(createButton(marktr("Download Members"),"downloadincomplete",
         tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_L, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 downloadRelationMembers();
