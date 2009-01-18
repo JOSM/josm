@@ -18,8 +18,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -68,6 +70,16 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                     new RelationEditor(toEdit).setVisible(true);
             }
         });
+        displaylist.addListSelectionListener(new ListSelectionListener(){
+            @Override public void valueChanged(ListSelectionEvent e) {
+                Relation toEdit = (Relation) displaylist.getSelectedValue();
+                if (toEdit != null) {
+                    Main.ds.setSelected(toEdit);
+                    AutoScaleAction asa = new AutoScaleAction("selection");
+                    asa.actionPerformed(null);
+                }
+            }
+        });
 
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
@@ -80,12 +92,12 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             }
         }), GBC.std());
 
-        buttonPanel.add(new SideButton(marktr("Select"), "select", "Selection", tr("Select this relation"), new ActionListener() {
+        /*buttonPanel.add(new SideButton(marktr("Select"), "select", "Selection", tr("Select this relation"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // replace selection with the relation from the list
                 Main.ds.setSelected((Relation)displaylist.getSelectedValue());
             }
-        }), GBC.std());
+        }), GBC.std());*/
 
         buttonPanel.add(new SideButton(marktr("Edit"), "edit", "Selection", tr( "Open an editor for the selected relation"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {

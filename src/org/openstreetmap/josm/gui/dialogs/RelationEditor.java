@@ -31,6 +31,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -290,6 +292,27 @@ public class RelationEditor extends JFrame {
                 }
             }
         });
+        ListSelectionModel lsm = memberTable.getSelectionModel();
+        lsm.addListSelectionListener(new ListSelectionListener() {
+            @Override public void valueChanged(ListSelectionEvent e) {
+                ArrayList<OsmPrimitive> sel;
+                int cnt = memberTable.getSelectedRowCount();
+                if(cnt > 0)
+                {
+                    sel = new ArrayList<OsmPrimitive>(cnt);
+                    for (int i : memberTable.getSelectedRows())
+                        sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
+                }
+                else
+                {
+                    cnt = memberTable.getRowCount();
+                    sel = new ArrayList<OsmPrimitive>(cnt);
+                    for (int i = 0; i < cnt; ++i)
+                        sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
+                }
+                Main.ds.setSelected(sel);
+            }
+        });
         memberTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         // combine both tables and wrap them in a scrollPane
@@ -352,7 +375,7 @@ public class RelationEditor extends JFrame {
             }
         }));
 
-        buttonPanel.add(createButton(marktr("Select"),"select",
+        /*buttonPanel.add(createButton(marktr("Select"),"select",
         tr("Highlight the member from the current table row as JOSM's selection"), KeyEvent.VK_S, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ArrayList<OsmPrimitive> sel;
@@ -372,7 +395,7 @@ public class RelationEditor extends JFrame {
                 }
                 Main.ds.setSelected(sel);
             }
-        }));
+        }));*/
         buttonPanel.add(createButton(marktr("Download Members"),"downloadincomplete",
         tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_L, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
