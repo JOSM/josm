@@ -119,7 +119,7 @@ public class ElemStyles
         public ElemStyle get(OsmPrimitive osm)
         {
             return (osm.keys == null) ? null :
-            ((osm instanceof Node) ? getNode(osm.keys) : get(osm.keys));
+            ((osm instanceof Node || osm instanceof Relation) ? getNode(osm.keys) : get(osm.keys));
         }
 
         public boolean isArea(OsmPrimitive o)

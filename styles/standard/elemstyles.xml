@@ -46,6 +46,50 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 <rules name="standard">
 
+	<rule>
+		<condition k="restriction" v="no_left_turn"/>
+		<icon annotate="true" src="vehicle/restrictions/turn_restrictions/no_left_turn.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="restriction" v="no_right_turn"/>
+		<icon annotate="true" src="vehicle/restrictions/turn_restrictions/no_right_turn.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="restriction" v="no_straight_on"/>
+		<icon annotate="true" src="vehicle/restrictions/turn_restrictions/no_straight_on.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="restriction" v="no_u_turn"/>
+		<icon annotate="true" src="vehicle/restrictions/turn_restrictions/no_u_turn.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="restriction" v="only_left_turn"/>
+		<icon annotate="true" src="vehicle/restrictions/turn_restrictions/only_left_turn.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="restriction" v="only_right_turn"/>
+		<icon annotate="true" src="vehicle/restrictions/turn_restrictions/only_right_turn.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="restriction" v="only_straight_on"/>
+		<icon annotate="true" src="vehicle/restrictions/turn_restrictions/only_straight_on.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+
 	<!-- mark some specials that should be fixed - they are already the default and therefore shouldn't be tagged -->
 	<rule>
 		<condition k="oneway"/>

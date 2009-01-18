@@ -8,6 +8,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Stroke;
@@ -36,12 +37,15 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class MapPaintVisitor extends SimplePaintVisitor {
     protected boolean useRealWidth;
     protected boolean zoomLevelDisplay;
     protected int fillAreas;
     protected boolean drawMultipolygon;
+    protected boolean drawRestriction;
+    protected boolean restrictionDebug;
     protected int showNames;
     protected int showIcons;
     protected int useStrokes;
@@ -473,7 +477,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             for (RelationMember m : r.members)
             {
                 if (m.member != null && !m.member.incomplete && !m.member.deleted
-                && m.member instanceof Node)
+                && (drawRestriction || m.member instanceof Node))
                 {
                     drawSelectedMember(m.member, styles != null ? styles.get(m.member) : null, true, true);
                 }
@@ -487,8 +491,240 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return;
         }
         
+        if (drawRestriction && r.keys != null && "restriction".equals(r.keys.get("type")))
+        {
+            drawRestriction(r);
+            return;
+        }
+        
         if(r.selected)
             drawSelectedRelation(r);
+    }
+
+    
+    // this current experimental implementation will only work for standard restrictions:
+    // from(Way) / via(Node) / to(Way)
+    public void drawRestriction(Relation r) {
+        if(restrictionDebug)
+            System.out.println("Restriction: " + r.keys.get("name") + " restriction " + r.keys.get("restriction"));
+     
+        r.clearErrors();
+
+        Way fromWay = null;
+        Way toWay = null;
+        Node via = null;
+
+        // find the "from", "via" and "to" elements
+        for (RelationMember m : r.members)
+        {
+            if(restrictionDebug)
+                System.out.println("member " + m.member + " selected " + r.selected);
+            
+            if(m.member == null) 
+                r.putError(tr("Empty member in relation."), true);
+            else if(m.member.deleted)
+                r.putError(tr("Deleted member ''{0}'' in relation.",
+                m.member.getName()), true);
+            else if(m.member.incomplete)
+            {
+                // TODO: What to do with incomplete members?
+                //incomplete = true;
+                r.putError(tr("incomplete member {0}" + " with role {1}", m.member, m.role), true);
+            }
+            else
+            {
+                if(m.member instanceof Way)
+                {
+                    Way w = (Way) m.member;
+                    ElemStyle style = getPrimitiveStyle(w);
+                    //if(r.selected) {
+                    //    drawWay(w, null /*(LineElemStyle)style*/, selectedColor, true);
+                    //    w.mappaintDrawnCode = paintid;
+                    //}
+                    if(w.nodes.size() < 2)
+                    {
+                        r.putError(tr("Way ''{0}'' with less than two points.",
+                        w.getName()), true);
+                    }
+                    else if("from".equals(m.role)) {
+                        if(fromWay != null)
+                            r.putError(tr("more than one from way found - ignored."), true);
+                        else {
+                            fromWay = w;
+                        }
+                    } else if("to".equals(m.role)) {
+                        if(toWay != null)
+                            r.putError(tr("more than one to way found - ignored."), true);
+                        else {
+                            toWay = w;
+                        }
+                    }
+                    else
+                        r.putError(tr("unknown role {0} - ignored", m.role), true);
+                }
+                else if(m.member instanceof Node)
+                {
+                    Node n = (Node) m.member;
+                    if("via".equals(m.role))
+                        if(via != null)
+                            System.out.println("more than one via found - ignored");
+                        else {
+                            via = n;
+                        }
+                    else
+                        r.putError(tr("unknown role {0} - ignored", m.role), true);
+                }
+                else
+                    r.putError(tr("unknown instanceof member - ignored"), true);
+            }
+        }
+        
+        if (fromWay == null) {
+            r.putError(tr("no from way found"), true);
+            return;
+        }
+        if (toWay == null) {
+            r.putError(tr("no to way found"), true);
+            return;
+        }
+        if (via == null) {
+            r.putError(tr("no via node found"), true);
+            return;
+        }
+
+        // check if "from" way starts or ends at via
+        if(fromWay.nodes.get(0) != via && fromWay.nodes.get(fromWay.nodes.size()-1) != via) {
+            r.putError(tr("from way doesn't start or end at a via node"), true);
+            return;
+        }
+        // check if "to" way starts or ends at via
+        /*if(toWay.nodes.get(0) != via && toWay.nodes.get(toWay.nodes.size()-1) != via) {
+            r.putError(tr("to way doesn't start or end at a via node"), true);
+            //return;
+        }*/
+
+        // find the "direct" nodes before the via node
+        Node fromNode = null;        
+        try
+        {
+            if(fromWay.nodes.get(0) == via) {
+                //System.out.println("From way heading away from via");
+                fromNode = fromWay.nodes.get(1);
+            } else {
+                //System.out.println("From way heading towards via");
+                fromNode = fromWay.nodes.get(fromWay.nodes.size()-2);
+            }
+        } catch (IndexOutOfBoundsException ioobe) {
+            System.out.println("from must contain at least 2 nodes");
+        }
+
+        // find the "direct" node after the via node
+        Node toNode = null;
+        try
+        {
+            if(toWay.nodes.get(0) == via) {
+                if(restrictionDebug)
+                    System.out.println("To way heading away from via");
+                toNode = toWay.nodes.get(1);
+            } else {
+                if(restrictionDebug)
+                    System.out.println("To way heading towards via");
+                toNode = toWay.nodes.get(toWay.nodes.size()-2);
+            }
+        } catch (IndexOutOfBoundsException ioobe) {
+            System.out.println("to must contain at least 2 nodes");
+        }
+        
+        Point pFrom = nc.getPoint(fromNode.eastNorth);
+        Point pVia = nc.getPoint(via.eastNorth);
+        
+        if(restrictionDebug) {
+            Point pTo = nc.getPoint(toNode.eastNorth);
+
+            // debug output of interesting nodes
+            System.out.println("From: " + fromNode);
+            drawNode(fromNode, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+            System.out.println("Via: " + via);
+            drawNode(via, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+            System.out.println("To: " + toNode);
+            drawNode(toNode, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+            System.out.println("From X: " + pFrom.x + " Y " + pFrom.y);
+            System.out.println("Via  X: " + pVia.x  + " Y " + pVia.y);
+            System.out.println("To   X: " + pTo.x   + " Y " + pTo.y);
+        }
+
+        // starting from via, go back the "from" way a few pixels
+        // (calculate the vector vx/vy with the specified length and the direction away from the "via" node along the first segment of the "from" way)
+        double distanceFromVia=14;
+        double dx = (pFrom.x >= pVia.x) ? (pFrom.x - pVia.x) : (pVia.x - pFrom.x);
+        double dy = (pFrom.y >= pVia.y) ? (pFrom.y - pVia.y) : (pVia.y - pFrom.y);
+        
+        if(dx == 0.0) {
+            System.out.println("dx " + dx);
+            return;
+        }
+        double fromAngle = Math.atan(dy / dx);
+        double fromAngleDeg = Math.toDegrees(fromAngle);
+
+        double vx = distanceFromVia * Math.cos(fromAngle);
+        double vy = distanceFromVia * Math.sin(fromAngle);
+        
+        if(pFrom.x < pVia.x) vx = -vx;
+        if(pFrom.y < pVia.y) vy = -vy;
+
+        if(restrictionDebug)
+            System.out.println("vx " + vx + " vy " + vy);
+        
+        // go a few pixels away from the way (in a right angle)
+        // (calculate the vx2/vy2 vector with the specified length and the direction 90degrees away from the first segment of the "from" way)
+        double distanceFromWay=8;
+        double vx2 = 0;
+        double vy2 = 0;
+        double iconAngle = 0;
+
+        if(pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
+            vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
+            vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+            iconAngle = 270+fromAngleDeg;
+        }
+        if(pFrom.x < pVia.x && pFrom.y >= pVia.y) {
+            vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
+            vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+            iconAngle = 90-fromAngleDeg;
+        }
+        if(pFrom.x < pVia.x && pFrom.y < pVia.y) {
+            vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
+            vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+            iconAngle = 90+fromAngleDeg;
+        }
+        if(pFrom.x >= pVia.x && pFrom.y < pVia.y) {
+            vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg+180));
+            vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg+180));
+            iconAngle = 270-fromAngleDeg;
+        }
+        
+        IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(r);
+        
+        if (nodeStyle == null) {
+            r.putError(tr("Style for restriction {0} not found", r.keys.get("restriction")), true);
+            return;
+        }
+
+        // rotate icon with direction last node in from to 
+        if(restrictionDebug)
+            System.out.println("Deg1 " + fromAngleDeg + " Deg2 " + (fromAngleDeg + 180) + " Icon " + iconAngle);
+        ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, nodeStyle.icon, iconAngle);
+
+        // scale down icon to 16*16 pixels
+        ImageIcon smallIcon = new ImageIcon(rotatedIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
+        int w = smallIcon.getIconWidth(), h=smallIcon.getIconHeight();
+        smallIcon.paintIcon ( Main.map.mapView, g, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2 );
+
+        if (r.selected)
+        {
+            g.setColor (  selectedColor );
+            g.drawRect ((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
+        }
     }
 
     public void drawMultipolygon(Relation r) {
@@ -954,6 +1190,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
         styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
+        drawRestriction = Main.pref.getBoolean("mappaint.restriction",false);
+        restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
         regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name;ref;operator;brand").split(";");
