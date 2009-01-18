@@ -402,7 +402,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="3" colour="motorway#809bc0"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -410,7 +410,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="3" colour="trunk#7fc97f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>20000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -418,7 +418,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="3" colour="trunk#7fc97f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>20000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -426,7 +426,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="3" realwidth="8" colour="primary#fb805f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>700000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -434,7 +434,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="3" colour="primary#fb805f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -797,7 +797,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="2" realwidth="10" colour="water#0000ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -814,7 +814,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="2" colour="water#0000ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -986,7 +986,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<line width="2" colour="rail#808080" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -3517,7 +3517,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="places/settlement/capital.png"/>
 		<area colour="place#8de3cb"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -3525,7 +3525,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="places/settlement/capital.png"/>
 		<area colour="place#8de3cb"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -3533,7 +3533,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="places/settlement/capital.png"/>
 		<area colour="place#8de3cb"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -3541,7 +3541,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="places/settlement/capital.png"/>
 		<area colour="place#8de3cb"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -3549,7 +3549,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="places/settlement/capital.png"/>
 		<area colour="place#8de3cb"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -3557,7 +3557,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="places/settlement/city.png"/>
 		<area colour="place#8de3cb"/>
 		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
+		<scale_max>200000000</scale_max>
 	</rule>
 
 	<rule>
@@ -3654,6 +3654,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!--annotation tags -->
 
 <!--"work in progress" tags -->
+
+	<rule>
+		<condition k="landuse" v="yes"/>
+		<area colour="construction#ffff00" dashed="true"/>
+		<icon src="misc/construction.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
 
 	<rule>
 		<condition k="building" b="yes"/>
