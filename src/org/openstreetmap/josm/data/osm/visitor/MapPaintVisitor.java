@@ -685,7 +685,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         double iconAngle = 0;
 
         if(pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
-            if(leftHandTraffic) {
+            if(!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
                 vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
             } else {
@@ -695,7 +695,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             iconAngle = 270+fromAngleDeg;
         }
         if(pFrom.x < pVia.x && pFrom.y >= pVia.y) {
-            if(leftHandTraffic) {
+            if(!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
                 vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
             } else {
@@ -705,7 +705,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             iconAngle = 90-fromAngleDeg;
         }
         if(pFrom.x < pVia.x && pFrom.y < pVia.y) {
-            if(leftHandTraffic) {
+            if(!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
                 vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
             } else {
@@ -715,7 +715,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             iconAngle = 90+fromAngleDeg;
         }
         if(pFrom.x >= pVia.x && pFrom.y < pVia.y) {
-            if(leftHandTraffic) {
+            if(!leftHandTraffic) {
                 vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
                 vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
              } else {
