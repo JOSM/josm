@@ -205,6 +205,7 @@ public class GeoImageLayer extends Layer {
         Collections.sort(gps);
         this.data = data;
         this.gps = gps;
+        final Layer self = this;
         mouseAdapter = new MouseAdapter(){
             @Override public void mousePressed(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1)
@@ -238,7 +239,8 @@ public class GeoImageLayer extends Layer {
             public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
             public void layerAdded(Layer newLayer) {}
             public void layerRemoved(Layer oldLayer) {
-                Main.map.mapView.removeMouseListener(mouseAdapter);
+                if (oldLayer == self)
+                    Main.map.mapView.removeMouseListener(mouseAdapter);
             }
         });
     }
