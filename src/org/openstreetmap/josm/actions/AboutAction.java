@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginProxy;
@@ -164,10 +165,16 @@ public class AboutAction extends JosmAction {
                     JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a));
                 }
             }), GBC.eol());
-            JLabel label = new JLabel("<html><i>"+(p.info.description==null?tr("no description available"):p.info.description)+"</i></html>");
-            label.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
-            label.setMaximumSize(new Dimension(450,1000));
-            pluginTab.add(label, GBC.eop().fill(GBC.HORIZONTAL));
+
+            JTextArea description = new JTextArea((p.info.description==null? tr("no description available"):p.info.description));
+            description.setEditable(false);
+            description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
+            description.setLineWrap(true);
+            description.setWrapStyleWord(true);
+            description.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+            description.setBackground(UIManager.getColor("Panel.background"));
+            
+            pluginTab.add(description, GBC.eop().fill(GBC.HORIZONTAL));
         }
         about.addTab(tr("Plugins"), new JScrollPane(pluginTab));
 
