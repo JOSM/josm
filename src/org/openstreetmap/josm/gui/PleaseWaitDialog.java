@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -36,7 +37,7 @@ public class PleaseWaitDialog extends JDialog {
         pane.add(progressBar, GBC.eop().fill(GBC.HORIZONTAL));
         pane.add(cancel, GBC.eol().anchor(GBC.CENTER));
         setContentPane(pane);
-        setSize(Main.pref.getInteger("progressdialog.size",400),100);
+        setSize(Main.pref.getInteger("progressdialog.size",600),100);
         setLocationRelativeTo(Main.parent);
         addComponentListener(new ComponentListener() {
             public void componentHidden(ComponentEvent e) {}
