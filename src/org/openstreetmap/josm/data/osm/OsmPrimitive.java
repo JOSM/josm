@@ -56,7 +56,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         errors = null;
     }
     /* This should not be called from outside. Fixing the UI to add relevant
-       get/set functions calling this implecitely is prefered, so we can have
+       get/set functions calling this implicitely is preferred, so we can have
        transparent cache handling in the future. */
     protected void clearCached()
     {
