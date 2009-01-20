@@ -71,7 +71,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             }
         });
         displaylist.addListSelectionListener(new ListSelectionListener(){
-            @Override public void valueChanged(ListSelectionEvent e) {
+            public void valueChanged(ListSelectionEvent e) {
                 Relation toEdit = (Relation) displaylist.getSelectedValue();
                 if (toEdit != null) {
                     Main.ds.setSelected(toEdit);
