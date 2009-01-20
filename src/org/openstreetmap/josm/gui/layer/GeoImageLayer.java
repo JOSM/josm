@@ -500,7 +500,7 @@ public class GeoImageLayer extends Layer {
         p.add(gpsTimezone, GBC.eol().fill(GBC.HORIZONTAL));
 
         while (true) {
-            int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Syncronize Time with GPS Unit"), JOptionPane.OK_CANCEL_OPTION);
+            int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Synchronize Time with GPS Unit"), JOptionPane.OK_CANCEL_OPTION);
             if (answer != JOptionPane.OK_OPTION || gpsText.getText().equals(""))
                 return;
             try {

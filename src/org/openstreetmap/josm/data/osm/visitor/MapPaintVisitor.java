@@ -171,7 +171,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if(n.eastNorth.east() < minx) minx = n.eastNorth.east();
             if(n.eastNorth.north() < miny) miny = n.eastNorth.north();
         }
-        
+
         if ((minx > maxEN.east()) ||
             (miny > maxEN.north()) ||
             (maxx < minEN.east()) ||
@@ -470,7 +470,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         // draw multipolygon relations including their ways
         // other relations are only drawn when selected
-        
+
         // we are in the "draw selected" phase
         // TODO: is it necessary to check for r.selected?
         if(r.selected && selectedCall)
@@ -485,30 +485,30 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             return;
         }
-        
+
         if (drawMultipolygon && r.keys != null && "multipolygon".equals(r.keys.get("type")))
         {
             drawMultipolygon(r);
             return;
         }
-        
+
         if (drawRestriction && r.keys != null && "restriction".equals(r.keys.get("type")))
         {
             drawRestriction(r);
             return;
         }
-        
+
         if(r.selected)
             drawSelectedRelation(r);
     }
 
-    
+
     // this current experimental implementation will only work for standard restrictions:
     // from(Way) / via(Node) / to(Way)
     public void drawRestriction(Relation r) {
         if(restrictionDebug)
             System.out.println("Restriction: " + r.keys.get("name") + " restriction " + r.keys.get("restriction"));
-     
+
         r.clearErrors();
 
         Way fromWay = null;
@@ -520,17 +520,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             if(restrictionDebug)
                 System.out.println("member " + m.member + " selected " + r.selected);
-            
-            if(m.member == null) 
+
+            if(m.member == null)
                 r.putError(tr("Empty member in relation."), true);
             else if(m.member.deleted)
                 r.putError(tr("Deleted member ''{0}'' in relation.",
                 m.member.getName()), true);
             else if(m.member.incomplete)
             {
-                // TODO: What to do with incomplete members?
-                //incomplete = true;
-                r.putError(tr("incomplete member {0}" + " with role {1}", m.member, m.role), true);
+                return;
             }
             else
             {
@@ -549,53 +547,53 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     }
                     else if("from".equals(m.role)) {
                         if(fromWay != null)
-                            r.putError(tr("more than one from way found - ignored."), true);
+                            r.putError(tr("More than one \"from\" way found."), true);
                         else {
                             fromWay = w;
                         }
                     } else if("to".equals(m.role)) {
                         if(toWay != null)
-                            r.putError(tr("more than one to way found - ignored."), true);
+                            r.putError(tr("More than one \"to\" way found."), true);
                         else {
                             toWay = w;
                         }
                     }
                     else
-                        r.putError(tr("unknown role {0} - ignored", m.role), true);
+                        r.putError(tr("Unknown role {0}.", m.role), true);
                 }
                 else if(m.member instanceof Node)
                 {
                     Node n = (Node) m.member;
                     if("via".equals(m.role))
                         if(via != null)
-                            System.out.println("more than one via found - ignored");
+                            System.out.println("More than one \"via\" found.");
                         else {
                             via = n;
                         }
                     else
-                        r.putError(tr("unknown role {0} - ignored", m.role), true);
+                        r.putError(tr("Unknown role ''{0}''.", m.role), true);
                 }
                 else
-                    r.putError(tr("unknown instanceof member - ignored"), true);
+                    r.putError(tr("Unknown member type for ''{0}''.", m.member.getName()), true);
             }
         }
-        
+
         if (fromWay == null) {
-            r.putError(tr("no from way found"), true);
+            r.putError(tr("No \"from\" way found."), true);
             return;
         }
         if (toWay == null) {
-            r.putError(tr("no to way found"), true);
+            r.putError(tr("No \"to\" way found."), true);
             return;
         }
         if (via == null) {
-            r.putError(tr("no via node found"), true);
+            r.putError(tr("No \"via\" node found."), true);
             return;
         }
 
         // check if "from" way starts or ends at via
         if(fromWay.nodes.get(0) != via && fromWay.nodes.get(fromWay.nodes.size()-1) != via) {
-            r.putError(tr("from way doesn't start or end at a via node"), true);
+            r.putError(tr("The \"from\" way doesn't start or end at a \"via\" node."), true);
             return;
         }
         // check if "to" way starts or ends at via
@@ -605,7 +603,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }*/
 
         // find the "direct" nodes before the via node
-        Node fromNode = null;        
+        Node fromNode = null;
         try
         {
             if(fromWay.nodes.get(0) == via) {
@@ -616,7 +614,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 fromNode = fromWay.nodes.get(fromWay.nodes.size()-2);
             }
         } catch (IndexOutOfBoundsException ioobe) {
-            System.out.println("from must contain at least 2 nodes");
+            r.putError(tr("The \"{0}\" way must contain at least 2 nodes.", "from"), true);
         }
 
         // find the "direct" node after the via node
@@ -633,12 +631,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 toNode = toWay.nodes.get(toWay.nodes.size()-2);
             }
         } catch (IndexOutOfBoundsException ioobe) {
-            System.out.println("to must contain at least 2 nodes");
+            r.putError(tr("The \"{0}\" way must contain at least 2 nodes.", "to"), true);
         }
-        
+
         Point pFrom = nc.getPoint(fromNode.eastNorth);
         Point pVia = nc.getPoint(via.eastNorth);
-        
+
         if(restrictionDebug) {
             Point pTo = nc.getPoint(toNode.eastNorth);
 
@@ -659,7 +657,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         double distanceFromVia=14;
         double dx = (pFrom.x >= pVia.x) ? (pFrom.x - pVia.x) : (pVia.x - pFrom.x);
         double dy = (pFrom.y >= pVia.y) ? (pFrom.y - pVia.y) : (pVia.y - pFrom.y);
-        
+
         double fromAngle;
         if(dx == 0.0) {
             fromAngle = Math.PI/2;
@@ -670,13 +668,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         double vx = distanceFromVia * Math.cos(fromAngle);
         double vy = distanceFromVia * Math.sin(fromAngle);
-        
+
         if(pFrom.x < pVia.x) vx = -vx;
         if(pFrom.y < pVia.y) vy = -vy;
 
         if(restrictionDebug)
             System.out.println("vx " + vx + " vy " + vy);
-        
+
         // go a few pixels away from the way (in a right angle)
         // (calculate the vx2/vy2 vector with the specified length and the direction 90degrees away from the first segment of the "from" way)
         double distanceFromWay=8;
@@ -724,15 +722,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             iconAngle = 270-fromAngleDeg;
         }
-        
+
         IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(r);
-        
+
         if (nodeStyle == null) {
-            r.putError(tr("Style for restriction {0} not found", r.keys.get("restriction")), true);
+            r.putError(tr("Style for restriction {0} not found.", r.keys.get("restriction")), true);
             return;
         }
 
-        // rotate icon with direction last node in from to 
+        // rotate icon with direction last node in from to
         if(restrictionDebug)
             System.out.println("Deg1 " + fromAngleDeg + " Deg2 " + (fromAngleDeg + 180) + " Icon " + iconAngle);
         ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, nodeStyle.icon, iconAngle);
@@ -760,7 +758,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (RelationMember m : r.members)
         {
-            if(m.member == null) 
+            if(m.member == null)
                 r.putError(tr("Empty member in relation."), true);
             else if(m.member.deleted)
                 r.putError(tr("Deleted member ''{0}'' in relation.",
@@ -868,9 +866,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                             if(poly.contains(p.xpoints[i],p.ypoints[i]))
                                 --contains;
                         }
-                        if(contains == 0) return 1; 
-                        if(contains == p.npoints) return 0; 
-                        return 2; 
+                        if(contains == 0) return 1;
+                        if(contains == p.npoints) return 0;
+                        return 2;
                     }
                     public void addInner(Polygon p)
                     {
@@ -1036,7 +1034,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected void drawArea(Way w, Color color)
     {
         Polygon polygon = getPolygon(w);
-        
+
         // set the opacity (alpha) level of the filled polygon
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
@@ -1185,7 +1183,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
         profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
-        
+
         useStyleCache = Main.pref.getBoolean("mappaint.cache",true);
         fillAreas = Main.pref.getInteger("mappaint.fillareas", 100000);
         fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
@@ -1195,7 +1193,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         LatLon ll1 = nc.getLatLon(0,0);
         LatLon ll2 = nc.getLatLon(100,0);
         dist = ll1.greatCircleDistance(ll2);
-        
+
         long profilerStart = java.lang.System.currentTimeMillis();
         long profilerLast = profilerStart;
         int profilerN;
@@ -1220,7 +1218,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name;ref;operator;brand").split(";");
         minEN = nc.getEastNorth(0,nc.getHeight()-1);
         maxEN = nc.getEastNorth(nc.getWidth()-1,0);
-        
+
 
         selectedCall = false;
         ++paintid;

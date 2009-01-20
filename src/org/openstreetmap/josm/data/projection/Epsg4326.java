@@ -23,6 +23,10 @@ public class Epsg4326 implements Projection {
         return tr("EPSG:4326");
     }
 
+    public String toCode() {
+        return "EPSG:4326";
+    }
+
     public String getCacheDirectoryName() {
         return "epsg4326";
     }

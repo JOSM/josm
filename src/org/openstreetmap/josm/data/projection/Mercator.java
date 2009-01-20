@@ -36,6 +36,10 @@ public class Mercator implements Projection {
         return tr("Mercator");
     }
 
+    public String toCode() {
+        return "EPSG:3785"; /* TODO: Check if that is correct */
+    }
+
     public String getCacheDirectoryName() {
         return "mercator";
     }

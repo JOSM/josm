@@ -121,13 +121,13 @@ public class Lambert implements Projection {
                 dontDisplayErrors = false;
             } else if (layoutZone != currentZone) {
                 if ((currentZone < layoutZone && Math.abs(zoneLimits[currentZone] - lt) > cMaxOverlappingZones)
-                        || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
+                || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
                     JOptionPane.showMessageDialog(Main.parent,
-                                    tr("IMPORTANT : data positioned far away from\n"
-                                            + "the current Lambert zone limits.\n"
-                                            + "Do not upload any data after this message.\n"
-                                            + "Undo your last action, Save your work \n"
-                                            + "and Start a new layer on the new zone."));
+                    tr("IMPORTANT : data positioned far away from\n"
+                    + "the current Lambert zone limits.\n"
+                    + "Do not upload any data after this message.\n"
+                    + "Undo your last action, save your work\n"
+                    + "and start a new layer on the new zone."));
                     layoutZone = -1;
                     dontDisplayErrors = true;
                 } else {
@@ -156,6 +156,10 @@ public class Lambert implements Projection {
 
     @Override public String toString() {
         return tr("Lambert Zone (France)");
+    }
+
+    public String toCode() {
+        return "EPSG::"+(27571+currentZone);
     }
 
     public String getCacheDirectoryName() {

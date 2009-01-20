@@ -57,6 +57,11 @@ public interface Projection {
     String toString();
 
     /**
+     * Return projection code.
+     */
+    String toCode();
+
+    /**
      * Get a filename compatible string (for the cache directory)
      */
     String getCacheDirectoryName();

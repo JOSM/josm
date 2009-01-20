@@ -96,6 +96,10 @@ public class LambertEST implements Projection {
         return tr("Lambert Zone (Estonia)");
     }
 
+    public String toCode() {
+        return "EPSG:3301";
+    }
+
     public String getCacheDirectoryName() {
         return "lambertest";
     }
