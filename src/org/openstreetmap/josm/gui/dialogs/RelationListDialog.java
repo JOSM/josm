@@ -70,7 +70,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                     new RelationEditor(toEdit).setVisible(true);
             }
         });
-        displaylist.addListSelectionListener(new ListSelectionListener(){
+        /*displaylist.addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent e) {
                 Relation toEdit = (Relation) displaylist.getSelectedValue();
                 if (toEdit != null) {
@@ -79,7 +79,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                     asa.actionPerformed(null);
                 }
             }
-        });
+        });*/
 
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
@@ -92,12 +92,14 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             }
         }), GBC.std());
 
-        /*buttonPanel.add(new SideButton(marktr("Select"), "select", "Selection", tr("Select this relation"), new ActionListener() {
+        buttonPanel.add(new SideButton(marktr("Select"), "select", "Selection", tr("Select this relation"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // replace selection with the relation from the list
                 Main.ds.setSelected((Relation)displaylist.getSelectedValue());
+                AutoScaleAction asa = new AutoScaleAction("selection");
+                asa.actionPerformed(null);
             }
-        }), GBC.std());*/
+        }), GBC.std());
 
         buttonPanel.add(new SideButton(marktr("Edit"), "edit", "Selection", tr( "Open an editor for the selected relation"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {
