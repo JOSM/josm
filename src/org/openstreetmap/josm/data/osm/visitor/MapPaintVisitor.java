@@ -559,7 +559,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         }
                     }
                     else
-                        r.putError(tr("Unknown role {0}.", m.role), true);
+                        r.putError(tr("Unknown role ''{0}''.", m.role), true);
                 }
                 else if(m.member instanceof Node)
                 {
