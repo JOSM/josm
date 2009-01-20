@@ -176,7 +176,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             virtualCmds.add(new AddCommand(virtualNode));
             Way w = virtualWay.way;
             Way wnew = new Way(w);
-            wnew.nodes.add(virtualWay.lowerIndex+1, virtualNode);
+            wnew.addNode(virtualWay.lowerIndex+1, virtualNode);
             virtualCmds.add(new ChangeCommand(w, wnew));
             virtualCmds.add(new MoveCommand(virtualNode, dx, dy));
             Main.main.undoRedo.add(new SequenceCommand(tr("Add and move a virtual new node to way"), virtualCmds));

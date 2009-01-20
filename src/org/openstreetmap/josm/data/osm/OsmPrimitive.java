@@ -55,6 +55,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     {
         errors = null;
     }
+    /* This should not be called from outside. Fixing the UI to add relevant
+       get/set functions calling this implecitely is prefered, so we can have
+       transparent cache handling in the future. */
+    protected void clearCached()
+    {
+        mappaintVisibleCode = 0;
+        mappaintDrawnCode = 0;
+        mappaintStyle = null;
+    }
     /* end of mappaint data */
 
     /**
@@ -278,7 +287,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         version = osm.version;
         tagged = osm.tagged;
         incomplete = osm.incomplete;
-        mappaintStyle = null;
+        clearCached();
+        clearErrors();
     }
 
     /**

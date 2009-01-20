@@ -222,7 +222,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     pruneSuccsAndReverse(is);
                     for (int i : is) segSet.add(
                         Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
-                    for (int i : is) wnew.nodes.add(i + 1, n);
+                    for (int i : is) wnew.addNode(i + 1, n);
 
                     cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
                     replacedWays.add(insertPoint.getKey());
@@ -286,14 +286,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // Don't allow creation of self-overlapping ways
             if(way != null) {
                 int nodeCount=0;
-                for (Node p : way.nodes) 
+                for (Node p : way.nodes)
                     if(p.equals(n0)) nodeCount++;
                 if(nodeCount > 1) way = null;
             }
 
             if (way == null) {
                 way = new Way();
-                way.nodes.add(n0);
+                way.addNode(n0);
                 cmds.add(new AddCommand(way));
             } else {
                 int i;
@@ -308,32 +308,30 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
             // Connected to a node that's already in the way
             if(way != null && way.nodes.contains(n)) {
-                System.out.println("Stop drawing, node is part of current way");
+                //System.out.println("Stop drawing, node is part of current way");
                 wayIsFinished = true;
                 selection.clear();
                 //Main.map.selectMapMode(new SelectAction(Main.map));
             }
-            
+
             // Add new node to way
-            if (way.nodes.get(way.nodes.size() - 1) == n0) {
-                way.nodes.add(n);
-            } else {
-                way.nodes.add(0, n);
-            }
+            if (way.nodes.get(way.nodes.size() - 1) == n0)
+                way.addNode(n);
+            else
+                way.addNode(0, n);
 
             extendedWay = true;
             Main.ds.setSelected(way);
         }
 
         String title;
-        if (!extendedWay && !newNode) {
-            return; // We didn't do anything.
-        } else if (!extendedWay) {
-            if (reuseWays.isEmpty()) {
+        if (!extendedWay) {
+            if (!newNode)
+              return; // We didn't do anything.
+            else if (reuseWays.isEmpty())
                 title = tr("Add node");
-            } else {
+            else
                 title = tr("Add node into way");
-            }
             for (Way w : reuseWays) w.selected = false;
             Main.ds.setSelected(n);
         } else if (!newNode) {

@@ -227,9 +227,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             EastNorth en4 = n1.eastNorth.add(xoff, yoff);
             Node n4 = new Node(Main.proj.eastNorth2latlon(en4));
             Way wnew = new Way(selectedSegment.way);
-            wnew.nodes.add(selectedSegment.lowerIndex+1, n3);
-            wnew.nodes.add(selectedSegment.lowerIndex+1, n4);
-            if (wnew.nodes.size() == 4) wnew.nodes.add(n1);
+            wnew.addNode(selectedSegment.lowerIndex+1, n3);
+            wnew.addNode(selectedSegment.lowerIndex+1, n4);
+            if (wnew.nodes.size() == 4) wnew.addNode(n1);
             Collection<Command> cmds = new LinkedList<Command>();
             cmds.add(new AddCommand(n4));
             cmds.add(new AddCommand(n3));

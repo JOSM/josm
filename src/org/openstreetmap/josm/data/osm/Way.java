@@ -29,7 +29,13 @@ public final class Way extends OsmPrimitive {
     public boolean isMappaintArea = false;
     public Integer mappaintDrawnAreaCode = 0;
     /* end of mappaint data */
-    
+    @Override protected void clearCached()
+    {
+        super.clearCached();
+        isMappaintArea = false;
+        mappaintDrawnAreaCode = 0;
+    }
+
     public void visitNodes(Visitor v) {
         for (Node n : this.nodes)
             v.visit(n);
@@ -123,6 +129,18 @@ public final class Way extends OsmPrimitive {
                 name = "*"+name;
         }
         return name;
+    }
+
+    public void addNode(Node n)
+    {
+        clearCached();
+        nodes.add(n);
+    }
+
+    public void addNode(int offs, Node n)
+    {
+        clearCached();
+        nodes.add(offs, n);
     }
 
     public Boolean isClosed() {

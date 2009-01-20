@@ -92,14 +92,24 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     public ElemStyle getPrimitiveStyle(OsmPrimitive osm) {
         if(!useStyleCache)
-            return (styles != null) ? (IconElemStyle)styles.get(osm) : null;
+            return (styles != null) ? styles.get(osm) : null;
 
         if(osm.mappaintStyle == null && styles != null) {
-            osm.mappaintStyle =  styles.get(osm);
+            osm.mappaintStyle = styles.get(osm);
             if(osm instanceof Way)
                 ((Way)osm).isMappaintArea = styles.isArea(osm);
         }
         return osm.mappaintStyle;
+    }
+
+    public IconElemStyle getPrimitiveNodeStyle(OsmPrimitive osm) {
+        if(!useStyleCache)
+            return (styles != null) ? styles.getIcon(osm) : null;
+
+        if(osm.mappaintStyle == null && styles != null)
+            osm.mappaintStyle = styles.getIcon(osm);
+
+        return (IconElemStyle)osm.mappaintStyle;
     }
 
     public boolean isPrimitiveArea(Way osm) {
@@ -416,21 +426,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return res;
     }
 
-    public void drawSelectedRelation(Relation r)
-    {
-        for (RelationMember m : r.members)
-        {
-            if (m.member != null && !m.member.incomplete && !m.member.deleted
-            && !(m.member instanceof Relation))
-            {
-                /* nodes drawn on second call */
-                if(!(m.member instanceof Node))
-                    drawSelectedMember(m.member, styles != null ? styles.get(m.member)
-                    : null, true, true);
-            }
-        }
-    }
-
     public void drawSelectedMember(OsmPrimitive osm, ElemStyle style, Boolean area,
     Boolean areaselected)
     {
@@ -462,46 +457,46 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     public void visit(Relation r) {
 
         r.mappaintVisibleCode = 0;
-        /* TODO implement visible handling for relations too */
 
         // TODO: is it possible to do this like the nodes/ways code?
         if(profilerOmitDraw)
             return;
 
-        // draw multipolygon relations including their ways
-        // other relations are only drawn when selected
-
-        // we are in the "draw selected" phase
-        // TODO: is it necessary to check for r.selected?
-        if(r.selected && selectedCall)
+        if(selectedCall)
         {
             for (RelationMember m : r.members)
             {
                 if (m.member != null && !m.member.incomplete && !m.member.deleted
-                && (drawRestriction || m.member instanceof Node))
+                && m.member instanceof Node)
                 {
-                    drawSelectedMember(m.member, styles != null ? styles.get(m.member) : null, true, true);
+                    drawSelectedMember(m.member, styles != null ? getPrimitiveStyle(m.member) : null, true, true);
                 }
             }
             return;
         }
-
-        if (drawMultipolygon && r.keys != null && "multipolygon".equals(r.keys.get("type")))
+        else if (drawMultipolygon && r.keys != null && "multipolygon".equals(r.keys.get("type")))
         {
-            drawMultipolygon(r);
-            return;
+            if(drawMultipolygon(r))
+              return;
         }
-
-        if (drawRestriction && r.keys != null && "restriction".equals(r.keys.get("type")))
+        else if (drawRestriction && r.keys != null && "restriction".equals(r.keys.get("type")))
         {
             drawRestriction(r);
-            return;
         }
 
-        if(r.selected)
-            drawSelectedRelation(r);
+        if(r.selected) /* draw ways*/
+        {
+            for (RelationMember m : r.members)
+            {
+                if (m.member != null && !m.member.incomplete && !m.member.deleted
+                && m.member instanceof Way) /* nodes drawn on second call */
+                {
+                    drawSelectedMember(m.member, styles != null ? getPrimitiveStyle(m.member)
+                    : null, true, true);
+                }
+            }
+        }
     }
-
 
     // this current experimental implementation will only work for standard restrictions:
     // from(Way) / via(Node) / to(Way)
@@ -723,7 +718,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             iconAngle = 270-fromAngleDeg;
         }
 
-        IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(r);
+        IconElemStyle nodeStyle = getPrimitiveNodeStyle(r);
 
         if (nodeStyle == null) {
             r.putError(tr("Style for restriction {0} not found.", r.keys.get("restriction")), true);
@@ -747,12 +742,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
     }
 
-    public void drawMultipolygon(Relation r) {
+    public Boolean drawMultipolygon(Relation r) {
         Collection<Way> inner = new LinkedList<Way>();
         Collection<Way> outer = new LinkedList<Way>();
         Collection<Way> innerclosed = new LinkedList<Way>();
         Collection<Way> outerclosed = new LinkedList<Way>();
         Boolean incomplete = false;
+        Boolean drawn = false;
 
         r.clearErrors();
 
@@ -786,7 +782,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         if(m.role == null || m.role.length() == 0)
                             outer.add(w);
                         else if(r.selected)
-                            drawSelectedMember(m.member, styles != null ? styles.get(m.member) : null, true, true);
+                            drawSelectedMember(m.member, styles != null
+                            ? getPrimitiveStyle(m.member) : null, true, true);
                     }
                 }
                 else
@@ -797,7 +794,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
         }
 
-        ElemStyle wayStyle = styles != null ? styles.get(r) : null;
+        ElemStyle wayStyle = styles != null ? getPrimitiveStyle(r) : null;
         if(styles != null && (wayStyle == null || !(wayStyle instanceof AreaElemStyle)))
         {
             for (Way w : outer)
@@ -805,6 +802,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                if(wayStyle == null || !(wayStyle instanceof AreaElemStyle))
                    wayStyle = styles.get(w);
             }
+            r.mappaintStyle = wayStyle;
         }
 
         if(wayStyle != null && wayStyle instanceof AreaElemStyle)
@@ -813,6 +811,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             Boolean visible = false;
             Collection<Way> join = new LinkedList<Way>();
 
+            drawn = true;
             for (Way w : outer)
             {
                 if(w.isClosed()) outerclosed.add(w);
@@ -953,11 +952,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     wInner.mappaintVisibleCode = viewid;
                 for (Way wOuter : outer)
                     wOuter.mappaintVisibleCode = viewid;
-                return;
+                return drawn;
             }
             for (Way wInner : inner)
             {
-                ElemStyle innerStyle = styles.get(wInner);
+                ElemStyle innerStyle = getPrimitiveStyle(wInner);
                 if(innerStyle == null)
                 {
                     if(zoomok && (wInner.mappaintDrawnCode != paintid
@@ -987,7 +986,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             for (Way wOuter : outer)
             {
-                ElemStyle outerStyle = styles.get(wOuter);
+                ElemStyle outerStyle = getPrimitiveStyle(wOuter);
                 if(outerStyle == null)
                 {
                     if(zoomok)
@@ -1015,8 +1014,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
             }
         }
-        else if(r.selected)
-            drawSelectedRelation(r);
+        return drawn;
     }
 
     protected Polygon getPolygon(Way w)

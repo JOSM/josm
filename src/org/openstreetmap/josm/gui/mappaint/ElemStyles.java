@@ -28,7 +28,7 @@ public class ElemStyles
             modifiers = new HashMap<String, LineElemStyle>();
             areas = new HashMap<String, AreaElemStyle>();
         }
-        private ElemStyle getNode(Map<String, String> keys)
+        private IconElemStyle getNode(Map<String, String> keys)
         {
             IconElemStyle ret = null;
             Iterator<String> iterator = keys.keySet().iterator();
@@ -119,7 +119,12 @@ public class ElemStyles
         public ElemStyle get(OsmPrimitive osm)
         {
             return (osm.keys == null) ? null :
-            ((osm instanceof Node || osm instanceof Relation) ? getNode(osm.keys) : get(osm.keys));
+            ((osm instanceof Node) ? getNode(osm.keys) : get(osm.keys));
+        }
+
+        public IconElemStyle getIcon(OsmPrimitive osm)
+        {
+            return (osm.keys == null) ? null : getNode(osm.keys);
         }
 
         public boolean isArea(OsmPrimitive o)
