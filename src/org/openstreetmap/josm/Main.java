@@ -49,7 +49,6 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.SplashScreen;
-import org.openstreetmap.josm.gui.download.BoundingBoxSelection;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -60,6 +59,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
@@ -493,7 +493,7 @@ abstract public class Main {
 
     private static void downloadFromParamString(final boolean rawGps, String s) {
         if (s.startsWith("http:")) {
-            final Bounds b = BoundingBoxSelection.osmurl2bounds(s);
+            final Bounds b = OsmUrlToBounds.parse(s);
             if (b == null)
                 JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed URL: \"{0}\"", s));
             else {

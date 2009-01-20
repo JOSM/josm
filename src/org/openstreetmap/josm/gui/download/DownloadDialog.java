@@ -4,24 +4,34 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.datatransfer.DataFlavor; 
+import java.awt.datatransfer.Transferable; 
+import java.awt.event.ActionEvent; 
+import java.awt.event.InputEvent; 
+import java.awt.event.KeyEvent; 
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
 /**
  * Main download dialog.
@@ -145,7 +155,40 @@ public class DownloadDialog extends JPanel {
         Font labelFont = sizeCheck.getFont();
         sizeCheck.setFont(labelFont.deriveFont(Font.PLAIN, labelFont.getSize()));
         add(sizeCheck, GBC.eop().insets(0,5,5,10));
+        
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put( 
+        KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), "checkClipboardContents"); 
+       
+        getActionMap().put("checkClipboardContents", new AbstractAction() { 
+            public void actionPerformed(ActionEvent e) { 
+                checkClipboardContents(); 
+            } 
+        }); 
     }
+    
+    private void checkClipboardContents() { 
+        String result = ""; 
+        Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null); 
+ 
+        if(contents == null || !contents.isDataFlavorSupported(DataFlavor.stringFlavor)) 
+            return; 
+         
+        try { 
+            result = (String)contents.getTransferData(DataFlavor.stringFlavor); 
+        } 
+        catch(Exception ex) { 
+            return; 
+        } 
+         
+        Bounds b = OsmUrlToBounds.parse(result); 
+        if (b != null) { 
+            minlon = b.min.lon(); 
+            minlat = b.min.lat(); 
+            maxlon = b.max.lon(); 
+            maxlat = b.max.lat(); 
+            boundingBoxChanged(null); 
+        } 
+    } 
 
     private void updateSizeCheck() {
         if ((maxlon-minlon)*(maxlat-minlat) > Main.pref.getDouble("osm-server.max-request-area", 0.25)) {

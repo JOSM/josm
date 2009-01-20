@@ -23,6 +23,8 @@ import javax.swing.event.DocumentEvent;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.OsmUrlToBounds;
+
 /**
  * Bounding box selector.
  *
@@ -40,12 +42,10 @@ public class BoundingBoxSelection implements DownloadSelection {
             new JTextField(11) };
     final JTextArea osmUrl = new JTextArea();
     final JTextArea showUrl = new JTextArea();
-    String noteUrl = tr("You can paste an URL here to download the area.");
 
     public void addGui(final DownloadDialog gui) {
 
         JPanel dlg = new JPanel(new GridBagLayout());
-        osmUrl.setText(noteUrl);
 
         final FocusListener dialogUpdater = new FocusAdapter() {
             @Override public void focusLost(FocusEvent e) {
@@ -79,7 +79,7 @@ public class BoundingBoxSelection implements DownloadSelection {
             public void insertUpdate(DocumentEvent e) { dowork(); }
             public void removeUpdate(DocumentEvent e) { dowork(); }
             private void dowork() {
-                Bounds b = osmurl2bounds(osmUrl.getText());
+                Bounds b = OsmUrlToBounds.parse(osmUrl.getText());
                 if (b != null) {
                     gui.minlon = b.min.lon();
                     gui.minlat = b.min.lat();
@@ -118,7 +118,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         dlg.add(new JLabel(tr("max lon")), GBC.std().insets(10,0,5,0));
         dlg.add(latlon[3], GBC.eol());
 
-        dlg.add(new JLabel(tr("URL from www.openstreetmap.org")), GBC.eol().insets(10,20,5,0));
+        dlg.add(new JLabel(tr("URL from www.openstreetmap.org (you can paste an URL here to download the area)")), GBC.eol().insets(10,20,5,0));
         dlg.add(osmUrl, GBC.eop().insets(10,0,5,0).fill());
         dlg.add(showUrl, GBC.eop().insets(10,0,5,5));
         showUrl.setEditable(false);
@@ -171,44 +171,5 @@ public class BoundingBoxSelection implements DownloadSelection {
         lon = Math.round(lon * decimals);
         lon /= decimals;
         showUrl.setText("http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
-    }
-
-    public static Bounds osmurl2bounds(String url) {
-        int i = url.indexOf('?');
-        if (i == -1)
-            return null;
-        String[] args = url.substring(i+1).split("&");
-        HashMap<String, String> map = new HashMap<String, String>();
-        for (String arg : args) {
-            int eq = arg.indexOf('=');
-            if (eq != -1) {
-                map.put(arg.substring(0, eq), arg.substring(eq + 1));
-            }
-        }
-
-        Bounds b = null;
-        try {
-            if (map.containsKey("bbox")) {
-                String bbox[] = map.get("bbox").split(",");
-                b = new Bounds(
-                    new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0])),
-                    new LatLon(Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2])));
-
-            } else {
-                double size = 180.0 / Math.pow(2, Integer.parseInt(map.get("zoom")));
-                b = new Bounds(
-                    new LatLon(parseDouble(map, "lat") - size/2, parseDouble(map, "lon") - size),
-                    new LatLon(parseDouble(map, "lat") + size/2, parseDouble(map, "lon") + size));
-            }
-        } catch (NumberFormatException x) {
-        } catch (NullPointerException x) {
-        }
-        return b;
-    }
-
-    private static double parseDouble(HashMap<String, String> map, String key) {
-        if (map.containsKey(key))
-            return Double.parseDouble(map.get(key));
-        return Double.parseDouble(map.get("m"+key));
     }
 }
