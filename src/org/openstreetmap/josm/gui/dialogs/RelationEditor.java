@@ -300,7 +300,7 @@ public class RelationEditor extends JFrame {
         });
         ListSelectionModel lsm = memberTable.getSelectionModel();
         lsm.addListSelectionListener(new ListSelectionListener() {
-            @Override public void valueChanged(ListSelectionEvent e) {
+            public void valueChanged(ListSelectionEvent e) {
                 ArrayList<OsmPrimitive> sel;
                 int cnt = memberTable.getSelectedRowCount();
                 if(cnt > 0)
