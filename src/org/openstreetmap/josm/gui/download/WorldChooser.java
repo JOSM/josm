@@ -77,6 +77,9 @@ public class WorldChooser extends NavigatableComponent implements DownloadSelect
             @Override public String toString() {
                 return "WorldChooser";
             }
+            public String toCode() {
+                return null; /* should never be used, we have no EPSG code */
+            }
             public String getCacheDirectoryName() {
                 throw new UnsupportedOperationException();
             }
