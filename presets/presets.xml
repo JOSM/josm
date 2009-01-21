@@ -102,6 +102,7 @@ check: checkbox
         </item>
         <separator/>
         <item name="Primary" icon="presets/way_primary.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary"/>
             <label text="Edit a Primary Road" />
             <space />
             <key key="highway" value="primary" />
@@ -134,7 +135,8 @@ check: checkbox
             </optional>
         </item>
         <item name="Secondary" icon="presets/way_secondary.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=secondary"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=secondary"
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=secondary"/>
             <label text="Edit a Secondary Road" />
             <space />
             <key key="highway" value="secondary" />

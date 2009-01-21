@@ -370,6 +370,7 @@ public class TaggingPreset extends AbstractAction {
         public String href;
         public String text;
         public String locale_text;
+        public String locale_href;
 
         @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null)
@@ -377,7 +378,7 @@ public class TaggingPreset extends AbstractAction {
             JButton b = new JButton(locale_text);
             b.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                    OpenBrowser.displayUrl(href);
+                    OpenBrowser.displayUrl(locale_href != null ? locale_href : href);
                 }
             });
             p.add(b, GBC.eol().anchor(GBC.EAST));
