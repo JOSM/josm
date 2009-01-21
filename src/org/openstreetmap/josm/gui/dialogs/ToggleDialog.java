@@ -93,8 +93,10 @@ public class ToggleDialog extends JPanel implements Helpful {
         // scale down the dialog icon
         ImageIcon inIcon = ImageProvider.get("dialogs", iconName);
         ImageIcon smallIcon = new ImageIcon(inIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
-        JLabel labelSmallIcon = new JLabel(smallIcon);
-        titleBar.add(labelSmallIcon);
+        JLabel firstPart = new JLabel(name, smallIcon, JLabel.TRAILING);
+        firstPart.setIconTextGap(8);
+        titleBar.add(firstPart, GBC.std());
+        titleBar.add(Box.createHorizontalGlue(),GBC.std().fill(GBC.HORIZONTAL));
 
         final ActionListener hideActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -143,15 +145,6 @@ public class ToggleDialog extends JPanel implements Helpful {
             public void mouseReleased(MouseEvent e) {}
         };
         titleBar.addMouseListener(titleMouseListener);
-
-        // add some padding space (there must be a better way to do this!)
-        JLabel padding = new JLabel(" ");
-        titleBar.add(padding);
-
-        // show the title label
-        label.setText(name);
-        titleBar.add(label, GBC.std());
-        titleBar.add(Box.createHorizontalGlue(),GBC.std().fill(GBC.HORIZONTAL));
 
         // show the sticky button
         JButton sticky = new JButton(ImageProvider.get("misc", "sticky"));
