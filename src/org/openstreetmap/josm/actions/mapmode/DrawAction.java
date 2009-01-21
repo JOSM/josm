@@ -146,8 +146,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * If in nodeway mode, insert the node into the way.
      */
     @Override public void mouseClicked(MouseEvent e) {
-
-        if (e.getButton() != MouseEvent.BUTTON1)
+        if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() > 1)
             return;
         if(!Main.map.mapView.isDrawableLayer())
             return;
