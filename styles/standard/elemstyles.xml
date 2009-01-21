@@ -3805,7 +3805,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!-- miscellaneous other tags, not fit elsewhere -->	
 	<rule>
 		<condition k="traffic_sign" v="city_limit"/>
-		<icon annotate="true" src="citylimit.png"/>
+		<icon annotate="true" src="vehicle/restrictions/citylimit.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
