@@ -109,7 +109,7 @@ check: checkbox
         </item>
         <separator/>
         <item name="Primary" icon="presets/way_primary.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary" />
             <label text="Edit a Primary Road" />
             <space />
             <key key="highway" value="primary" />
@@ -143,7 +143,7 @@ check: checkbox
         </item>
         <item name="Secondary" icon="presets/way_secondary.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=secondary"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=secondary"/>
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=secondary" />
             <label text="Edit a Secondary Road" />
             <space />
             <key key="highway" value="secondary" />
@@ -179,7 +179,8 @@ check: checkbox
         </item>
         <item name="Unclassified" icon="presets/way_unclassified.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=unclassified"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=unclassified" />
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=unclassified"
+                  fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=unclassified" />
             <label text="Edit a Unclassified Road" />
             <space />
             <key key="highway" value="unclassified" />
@@ -232,7 +233,7 @@ check: checkbox
         </item>
         <item name="Service" icon="presets/way_unclassified.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=service"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=service"/>
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=service" />
             <label text="Edit a Serviceway" />
             <space />
             <key key="highway" value="service" />
@@ -251,7 +252,7 @@ check: checkbox
         </item>
         <item name="Parking Aisle" icon="presets/way_unclassified.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:service=parking_aisle"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:service=parking_aisle"/>
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:service=parking_aisle" />
             <label text="Edit a Parking Aisle" />
             <space />
             <key key="highway" value="service" />
@@ -305,7 +306,9 @@ check: checkbox
         </item>
         <item name="Roundabout" icon="presets/roundabout.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=roundabout"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:junction=roundabout" />
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:junction=roundabout"
+                  it:href="http://wiki.openstreetmap.org/wiki/IT:Tag:junction=roundabout"
+                  ro:href="http://wiki.openstreetmap.org/wiki/Ro:Tag:junction=roundabout" />
             <label text="Edit a Junction" />
             <space />
             <key key="junction" value="roundabout" />
@@ -324,7 +327,9 @@ check: checkbox
         </item>
         <item name="Bridge" icon="presets/bridge.png">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge" />
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge"
+                  fi:href="http://wiki.openstreetmap.org/wiki/Fi:Key:bridge"
+                  fr:href="http://wiki.openstreetmap.org/wiki/FR:Key:bridge" />
             <label text="Edit a Bridge" />
             <space />
             <key key="bridge" value="yes" />
@@ -336,11 +341,14 @@ check: checkbox
                 <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
             </optional>
         </item>
-    </group>
-<!-- Streets -->
+    </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
         <item name="Construction" icon="presets/construction.png">
             <label text="Edit a highway under construction" />
+<!--     FIXME: no entry in the Wiki
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=construction" />
+-->
             <space />
             <key key="highway" value="construction" />
             <optional>
@@ -378,6 +386,7 @@ check: checkbox
         </item>
         <item name="Cycleway" icon="presets/cycleway.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
+                  it:href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway" />
             <label text="Edit a Cycleway" />
             <space />
@@ -434,7 +443,8 @@ check: checkbox
         </item>
         <item name="Steps" icon="presets/steps.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=steps"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=steps" />
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=steps"
+                  fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=steps" />
             <label text="Edit a flight of Steps" />
             <space />
             <key key="highway" value="steps" />
@@ -473,7 +483,7 @@ check: checkbox
             </optional>
         </item>
         <item name="Track Grade 1" icon="presets/track1.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
+            <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
             <label text="Edit a Track of grade 1" />
             <space />
@@ -579,7 +589,7 @@ check: checkbox
         </item>
         <separator/>
         <item name="Path" icon="presets/path.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=path" />
             <label text="Edit Path" />
             <space />
@@ -677,8 +687,7 @@ check: checkbox
                 <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
             </optional>
         </item>
-    </group>
-<!-- Ways -->
+    </group> <!-- Ways -->
     <group name="Waypoints" icon="presets/waypoints.png">
         <item name="Motorway Junction" icon="presets/motorway_junction.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_junction" />
@@ -769,8 +778,7 @@ check: checkbox
                 <text key="ele" text="Elevation" default="" delete_if_empty="true" />
             </optional>
         </item>
-    </group>
-<!-- Waypoints -->
+    </group> <!-- Waypoints -->
     <group name="Barriers" icon="presets/barrier.png">
         <item name="Stile" icon="presets/stile.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stile" />
@@ -781,8 +789,7 @@ check: checkbox
             <space />
             <check key="foot" text="Foot" default="on" delete_if_empty="true" />
             <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
-        </item>
-<!-- stile -->
+        </item> <!-- stile -->
         <item name="Kissing Gate" icon="presets/empty.png">
             <label text="Edit a Kissing Gate" />
             <space />
@@ -791,8 +798,7 @@ check: checkbox
             <space />
             <check key="foot" text="Foot" default="on" delete_if_empty="true" />
             <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
-        </item>
-<!-- kissing_gate -->
+        </item> <!-- kissing_gate -->
         <item name="Hampshire Gate" icon="presets/empty.png">
             <label text="Edit a Hampshire Gate" />
             <space />
@@ -804,8 +810,7 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- hampshire_gate -->
+        </item> <!-- hampshire_gate -->
         <item name="Bollard" icon="presets/bollard.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=bollard" />
             <label text="Edit a bollard" />
@@ -817,8 +822,7 @@ check: checkbox
             <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
-        </item>
-<!-- bollard -->
+        </item> <!-- bollard -->
         <item name="Drawbridge" icon="presets/empty.png">
             <label text="Edit a Drawbridge" />
             <space />
@@ -830,12 +834,10 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- drawbridge -->
+        </item> <!-- drawbridge -->
         <item name="Bus Trap" icon="presets/empty.png">
             <key key="barrier" value="bus_trap" />
-        </item>
-<!-- bus_trap -->
+        </item> <!-- bus_trap -->
         <item name="Cattle Grid" icon="presets/cattle_grid.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cattle_grid" />
             <label text="Edit a Cattle Grid" />
@@ -847,8 +849,7 @@ check: checkbox
             <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- cattle_grid -->
+        </item> <!-- cattle_grid -->
         <item name="Spikes" icon="presets/empty.png">
             <label text="Edit a Spikes" />
             <space />
@@ -860,8 +861,7 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- spikes -->
+        </item> <!-- spikes -->
         <item name="Portcullis" icon="presets/empty.png">
             <label text="Edit a Portcullis" />
             <space />
@@ -871,8 +871,7 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- portcullis -->
+        </item> <!-- portcullis -->
         <item name="Gate" icon="presets/gate.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=gate" />
             <label text="Edit a Gate" />
@@ -885,8 +884,7 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- gate -->
+        </item> <!-- gate -->
         <item name="Lift Gate" icon="presets/lift_gate.png">
             <label text="Edit a Lift Gate" />
             <space />
@@ -898,8 +896,7 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- lift_gate -->
+        </item> <!-- lift_gate -->
         <item name="Sally Port" icon="presets/empty.png">
             <label text="Edit a Sally Port" />
             <space />
@@ -911,8 +908,7 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- sally_port -->
+        </item> <!-- sally_port -->
         <item name="Bump Gate" icon="presets/empty.png">
             <label text="Edit a Bump Gate" />
             <space />
@@ -924,36 +920,29 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- bump_gate -->
+        </item> <!-- bump_gate -->
         <item name="Hedge" icon="presets/empty.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=hedge" />
             <key key="barrier" value="hedge" />
-        </item>
-<!-- hedge -->
+        </item> <!-- hedge -->
         <item name="Fence" icon="presets/empty.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence" />
             <key key="barrier" value="fence" />
-        </item>
-<!-- fence -->
+        </item> <!-- fence -->
         <item name="Block" icon="presets/empty.png">
             <key key="barrier" value="block" />
-        </item>
-<!-- block -->
+        </item> <!-- block -->
         <item name="Wall" icon="presets/empty.png">
             <key key="barrier" value="wall" />
-        </item>
-<!-- wall -->
+        </item> <!-- wall -->
         <item name="City Wall" icon="presets/empty.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=city_wall" />
             <key key="barrier" value="city_wall" />
-        </item>
-<!-- city_wall -->
+        </item> <!-- city_wall -->
         <item name="Retaining Wall" icon="presets/empty.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=retaining_wall" />
             <key key="barrier" value="retaining_wall" />
-        </item>
-<!-- retaining_wall -->
+        </item> <!-- retaining_wall -->
         <item name="Toll Booth" icon="presets/toll_station.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=toll_booth" />
             <label text="Edit Toll Booth" />
@@ -963,8 +952,7 @@ check: checkbox
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <text key="operator" text="Operator" default="" delete_if_empty="true" />
             </optional>
-        </item>
-<!-- toll_booth -->
+        </item> <!-- toll_booth -->
         <item name="Border Control" icon="presets/douane.png">
             <label text="Edit a Border Control" />
             <space />
@@ -976,8 +964,7 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- border_control -->
+        </item> <!-- border_control -->
         <separator/>
         <item name="Entrance" icon="presets/empty.png">
             <label text="Edit a Entrance" />
@@ -990,10 +977,8 @@ check: checkbox
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item>
-<!-- entrance -->
-    </group>
-<!-- Barriers -->
+        </item> <!-- entrance -->
+    </group> <!-- Barriers -->
     <separator/>
     <group name="Waterway" icon="presets/waterway.png">
         <item name="River" icon="presets/river.png">
@@ -1006,7 +991,7 @@ check: checkbox
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
         </item>
         <item name="Canal" icon="presets/waterway.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal" />
             <label text="Edit a Canal" />
             <space />
             <key key="waterway" value="canal" />
@@ -1031,7 +1016,7 @@ check: checkbox
         </item>
         <separator/>
         <item name="Ferry Route" icon="presets/ferry.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry" />
             <label text="Edit a Ferry" />
             <space />
             <key key="route" value="ferry" />
@@ -1062,8 +1047,7 @@ check: checkbox
             <key key="waterway" value="dam" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Waterway -->
+    </group> <!-- Waterway -->
     <group name="Waterway Point" icon="presets/waterwaypoint.png">
         <item name="Lock Gate" icon="presets/lock_gate.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=lock_gate" />
@@ -1098,58 +1082,57 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Slipway" icon="presets/slipway.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=slipway"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=slipway"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=slipway" />
             <label text="Edit Slipway" />
             <key key="leisure" value="slipway" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Waterway -->
+    </group> <!-- Waterway -->
     <separator/>
     <group name="Railway" icon="presets/railway.png">
         <item name="Rail" icon="presets/railway.png">
           <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=rail" />
             <label text="Edit a Rail" />
             <space />
-            <key key="railway" value="rail"/>
+            <key key="railway" value="rail" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Narrow Gauge Rail" icon="presets/railway.png">
             <label text="Edit a Narrow Gauge Rail" />
             <space />
-            <key key="railway" value="narrow_gauge"/>
+            <key key="railway" value="narrow_gauge" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Monorail" icon="presets/railway.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=monorail" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=monorail" />
             <label text="Edit a Monorail" />
             <space />
-            <key key="railway" value="monorail"/>
+            <key key="railway" value="monorail" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Preserved" icon="presets/rail_preserved.png">
             <label text="Edit a Preserved Railway" />
             <space />
-            <key key="railway" value="preserved"/>
+            <key key="railway" value="preserved" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Light Rail" icon="presets/rail_light.png">
             <label text="Edit a Light Rail" />
             <space />
-            <key key="railway" value="light_rail"/>
+            <key key="railway" value="light_rail" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Subway" icon="presets/rail_light.png">
             <label text="Edit a Subway" />
             <space />
-            <key key="railway" value="subway"/>
+            <key key="railway" value="subway" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Tram" icon="presets/tram.png">
             <label text="Edit a Tram" />
             <space />
-            <key key="railway" value="tram"/>
+            <key key="railway" value="tram" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Bus Guideway" icon="presets/busway.png">
@@ -1174,11 +1157,11 @@ check: checkbox
         <item name="Disused Rail" icon="presets/railway.png">
             <label text="Edit a Disused Railway" />
             <space />
-            <key key="railway" value="disused"/>
+            <key key="railway" value="disused" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Abandoned Rail" icon="presets/railway.png">
-            <key key="railway" value="abandoned"/>
+            <key key="railway" value="abandoned" />
         </item>
         <separator/>
         <item name="Level Crossing" icon="presets/level_crossing.png">
@@ -1193,8 +1176,7 @@ check: checkbox
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=turntable" />
             <key key="railway" value="turntable" />
         </item>
-    </group>
-<!-- Railway -->
+    </group> <!-- Railway -->
     <group name="Aerialway" icon="presets/aerialway.png">
         <item name="Chair Lift" icon="presets/chair_lift.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=chair_lift" />
@@ -1219,8 +1201,7 @@ check: checkbox
             <key key="aerialway" value="station" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Aerialway -->
+    </group> <!-- Aerialway -->
     <separator/>
     <group name="Car" icon="presets/car.png">
         <item name="Fuel" icon="presets/fuel.png">
@@ -1275,8 +1256,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Car -->
+    </group> <!-- Car -->
     <group name="Bicycle" icon="presets/bike.png">
         <item name="Parking" icon="presets/bike_parking.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_parking" />
@@ -1296,8 +1276,7 @@ check: checkbox
             <key key="shop" value="bicycle" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Bicycle -->
+    </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/bus.png">
         <item name="Station" icon="presets/station.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=station"
@@ -1333,7 +1312,7 @@ check: checkbox
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=platform"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=platform" />
             <label text="Edit a railway platform" />
-            <key key="railway" value="platform"/>
+            <key key="railway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
             <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
@@ -1372,7 +1351,7 @@ check: checkbox
         </item>
         <item name="Bus Platform" icon="presets/platform_bus.png">
             <label text="Edit a bus platform" />
-            <key key="highway" value="platform"/>
+            <key key="highway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
             <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
@@ -1387,7 +1366,7 @@ check: checkbox
         </item>
         <separator/>
         <item name="Airport" icon="presets/plane.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=aerodrome" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=aerodrome" />
             <label text="Edit an airport" />
             <key key="aeroway" value="aerodrome" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1397,8 +1376,7 @@ check: checkbox
                 <text key="icao" text="ICAO" default="" delete_if_empty="true" />
             </optional>
         </item>
-    </group>
-<!-- Public Transport -->
+    </group> <!-- Public Transport -->
     <separator/>
     <group name="Accomodation" icon="presets/bed.png">
         <item name="Hotel" icon="presets/bed.png">
@@ -1448,8 +1426,7 @@ check: checkbox
             <key key="tourism" value="camp_site" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Accomodation -->
+    </group> <!-- Accomodation -->
     <group name="Food+Drinks" icon="presets/restaurant.png">
         <item name="Restaurant" icon="presets/restaurant.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=restaurant" />
@@ -1488,8 +1465,7 @@ check: checkbox
             <key key="amenity" value="nightclub" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Food+Drinks -->
+    </group> <!-- Food+Drinks -->
     <group name="Tourism" icon="presets/State_Public.png">
         <item name="Attraction" icon="presets/sightseeing.png">
             <label text="Edit Attraction" />
@@ -1528,7 +1504,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Artwork" icon="presets/arts_centre.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=artwork" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=artwork" />
             <label text="Edit Artwork" />
             <key key="tourism" value="artwork" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1546,8 +1522,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Tourism -->
+    </group> <!-- Tourism -->
     <group name="Historic Places" icon="presets/State_Tourist.png">
         <item name="Castle" icon="presets/State_Tourist.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=castle"
@@ -1562,6 +1537,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Archaeological Site" icon="presets/historic.png">
+        <item name="Archaeological Site" icon="presets/historic.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=archaeological_site"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=archaeological_site" />
             <label text="Edit Archaeological Site" />
@@ -1574,7 +1550,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Memorial" icon="presets/memorial.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=memorial" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=memorial" />
             <label text="Edit Memorial" />
             <key key="historic" value="memorial" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1595,8 +1571,7 @@ check: checkbox
             <key key="historic" value="wayside_shrine" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Historic Places -->
+    </group> <!-- Historic Places -->
     <group name="Leisure" icon="presets/kindergarten.png">
         <item name="Water Park" icon="presets/swimming.png">
             <label text="Edit Water Park" />
@@ -1635,8 +1610,7 @@ check: checkbox
             <key key="leisure" value="common" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Leisure -->
+    </group> <!-- Leisure -->
     <separator/>
     <group name="Sport Facilities" icon="presets/stadium.png">
         <item name="Stadium" icon="presets/stadium.png">
@@ -1961,7 +1935,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="University" icon="presets/empty.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=university" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=university" />
             <label text="Edit University" />
             <key key="amenity" value="university" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2027,8 +2001,7 @@ check: checkbox
             <space />
             <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all" default="odd" />
         </item>
-    </group>
-<!-- Buildings -->
+    </group> <!-- Buildings -->
     <group name="Man Made" icon="presets/works.png">
         <item name="Works" icon="presets/works.png">
             <label text="Edit Works" />
@@ -2068,21 +2041,20 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Pier" icon="presets/pier.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier" />
             <label text="Edit Pier" />
             <key key="man_made" value="pier" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Pipeline" icon="presets/empty.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline" />
             <label text="Edit Pipeline" />
             <key key="man_made" value="pipeline" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Wastewater Plant" icon="presets/wastewater_plant.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=wastewater_plant"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=wastewater_plant"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=wastewater_plant" />
-          <link href="" />
             <label text="Edit Wastewater Plant" />
             <key key="man_made" value="wastewater_plant" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2151,8 +2123,7 @@ check: checkbox
             <text key="voltage" text="Voltage" default="" delete_if_empty="true" />
             <text key="wires" text="Amount of Wires" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Man Made -->
+    </group> <!-- Man Made -->
     <group name="Amenities" icon="presets/telephone.png">
         <item name="Toilets" icon="presets/toilet.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=toilets"
@@ -2181,7 +2152,7 @@ check: checkbox
             <check key="payment:telephone_cards" text="Telephone cards" default="off" delete_if_empty="true" />
         </item>
         <item name="Recycling" icon="presets/recycling.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=recycling" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=recycling" />
             <label text="Edit a Recycling station" />
             <key key="amenity" value="recycling" />
             <check key="recycling:batteries" text="Batteries" default="off" delete_if_empty="true" />
@@ -2223,8 +2194,7 @@ check: checkbox
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Amenities -->
+    </group> <!-- Amenities -->
     <group name="Shops" icon="presets/shopping.png">
         <item name="Supermarket" icon="presets/shopping.png">
             <label text="Edit Supermarket" />
@@ -2299,8 +2269,7 @@ check: checkbox
             <key key="shop" value="outdoor" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Shops -->
+    </group> <!-- Shops -->
     <group name="Cash" icon="presets/dollar.png">
         <item name="Bank" icon="presets/bank.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bank" />
@@ -2321,8 +2290,7 @@ check: checkbox
             <key key="amenity" value="atm" />
             <text key="name" text="Provider" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Cash -->
+    </group> <!-- Cash -->
     <group name="Health" icon="presets/pharmacy.png">
         <item name="Doctors" icon="presets/empty.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=doctors" />
@@ -2365,8 +2333,7 @@ check: checkbox
             <key key="amenity" value="veterinary" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Health -->
+    </group> <!-- Health -->
     <separator/>
     <group name="Places" icon="presets/places.png">
         <item name="Continent" icon="presets/places.png">
@@ -2406,15 +2373,15 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Town" icon="presets/places.png">
-          <link href="http://wiki.openstreetmap.org/wiki/Tag:place=town" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:place=town" />
             <label text="Edit Town" />
             <space />
             <key key="place" value="town" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Suburb" icon="presets/places.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=suburb" />
-            <label text="Edit Suburb" />
+           <link href="http://wiki.openstreetmap.org/wiki/Tag:place=suburb" />
+           <label text="Edit Suburb" />
             <space />
             <key key="place" value="suburb" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2445,8 +2412,7 @@ check: checkbox
             <key key="place" value="island" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Places -->
+    </group> <!-- Places -->
     <group name="Boundaries" icon="presets/boundaries.png">
         <item name="National" icon="presets/boundaries.png">
             <label text="Edit National Boundary" />
@@ -2478,8 +2444,7 @@ check: checkbox
             <key key="boundary" value="national_park" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Boundaries -->
+    </group> <!-- Boundaries -->
     <group name="Land use" icon="presets/landuse.png">
         <item name="Graveyard" icon="presets/graveyard.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=grave_yard" />
@@ -2633,8 +2598,7 @@ check: checkbox
             <key key="landuse" value="recreation_ground" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Landuse -->
+    </group> <!-- Landuse -->
     <group name="Natural" icon="presets/water.png">
         <item name="Water" icon="presets/water.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water" />
@@ -2700,19 +2664,19 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Fell" icon="presets/empty.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell" />
             <label text="Edit Fell" />
             <key key="natural" value="fell" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Heath" icon="presets/empty.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath" />
             <label text="Edit Heath" />
             <key key="natural" value="heath" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Wood" icon="presets/empty.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
                     de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood" />
             <label text="Edit Wood" />
             <key key="natural" value="wood" />
@@ -2721,20 +2685,20 @@ check: checkbox
         </item>
         <separator/>
         <item name="Riverbank" icon="presets/waterway.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
                     de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=riverbank" />
             <label text="Edit a riverbank" />
             <key key="waterway" value="riverbank" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Coastline" icon="presets/empty.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline" />
             <label text="Edit Coastline" />
             <key key="natural" value="coastline" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Wetland" icon="presets/empty.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
                     de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland" />
             <label text="Edit Wetland" />
             <key key="natural" value="wetland" />
@@ -2747,7 +2711,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Beach" icon="presets/empty.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach" />
             <label text="Edit Beach" />
             <key key="natural" value="beach" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2758,11 +2722,10 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Cliff" icon="presets/empty.png">
-             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff" />
             <label text="Edit Cliff" />
             <key key="natural" value="cliff" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group>
-<!-- Natural -->
+    </group> <!-- Natural -->
 </annotations>
