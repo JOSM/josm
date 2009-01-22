@@ -1557,7 +1557,6 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Archaeological Site" icon="presets/historic.png">
-        <item name="Archaeological Site" icon="presets/historic.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=archaeological_site"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=archaeological_site" />
             <label text="Edit Archaeological Site" />
@@ -2740,7 +2739,7 @@ check: checkbox
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland"
                   pt:href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=wetland"
-                  pt_BR:href="http://wiki.openstreetmap.org/wiki/Pt_br:Tag:natural=wetland"  />
+                  pt_BR:href="http://wiki.openstreetmap.org/wiki/Pt_br:Tag:natural=wetland" />
             <label text="Edit Wetland" />
             <key key="natural" value="wetland" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
