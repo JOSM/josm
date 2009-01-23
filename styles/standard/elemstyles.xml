@@ -166,14 +166,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!--the restrictions rules should be placed before the path rule! -->
 
 	<rule>
-		<condition k="access" v="no"/>
+		<condition k="access" b="no"/>
 		<icon src="vehicle/restrictions/access.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="bicycle" v="no"/>
+		<condition k="bicycle" b="no"/>
 		<icon src="vehicle/restrictions/bicycle.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -187,7 +187,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="foot" v="no"/>
+		<condition k="foot" b="no"/>
 		<icon src="vehicle/restrictions/foot.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -201,21 +201,21 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="goods" v="no"/>
+		<condition k="goods" b="no"/>
 		<icon src="vehicle/restrictions/goods.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="hgv" v="no"/>
+		<condition k="hgv" b="no"/>
 		<icon src="vehicle/restrictions/goods.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="horse" v="no"/>
+		<condition k="horse" b="no"/>
 		<icon src="vehicle/restrictions/horse.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -229,42 +229,42 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="motorcycle" v="no"/>
+		<condition k="motorcycle" b="no"/>
 		<icon src="vehicle/restrictions/motorbike.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="motorcar" v="no"/>
+		<condition k="motorcar" b="no"/>
 		<icon src="vehicle/restrictions/motorcar.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="psv" v="no"/>
+		<condition k="psv" b="no"/>
 		<icon src="vehicle/restrictions/psv.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="motorboat" v="no"/>
+		<condition k="motorboat" b="no"/>
 		<icon src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="boat" v="no"/>
+		<condition k="boat" b="no"/>
 		<icon src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
-		<condition k="noexit" v="yes"/>
+		<condition k="noexit" b="yes"/>
 		<icon src="vehicle/restrictions/dead_end.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3473,7 +3473,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!--properties tags -->
 
 	<rule>
-		<condition k="mountain_pass" v="yes"/>
+		<condition k="mountain_pass" b="yes"/>
 		<icon src="misc/landmark/mountain_pass.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3656,7 +3656,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!--"work in progress" tags -->
 
 	<rule>
-		<condition k="construction" v="yes"/>
+		<condition k="construction" b="yes"/>
 		<line colour="construction#ffff00" dashed="true" priority="1000"/>
 		<icon src="misc/construction.png" priority="1000"/>
 		<scale_min>1</scale_min>
