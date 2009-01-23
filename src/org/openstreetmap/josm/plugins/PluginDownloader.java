@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.preferences.PluginPreference.PluginDescription;
 import org.xml.sax.SAXException;
 
 public class PluginDownloader {
@@ -75,6 +74,9 @@ public class PluginDownloader {
 
     public static Collection<String> getSites() {
         return Main.pref.getCollection("pluginmanager.sites", Arrays.asList(pluginSites));
+    }
+    public static void setSites(Collection<String> c) {
+        Main.pref.putCollection("pluginmanager.sites", c);
     }
 
     public static int downloadDescription() {

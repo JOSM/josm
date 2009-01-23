@@ -21,7 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.plugins.PluginProxy;
+import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -111,6 +112,9 @@ public class PreferenceDialog extends JTabbedPane {
                 it.next().addGui(this);
             } catch (SecurityException e) {
                 it.remove();
+            } catch (Throwable e) {
+                /* allow to change most settings even if e.g. a plugin fails */
+                BugReportExceptionHandler.handleException(e);
             }
         }
     }
@@ -132,11 +136,7 @@ public class PreferenceDialog extends JTabbedPane {
         settings.add(new AudioPreference());
         settings.add(new ShortcutPreference());
 
-        for (PluginProxy plugin : Main.plugins) {
-            PreferenceSetting p = plugin.getPreferenceSetting();
-            if (p != null)
-                settings.add(p);
-        }
+        PluginHandler.getPreferenceSetting(settings);
 
         // always the last: advanced tab
         settings.add(new AdvancedPreference());

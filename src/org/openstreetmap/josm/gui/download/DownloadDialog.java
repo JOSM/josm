@@ -29,7 +29,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.plugins.PluginProxy;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
@@ -106,9 +106,7 @@ public class DownloadDialog extends JPanel {
         downloadSelections.add(new WorldChooser());
 
         // add selections from plugins
-        for (PluginProxy p : Main.plugins) {
-            p.addDownloadSelection(downloadSelections);
-        }
+        PluginHandler.addDownloadSelection(downloadSelections);
 
         // now everybody may add their tab to the tabbed pane
         // (not done right away to allow plugins to remove one of

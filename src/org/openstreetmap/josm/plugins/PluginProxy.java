@@ -6,7 +6,7 @@ import java.util.List;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
-
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 
 /**
  * Helper class for the JOSM system to communicate with the plugin.
@@ -30,7 +30,7 @@ public class PluginProxy extends Plugin {
             plugin.getClass().getMethod("mapFrameInitialized", MapFrame.class, MapFrame.class).invoke(plugin, oldFrame, newFrame);
         } catch (NoSuchMethodException e) {
         } catch (Exception e) {
-            throw new PluginException(this, info.name, e);
+            BugReportExceptionHandler.handleException(new PluginException(this, info.name, e));
         }
     }
 
@@ -40,8 +40,9 @@ public class PluginProxy extends Plugin {
         } catch (NoSuchMethodException e) {
             return null;
         } catch (Exception e) {
-            throw new PluginException(this, info.name, e);
+            BugReportExceptionHandler.handleException(new PluginException(this, info.name, e));
         }
+        return null;
     }
 
     @Override public void addDownloadSelection(List<DownloadSelection> list) {
@@ -50,7 +51,7 @@ public class PluginProxy extends Plugin {
         } catch (NoSuchMethodException e) {
             // ignore
         } catch (Exception e) {
-            throw new PluginException(this, info.name, e);
+            BugReportExceptionHandler.handleException(new PluginException(this, info.name, e));
         }
     }
 }

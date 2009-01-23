@@ -14,24 +14,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.plugins.PluginProxy;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
@@ -144,44 +139,12 @@ public class AboutAction extends JosmAction {
         about.addTab(tr("Readme"), createScrollPane(readme));
         about.addTab(tr("Revision"), createScrollPane(revision));
         about.addTab(tr("Contribution"), createScrollPane(contribution));
-
-        JPanel pluginTab = new JPanel(new GridBagLayout());
-        for (final PluginProxy p : Main.plugins) {
-            String name = p.info.name + (p.info.version != null && !p.info.version.equals("") ? " Version: "+p.info.version : "");
-            pluginTab.add(new JLabel(name), GBC.std());
-            pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-            pluginTab.add(new JButton(new AbstractAction(tr("Information")){
-                public void actionPerformed(ActionEvent event) {
-                    StringBuilder b = new StringBuilder();
-                    for (Entry<String,String> e : p.info.attr.entrySet()) {
-                        b.append(e.getKey());
-                        b.append(": ");
-                        b.append(e.getValue());
-                        b.append("\n");
-                    }
-                    JTextArea a = new JTextArea(10,40);
-                    a.setEditable(false);
-                    a.setText(b.toString());
-                    JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a));
-                }
-            }), GBC.eol());
-
-            JTextArea description = new JTextArea((p.info.description==null? tr("no description available"):p.info.description));
-            description.setEditable(false);
-            description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
-            description.setLineWrap(true);
-            description.setWrapStyleWord(true);
-            description.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
-            description.setBackground(UIManager.getColor("Panel.background"));
-            
-            pluginTab.add(description, GBC.eop().fill(GBC.HORIZONTAL));
-        }
-        about.addTab(tr("Plugins"), new JScrollPane(pluginTab));
+        about.addTab(tr("Plugins"), new JScrollPane(PluginHandler.getInfoPanel()));
 
         about.setPreferredSize(new Dimension(500,300));
 
         JOptionPane.showMessageDialog(Main.parent, about, tr("About JOSM..."),
-                JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));
+        JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));
     }
 
     private JScrollPane createScrollPane(JTextArea area) {

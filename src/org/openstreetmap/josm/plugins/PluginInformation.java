@@ -33,6 +33,7 @@ public class PluginInformation {
     public final String name;
     public final String mainversion;
     public final String className;
+    public final String requires;
     public final String description;
     public final boolean early;
     public final String author;
@@ -76,6 +77,7 @@ public class PluginInformation {
             if (manifest != null) {
                 Attributes attr = manifest.getMainAttributes();
                 className = attr.getValue("Plugin-Class");
+                requires = attr.getValue("Plugin-Requires");
                 description = attr.getValue("Plugin-Description");
                 early = Boolean.parseBoolean(attr.getValue("Plugin-Early"));
                 String stageStr = attr.getValue("Plugin-Stage");
@@ -106,6 +108,7 @@ public class PluginInformation {
                 description = tr("unknown");
                 early = false;
                 stage = 50;
+                requires = null;
                 version = null;
                 author = null;
             }
@@ -213,23 +216,6 @@ public class PluginInformation {
         for (String s : locations)
             all.add(s+"plugins");
         return all;
-    }
-
-
-    /**
-     * Return information about a loaded plugin.
-     *
-     * Note that if you call this in your plugins bootstrap, you may get <code>null</code> if
-     * the plugin requested is not loaded yet.
-     *
-     * @return The PluginInformation to a specific plugin, but only if the plugin is loaded.
-     * If it is not loaded, <code>null</code> is returned.
-     */
-    public static PluginInformation getLoaded(String pluginName) {
-        for (PluginProxy p : Main.plugins)
-            if (p.info.name.equals(pluginName))
-                return p.info;
-        return null;
     }
 }
 

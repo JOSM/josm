@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +22,8 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
@@ -297,10 +301,39 @@ public class Preferences {
             }
             properties.put(line.substring(0,i), line.substring(i+1));
         }
-        if (!errLines.isEmpty()) {
-            throw new IOException("Malformed config file at lines " + errLines);
-        }
+        if (!errLines.isEmpty())
+            throw new IOException(tr("Malformed config file at lines {0}", errLines));
         setSystemProperties();
+    }
+
+    public void init(Boolean reset)
+    {
+        // get the preferences.
+        File prefDir = getPreferencesDirFile();
+        if (prefDir.exists()) {
+            if(!prefDir.isDirectory()) {
+                JOptionPane.showMessageDialog(null, tr("Cannot open preferences directory: {0}",Main.pref.getPreferencesDir()));
+                return;
+            }
+        }
+        else
+            prefDir.mkdirs();
+
+        if (!new File(getPreferencesDir()+"preferences").exists())
+            resetToDefault();
+
+        try {
+            if (reset)
+                resetToDefault();
+            else
+                load();
+        } catch (final IOException e1) {
+            e1.printStackTrace();
+            String backup = getPreferencesDir() + "preferences.bak";
+            JOptionPane.showMessageDialog(null, tr("Preferences file had errors. Making backup of old one to {0}.", backup));
+            new File(getPreferencesDir() + "preferences").renameTo(new File(backup));
+            save();
+        }
     }
 
     public final void resetToDefault() {
@@ -447,7 +480,7 @@ public class Preferences {
                 return Arrays.asList(s.split(","));
             /* handle space separated stuff - remove in future */
             else if(s.indexOf(' ') >= 0)
-                return Arrays.asList(s.split(","));
+                return Arrays.asList(s.split(" "));
             else
                 return Arrays.asList(s.split(";"));
         }

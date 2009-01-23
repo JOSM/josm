@@ -29,8 +29,7 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
-import org.openstreetmap.josm.plugins.PluginException;
-import org.openstreetmap.josm.plugins.PluginProxy;
+import org.openstreetmap.josm.plugins.PluginHandler;
 
 /**
  * An exception handler that asks the user to send a bug report.
@@ -40,6 +39,9 @@ import org.openstreetmap.josm.plugins.PluginProxy;
 public final class BugReportExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     public void uncaughtException(Thread t, Throwable e) {
+        handleException(e);
+    }
+    public static void handleException(Throwable e) {
         e.printStackTrace();
         if (Main.parent != null) {
             if (e instanceof OutOfMemoryError) {
@@ -51,44 +53,8 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 return;
             }
 
-            PluginProxy plugin = null;
-
-            // Check for an explicit problem when calling a plugin function
-            if (e instanceof PluginException)
-                plugin = ((PluginException)e).plugin;
-
-            if (plugin == null)
-                plugin = guessPlugin(e);
-
-            if (plugin != null) {
-                int answer = JOptionPane.showConfirmDialog(
-                        Main.parent, tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.",
-                        plugin.info.name) + "\n"+ (plugin.info.author != null ?
-                        tr("According to the information within the plugin, the author is {0}.",
-                        plugin.info.author) : "") + "\n" +
-                        tr("Try updating to the newest version of this plugin before reporting a bug.") + "\n" +
-                        tr("Should the plugin be disabled?"),
-                        tr("Disable plugin"),
-                        JOptionPane.YES_NO_OPTION);
-                if (answer == JOptionPane.OK_OPTION) {
-                    LinkedList<String> plugins = new LinkedList<String>(Arrays.asList(Main.pref.get("plugins").split(",")));
-                    if (plugins.contains(plugin.info.name)) {
-                        while (plugins.remove(plugin.info.name)) {}
-                        String p = "";
-                        for (String s : plugins)
-                            p += ","+s;
-                        if (p.length() > 0)
-                            p = p.substring(1);
-                        Main.pref.put("plugins", p);
-                        JOptionPane.showMessageDialog(Main.parent,
-                        tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."));
-                    } else {
-                        JOptionPane.showMessageDialog(Main.parent,
-                        tr("The plugin could not be removed. Please tell the people you got JOSM from about the problem."));
-                    }
-                    return;
-                }
-            }
+            if(PluginHandler.checkException(e))
+                return;
 
             Object[] options = new String[]{tr("Do nothing"), tr("Report Bug")};
             int answer = JOptionPane.showOptionDialog(Main.parent, tr("An unexpected exception occurred.\n\n" +
@@ -102,13 +68,8 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     e.printStackTrace(new PrintWriter(stack));
 
                     String text = AboutAction.getTextBlock();
-                    String pl = Main.pref.get("plugins");
                     text += "Java version: " + System.getProperty("java.version")+"\n";
-                    if(pl != null && pl.length() != 0)
-                        text += "Plugins: "+pl+"\n";
-                    for (final PluginProxy pp : Main.plugins) {
-                        text += "Plugin " + pp.info.name + (pp.info.version != null && !pp.info.version.equals("") ? " Version: "+pp.info.version+"\n" : "\n");
-                    }
+                    text += PluginHandler.getBugReportText();
                     text += "\n" + stack.getBuffer().toString();
 
                     JPanel p = new JPanel(new GridBagLayout());
@@ -135,45 +96,5 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 }
             }
         }
-    }
-
-    private PluginProxy guessPlugin(Throwable e) {
-        String name = guessPluginName(e);
-        for (PluginProxy p : Main.plugins)
-            if (p.info.name.equals(name))
-                return p;
-        return null;
-    }
-
-    /**
-     * Analyze the stack of the argument and return a name of a plugin, if
-     * some known problem pattern has been found or <code>null</code>, if
-     * the stack does not contain plugin-code.
-     *
-     * Note: This heuristic is not meant as discrimination against specific
-     * plugins, but only to stop the flood of similar bug reports about plugins.
-     * Of course, plugin writers are free to install their own version of
-     * an exception handler with their email address listed to receive
-     * bug reports ;-).
-     */
-    private String guessPluginName(Throwable e) {
-        for (StackTraceElement element : e.getStackTrace()) {
-            String c = element.getClassName();
-
-            if (c.contains("wmsplugin.") || c.contains(".WMSLayer"))
-                return "wmsplugin";
-            if (c.contains("livegps."))
-                return "livegps";
-            if (c.startsWith("UtilsPlugin."))
-                return "UtilsPlugin";
-
-            if (c.startsWith("org.openstreetmap.josm.plugins.")) {
-                String p = c.substring("org.openstreetmap.josm.plugins.".length());
-                if (p.indexOf('.') != -1 && p.matches("[a-z].*")) {
-                    return p.substring(0,p.indexOf('.'));
-                }
-            }
-        }
-        return null;
     }
 }

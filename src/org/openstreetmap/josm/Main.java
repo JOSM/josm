@@ -11,18 +11,10 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -33,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -56,8 +47,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
-import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.plugins.PluginProxy;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHook;
@@ -101,10 +91,6 @@ abstract public class Main {
      * The MapFrame. Use setMapFrame to set or clear it.
      */
     public static MapFrame map;
-    /**
-     * All installed and loaded plugins (resp. their main classes)
-     */
-    public final static Collection<PluginProxy> plugins = new LinkedList<PluginProxy>();
     /**
      * The dialog that gets displayed during background task execution.
      */
@@ -163,22 +149,7 @@ abstract public class Main {
         panel.setVisible(true);
         redoUndoListener.commandChanged(0,0);
 
-        for (PluginProxy plugin : plugins)
-            plugin.mapFrameInitialized(old, map);
-    }
-
-    /**
-     * Set the layer menu (changed when active layer changes).
-     */
-    public final void setLayerMenu(Component[] entries) {
-        //if (entries == null || entries.length == 0)
-            //menu.layerMenu.setVisible(false);
-        //else {
-            //menu.layerMenu.removeAll();
-            //for (Component c : entries)
-                //menu.layerMenu.add(c);
-            //menu.layerMenu.setVisible(true);
-        //}
+        PluginHandler.setMapFrame(old, map);
     }
 
     /**
@@ -196,7 +167,7 @@ abstract public class Main {
     public Main() {
         this(null);
     }
-    
+
     public Main(SplashScreen splash) {
         main = this;
 //        platform = determinePlatformHook();
@@ -204,7 +175,7 @@ abstract public class Main {
         contentPane.add(panel, BorderLayout.CENTER);
         if(splash != null) splash.setStatus(tr("Download \"Message of the day\""));
         panel.add(new GettingStarted(), BorderLayout.CENTER);
-        
+
         if(splash != null) splash.setStatus(tr("Creating main GUI"));
         menu = new MainMenu();
 
@@ -213,7 +184,9 @@ abstract public class Main {
         // creating toolbar
         contentPane.add(toolbar.control, BorderLayout.NORTH);
 
-        contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.GROUP_DIRECT).getKeyStroke(), "Help");
+        contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(Shortcut.registerShortcut("system:help", tr("Help"),
+        KeyEvent.VK_F1, Shortcut.GROUP_DIRECT).getKeyStroke(), "Help");
         contentPane.getActionMap().put("Help", menu.help);
 
         TaggingPresetPreference.initialize();
@@ -223,124 +196,6 @@ abstract public class Main {
 
         toolbar.control.updateUI();
         contentPane.updateUI();
-    }
-
-    /**
-     * Load all plugins specified in preferences. If the parameter is
-     * <code>true</code>, all early plugins are loaded (before constructor).
-     */
-    public static void loadPlugins(boolean early) {
-        List<String> plugins = new LinkedList<String>();
-        Collection<String> cp = Main.pref.getCollection("plugins", null);
-        if (cp != null)
-            plugins.addAll(cp);
-        if (System.getProperty("josm.plugins") != null)
-            plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
-
-        String [] oldplugins = new String[] {"mappaint", "unglueplugin",
-        "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
-        "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat"};
-        for (String p : oldplugins) {
-            if (plugins.contains(p)) {
-                plugins.remove(p);
-                Main.pref.removeFromCollection("plugins", p);
-                System.out.println(tr("Warning - loading of {0} plugin was requested. This plugin is no longer required.", p));
-            }
-        }
-
-        if (plugins.isEmpty())
-            return;
-
-        SortedMap<Integer, Collection<PluginInformation>> p = new TreeMap<Integer, Collection<PluginInformation>>();
-        for (String pluginName : plugins) {
-            PluginInformation info = PluginInformation.findPlugin(pluginName);
-            if (info != null) {
-                if (info.early != early)
-                    continue;
-                if (info.mainversion != null) {
-                    int requiredJOSMVersion = 0;
-                    try {
-                        requiredJOSMVersion = Integer.parseInt(info.mainversion);
-                    } catch(NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                    if (requiredJOSMVersion > AboutAction.getVersionNumber()) {
-                        JOptionPane.showMessageDialog(Main.parent, tr("Plugin requires JOSM update: {0}.", pluginName));
-                        continue;
-                    }
-                }
-                if (!p.containsKey(info.stage))
-                    p.put(info.stage, new LinkedList<PluginInformation>());
-                p.get(info.stage).add(info);
-            } else {
-                if (early)
-                    System.out.println("Plugin not found: "+pluginName); // do not translate
-                else
-                    JOptionPane.showMessageDialog(Main.parent, tr("Plugin not found: {0}.", pluginName));
-            }
-        }
-
-        if (!early) {
-            long tim = System.currentTimeMillis();
-            long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
-            Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 30);
-            long d = (tim - last)/(24*60*60*1000l);
-            if ((last <= 0) || (maxTime <= 0)) {
-                Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
-            } else if (d > maxTime) {
-                JOptionPane.showMessageDialog(Main.parent,
-                   "<html>" +
-                   tr("Last plugin update more than {0} days ago.", d) +
-                   "<br><em>" +
-                   tr("(You can change the number of days after which this warning appears<br>by setting the config option 'pluginmanager.warntime'.)") +
-                   "</html>");
-            }
-        }
-
-        // iterate all plugins and collect all libraries of all plugins:
-        List<URL> allPluginLibraries = new ArrayList<URL>();
-        for (Collection<PluginInformation> c : p.values())
-            for (PluginInformation info : c)
-                allPluginLibraries.addAll(info.libraries);
-        // create a classloader for all plugins:
-        URL[] jarUrls = new URL[allPluginLibraries.size()];
-        jarUrls = allPluginLibraries.toArray(jarUrls);
-        URLClassLoader pluginClassLoader = new URLClassLoader(jarUrls, Main.class.getClassLoader());
-        ImageProvider.sources.add(0, pluginClassLoader);
-
-        for (Collection<PluginInformation> c : p.values()) {
-            for (PluginInformation info : c) {
-                try {
-                    Class<?> klass = info.loadClass(pluginClassLoader);
-                    if (klass != null) {
-                        System.out.println("loading "+info.name);
-                        Main.plugins.add(info.load(klass));
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    boolean remove = true;
-                    if (early)
-                        System.out.println("Could not load plugin: "+info.name+" - deleted from preferences"); // do not translate
-                    else {
-                        int answer = JOptionPane.showConfirmDialog(Main.parent,
-                            tr("Could not load plugin {0}. Delete from preferences?", info.name,
-                            JOptionPane.YES_NO_OPTION));
-                        if (answer != JOptionPane.OK_OPTION) {
-                            remove = false;
-                        }
-                    }
-                    if (remove) {
-                        plugins.remove(info.name);
-                        String plist = null;
-                        for (String pn : plugins) {
-                            if (plist==null) plist=""; else plist=plist+",";
-                            plist=plist+pn;
-                        }
-                        Main.pref.put("plugins", plist);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -369,7 +224,6 @@ abstract public class Main {
      * Use this to register shortcuts to
      */
     public static final JPanel contentPane = new JPanel(new BorderLayout());
-
 
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part

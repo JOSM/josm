@@ -6,7 +6,6 @@ import org.xnap.commons.i18n.I18nFactory;
 import static org.openstreetmap.josm.tools.I18n.i18n;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -23,10 +22,9 @@ import java.util.Map;
 import java.util.MissingResourceException;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.plugins.PluginDownloader;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -66,16 +64,9 @@ public class MainApplication extends Main {
      * Main application Startup
      */
     public static void main(final String[] argArray) {
-        /////////////////////////////////////////////////////////////////////////
-        //                        TO ALL TRANSLATORS
-        /////////////////////////////////////////////////////////////////////////
-        // Do not translate the early strings below until the locale is set up.
-        // (By the eager loaded plugins)
-        //
-        // These strings cannot be translated. That's life. Really. Sorry.
-        //
-        //                                                                 Imi.
-        /////////////////////////////////////////////////////////////////////////
+        /* try initial language settings, may be changed later again */
+        try { i18n = I18nFactory.getI18n(MainApplication.class); }
+        catch (MissingResourceException ex) { Locale.setDefault(Locale.ENGLISH);}
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
 
@@ -100,6 +91,40 @@ public class MainApplication extends Main {
             args.put(key, v);
         }
 
+        Main.pref.init(args.containsKey("reset-preferences"));
+
+        String localeName = null; // The locale to use
+
+        //Check if passed as parameter
+        if(args.containsKey("language"))
+            localeName = (String)(args.get("language").toArray()[0]);
+
+        if (localeName == null)
+            localeName = Main.pref.get("language", null);
+
+        if (localeName != null) {
+            Locale l;
+            Locale d = Locale.getDefault();
+            if(localeName.equals("he")) localeName = "iw_IL";
+            int i = localeName.indexOf('_');
+            if (i > 0) {
+                l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
+            } else {
+                l = new Locale(localeName);
+            }
+            try {
+                Locale.setDefault(l);
+                i18n = I18nFactory.getI18n(MainApplication.class);
+            } catch (MissingResourceException ex) {
+                if(!l.getLanguage().equals("en"))
+                {
+                    System.out.println(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
+                    l.getDisplayName(), d.getDisplayName()));
+                    Locale.setDefault(d);
+                }
+            }
+        }
+
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
             // TODO: put in a platformHook for system that have no console by default
             System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
@@ -121,86 +146,19 @@ public class MainApplication extends Main {
                     "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
                     "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
                     "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n\n"+
-
                     tr("Parameters are read in the order they are specified, so make sure you load\n"+
                     "some data before --selection")+"\n\n"+
                     tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
             System.exit(0);
         }
 
-        // get the preferences.
-        final File prefDir = new File(Main.pref.getPreferencesDir());
-        if (prefDir.exists()) {
-            if(!prefDir.isDirectory()) {
-                JOptionPane.showMessageDialog(null, tr("Cannot open preferences directory: {0}",Main.pref.getPreferencesDir()));
-                return;
-            }
-        }
-        else
-            prefDir.mkdirs();
-
-        if (!new File(Main.pref.getPreferencesDir()+"preferences").exists()) {
-            Main.pref.resetToDefault();
-        }
-
-        try {
-            if (args.containsKey("reset-preferences")) {
-                Main.pref.resetToDefault();
-            } else {
-                Main.pref.load();
-            }
-        } catch (final IOException e1) {
-            e1.printStackTrace();
-            String backup = Main.pref.getPreferencesDir() + "preferences.bak";
-            JOptionPane.showMessageDialog(null, tr("Preferences file had errors. Making backup of old one to {0}.", backup));
-            new File(Main.pref.getPreferencesDir() + "preferences").renameTo(new File(backup));
-            Main.pref.save();
-        }
-
-        String localeName = null; //The locale to use
-
-        //Check if passed as parameter
-        if(args.containsKey("language"))
-            localeName = (String)(args.get("language").toArray()[0]);
-
-        if (localeName == null) {
-            localeName = Main.pref.get("language", null);
-        }
-
-        if (localeName != null) {
-            if(localeName.equals("he")) localeName = "iw_IL";
-            Locale l;
-            int i = localeName.indexOf('_');
-            if (i > 0) {
-                l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
-            } else {
-                l = new Locale(localeName);
-            }
-            Locale.setDefault(l);
-        }
-        try {
-            i18n = I18nFactory.getI18n(MainApplication.class);
-        } catch (MissingResourceException ex) {
-            if(!Locale.getDefault().getLanguage().equals("en"))
-            {
-                System.out.println("Unable to find translation for the locale: "
-                + Locale.getDefault().getDisplayName() + " reverting to English.");
-                Locale.setDefault(Locale.ENGLISH);
-            }
-        }
-
         SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
 
         splash.setStatus(tr("Activating updated plugins"));
-        if (!PluginDownloader.moveUpdatedPlugins()) {
-            JOptionPane.showMessageDialog(null,
-                    tr("Activating the updated plugins failed. Check if JOSM has the permission to overwrite the existing ones."),
-                    tr("Plugins"), JOptionPane.ERROR_MESSAGE);
-        }
+        PluginHandler.earlyCleanup();
 
-        // load the early plugins
         splash.setStatus(tr("Loading early plugins"));
-        Main.loadPlugins(true);
+        PluginHandler.loadPlugins(true);
 
         splash.setStatus(tr("Setting defaults"));
         preConstructorInit(args);
@@ -209,7 +167,7 @@ public class MainApplication extends Main {
         Main.parent = mainFrame;
         final Main main = new MainApplication(mainFrame, splash);
         splash.setStatus(tr("Loading plugins"));
-        Main.loadPlugins(false);
+        PluginHandler.loadPlugins(false);
         toolbar.refreshToolbarControl();
 
         mainFrame.setVisible(true);
