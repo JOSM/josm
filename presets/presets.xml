@@ -1784,9 +1784,12 @@ check: checkbox
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Skiing" icon="presets/skiing_downhill.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps"/>
             <label text="Edit Skiing" />
             <key key="sport" value="skiing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="piste:type" text="Piste type" values="downhill,nordic,snow_park" default="" delete_if_empty="true" />
+            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermedia,advance,expert,freeride" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Shooting" icon="presets/range.png">
@@ -2309,7 +2312,7 @@ check: checkbox
             <key key="shop" value="electronics" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="hifi" icon="presets/empty.png">
+        <item name="Hifi" icon="presets/empty.png">
             <label text="Edit Hifi Shop" />
             <key key="shop" value="hifi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
