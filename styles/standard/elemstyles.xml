@@ -3656,9 +3656,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!--"work in progress" tags -->
 
 	<rule>
-		<condition k="landuse" v="yes"/>
-		<area colour="construction#ffff00" dashed="true"/>
-		<icon src="misc/construction.png"/>
+		<condition k="construction" v="yes"/>
+		<line colour="construction#ffff00" dashed="true" priority="1000"/>
+		<icon src="misc/construction.png" priority="1000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
