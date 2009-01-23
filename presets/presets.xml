@@ -7,6 +7,8 @@
     http://www.sjjb.co.uk/mapicons/ (meanwhile in osm svn)
 -->
 <!--
+link: link to the relating map features website
+
 label: simple static text label
   text: the text to display
 
@@ -91,7 +93,8 @@ check: checkbox
             </optional>
         </item>
         <item name="Trunk Link" icon="presets/trunk.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk_link" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk_link" 
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=trunk_link"/>
             <label text="Edit a Trunk Link" />
             <space />
             <key key="highway" value="trunk_link" />
@@ -109,7 +112,8 @@ check: checkbox
         </item>
         <separator/>
         <item name="Primary" icon="presets/way_primary.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary" 
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=primary" />
             <label text="Edit a Primary Road" />
             <space />
             <key key="highway" value="primary" />
@@ -163,6 +167,7 @@ check: checkbox
         </item>
         <item name="Tertiary" icon="presets/way_tertiary.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=tertiary"
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=tertiary"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=tertiary" />
             <label text="Edit a Tertiary Road" />
             <space />
@@ -217,7 +222,8 @@ check: checkbox
             </optional>
         </item>
         <item name="Living Street" icon="presets/living_street.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street" 
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street" />
             <label text="Edit a Living Street" />
             <space />
             <key key="highway" value="living_street" />
@@ -267,7 +273,8 @@ check: checkbox
         </item>
         <separator/>
         <item name="Road (Unknown Type)" icon="presets/way_unclassified.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road" 
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road" />
             <label text="Edit a Road of unknown type" />
             <space />
             <key key="highway" value="road" />
@@ -1084,6 +1091,12 @@ check: checkbox
         <item name="Marina" icon="presets/marina.png">
             <label text="Edit Marina" />
             <key key="leisure" value="marina" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Pier" icon="presets/pier.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier" />
+            <label text="Edit Pier" />
+            <key key="man_made" value="pier" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Ferry Terminal" icon="presets/empty.png">
@@ -2069,12 +2082,6 @@ check: checkbox
             <key key="man_made" value="windmill" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Pier" icon="presets/pier.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier" />
-            <label text="Edit Pier" />
-            <key key="man_made" value="pier" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
         <item name="Pipeline" icon="presets/empty.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline" />
             <label text="Edit Pipeline" />
@@ -2275,6 +2282,54 @@ check: checkbox
             <label text="Edit Baker" />
             <key key="shop" value="bakery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item> 
+        <item name="Florist" icon="presets/empty.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=florist" />
+            <label text="Edit Florist" />
+            <key key="shop" value="florist" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Organic" icon="presets/empty.png">
+            <label text="Edit Organic Shop" />
+            <key key="shop" value="organic" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Beverages" icon="presets/empty.png">
+            <label text="Edit Beverages  Shop" />
+            <key key="shop" value="beverages" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Computer" icon="presets/empty.png">
+            <label text="Edit Computer Shop" />
+            <key key="shop" value="computer" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Electronics" icon="presets/empty.png">
+            <label text="Edit Electronics Shop" />
+            <key key="shop" value="electronics" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="hifi" icon="presets/empty.png">
+            <label text="Edit Hifi Shop" />
+            <key key="shop" value="hifi" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Furniture" icon="presets/empty.png">
+            <label text="Edit Furniture Shop" />
+            <key key="shop" value="furniture" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Garden Centre" icon="presets/empty.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=garden_centre" />
+            <label text="Edit Garden Centre" />
+            <key key="shop" value="garden_centre" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Hardware" icon="presets/empty.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hardware" />
+            <label text="Edit Hardware Store" />
+            <key key="shop" value="hardware" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Do-it-yourself-store" icon="presets/diy_store.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=doityourself" />
@@ -2282,9 +2337,29 @@ check: checkbox
             <key key="shop" value="doityourself" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Stationery" icon="presets/empty.png">
+            <label text="Edit Stationery Shop" />
+            <key key="shop" value="stationery" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Hairdresser" icon="presets/empty.png">
             <label text="Edit Hairdresser" />
             <key key="shop" value="hairdresser" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Shoes" icon="presets/empty.png">
+            <label text="Edit Shoe Shop" />
+            <key key="shop" value="shoes" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Toys" icon="presets/empty.png">
+            <label text="Edit Toy Shop" />
+            <key key="shop" value="toys" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Video" icon="presets/empty.png">
+            <label text="Edit Video Shop" />
+            <key key="shop" value="video" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Dry Cleaning" icon="presets/laundry.png">
@@ -2304,7 +2379,18 @@ check: checkbox
             <label text="Edit Outdoor Shop" />
             <key key="shop" value="outdoor" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>    
+        <item name="sports" icon="presets/empty.png">
+            <label text="Edit Sports Shop" />
+            <key key="shop" value="sports" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="optician" icon="presets/empty.png">
+            <label text="Edit Optician" />
+            <key key="shop" value="optician" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>    
+
     </group> <!-- Shops -->
     <group name="Cash" icon="presets/dollar.png">
         <item name="Bank" icon="presets/bank.png">
