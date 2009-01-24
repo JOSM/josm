@@ -122,6 +122,10 @@ public class MainApplication extends Main {
                     l.getDisplayName(), d.getDisplayName()));
                     Locale.setDefault(d);
                 }
+                else
+                {
+                    i18n = null;
+                }
             }
         }
 
