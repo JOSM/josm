@@ -559,7 +559,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="steps"/>
-		<line width="1" realwidth="1" colour="foot#00ff00"/>
+		<line width="1" realwidth="1" dashed="1" colour="foot#00ff00"/>
 		<icon annotate="true" src="transport/steps.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
@@ -681,7 +681,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="turning_circle"/>
-		<area width="1" colour="turningcircle#c0c0c0"/>
+		<area colour="turningcircle#c0c0c0"/>
 		<icon annotate="true" src="vehicle/turning_circle.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -699,7 +699,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="junction" v="roundabout"/>
-		<area width="1" colour="roundabout#eeeeee"/>
+		<area colour="roundabout#eeeeee"/>
 		<!-- tagging a node makes no real sense, a roundabout should be tagged with several nodes, or a highway=mini_roundabout should probably be used -->
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
@@ -752,7 +752,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade1"/>
-		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -760,7 +760,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade2"/>
-		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="3" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -768,7 +768,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade3"/>
-		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="6" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -776,7 +776,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade4"/>
-		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="9" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -784,7 +784,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade5"/>
-		<line width="1" realwidth="3" dashed="true" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="12" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -835,7 +835,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="waterway" v="dock"/>
-		<area width="1" colour="dock#0000cf"/>
+		<area colour="dock#0000cf"/>
 		<icon annotate="true" src="nautical/boatyard.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1138,7 +1138,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aerialway" v="cable_car"/>
-		<line width="1" colour="aerialway#663300" dashed="true"/>
+		<line width="1" colour="aerialway#663300" dashed="9"/>
 		<icon annotate="true" src="transport/aerialway/cable_car.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1146,7 +1146,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aerialway" v="chair_lift"/>
-		<line width="1" colour="aerialway#663300" dashed="true"/>
+		<line width="1" colour="aerialway#663300" dashed="6"/>
 		<icon annotate="true" src="transport/aerialway/chair_lift.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1154,7 +1154,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aerialway" v="drag_lift"/>
-		<line width="1" colour="aerialway#663300" dashed="true"/>
+		<line width="1" colour="aerialway#663300" dashed="3"/>
 		<icon annotate="true" src="transport/aerialway/drag_lift.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1162,7 +1162,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="aerialway" v="station"/>
-		<line width="1" colour="aerialway#663300" dashed="true"/>
+		<area colour="aerialway#663300"/>
 		<icon annotate="true" src="transport/aerialway/station.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1215,7 +1215,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="power" v="tower"/>
 		<icon annotate="true" src="misc/landmark/power/tower_small.png"/>
-		<area width="1" colour="power#eeeeee"/>
+		<area colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1231,7 +1231,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="power" v="sub_station"/>
 		<icon annotate="true" src="misc/landmark/power.png"/>
-		<area width="1" colour="power#eeeeee"/>
+		<area colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1239,7 +1239,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="power_source" v="wind"/>
 		<icon annotate="true" src="misc/landmark/power/wind.png"/>
-		<area width="1" colour="power#eeeeee"/>
+		<area colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1247,7 +1247,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="power_source" v="hydro"/>
 		<icon annotate="true" src="misc/landmark/power/hydro.png"/>
-		<area width="1" colour="power#eeeeee"/>
+		<area colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1255,7 +1255,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="power_source" v="fossil"/>
 		<icon annotate="true" src="misc/landmark/power/fossil.png"/>
-		<area width="1" colour="power#eeeeee"/>
+		<area colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1263,7 +1263,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="power_source" v="nuclear"/>
 		<icon annotate="true" src="misc/landmark/power/nuclear.png"/>
-		<area width="1" colour="power#eeeeee"/>
+		<area colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1271,7 +1271,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="power" v="generator"/>
 		<icon annotate="true" src="misc/landmark/power.png" priority="-10000"/>
-		<area width="1" colour="power#eeeeee"/>
+		<area colour="power#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1833,9 +1833,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="amenity" v="place_of_worship" priority="-10000"/>
-		<icon annotate="true" src="religion.png"/>
-		<area colour="amenity_light#f7efb7"/>
+		<condition k="amenity" v="place_of_worship"/>
+		<icon annotate="true" src="religion.png" priority="-10000"/>
+		<area colour="amenity_light#f7efb7" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2771,7 +2771,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="landuse" v="construction"/>
-		<area colour="construction#ffff00" dashed="true"/>
+		<area colour="construction#ffff00"/>
+		<line width="1" colour="construction#ffff00" dashed="true"/>
 		<icon src="misc/construction.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
