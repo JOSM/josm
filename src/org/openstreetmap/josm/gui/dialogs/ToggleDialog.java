@@ -59,6 +59,13 @@ public class ToggleDialog extends JPanel implements Helpful {
             Main.pref.put(prefname+".visible", selected);
             if(!selected && winadapter != null)
                 winadapter.windowClosing(null);
+            else if (!Main.pref.getBoolean(action.prefname+".docked", true)) {
+                EventQueue.invokeLater(new Runnable(){
+                    public void run() {
+                        stickyActionListener.actionPerformed(null);
+                    }
+                });
+            }
         }
     }
 
@@ -70,6 +77,7 @@ public class ToggleDialog extends JPanel implements Helpful {
 
     public JPanel parent;
     WindowAdapter winadapter;
+    private ActionListener stickyActionListener;
     private final JPanel titleBar = new JPanel(new GridBagLayout());
     public JLabel label = new JLabel();
 
@@ -150,7 +158,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         JButton sticky = new JButton(ImageProvider.get("misc", "sticky"));
         sticky.setToolTipText(tr("Undock the panel"));
         sticky.setBorder(BorderFactory.createEmptyBorder());
-        final ActionListener stickyActionListener = new ActionListener(){
+        stickyActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 final JFrame f = new JFrame(name);
                 try {f.setAlwaysOnTop(true);} catch (SecurityException e1) {}
@@ -168,7 +176,8 @@ public class ToggleDialog extends JPanel implements Helpful {
                         if(Main.pref.getBoolean(action.prefname+".visible"))
                             setVisible(true);
                         titleBar.setVisible(true);
-                        Main.pref.put(action.prefname+".docked", true);
+                        if(e != null)
+                            Main.pref.put(action.prefname+".docked", true);
                     }
                 }));
                 f.addComponentListener(new ComponentAdapter(){
@@ -227,6 +236,12 @@ public class ToggleDialog extends JPanel implements Helpful {
                 }
             });
         }
+    }
+
+    public void close()
+    {
+        if(winadapter != null)
+            winadapter.windowClosing(null);
     }
 
     public void setTitle(String title, boolean active) {

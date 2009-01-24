@@ -5,6 +5,7 @@ package org.openstreetmap.josm.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -69,6 +70,7 @@ public class MapFrame extends JPanel implements Destroyable {
      * instead of adding directly to this list.
      */
     public JPanel toggleDialogs = new JPanel();
+    public ArrayList<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
 
     public final ButtonGroup toolGroup = new ButtonGroup();
 
@@ -115,6 +117,8 @@ public class MapFrame extends JPanel implements Destroyable {
      * Delegates the call to all Destroyables within this component (e.g. MapModes)
      */
     public void destroy() {
+        for (ToggleDialog t : allDialogs)
+            t.close();
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
             if (toolBarActions.getComponent(i) instanceof Destroyable)
                 ((Destroyable)toolBarActions).destroy();
@@ -153,6 +157,7 @@ public class MapFrame extends JPanel implements Destroyable {
         dlg.parent = toggleDialogs;
         toolBarToggle.add(button);
         toggleDialogs.add(dlg);
+        allDialogs.add(dlg);
         return button;
     }
 

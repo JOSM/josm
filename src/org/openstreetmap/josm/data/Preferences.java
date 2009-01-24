@@ -474,16 +474,7 @@ public class Preferences {
     synchronized public Collection<String> getCollection(String key, Collection<String> def) {
         String s = get(key);
         if(s != null && s.length() != 0)
-        {
-            /* handle old comma separated stuff - remove in future */
-            if(s.indexOf(',') >= 0)
-                return Arrays.asList(s.split(","));
-            /* handle space separated stuff - remove in future */
-            else if(s.indexOf(' ') >= 0)
-                return Arrays.asList(s.split(" "));
-            else
-                return Arrays.asList(s.split(";"));
-        }
+           return Arrays.asList(s.split(";"));
         return def;
     }
     synchronized public void removeFromCollection(String key, String value) {
