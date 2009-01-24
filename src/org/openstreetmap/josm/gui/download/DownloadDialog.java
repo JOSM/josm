@@ -4,11 +4,11 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
-import java.awt.datatransfer.DataFlavor; 
-import java.awt.datatransfer.Transferable; 
-import java.awt.event.ActionEvent; 
-import java.awt.event.InputEvent; 
-import java.awt.event.KeyEvent; 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -103,6 +103,7 @@ public class DownloadDialog extends JPanel {
         downloadSelections.add(new BoundingBoxSelection());
         downloadSelections.add(new TileSelection());
         downloadSelections.add(new BookmarkSelection());
+        downloadSelections.add(new PlaceSelection());
         downloadSelections.add(new WorldChooser());
 
         // add selections from plugins
@@ -153,40 +154,40 @@ public class DownloadDialog extends JPanel {
         Font labelFont = sizeCheck.getFont();
         sizeCheck.setFont(labelFont.deriveFont(Font.PLAIN, labelFont.getSize()));
         add(sizeCheck, GBC.eop().insets(0,5,5,10));
-        
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put( 
-        KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), "checkClipboardContents"); 
-       
-        getActionMap().put("checkClipboardContents", new AbstractAction() { 
-            public void actionPerformed(ActionEvent e) { 
-                checkClipboardContents(); 
-            } 
-        }); 
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+        KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), "checkClipboardContents");
+
+        getActionMap().put("checkClipboardContents", new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                checkClipboardContents();
+            }
+        });
     }
-    
-    private void checkClipboardContents() { 
-        String result = ""; 
-        Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null); 
- 
-        if(contents == null || !contents.isDataFlavorSupported(DataFlavor.stringFlavor)) 
-            return; 
-         
-        try { 
-            result = (String)contents.getTransferData(DataFlavor.stringFlavor); 
-        } 
-        catch(Exception ex) { 
-            return; 
-        } 
-         
-        Bounds b = OsmUrlToBounds.parse(result); 
-        if (b != null) { 
-            minlon = b.min.lon(); 
-            minlat = b.min.lat(); 
-            maxlon = b.max.lon(); 
-            maxlat = b.max.lat(); 
-            boundingBoxChanged(null); 
-        } 
-    } 
+
+    private void checkClipboardContents() {
+        String result = "";
+        Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+
+        if(contents == null || !contents.isDataFlavorSupported(DataFlavor.stringFlavor))
+            return;
+
+        try {
+            result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+        }
+        catch(Exception ex) {
+            return;
+        }
+
+        Bounds b = OsmUrlToBounds.parse(result);
+        if (b != null) {
+            minlon = b.min.lon();
+            minlat = b.min.lat();
+            maxlon = b.max.lon();
+            maxlat = b.max.lat();
+            boundingBoxChanged(null);
+        }
+    }
 
     private void updateSizeCheck() {
         if ((maxlon-minlon)*(maxlat-minlat) > Main.pref.getDouble("osm-server.max-request-area", 0.25)) {

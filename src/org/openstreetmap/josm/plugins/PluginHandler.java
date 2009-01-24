@@ -56,7 +56,8 @@ public class PluginHandler {
 
         String [] oldplugins = new String[] {"mappaint", "unglueplugin",
         "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
-        "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat"};
+        "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
+        "namefinder", "waypoints"};
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
                 plugins.remove(p);
