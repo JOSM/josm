@@ -8,7 +8,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     public int width;
     public int realWidth; //the real width of this line in meter
     public Color color;
-    public boolean dashed;
+    public int dashed;
 
     public boolean over;
     public enum WidthMode { ABSOLUTE, PERCENT, OFFSET }
@@ -53,7 +53,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     {
         width = 1;
         realWidth = 0;
-        dashed = false;
+        dashed = 0;
         priority = 0;
         color = null;
         over = true; // only used for line modifications

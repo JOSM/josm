@@ -67,6 +67,57 @@ public class ElemStyleHandler extends DefaultHandler
         inDoc = false;
     }
 
+    private void error(String message) {
+        System.out.println(styleName + " (" + rule.key + "=" + rule.value + "): " + message);
+    }
+    
+    private void startElementLine(String qName, Attributes atts, LineElemStyle line) {
+        for (int count=0; count<atts.getLength(); count++)
+        {
+            if(atts.getQName(count).equals("width"))
+            {
+                String val = atts.getValue(count);
+                if(val.startsWith("+"))
+                {
+                    line.width = Integer.parseInt(val.substring(1));
+                    line.widthMode = LineElemStyle.WidthMode.OFFSET;
+                }
+                else if(val.startsWith("-"))
+                {
+                    line.width = Integer.parseInt(val);
+                    line.widthMode = LineElemStyle.WidthMode.OFFSET;
+                }
+                else if(val.endsWith("%"))
+                {
+                    line.width = Integer.parseInt(val.substring(0, val.length()-1));
+                    line.widthMode = LineElemStyle.WidthMode.PERCENT;
+                }
+                else
+                    line.width = Integer.parseInt(val);
+            }
+            else if (atts.getQName(count).equals("colour"))
+                line.color=convertColor(atts.getValue(count));
+            else if (atts.getQName(count).equals("realwidth"))
+                line.realWidth=Integer.parseInt(atts.getValue(count));
+            else if (atts.getQName(count).equals("dashed")) {
+                try
+                {
+                    line.dashed=Integer.parseInt(atts.getValue(count));
+                } catch (NumberFormatException nfe) {
+                    boolean dashed=Boolean.parseBoolean(atts.getValue(count));
+                    if(dashed) {
+                        line.dashed = 9;
+                    }                
+                }
+            } else if(atts.getQName(count).equals("priority"))
+                line.priority = Integer.parseInt(atts.getValue(count));
+            else if(atts.getQName(count).equals("mode"))
+                line.over = !atts.getValue(count).equals("under");
+            else
+                error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
+        }
+    }
+
     @Override public void startElement(String uri,String name, String qName, Attributes atts) {
         if (inDoc==true)
         {
@@ -96,62 +147,23 @@ public class ElemStyleHandler extends DefaultHandler
                         rule.value = atts.getValue(count);
                     else if(atts.getQName(count).equals("b"))
                         rule.boolValue = atts.getValue(count);
+                    else
+                        error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                 }
             }
             else if (qName.equals("line"))
             {
                 hadLine = inLine = true;
-                for (int count=0; count<atts.getLength(); count++)
-                {
-                    if(atts.getQName(count).equals("width"))
-                        rule.line.width = Integer.parseInt(atts.getValue(count));
-                    else if (atts.getQName(count).equals("colour"))
-                        rule.line.color=convertColor(atts.getValue(count));
-                    else if (atts.getQName(count).equals("realwidth"))
-                        rule.line.realWidth=Integer.parseInt(atts.getValue(count));
-                    else if (atts.getQName(count).equals("dashed"))
-                        rule.line.dashed=Boolean.parseBoolean(atts.getValue(count));
-                    else if(atts.getQName(count).equals("priority"))
-                        rule.line.priority = Integer.parseInt(atts.getValue(count));
+                startElementLine(qName, atts, rule.line);
+                if(rule.line.widthMode != LineElemStyle.WidthMode.ABSOLUTE) {
+                    error("Relative widths are not possible for normal lines");
+                    rule.line.widthMode = LineElemStyle.WidthMode.ABSOLUTE;
                 }
             }
             else if (qName.equals("linemod"))
             {
                 hadLineMod = inLineMod = true;
-                for (int count=0; count<atts.getLength(); count++)
-                {
-                    if(atts.getQName(count).equals("width"))
-                    {
-                        String val = atts.getValue(count);
-                        if(val.startsWith("+"))
-                        {
-                            rule.linemod.width = Integer.parseInt(val.substring(1));
-                            rule.linemod.widthMode = LineElemStyle.WidthMode.OFFSET;
-                        }
-                        else if(val.startsWith("-"))
-                        {
-                            rule.linemod.width = Integer.parseInt(val);
-                            rule.linemod.widthMode = LineElemStyle.WidthMode.OFFSET;
-                        }
-                        else if(val.endsWith("%"))
-                        {
-                            rule.linemod.width = Integer.parseInt(val.substring(0, val.length()-1));
-                            rule.linemod.widthMode = LineElemStyle.WidthMode.PERCENT;
-                        }
-                        else
-                            rule.linemod.width = Integer.parseInt(val);
-                    }
-                    else if (atts.getQName(count).equals("colour"))
-                        rule.linemod.color=convertColor(atts.getValue(count));
-                    else if (atts.getQName(count).equals("realwidth"))
-                        rule.linemod.realWidth=Integer.parseInt(atts.getValue(count));
-                    else if (atts.getQName(count).equals("dashed"))
-                        rule.linemod.dashed=Boolean.parseBoolean(atts.getValue(count));
-                    else if(atts.getQName(count).equals("priority"))
-                        rule.linemod.priority = Integer.parseInt(atts.getValue(count));
-                    else if(atts.getQName(count).equals("mode"))
-                        rule.linemod.over = !atts.getValue(count).equals("under");
-                }
+                startElementLine(qName, atts, rule.linemod);
             }
             else if (qName.equals("icon"))
             {
@@ -164,6 +176,8 @@ public class ElemStyleHandler extends DefaultHandler
                         rule.icon.annotate = Boolean.parseBoolean (atts.getValue(count));
                     else if(atts.getQName(count).equals("priority"))
                         rule.icon.priority = Integer.parseInt(atts.getValue(count));
+                    else
+                        error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                 }
             }
             else if (qName.equals("area"))
@@ -175,8 +189,12 @@ public class ElemStyleHandler extends DefaultHandler
                         rule.area.color=convertColor(atts.getValue(count));
                     else if(atts.getQName(count).equals("priority"))
                         rule.area.priority = Integer.parseInt(atts.getValue(count));
+                    else
+                        error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                 }
             }
+            else
+                error("The element \"" + qName + "\" is unknown!");
         }
     }
 

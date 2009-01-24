@@ -53,7 +53,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected int fillAlpha;
     protected Color untaggedColor;
     protected Color textColor;
-    protected boolean currentDashed = false;
+    protected int currentDashed = 0;
     protected int currentWidth = 0;
     protected Stroke currentStroke = null;
     protected Font orderFont;
@@ -245,7 +245,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         boolean showOnlyHeadArrowOnly = showDirection && !w.selected && showHeadArrowOnly;
         int width = defaultSegmentWidth;
         int realWidth = 0; //the real width of the element in meters
-        boolean dashed = false;
+        int dashed = 0;
         Node lastN;
 
         if(l != null)
@@ -1083,7 +1083,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return name;
     }
 
-    private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, boolean dashed) {
+    private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, int dashed) {
         profilerSegments++;
         if (col != currentColor || width != currentWidth || dashed != currentDashed) {
             displaySegments(col, width, dashed);
@@ -1107,16 +1107,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     protected void displaySegments() {
-        displaySegments(null, 0, false);
+        displaySegments(null, 0, 0);
     }
 
-    protected void displaySegments(Color newColor, int newWidth, boolean newDash) {
+    protected void displaySegments(Color newColor, int newWidth, int newDash) {
         if (currentPath != null) {
             Graphics2D g2d = (Graphics2D)g;
             g2d.setColor(inactive ? inactiveColor : currentColor);
             if (currentStroke == null && useStrokes > dist) {
-                if (currentDashed)
-                    g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,new float[] {9},0));
+                if (currentDashed != 0)
+                    g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,new float[] {currentDashed},0));
                 else
                     g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             }
