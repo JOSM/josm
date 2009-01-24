@@ -63,23 +63,10 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         displaylist.addMouseListener(new MouseAdapter(){
             @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() < 2)
-                    return;
-                Relation toEdit = (Relation) displaylist.getSelectedValue();
-                if (toEdit != null)
-                    new RelationEditor(toEdit).setVisible(true);
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1)
+                    Main.ds.setSelected((Relation)displaylist.getSelectedValue());
             }
         });
-        /*displaylist.addListSelectionListener(new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent e) {
-                Relation toEdit = (Relation) displaylist.getSelectedValue();
-                if (toEdit != null) {
-                    Main.ds.setSelected(toEdit);
-                    AutoScaleAction asa = new AutoScaleAction("selection");
-                    asa.actionPerformed(null);
-                }
-            }
-        });*/
 
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
@@ -89,15 +76,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             public void actionPerformed(ActionEvent e) {
                 // call relation editor with null argument to create new relation
                 new RelationEditor(null).setVisible(true);
-            }
-        }), GBC.std());
-
-        buttonPanel.add(new SideButton(marktr("Select"), "select", "Selection", tr("Select this relation"), new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // replace selection with the relation from the list
-                Main.ds.setSelected((Relation)displaylist.getSelectedValue());
-                AutoScaleAction asa = new AutoScaleAction("selection");
-                asa.actionPerformed(null);
             }
         }), GBC.std());
 
