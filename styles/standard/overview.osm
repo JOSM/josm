@@ -901,34 +901,13 @@
     <tag k="tourism" v="information"/>
     <tag k="name" v="surface"/>
   </node>
-  <node id="-43400" user="overview-creator" visible="true" lat="-0.00170" lon="0.00060">
-    <tag k="tourism" v="information"/>
-    <tag k="name" v="abutters"/>
-  </node>
-  <node id="-44000" user="overview-creator" visible="true" lat="-0.00200" lon="0.00060">
+  <node id="-44200" user="overview-creator" visible="true" lat="-0.00210" lon="0.00060">
     <tag k="tourism" v="information"/>
     <tag k="name" v="bridge"/>
   </node>
-  <node id="-44200" user="overview-creator" visible="true" lat="-0.00210" lon="0.00060">
-    <tag k="bridge" v="yes"/>
-    <tag k="name" v="yes"/>
-  </node>
-  <node id="-44201" user="overview-creator" visible="true" lat="-0.00206" lon="0.00056"/>
-  <node id="-44202" user="overview-creator" visible="true" lat="-0.00206" lon="0.00084"/>
-  <node id="-44203" user="overview-creator" visible="true" lat="-0.00214" lon="0.00084"/>
-  <node id="-44204" user="overview-creator" visible="true" lat="-0.00214" lon="0.00056"/>
-  <way id="-44204" user="overview-creator" visible="true">
-    <nd ref="-44201"/>
-    <nd ref="-44202"/>
-    <nd ref="-44203"/>
-    <nd ref="-44204"/>
-    <nd ref="-44201"/>
-    <tag k="bridge" v="yes"/>
-    <tag k="name" v="yes"/>
-  </way>
   <node id="-44400" user="overview-creator" visible="true" lat="-0.00220" lon="0.00060">
-    <tag k="bridge" v="no"/>
-    <tag k="name" v="no"/>
+    <tag k="bridge" v="yes"/>
+    <tag k="name" v="yes"/>
   </node>
   <node id="-44401" user="overview-creator" visible="true" lat="-0.00216" lon="0.00056"/>
   <node id="-44402" user="overview-creator" visible="true" lat="-0.00216" lon="0.00084"/>
@@ -940,12 +919,12 @@
     <nd ref="-44403"/>
     <nd ref="-44404"/>
     <nd ref="-44401"/>
-    <tag k="bridge" v="no"/>
-    <tag k="name" v="no"/>
+    <tag k="bridge" v="yes"/>
+    <tag k="name" v="yes"/>
   </way>
   <node id="-44600" user="overview-creator" visible="true" lat="-0.00230" lon="0.00060">
-    <tag k="bridge" v="viaduct"/>
-    <tag k="name" v="viaduct"/>
+    <tag k="bridge" v="no"/>
+    <tag k="name" v="no"/>
   </node>
   <node id="-44601" user="overview-creator" visible="true" lat="-0.00226" lon="0.00056"/>
   <node id="-44602" user="overview-creator" visible="true" lat="-0.00226" lon="0.00084"/>
@@ -957,12 +936,12 @@
     <nd ref="-44603"/>
     <nd ref="-44604"/>
     <nd ref="-44601"/>
-    <tag k="bridge" v="viaduct"/>
-    <tag k="name" v="viaduct"/>
+    <tag k="bridge" v="no"/>
+    <tag k="name" v="no"/>
   </way>
   <node id="-44800" user="overview-creator" visible="true" lat="-0.00240" lon="0.00060">
-    <tag k="bridge" v="aqueduct"/>
-    <tag k="name" v="aqueduct"/>
+    <tag k="bridge" v="viaduct"/>
+    <tag k="name" v="viaduct"/>
   </node>
   <node id="-44801" user="overview-creator" visible="true" lat="-0.00236" lon="0.00056"/>
   <node id="-44802" user="overview-creator" visible="true" lat="-0.00236" lon="0.00084"/>
@@ -974,12 +953,12 @@
     <nd ref="-44803"/>
     <nd ref="-44804"/>
     <nd ref="-44801"/>
-    <tag k="bridge" v="aqueduct"/>
-    <tag k="name" v="aqueduct"/>
+    <tag k="bridge" v="viaduct"/>
+    <tag k="name" v="viaduct"/>
   </way>
   <node id="-45000" user="overview-creator" visible="true" lat="-0.00250" lon="0.00060">
-    <tag k="bridge" v="swing"/>
-    <tag k="name" v="swing"/>
+    <tag k="bridge" v="aqueduct"/>
+    <tag k="name" v="aqueduct"/>
   </node>
   <node id="-45001" user="overview-creator" visible="true" lat="-0.00246" lon="0.00056"/>
   <node id="-45002" user="overview-creator" visible="true" lat="-0.00246" lon="0.00084"/>
@@ -991,86 +970,103 @@
     <nd ref="-45003"/>
     <nd ref="-45004"/>
     <nd ref="-45001"/>
+    <tag k="bridge" v="aqueduct"/>
+    <tag k="name" v="aqueduct"/>
+  </way>
+  <node id="-45200" user="overview-creator" visible="true" lat="-0.00260" lon="0.00060">
+    <tag k="bridge" v="swing"/>
+    <tag k="name" v="swing"/>
+  </node>
+  <node id="-45201" user="overview-creator" visible="true" lat="-0.00256" lon="0.00056"/>
+  <node id="-45202" user="overview-creator" visible="true" lat="-0.00256" lon="0.00084"/>
+  <node id="-45203" user="overview-creator" visible="true" lat="-0.00264" lon="0.00084"/>
+  <node id="-45204" user="overview-creator" visible="true" lat="-0.00264" lon="0.00056"/>
+  <way id="-45204" user="overview-creator" visible="true">
+    <nd ref="-45201"/>
+    <nd ref="-45202"/>
+    <nd ref="-45203"/>
+    <nd ref="-45204"/>
+    <nd ref="-45201"/>
     <tag k="bridge" v="swing"/>
     <tag k="name" v="swing"/>
   </way>
-  <node id="-46000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00060">
+  <node id="-46600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00060">
     <tag k="tourism" v="information"/>
     <tag k="name" v="tunnel"/>
   </node>
-  <node id="-46200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00060">
+  <node id="-46800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00060">
     <tag k="tunnel" v="yes"/>
     <tag k="name" v="yes"/>
   </node>
-  <node id="-46201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00056"/>
-  <node id="-46202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00084"/>
-  <node id="-46203" user="overview-creator" visible="true" lat="-0.00314" lon="0.00084"/>
-  <node id="-46204" user="overview-creator" visible="true" lat="-0.00314" lon="0.00056"/>
-  <way id="-46204" user="overview-creator" visible="true">
-    <nd ref="-46201"/>
-    <nd ref="-46202"/>
-    <nd ref="-46203"/>
-    <nd ref="-46204"/>
-    <nd ref="-46201"/>
+  <node id="-46801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00056"/>
+  <node id="-46802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00084"/>
+  <node id="-46803" user="overview-creator" visible="true" lat="-0.00344" lon="0.00084"/>
+  <node id="-46804" user="overview-creator" visible="true" lat="-0.00344" lon="0.00056"/>
+  <way id="-46804" user="overview-creator" visible="true">
+    <nd ref="-46801"/>
+    <nd ref="-46802"/>
+    <nd ref="-46803"/>
+    <nd ref="-46804"/>
+    <nd ref="-46801"/>
     <tag k="tunnel" v="yes"/>
     <tag k="name" v="yes"/>
-  </way>
-  <node id="-46400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00060">
-    <tag k="tunnel" v="no"/>
-    <tag k="name" v="no"/>
-  </node>
-  <node id="-46401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00056"/>
-  <node id="-46402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00084"/>
-  <node id="-46403" user="overview-creator" visible="true" lat="-0.00324" lon="0.00084"/>
-  <node id="-46404" user="overview-creator" visible="true" lat="-0.00324" lon="0.00056"/>
-  <way id="-46404" user="overview-creator" visible="true">
-    <nd ref="-46401"/>
-    <nd ref="-46402"/>
-    <nd ref="-46403"/>
-    <nd ref="-46404"/>
-    <nd ref="-46401"/>
-    <tag k="tunnel" v="no"/>
-    <tag k="name" v="no"/>
   </way>
   <node id="-47000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00060">
+    <tag k="tunnel" v="no"/>
+    <tag k="name" v="no"/>
+  </node>
+  <node id="-47001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00056"/>
+  <node id="-47002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00084"/>
+  <node id="-47003" user="overview-creator" visible="true" lat="-0.00354" lon="0.00084"/>
+  <node id="-47004" user="overview-creator" visible="true" lat="-0.00354" lon="0.00056"/>
+  <way id="-47004" user="overview-creator" visible="true">
+    <nd ref="-47001"/>
+    <nd ref="-47002"/>
+    <nd ref="-47003"/>
+    <nd ref="-47004"/>
+    <nd ref="-47001"/>
+    <tag k="tunnel" v="no"/>
+    <tag k="name" v="no"/>
+  </way>
+  <node id="-47400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00060">
     <tag k="tourism" v="information"/>
     <tag k="name" v="mountain_pass"/>
   </node>
-  <node id="-47200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00060">
+  <node id="-47600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00060">
     <tag k="mountain_pass" v="yes"/>
     <tag k="name" v="yes"/>
   </node>
-  <node id="-47201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00056"/>
-  <node id="-47202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00084"/>
-  <node id="-47203" user="overview-creator" visible="true" lat="-0.00364" lon="0.00084"/>
-  <node id="-47204" user="overview-creator" visible="true" lat="-0.00364" lon="0.00056"/>
-  <way id="-47204" user="overview-creator" visible="true">
-    <nd ref="-47201"/>
-    <nd ref="-47202"/>
-    <nd ref="-47203"/>
-    <nd ref="-47204"/>
-    <nd ref="-47201"/>
+  <node id="-47601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00056"/>
+  <node id="-47602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00084"/>
+  <node id="-47603" user="overview-creator" visible="true" lat="-0.00384" lon="0.00084"/>
+  <node id="-47604" user="overview-creator" visible="true" lat="-0.00384" lon="0.00056"/>
+  <way id="-47604" user="overview-creator" visible="true">
+    <nd ref="-47601"/>
+    <nd ref="-47602"/>
+    <nd ref="-47603"/>
+    <nd ref="-47604"/>
+    <nd ref="-47601"/>
     <tag k="mountain_pass" v="yes"/>
     <tag k="name" v="yes"/>
   </way>
-  <node id="-47600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00060">
+  <node id="-48000" user="overview-creator" visible="true" lat="-0.00400" lon="0.00060">
     <tag k="tourism" v="information"/>
     <tag k="name" v="junction"/>
   </node>
-  <node id="-47800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00060">
+  <node id="-48200" user="overview-creator" visible="true" lat="-0.00410" lon="0.00060">
     <tag k="junction" v="roundabout"/>
     <tag k="name" v="roundabout"/>
   </node>
-  <node id="-47801" user="overview-creator" visible="true" lat="-0.00386" lon="0.00056"/>
-  <node id="-47802" user="overview-creator" visible="true" lat="-0.00386" lon="0.00084"/>
-  <node id="-47803" user="overview-creator" visible="true" lat="-0.00394" lon="0.00084"/>
-  <node id="-47804" user="overview-creator" visible="true" lat="-0.00394" lon="0.00056"/>
-  <way id="-47804" user="overview-creator" visible="true">
-    <nd ref="-47801"/>
-    <nd ref="-47802"/>
-    <nd ref="-47803"/>
-    <nd ref="-47804"/>
-    <nd ref="-47801"/>
+  <node id="-48201" user="overview-creator" visible="true" lat="-0.00406" lon="0.00056"/>
+  <node id="-48202" user="overview-creator" visible="true" lat="-0.00406" lon="0.00084"/>
+  <node id="-48203" user="overview-creator" visible="true" lat="-0.00414" lon="0.00084"/>
+  <node id="-48204" user="overview-creator" visible="true" lat="-0.00414" lon="0.00056"/>
+  <way id="-48204" user="overview-creator" visible="true">
+    <nd ref="-48201"/>
+    <nd ref="-48202"/>
+    <nd ref="-48203"/>
+    <nd ref="-48204"/>
+    <nd ref="-48201"/>
     <tag k="junction" v="roundabout"/>
     <tag k="name" v="roundabout"/>
   </way>
@@ -1268,6 +1264,57 @@
     <nd ref="-60401"/>
     <tag k="access" v="no"/>
     <tag k="name" v="no"/>
+  </way>
+  <node id="-60600" user="overview-creator" visible="true" lat="-0.00030" lon="0.00090">
+    <tag k="access" v="permissive"/>
+    <tag k="name" v="permissive"/>
+  </node>
+  <node id="-60601" user="overview-creator" visible="true" lat="-0.00026" lon="0.00086"/>
+  <node id="-60602" user="overview-creator" visible="true" lat="-0.00026" lon="0.00114"/>
+  <node id="-60603" user="overview-creator" visible="true" lat="-0.00034" lon="0.00114"/>
+  <node id="-60604" user="overview-creator" visible="true" lat="-0.00034" lon="0.00086"/>
+  <way id="-60604" user="overview-creator" visible="true">
+    <nd ref="-60601"/>
+    <nd ref="-60602"/>
+    <nd ref="-60603"/>
+    <nd ref="-60604"/>
+    <nd ref="-60601"/>
+    <tag k="access" v="permissive"/>
+    <tag k="name" v="permissive"/>
+  </way>
+  <node id="-60800" user="overview-creator" visible="true" lat="-0.00040" lon="0.00090">
+    <tag k="access" v="private"/>
+    <tag k="name" v="private"/>
+  </node>
+  <node id="-60801" user="overview-creator" visible="true" lat="-0.00036" lon="0.00086"/>
+  <node id="-60802" user="overview-creator" visible="true" lat="-0.00036" lon="0.00114"/>
+  <node id="-60803" user="overview-creator" visible="true" lat="-0.00044" lon="0.00114"/>
+  <node id="-60804" user="overview-creator" visible="true" lat="-0.00044" lon="0.00086"/>
+  <way id="-60804" user="overview-creator" visible="true">
+    <nd ref="-60801"/>
+    <nd ref="-60802"/>
+    <nd ref="-60803"/>
+    <nd ref="-60804"/>
+    <nd ref="-60801"/>
+    <tag k="access" v="private"/>
+    <tag k="name" v="private"/>
+  </way>
+  <node id="-61000" user="overview-creator" visible="true" lat="-0.00050" lon="0.00090">
+    <tag k="access" v="destination"/>
+    <tag k="name" v="destination"/>
+  </node>
+  <node id="-61001" user="overview-creator" visible="true" lat="-0.00046" lon="0.00086"/>
+  <node id="-61002" user="overview-creator" visible="true" lat="-0.00046" lon="0.00114"/>
+  <node id="-61003" user="overview-creator" visible="true" lat="-0.00054" lon="0.00114"/>
+  <node id="-61004" user="overview-creator" visible="true" lat="-0.00054" lon="0.00086"/>
+  <way id="-61004" user="overview-creator" visible="true">
+    <nd ref="-61001"/>
+    <nd ref="-61002"/>
+    <nd ref="-61003"/>
+    <nd ref="-61004"/>
+    <nd ref="-61001"/>
+    <tag k="access" v="destination"/>
+    <tag k="name" v="destination"/>
   </way>
   <node id="-60600" user="overview-creator" visible="true" lat="-0.00030" lon="0.00090">
     <tag k="tourism" v="information"/>
@@ -1739,6 +1786,150 @@
     <nd ref="-84001"/>
     <tag k="oneway" v="any"/>
     <tag k="name" v="any"/>
+  </way>
+  <node id="-84200" user="overview-creator" visible="true" lat="-0.00210" lon="0.00120">
+    <tag k="tourism" v="information"/>
+    <tag k="name" v="traffic_sign"/>
+  </node>
+  <node id="-84400" user="overview-creator" visible="true" lat="-0.00220" lon="0.00120">
+    <tag k="traffic_sign" v="city_limit"/>
+    <tag k="name" v="city_limit"/>
+  </node>
+  <node id="-84401" user="overview-creator" visible="true" lat="-0.00216" lon="0.00116"/>
+  <node id="-84402" user="overview-creator" visible="true" lat="-0.00216" lon="0.00144"/>
+  <node id="-84403" user="overview-creator" visible="true" lat="-0.00224" lon="0.00144"/>
+  <node id="-84404" user="overview-creator" visible="true" lat="-0.00224" lon="0.00116"/>
+  <way id="-84404" user="overview-creator" visible="true">
+    <nd ref="-84401"/>
+    <nd ref="-84402"/>
+    <nd ref="-84403"/>
+    <nd ref="-84404"/>
+    <nd ref="-84401"/>
+    <tag k="traffic_sign" v="city_limit"/>
+    <tag k="name" v="city_limit"/>
+  </way>
+  <node id="-85000" user="overview-creator" visible="true" lat="-0.00250" lon="0.00120">
+    <tag k="tourism" v="information"/>
+    <tag k="name" v="restriction"/>
+  </node>
+  <node id="-85200" user="overview-creator" visible="true" lat="-0.00260" lon="0.00120">
+    <tag k="restriction" v="no_left_turn"/>
+    <tag k="name" v="no_left_turn"/>
+  </node>
+  <node id="-85201" user="overview-creator" visible="true" lat="-0.00256" lon="0.00116"/>
+  <node id="-85202" user="overview-creator" visible="true" lat="-0.00256" lon="0.00144"/>
+  <node id="-85203" user="overview-creator" visible="true" lat="-0.00264" lon="0.00144"/>
+  <node id="-85204" user="overview-creator" visible="true" lat="-0.00264" lon="0.00116"/>
+  <way id="-85204" user="overview-creator" visible="true">
+    <nd ref="-85201"/>
+    <nd ref="-85202"/>
+    <nd ref="-85203"/>
+    <nd ref="-85204"/>
+    <nd ref="-85201"/>
+    <tag k="restriction" v="no_left_turn"/>
+    <tag k="name" v="no_left_turn"/>
+  </way>
+  <node id="-85400" user="overview-creator" visible="true" lat="-0.00270" lon="0.00120">
+    <tag k="restriction" v="no_right_turn"/>
+    <tag k="name" v="no_right_turn"/>
+  </node>
+  <node id="-85401" user="overview-creator" visible="true" lat="-0.00266" lon="0.00116"/>
+  <node id="-85402" user="overview-creator" visible="true" lat="-0.00266" lon="0.00144"/>
+  <node id="-85403" user="overview-creator" visible="true" lat="-0.00274" lon="0.00144"/>
+  <node id="-85404" user="overview-creator" visible="true" lat="-0.00274" lon="0.00116"/>
+  <way id="-85404" user="overview-creator" visible="true">
+    <nd ref="-85401"/>
+    <nd ref="-85402"/>
+    <nd ref="-85403"/>
+    <nd ref="-85404"/>
+    <nd ref="-85401"/>
+    <tag k="restriction" v="no_right_turn"/>
+    <tag k="name" v="no_right_turn"/>
+  </way>
+  <node id="-85600" user="overview-creator" visible="true" lat="-0.00280" lon="0.00120">
+    <tag k="restriction" v="no_straight_on"/>
+    <tag k="name" v="no_straight_on"/>
+  </node>
+  <node id="-85601" user="overview-creator" visible="true" lat="-0.00276" lon="0.00116"/>
+  <node id="-85602" user="overview-creator" visible="true" lat="-0.00276" lon="0.00144"/>
+  <node id="-85603" user="overview-creator" visible="true" lat="-0.00284" lon="0.00144"/>
+  <node id="-85604" user="overview-creator" visible="true" lat="-0.00284" lon="0.00116"/>
+  <way id="-85604" user="overview-creator" visible="true">
+    <nd ref="-85601"/>
+    <nd ref="-85602"/>
+    <nd ref="-85603"/>
+    <nd ref="-85604"/>
+    <nd ref="-85601"/>
+    <tag k="restriction" v="no_straight_on"/>
+    <tag k="name" v="no_straight_on"/>
+  </way>
+  <node id="-85800" user="overview-creator" visible="true" lat="-0.00290" lon="0.00120">
+    <tag k="restriction" v="no_u_turn"/>
+    <tag k="name" v="no_u_turn"/>
+  </node>
+  <node id="-85801" user="overview-creator" visible="true" lat="-0.00286" lon="0.00116"/>
+  <node id="-85802" user="overview-creator" visible="true" lat="-0.00286" lon="0.00144"/>
+  <node id="-85803" user="overview-creator" visible="true" lat="-0.00294" lon="0.00144"/>
+  <node id="-85804" user="overview-creator" visible="true" lat="-0.00294" lon="0.00116"/>
+  <way id="-85804" user="overview-creator" visible="true">
+    <nd ref="-85801"/>
+    <nd ref="-85802"/>
+    <nd ref="-85803"/>
+    <nd ref="-85804"/>
+    <nd ref="-85801"/>
+    <tag k="restriction" v="no_u_turn"/>
+    <tag k="name" v="no_u_turn"/>
+  </way>
+  <node id="-86000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00120">
+    <tag k="restriction" v="only_left_turn"/>
+    <tag k="name" v="only_left_turn"/>
+  </node>
+  <node id="-86001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00116"/>
+  <node id="-86002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00144"/>
+  <node id="-86003" user="overview-creator" visible="true" lat="-0.00304" lon="0.00144"/>
+  <node id="-86004" user="overview-creator" visible="true" lat="-0.00304" lon="0.00116"/>
+  <way id="-86004" user="overview-creator" visible="true">
+    <nd ref="-86001"/>
+    <nd ref="-86002"/>
+    <nd ref="-86003"/>
+    <nd ref="-86004"/>
+    <nd ref="-86001"/>
+    <tag k="restriction" v="only_left_turn"/>
+    <tag k="name" v="only_left_turn"/>
+  </way>
+  <node id="-86200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00120">
+    <tag k="restriction" v="only_right_turn"/>
+    <tag k="name" v="only_right_turn"/>
+  </node>
+  <node id="-86201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00116"/>
+  <node id="-86202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00144"/>
+  <node id="-86203" user="overview-creator" visible="true" lat="-0.00314" lon="0.00144"/>
+  <node id="-86204" user="overview-creator" visible="true" lat="-0.00314" lon="0.00116"/>
+  <way id="-86204" user="overview-creator" visible="true">
+    <nd ref="-86201"/>
+    <nd ref="-86202"/>
+    <nd ref="-86203"/>
+    <nd ref="-86204"/>
+    <nd ref="-86201"/>
+    <tag k="restriction" v="only_right_turn"/>
+    <tag k="name" v="only_right_turn"/>
+  </way>
+  <node id="-86400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00120">
+    <tag k="restriction" v="only_straight_on"/>
+    <tag k="name" v="only_straight_on"/>
+  </node>
+  <node id="-86401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00116"/>
+  <node id="-86402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00144"/>
+  <node id="-86403" user="overview-creator" visible="true" lat="-0.00324" lon="0.00144"/>
+  <node id="-86404" user="overview-creator" visible="true" lat="-0.00324" lon="0.00116"/>
+  <way id="-86404" user="overview-creator" visible="true">
+    <nd ref="-86401"/>
+    <nd ref="-86402"/>
+    <nd ref="-86403"/>
+    <nd ref="-86404"/>
+    <nd ref="-86401"/>
+    <tag k="restriction" v="only_straight_on"/>
+    <tag k="name" v="only_straight_on"/>
   </way>
   <node id="-100200" user="overview-creator" visible="true" lat="-0.00010" lon="0.00150">
     <tag k="tourism" v="information"/>
@@ -7175,6 +7366,10 @@
     <tag k="landuse" v="recreation_ground"/>
     <tag k="name" v="recreation_ground"/>
   </way>
+  <node id="-325400" user="overview-creator" visible="true" lat="-0.00270" lon="0.00480">
+    <tag k="tourism" v="information"/>
+    <tag k="name" v="abutters"/>
+  </node>
   <node id="-327000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00480">
     <tag k="tourism" v="information"/>
     <tag k="name" v="building"/>
