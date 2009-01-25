@@ -12,6 +12,8 @@ A little help:
 	- realwidth relative width which will be scaled in meters, integer
 	- colour
 	- priority
+	- dashed x - dashed line, length of dashes / spaces in x pixels
+	- dashedcolour second (background) colour of a dashed line
 4. linemod attributes
 	- all line attributes
 	- mode ('over' or 'under')
@@ -37,8 +39,8 @@ connected with it. They need not have the same key/value pair.
 The colours can consist of the two components - name and hex code (e.g. water#0000ff).
 If both are given, the color name is introduced in preferences with that value. If only
 code is given (e.g. #0000ff), it is used directly. If only name is given, either user
-modified preferences or previous value is used. The color code can also have a hex value
-containing the alpha channel (thus havin 8 hex digits instead of 6).
+modified preferences or previous value is used. The 6 hex digit color code can also 
+be appended by a hex value of the alpha channel (thus havin 8 hex digits instead of 6).
 
 If a key/value pair matches more than one rule, the "rule that wins" is unpredicted
 in case they have same priority! Using priority settings helps to solve conflicts.
@@ -170,6 +172,27 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon src="vehicle/restrictions/access.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="access" v="permissive"/>
+		<linemod mode="under" width="+2" colour="permissive#80ff80" dashed="2"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="access" v="private"/>
+		<linemod mode="under" width="+2" colour="private#ff8080" dashed="2"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="access" v="destination"/>
+		<linemod mode="under" width="+2" colour="destination#8080ff" dashed="2"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
@@ -503,7 +526,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="living_street"/>
-		<line width="1" realwidth="3" colour="street#c0c0c0"/>
+		<line width="2" realwidth="3" colour="street#c0c0c0" dashed="9" dashedcolour="livingdashed#00ff00" />
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
@@ -567,7 +590,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="bus_guideway"/>
-		<line width="1" realwidth="1" colour="bus#00ff00"/>
+		<line width="1" colour="otherrail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
@@ -599,6 +622,13 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="vehicle/restrictions/speed_trap.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="traffic_sign" v="city_limit"/>
+		<icon annotate="true" src="vehicle/restrictions/citylimit.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
@@ -752,7 +782,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade1"/>
-		<line width="1" realwidth="3" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="2" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -760,7 +790,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade2"/>
-		<line width="1" realwidth="3" dashed="3" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="4" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -776,7 +806,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade4"/>
-		<line width="1" realwidth="3" dashed="9" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="8" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -784,7 +814,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="tracktype" v="grade5"/>
-		<line width="1" realwidth="3" dashed="12" colour="highway_track#006600"/>
+		<line width="1" realwidth="3" dashed="10" colour="highway_track#006600"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1041,7 +1071,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="narrow_gauge"/>
-		<line width="1" colour="otherrail#202020" dashed="true"/>
+		<line width="1" colour="otherrail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1049,7 +1079,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="monorail"/>
-		<line width="1" colour="otherrail#202020" dashed="true"/>
+		<line width="1" colour="otherrail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1058,7 +1088,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="railway" v="turntable"/>
 		<icon annotate="true" src="transport/turntable.png"/>
-		<area colour="otherrail#202020"/>
+		<area colour="otherrail#404040"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2107,6 +2137,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="signpost"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
@@ -3484,24 +3515,30 @@ in case they have same priority! Using priority settings helps to solve conflict
 	XXX - maybe it's possible to use linemod's here?
 	<rule>
 		<condition k="surface" v="paved"/>
-		<line width="1" realwidth="3" colour="street#c0c0c0"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<linemod mode="under" width="0" dashedcolour="#505050"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="surface" v="unpaved"/>
+		<linemod mode="under" width="0" dashedcolour="#301000"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+	<rule>
+		<condition k="surface" v="gravel"/>
+		<linemod mode="under" width="0" dashedcolour="#100070"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="surface" v="cobblestone"/>
-		<line width="1" realwidth="3" colour="street#c0c0c0"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="surface" v="unpaved"/>
-		<line width="1" realwidth="3" colour="street#c0c0c0"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<linemod mode="under" width="0" dashedcolour="#600060"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
@@ -3713,6 +3750,27 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="addr:interpolation" v="odd"/>
+		<line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="addr:interpolation" v="even"/>
+                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="addr:interpolation" v="all"/>
+                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
 <!--"deprecated" tags -->
 
 	<!-- historic=museum -> tourism=museum -->
@@ -3773,6 +3831,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="park_bench"/>
 		<area colour="deprecated#ff0000"/>
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3781,6 +3840,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<!-- highway=stile -> barrier=stile -->
 	<rule>
 		<condition k="highway" v="stile"/>
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3793,35 +3853,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
-	</rule>
-
-<!-- miscellaneous other tags, not fit elsewhere -->	
-	<rule>
-		<condition k="traffic_sign" v="city_limit"/>
-		<icon annotate="true" src="vehicle/restrictions/citylimit.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="addr:interpolation" v="odd"/>
-		<line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="addr:interpolation" v="even"/>
-                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="addr:interpolation" v="all"/>
-                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
 	</rule>
 
 </rules>
