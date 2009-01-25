@@ -197,7 +197,7 @@ public class ToolbarPreferences implements PreferenceSetting {
             @Override
             public boolean importData(JComponent comp, Transferable t) {
                 try {
-                    int dropIndex = selectedList.locationToIndex(selectedList.getDropLocation().getDropPoint());
+                    int dropIndex = selectedList.locationToIndex(selectedList.getMousePosition(true));
                     Object[] draggedData = (Object[]) t.getTransferData(ACTION_FLAVOR);
 
                     Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
@@ -408,7 +408,6 @@ public class ToolbarPreferences implements PreferenceSetting {
     }
 
     public boolean ok() {
-        StringBuilder b = new StringBuilder();
         Collection<String> t = new LinkedList<String>();
         for (int i = 0; i < selected.size(); ++i) {
             if (selected.get(i) == null)
@@ -425,7 +424,7 @@ public class ToolbarPreferences implements PreferenceSetting {
      * @return The parameter (for better chaining)
      */
     public Action register(Action action) {
-//        actions.put((String) action.getValue("toolbar"), action);
+        actions.put((String) action.getValue("toolbar"), action);
         return action;
     }
 
