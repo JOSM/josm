@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.util.HashMap;
 
@@ -17,8 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -74,25 +74,29 @@ public class BoundingBoxSelection implements DownloadSelection {
             f.setMinimumSize(new Dimension(100,new JTextField().getMinimumSize().height));
             f.addFocusListener(dialogUpdater);
         }
-        class osmUrlRefresher implements DocumentListener {
-            public void changedUpdate(DocumentEvent e) { dowork(); }
-            public void insertUpdate(DocumentEvent e) { dowork(); }
-            public void removeUpdate(DocumentEvent e) { dowork(); }
-            private void dowork() {
-                Bounds b = OsmUrlToBounds.parse(osmUrl.getText());
-                if (b != null) {
-                    gui.minlon = b.min.lon();
-                    gui.minlat = b.min.lat();
-                    gui.maxlon = b.max.lon();
-                    gui.maxlat = b.max.lat();
-                    gui.boundingBoxChanged(BoundingBoxSelection.this);
-                    updateBboxFields(gui);
-                    updateUrl(gui);
-                }
-            }
-        }
+        
+        KeyListener osmUrlKeyListener = new KeyListener() {
+          public void keyPressed(KeyEvent keyEvent) {}
 
-        osmUrl.getDocument().addDocumentListener(new osmUrlRefresher());
+          public void keyReleased(KeyEvent keyEvent) {
+              Bounds b = OsmUrlToBounds.parse(osmUrl.getText());
+              if (b != null) {
+                  gui.minlon = b.min.lon();
+                  gui.minlat = b.min.lat();
+                  gui.maxlon = b.max.lon();
+                  gui.maxlat = b.max.lat();
+                  gui.boundingBoxChanged(BoundingBoxSelection.this);
+                  updateBboxFields(gui);
+                  updateUrl(gui);
+                  if(keyEvent.getKeyCode() == keyEvent.VK_ENTER) 
+                      gui.closeDownloadDialog(true);
+              }
+          }
+
+          public void keyTyped(KeyEvent keyEvent) {}
+        };
+        
+        osmUrl.addKeyListener(osmUrlKeyListener);
 
         // select content on receiving focus. this seems to be the default in the
         // windows look+feel but not for others. needs invokeLater to avoid strange
