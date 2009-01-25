@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -16,39 +14,40 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 class MapSlider extends JSlider implements PropertyChangeListener, ChangeListener, Helpful {
 
     private final MapView mv;
-    boolean clicked = false;
+    boolean preventChange = false;
 
     public MapSlider(MapView mv) {
-        super(0, 20);
+        super(35, 150);
         setOpaque(false);
         this.mv = mv;
-        addMouseListener(new MouseAdapter(){
-            @Override public void mousePressed(MouseEvent e) {
-                clicked = true;
-            }
-            @Override public void mouseReleased(MouseEvent e) {
-                clicked = false;
-            }
-        });
         mv.addPropertyChangeListener("scale", this);
         addChangeListener(this);
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        if (!getModel().getValueIsAdjusting())
-            setValue(this.mv.zoom());
+        if (getModel().getValueIsAdjusting()) return;
+        
+        double sizex = this.mv.scale * this.mv.getWidth();
+        double sizey = this.mv.scale * this.mv.getHeight();
+        for (int zoom = 0; zoom <= 150; zoom++, sizex *= 1.1, sizey *= 1.1) {
+            if (sizex > this.mv.world.east() || sizey > this.mv.world.north()) {
+                preventChange=true;
+                setValue(zoom);
+                preventChange=false;
+                break;
+            }
+        }
     }
 
     public void stateChanged(ChangeEvent e) {
-        if (!clicked)
-            return;
+        if (preventChange) return;
         EastNorth pos = MapView.world;
-        for (int zoom = 0; zoom < getValue(); ++zoom)
-            pos = new EastNorth(pos.east()/2, pos.north()/2);
+        for (int zoom = 0; zoom < getValue(); zoom++)
+            pos = new EastNorth(pos.east()/1.1, pos.north()/1.1);
         if (this.mv.getWidth() < this.mv.getHeight())
-            this.mv.zoomTo(this.mv.center, pos.east()*2/(this.mv.getWidth()-20));
+            this.mv.zoomTo(this.mv.center, pos.east()/(this.mv.getWidth()-20));
         else
-            this.mv.zoomTo(this.mv.center, pos.north()*2/(this.mv.getHeight()-20));
+            this.mv.zoomTo(this.mv.center, pos.north()/(this.mv.getHeight()-20));
     }
 
     public String helpTopic() {
