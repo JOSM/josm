@@ -10,25 +10,44 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
+import javax.swing.MenuElement;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
@@ -38,29 +57,22 @@ public class ToolbarPreferences implements PreferenceSetting {
 
     private final class Move implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("<<")) {
-                while (unselected.size() > 1) {
-                    selected.addElement(unselected.get(0));
-                    unselected.remove(0);
+            if (e.getActionCommand().equals("<") && actionsTree.getSelectionCount() > 0) {
+
+                int leadItem = selected.getSize();
+                if (selectedList.getSelectedIndex() != -1) {
+                    int[] indices = selectedList.getSelectedIndices();
+                    leadItem = indices[indices.length - 1];
                 }
-            } else if (e.getActionCommand().equals("<") && unselectedList.getSelectedIndex() != -1) {
-                while (unselectedList.getSelectedIndex() != -1 && unselectedList.getSelectedIndex() != unselected.size()-1) {
-                    selected.addElement(unselectedList.getSelectedValue());
-                    unselected.remove(unselectedList.getSelectedIndex());
+                for (TreePath selectedAction : actionsTree.getSelectionPaths()) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectedAction.getLastPathComponent();
+                    if (node.getUserObject() == null || node.getUserObject() instanceof Action) {
+                        selected.add(leadItem++, ((Action)node.getUserObject()).getValue("toolbar"));
+                    }
                 }
-                if (unselectedList.getSelectedIndex() == unselected.size()-1)
-                    selected.addElement(null);
             } else if (e.getActionCommand().equals(">") && selectedList.getSelectedIndex() != -1) {
                 while (selectedList.getSelectedIndex() != -1) {
-                    if (selectedList.getSelectedValue() != null)
-                        unselected.add(unselected.size()-1, selectedList.getSelectedValue());
                     selected.remove(selectedList.getSelectedIndex());
-                }
-            } else if (e.getActionCommand().equals(">>")) {
-                while (selected.size() > 0) {
-                    if (selected.get(0) != null)
-                        unselected.add(unselected.size()-1, selected.get(0));
-                    selected.remove(0);
                 }
             } else if (e.getActionCommand().equals("up")) {
                 int i = selectedList.getSelectedIndex();
@@ -90,9 +102,13 @@ public class ToolbarPreferences implements PreferenceSetting {
     private Map<String, Action> actions = new HashMap<String, Action>();
 
     private DefaultListModel selected = new DefaultListModel();
-    private DefaultListModel unselected = new DefaultListModel();
+
+    private DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode("Actions");
+    private DefaultTreeModel actionsTreeModel = new DefaultTreeModel(rootActionsNode);
+    private JTree actionsTree = new JTree(actionsTreeModel);
     private JList selectedList = new JList(selected);
-    private JList unselectedList = new JList(unselected);
+
+    private String movingComponent;
 
     public JToolBar control = new JToolBar();
 
@@ -102,68 +118,195 @@ public class ToolbarPreferences implements PreferenceSetting {
     public ToolbarPreferences() {
         control.setFloatable(false);
 
-        final ListCellRenderer oldRenderer = selectedList.getCellRenderer();
+        actionsTree.setCellRenderer(new DefaultTreeCellRenderer() {
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                    boolean leaf, int row, boolean hasFocus) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                JLabel comp = (JLabel) super.getTreeCellRendererComponent(
+                        tree, value, sel, expanded, leaf, row, hasFocus);
+                if (node.getUserObject() == null) {
+                    comp.setText(tr("Separator"));
+                    comp.setIcon(ImageProvider.get("preferences/separator"));
+                }
+                else if (node.getUserObject() instanceof Action) {
+                    Action action = (Action) node.getUserObject();
+                    comp.setText((String) action.getValue(Action.NAME));
+                    comp.setIcon((Icon) action.getValue(Action.SMALL_ICON));
+                }
+                return comp;
+            }
+        });
+
         ListCellRenderer renderer = new DefaultListCellRenderer(){
             @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String s = tr("Separator");
-                Icon i = ImageProvider.get("preferences/separator");
+                String s;
+                Icon i;
                 if (value != null) {
-                    s = (String)((Action)value).getValue(Action.NAME);
-                    i = (Icon)((Action)value).getValue(Action.SMALL_ICON);
+                    Action action = actions.get(value);
+                    s = (String) action.getValue(Action.NAME);
+                    i = (Icon) action.getValue(Action.SMALL_ICON);
+                } else {
+                    i = ImageProvider.get("preferences/separator");
+                    s = tr("Separator");
                 }
-                JLabel l = (JLabel)oldRenderer.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
+                JLabel l = (JLabel)super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
                 l.setIcon(i);
                 return l;
             }
         };
         selectedList.setCellRenderer(renderer);
-        unselectedList.setCellRenderer(renderer);
-
-        unselectedList.addListSelectionListener(new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent e) {
-                if ((unselectedList.getSelectedIndex() != -1))
-                    selectedList.clearSelection();
-                upButton.setEnabled(selectedList.getSelectedIndex() != -1);
-                downButton.setEnabled(selectedList.getSelectedIndex() != -1);
-            }
-        });
         selectedList.addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent e) {
                 boolean sel = selectedList.getSelectedIndex() != -1;
                 if (sel)
-                    unselectedList.clearSelection();
+                    actionsTree.clearSelection();
                 upButton.setEnabled(sel);
                 downButton.setEnabled(sel);
             }
         });
+
+        selectedList.setDragEnabled(true);
+        selectedList.setTransferHandler(new TransferHandler() {
+            @Override
+            protected Transferable createTransferable(JComponent c) {
+                return new ActionTransferable(((JList)c).getSelectedValues());
+            }
+
+            @Override
+            public int getSourceActions(JComponent c) {
+                return TransferHandler.MOVE;
+            }
+
+            @Override
+            public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+                for (DataFlavor f : transferFlavors) {
+                    if (ACTION_FLAVOR.equals(f)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public void exportAsDrag(JComponent comp, InputEvent e, int action) {
+                super.exportAsDrag(comp, e, action);
+                movingComponent = "list";
+            }
+
+            @Override
+            public boolean importData(JComponent comp, Transferable t) {
+                try {
+                    int dropIndex = selectedList.locationToIndex(selectedList.getDropLocation().getDropPoint());
+                    Object[] draggedData = (Object[]) t.getTransferData(ACTION_FLAVOR);
+
+                    Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
+                    int dataLength = draggedData.length;
+
+                    if (leadItem != null)
+                        for (int i = 0; i < dataLength; i++)
+                            if (leadItem.equals(draggedData[i]))
+                                return false;
+
+                    int dragLeadIndex = -1;
+                    boolean localDrop = "list".equals(movingComponent);
+
+                    if (localDrop) {
+                        dragLeadIndex = selected.indexOf(draggedData[0]);
+                        for (int i = 0; i < dataLength; i++)
+                            selected.removeElement(draggedData[i]);
+                    }
+                    int[] indices = new int[dataLength];
+
+                    if (localDrop) {
+                        int adjustedLeadIndex = selected.indexOf(leadItem);
+                        int insertionAdjustment = dragLeadIndex <= adjustedLeadIndex ? 1 : 0;
+                        for (int i = 0; i < dataLength; i++) {
+                            selected.insertElementAt(draggedData[i], adjustedLeadIndex + insertionAdjustment + i);
+                            indices[i] = adjustedLeadIndex + insertionAdjustment + i;
+                        }
+                    } else {
+                        for (int i = 0; i < dataLength; i++) {
+                            selected.add(dropIndex, draggedData[i]);
+                            indices[i] = dropIndex + i;
+                        }
+                    }
+                    selectedList.clearSelection();
+                    selectedList.setSelectedIndices(indices);
+                    movingComponent = "";
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            protected void exportDone(JComponent source, Transferable data, int action) {
+                if (movingComponent.equals("list")) {
+                    try {
+                        Object[] draggedData = (Object[]) data.getTransferData(ACTION_FLAVOR);
+                        boolean localDrop = selected.contains(draggedData[0]);
+                        if (localDrop) {
+                            int[] indices = selectedList.getSelectedIndices();
+                            Arrays.sort(indices);
+                            for (int i = indices.length - 1; i >= 0; i--) {
+                                selected.remove(indices[i]);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    movingComponent = "";
+                }
+            }
+        });
+
+        actionsTree.setTransferHandler(new TransferHandler() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public int getSourceActions( JComponent c ){
+                return TransferHandler.MOVE;
+            }
+
+            @Override
+            protected void exportDone(JComponent source, Transferable data, int action) {
+            }
+
+            @Override
+            protected Transferable createTransferable(JComponent c) {
+                TreePath[] paths = actionsTree.getSelectionPaths();
+                List<String> dragActions = new LinkedList<String>();
+                for (TreePath path : paths) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                    Object obj = node.getUserObject();
+                    if (obj == null) {
+                        dragActions.add(null);
+                    }
+                    else if (obj instanceof Action) {
+                        dragActions.add((String) ((Action) obj).getValue("toolbar"));
+                    }
+                }
+                return new ActionTransferable(dragActions.toArray());
+            }
+        });
+        actionsTree.setDragEnabled(true);
     }
 
     public void addGui(PreferenceDialog gui) {
-        selected.removeAllElements();
-        unselected.removeAllElements();
-        Map<String, Action> us = new TreeMap<String, Action>();
-        for (Action a : actions.values())
-        {
-            us.put(a.getValue(Action.NAME).toString()+a.toString(), a);
-        }
-        for (String a : us.keySet())
-            unselected.addElement(us.get(a));
-        unselected.addElement(null);
-
         final JPanel left = new JPanel(new GridBagLayout());
         left.add(new JLabel(tr("Toolbar")), GBC.eol());
         left.add(new JScrollPane(selectedList), GBC.std().fill(GBC.BOTH));
 
         final JPanel right = new JPanel(new GridBagLayout());
         right.add(new JLabel(tr("Available")), GBC.eol());
-        right.add(new JScrollPane(unselectedList), GBC.eol().fill(GBC.BOTH));
+        right.add(new JScrollPane(actionsTree), GBC.eol().fill(GBC.BOTH));
 
         final JPanel buttons = new JPanel(new GridLayout(6,1));
         buttons.add(upButton = createButton("up"));
-        buttons.add(createButton("<<"));
         buttons.add(createButton("<"));
         buttons.add(createButton(">"));
-        buttons.add(createButton(">>"));
         buttons.add(downButton = createButton("down"));
         upButton.setEnabled(false);
         downButton.setEnabled(false);
@@ -179,8 +322,8 @@ public class ToolbarPreferences implements PreferenceSetting {
                 return new Dimension(l.width+b.width+10+r.width,l.height+b.height+10+r.height);
             }
             public Dimension preferredLayoutSize(Container parent) {
-                Dimension l = left.getPreferredSize();
-                Dimension r = right.getPreferredSize();
+                Dimension l = new Dimension(200, 200); //left.getPreferredSize();
+                Dimension r = new Dimension(200, 200); //right.getPreferredSize();
                 return new Dimension(l.width+r.width+10+buttons.getPreferredSize().width,Math.max(l.height, r.height));
             }
             public void layoutContainer(Container parent) {
@@ -200,24 +343,55 @@ public class ToolbarPreferences implements PreferenceSetting {
                 tr("Customize the elements on the toolbar."), false);
         panel.add(p, GBC.eol().fill(GBC.BOTH));
 
+        selected.removeAllElements();
         for (String s : getToolString()) {
             if (s.equals("|"))
                 selected.addElement(null);
             else {
-                Action a = actions.get(s);
-                if (a != null) {
-                    selected.addElement(a);
-                    unselected.removeElement(a);
+                if (actions.get(s) != null) {
+                    selected.addElement(s);
                 }
             }
         }
     }
 
-    private String[] getToolString() {
-        String s = Main.pref.get("toolbar", "open;save;exportgpx;|;download;upload;|;undo;redo;|;preference");
-        if (s == null || s.equals("null") || s.equals(""))
-            return new String[0];
-        return s.split(";");
+    private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
+        Object userObject = null;
+        MenuElement menuElement = menu;
+        if (menu.getSubElements().length > 0 &&
+                menu.getSubElements()[0] instanceof JPopupMenu) {
+            menuElement = menu.getSubElements()[0];
+        }
+        for (MenuElement item : menuElement.getSubElements()) {
+            if (item instanceof JMenuItem) {
+                JMenuItem menuItem = ((JMenuItem)item);
+                if (menuItem.getAction() != null) {
+                    Action action = menuItem.getAction();
+                    userObject = action;
+                    actions.put((String) action.getValue("toolbar"), action);
+                } else {
+                    userObject = menuItem.getText();
+                }
+            }
+            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(userObject);
+            node.add(newNode);
+            loadAction(newNode, item);
+        }
+    }
+
+    private void loadActions() {
+        rootActionsNode.removeAllChildren();
+        loadAction(rootActionsNode, Main.main.menu);
+        rootActionsNode.add(new DefaultMutableTreeNode(null));
+        actionsTree.updateUI();
+        actionsTree.setRootVisible(false);
+        actionsTree.expandPath(new TreePath(rootActionsNode));
+    }
+
+    private static final String[] deftoolbar = {"open", "save", "exportgpx", "|",
+    "download", "upload", "|", "undo", "redo", "|", "preference"};
+    private Collection<String> getToolString() {
+        return Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
     }
 
     private JButton createButton(String name) {
@@ -235,19 +409,14 @@ public class ToolbarPreferences implements PreferenceSetting {
 
     public boolean ok() {
         StringBuilder b = new StringBuilder();
+        Collection<String> t = new LinkedList<String>();
         for (int i = 0; i < selected.size(); ++i) {
             if (selected.get(i) == null)
-                b.append("|");
+                t.add("|");
             else
-                b.append(((Action)selected.get(i)).getValue("toolbar"));
-            b.append(";");
+                t.add((String)((actions.get(selected.get(i))).getValue("toolbar")));
         }
-        String s = b.toString();
-        if (s.length() > 0)
-            s = s.substring(0, s.length()-1);
-        else
-            s = "null";
-        Main.pref.put("toolbar", s);
+        Main.pref.putCollection("toolbar", t);
         refreshToolbarControl();
         return false;
     }
@@ -256,7 +425,7 @@ public class ToolbarPreferences implements PreferenceSetting {
      * @return The parameter (for better chaining)
      */
     public Action register(Action action) {
-        actions.put((String)action.getValue("toolbar"), action);
+//        actions.put((String) action.getValue("toolbar"), action);
         return action;
     }
 
@@ -267,6 +436,7 @@ public class ToolbarPreferences implements PreferenceSetting {
      * the toolbar content (e.g. after registering actions in a plugin)
      */
     public void refreshToolbarControl() {
+        loadActions();
         control.removeAll();
         for (String s : getToolString()) {
             if (s.equals("|"))
@@ -275,5 +445,35 @@ public class ToolbarPreferences implements PreferenceSetting {
                 control.add(actions.get(s));
         }
         control.setVisible(control.getComponentCount() != 0);
+    }
+
+    private static DataFlavor ACTION_FLAVOR = new DataFlavor(
+            AbstractAction.class, "ActionItem");
+
+    private class ActionTransferable implements Transferable {
+
+        private DataFlavor[] flavors = new DataFlavor[] { ACTION_FLAVOR };
+
+        private Object[] actions;
+
+        public ActionTransferable(Action action) {
+            this.actions = new Action[] { action };
+        }
+
+        public ActionTransferable(Object[] actions) {
+            this.actions = actions;
+        }
+
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+            return actions;
+        }
+
+        public DataFlavor[] getTransferDataFlavors() {
+            return flavors;
+        }
+
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return flavors[0] == flavor;
+        }
     }
 }

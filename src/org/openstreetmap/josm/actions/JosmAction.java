@@ -63,8 +63,8 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         }
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
         putValue("toolbar", iconName);
-    if (register)
-        Main.toolbar.register(this);
+        if (register)
+            Main.toolbar.register(this);
     }
 
     public void destroy() {
