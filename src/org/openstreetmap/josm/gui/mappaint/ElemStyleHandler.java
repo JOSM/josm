@@ -109,7 +109,9 @@ public class ElemStyleHandler extends DefaultHandler
                         line.dashed = 9;
                     }                
                 }
-            } else if(atts.getQName(count).equals("priority"))
+            } else if (atts.getQName(count).equals("dashedcolour"))
+                line.dashedColor=convertColor(atts.getValue(count));
+            else if(atts.getQName(count).equals("priority"))
                 line.priority = Integer.parseInt(atts.getValue(count));
             else if(atts.getQName(count).equals("mode"))
                 line.over = !atts.getValue(count).equals("under");

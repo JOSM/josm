@@ -9,6 +9,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     public int realWidth; //the real width of this line in meter
     public Color color;
     public int dashed;
+    public Color dashedColor;
 
     public boolean over;
     public enum WidthMode { ABSOLUTE, PERCENT, OFFSET }
@@ -21,6 +22,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         this.realWidth = s.realWidth;
         this.color = s.color;
         this.dashed = s.dashed;
+        this.dashedColor = s.dashedColor;
         this.over = s.over;
         this.widthMode = s.widthMode;
 
@@ -34,6 +36,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         this.realWidth = s.realWidth;
         this.color = s.color;
         this.dashed = s.dashed;
+        this.dashedColor = s.dashedColor;
         this.over = s.over;
         this.widthMode = s.widthMode;
 
@@ -54,6 +57,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         width = 1;
         realWidth = 0;
         dashed = 0;
+        dashedColor = null;
         priority = 0;
         color = null;
         over = true; // only used for line modifications
