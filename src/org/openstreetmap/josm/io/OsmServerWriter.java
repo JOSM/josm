@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.Math;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -143,8 +144,10 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                     osm.visit(v);
                     int progress = Main.pleaseWaitDlg.progress.getValue();
                     String time_left_str = timeLeft(progress, list.size());
-                    Main.pleaseWaitDlg.currentAction.setText(tr("Upload {0} {1} (id: {2}) {3}% {4}/{5} ({6} left)...",
-                            tr(v.className), v.name, osm.id, 100.0*progress/list.size(), progress, list.size(), time_left_str));
+                    Main.pleaseWaitDlg.currentAction.setText(
+                    tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
+                    Math.round(100.0*progress/list.size()), progress,
+                    list.size(), time_left_str, tr(v.className), v.name, osm.id));
                     osm.visit(this);
                     Main.pleaseWaitDlg.progress.setValue(progress+1);
                 }
