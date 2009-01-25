@@ -19,7 +19,7 @@ public class TaggingPresetMenu extends TaggingPreset {
     public void setDisplayName() {
         String n = getName();
         putValue(Action.NAME, n);
-        putValue(SHORT_DESCRIPTION, "<html>"+tr("Preset group ''{0}''", n)+"</html>");
+        putValue(SHORT_DESCRIPTION, tr("Preset group ''{0}''", n));
         putValue("toolbar", "tagginggroup_" + getRawName());
     }
     public void setIcon(String iconName) {
