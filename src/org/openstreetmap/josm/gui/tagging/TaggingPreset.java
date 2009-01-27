@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -374,14 +375,14 @@ public class TaggingPreset extends AbstractAction {
 
         @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null)
-                locale_text = text == null ? tr("Open map features in browser") : tr(text);
+                locale_text = text == null ? tr("More information about this feature") : tr(text);
             JButton b = new JButton(locale_text);
             b.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
                     OpenBrowser.displayUrl(locale_href != null ? locale_href : href);
                 }
             });
-            p.add(b, GBC.eol().anchor(GBC.EAST));
+            p.add(new UrlLabel(locale_href, locale_text), GBC.eol().anchor(GBC.WEST));
         }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
@@ -566,9 +567,17 @@ public class TaggingPreset extends AbstractAction {
         if (data == null)
             return null;
         JPanel p = new JPanel(new GridBagLayout());
+        LinkedList<Item> l = new LinkedList<Item>();
 
         for (Item i : data)
-            i.addToPanel(p, selected);
+        {
+            if(i instanceof Link)
+                l.add(i);
+            else
+                i.addToPanel(p, selected);
+        }
+        for(Item link : l)
+            link.addToPanel(p, selected);
         return p;
     }
 

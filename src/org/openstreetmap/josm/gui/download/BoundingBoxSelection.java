@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentListener; 
+import javax.swing.event.DocumentEvent; 
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -75,28 +77,23 @@ public class BoundingBoxSelection implements DownloadSelection {
             f.addFocusListener(dialogUpdater);
         }
         
+        class osmUrlRefresher implements DocumentListener { 
+            public void changedUpdate(DocumentEvent e) { parseURL(gui); } 
+            public void insertUpdate(DocumentEvent e) { parseURL(gui); } 
+            public void removeUpdate(DocumentEvent e) { parseURL(gui); } 
+        } 
+        
         KeyListener osmUrlKeyListener = new KeyListener() {
-          public void keyPressed(KeyEvent keyEvent) {}
-
-          public void keyReleased(KeyEvent keyEvent) {
-              Bounds b = OsmUrlToBounds.parse(osmUrl.getText());
-              if (b != null) {
-                  gui.minlon = b.min.lon();
-                  gui.minlat = b.min.lat();
-                  gui.maxlon = b.max.lon();
-                  gui.maxlat = b.max.lat();
-                  gui.boundingBoxChanged(BoundingBoxSelection.this);
-                  updateBboxFields(gui);
-                  updateUrl(gui);
-                  if(keyEvent.getKeyCode() == keyEvent.VK_ENTER) 
-                      gui.closeDownloadDialog(true);
-              }
-          }
-
-          public void keyTyped(KeyEvent keyEvent) {}
+            public void keyPressed(KeyEvent keyEvent) {}
+            public void keyReleased(KeyEvent keyEvent) {
+                if (keyEvent.getKeyCode() == keyEvent.VK_ENTER && parseURL(gui))
+                    gui.closeDownloadDialog(true);
+            }
+            public void keyTyped(KeyEvent keyEvent) {}
         };
         
         osmUrl.addKeyListener(osmUrlKeyListener);
+        osmUrl.getDocument().addDocumentListener(new osmUrlRefresher()); 
 
         // select content on receiving focus. this seems to be the default in the
         // windows look+feel but not for others. needs invokeLater to avoid strange
@@ -143,6 +140,19 @@ public class BoundingBoxSelection implements DownloadSelection {
     public void boundingBoxChanged(DownloadDialog gui) {
         updateBboxFields(gui);
         updateUrl(gui);
+    }
+    
+    private boolean parseURL(DownloadDialog gui) {
+        Bounds b = OsmUrlToBounds.parse(osmUrl.getText());
+        if(b == null) return false;
+        gui.minlon = b.min.lon();
+        gui.minlat = b.min.lat();
+        gui.maxlon = b.max.lon();
+        gui.maxlat = b.max.lat();
+        gui.boundingBoxChanged(BoundingBoxSelection.this);
+        updateBboxFields(gui);
+        updateUrl(gui);
+        return true;
     }
 
     private void updateBboxFields(DownloadDialog gui) {
