@@ -2594,7 +2594,13 @@ check: checkbox
             <key key="landuse" value="farmland" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Vineyard" icon="presets/fruits.png">
+				<item name="Meadow" icon="presets/landuse.png">
+					<label text="Edit Meadow Landuse" />
+					<space />
+					<key key="landuse" value="meadow" />
+					<text key="name" text="Name" default="" delete_if_empty="true" />
+				</item>
+				<item name="Vineyard" icon="presets/fruits.png">
             <label text="Edit Vineyard Landuse" />
             <space />
             <key key="landuse" value="vineyard" />

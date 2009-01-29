@@ -2666,7 +2666,15 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="farmland"/>
 		<area colour="green#b1e0c2"/>
-		<icon annotate="true" src="misc/landmark/farm.png"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="landuse" v="meadow"/>
+		<area colour="green#b1e0c2"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2674,7 +2682,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="vineyard"/>
 		<area colour="green#b1e0c2"/>
-		<icon annotate="true" src="misc/landmark/farm.png"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
