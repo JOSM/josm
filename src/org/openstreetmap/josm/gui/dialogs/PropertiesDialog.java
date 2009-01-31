@@ -437,7 +437,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SideButton btnEdit;
     private final SideButton btnDel;
 
-    private final JLabel selectSth = new JLabel(tr("Please select the objects you want to change properties for."));
+    private final JLabel selectSth = new JLabel("<html><p>" + tr("Please select the objects you want to change properties for.") + "</p></html>");
 
     /**
      * Create a new PropertiesDialog
@@ -530,6 +530,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JScrollPane scrollPane = new JScrollPane(bothTables);
         scrollPane.addMouseListener(dblClickWatch);
         add(scrollPane, BorderLayout.CENTER);
+        
+        selectSth.setPreferredSize(scrollPane.getSize());
 
         JPanel buttonPanel = new JPanel(new GridLayout(1,3));
         ActionListener buttonAction = new ActionListener(){
