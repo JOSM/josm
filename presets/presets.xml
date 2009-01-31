@@ -2863,4 +2863,37 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Natural -->
+<!-- FIXME: parameter type and element role not yet supported! -->
+<!-- type should be used for all other items also to say if they are used for nodes/ways -->
+    <group name="Relations" icon="presets/empty.png">
+        <item name="Multipolygon" icon="presets/empty.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"
+                  fr:href="http://wiki.openstreetmap.org/wiki/FR:Relation:multipolygon" />
+            <label text="Edit a Multipolygon" />
+            <key key="type" value="multipolygon" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+                <role key="outer" text="outer segment" requisite="required" count="multiple" type="way" />
+                <role key="inner" text="inner segment" requisite="optional" count="multiple" type="way" />
+            </roles>
+        </item>
+        <item name="Turn restriction" icon="presets/empty.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"/>
+            <label text="Edit a Turn Restriction" />
+            <key key="type" value="restriction" />
+            <combo key="restriction" text="Restriction" values="no_left_turn,no_right_turn,no_straight_on,no_u_turn,only_right_turn,only_left_turn,only_straight_on" default="" delete_if_empty="true" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+                <role key="from" text="from way" requisite="required" count="single" type="way" />
+                <role key="via" text="via node or way" requisite="required" count="single" type="way,node" />
+                <role key="to" text="to way" requisite="required" count="single" type="way" />
+            </roles>
+        </item>
+    </group> <!-- Relations -->
 </annotations>
