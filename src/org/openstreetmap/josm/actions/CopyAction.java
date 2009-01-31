@@ -43,18 +43,24 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
     }
 
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
-        if (sel.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    tr("Please select something to copy."));
-            return;
-        }
+        if(noSelection()) return;
+        
+        Main.pasteBuffer = copyData();
+        Main.main.menu.paste.setEnabled(true); /* now we have a paste buffer we can make paste available */
 
+        for(JosmAction a : listeners) {
+            a.pasteBufferChanged(Main.pasteBuffer);
+        }
+    }
+    
+    public static DataSet copyData() {
         /* New pasteBuffer - will be assigned to the global one at the end */
         final DataSet pasteBuffer = new DataSet();
         final HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>();
         /* temporarily maps old nodes to new so we can do a true deep copy */
-
+        
+        if(noSelection()) return pasteBuffer;
+        
         /* scan the selected objects, mapping them to copies; when copying a way or relation,
          * the copy references the copies of their child objects */
         new Visitor(){
@@ -104,16 +110,21 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
                     osm.visit(this);
             }
         }.visitAll();
-
-        Main.pasteBuffer = pasteBuffer;
-        Main.main.menu.paste.setEnabled(true); /* now we have a paste buffer we can make paste available */
-
-        for(JosmAction a : listeners) {
-            a.pasteBufferChanged(Main.pasteBuffer);
-        }
+        
+        return pasteBuffer;
     }
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         setEnabled(! newSelection.isEmpty());
+    }
+    
+    private static boolean noSelection() {
+        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        if (sel.isEmpty()) {
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("Please select something to copy."));
+            return true;
+        }
+        return false;
     }
 }

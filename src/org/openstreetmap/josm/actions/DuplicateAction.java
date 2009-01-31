@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.CopyAction;
+import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -21,12 +23,11 @@ public final class DuplicateAction extends JosmAction implements SelectionChange
             tr("Duplicate selection by copy and immediate paste."),
             Shortcut.registerShortcut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, Shortcut.GROUP_MENU), true);
         setEnabled(false);
-            DataSet.selListeners.add(this);
+        DataSet.selListeners.add(this);
     }
 
     public void actionPerformed(ActionEvent e) {
-        Main.main.menu.copy.actionPerformed(e);
-        Main.main.menu.paste.actionPerformed(e);
+        PasteAction.pasteData(CopyAction.copyData(), e);
     }
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {

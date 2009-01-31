@@ -30,12 +30,14 @@ public final class PasteAction extends JosmAction {
     public PasteAction() {
         super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
             Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
-            setEnabled(false);
+        setEnabled(false);
     }
 
     public void actionPerformed(ActionEvent e) {
-        DataSet pasteBuffer = Main.pasteBuffer;
-
+        pasteData(Main.pasteBuffer, e);
+    }
+    
+    public static void pasteData(DataSet pasteBuffer, ActionEvent e) {
         /* Find the middle of the pasteBuffer area */
         double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
         for (Node n : pasteBuffer.nodes) {
