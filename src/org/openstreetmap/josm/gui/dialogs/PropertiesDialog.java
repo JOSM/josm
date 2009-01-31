@@ -58,10 +58,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.tagging.ForwardActionListener;
-import org.openstreetmap.josm.gui.tagging.TaggingCellRenderer;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -127,13 +123,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param row The row of the table from which the value is edited.
      */
     void propertyEdit(int row) {
+        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        if (sel.isEmpty()) return;
+
         String key = propertyData.getValueAt(row, 0).toString();
         objKey=key;
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
-        if (sel.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Please select the objects you want to change properties for."));
-            return;
-        }
+
         String msg = "<html>"+trn("This will change up to {0} object.", "This will change up to {0} objects.", sel.size(), sel.size())+"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -303,10 +298,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     void add() {
         Collection<OsmPrimitive> sel = Main.ds.getSelected();
-        if (sel.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Please select objects for which you want to change properties."));
-            return;
-        }
+        if (sel.isEmpty()) return;
 
         JPanel p = new JPanel(new BorderLayout());
         p.add(new JLabel("<html>"+trn("This will change up to {0} object.","This will change up to {0} objects.", sel.size(),sel.size())+"<br><br>"+tr("Please select a key")),
@@ -401,7 +393,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
         Main.ds.fireSelectionChanged(sel);
         selectionChanged(sel); // update table
-          
+
         int rowCount = propertyTable.getRowCount();
         propertyTable.changeSelection((row < rowCount ? row : (rowCount-1)), 0, false, false);
     }
@@ -438,6 +430,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     public JComboBox taggingPresets = new JComboBox();
 
+    /**
+     * The Add/Edit/Delete buttons (needed to be able to disable them)
+     */
+    private final SideButton btnAdd;
+    private final SideButton btnEdit;
+    private final SideButton btnDel;
+
+    private final JLabel selectSth = new JLabel(tr("Please select the objects you want to change properties for."));
 
     /**
      * Create a new PropertiesDialog
@@ -447,36 +447,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
         Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
-        // ---------------------------------------
-        // This drop-down is really deprecated but we offer people a chance to
-        // activate it if they really want. Presets should be used from the
-        // menu.
-        if (TaggingPresetPreference.taggingPresets.size() > 0 &&
-                Main.pref.getBoolean("taggingpreset.in-properties-dialog", false)) {
-            Vector<ActionListener> allPresets = new Vector<ActionListener>();
-            for (final TaggingPreset p : TaggingPresetPreference.taggingPresets)
-                allPresets.add(new ForwardActionListener(this, p));
-
-            TaggingPreset empty = new TaggingPreset();
-            // empty.setName("this drop-down will be removed soon");
-            allPresets.add(0, new ForwardActionListener(this, empty));
-            taggingPresets.setModel(new DefaultComboBoxModel(allPresets));
-            JPanel north = new JPanel(new GridBagLayout());
-            north.add(getComponent(0),GBC.eol().fill(GBC.HORIZONTAL));
-            north.add(taggingPresets,GBC.eol().fill(GBC.HORIZONTAL));
-            add(north, BorderLayout.NORTH);
-        }
-        taggingPresets.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                TaggingPreset preset = ((ForwardActionListener)taggingPresets.getSelectedItem()).preset;
-                preset.actionPerformed(e);
-                taggingPresets.setSelectedItem(null);
-            }
-        });
-        taggingPresets.setRenderer(new TaggingCellRenderer());
-
         // setting up the properties table
-
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -547,6 +518,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         // combine both tables and wrap them in a scrollPane
         JPanel bothTables = new JPanel();
         bothTables.setLayout(new GridBagLayout());
+        bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
         bothTables.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
@@ -600,37 +572,33 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 else
                 {
                     int sel = propertyTable.getSelectedRow();
-                    if (e.getActionCommand().equals("Edit")) {
-                        if(propertyTable.getRowCount() == 1)
-                            sel = 0;
-                        if (sel == -1)
-                            JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
-                        else
-                            propertyEdit(sel);
-                    } else if (e.getActionCommand().equals("Delete")) {
-                        if (sel == -1)
-                            JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
-                        else
-                            delete(sel);
-                    }
+                    // Although we might edit/delete the wrong tag here, chances are still better
+                    // than just displaying an error message (which always "fails").
+                    if (e.getActionCommand().equals("Edit"))
+                        propertyEdit(sel >= 0 ? sel : 0);
+                    else if (e.getActionCommand().equals("Delete"))
+                        delete(sel >= 0 ? sel : 0);
                 }
             }
         };
 
         Shortcut s = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
         Shortcut.GROUP_MNEMONIC);
-        buttonPanel.add(new SideButton(marktr("Add"),"add","Properties",
-                tr("Add a new key/value pair to all objects"), s, buttonAction));
+        this.btnAdd = new SideButton(marktr("Add"),"add","Properties",
+                tr("Add a new key/value pair to all objects"), s, buttonAction);
+        buttonPanel.add(this.btnAdd);
 
         s = Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_I,
         Shortcut.GROUP_MNEMONIC);
-        buttonPanel.add(new SideButton(marktr("Edit"),"edit","Properties",
-                tr("Edit the value of the selected key for all objects"), s, buttonAction));
+        this.btnEdit = new SideButton(marktr("Edit"),"edit","Properties",
+                tr("Edit the value of the selected key for all objects"), s, buttonAction);
+        buttonPanel.add(this.btnEdit);
 
         s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_Q,
         Shortcut.GROUP_MNEMONIC);
-        buttonPanel.add(new SideButton(marktr("Delete"),"delete","Properties",
-                tr("Delete the selected key in all objects"), s, buttonAction));
+        this.btnDel = new SideButton(marktr("Delete"),"delete","Properties",
+                tr("Delete the selected key in all objects"), s, buttonAction);
+        buttonPanel.add(this.btnDel);
         add(buttonPanel, BorderLayout.SOUTH);
 
         DataSet.selListeners.add(this);
@@ -651,7 +619,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             propertyTable.getCellEditor().cancelCellEditing();
 
         // re-load property data
-
         propertyData.setRowCount(0);
 
         Map<String, Integer> keyCount = new HashMap<String, Integer>();
@@ -680,6 +647,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             propertyData.addRow(new Object[]{e.getKey(), e.getValue()});
         }
 
+        boolean hasTags = !newSelection.isEmpty() && propertyData.getRowCount() > 0;
+        boolean hasSelection = !newSelection.isEmpty();
+        btnAdd.setEnabled(hasSelection);
+        btnEdit.setEnabled(hasTags);
+        btnDel.setEnabled(hasTags);
+        propertyTable.setVisible(hasSelection);
+        propertyTable.getTableHeader().setVisible(hasSelection);
+        selectSth.setVisible(!hasSelection);
+        if(hasTags) propertyTable.changeSelection(0, 0, false, false);
+
         // re-load membership data
         // this is rather expensive since we have to walk through all members of all existing relationships.
         // could use back references here for speed if necessary.
@@ -707,13 +684,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
 
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
+        membershipTable.setVisible(membershipData.getRowCount() > 0);
 
         if(propertyData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
-            setTitle(tr("Properties: {0} / Memberships: {1}", 
+            setTitle(tr("Properties: {0} / Memberships: {1}",
                 propertyData.getRowCount(), membershipData.getRowCount()), true);
         } else {
             setTitle(tr("Properties / Memberships"), false);
         }
-
     }
 }

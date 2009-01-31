@@ -221,21 +221,21 @@ public class OsmDataLayer extends Layer {
 
     @Override public void mergeFrom(final Layer from) {
         final MergeVisitor visitor = new MergeVisitor(data,((OsmDataLayer)from).data);
-        int i=0;
+//        int i=0;
         int max = ((OsmDataLayer)from).data.allPrimitives().size();
 
-        System.out.format("Add/Merge data:");
-        
+//        System.out.format("Add/Merge data:");
+
         for (final OsmPrimitive osm : ((OsmDataLayer)from).data.allPrimitives()) {
-            i++;
-            if(i%100 == 0) {
-                double perc = (((double)i) / ((double)max) * 100.0);
-                System.out.format(" " + (int)perc + "%%");
-            }
+//            i++;
+//            if(i%100 == 0) {
+//                double perc = (((double)i) / ((double)max) * 100.0);
+//                System.out.format(" " + (int)perc + "%%");
+//            }
             osm.visit(visitor);
         }
         visitor.fixReferences();
-        System.out.println("");
+//        System.out.println("");
 
         // copy the merged layer's data source info
         for (DataSource src : ((OsmDataLayer)from).data.dataSources)

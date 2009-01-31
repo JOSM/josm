@@ -41,7 +41,7 @@ public abstract class OsmServerReader extends OsmConnection {
 
     protected InputStream getInputStreamRaw(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
 
-        System.out.println("download: "+urlStr);
+//        System.out.println("download: "+urlStr);
         initAuthentication();
         URL url = new URL(urlStr);
         activeConnection = (HttpURLConnection)url.openConnection();
@@ -54,14 +54,14 @@ public abstract class OsmServerReader extends OsmConnection {
             activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
 
         activeConnection.setConnectTimeout(15000);
-        
+
         try {
             activeConnection.connect();
         }
         catch (Exception e) {
             throw new IOException(tr("Couldn't connect to the osm server. Please check your internet connection."));
         }
-        
+
         if (isAuthCancelled() && activeConnection.getResponseCode() == 401)
             return null;
         if (activeConnection.getResponseCode() == 500)
