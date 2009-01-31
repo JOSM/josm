@@ -2876,8 +2876,8 @@ check: checkbox
                 <text key="name" text="Name" default="" delete_if_empty="true" />
             </optional>
             <roles>
-                <role key="outer" text="outer segment" requisite="required" count="multiple" type="way" />
-                <role key="inner" text="inner segment" requisite="optional" count="multiple" type="way" />
+                <role key="outer" text="outer segment" requisite="required" type="way" />
+                <role key="inner" text="inner segment" requisite="optional" type="way" />
             </roles>
         </item>
         <item name="Turn restriction" icon="presets/empty.png" type="relation">
@@ -2890,9 +2890,9 @@ check: checkbox
                 <text key="name" text="Name" default="" delete_if_empty="true" />
             </optional>
             <roles>
-                <role key="from" text="from way" requisite="required" count="single" type="way" />
-                <role key="via" text="via node or way" requisite="required" count="single" type="way,node" />
-                <role key="to" text="to way" requisite="required" count="single" type="way" />
+                <role key="from" text="from way" requisite="required" count="1" type="way" />
+                <role key="via" text="via node or way" requisite="required" count="1" type="way,node" />
+                <role key="to" text="to way" requisite="required" count="1" type="way" />
             </roles>
         </item>
     </group> <!-- Relations -->
