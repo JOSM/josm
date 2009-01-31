@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseListener;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -344,6 +345,13 @@ public class MapStatus extends JPanel implements Helpful {
     public String helpTopic() {
         return "Statusline";
     }
+    
+    @Override
+    public void addMouseListener(MouseListener ml) {
+        //super.addMouseListener(ml);
+        lonText.addMouseListener(ml);
+        latText.addMouseListener(ml);
+    }
 
     public void setHelpText(String t) {
         helpText.setText(t);
@@ -359,5 +367,4 @@ public class MapStatus extends JPanel implements Helpful {
         String text = dist > 1000 ? (Math.round(dist/100)/10.0)+" km" : Math.round(dist*10)/10.0 +" m";
         distText.setText(dist < 0 ? "--" : text);
     }
-
 }
