@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -115,6 +116,11 @@ abstract public class Main {
     public final MainMenu menu;
 
     /**
+     * The MOTD Layer.
+     */
+    private GettingStarted gettingStarted=new GettingStarted();
+
+    /**
      * Print a debug message if debugging is on.
      */
     static public int debug_level = 1;
@@ -144,7 +150,7 @@ abstract public class Main {
             map.fillPanel(panel);
         else {
             old.destroy();
-            panel.add(new GettingStarted(), BorderLayout.CENTER);
+            panel.add(gettingStarted, BorderLayout.CENTER);
         }
         panel.setVisible(true);
         redoUndoListener.commandChanged(0,0);
@@ -173,8 +179,7 @@ abstract public class Main {
 //        platform = determinePlatformHook();
         platform.startupHook();
         contentPane.add(panel, BorderLayout.CENTER);
-        if(splash != null) splash.setStatus(tr("Download \"Message of the day\""));
-        panel.add(new GettingStarted(), BorderLayout.CENTER);
+        panel.add(gettingStarted, BorderLayout.CENTER);
 
         if(splash != null) splash.setStatus(tr("Creating main GUI"));
         menu = new MainMenu();
@@ -273,11 +278,11 @@ abstract public class Main {
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
 
         Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-	String geometry = Main.pref.get("gui.geometry");
+        String geometry = Main.pref.get("gui.geometry");
         if (args.containsKey("geometry")) {
             geometry = args.get("geometry").iterator().next();
-	}
-	if (geometry.length() != 0) {
+        }
+        if (geometry.length() != 0) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(geometry);
             if (m.matches()) {
                 int w = Integer.valueOf(m.group(1));
@@ -292,10 +297,10 @@ abstract public class Main {
                         y = screenDimension.height - y - h;
                 }
                 bounds = new Rectangle(x,y,w,h);
-		if(!Main.pref.get("gui.geometry").equals(geometry)) {
-		    // remember this geometry
-		    Main.pref.put("gui.geometry", geometry);
-		}
+                if(!Main.pref.get("gui.geometry").equals(geometry)) {
+                    // remember this geometry
+                    Main.pref.put("gui.geometry", geometry);
+                }
             } else
                 System.out.println("Ignoring malformed geometry: "+geometry);
         }
@@ -410,16 +415,30 @@ abstract public class Main {
     }
 
     static public void saveGuiGeometry() {
-	// if the gui.geometry preference is already set,
-	// save the current window geometry
-	String curGeometryPref = pref.get("gui.geometry");
-	if(curGeometryPref.length() != 0) {
-	    Rectangle bounds = parent.getBounds();
-	    pref.put("gui.geometry",
-		     (int)bounds.getWidth() +
-		     "x" + (int)bounds.getHeight() +
-		     "+" + (int)bounds.getX() +
-		     "+" + (int)bounds.getY());
-	}
+        // save the current window geometry
+        String newGeometry = "";
+        try {
+            if(((JFrame)parent).getExtendedState() == JFrame.NORMAL) {
+                Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+                Rectangle bounds = parent.getBounds();
+                int width = (int)bounds.getWidth();
+                int height = (int)bounds.getHeight();
+                int x = (int)bounds.getX();
+                int y = (int)bounds.getY();
+                if(width > screenDimension.width)
+                    width = screenDimension.width;
+                if(height > screenDimension.height)
+                    width = screenDimension.height;
+                if(x < 0)
+                    x = 0;
+                if(y < 0)
+                    y = 0;
+                newGeometry = width + "x" + height + "+" + x + "+" + y;
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Failed to save GUI geometry: " + e);
+        }
+        pref.put("gui.geometry", newGeometry);
     }
 }

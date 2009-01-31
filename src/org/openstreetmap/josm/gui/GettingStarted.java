@@ -32,6 +32,10 @@ import org.openstreetmap.josm.actions.AboutAction;
 public class GettingStarted extends JPanel {
 
     static private String content = "";
+    static private String styles = "<style type=\"text/css\">\n"+
+            "body { font-family: sans-serif; font-weight: bold; }\n"+
+            "h1 {text-align: center;}\n"+
+            "</style>\n";
 
     public class LinkGeneral extends JEditorPane implements HyperlinkListener {
         public LinkGeneral(String text) {
@@ -101,7 +105,7 @@ public class GettingStarted extends JPanel {
         try {
             motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay?format=txt");
         } catch (IOException ioe) {
-            motdcontent = "<html><body>\n<h1>" +
+            motdcontent = "<html>" + styles + "<body><h1>" +
                 "JOSM - " + tr("Java OpenStreetMap Editor") +
                 "</h1>\n<h2 align=\"center\">(" +
                 tr ("Message of the day not available") +
@@ -178,10 +182,7 @@ public class GettingStarted extends JPanel {
         }
         
         content = "<html>\n"+
-            "<style type=\"text/css\">\n"+
-            "body { font-family: sans-serif; font-weight: bold; }\n"+
-            "h1 {text-align: center;}\n"+
-            "</style>\n"+
+            styles +
             "<h1>JOSM - " + tr("Java OpenStreetMap Editor") + "</h1>\n"+
             content+"\n"+
             "</html>";
@@ -189,10 +190,16 @@ public class GettingStarted extends JPanel {
 
     public GettingStarted() {
         super(new BorderLayout());
-        final LinkGeneral lg = new LinkGeneral(tr("Download \"Message of the day\""));
+        final LinkGeneral lg = new LinkGeneral(
+            "<html>" +
+            styles +
+            "<h1>" +
+            "JOSM - " +
+            tr("Java OpenStreetMap Editor") +
+            "</h1><h2 align=\"center\">" +
+            tr("Downloading \"Message of the day\"") +
+            "</h2>");
         JScrollPane scroller = new JScrollPane(lg);
-        // panel.add(GBC.glue(0,1), GBC.eol());
-        //panel.setMinimumSize(new Dimension(400, 600));
         Component linkGeneral = new LinkGeneral(content);
         scroller.setViewportBorder(new EmptyBorder(10,100,10,100));
         add(scroller, BorderLayout.CENTER);

@@ -177,7 +177,7 @@ public class MainApplication extends Main {
         mainFrame.setVisible(true);
         splash.closeSplash();
 
-        if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Main.pref.get("gui.geometry") == null && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
+        if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Main.pref.get("gui.geometry").length() == 0 && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         EventQueue.invokeLater(new Runnable(){
