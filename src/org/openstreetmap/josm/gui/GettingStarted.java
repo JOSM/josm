@@ -51,14 +51,14 @@ public class GettingStarted extends JPanel {
             }
         }
     }
-    
+
     public class readMOTD implements Callable<String> {
         private boolean isLocalized;
         private boolean isHelp;
         private String urlLoc;
         private String urlIntl;
         private String urlBase;
-        
+
         readMOTD(boolean isLocalized, String urlBase, String urlLoc, String urlIntl, boolean isHelp) {
           this.isLocalized = isLocalized;
           this.urlBase = urlBase;
@@ -81,17 +81,17 @@ public class GettingStarted extends JPanel {
                     if(isHelp)
                         content += message;
                     else
-                        content += "<ul><li>"+ message.substring(8)+"</li></ul>";
+                        content += "<ul><li>"+ message.substring(8).replaceAll("\n *\\* +","</li><li>")+"</li></ul>";
             } catch (IOException ioe) {
                 try {
                     if(isHelp)
                         content += wr.read(urlIntl);
                     else
-                        content += "<ul><li>"+wr.read(urlIntl).substring(8)+"</li></ul>";
+                        content += "<ul><li>"+wr.read(urlIntl).substring(8).replaceAll("\n *\\* +","</li><li>")+"</li></ul>";
                 } catch (IOException ioe2) {
                 }
             }
-            
+
             return content;
         }
     }
@@ -134,11 +134,11 @@ public class GettingStarted extends JPanel {
             links.add(new String[] {matcher.group(1), matcher.group(2), matcher.group(3)});
             linksList += matcher.group(1)+matcher.group(2)+matcher.group(3)+": ";
         }
-        
+
         // We cannot use Main.worker here because it's single-threaded and
         // setting it to multi-threading will cause problems elsewhere
         ExecutorService slave = Executors.newCachedThreadPool();
-        
+
         ArrayList<Future<String>> linkContent = new ArrayList<Future<String>>();
         for(int i=0; i < links.size(); i++) {
             String[] obj = (String[])links.get(i);
@@ -164,23 +164,23 @@ public class GettingStarted extends JPanel {
               included = myVersion <= targetVersion;
 
             if(!included) continue;
-            
+
             boolean isHelp = targetVersion == 1;
             String urlStart = baseurl + "/wiki/";
             String urlEnd = "MessageOfTheDay" + condition + targetVersion + (isHelp ? "" : "?format=txt");
             String urlLoc = urlStart + languageCode + urlEnd;
             String urlIntl = urlStart + urlEnd;
-            
+
             // This adds all links to the worker which will download them concurrently
             linkContent.add(slave.submit(new readMOTD(isLocalized, baseurl, urlLoc, urlIntl, isHelp)));
         }
-        
+
         for(int i=0; i < linkContent.size(); i++) {
             try {
                 content += linkContent.get(i).get();
             } catch (Exception e) {}
         }
-        
+
         content = "<html>\n"+
             styles +
             "<h1>JOSM - " + tr("Java OpenStreetMap Editor") + "</h1>\n"+
