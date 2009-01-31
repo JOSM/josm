@@ -1224,7 +1224,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
         styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
-        drawRestriction = Main.pref.getBoolean("mappaint.restriction",false);
+        drawRestriction = Main.pref.getBoolean("mappaint.restriction",true);
         restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
