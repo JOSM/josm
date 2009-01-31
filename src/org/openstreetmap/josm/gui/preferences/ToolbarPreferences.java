@@ -100,6 +100,7 @@ public class ToolbarPreferences implements PreferenceSetting {
      * Value: The action to execute.
      */
     private Map<String, Action> actions = new HashMap<String, Action>();
+    private Map<String, Action> regactions = new HashMap<String, Action>();
 
     private DefaultListModel selected = new DefaultListModel();
 
@@ -382,6 +383,11 @@ public class ToolbarPreferences implements PreferenceSetting {
     private void loadActions() {
         rootActionsNode.removeAllChildren();
         loadAction(rootActionsNode, Main.main.menu);
+        for(Map.Entry<String, Action> a : regactions.entrySet())
+        {
+            if(actions.get(a.getKey()) == null)
+                rootActionsNode.add(new DefaultMutableTreeNode(a.getValue()));
+        }
         rootActionsNode.add(new DefaultMutableTreeNode(null));
         actionsTree.updateUI();
         actionsTree.setRootVisible(false);
@@ -390,6 +396,7 @@ public class ToolbarPreferences implements PreferenceSetting {
 
     private static final String[] deftoolbar = {"open", "save", "exportgpx", "|",
     "download", "upload", "|", "undo", "redo", "|", "preference"};
+
     private Collection<String> getToolString() {
         return Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
     }
@@ -424,7 +431,7 @@ public class ToolbarPreferences implements PreferenceSetting {
      * @return The parameter (for better chaining)
      */
     public Action register(Action action) {
-        actions.put((String) action.getValue("toolbar"), action);
+        regactions.put((String) action.getValue("toolbar"), action);
         return action;
     }
 
