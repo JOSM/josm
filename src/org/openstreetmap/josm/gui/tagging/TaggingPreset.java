@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +40,9 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
@@ -411,7 +416,7 @@ public class TaggingPreset extends AbstractAction {
     /**
      * The types as preparsed collection.
      */
-    public Collection<Class<?>> types;
+    public List<String> types;
     public List<Item> data = new LinkedList<Item>();
     private static HashMap<String,String> lastValue = new HashMap<String,String>();
 
@@ -461,17 +466,13 @@ public class TaggingPreset extends AbstractAction {
     /**
      * Called from the XML parser to set the types this preset affects
      */
+    private static Collection<String> allowedtypes = Arrays.asList(new String[]
+    {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
     public void setType(String types) throws SAXException {
-        try {
-            for (String type : types.split(",")) {
-                type = Character.toUpperCase(type.charAt(0))+type.substring(1);
-                if (this.types == null)
-                    this.types = new LinkedList<Class<?>>();
-                this.types.add(Class.forName("org.openstreetmap.josm.data.osm."+type));
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new SAXException(tr("Unknown type"));
+        this.types = Arrays.asList(types.split(","));
+        for (String type : this.types) {
+            if(!allowedtypes.contains(type))
+                throw new SAXException(tr("Unknown type: {0}", type));
         }
     }
 
@@ -562,6 +563,17 @@ public class TaggingPreset extends AbstractAction {
             return null;
         JPanel p = new JPanel(new GridBagLayout());
         LinkedList<Item> l = new LinkedList<Item>();
+        if(types != null)
+        {
+            JPanel pp = new JPanel();
+            for(String t : types)
+            {
+                JLabel la = new JLabel(ImageProvider.get("Mf_" + t));
+                la.setToolTipText(tr("Elements of type {0} are supported.", tr(t)));
+                pp.add(la);
+            }
+            p.add(pp, GBC.eol());
+        }
 
         for (Item i : data)
         {
@@ -576,7 +588,7 @@ public class TaggingPreset extends AbstractAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = createSelection(Main.ds.getSelected());
         JPanel p = createPanel(sel);
         if (p == null)
             return;
@@ -592,28 +604,51 @@ public class TaggingPreset extends AbstractAction {
                     }
                 }
             };
-            optionPane.createDialog(Main.parent, trn("Change {0} object", "Change {0} objects", sel.size(), sel.size())).setVisible(true);
+            String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
+            if(sel.size() == 0)
+                title = tr("Nothing selected!");
+
+            optionPane.createDialog(Main.parent, title).setVisible(true);
             Object answerObj = optionPane.getValue();
             if (answerObj == null || answerObj == JOptionPane.UNINITIALIZED_VALUE ||
                     (answerObj instanceof Integer && (Integer)answerObj != JOptionPane.OK_OPTION))
                 answer = JOptionPane.CANCEL_OPTION;
         }
-        if (answer == JOptionPane.OK_OPTION) {
-            Command cmd = createCommand(Main.ds.getSelected());
+        if (sel.size() != 0 && answer == JOptionPane.OK_OPTION) {
+            Command cmd = createCommand(sel);
             if (cmd != null)
                 Main.main.undoRedo.add(cmd);
         }
         Main.ds.setSelected(Main.ds.getSelected()); // force update
     }
 
-    private Command createCommand(Collection<OsmPrimitive> participants) {
+    private Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : participants)
-            if (types == null || types.contains(osm.getClass()))
-                sel.add(osm);
-        if (sel.isEmpty())
-            return null;
+        {
+            if (types != null)
+            {
+                if(osm instanceof Relation)
+                {
+                    if(!types.contains("relation")) continue;
+                }
+                else if(osm instanceof Node)
+                {
+                    if(!types.contains("node")) continue;
+                }
+                else if(osm instanceof Way)
+                {
+                    if(!types.contains("way") &&
+                    !(types.contains("closedway") && ((Way)osm).isClosed()))
+                        continue;
+                }
+            }
+            sel.add(osm);
+        }
+        return sel;
+    }
 
+    private Command createCommand(Collection<OsmPrimitive> sel) {
         List<Command> cmds = new LinkedList<Command>();
         for (Item i : data)
             i.addCommands(sel, cmds);

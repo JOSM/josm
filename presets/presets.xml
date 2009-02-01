@@ -7,6 +7,11 @@
     http://www.sjjb.co.uk/mapicons/ (meanwhile in osm svn)
 -->
 <!--
+item:
+  name: the text to display
+  icon: the icon to display
+  type: the data types - way,node,relation,closedway (separated by comma)
+
 link: link to the relating map features website
 
 label: simple static text label
@@ -34,10 +39,12 @@ check: checkbox
   text: fixed label to display
   default: ticked on/off
   delete_if_empty: true/false
+
+See also http://josm.openstreetmap.de/wiki/TaggingPresets.
 -->
 <annotations>
     <group name="Streets" icon="presets/way_secondary.png">
-        <item name="Motorway" icon="presets/motorway.png">
+        <item name="Motorway" icon="presets/motorway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway" />
             <label text="Edit a Motorway" />
@@ -56,7 +63,7 @@ check: checkbox
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Motorway Link" icon="presets/motorway.png">
+        <item name="Motorway Link" icon="presets/motorway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_link"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway_link" />
             <label text="Edit a Motorway Link" />
@@ -73,7 +80,7 @@ check: checkbox
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Trunk" icon="presets/trunk.png">
+        <item name="Trunk" icon="presets/trunk.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=trunk" />
             <label text="Edit a Trunk" />
@@ -92,7 +99,7 @@ check: checkbox
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Trunk Link" icon="presets/trunk.png">
+        <item name="Trunk Link" icon="presets/trunk.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk_link" 
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=trunk_link"/>
             <label text="Edit a Trunk Link" />
@@ -111,7 +118,7 @@ check: checkbox
             </optional>
         </item>
         <separator/>
-        <item name="Primary" icon="presets/way_primary.png">
+        <item name="Primary" icon="presets/way_primary.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary" 
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=primary" />
             <label text="Edit a Primary Road" />
@@ -130,7 +137,7 @@ check: checkbox
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Primary Link" icon="presets/way_primary.png">
+        <item name="Primary Link" icon="presets/way_primary.png" type="way">
             <label text="Edit a Primary Link" />
             <space />
             <key key="highway" value="primary_link" />
@@ -145,7 +152,7 @@ check: checkbox
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Secondary" icon="presets/way_secondary.png">
+        <item name="Secondary" icon="presets/way_secondary.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=secondary"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=secondary"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=secondary" />
@@ -165,7 +172,7 @@ check: checkbox
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Tertiary" icon="presets/way_tertiary.png">
+        <item name="Tertiary" icon="presets/way_tertiary.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=tertiary"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=tertiary"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=tertiary" />
@@ -184,7 +191,7 @@ check: checkbox
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Unclassified" icon="presets/way_unclassified.png">
+        <item name="Unclassified" icon="presets/way_unclassified.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=unclassified"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=unclassified"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=unclassified" />
@@ -203,7 +210,7 @@ check: checkbox
                 <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Residential" icon="presets/residential.png">
+        <item name="Residential" icon="presets/residential.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=residential"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=residential" />
             <label text="Edit a Residential Street" />
@@ -221,7 +228,7 @@ check: checkbox
                 <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Living Street" icon="presets/living_street.png">
+        <item name="Living Street" icon="presets/living_street.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street" 
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street" />
             <label text="Edit a Living Street" />
@@ -239,7 +246,7 @@ check: checkbox
                 <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Service" icon="presets/way_unclassified.png">
+        <item name="Service" icon="presets/way_unclassified.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=service"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=service" />
             <label text="Edit a Serviceway" />
@@ -258,7 +265,7 @@ check: checkbox
                 <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Parking Aisle" icon="presets/way_unclassified.png">
+        <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:service=parking_aisle"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:service=parking_aisle"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:service=parking_aisle" />
@@ -272,8 +279,8 @@ check: checkbox
             </optional>
         </item>
         <separator/>
-        <item name="Road (Unknown Type)" icon="presets/way_unclassified.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road" 
+        <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road" />
             <label text="Edit a Road of unknown type" />
             <space />
@@ -2863,8 +2870,7 @@ check: checkbox
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Natural -->
-<!-- FIXME: parameter type and element role not yet supported! -->
-<!-- type should be used for all other items also to say if they are used for nodes/ways -->
+<!-- FIXME: element role not yet supported! -->
     <group name="Relations" icon="presets/empty.png">
         <item name="Multipolygon" icon="presets/empty.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
