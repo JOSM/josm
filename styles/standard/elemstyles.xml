@@ -1119,6 +1119,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="aeroway" v="aerodrome"/>
 		<line width="2" colour="aeroway#660000" dashed="true"/>
+		<area colour="aeroway#660000"/>
 		<icon annotate="true" src="transport/airport.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
