@@ -412,7 +412,7 @@ public class RelationEditor extends JFrame {
 
         bothTables.add(buttonPanel, GBC.eop().fill(GBC.HORIZONTAL));
 
-        tabPane.add(bothTables, "Basic");
+        tabPane.add(bothTables, tr("Basic"));
 
         refreshTables();
 
