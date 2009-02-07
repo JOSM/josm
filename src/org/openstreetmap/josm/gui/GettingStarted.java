@@ -200,7 +200,6 @@ public class GettingStarted extends JPanel {
             tr("Downloading \"Message of the day\"") +
             "</h2>");
         JScrollPane scroller = new JScrollPane(lg);
-        Component linkGeneral = new LinkGeneral(content);
         scroller.setViewportBorder(new EmptyBorder(10,100,10,100));
         add(scroller, BorderLayout.CENTER);
 
@@ -211,7 +210,7 @@ public class GettingStarted extends JPanel {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                        lg.setText(content);
-                       lg.moveCaretPosition(0);
+                       //lg.moveCaretPosition(0);
                     }
                 });
             }
@@ -219,6 +218,6 @@ public class GettingStarted extends JPanel {
         t.setDaemon(true);
         t.start();
 
-        new FileDrop(linkGeneral);
+        new FileDrop(scroller);
     }
 }
