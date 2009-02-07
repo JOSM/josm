@@ -1482,7 +1482,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="leisure" v="marina"/>
 		<icon annotate="true" src="nautical/marina.png"/>
-		<area colour="leisure#c7f1a3"/>
+		<area colour="marina#0070cf"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
