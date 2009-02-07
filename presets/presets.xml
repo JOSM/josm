@@ -207,7 +207,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Residential" icon="presets/residential.png" type="way">
@@ -225,7 +225,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Living Street" icon="presets/living_street.png" type="way">
@@ -243,7 +243,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Service" icon="presets/way_unclassified.png" type="way">
@@ -253,6 +253,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <space />
             <key key="highway" value="service" />
             <optional>
+                <combo key="service" text="Serviceway type" values="alley,driveway,parking_aisle" default="" delete_if_empty="true" />
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
@@ -262,7 +263,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way">
@@ -294,7 +295,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -317,9 +318,9 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
             <text key="minspeed" text="Min. speed (km/h)" default="" delete_if_empty="true" />
             <text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
-            <text key="maxheight" text="Max. Height (metres)" default="" delete_if_empty="true" />
-            <text key="maxwidth" text="Max. Width (metres)" default="" delete_if_empty="true" />
-            <text key="maxlength" text="Max. Length (metres)" default="" delete_if_empty="true" />
+            <text key="maxheight" text="Max. Height (meters)" default="" delete_if_empty="true" />
+            <text key="maxwidth" text="Max. Width (meters)" default="" delete_if_empty="true" />
+            <text key="maxlength" text="Max. Length (meters)" default="" delete_if_empty="true" />
         </item>
         <item name="Roundabout" icon="presets/roundabout.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=roundabout"
@@ -339,7 +340,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Bridge" icon="presets/bridge.png">
@@ -355,8 +356,22 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
+        </item>
+        <item name="Tunnel" icon="presets/tunnel.png">
+             <label text="Edit a Tunnel"/>
+             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
+                  de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
+                  fi:href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel" />
+             <space />
+             <key key="tunnel" value="yes" />
+             <optional>
+                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" delete_if_empty="true" />
+                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
+                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+             </optional>
         </item>
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
@@ -379,7 +394,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <combo key="junction" text="Junction" values="roundabout" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -398,7 +413,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Cycleway" icon="presets/cycleway.png">
@@ -418,7 +433,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Footway" icon="presets/footway.png">
@@ -437,7 +452,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Pedestrian" icon="presets/pedestrian.png">
@@ -455,7 +470,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Steps" icon="presets/steps.png">
@@ -475,7 +490,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -496,7 +511,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="access" text="Access" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcar" text="Motorcar" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Track Grade 1" icon="presets/track1.png">
@@ -517,7 +532,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="access" text="Access" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcar" text="Motorcar" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Track Grade 2" icon="presets/track2.png">
@@ -538,7 +553,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="access" text="Access" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcar" text="Motorcar" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Track Grade 3" icon="presets/track3.png">
@@ -559,7 +574,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="access" text="Access" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcar" text="Motorcar" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Track Grade 4" icon="presets/track4.png">
@@ -580,7 +595,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="access" text="Access" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcar" text="Motorcar" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Track Grade 5" icon="presets/track5.png">
@@ -601,7 +616,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="access" text="Access" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcar" text="Motorcar" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -629,7 +644,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Hiking" icon="presets/hiking_grade1.png">
@@ -642,7 +657,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="sac_scale" value="hiking" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Mountain Hiking" icon="presets/hiking_grade2.png">
@@ -655,7 +670,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="sac_scale" value="mountain_hiking" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Demanding Mountain Hiking" icon="presets/hiking_grade3.png">
@@ -668,7 +683,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="sac_scale" value="demanding_mountain_hiking" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Alpine Hiking" icon="presets/hiking_grade4.png">
@@ -681,7 +696,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="sac_scale" value="alpine_hiking" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Demanding alpine hiking" icon="presets/hiking_grade5.png">
@@ -694,7 +709,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="sac_scale" value="demanding_alpine_hiking" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Difficult alpine hiking" icon="presets/hiking_grade6.png">
@@ -707,7 +722,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="sac_scale" value="difficult_alpine_hiking" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
     </group> <!-- Ways -->
@@ -741,25 +756,34 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Traffic Signal" icon="presets/traffic-light.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_signals" />
             <key key="highway" value="traffic_signals" />
+            <optional>
+                 <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" default="" delete_if_empty="true" />
+                 <check key="horse" text="Cross on horseback" default="off" delete_if_empty="true" />
+                 <check key="bicycle" text="Cross by bicycle" default="off" delete_if_empty="true" />
+                 <check key="supervised" text="Crossing attendant" default="off" delete_if_empty="true" />
+                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Stop" icon="presets/Stop.png">
             <key key="highway" value="stop" />
         </item>
-        <item name="Zebra Crossing" icon="presets/zebracrossing.png">
+        <item name="Pedestrian Crossing" icon="presets/zebracrossing.png">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=crossing" />
             <label text="Edit a crossing" />
             <key key="highway" value="crossing" />
-            <combo key="crossing" text="Type" values="uncontrolled,island" default="uncontrolled" />
-            <combo key="crossing_ref" text="Ref" values="zebra,pelican" default="zebra" />
-            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
-            <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
+            <combo key="crossing" text="Type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" default="" delete_if_empty="true" />
+            <check key="bicycle" text="Cross by bicycle" default="off" delete_if_empty="true" />
+            <check key="horse" text="Cross on horseback" default="off" delete_if_empty="true" />
+            <check key="supervised" text="Crossing attendant" default="off" delete_if_empty="true" />
+            <combo key="crossing_ref" text="Type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" default="" delete_if_empty="true" />
         </item>
-        <item name="Mini Roundabout" icon="presets/roundabout_left.png">
+        <item name="Mini-roundabout" icon="presets/roundabout_left.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=mini_roundabout"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=mini_roundabout" />
             <key key="highway" value="mini_roundabout" />
+            <combo key="direction" text="Clockwise direction?" values="clockwise" default="" delete_if_empty="true" />
         </item>
         <item name="Turning Circle" icon="presets/turning_circle.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_circle"
@@ -875,7 +899,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- cattle_grid -->
         <item name="Spikes" icon="presets/empty.png">
-            <label text="Edit a Spikes" />
+            <label text="Edit Spikes" />
             <space />
             <key key="barrier" value="spikes" />
             <label text="Allowed traffic:" />
@@ -1182,7 +1206,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,cobblestone" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -1203,6 +1227,12 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Crossing" icon="presets/crossing.png">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing" />
             <key key="railway" value="crossing" />
+            <optional>
+                 <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" default="" delete_if_empty="true" />
+                 <check key="horse" text="Cross on horseback" default="off" delete_if_empty="true" />
+                 <check key="bicycle" text="Cross by bicycle" default="off" delete_if_empty="true" />
+                 <check key="supervised" text="Crossing attendant" default="off" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Turntable" icon="presets/turntable.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=turntable" />
@@ -1297,6 +1327,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Bicycle Parking" />
             <key key="amenity" value="bicycle_parking" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="capacity" text="Capacity" default="" delete_if_empty="true" />
         </item>
         <item name="Rental" icon="presets/bicycle_rental.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_rental"
@@ -1351,7 +1382,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="railway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
-            <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+            <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             <check key="area" text="Area" default="off" delete_if_empty="true" />
         </item>
         <item name="Subway Entrance" icon="presets/underground.png">
@@ -1392,7 +1423,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="highway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
-            <text key="width" text="Width (metres)" default="" delete_if_empty="true" />
+            <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             <check key="area" text="Area" default="off" delete_if_empty="true" />
         </item>
         <separator/>
@@ -2420,7 +2451,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=atm" />
             <label text="Edit Automated Teller Machine" />
             <key key="amenity" value="atm" />
-            <text key="name" text="Provider" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Cash -->
     <group name="Health" icon="presets/pharmacy.png">
