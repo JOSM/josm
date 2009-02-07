@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -246,11 +247,14 @@ public class RelationEditor extends JFrame {
             }
         });
 
+        /* I don't like this text any more. Let's just get on with doing the specialist
+         * editors instead of talking about it.
         JLabel help = new JLabel("<html><em>"+
             tr("This is the basic relation editor which allows you to change the relation's tags " +
             "as well as the members. In addition to this we should have a smart editor that " +
             "detects the type of relationship and limits your choices in a sensible way.")+"</em></html>");
         getContentPane().add(help, BorderLayout.NORTH);
+         */
         try { setAlwaysOnTop(true); } catch (SecurityException sx) {}
 
         // Basic Editor panel has two blocks;
@@ -345,7 +349,9 @@ public class RelationEditor extends JFrame {
             bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
         }
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1,3));
+        // this is not exactly pretty but the four buttons simply don't fit in one line.
+        // we should have smaller buttons for situations like this.
+        JPanel buttonPanel = new JPanel(new GridLayout(2,2));
 
         buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
         tr("Add all currently selected objects as members"), KeyEvent.VK_A, new ActionListener() {
@@ -354,14 +360,14 @@ public class RelationEditor extends JFrame {
             }
         }));
 
-        buttonPanel.add(createButton(marktr("Delete Selected"),"deleteselected",
-        tr("Delete all currently selected objects from relation"), KeyEvent.VK_R, new ActionListener() {
+        buttonPanel.add(createButton(marktr("Remove Selected"),"removeselected",
+        tr("Remove all currently selected objects from relation"), KeyEvent.VK_R, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteSelected();
             }
         }));
 
-        buttonPanel.add(createButton(marktr("Delete"),"delete",
+        buttonPanel.add(createButton(marktr("Remove"),"remove",
         tr("Remove the member in the current table row from this relation"), KeyEvent.VK_D, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int[] rows = memberTable.getSelectedRows();
