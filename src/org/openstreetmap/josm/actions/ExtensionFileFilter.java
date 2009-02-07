@@ -23,9 +23,9 @@ public class ExtensionFileFilter extends FileFilter {
     public static final int NMEA = 2;
 
     public static ExtensionFileFilter[] filters = {
-        new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files (*.osm *.xml)")),
-        new ExtensionFileFilter("gpx,gpx.gz", "gpx", tr("GPX Files (*.gpx *.gpx.gz)")),
-        new ExtensionFileFilter("nmea,txt", "nmea", tr("NMEA-0183 Files (*.nmea *.txt)")),
+        new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files")+ " (*.osm *.xml)"),
+        new ExtensionFileFilter("gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)"),
+        new ExtensionFileFilter("nmea,nme,nma,txt", "nmea", tr("NMEA-0183 Files") + " (*.nmea *.nme *.nma *.txt)"),
     };
 
     /**
