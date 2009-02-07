@@ -292,6 +292,13 @@ public class SearchCompiler {
         @Override public String toString() {return "incomplete";}
     }
 
+    private static class Untagged extends Match {
+        @Override public boolean match(OsmPrimitive osm) {
+            return !osm.tagged;
+        }
+        @Override public String toString() {return "untagged";}
+    }
+
     public static class ParseError extends Exception {
         public ParseError(String msg) {
             super(msg);
@@ -375,6 +382,8 @@ public class SearchCompiler {
             return new Modified();
         } else if (tok.equals("incomplete")) {
             return new Incomplete();
+        } else if (tok.equals("untagged")) {
+            return new Untagged();
         } else if (tok.equals("selected")) {
             return new Selected();
         } else {
