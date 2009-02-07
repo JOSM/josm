@@ -452,7 +452,7 @@ public class RelationEditor extends JFrame {
     }
 
     private JButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {
-        JButton b = new JButton(tr(name), ImageProvider.get("dialogs", iconName));
+        JButton b = new JButton((name == null) ? null : tr(name), ImageProvider.get("dialogs", iconName));
         b.setActionCommand(name);
         b.addActionListener(actionListener);
         b.setToolTipText(tooltip);
