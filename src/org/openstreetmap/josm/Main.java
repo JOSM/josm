@@ -29,6 +29,7 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Epsg4326;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -339,11 +341,26 @@ abstract public class Main {
                 }
             }
             if (modified) {
-                final String msg = uploadedModified ? "\n"+tr("Hint: Some changes came from uploading new data to the server.") : "";
-                final int answer = JOptionPane.showConfirmDialog(
-                        parent, tr("There are unsaved changes. Discard the changes and continue?")+msg,
-                        tr("Unsaved Changes"), JOptionPane.YES_NO_OPTION);
-                if (answer != JOptionPane.YES_OPTION)
+                final String msg = uploadedModified ? "\n"
+                +tr("Hint: Some changes came from uploading new data to the server.") : "";
+                int result = new ExtendedDialog(parent, tr("Unsaved Changes"),
+                new javax.swing.JLabel(tr("There are unsaved changes. Discard the changes and continue?")+msg),
+                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")},
+                new String[] {"save.png", "exit.png", "cancel.png"}).getValue(); 
+
+                // Save before exiting
+                if(result == 1) {
+                    Boolean savefailed = false;
+                    for (final Layer l : map.mapView.getAllLayers()) {
+                        if (l instanceof OsmDataLayer && ((OsmDataLayer)l).isModified()) {
+                            SaveAction save = new SaveAction(l);
+                            if(!save.doSave())
+                                savefailed = true;
+                        }
+                    }
+                    return savefailed;
+                }
+                else if(result != 2) // Cancel exiting unless the 2nd button was clicked
                     return true;
             }
         }

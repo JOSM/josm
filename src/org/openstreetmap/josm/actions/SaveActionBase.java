@@ -33,6 +33,10 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     public void actionPerformed(ActionEvent e) {
+        doSave();
+    }
+
+    public Boolean doSave() {
         Layer layer = this.layer;
         if (layer == null && Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
                 || Main.map.mapView.getActiveLayer() instanceof GpxLayer))
@@ -41,18 +45,19 @@ public abstract class SaveActionBase extends DiskAccessAction {
             layer = Main.main.editLayer();
 
         if (!checkSaveConditions(layer))
-            return;
+            return false;
 
 
         File file = getFile(layer);
         if (file == null)
-            return;
+            return false;
 
         save(file, layer);
 
         layer.name = file.getName();
         layer.associatedFile = file;
         Main.parent.repaint();
+        return true;
     }
 
     protected abstract File getFile(Layer layer);
