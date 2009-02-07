@@ -11,7 +11,7 @@ public class ColorHelper {
     public static Color html2color(String html) {
         if (html.length() > 0 && html.charAt(0) == '#')
             html = html.substring(1);
-        else if (html.length() != 6 && html.length() != 8)
+        if (html.length() != 6 && html.length() != 8)
             return null;
         try {
             return new Color(
