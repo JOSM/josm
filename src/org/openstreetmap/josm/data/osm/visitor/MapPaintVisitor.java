@@ -1199,11 +1199,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
 
         useStyleCache = Main.pref.getBoolean("mappaint.cache",true);
-        fillAreas = Main.pref.getInteger("mappaint.fillareas", 100000);
+        fillAreas = Main.pref.getInteger("mappaint.fillareas", 10000000);
         fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
-        showNames = Main.pref.getInteger("mappaint.shownames", 100000);
-        showIcons = Main.pref.getInteger("mappaint.showicons", 100000);
-        useStrokes = Main.pref.getInteger("mappaint.strokes", 100000);
+        showNames = Main.pref.getInteger("mappaint.shownames", 10000000);
+        showIcons = Main.pref.getInteger("mappaint.showicons", 10000000);
+        useStrokes = Main.pref.getInteger("mappaint.strokes", 10000000);
         LatLon ll1 = nc.getLatLon(0,0);
         LatLon ll2 = nc.getLatLon(100,0);
         dist = ll1.greatCircleDistance(ll2);
