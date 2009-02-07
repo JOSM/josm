@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
@@ -51,7 +52,8 @@ public class PleaseWaitDialog extends JDialog {
         });
     }
     
-    public void setIndeterminate(boolean newValue) {
+    public void setIndeterminate(boolean newValue) {    
+        UIManager.put("ProgressBar.cycleTime", UIManager.getInt("ProgressBar.repaintInterval") * 100);
         progressBar.setIndeterminate(newValue);
     }
 }
