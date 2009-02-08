@@ -1028,8 +1028,39 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item> <!-- entrance -->
     </group> <!-- Barriers -->
     <separator/>
-    <group name="Waterway" icon="presets/waterway.png">
-        <item name="River" icon="presets/river.png">
+    <group name="Water" icon="presets/waterway.png">
+      <item name="Spring" icon="presets/spring.png">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring" />
+        <label text="Edit a Spring" />
+        <key key="natural" value="spring" />
+        <text key="name" text="Name" default="" delete_if_empty="true" />
+      </item>
+      <separator/>
+      <item name="Drain" icon="presets/waterway.png">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=drain" />
+        <label text="Edit a Drain" />
+        <space />
+        <key key="waterway" value="drain" />
+        <text key="name" text="Name" default="" delete_if_empty="true" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+      </item>
+      <item name="Stream" icon="presets/waterway.png">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=stream" />
+        <label text="Edit a Stream" />
+        <space />
+        <key key="waterway" value="stream" />
+        <text key="name" text="Name" default="" delete_if_empty="true" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+      </item>
+      <item name="Canal" icon="presets/waterway.png">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal" />
+        <label text="Edit a Canal" />
+        <space />
+        <key key="waterway" value="canal" />
+        <text key="name" text="Name" default="" delete_if_empty="true" />
+        <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+      </item>
+      <item name="River" icon="presets/river.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=river"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=river"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:waterway=river" />
@@ -1039,64 +1070,117 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
         </item>
-        <item name="Canal" icon="presets/waterway.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal" />
-            <label text="Edit a Canal" />
-            <space />
-            <key key="waterway" value="canal" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+        <separator/>
+        <item name="Water" icon="presets/water.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water" />
+          <label text="Edit Water" />
+          <key key="natural" value="water" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Drain" icon="presets/waterway.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=drain" />
-            <label text="Edit a Drain" />
-            <space />
-            <key key="waterway" value="drain" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+        <item name="Land" icon="presets/landuse.png">
+          <label text="Edit Land" />
+          <key key="natural" value="land" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Stream" icon="presets/waterway.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=stream" />
-            <label text="Edit a Stream" />
-            <space />
-            <key key="waterway" value="stream" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+        <separator/>
+        <item name="Basin" icon="presets/landuse_water.png">
+          <label text="Edit Basin Landuse" />
+          <space />
+          <key key="landuse" value="basin" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Reservoir" icon="presets/landuse_water.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=reservoir" />
+          <label text="Edit Reservoir Landuse" />
+          <space />
+          <key key="landuse" value="reservoir" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Covered Reservoir" icon="presets/reservoir_covered.png">
+          <label text="Edit Covered Reservoir" />
+          <key key="man_made" value="reservoir_covered" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
+        <item name="Riverbank" icon="presets/waterway.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
+                de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=riverbank" />
+          <label text="Edit a riverbank" />
+          <key key="waterway" value="riverbank" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Wetland" icon="presets/empty.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
+                de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland"
+                pt:href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=wetland"
+                pt_BR:href="http://wiki.openstreetmap.org/wiki/Pt_br:Tag:natural=wetland" />
+          <label text="Edit Wetland" />
+          <key key="natural" value="wetland" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+          <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" default="" delete_if_empty="true" />
+        </item>
+        <item name="Mud" icon="presets/empty.png">
+          <label text="Edit Mud" />
+          <key key="natural" value="mud" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Beach" icon="presets/empty.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach" />
+          <label text="Edit Beach" />
+          <key key="natural" value="beach" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Bay" icon="presets/empty.png">
+          <label text="Edit Bay" />
+          <key key="natural" value="bay" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Cliff" icon="presets/empty.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff" />
+          <label text="Edit Cliff" />
+          <key key="natural" value="cliff" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Coastline" icon="presets/empty.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline" />
+          <label text="Edit Coastline" />
+          <key key="natural" value="coastline" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Ferry Route" icon="presets/ferry.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry" />
-            <label text="Edit a Ferry" />
-            <space />
-            <key key="route" value="ferry" />
-            <optional>
-                <text key="name" text="Name" default="" delete_if_empty="true" />
-            </optional>
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry" />
+          <label text="Edit a Ferry" />
+          <space />
+          <key key="route" value="ferry" />
+          <optional>
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+          </optional>
         </item>
         <separator/>
         <item name="Boatyard" icon="presets/boatyard.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=boatyard" />
-            <label text="Edit a Boatyard" />
-            <space />
-            <key key="waterway" value="boatyard" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=boatyard" />
+          <label text="Edit a Boatyard" />
+          <space />
+          <key key="waterway" value="boatyard" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Dock" icon="presets/waterway.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dock" />
-            <label text="Edit a Dock" />
-            <space />
-            <key key="waterway" value="dock" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dock" />
+          <label text="Edit a Dock" />
+          <space />
+          <key key="waterway" value="dock" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Dam" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam" />
-            <label text="Edit a Dam" />
-            <space />
-            <key key="waterway" value="dam" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam" />
+          <label text="Edit a Dam" />
+          <space />
+          <key key="waterway" value="dam" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group> <!-- Waterway -->
+      </group> <!-- Water -->
     <group name="Waterway Point" icon="presets/waterwaypoint.png">
         <item name="Lock Gate" icon="presets/lock_gate.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=lock_gate" />
@@ -2106,11 +2190,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="man_made" value="gasometer" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Covered Reservoir" icon="presets/reservoir_covered.png">
-            <label text="Edit Covered Reservoir" />
-            <key key="man_made" value="reservoir_covered" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
         <item name="Lighthouse" icon="presets/lighthouse.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=lighthouse" />
             <label text="Edit Lighthouse" />
@@ -2576,6 +2655,34 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="place" value="island" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
+        <item name="Cave Entrance" icon="presets/empty.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance" />
+            <label text="Edit Cave Entrance" />
+            <key key="natural" value="cave_entrance" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Peak" icon="presets/peak.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=peak" />
+            <label text="Edit Peak" />
+            <key key="natural" value="peak" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+        </item>
+        <item name="Glacier" icon="presets/glacier.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=glacier" />
+            <label text="Edit Glacier" />
+            <key key="natural" value="glacier" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+        </item>
+        <item name="Volcano" icon="presets/volcano.png">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=volcano" />
+            <label text="Edit Volcano" />
+            <key key="natural" value="volcano" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+        </item>
     </group> <!-- Places -->
     <group name="Boundaries" icon="presets/boundaries.png">
         <item name="National" icon="presets/boundaries.png">
@@ -2610,13 +2717,32 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
     </group> <!-- Boundaries -->
     <group name="Land use" icon="presets/landuse.png">
-        <item name="Graveyard" icon="presets/graveyard.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=grave_yard" />
-            <label text="Edit Graveyard" />
-            <key key="amenity" value="grave_yard" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
+      <item name="Tree" icon="presets/tree.png">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree"
+              fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:natural=tree"  />
+        <label text="Edit a Tree" />
+        <key key="natural" value="tree" />
+        <text key="name" text="Name" default="" delete_if_empty="true" />
+        <text key="type" text="Type" default="" delete_if_empty="true" />
+        <text key="height" text="Height" default="" delete_if_empty="true" />
+        <text key="name:botanical" text="Botanical Name" default="" delete_if_empty="true" />
+      </item>
+      <item name="Wood" icon="presets/landuse.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
+                de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood" />
+          <label text="Edit Wood" />
+          <key key="natural" value="wood" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+          <combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
+        </item>
+        <item name="Forest" icon="presets/landuse.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"
+                de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=forest" />
+          <label text="Edit Forest Landuse" />
+          <space />
+          <key key="landuse" value="forest" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+          <combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
         </item>
         <item name="Farmyard" icon="presets/landuse.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmyard"
@@ -2632,63 +2758,67 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="landuse" value="farmland" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-				<item name="Meadow" icon="presets/landuse.png">
-					<label text="Edit Meadow Landuse" />
-					<space />
-					<key key="landuse" value="meadow" />
-					<text key="name" text="Name" default="" delete_if_empty="true" />
-				</item>
-				<item name="Vineyard" icon="presets/fruits.png">
-            <label text="Edit Vineyard Landuse" />
-            <space />
-            <key key="landuse" value="vineyard" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+        <item name="Meadow" icon="presets/landuse.png">
+          <label text="Edit Meadow Landuse" />
+          <space />
+          <key key="landuse" value="meadow" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Quarry" icon="presets/mine.png">
-            <label text="Edit Quarry Landuse" />
-            <space />
-            <key key="landuse" value="quarry" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Landfill" icon="presets/landuse.png">
-            <label text="Edit Landfill Landuse" />
-            <space />
-            <key key="landuse" value="landfill" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Basin" icon="presets/landuse_water.png">
-            <label text="Edit Basin Landuse" />
-            <space />
-            <key key="landuse" value="basin" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Reservoir" icon="presets/landuse_water.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=reservoir" />
-            <label text="Edit Reservoir Landuse" />
-            <space />
-            <key key="landuse" value="reservoir" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Forest" icon="presets/landuse.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=forest" />
-            <label text="Edit Forest Landuse" />
-            <space />
-            <key key="landuse" value="forest" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
+        <item name="Vineyard" icon="presets/fruits.png">
+          <label text="Edit Vineyard Landuse" />
+          <space />
+          <key key="landuse" value="vineyard" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Allotments" icon="presets/landuse.png">
-            <label text="Edit Allotments Landuse" />
-            <space />
-            <key key="landuse" value="allotments" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <label text="Edit Allotments Landuse" />
+          <space />
+          <key key="landuse" value="allotments" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Grass" icon="presets/landuse.png">
+          <label text="Edit Grass Landuse" />
+          <space />
+          <key key="landuse" value="grass" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Village Green" icon="presets/landuse.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=village_green" />
+          <label text="Edit Village Green Landuse" />
+          <space />
+          <key key="landuse" value="village_green" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Recreation Ground" icon="presets/landuse.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=recreation_ground" />
+          <label text="Edit Recreation Ground Landuse" />
+          <space />
+          <key key="landuse" value="recreation_ground" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
         <item name="Residential area" icon="presets/landuse.png">
             <label text="Edit Residential Landuse" />
             <space />
             <key key="landuse" value="residential" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Graveyard" icon="presets/graveyard.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=grave_yard" />
+          <label text="Edit Graveyard" />
+          <key key="amenity" value="grave_yard" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+          <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+          <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
+        </item>
+        <item name="Cemetery" icon="presets/cemetery.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=cemetery" />
+          <label text="Edit Cemetery Landuse" />
+          <space />
+          <key key="landuse" value="cemetery" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+          <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+          <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
         </item>
         <item name="Retail" icon="presets/landuse.png">
             <label text="Edit Retail Landuse" />
@@ -2708,18 +2838,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="landuse" value="industrial" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Brownfield" icon="presets/landuse.png">
-            <label text="Edit Brownfield Landuse" />
-            <space />
-            <key key="landuse" value="brownfield" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Greenfield" icon="presets/landuse.png">
-            <label text="Edit Greenfield Landuse" />
-            <space />
-            <key key="landuse" value="greenfield" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
         <item name="Railway land" icon="presets/rail_light.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=railway" />
             <label text="Edit Railway Landuse" />
@@ -2727,11 +2845,36 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="landuse" value="railway" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
+        <item name="Brownfield" icon="presets/landuse.png">
+          <label text="Edit Brownfield Landuse" />
+          <space />
+          <key key="landuse" value="brownfield" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Greenfield" icon="presets/landuse.png">
+          <label text="Edit Greenfield Landuse" />
+          <space />
+          <key key="landuse" value="greenfield" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Construction area" icon="presets/construction.png">
             <label text="Edit Construction Landuse" />
             <space />
             <key key="landuse" value="construction" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Landfill" icon="presets/landuse.png">
+          <label text="Edit Landfill Landuse" />
+          <space />
+          <key key="landuse" value="landfill" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Quarry" icon="presets/mine.png">
+          <label text="Edit Quarry Landuse" />
+          <space />
+          <key key="landuse" value="quarry" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Military" icon="presets/military.png">
             <label text="Edit Military Landuse" />
@@ -2739,168 +2882,30 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="landuse" value="military" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Cemetery" icon="presets/cemetery.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=cemetery" />
-            <label text="Edit Cemetery Landuse" />
-            <space />
-            <key key="landuse" value="cemetery" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
-        </item>
-        <item name="Village Green" icon="presets/landuse.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=village_green" />
-            <label text="Edit Village Green Landuse" />
-            <space />
-            <key key="landuse" value="village_green" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Grass" icon="presets/landuse.png">
-            <label text="Edit Grass Landuse" />
-            <space />
-            <key key="landuse" value="grass" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Recreation Ground" icon="presets/landuse.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=recreation_ground" />
-            <label text="Edit Recreation Ground Landuse" />
-            <space />
-            <key key="landuse" value="recreation_ground" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-    </group> <!-- Landuse -->
-    <group name="Natural" icon="presets/water.png">
-        <item name="Water" icon="presets/water.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water" />
-            <label text="Edit Water" />
-            <key key="natural" value="water" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Land" icon="presets/empty.png">
-            <label text="Edit Land" />
-            <key key="natural" value="land" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Tree" icon="presets/tree.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree"
-                  fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:natural=tree"  />
-            <label text="Edit a Tree" />
-            <key key="natural" value="tree" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="type" text="Type" default="" delete_if_empty="true" />
-            <text key="height" text="Height" default="" delete_if_empty="true" />
-            <text key="name:botanical" text="Botanical Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Spring" icon="presets/spring.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring" />
-            <label text="Edit a Spring" />
-            <key key="natural" value="spring" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Cave Entrance" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance" />
-            <label text="Edit Cave Entrance" />
-            <key key="natural" value="cave_entrance" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Peak" icon="presets/peak.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=peak" />
-            <label text="Edit Peak" />
-            <key key="natural" value="peak" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="ele" text="Elevation" default="" delete_if_empty="true" />
-        </item>
-        <item name="Glacier" icon="presets/glacier.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=glacier" />
-            <label text="Edit Glacier" />
-            <key key="natural" value="glacier" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="ele" text="Elevation" default="" delete_if_empty="true" />
-        </item>
-        <item name="Volcano" icon="presets/volcano.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=volcano" />
-            <label text="Edit Volcano" />
-            <key key="natural" value="volcano" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="ele" text="Elevation" default="" delete_if_empty="true" />
-        </item>
+        <separator/>
         <item name="Scree" icon="presets/empty.png">
-            <label text="Edit Scree" />
-            <key key="natural" value="scree" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <label text="Edit Scree" />
+          <key key="natural" value="scree" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Scrub" icon="presets/empty.png">
-            <label text="Edit Scrub" />
-            <key key="natural" value="scrub" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <label text="Edit Scrub" />
+          <key key="natural" value="scrub" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Fell" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell" />
-            <label text="Edit Fell" />
-            <key key="natural" value="fell" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell" />
+          <label text="Edit Fell" />
+          <key key="natural" value="fell" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Heath" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath" />
-            <label text="Edit Heath" />
-            <key key="natural" value="heath" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath" />
+          <label text="Edit Heath" />
+          <key key="natural" value="heath" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Wood" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood" />
-            <label text="Edit Wood" />
-            <key key="natural" value="wood" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
-        </item>
-        <separator/>
-        <item name="Riverbank" icon="presets/waterway.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=riverbank" />
-            <label text="Edit a riverbank" />
-            <key key="waterway" value="riverbank" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Coastline" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline" />
-            <label text="Edit Coastline" />
-            <key key="natural" value="coastline" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Wetland" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
-                  de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland"
-                  pt:href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=wetland"
-                  pt_BR:href="http://wiki.openstreetmap.org/wiki/Pt_br:Tag:natural=wetland" />
-            <label text="Edit Wetland" />
-            <key key="natural" value="wetland" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" default="" delete_if_empty="true" />
-        </item>
-        <item name="Mud" icon="presets/empty.png">
-            <label text="Edit Mud" />
-            <key key="natural" value="mud" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Beach" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach" />
-            <label text="Edit Beach" />
-            <key key="natural" value="beach" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Bay" icon="presets/empty.png">
-            <label text="Edit Bay" />
-            <key key="natural" value="bay" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Cliff" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff" />
-            <label text="Edit Cliff" />
-            <key key="natural" value="cliff" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-    </group> <!-- Natural -->
+    </group> <!-- Landuse -->
 <!-- FIXME: element role not yet supported! -->
     <group name="Relations" icon="presets/empty.png">
         <item name="Multipolygon" icon="presets/empty.png" type="relation">
