@@ -360,18 +360,18 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <item name="Tunnel" icon="presets/tunnel.png">
-             <label text="Edit a Tunnel"/>
-             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
+            <label text="Edit a Tunnel"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel" />
-             <space />
-             <key key="tunnel" value="yes" />
-             <optional>
-                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" delete_if_empty="true" />
-                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
-             </optional>
+            <space />
+            <key key="tunnel" value="yes" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" delete_if_empty="true" />
+                <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+            </optional>
         </item>
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
@@ -783,7 +783,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=mini_roundabout" />
             <key key="highway" value="mini_roundabout" />
-            <combo key="direction" text="Clockwise direction?" values="clockwise" default="" delete_if_empty="true" />
+            <combo key="direction" text="Direction" values="clockwise" default="" delete_if_empty="true" />
         </item>
         <item name="Turning Circle" icon="presets/turning_circle.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_circle"
