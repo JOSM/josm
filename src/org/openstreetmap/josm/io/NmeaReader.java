@@ -135,6 +135,17 @@ public class NmeaReader {
 //      new SimpleDateFormat("HHmmss.SSS");
     private final static SimpleDateFormat RMCTIMEFMT =
         new SimpleDateFormat("ddMMyyHHmmss.SSS");
+    private final static SimpleDateFormat RMCTIMEFMTSTD =
+        new SimpleDateFormat("ddMMyyHHmmss");
+
+    private Date readTime(String p)
+    {
+        Date d = RMCTIMEFMT.parse(p, new ParsePosition(0));
+        if (d == null)
+            d = RMCTIMEFMTSTD.parse(p, new ParsePosition(0));
+        if (d == null) throw(null); // malformed
+        return d;
+    }
 
     // functons for reading the error stats
     public NMEAParserState ps;
@@ -257,8 +268,7 @@ public class NmeaReader {
 
                 // time
                 accu = e[GPGGA.TIME.position];
-                Date d = RMCTIMEFMT.parse(currentDate+accu, new ParsePosition(0));
-                if (d == null) throw(null); // malformed
+                Date d = readTime(currentDate+accu);
 
                 if((ps.p_Time==null) || (currentwp==null) || !ps.p_Time.equals(accu)) {
                     // this node is newer than the previous, create a new waypoint.
@@ -375,8 +385,7 @@ public class NmeaReader {
                 currentDate = e[GPRMC.DATE.position];
                 String time = e[GPRMC.TIME.position];
 
-                Date d = RMCTIMEFMT.parse(currentDate+time, new ParsePosition(0));
-                if (d == null) throw(null);
+                Date d = readTime(currentDate+time);
 
                 if((ps.p_Time==null) || (currentwp==null) || !ps.p_Time.equals(time)) {
                     // this node is newer than the previous, create a new waypoint.
@@ -425,7 +434,7 @@ public class NmeaReader {
 
         } catch(Exception x) {
             // out of bounds and such
-            //System.out.println("Malformed line: "+s.toString().trim());
+            // System.out.println("Malformed line: "+s.toString().trim());
             ps.malformed++;
             ps.p_Wp=null;
             return false;
