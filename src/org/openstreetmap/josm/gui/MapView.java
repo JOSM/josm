@@ -14,16 +14,19 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -355,6 +358,15 @@ public class MapView extends NavigatableComponent {
         if (old != layer) {
             for (Layer.LayerChangeListener l : Layer.listeners)
                 l.activeLayerChange(old, layer);
+        }
+        
+        /* This only makes the buttons look disabled. Disabling the actions as well requires
+         * the user to re-select the tool after i.e. moving a layer. While testing I found
+         * that I switch layers and actions at the same time and it was annoying to mind the
+         * order. This way it works as visual clue for new users */
+        for (Enumeration e = Main.map.toolGroup.getElements() ; e.hasMoreElements() ;) {
+            AbstractButton x=(AbstractButton)e.nextElement();
+            x.setEnabled(((MapMode)x.getAction()).layerIsSupported(layer));
         }
         repaint();
     }

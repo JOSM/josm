@@ -9,6 +9,7 @@ import java.awt.event.MouseMotionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -69,6 +70,12 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
     public void actionPerformed(ActionEvent e) {
         if (Main.map != null)
             Main.map.selectMapMode(this);
+    }
+    
+    // By default, all tools will work with all layers. Can be overwritten to require
+    // a special type of layer
+    public boolean layerIsSupported(Layer l) {
+        return true;
     }
 
     public void mouseReleased(MouseEvent e) {}

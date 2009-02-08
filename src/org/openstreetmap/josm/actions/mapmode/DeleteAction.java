@@ -14,6 +14,8 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -127,5 +129,9 @@ public class DeleteAction extends MapMode {
 
     @Override public String getModeHelpText() {
         return tr("Click to delete. Shift: delete way segment. Alt: don't delete unused nodes when deleting a way. Ctrl: delete referring objects.");
+    }
+    
+    @Override public boolean layerIsSupported(Layer l) {
+        return l instanceof OsmDataLayer;
     }
 }

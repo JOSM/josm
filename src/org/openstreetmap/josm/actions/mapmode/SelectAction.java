@@ -31,6 +31,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
@@ -393,5 +395,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
         } else {
             return tr("Move objects by dragging; Shift to add to selection (Ctrl to remove); Shift-Ctrl to rotate selected; or change selection");
         }
+    }
+    
+    @Override public boolean layerIsSupported(Layer l) {
+        return l instanceof OsmDataLayer;
     }
 }

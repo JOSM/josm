@@ -28,6 +28,8 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -256,4 +258,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             return tr("Drag a way segment to make a rectangle.");
         }
     }
+		
+		@Override public boolean layerIsSupported(Layer l) {
+				return l instanceof OsmDataLayer;
+		}
 }
