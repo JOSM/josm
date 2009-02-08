@@ -441,7 +441,7 @@ public class NmeaReader {
         }
     }
 
-    private LatLon parseLatLon(String ew, String ns, String dlat, String dlon)
+    private LatLon parseLatLon(String ns, String ew, String dlat, String dlon)
         throws NumberFormatException {
         String widthNorth = dlat.trim();
         String lengthEast = dlon.trim();
@@ -461,7 +461,6 @@ public class NmeaReader {
         double latmin = Double.parseDouble(widthNorth.substring(latdegsep));
         double lat = latdeg + latmin / 60;
         if ("S".equals(ns)) {
-            if(!ew.equals("N")) return null;
             lat = -lat;
         }
 
@@ -472,7 +471,6 @@ public class NmeaReader {
         double lonmin = Double.parseDouble(lengthEast.substring(londegsep));
         double lon = londeg + lonmin / 60;
         if ("W".equals(ew)) {
-            if(!ew.equals("E")) return null;
             lon = -lon;
         }
         return new LatLon(lat, lon);
