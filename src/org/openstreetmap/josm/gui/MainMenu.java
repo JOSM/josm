@@ -26,6 +26,7 @@ import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.CreateCircleAction;
 import org.openstreetmap.josm.actions.DeleteAction;
+import org.openstreetmap.josm.actions.DistributeAction;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
@@ -108,6 +109,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction reverseWay = new ReverseWayAction();
     public final JosmAction alignInCircle = new AlignInCircleAction();
     public final JosmAction alignInLine = new AlignInLineAction();
+    public final JosmAction distribute = new DistributeAction();
     public final JosmAction ortho = new OrthogonalizeAction();
     public final AddNodeAction addnode = new AddNodeAction();
     public final JosmAction createCircle = new CreateCircleAction();
@@ -231,6 +233,7 @@ public class MainMenu extends JMenuBar {
         toolsMenu.addSeparator();
         add(toolsMenu, alignInCircle);
         add(toolsMenu, alignInLine);
+        add(toolsMenu, distribute);
         add(toolsMenu, ortho);
         toolsMenu.addSeparator();
         add(toolsMenu, addnode);
