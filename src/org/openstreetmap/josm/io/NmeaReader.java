@@ -157,7 +157,7 @@ public class NmeaReader {
         return ps.zero_coord;
     }
     public int getParserChecksumErrors() {
-        return ps.checksum_errors;
+        return ps.checksum_errors+ps.no_checksum;
     }
     public int getParserMalformed() {
         return ps.malformed;
@@ -218,6 +218,7 @@ public class NmeaReader {
         protected int success = 0; // number of successfully parsend sentences
         protected int malformed = 0;
         protected int checksum_errors = 0;
+        protected int no_checksum = 0;
         protected int unknown = 0;
         protected int zero_coord = 0;
     }
@@ -234,15 +235,20 @@ public class NmeaReader {
             // if there is no * or other meanities it will throw
             // and result in a malformed packet.
             String[] chkstrings = s.split("\\*");
-            byte[] chb = chkstrings[0].getBytes();
-            int chk=0;
-            for(int i = 1; i < chb.length; i++) chk ^= chb[i];
-            if(Integer.parseInt(chkstrings[1].substring(0,2),16) != chk) {
-                //System.out.println("Checksum error");
-                ps.checksum_errors++;
-                ps.p_Wp=null;
-                return false;
+            if(chkstrings.length > 1)
+            {
+                byte[] chb = chkstrings[0].getBytes();
+                int chk=0;
+                for(int i = 1; i < chb.length; i++) chk ^= chb[i];
+                if(Integer.parseInt(chkstrings[1].substring(0,2),16) != chk) {
+                    //System.out.println("Checksum error");
+                    ps.checksum_errors++;
+                    ps.p_Wp=null;
+                    return false;
+                }
             }
+            else
+                ps.no_checksum++;
             // now for the content
             String[] e = chkstrings[0].split(",");
             String accu;
@@ -434,6 +440,7 @@ public class NmeaReader {
 
         } catch(Exception x) {
             // out of bounds and such
+            // x.printStackTrace();
             // System.out.println("Malformed line: "+s.toString().trim());
             ps.malformed++;
             ps.p_Wp=null;
@@ -459,6 +466,8 @@ public class NmeaReader {
 
         int latdeg = Integer.parseInt(widthNorth.substring(0, latdegsep));
         double latmin = Double.parseDouble(widthNorth.substring(latdegsep));
+        if(latdeg < 0) // strange data with '-' sign
+            latmin *= -1.0;
         double lat = latdeg + latmin / 60;
         if ("S".equals(ns)) {
             lat = -lat;
@@ -469,6 +478,8 @@ public class NmeaReader {
 
         int londeg = Integer.parseInt(lengthEast.substring(0, londegsep));
         double lonmin = Double.parseDouble(lengthEast.substring(londegsep));
+        if(londeg < 0) // strange data with '-' sign
+            lonmin *= -1.0;
         double lon = londeg + lonmin / 60;
         if ("W".equals(ew)) {
             lon = -lon;
