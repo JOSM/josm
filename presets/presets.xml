@@ -1743,27 +1743,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="leisure" value="fishing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Nature Reserve" icon="presets/empty.png">
-            <label text="Edit Nature Reserve" />
-            <key key="leisure" value="nature_reserve" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Park" icon="presets/empty.png">
-            <label text="Edit Park" />
-            <key key="leisure" value="park" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Garden" icon="presets/empty.png">
-            <label text="Edit Garden" />
-            <key key="leisure" value="garden" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Common" icon="presets/empty.png">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=common" />
-            <label text="Edit Common" />
-            <key key="leisure" value="common" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
     </group> <!-- Leisure -->
     <separator/>
     <group name="Sport Facilities" icon="presets/stadium.png">
@@ -2744,6 +2723,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
           <text key="name" text="Name" default="" delete_if_empty="true" />
           <combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
         </item>
+        <item name="Nature Reserve" icon="presets/empty.png">
+          <label text="Edit Nature Reserve" />
+          <key key="leisure" value="nature_reserve" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Farmyard" icon="presets/landuse.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmyard"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=farmyard" />
@@ -2776,6 +2760,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
           <key key="landuse" value="allotments" />
           <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Garden" icon="presets/empty.png">
+          <label text="Edit Garden" />
+          <key key="leisure" value="garden" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Grass" icon="presets/landuse.png">
           <label text="Edit Grass Landuse" />
           <space />
@@ -2787,6 +2776,17 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
           <label text="Edit Village Green Landuse" />
           <space />
           <key key="landuse" value="village_green" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Common" icon="presets/empty.png">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=common" />
+          <label text="Edit Common" />
+          <key key="leisure" value="common" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Park" icon="presets/empty.png">
+          <label text="Edit Park" />
+          <key key="leisure" value="park" />
           <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Recreation Ground" icon="presets/landuse.png">
