@@ -727,20 +727,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
     </group> <!-- Ways -->
     <group name="Waypoints" icon="presets/waypoints.png">
-        <item name="Motorway Junction" icon="presets/motorway_junction.png">
+        <item name="Motorway Junction" icon="presets/motorway_exit.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_junction" />
             <label text="Edit Motorway Junction" />
             <space />
             <key key="highway" value="motorway_junction" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ref" text="Number" default="" delete_if_empty="true" />
-        </item>
-        <item name="Highway Exit" icon="presets/motorway_exit.png">
-            <label text="Edit an Exit" />
-            <optional>
-                <text key="ref" text="Exit Number" default="" delete_if_empty="true" />
-                <text key="name" text="Exit Name" default="" delete_if_empty="true" />
-            </optional>
         </item>
         <item name="Services" icon="presets/car_service.png">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=services" />
