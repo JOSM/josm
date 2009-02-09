@@ -270,6 +270,26 @@ public class SearchCompiler {
         }
         @Override public String toString() {return "nodes="+count;}
     }
+    
+    private static class NodeCountRange extends Match {
+        private int minCount;
+        private int maxCount;
+        public NodeCountRange(int minCount, int maxCount) { 
+            if(maxCount < minCount) {
+                this.minCount = maxCount;
+                this.maxCount = minCount;
+            } else {
+                this.minCount = minCount;
+                this.maxCount = maxCount;
+            }
+        }
+        @Override public boolean match(OsmPrimitive osm) {
+            if(!(osm instanceof Way)) return false;
+            int size = ((Way)osm).nodes.size();
+            return (size >= minCount) && (size <= maxCount);
+        }
+        @Override public String toString() {return "nodes="+minCount+"-"+maxCount;}
+    }
 
     private static class Modified extends Match {
         @Override public boolean match(OsmPrimitive osm) {
@@ -397,7 +417,16 @@ public class SearchCompiler {
         } else if (key.equals("user")) {
             return new UserMatch(value);
         } else if (key.equals("nodes")) {
-            return new NodeCount(Integer.parseInt(value));
+            try {
+                return new NodeCount(Integer.parseInt(value));
+            } catch(Exception x) {}
+        
+            try {
+                String[] range = value.split("-", 2);
+                return new NodeCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
+            } catch(Exception x) {}
+            
+            return new NodeCount(0);
         } else if (key.equals("id")) {
             try {
                 return new Id(Long.parseLong(value));
