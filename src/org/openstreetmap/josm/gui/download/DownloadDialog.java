@@ -101,10 +101,10 @@ public class DownloadDialog extends JPanel {
 
         // predefined download selections
         downloadSelections.add(new SlippyMapChooser());
-        downloadSelections.add(new BoundingBoxSelection());
-        downloadSelections.add(new TileSelection());
         downloadSelections.add(new BookmarkSelection());
+        downloadSelections.add(new BoundingBoxSelection());
         downloadSelections.add(new PlaceSelection());
+        downloadSelections.add(new TileSelection());
         downloadSelections.add(new WorldChooser());
 
         // add selections from plugins
