@@ -299,7 +299,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <separator/>
-        <item name="Road Restrictions" icon="presets/restrictions.png">
+        <item name="Road Restrictions" icon="presets/restrictions.png" type="node,way">
             <label text="Edit Road Restrictions" />
             <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
             <check key="toll" text="Toll" default="off" delete_if_empty="true"  />
@@ -322,7 +322,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="maxwidth" text="Max. Width (meters)" default="" delete_if_empty="true" />
             <text key="maxlength" text="Max. Length (meters)" default="" delete_if_empty="true" />
         </item>
-        <item name="Roundabout" icon="presets/roundabout.png">
+        <item name="Roundabout" icon="presets/roundabout.png" type="closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=roundabout"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:junction=roundabout"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Tag:junction=roundabout"
@@ -343,7 +343,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Bridge" icon="presets/bridge.png">
+        <item name="Bridge" icon="presets/bridge.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Key:bridge"
@@ -359,7 +359,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Tunnel" icon="presets/tunnel.png">
+        <item name="Tunnel" icon="presets/tunnel.png" type="way">
             <label text="Edit a Tunnel"/>
             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
@@ -375,7 +375,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
-        <item name="Construction" icon="presets/construction.png">
+        <item name="Construction" icon="presets/construction.png" type="way">
             <label text="Edit a highway under construction" />
 <!--     FIXME: no entry in the Wiki
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
@@ -398,7 +398,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <separator/>
-        <item name="Bridleway" icon="presets/equestrian.png">
+        <item name="Bridleway" icon="presets/equestrian.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bridleway" />
             <label text="Edit a Bridleway" />
             <space />
@@ -416,7 +416,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Cycleway" icon="presets/cycleway.png">
+        <item name="Cycleway" icon="presets/cycleway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
@@ -436,7 +436,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Footway" icon="presets/footway.png">
+        <item name="Footway" icon="presets/footway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=footway"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=footway" />
             <label text="Edit a Footway" />
@@ -455,7 +455,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Pedestrian" icon="presets/pedestrian.png">
+        <item name="Pedestrian" icon="presets/pedestrian.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=pedestrian"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=pedestrian" />
             <label text="Edit a Pedestrian Street" />
@@ -473,7 +473,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Steps" icon="presets/steps.png">
+        <item name="Steps" icon="presets/steps.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=steps"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=steps"
                   fi:href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=steps" />
@@ -494,7 +494,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <separator/>
-        <item name="Track" icon="presets/track1.png">
+        <item name="Track" icon="presets/track1.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=track"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=track" />
             <label text="Edit a Track" />
@@ -514,7 +514,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Track Grade 1" icon="presets/track1.png">
+        <item name="Track Grade 1" icon="presets/track1.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
             <label text="Edit a Track of grade 1" />
@@ -535,7 +535,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Track Grade 2" icon="presets/track2.png">
+        <item name="Track Grade 2" icon="presets/track2.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
             <label text="Edit a Track of grade 2" />
@@ -556,7 +556,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Track Grade 3" icon="presets/track3.png">
+        <item name="Track Grade 3" icon="presets/track3.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
             <label text="Edit a Track of grade 3" />
@@ -577,7 +577,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Track Grade 4" icon="presets/track4.png">
+        <item name="Track Grade 4" icon="presets/track4.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
             <label text="Edit a Track of grade 4" />
@@ -598,7 +598,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Track Grade 5" icon="presets/track5.png">
+        <item name="Track Grade 5" icon="presets/track5.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
             <label text="Edit a Track of grade 5" />
@@ -620,7 +620,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <separator/>
-        <item name="Path" icon="presets/path.png">
+        <item name="Path" icon="presets/path.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=path" />
             <label text="Edit Path" />
@@ -647,7 +647,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Hiking" icon="presets/hiking_grade1.png">
+        <item name="Hiking" icon="presets/hiking_grade1.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
@@ -660,7 +660,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Mountain Hiking" icon="presets/hiking_grade2.png">
+        <item name="Mountain Hiking" icon="presets/hiking_grade2.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
@@ -673,7 +673,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Demanding Mountain Hiking" icon="presets/hiking_grade3.png">
+        <item name="Demanding Mountain Hiking" icon="presets/hiking_grade3.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
@@ -686,7 +686,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Alpine Hiking" icon="presets/hiking_grade4.png">
+        <item name="Alpine Hiking" icon="presets/hiking_grade4.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
@@ -699,7 +699,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Demanding alpine hiking" icon="presets/hiking_grade5.png">
+        <item name="Demanding alpine hiking" icon="presets/hiking_grade5.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
@@ -712,7 +712,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Difficult alpine hiking" icon="presets/hiking_grade6.png">
+        <item name="Difficult alpine hiking" icon="presets/hiking_grade6.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
@@ -727,7 +727,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
     </group> <!-- Ways -->
     <group name="Waypoints" icon="presets/waypoints.png">
-        <item name="Motorway Junction" icon="presets/motorway_exit.png">
+        <item name="Motorway Junction" icon="presets/motorway_exit.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_junction" />
             <label text="Edit Motorway Junction" />
             <space />
@@ -735,7 +735,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ref" text="Number" default="" delete_if_empty="true" />
         </item>
-        <item name="Services" icon="presets/car_service.png">
+        <item name="Services" icon="presets/car_service.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=services" />
             <label text="Edit Service Station" />
             <space />
@@ -746,7 +746,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <separator/>
-        <item name="Traffic Signal" icon="presets/traffic-light.png">
+        <item name="Traffic Signal" icon="presets/traffic-light.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_signals" />
             <key key="highway" value="traffic_signals" />
             <optional>
@@ -757,10 +757,10 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                  <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Stop" icon="presets/Stop.png">
+        <item name="Stop" icon="presets/Stop.png" type="node">
             <key key="highway" value="stop" />
         </item>
-        <item name="Pedestrian Crossing" icon="presets/zebracrossing.png">
+        <item name="Pedestrian Crossing" icon="presets/zebracrossing.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=crossing" />
             <label text="Edit a crossing" />
@@ -771,19 +771,19 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="supervised" text="Crossing attendant" default="off" delete_if_empty="true" />
             <combo key="crossing_ref" text="Type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" default="" delete_if_empty="true" />
         </item>
-        <item name="Mini-roundabout" icon="presets/roundabout_left.png">
+        <item name="Mini-roundabout" icon="presets/roundabout_left.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=mini_roundabout"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
                   it:href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=mini_roundabout" />
             <key key="highway" value="mini_roundabout" />
             <combo key="direction" text="Direction" values="clockwise" default="" delete_if_empty="true" />
         </item>
-        <item name="Turning Circle" icon="presets/turning_circle.png">
+        <item name="Turning Circle" icon="presets/turning_circle.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_circle"
                   de:href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=turning_circle" />
             <key key="highway" value="turning_circle" />
         </item>
-        <item name="City Limit" icon="presets/citylimit.png">
+        <item name="City Limit" icon="presets/citylimit.png" type="node">
             <label text="Edit a city limit sign" />
             <space />
             <key key="traffic_sign" value="city_limit" />
@@ -791,17 +791,17 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Signpost" icon="presets/empty.png">
+        <item name="Signpost" icon="presets/empty.png" type="node">
             <key key="amenity" value="signpost" />
         </item>
-        <item name="Speed Camera" icon="presets/speed_camera.png">
+        <item name="Speed Camera" icon="presets/speed_camera.png" type="node">
             <key key="highway" value="speed_camera" />
         </item>
-        <item name="Emergency Phone" icon="presets/telephone.png">
+        <item name="Emergency Phone" icon="presets/telephone.png" type="node">
             <key key="amenity" value="emergency_phone" />
         </item>
         <separator/>
-        <item name="Ford" icon="presets/ford.png">
+        <item name="Ford" icon="presets/ford.png" type="node,way">
             <label text="Edit Ford" />
             <space />
             <key key="highway" value="ford" />
