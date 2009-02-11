@@ -144,7 +144,7 @@ public class ToolbarPreferences implements PreferenceSetting {
                 String s;
                 Icon i;
                 if (value != null) {
-                    Action action = actions.get(value);
+                    Action action = getAction((String)value);
                     s = (String) action.getValue(Action.NAME);
                     i = (Icon) action.getValue(Action.SMALL_ICON);
                 } else {
@@ -348,11 +348,8 @@ public class ToolbarPreferences implements PreferenceSetting {
         for (String s : getToolString()) {
             if (s.equals("|"))
                 selected.addElement(null);
-            else {
-                if (actions.get(s) != null) {
-                    selected.addElement(s);
-                }
-            }
+            else if (getAction(s) != null)
+                selected.addElement(s);
         }
     }
 
@@ -378,6 +375,14 @@ public class ToolbarPreferences implements PreferenceSetting {
             node.add(newNode);
             loadAction(newNode, item);
         }
+    }
+
+    public Action getAction(String s)
+    {
+        Action e = actions.get(s);
+        if(e == null)
+            e = regactions.get(s);
+        return e;
     }
 
     private void loadActions() {
@@ -420,7 +425,7 @@ public class ToolbarPreferences implements PreferenceSetting {
             if (selected.get(i) == null)
                 t.add("|");
             else
-                t.add((String)((actions.get(selected.get(i))).getValue("toolbar")));
+                t.add((String)((getAction((String)selected.get(i))).getValue("toolbar")));
         }
         Main.pref.putCollection("toolbar", t);
         refreshToolbarControl();
@@ -448,7 +453,7 @@ public class ToolbarPreferences implements PreferenceSetting {
             if (s.equals("|"))
                 control.addSeparator();
             else
-                control.add(actions.get(s));
+                control.add(getAction(s));
         }
         control.setVisible(control.getComponentCount() != 0);
     }
