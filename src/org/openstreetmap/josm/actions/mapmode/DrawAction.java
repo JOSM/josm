@@ -141,6 +141,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         computeHelperLine();
     }
 
+    private void tryAgain(MouseEvent e) {
+        Main.ds.setSelected();
+        mouseClicked(e);
+    }
+    
     /**
      * If user clicked with the left button, add a node at the current mouse
      * position.
@@ -148,11 +153,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * If in nodeway mode, insert the node into the way.
      */
     @Override public void mouseClicked(MouseEvent e) {
-        if (e.getButton() != MouseEvent.BUTTON1 || e.getClickCount() > 1)
+        if (e.getButton() != MouseEvent.BUTTON1)
             return;
         if(!Main.map.mapView.isDrawableLayer())
             return;
-
+        if(e.getClickCount() > 1) {
+            // A double click equals "user clicked last node again, finish way"
+            lastUsedNode = null;
+            return;
+        }
         // we copy ctrl/alt/shift from the event just in case our global
         // AWTEvent didn't make it through the security manager. Unclear
         // if that can ever happen but better be safe.
@@ -170,10 +179,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Node n = null;
         boolean wayIsFinished = false;
 
-        if (!ctrl) {
+        if (!ctrl)
             n = Main.map.mapView.getNearestNode(mousePos);
-        }
-
+      
         if (n != null) {
             // user clicked on node
             if (shift || selection.isEmpty()) {
@@ -183,7 +191,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 Main.ds.setSelected(n);
                 return;
             }
-
         } else {
             // no node found in clicked area
             n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
@@ -242,41 +249,83 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // of that way must be the last used node (connection is made to last used node), or
         // he must have a way and a node selected (connection is made to the selected node).
 
+        // If the above does not apply, the selection is cleared and a new try is started
         boolean extendedWay = false;
-
-        if (!shift && selection.size() > 0 && selection.size() < 3) {
-
+        if (!shift && selection.size() > 0) {
             Node selectedNode = null;
             Way selectedWay = null;
-
+            
             for (OsmPrimitive p : selection) {
                 if (p instanceof Node) {
-                    if (selectedNode != null) return;
+                    if (selectedNode != null) {
+                        // Too many nodes selected to do something useful
+                        tryAgain(e);
+                        return;
+                    }
                     selectedNode = (Node) p;
                 } else if (p instanceof Way) {
-                    if (selectedWay != null) return;
+                    if (selectedWay != null) {
+                        // Too many ways selected to do something useful
+                        tryAgain(e);
+                        return;
+                    }
                     selectedWay = (Way) p;
                 }
+            }
+            
+            // No nodes or ways have been selected, try again with no selection
+            // This occurs when a relation has been selected
+            if(selectedNode == null && selectedWay == null) {
+                tryAgain(e);
+                return;
             }
 
             // the node from which we make a connection
             Node n0 = null;
 
             if (selectedNode == null) {
-                if (selectedWay == null) return;
-                if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+                if (selectedWay.isFirstLastNode(lastUsedNode)) {
                     n0 = lastUsedNode;
+                } else {
+                    // We have a way selected, but no suitable node to continue from. Start anew. 
+                    tryAgain(e);
+                    return;
                 }
             } else if (selectedWay == null) {
                 n0 = selectedNode;
             } else {
-                if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+                if (selectedWay.isFirstLastNode(selectedNode)) {
                     n0 = selectedNode;
+                } else {
+                    // We have a way and node selected, but it's not at the start/end of the way. Start anew.
+                    tryAgain(e);
+                    return;
                 }
             }
 
-            if (n0 == null || n0 == n) {
-                return; // Don't create zero length way segments.
+            // Prevent creation of ways that look like this: <---->
+            // This happens if users want to draw a no-exit-sideway from the main way like this:
+            // ^
+            // |<---->
+            // |
+            // The solution isn't ideal because the main way will end in the side way, which is bad for
+            // navigation software ("drive straight on") but at least easier to fix. Maybe users will fix
+            // it on their own, too. At least it's better than producing an error.
+            if(selectedWay != null && selectedWay.nodes != null) {
+                int posn0 = selectedWay.nodes.indexOf(n0);
+                if( posn0 != -1 && // n0 is part of way
+                    (posn0 >= 1                          && n.equals(selectedWay.nodes.get(posn0-1))) || // previous node
+                    (posn0 < selectedWay.nodes.size()-1) && n.equals(selectedWay.nodes.get(posn0+1))) {  // next node
+                    Main.ds.setSelected(n);
+                    lastUsedNode = n;
+                    return;
+                }
+            }
+            
+            // User clicked last node again, finish way
+            if(n0 == n) {
+                lastUsedNode = null;
+                return;
             }
 
             // Ok we know now that we'll insert a line segment, but will it connect to an
@@ -308,11 +357,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
 
             // Connected to a node that's already in the way
-            if(way != null && way.nodes.contains(n)) {
+            if(way.nodes.contains(n)) {
                 //System.out.println("Stop drawing, node is part of current way");
                 wayIsFinished = true;
                 selection.clear();
-                //Main.map.selectMapMode(new SelectAction(Main.map));
             }
 
             // Add new node to way
@@ -324,16 +372,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             extendedWay = true;
             Main.ds.setSelected(way);
         }
-
+                
         String title;
         if (!extendedWay) {
-            if (!newNode)
-              return; // We didn't do anything.
-            else if (reuseWays.isEmpty())
+            if (!newNode) {
+                return; // We didn't do anything.
+            } else if (reuseWays.isEmpty()) {
                 title = tr("Add node");
-            else
+            } else {
                 title = tr("Add node into way");
-            for (Way w : reuseWays) w.selected = false;
+                for (Way w : reuseWays) w.selected = false;
+            }
             Main.ds.setSelected(n);
         } else if (!newNode) {
             title = tr("Connect existing way to node");
