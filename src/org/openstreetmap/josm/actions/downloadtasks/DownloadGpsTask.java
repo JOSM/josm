@@ -40,22 +40,24 @@ public class DownloadGpsTask implements DownloadTask {
                 return;
                         rawData.recalculateBounds();
                         Bounds b = rawData.bounds;
-                        String name = b.min.lat() + " " + b.min.lon() + " x " + b.max.lat() + " " + b.max.lon();
+                        String name = tr("Downloaded GPX Data");
                         GpxLayer layer = new GpxLayer(rawData, name);
-            if (newLayer || findMergeLayer() == null)
+            Layer x = findMergeLayer();
+            if (newLayer || x == null)
                 Main.main.addLayer(layer);
             else
-                findMergeLayer().mergeFrom(layer);
+                x.mergeFrom(layer);
         }
 
         private Layer findMergeLayer() {
+            boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
             if (Main.map == null)
                 return null;
             Layer active = Main.map.mapView.getActiveLayer();
-            if (active != null && active instanceof GpxLayer)
+            if (active != null && active instanceof GpxLayer && (merge || ((GpxLayer)active).data.fromServer))
                 return active;
             for (Layer l : Main.map.mapView.getAllLayers())
-                if (l instanceof GpxLayer)
+                if (l instanceof GpxLayer &&  (merge || ((GpxLayer)l).data.fromServer))
                     return l;
             return null;
         }
