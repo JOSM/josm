@@ -590,7 +590,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="bus_guideway"/>
-		<line width="1" colour="otherrail#404040" dashed="true"/>
+		<line width="1" colour="rail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
@@ -1022,7 +1022,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="railway" v="tram"/>
 		<!-- prefer way types over tram - draw tram as overlay in joined cases -->
-		<line width="1" colour="rail#808080" dashed="true" priority="-10000"/>
+		<line width="1" colour="otherrail#808080" dashed="true" priority="-10000"/>
 		<linemod mode="over" width="1" colour="railover#202020" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
@@ -1031,7 +1031,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="light_rail"/>
-		<line width="2" colour="rail#808080" dashed="true"/>
+		<line width="2" colour="otherrail#808080" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1071,7 +1071,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="narrow_gauge"/>
-		<line width="1" colour="otherrail#404040" dashed="true"/>
+		<line width="1" colour="rail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1079,7 +1079,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="monorail"/>
-		<line width="1" colour="otherrail#404040" dashed="true"/>
+		<line width="1" colour="rail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1088,7 +1088,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="railway" v="turntable"/>
 		<icon annotate="true" src="transport/turntable.png"/>
-		<area colour="otherrail#404040"/>
+		<area colour="rail#404040"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
