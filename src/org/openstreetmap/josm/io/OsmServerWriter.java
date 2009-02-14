@@ -226,11 +226,9 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                 throw new OsmTransferException(tr("Server does not support changesets"));
             }
             if (retCode != 200 && retCode != 412) {
-
                 if (retries >= 0) {
                     retries--;
-                    System.out.print("backing off for 10 seconds...");
-                    Thread.sleep(10000);
+                    if(sleepAndListen()) return false;
                     System.out.println("retrying ("+retries+" left)");
                     return startChangeset(retries, comment);
                 }
@@ -331,8 +329,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             } else if (retCode != 200 && retCode != 412) {
                 if (retries >= 0) {
                     retries--;
-                    System.out.print("backing off for 10 seconds...");
-                    Thread.sleep(10000);
+                    if(sleepAndListen()) return;
                     System.out.println("retrying ("+retries+" left)");
                     stopChangeset(retries);
                 } else {
@@ -413,8 +410,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             if (retCode != 200 && retCode != 412) {
                 if (retries >= 0) {
                     retries--;
-                    System.out.print("backing off for 10 seconds...");
-                    Thread.sleep(10000);
+                    if(sleepAndListen()) return;
                     System.out.println("retrying ("+retries+" left)");
                     stopChangeset(retries);
                 } else {
@@ -455,6 +451,20 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
                 throw (RuntimeException)e;
             throw new RuntimeException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
         }
+    }
+
+    private boolean sleepAndListen() {
+        // System.out.print("backing off for 10 seconds...");
+        for(int i=0; i < 10; i++) {
+            if(cancel || isAuthCancelled()) {
+                if(!cancel) cancel();
+                return true;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {}
+        }
+        return false;
     }
 
     /**
@@ -579,8 +589,7 @@ public class OsmServerWriter extends OsmConnection implements Visitor {
             else if (retCode != 200) {
                 if (retries >= 0 && retCode != 412)    {
                     retries--;
-                    System.out.print("backing off for 10 seconds...");
-                    Thread.sleep(10000);
+                    if(sleepAndListen()) return;
                     System.out.println("retrying ("+retries+" left)");
                     sendRequestRetry(requestMethod, urlSuffix, osm, body, retries);
                 } else {
