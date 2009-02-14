@@ -1013,7 +1013,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="rail"/>
-		<line width="2" colour="rail#808080" dashed="true"/>
+		<line width="2" colour="rail#404040" dashed="true" dashedcolour="raildashed#ffffff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>200000000</scale_max>
@@ -1195,6 +1195,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<condition k="aerialway" v="station"/>
 		<area colour="aerialway#663300"/>
 		<icon annotate="true" src="transport/aerialway/station.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="aerialway" v="gondola"/>
+		<line width="1" colour="aerialway#663300" dashed="9"/>
+		<icon annotate="true" src="transport/aerialway/cable_car.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2137,7 +2145,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="signpost"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="places/locality.png"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
@@ -3704,7 +3712,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="building" b="yes"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
+		<icon annotate="true" src="misc/landmark/building.png" priority="-10000"/>
 		<area colour="building#cb9999" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
