@@ -2916,8 +2916,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </roles>
         </item>
         <item name="Turn restriction" icon="presets/empty.png" type="relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"/>
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:restriction"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:restriction"/>
             <label text="Edit a Turn Restriction" />
             <key key="type" value="restriction" />
             <combo key="restriction" text="Restriction" values="no_left_turn,no_right_turn,no_straight_on,no_u_turn,only_right_turn,only_left_turn,only_straight_on" default="" delete_if_empty="true" />
