@@ -29,7 +29,7 @@ import org.openstreetmap.josm.Main;
  */
 public class XmlObjectParser implements Iterable<Object> {
 
-        public static final String lang = Main.getLanguageCode();
+    public static final String lang = Main.getLanguageCode()+".";
     public static class Uniform<T> implements Iterable<T>{
         private Iterator<Object> iterator;
         /**

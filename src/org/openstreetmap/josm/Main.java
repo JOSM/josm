@@ -428,7 +428,7 @@ abstract public class Main {
     }
     static public String getLanguageCode()
     {
-        return Locale.getDefault().getLanguage() + ":";
+        return Locale.getDefault().getLanguage();
     }
 
     static public void saveGuiGeometry() {
