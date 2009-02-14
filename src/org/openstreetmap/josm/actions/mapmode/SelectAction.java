@@ -18,8 +18,8 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.RotateCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -31,12 +31,12 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -328,6 +328,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mouseReleased(MouseEvent e) {
         if (mode == Mode.select) {
             selectionManager.unregister(Main.map.mapView);
+            if(Main.ds.getSelected().size() == 0)
+                Main.map.selectDrawTool(true);
+                return;
         }
         restoreCursor();
 

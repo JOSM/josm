@@ -33,7 +33,6 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -48,8 +47,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
@@ -68,6 +67,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private boolean shift;
     private boolean mouseOnExistingNode;
     private boolean drawHelperLine;
+    private boolean wayIsFinished = false;
     private Point mousePos;
     private Color selectedColor;
 
@@ -96,7 +96,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         super.enterMode();
         selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
-
+        wayIsFinished = false;
+        
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         Main.map.mapView.addTemporaryLayer(this);
@@ -160,6 +161,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(e.getClickCount() > 1) {
             // A double click equals "user clicked last node again, finish way"
             lastUsedNode = null;
+            wayIsFinished = true;
+            Main.map.selectSelectTool(true);
             return;
         }
         // we copy ctrl/alt/shift from the event just in case our global
@@ -177,7 +180,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             replacedWays = new ArrayList<Way>();
         boolean newNode = false;
         Node n = null;
-        boolean wayIsFinished = false;
 
         if (!ctrl)
             n = Main.map.mapView.getNearestNode(mousePos);
@@ -251,7 +253,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // If the above does not apply, the selection is cleared and a new try is started
         boolean extendedWay = false;
-        if (!shift && selection.size() > 0) {
+        boolean wayIsFinishedTemp = wayIsFinished;
+        wayIsFinished = false;
+        if (!shift && selection.size() > 0 && !wayIsFinishedTemp) {
             Node selectedNode = null;
             Way selectedWay = null;
             
@@ -325,6 +329,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // User clicked last node again, finish way
             if(n0 == n) {
                 lastUsedNode = null;
+                wayIsFinished = true;
+                Main.map.selectSelectTool(true);
                 return;
             }
 
@@ -372,7 +378,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             extendedWay = true;
             Main.ds.setSelected(way);
         }
-                
+      
         String title;
         if (!extendedWay) {
             if (!newNode) {
@@ -504,7 +510,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setDist(distance);
         updateStatusLine();
 
-        if (!drawHelperLine) return;
+        if (!drawHelperLine || wayIsFinished) return;
 
         Main.map.mapView.repaint();
     }

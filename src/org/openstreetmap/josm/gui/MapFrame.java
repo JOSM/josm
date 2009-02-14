@@ -111,6 +111,21 @@ public class MapFrame extends JPanel implements Destroyable {
         // status line below the map
         statusLine = new MapStatus(this);
     }
+    
+    public void selectSelectTool(boolean onlyIfModeless) {
+        if(onlyIfModeless && !Main.pref.getBoolean("modeless", false))
+            return;
+        
+        selectMapMode((MapMode)getDefaultButtonAction());
+    }
+    
+    public void selectDrawTool(boolean onlyIfModeless) {
+        if(onlyIfModeless && !Main.pref.getBoolean("modeless", false))
+            return;
+        
+        Action drawAction = ((AbstractButton)toolBarActions.getComponent(1)).getAction();
+        selectMapMode((MapMode)drawAction);
+    }
 
     /**
      * Called as some kind of destructor when the last layer has been removed.

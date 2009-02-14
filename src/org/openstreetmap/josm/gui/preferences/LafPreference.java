@@ -32,6 +32,7 @@ public class LafPreference implements PreferenceSetting {
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
     private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
+    private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
 
     public void addGui(PreferenceDialog gui) {
         lafCombo = new JComboBox(UIManager.getInstalledLookAndFeels());
@@ -81,6 +82,10 @@ public class LafPreference implements PreferenceSetting {
         drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
         panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
 
+        modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
+        modeless.setSelected(Main.pref.getBoolean("modeless", false));
+        panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
@@ -96,6 +101,7 @@ public class LafPreference implements PreferenceSetting {
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
         Main.pref.put("osm-primitives.showid", showID.isSelected());
         Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
+        Main.pref.put("modeless", modeless.isSelected());
         return Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
     }
 
