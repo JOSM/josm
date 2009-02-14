@@ -36,11 +36,14 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
     public static Collection<TaggingPreset> taggingPresets;
     private JList taggingPresetSources;
+    private JCheckBox sortMenu;
     private JCheckBox enableDefault;
 
     public void addGui(final PreferenceDialog gui) {
 
         taggingPresetSources = new JList(new DefaultListModel());
+        sortMenu = new JCheckBox(tr("Sort presets menu"),
+                Main.pref.getBoolean("taggingpreset.sortmenu", false));
         enableDefault = new JCheckBox(tr("Enable built-in defaults"),
                 Main.pref.getBoolean("taggingpreset.enable-defaults", true));
 
@@ -90,6 +93,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
         JPanel tpPanel = new JPanel();
         tpPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Tagging Presets")));
         tpPanel.setLayout(new GridBagLayout());
+        tpPanel.add(sortMenu, GBC.eol().insets(5,5,5,0));
         tpPanel.add(enableDefault, GBC.eol().insets(5,5,5,0));
         tpPanel.add(new JLabel(tr("Tagging preset sources")), GBC.eol().insets(5,5,5,0));
         tpPanel.add(new JScrollPane(taggingPresetSources), GBC.eol().insets(5,0,5,0).fill(GBC.BOTH));
@@ -103,18 +107,20 @@ public class TaggingPresetPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        Main.pref.put("taggingpreset.enable-defaults", enableDefault.getSelectedObjects() != null);
-        int num = taggingPresetSources.getModel().getSize();
         boolean restart;
+        Main.pref.put("taggingpreset.enable-defaults", enableDefault.getSelectedObjects() != null);
+        restart = Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
+        int num = taggingPresetSources.getModel().getSize();
         if (num > 0)
         {
             ArrayList<String> l = new ArrayList<String>();
             for (int i = 0; i < num; ++i)
                 l.add((String)taggingPresetSources.getModel().getElementAt(i));
-            restart = Main.pref.putCollection("taggingpreset.sources", l);
+            if(Main.pref.putCollection("taggingpreset.sources", l))
+                restart = true;
         }
-        else
-            restart = Main.pref.putCollection("taggingpreset.sources", null);
+        else if(Main.pref.putCollection("taggingpreset.sources", null))
+            restart = true;
         return restart;
     }
 
@@ -149,5 +155,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
                 }
             }
         }
+        if(Main.pref.getBoolean("taggingpreset.sortmenu"))
+            TaggingPresetMenu.sortMenu(Main.main.menu.presetsMenu);
     }
 }
