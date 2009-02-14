@@ -92,22 +92,29 @@ public class JMultilineLabel extends JComponent {
         width -= insets.left + insets.right;
         float w = insets.left + insets.right;
         float x = insets.left, y=insets.top;
+              
+        
         if (width > 0 && text != null && text.length() > 0) {
-            AttributedString as = new AttributedString(getText());
-            as.addAttribute(TextAttribute.FONT, getFont());
-            AttributedCharacterIterator aci = as.getIterator();
-            LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc);
-            float max = 0;
-            while (lbm.getPosition() < aci.getEndIndex()) {
-                TextLayout textLayout = lbm.nextLayout(width);
-                if (g != null && isJustified() && textLayout.getVisibleAdvance() > 0.80 * width)
-                    textLayout = textLayout.getJustifiedLayout(width);
-                if (g != null)
-                    textLayout.draw(g, x, y + textLayout.getAscent());
-                y += textLayout.getDescent() + textLayout.getLeading() + textLayout.getAscent();
-                max = Math.max(max, textLayout.getVisibleAdvance());
+            String[] lines = getText().split("\n");             
+            for(String line : lines) {
+                // Insert a space so new lines get rendered
+                if(line.length() == 0) line = " ";
+                AttributedString as = new AttributedString(line);
+                as.addAttribute(TextAttribute.FONT, getFont());
+                AttributedCharacterIterator aci = as.getIterator();
+                LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc);
+                float max = 0;
+                while (lbm.getPosition() < aci.getEndIndex()) {
+                    TextLayout textLayout = lbm.nextLayout(width);
+                    if (g != null && isJustified() && textLayout.getVisibleAdvance() > 0.80 * width)
+                        textLayout = textLayout.getJustifiedLayout(width);
+                    if (g != null)
+                        textLayout.draw(g, x, y + textLayout.getAscent());
+                    y += textLayout.getDescent() + textLayout.getLeading() + textLayout.getAscent();
+                    max = Math.max(max, textLayout.getVisibleAdvance());
+                }
+                w += max;
             }
-            w += max;
         }
         return new Dimension((int)Math.ceil(w), (int)Math.ceil(y) + insets.bottom);
     }

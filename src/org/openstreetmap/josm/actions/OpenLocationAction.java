@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -54,13 +55,16 @@ public class OpenLocationAction extends JosmAction {
         JCheckBox layer = new JCheckBox(tr("Separate Layer"));
         layer.setSelected(Main.pref.getBoolean("download.newlayer"));
         JPanel all = new JPanel(new GridBagLayout());
-        all.add(new JLabel("Enter URL to download:"), GBC.eol());
+        all.add(new JLabel(tr("Enter URL to download:")), GBC.eol());
         JTextField urltext = new JTextField(40);
         all.add(urltext, GBC.eol());
         all.add(layer, GBC.eol());
-        int answer = JOptionPane.showConfirmDialog(Main.parent, all, tr("Download Location"), JOptionPane.OK_CANCEL_OPTION);
-        if (answer != JOptionPane.OK_OPTION)
-            return;
+        int answer = new ExtendedDialog(Main.parent, 
+                        tr("Download Location"), 
+                        all,
+                        new String[] {tr("Download URL"), tr("Cancel")}, 
+                        new String[] {"download.png", "cancel.png"}).getValue();  
+        if (answer != 1) return;
         openUrl(layer.isSelected(), urltext.getText());
     }
 

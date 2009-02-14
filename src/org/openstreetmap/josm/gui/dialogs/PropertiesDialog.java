@@ -56,6 +56,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
@@ -547,8 +548,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         Relation cur = (Relation)membershipData.getValueAt(row, 0);
                         NameVisitor n = new NameVisitor();
                         cur.visit(n);
-                        if(JOptionPane.showConfirmDialog(Main.parent, tr("Really delete selection from relation {0}?", n.name),
-                        tr("Change relation"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_NO_OPTION)
+                        
+                        int result = new ExtendedDialog(Main.parent, 
+                            tr("Change relation"), 
+                            tr("Really delete selection from relation {0}?", n.name),
+                            new String[] {tr("Delete from relation"), tr("Cancel")}, 
+                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
+                        
+                        if(result == 1)
                         {
                             Relation rel = new Relation(cur);
                             Collection<OsmPrimitive> sel = Main.ds.getSelected();

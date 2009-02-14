@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxWriter;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -110,8 +111,12 @@ public class GpxExportAction extends DiskAccessAction {
         JTextField keywords = new JTextField();
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
-        int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Export options"), JOptionPane.OK_CANCEL_OPTION);
-        if (answer != JOptionPane.OK_OPTION)
+        int answer = new ExtendedDialog(Main.parent, 
+                        tr("Export options"), 
+                        p,
+                        new String[] {tr("Export and Save"), tr("Cancel")}, 
+                        new String[] {"exportgpx.png", "cancel.png"}).getValue();  
+        if (answer != 1)
             return;
 
         Main.pref.put("lastAddAuthor", author.isSelected());

@@ -38,6 +38,7 @@ import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.XmlObjectParser.Uniform;
 
@@ -77,9 +78,12 @@ public class PluginSelection {
             JOptionPane.showMessageDialog(Main.parent, tr("All installed plugins are up to date."));
             done = true;
         } else {
-            int answer = JOptionPane.showConfirmDialog(Main.parent, tr("Update the following plugins:\n\n{0}",
-            toUpdateStr.toString()), tr("Update"), JOptionPane.OK_CANCEL_OPTION);
-            if (answer == JOptionPane.OK_OPTION) {
+            int answer = new ExtendedDialog(Main.parent, 
+                        tr("Update"), 
+                        tr("Update the following plugins:\n\n{0}", toUpdateStr.toString()),
+                        new String[] {tr("Update Plugins"), tr("Cancel")}, 
+                        new String[] {"dialogs/refresh.png", "cancel.png"}).getValue();  
+            if (answer == 1) {
                 PluginDownloader.update(toUpdate);
                 done = true;
             }
@@ -99,11 +103,12 @@ public class PluginSelection {
             }
         }
         if (!toDownload.isEmpty()) {
-            int answer = JOptionPane.showConfirmDialog(Main.parent,
-                    tr("Download the following plugins?\n\n{0}", msg),
-                    tr("Download missing plugins"),
-                    JOptionPane.YES_NO_OPTION);
-            if (answer != JOptionPane.OK_OPTION)
+            int answer = new ExtendedDialog(Main.parent, 
+                        tr("Download missing plugins"),
+                        tr("Download the following plugins?\n\n{0}", msg),
+                        new String[] {tr("Download Plugins"), tr("Cancel")}, 
+                        new String[] {"download.png", "cancel.png"}).getValue();  
+            if (answer != 1)
                 for (PluginDescription pd : toDownload)
                     pluginMap.put(pd.name, false);
             else
@@ -201,10 +206,15 @@ public class PluginSelection {
                         PluginInformation plinfo = PluginInformation.findPlugin(plugin.name);
                         if ((getLoaded(plugin.name) == null) && (plinfo != null)) {
                             try {
-                                int answer = JOptionPane.showConfirmDialog(Main.parent,
-                                    tr("Plugin archive already available. Do you want to download the current version by deleting existing archive?\n\n{0}",
-                                    plinfo.file.getCanonicalPath()), tr("Plugin already exists"), JOptionPane.OK_CANCEL_OPTION);
-                                if (answer == JOptionPane.OK_OPTION) {
+                                int answer = new ExtendedDialog(Main.parent, 
+                                    tr("Plugin already exists"), 
+                                    tr("Plugin archive already available. Do you want to download"
+                                        + " the current version by deleting existing archive?\n\n{0}",
+                                        plinfo.file.getCanonicalPath()),
+                                    new String[] {tr("Delete and Download"), tr("Cancel")}, 
+                                    new String[] {"download.png", "cancel.png"}).getValue();      
+                                    
+                                if (answer == 1) {
                                     if (!plinfo.file.delete()) {
                                         JOptionPane.showMessageDialog(Main.parent, tr("Error deleting plugin file: {0}", plinfo.file.getCanonicalPath()));
                                     }

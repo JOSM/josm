@@ -33,6 +33,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
+import org.openstreetmap.josm.gui.ExtendedDialog; 
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -149,10 +150,14 @@ public class PluginHandler {
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
-                    if(JOptionPane.showConfirmDialog(Main.parent,
-                    tr("Could not load plugin {0}. Delete from preferences?",
-                    info.name), tr("Disable plugin"),
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION)
+                    
+                    int result = new ExtendedDialog(Main.parent, 
+                        tr("Disable plugin"), 
+                        tr("Could not load plugin {0}. Delete from preferences?", info.name),
+                        new String[] {tr("Disable plugin"), tr("Cancel")}, 
+                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
+                    
+                    if(result == 1)
                     {
                         plugins.remove(info.name);
                         Main.pref.removeFromCollection("plugins", info.name);
@@ -246,16 +251,20 @@ public class PluginHandler {
         }
 
         if (plugin != null) {
-            int answer = JOptionPane.showConfirmDialog(
-                    Main.parent, tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.",
-                    plugin.info.name) + "\n"+ (plugin.info.author != null ?
-                    tr("According to the information within the plugin, the author is {0}.",
-                    plugin.info.author) : "") + "\n" +
-                    tr("Try updating to the newest version of this plugin before reporting a bug.") + "\n" +
-                    tr("Should the plugin be disabled?"),
-                    tr("Disable plugin"),
-                    JOptionPane.YES_NO_OPTION);
-            if (answer == JOptionPane.OK_OPTION) {
+            int answer = new ExtendedDialog(Main.parent, 
+                tr("Disable plugin"), 
+                tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)
+                    + "\n"
+                    + (plugin.info.author != null
+                        ? tr("According to the information within the plugin, the author is {0}.", plugin.info.author)
+                        : "")
+                    + "\n"
+                    + tr("Try updating to the newest version of this plugin before reporting a bug.")
+                    + "\n"
+                    + tr("Should the plugin be disabled?"),
+                new String[] {tr("Disable plugin"), tr("Cancel")}, 
+                new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
+            if (answer == 1) {
                 LinkedList<String> plugins = new LinkedList<String>(Arrays.asList(Main.pref.get("plugins").split(",")));
                 if (plugins.contains(plugin.info.name)) {
                     while (plugins.remove(plugin.info.name)) {}

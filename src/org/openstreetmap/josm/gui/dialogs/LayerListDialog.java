@@ -21,7 +21,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -30,6 +29,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
@@ -76,9 +76,12 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
             {
                 if (((OsmDataLayer)l).isModified())
                 {
-                    if(JOptionPane.showConfirmDialog(instance, tr("There are unsaved changes. Delete the layer anwyay?"),
-                    tr("Unsaved Changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
-                        return;
+                    int result = new ExtendedDialog(Main.parent, tr("Unsaved Changes"),
+                        tr("There are unsaved changes. Delete the layer anwyay?"),
+                        new String[] {tr("Delete Layer"), tr("Cancel")},
+                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue(); 
+
+                    if(result != 1) return;
                 }
                 else if(!DontShowAgainInfo.show("delete_layer", tr("Do you really want to delete the whole layer?"), false))
                     return;

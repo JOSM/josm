@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -42,8 +43,12 @@ abstract public class DiskAccessAction extends JosmAction {
 
         if (!open) {
             File file = fc.getSelectedFile();
-            if (file == null || (file.exists() && JOptionPane.YES_OPTION !=
-                    JOptionPane.showConfirmDialog(Main.parent, tr("File exists. Overwrite?"), tr("Overwrite"), JOptionPane.YES_NO_OPTION)))
+            if (file == null || (file.exists() && 1 !=
+                new ExtendedDialog(Main.parent, 
+                        tr("Overwrite"), 
+                        tr("File exists. Overwrite?"),
+                        new String[] {tr("Overwrite"), tr("Cancel")}, 
+                        new String[] {"save_as.png", "cancel.png"}).getValue()))
                 return null;
         }
 

@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmServerWriter;
@@ -97,8 +98,11 @@ public class UploadAction extends JosmAction {
                     p.add(new JScrollPane(l), GBC.eol().fill());
                 }
 
-                return JOptionPane.showConfirmDialog(Main.parent, p, tr("Upload these changes?"),
-                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                return new ExtendedDialog(Main.parent, 
+                        tr("Upload these changes?"), 
+                        p,
+                        new String[] {tr("Upload Changes"), tr("Cancel")}, 
+                        new String[] {"upload.png", "cancel.png"}).getValue() == 1;  
             }
         });
     }

@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -153,13 +154,19 @@ public class DeleteCommand extends Command {
             }
         }
         if (role.length() > 0) {
-            return JOptionPane.showConfirmDialog(Main.parent, tr(
-                    "Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?", s.name,
-                    n.name, role), tr("Conflicting relation"), JOptionPane.YES_NO_OPTION);
+            return new ExtendedDialog(Main.parent, 
+                        tr("Conflicting relation"), 
+                        tr("Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?",
+                            s.name, n.name, role),
+                        new String[] {tr("Delete from relation"), tr("Cancel")}, 
+                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
         } else {
-            return JOptionPane.showConfirmDialog(Main.parent, tr(
-                    "Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?", s.name, n.name),
-                    tr("Conflicting relation"), JOptionPane.YES_NO_OPTION);
+            return new ExtendedDialog(Main.parent, 
+                        tr("Conflicting relation"), 
+                        tr("Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?",
+                            s.name, n.name),
+                        new String[] {tr("Delete from relation"), tr("Cancel")}, 
+                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
         }
     }
 
@@ -207,7 +214,7 @@ public class DeleteCommand extends Command {
                 if (ref instanceof Way) {
                     waysToBeChanged.add((Way) ref);
                 } else if (ref instanceof Relation) {
-                    if (testRelation((Relation) ref, osm) == JOptionPane.YES_OPTION) {
+                    if (testRelation((Relation) ref, osm) == 1) {
                         Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
                         if (relset == null)
                             relset = new HashSet<OsmPrimitive>();
@@ -247,7 +254,7 @@ public class DeleteCommand extends Command {
                             }
                         }
                         if (!found) {
-                            if (testRelation((Relation) ref, w) == JOptionPane.YES_OPTION) {
+                            if (testRelation((Relation) ref, w) == 1) {
                                 relset.add(w);
                                 relationsToBeChanged.put(ref, relset);
                             } else

@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -54,6 +55,8 @@ public class SearchAction extends JosmAction {
     public void showSearchDialog(SearchSetting initialValues) {
         JLabel label = new JLabel(tr("Please enter a search string."));
         final JTextField input = new JTextField(initialValues.text);
+        input.selectAll();
+        input.requestFocusInWindow();
         JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
         JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);
         JRadioButton remove = new JRadioButton(tr("remove from selection"), initialValues.mode == SearchMode.remove);
@@ -98,17 +101,14 @@ public class SearchAction extends JosmAction {
         final JPanel p = new JPanel();
         p.add(left);
         p.add(right);
+        
+        int result = new ExtendedDialog(Main.parent, 
+            tr("Search"), 
+            p,
+            new String[] {tr("Start Search"), tr("Cancel")}, 
+            new String[] {"dialogs/search.png", "cancel.png"}).getValue();  
+        if(result != 1) return;
 
-        JOptionPane pane = new JOptionPane(p, JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null) {
-            @Override
-            public void selectInitialValue() {
-                input.requestFocusInWindow();
-                input.selectAll();
-            }
-        };
-        pane.createDialog(Main.parent, tr("Search")).setVisible(true);
-        if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
-            return;
         // User pressed OK - let's perform the search
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
                 : (add.isSelected() ? SearchAction.SearchMode.add : SearchAction.SearchMode.remove);

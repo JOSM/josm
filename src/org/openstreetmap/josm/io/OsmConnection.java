@@ -16,12 +16,12 @@ import java.nio.charset.CharacterCodingException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog; 
 import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -89,8 +89,13 @@ public class OsmConnection {
                 JCheckBox savePassword = new JCheckBox(tr("Save user and password (unencrypted)"), !username.equals("") && !password.equals(""));
                 p.add(savePassword, GBC.eop());
 
-                int choice = JOptionPane.showConfirmDialog(Main.parent, p, tr("Enter Password"), JOptionPane.OK_CANCEL_OPTION);
-                if (choice == JOptionPane.CANCEL_OPTION) {
+                int choice = new ExtendedDialog(Main.parent, 
+                        tr("Enter Password"), 
+                        p,
+                        new String[] {tr("Login"), tr("Cancel")}, 
+                        new String[] {"ok.png", "cancel.png"}).getValue();  
+                
+                if (choice != 1) {
                     authCancelled = true;
                     return null;
                 }

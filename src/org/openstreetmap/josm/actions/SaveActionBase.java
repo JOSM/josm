@@ -16,6 +16,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -77,17 +78,20 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return false;
         }
 
-        if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer) && JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(Main.parent,tr("The document contains no data. Save anyway?"), tr("Empty document"), JOptionPane.YES_NO_OPTION)) {
+        if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer) && 1 != new ExtendedDialog(Main.parent, tr("Empty document"), tr("The document contains no data."), new String[] {tr("Save anyway"), tr("Cancel")}, new String[] {"save.png", "cancel.png"}).getValue()) {
             return false;
         }
         if (layer instanceof GpxLayer && ((GpxLayer)layer).data == null) {
             return false;
         }
         if (!Main.map.conflictDialog.conflicts.isEmpty()) {
-            int answer = JOptionPane.showConfirmDialog(Main.parent,
-                    tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"),tr("Conflicts"), JOptionPane.YES_NO_OPTION);
-            if (answer != JOptionPane.YES_OPTION)
-                return false;
+            int answer = new ExtendedDialog(Main.parent,
+                tr("Conflicts"),
+                tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"),
+                new String[] {tr("Reject Conflicts and Save"), tr("Cancel")},
+                new String[] {"save.png", "cancel.png"}).getValue();
+
+            if (answer != 1) return false;
         }
         return true;
     }

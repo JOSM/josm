@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -18,10 +19,12 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -46,12 +49,29 @@ public class ExtendedDialog extends JDialog {
     }
     
     public ExtendedDialog(Component parent, String title, Component content, String[] buttonTexts) {
+        this(parent, title, content, buttonTexts, null);
+    }
+    
+    // just display a breakable message
+    public ExtendedDialog(Component parent, String title, String message, String[] buttonTexts, String[] buttonIcons) {
         super(JOptionPane.getFrameForComponent(parent), title, true);
-        bTexts = buttonTexts;
-        setupDialog(parent, title, content, buttonTexts, null);
+        
+        JMultilineLabel lbl = new JMultilineLabel(message);
+        // Make it not wider than 2/3 of the screen
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        lbl.setMaxWidth(Math.round(screenSize.width*2/3));
+        
+        bTexts = buttonTexts;        
+        setupDialog(parent, title, lbl, buttonTexts, buttonIcons);
+    }
+    
+    public ExtendedDialog(Component parent, String title, String message, String[] buttonTexts) {
+        this(parent, title, message, buttonTexts, null);
     }
     
     private void setupDialog(Component parent, String title, Component content, String[] buttonTexts, String[] buttonIcons) {
+        setupEscListener();
+        
         JButton button;
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
         
@@ -78,31 +98,37 @@ public class ExtendedDialog extends JDialog {
         }
         
         JPanel cp = new JPanel(new GridBagLayout());        
-        cp.add(content, GBC.eol().anchor(GBC.CENTER).insets(0,10,0,0)); //fill(GBC.HORIZONTAL).
+        cp.add(content, GBC.eol().anchor(GBC.CENTER).insets(5,10,5,0));
         cp.add(buttonsPanel, GBC.eol().anchor(GBC.CENTER).insets(5,5,5,5));
         
-        JScrollPane pane = new JScrollPane(cp); 
+        JScrollPane pane = new JScrollPane(cp);
         pane.setBorder(null);        
         setContentPane(pane);
         
         pack(); 
         
-        // Try to make it not larger than the parent window or at least not larger than a reasonable value
+        // Try to make it not larger than the parent window or at least not larger than 2/3 of the screen
         Dimension d = getSize();
-        Dimension x = new Dimension(700, 500);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension x = new Dimension(Math.round(screenSize.width*2/3), Math.round(screenSize.height*2/3));
+        
         try {
-            
             if(parent != null)
                 x = JOptionPane.getFrameForComponent(parent).getSize();
         } catch(NullPointerException e) { }
+        
+        boolean limitedInWidth = d.width > x.width;
+        boolean limitedInHeight = d.height > x.height;
 
         if(x.width  > 0 && d.width  > x.width)  d.width  = x.width;
         if(x.height > 0 && d.height > x.height) d.height = x.height;
+        
+        // We have a vertical scrollbar and enough space to prevent a horizontal one
+        if(!limitedInWidth && limitedInHeight)
+            d.width += new JScrollBar().getPreferredSize().width;
+        
         setSize(d);
-        
-        setLocationRelativeTo(parent);        
-        
-        setupEscListener();
+        setLocationRelativeTo(parent);
         setVisible(true);
     }
     

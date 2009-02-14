@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -143,13 +144,13 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         // Complain to the user if the ways don't have equal memberships.
         for (HashSet<Node> nodelinks : backlinks.values()) {
             if (!nodelinks.containsAll(allNodes)) {
-                int option = JOptionPane.showConfirmDialog(Main.parent,
-                    tr("The selected nodes have differing relation memberships.  "
-                        + "Do you still want to merge them?"),
-                    tr("Merge nodes with different memberships?"),
-                    JOptionPane.YES_NO_OPTION);
-                if (option == JOptionPane.YES_OPTION)
-                    break;
+                int option = new ExtendedDialog(Main.parent, 
+                        tr("Merge nodes with different memberships?"), 
+                        tr("The selected nodes have differing relation memberships.  "
+                            + "Do you still want to merge them?"),
+                        new String[] {tr("Merge Anyway"), tr("Cancel")}, 
+                        new String[] {"mergenodes.png", "cancel.png"}).getValue();  
+                if (option == 1) break;
                 return null;
             }
         }
@@ -190,8 +191,12 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         }
 
         if (!components.isEmpty()) {
-            int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Enter values for all conflicts."), JOptionPane.OK_CANCEL_OPTION);
-            if (answer != JOptionPane.OK_OPTION)
+            int answer = new ExtendedDialog(Main.parent, 
+                tr("Enter values for all conflicts."), 
+                p,
+                new String[] {tr("Solve Conflicts"), tr("Cancel")}, 
+                new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();  
+            if (answer != 1)
                 return null;
             for (Entry<String, JComboBox> e : components.entrySet())
                 newNode.put(e.getKey(), e.getValue().getEditor().getItem().toString());
