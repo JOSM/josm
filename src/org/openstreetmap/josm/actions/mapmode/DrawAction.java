@@ -73,6 +73,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private boolean drawTargetHighlight;
     private boolean drawTargetCursor;
     private Point mousePos;
+    private Point oldMousePos;
     private Color selectedColor;
 
     private Node currentBaseNode;
@@ -246,13 +247,19 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         if(!Main.map.mapView.isDrawableLayer())
             return;
-        if(e.getClickCount() > 1) {
+        
+        if(e.getClickCount() > 1 && mousePos != null && mousePos.equals(oldMousePos)) {
             // A double click equals "user clicked last node again, finish way"
+            // Change draw tool only if mouse position is nearly the same, as
+            // otherwise fast clicks will count as a double click
             lastUsedNode = null;
             wayIsFinished = true;
+
             Main.map.selectSelectTool(true);
             return;
         }
+        oldMousePos = mousePos;
+        
         // we copy ctrl/alt/shift from the event just in case our global
         // AWTEvent didn't make it through the security manager. Unclear
         // if that can ever happen but better be safe.

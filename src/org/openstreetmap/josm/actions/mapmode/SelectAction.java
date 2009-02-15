@@ -9,9 +9,11 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -56,6 +58,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
     private Mode mode = null;
     private long mouseDownTime = 0;
     private boolean didMove = false;
+    private boolean cancelDrawMode = false;
     Node virtualNode = null;
     WaySegment virtualWay = null;
     SequenceCommand virtualCmds = null;
@@ -141,6 +144,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * mouse (which will become selected).
      */
     @Override public void mouseDragged(MouseEvent e) {
+        cancelDrawMode = true;
         if (mode == Mode.select) return;
 
         // do not count anything as a move if it lasts less than 100 milliseconds.
@@ -278,6 +282,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * cursor to movement.
      */
     @Override public void mousePressed(MouseEvent e) {
+        cancelDrawMode = false;
         if (! (Boolean)this.getValue("active")) return;
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -328,9 +333,12 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mouseReleased(MouseEvent e) {
         if (mode == Mode.select) {
             selectionManager.unregister(Main.map.mapView);
-            if(Main.ds.getSelected().size() == 0)
+
+            // Select Draw Tool if no selection has been made
+            if(Main.ds.getSelected().size() == 0 && !cancelDrawMode) {
                 Main.map.selectDrawTool(true);
                 return;
+            }
         }
         restoreCursor();
 
@@ -341,6 +349,19 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 selectPrims(
                     Main.map.mapView.getNearestCollection(e.getPoint()),
                     shift, ctrl);
+
+                // If the user double-clicked a node, change to draw mode
+                List<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(Main.ds.getSelected());
+                if(e.getClickCount() >=2 && sel.size() == 1 && sel.get(0) instanceof Node) {
+                    // We need to do it like this as otherwise drawAction will see a double
+                    // click and switch back to SelectMode
+                    Main.worker.execute(new Runnable(){
+                        public void run() {
+                            Main.map.selectDrawTool(true);
+                        }
+                    });
+                    return;
+                }
             } else {
                 Collection<OsmPrimitive> selection = Main.ds.getSelected();
                 if (ctrl) {
@@ -401,7 +422,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             return tr("Move objects by dragging; Shift to add to selection (Ctrl to remove); Shift-Ctrl to rotate selected; or change selection");
         }
     }
-    
+
     @Override public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
     }
