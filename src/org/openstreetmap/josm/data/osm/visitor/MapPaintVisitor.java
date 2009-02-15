@@ -119,8 +119,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(osm.mappaintStyle == null && styles != null) {
             osm.mappaintStyle = styles.get(osm);
-            if(osm instanceof Way)
-                osm.isMappaintArea = styles.isArea(osm);
+            osm.isMappaintArea = styles.isArea(osm);
         }
         return osm.isMappaintArea;
     }
@@ -150,6 +149,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if (nodeStyle != null && isZoomOk(nodeStyle) && showIcons > dist)
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
+        else if (n.highlighted)
+            drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if (n.selected)
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if (n.tagged)
@@ -265,7 +266,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             int tmpWidth = (int) (100 /  (float) (circum / realWidth));
             if (tmpWidth > width) width = tmpWidth;
         }
-        if(w.selected)
+
+        if(w.highlighted)
+            color = highlightColor;
+        else if(w.selected)
             color = selectedColor;
 
         // draw overlays under the way
@@ -1135,7 +1139,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
                 g2d.draw(currentPath);
             }
-            
+
             if(useStrokes > dist)
                 g2d.setStroke(new BasicStroke(1));
 

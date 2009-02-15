@@ -36,6 +36,7 @@ public class SimplePaintVisitor implements Visitor {
     public final static Color darkblue = new Color(0,0,128);
     public final static Color darkgreen = new Color(0,128,0);
     public final static Color teal = new Color(0,128,128);
+    public final static Color lightteal= new Color(0, 255, 186);
 
     /**
      * The environment to paint to.
@@ -61,6 +62,7 @@ public class SimplePaintVisitor implements Visitor {
     protected Color untaggedWayColor;
     protected Color incompleteColor;
     protected Color backgroundColor;
+    protected Color highlightColor;
     protected boolean showDirectionArrow;
     protected boolean showRelevantDirectionsOnly;
     protected boolean showHeadArrowOnly;
@@ -96,6 +98,7 @@ public class SimplePaintVisitor implements Visitor {
         untaggedWayColor = Main.pref.getColor(marktr("untagged way"), darkgreen);
         incompleteColor = Main.pref.getColor(marktr("incomplete way"), darkerblue);
         backgroundColor = Main.pref.getColor(marktr("background"), Color.BLACK);
+        highlightColor = Main.pref.getColor(marktr("highlight"), lightteal);
     }
 
     protected void getSettings(Boolean virtual) {
@@ -131,13 +134,13 @@ public class SimplePaintVisitor implements Visitor {
             System.out.println("Simplepaint Profiler");
 
         getSettings(virtual);
-        
-        if(profiler) 
+
+        if(profiler)
         {
             System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
             profilerLast = java.lang.System.currentTimeMillis();
         }
-        
+
         // draw tagged ways first, then untagged ways. takes
         // time to iterate through list twice, OTOH does not
         // require changing the colour while painting...
@@ -244,6 +247,8 @@ public class SimplePaintVisitor implements Visitor {
 
         if (inactive)
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
+        else if (n.highlighted)
+            drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if (n.selected)
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if(n.tagged)
@@ -300,6 +305,10 @@ public class SimplePaintVisitor implements Visitor {
 
         if (inactive) {
             wayColor = inactiveColor;
+        } else if(w.highlighted) {
+            wayColor = highlightColor;
+        } else if(w.selected) {
+            wayColor = selectedColor;
         } else if (!w.tagged) {
             wayColor = untaggedWayColor;
         } else {
@@ -311,7 +320,7 @@ public class SimplePaintVisitor implements Visitor {
             Point lastP = nc.getPoint(it.next().eastNorth);
             for (int orderNumber = 1; it.hasNext(); orderNumber++) {
                 Point p = nc.getPoint(it.next().eastNorth);
-                drawSegment(lastP, p, w.selected && !inactive ? selectedColor : wayColor, 
+                drawSegment(lastP, p, wayColor,
                     showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
                 if (showOrderNumber)
                     drawOrderNumber(lastP, p, orderNumber);

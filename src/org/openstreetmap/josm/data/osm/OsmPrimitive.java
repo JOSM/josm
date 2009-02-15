@@ -122,6 +122,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * If set to true, this object is currently selected.
      */
     public volatile boolean selected = false;
+    
+    /**
+     * If set to true, this object is highlighted. Currently this is only used to
+     * show which ways/nodes will connect 
+     */
+    public volatile boolean highlighted = false;
 
     /**
      * Time of last modification to this object. This is not set by JOSM but
