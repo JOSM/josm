@@ -1075,7 +1075,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if (selected)
         {
             g.setColor (  selectedColor );
-            g.drawRect (p.x-w/2-2,p.y-w/2-2, w+4, h+4);
+            g.drawRect (p.x-w/2-2, p.y-h/2-2, w+4, h+4);
         }
     }
 
