@@ -92,10 +92,9 @@ public class JMultilineLabel extends JComponent {
         width -= insets.left + insets.right;
         float w = insets.left + insets.right;
         float x = insets.left, y=insets.top;
-              
-        
+
         if (width > 0 && text != null && text.length() > 0) {
-            String[] lines = getText().split("\n");             
+            String[] lines = getText().split("\n");
             for(String line : lines) {
                 // Insert a space so new lines get rendered
                 if(line.length() == 0) line = " ";

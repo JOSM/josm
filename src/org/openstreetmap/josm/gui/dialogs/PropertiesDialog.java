@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -52,13 +53,18 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -437,6 +443,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SideButton btnAdd;
     private final SideButton btnEdit;
     private final SideButton btnDel;
+    private final JMultilineLabel presets = new JMultilineLabel("");
 
     private final JLabel selectSth = new JLabel("<html><p>" + tr("Please select the objects you want to change properties for.") + "</p></html>");
 
@@ -524,6 +531,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
+        bothTables.add(presets, GBC.eol().fill().insets(10, 10, 10, 10));
 
         DblClickWatch dblClickWatch = new DblClickWatch();
         propertyTable.addMouseListener(dblClickWatch);
@@ -531,8 +539,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JScrollPane scrollPane = new JScrollPane(bothTables);
         scrollPane.addMouseListener(dblClickWatch);
         add(scrollPane, BorderLayout.CENTER);
-        
+
         selectSth.setPreferredSize(scrollPane.getSize());
+        presets.setPreferredSize(scrollPane.getSize());
 
         JPanel buttonPanel = new JPanel(new GridLayout(1,3));
         ActionListener buttonAction = new ActionListener(){
@@ -548,13 +557,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         Relation cur = (Relation)membershipData.getValueAt(row, 0);
                         NameVisitor n = new NameVisitor();
                         cur.visit(n);
-                        
-                        int result = new ExtendedDialog(Main.parent, 
-                            tr("Change relation"), 
+
+                        int result = new ExtendedDialog(Main.parent,
+                            tr("Change relation"),
                             tr("Really delete selection from relation {0}?", n.name),
-                            new String[] {tr("Delete from relation"), tr("Cancel")}, 
-                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
-                        
+                            new String[] {tr("Delete from relation"), tr("Cancel")},
+                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+
                         if(result == 1)
                         {
                             Relation rel = new Relation(cur);
@@ -619,6 +628,54 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             selectionChanged(Main.ds.getSelected());
     }
 
+    private void checkPresets(int nodes, int ways, int relations, int closedways)
+    {
+        LinkedList<TaggingPreset> p = new LinkedList<TaggingPreset>();
+        int total = nodes+ways+relations+closedways;
+        if(total != 0)
+        {
+            for(TaggingPreset t : TaggingPresetPreference.taggingPresets)
+            {
+                if(!( (relations > 0 && !t.types.contains("relation")) &&
+                (nodes > 0 && !t.types.contains("node")) &&
+                (ways+closedways > 0 && !t.types.contains("way")) &&
+                (closedways > 0 && !t.types.contains("closedway"))))
+                {
+                    int found = 0;
+                    for(TaggingPreset.Item i : t.data)
+                    {
+                        if(i instanceof TaggingPreset.Key)
+                        {
+                            String val = ((TaggingPreset.Key)i).value;
+                            String key = ((TaggingPreset.Key)i).key;
+                            // we subtract 100 if not found and add 1 if found
+                            found -= 100;
+                            if(valueCount.containsKey(key))
+                            {
+                                Map<String, Integer> v = valueCount.get(key);
+                                if(v.size() == 1 && v.containsKey(val) && v.get(val) == total)
+                                {
+                                    found += 101;
+                                }
+                            }
+                        }
+                    }
+                    if(found > 0)
+                        p.add(t);
+                }
+            }
+        }
+        String t = "";
+        for(TaggingPreset tp : p)
+        {
+            if(t.length() > 0)
+                t += "\n";
+            t += tp.getName();
+        }
+        presets.setText(t);
+        presets.setVisible(t.length() > 0);
+    }
+
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if (!isVisible())
             return;
@@ -629,10 +686,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // re-load property data
         propertyData.setRowCount(0);
+        int nodes = 0;
+        int ways = 0;
+        int relations = 0;
+        int closedways = 0;
 
         Map<String, Integer> keyCount = new HashMap<String, Integer>();
         valueCount.clear();
         for (OsmPrimitive osm : newSelection) {
+            if(osm instanceof Node) ++nodes;
+            else if(osm instanceof Relation) ++relations;
+            else if(((Way)osm).isClosed()) ++closedways;
+            else ++ways;
             for (Entry<String, String> e : osm.entrySet()) {
                 keyCount.put(e.getKey(), keyCount.containsKey(e.getKey()) ? keyCount.get(e.getKey())+1 : 1);
                 if (valueCount.containsKey(e.getKey())) {
@@ -665,6 +730,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.getTableHeader().setVisible(hasSelection);
         selectSth.setVisible(!hasSelection);
         if(hasTags) propertyTable.changeSelection(0, 0, false, false);
+
+        checkPresets(nodes, ways, relations, closedways);
 
         // re-load membership data
         // this is rather expensive since we have to walk through all members of all existing relationships.

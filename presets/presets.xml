@@ -26,6 +26,7 @@ text: text box
   text: fixed label to display
   default: default string to display
   delete_if_empty: true/false
+  use_last_as_default: true/false
 
 combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
