@@ -531,7 +531,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
-        bothTables.add(presets, GBC.eol().fill().insets(10, 10, 10, 10));
+        bothTables.add(presets, GBC.eol().fill().insets(5, 2, 5, 2));
 
         DblClickWatch dblClickWatch = new DblClickWatch();
         propertyTable.addMouseListener(dblClickWatch);
