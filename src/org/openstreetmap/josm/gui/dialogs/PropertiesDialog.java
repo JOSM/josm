@@ -636,7 +636,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         {
             for(TaggingPreset t : TaggingPresetPreference.taggingPresets)
             {
-                if(!( (relations > 0 && !t.types.contains("relation")) &&
+                if(t.types == null || !((relations > 0 && !t.types.contains("relation")) &&
                 (nodes > 0 && !t.types.contains("node")) &&
                 (ways+closedways > 0 && !t.types.contains("way")) &&
                 (closedways > 0 && !t.types.contains("closedway"))))
