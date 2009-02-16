@@ -144,6 +144,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * mouse (which will become selected).
      */
     @Override public void mouseDragged(MouseEvent e) {
+        if(!Main.map.mapView.isVisibleDrawableLayer())
+            return;
+        
         cancelDrawMode = true;
         if (mode == Mode.select) return;
 
@@ -282,6 +285,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * cursor to movement.
      */
     @Override public void mousePressed(MouseEvent e) {
+        if(!Main.map.mapView.isVisibleDrawableLayer())
+            return;
+        
         cancelDrawMode = false;
         if (! (Boolean)this.getValue("active")) return;
         if (e.getButton() != MouseEvent.BUTTON1)
@@ -331,6 +337,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * Restore the old mouse cursor.
      */
     @Override public void mouseReleased(MouseEvent e) {
+        if(!Main.map.mapView.isVisibleDrawableLayer())
+            return;
+        
         if (mode == Mode.select) {
             selectionManager.unregister(Main.map.mapView);
 

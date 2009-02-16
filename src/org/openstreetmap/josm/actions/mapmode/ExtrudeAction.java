@@ -125,6 +125,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * mouse (which will become selected).
      */
     @Override public void mouseDragged(MouseEvent e) {
+        if(!Main.map.mapView.isVisibleDrawableLayer())
+            return;
         if (mode == Mode.select) return;
 
         // do not count anything as a move if it lasts less than 100 milliseconds.
@@ -192,6 +194,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /**
      */
     @Override public void mousePressed(MouseEvent e) {
+        if(!Main.map.mapView.isVisibleDrawableLayer())
+            return;
         if (!(Boolean)this.getValue("active")) return;
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -219,6 +223,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * Restore the old mouse cursor.
      */
     @Override public void mouseReleased(MouseEvent e) {
+        if(!Main.map.mapView.isVisibleDrawableLayer())
+            return;
         restoreCursor();
         if (selectedSegment == null) return;
         if (mousePos.distance(initialMousePos) > 10) {

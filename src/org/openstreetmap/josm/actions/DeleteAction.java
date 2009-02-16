@@ -24,6 +24,8 @@ public final class DeleteAction extends JosmAction implements SelectionChangedLi
     }
 
     public void actionPerformed(ActionEvent e) {
+        if(!Main.map.mapView.isVisibleDrawableLayer())
+            return;
         new org.openstreetmap.josm.actions.mapmode.DeleteAction(Main.map)
                 .doActionPerformed(e);
     }

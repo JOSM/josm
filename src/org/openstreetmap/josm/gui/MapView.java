@@ -189,6 +189,11 @@ public class MapView extends NavigatableComponent {
     {
         return activeLayer != null && activeLayer instanceof OsmDataLayer;
     }
+    
+    public Boolean isVisibleDrawableLayer() {
+        return isDrawableLayer() && activeLayer.visible;
+    }
+    
 
     /**
      * Remove the layer from the mapview. If the layer was in the list before,
