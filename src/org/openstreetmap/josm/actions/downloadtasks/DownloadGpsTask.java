@@ -14,7 +14,6 @@ import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.xml.sax.SAXException;
 
@@ -38,10 +37,9 @@ public class DownloadGpsTask implements DownloadTask {
         @Override protected void finish() {
             if (rawData == null)
                 return;
-                        rawData.recalculateBounds();
-                        Bounds b = rawData.bounds;
-                        String name = tr("Downloaded GPX Data");
-                        GpxLayer layer = new GpxLayer(rawData, name);
+            rawData.recalculateBounds();
+            String name = tr("Downloaded GPX Data");
+            GpxLayer layer = new GpxLayer(rawData, name);
             Layer x = findMergeLayer();
             if (newLayer || x == null)
                 Main.main.addLayer(layer);

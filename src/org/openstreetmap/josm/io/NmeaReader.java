@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
@@ -201,7 +200,6 @@ public class NmeaReader {
                 } else sb.append((char)c);
             }
             rd.close();
-            Object[] wparr = ps.waypoints.toArray();
             currentTrack.trackSegs.add(ps.waypoints);
             data.recalculateBounds();
 

@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -12,10 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -32,13 +28,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.MapScaler;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -76,13 +69,13 @@ public class ColorPreference implements PreferenceSetting {
             else
                 colorKeyList.put(getName(key), key);
         }
-        for (Entry k : colorKeyList.entrySet()) {
+        for (Entry<String, String> k : colorKeyList.entrySet()) {
             Vector<Object> row = new Vector<Object>(2);
             row.add(k.getValue());
             row.add(ColorHelper.html2color(colorMap.get(k.getValue())));
             tableModel.addRow(row);
         }
-        for (Entry k : colorKeyList_mappaint.entrySet()) {
+        for (Entry<String, String> k : colorKeyList_mappaint.entrySet()) {
             Vector<Object> row = new Vector<Object>(2);
             row.add(k.getValue());
             row.add(ColorHelper.html2color(colorMap.get(k.getValue())));

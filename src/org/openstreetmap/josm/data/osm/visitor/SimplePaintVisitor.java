@@ -1,5 +1,7 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+/* License: GPL. Copyright 2007 by Immanuel Scholz and others */
 package org.openstreetmap.josm.data.osm.visitor;
+
+/* To enable debugging or profiling remove the double / signs */
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
@@ -126,44 +128,44 @@ public class SimplePaintVisitor implements Visitor {
     }
 
     public void visitAll(DataSet data, Boolean virtual) {
-        boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
-        long profilerStart = java.lang.System.currentTimeMillis();
-        long profilerLast = profilerStart;
-        int profilerN = 0;
-        if(profiler)
-            System.out.println("Simplepaint Profiler");
+        //boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
+        //long profilerStart = java.lang.System.currentTimeMillis();
+        //long profilerLast = profilerStart;
+        //int profilerN = 0;
+        //if(profiler)
+        //    System.out.println("Simplepaint Profiler");
 
         getSettings(virtual);
 
-        if(profiler)
-        {
-            System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
-        // draw tagged ways first, then untagged ways. takes
-        // time to iterate through list twice, OTOH does not
-        // require changing the colour while painting...
-        profilerN = 0;
+        /* draw tagged ways first, then untagged ways. takes
+           time to iterate through list twice, OTOH does not
+           require changing the colour while painting... */
+        //profilerN = 0;
         for (final OsmPrimitive osm : data.relations)
             if (!osm.deleted && !osm.selected)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
 
-        if(profiler)
-        {
-            System.out.format("Relations: %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Relations: %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
-        profilerN = 0;
+        //profilerN = 0;
         for (final OsmPrimitive osm : data.ways)
             if (!osm.deleted && !osm.selected && osm.tagged)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
         displaySegments();
 
@@ -171,69 +173,70 @@ public class SimplePaintVisitor implements Visitor {
             if (!osm.deleted && !osm.selected && !osm.tagged)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
         displaySegments();
 
-        if(profiler)
-        {
-            System.out.format("Ways     : %4dms, n=%5d\n",
-                (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Ways     : %4dms, n=%5d\n",
+        //        (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
-        profilerN = 0;
+        //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected())
             if (!osm.deleted)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
         displaySegments();
 
-        if(profiler)
-        {
-            System.out.format("Selected : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Selected : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
-        profilerN = 0;
+        //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
             if (!osm.deleted && !osm.selected)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
-        if(profiler)
-        {
-            System.out.format("Nodes    : %4dms, n=%5d\n",
-                (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+
+        //if(profiler)
+        //{
+        //    System.out.format("Nodes    : %4dms, n=%5d\n",
+        //        (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
         if(virtualNodeSize != 0)
         {
-            profilerN = 0;
+        //    profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
                 if (!osm.deleted)
                     {
                         visitVirtual((Way)osm);
-                        profilerN++;
+        //                profilerN++;
                     }
             displaySegments();
 
-            if(profiler)
-            {
-                System.out.format("Virtual  : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-                profilerLast = java.lang.System.currentTimeMillis();
-            }
+        //    if(profiler)
+        //    {
+        //        System.out.format("Virtual  : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //        profilerLast = java.lang.System.currentTimeMillis();
+        //    }
         }
 
-        if(profiler)
-        {
-            System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
+        //}
     }
 
     /**
@@ -293,13 +296,13 @@ public class SimplePaintVisitor implements Visitor {
         if (w.incomplete || w.nodes.size() < 2)
             return;
 
-        // show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
-        // (even if the tag is negated as in oneway=false) or the way is selected
+        /* show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
+           (even if the tag is negated as in oneway=false) or the way is selected */
 
         boolean showThisDirectionArrow = w.selected
         || (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
-        // head only takes over control if the option is true,
-        // the direction should be shown at all and not only because it's selected
+        /* head only takes over control if the option is true,
+           the direction should be shown at all and not only because it's selected */
         boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !w.selected && showHeadArrowOnly;
         Color wayColor;
 
@@ -389,7 +392,7 @@ public class SimplePaintVisitor implements Visitor {
                 y = (p1.y+p2.y)/2 - virtualNodeSize - 3;
             }
 
-            displaySegments(); // draw nodes on top!
+            displaySegments(); /* draw nodes on top! */
             Color c = g.getColor();
             g.setColor(backgroundColor);
             g.fillRect(x-1, y-12, 8*strlen+1, 14);

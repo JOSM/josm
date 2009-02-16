@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -109,7 +108,7 @@ public class RelationEditor extends JFrame {
     private final JTable propertyTable = new JTable(propertyData);
     private final JTable memberTable = new JTable(memberData);
 
-    // =================== FIXME FIXME FIXME =====================
+    // =================== FIXME =====================
     // As soon as API 0.5 is dead, drop all the collation stuff from here ...
 
     /**
@@ -207,7 +206,7 @@ public class RelationEditor extends JFrame {
             tr("Edit relation #{0}", relation.id));
         this.relation = relation;
 
-        ordered = Main.pref.get("osm-server.version", "0.5").equals("0.6");
+        ordered = !Main.pref.get("osm-server.version", "0.5").equals("0.5");
 
         if (relation == null) {
             // create a new relation
@@ -247,14 +246,6 @@ public class RelationEditor extends JFrame {
             }
         });
 
-        /* I don't like this text any more. Let's just get on with doing the specialist
-         * editors instead of talking about it.
-        JLabel help = new JLabel("<html><em>"+
-            tr("This is the basic relation editor which allows you to change the relation's tags " +
-            "as well as the members. In addition to this we should have a smart editor that " +
-            "detects the type of relationship and limits your choices in a sensible way.")+"</em></html>");
-        getContentPane().add(help, BorderLayout.NORTH);
-         */
         try { setAlwaysOnTop(true); } catch (SecurityException sx) {}
 
         // Basic Editor panel has two blocks;
@@ -325,33 +316,18 @@ public class RelationEditor extends JFrame {
         bothTables.add(new JLabel(tr("Tags (empty value deletes tag)")), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(new JScrollPane(propertyTable), GBC.eop().fill(GBC.BOTH));
         bothTables.add(status = new JLabel(tr("Members")), GBC.eol().fill(GBC.HORIZONTAL));
-        if (ordered) {
-            JPanel upDownPanel = new JPanel();
-            upDownPanel.setLayout(new BoxLayout(upDownPanel, BoxLayout.Y_AXIS));
+        // this is not exactly pretty but the four buttons simply don't fit in one line.
+        // we should have smaller buttons for situations like this.
+        JPanel buttonPanel = new JPanel(new GridLayout(2,ordered ? 3 : 2));
 
-            upDownPanel.add(createButton(null, "moveup", tr("Move the currently selected members up"),
-                    KeyEvent.VK_U, new ActionListener() {
+        if (ordered) {
+            buttonPanel.add(createButton(null, "moveup", tr("Move the currently selected members up"), KeyEvent.VK_U, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     moveMembers(-1);
                 }
             }));
-            upDownPanel.add(createButton(null, "movedown", tr("Move the currently selected members down"),
-                    KeyEvent.VK_N, new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    moveMembers(1);
-                }
-            }));
-
-
-            bothTables.add(new JScrollPane(memberTable), GBC.std().fill(GBC.BOTH));
-            bothTables.add(upDownPanel, GBC.eol().fill(GBC.VERTICAL));
-        } else {
-            bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
         }
-
-        // this is not exactly pretty but the four buttons simply don't fit in one line.
-        // we should have smaller buttons for situations like this.
-        JPanel buttonPanel = new JPanel(new GridLayout(2,2));
+        bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
 
         buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
         tr("Add all currently selected objects as members"), KeyEvent.VK_A, new ActionListener() {
@@ -367,6 +343,14 @@ public class RelationEditor extends JFrame {
             }
         }));
 
+        if(ordered) {
+            buttonPanel.add(createButton(null, "movedown", tr("Move the currently selected members down"), KeyEvent.VK_N, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    moveMembers(1);
+                }
+            }));
+        }
+
         buttonPanel.add(createButton(marktr("Remove"),"remove",
         tr("Remove the member in the current table row from this relation"), KeyEvent.VK_D, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -381,27 +365,6 @@ public class RelationEditor extends JFrame {
             }
         }));
 
-        /*buttonPanel.add(createButton(marktr("Select"),"select",
-        tr("Highlight the member from the current table row as JOSM's selection"), KeyEvent.VK_S, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                ArrayList<OsmPrimitive> sel;
-                int cnt = memberTable.getSelectedRowCount();
-                if(cnt > 0)
-                {
-                    sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i : memberTable.getSelectedRows())
-                        sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
-                }
-                else
-                {
-                    cnt = memberTable.getRowCount();
-                    sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i = 0; i < cnt; ++i)
-                        sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
-                }
-                Main.ds.setSelected(sel);
-            }
-        }));*/
         buttonPanel.add(createButton(marktr("Download Members"),"downloadincomplete",
         tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_L, new ActionListener() {
             public void actionPerformed(ActionEvent e) {

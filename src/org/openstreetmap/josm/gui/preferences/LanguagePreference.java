@@ -54,7 +54,7 @@ public class LanguagePreference implements PreferenceSetting {
         });
 
         JPanel panel = null;
-        for(PreferenceSetting s : gui.settings)
+        for(PreferenceSetting s : PreferenceDialog.settings)
         {
             if(s instanceof LafPreference)
                 panel = ((LafPreference)s).panel;

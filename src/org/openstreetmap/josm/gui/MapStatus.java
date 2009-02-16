@@ -23,7 +23,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseListener;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Map.Entry;

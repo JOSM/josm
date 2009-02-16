@@ -64,8 +64,6 @@ public class BoundingXYVisitor implements Visitor {
      * Enlarges the calculated bounding box by 0.002 degrees.
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
-     *
-     * @param enlargeDegree
      */
     public void enlargeBoundingBox() {
         enlargeBoundingBox(0.002);

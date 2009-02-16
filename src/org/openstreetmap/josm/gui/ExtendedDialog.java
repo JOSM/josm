@@ -3,30 +3,22 @@ package org.openstreetmap.josm.gui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoundedRangeModel;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 
@@ -36,11 +28,11 @@ public class ExtendedDialog extends JDialog {
     
     /**
      * Sets up the dialog. The first button is always the default.
-     * @param Component The parent element that will be used for position and maximum size
-     * @param String The text that will be shown in the window titlebar
-     * @param Component Any component that should be show above the buttons (e.g. JLabel)
-     * @param String[] The labels that will be displayed on the buttons
-     * @param String[] The path to the icons that will be displayed on the buttons. Path is relative to JOSM's image directory. File extensions need to be included. If a button should not have an icon pass null.
+     * @param parent The parent element that will be used for position and maximum size
+     * @param title The text that will be shown in the window titlebar
+     * @param content Any component that should be show above the buttons (e.g. JLabel)
+     * @param buttonTexts The labels that will be displayed on the buttons
+     * @param buttonIcons The path to the icons that will be displayed on the buttons. Path is relative to JOSM's image directory. File extensions need to be included. If a button should not have an icon pass null.
      */ 
     public ExtendedDialog(Component parent, String title, Component content, String[] buttonTexts, String[] buttonIcons) {
         super(JOptionPane.getFrameForComponent(parent), title, true);     

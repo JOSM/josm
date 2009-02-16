@@ -27,9 +27,6 @@ public class OsmServerObjectReader extends OsmServerReader {
     }
     /**
      * Method to download single objects from OSM server. ways, relations, nodes
-     * @param id Object ID
-     * @param type way node relation
-     * @param full download with or without child objects
      * @return the data requested
      * @throws SAXException
      * @throws IOException

@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginDownloader;
 import org.openstreetmap.josm.plugins.PluginSelection;
 import org.openstreetmap.josm.tools.GBC;

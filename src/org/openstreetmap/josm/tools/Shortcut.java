@@ -259,14 +259,6 @@ public class Shortcut {
     public static final int GROUPS_ALT1 = GROUP__MAX;
     public static final int GROUPS_ALT2 = GROUP__MAX * 2;
 
-    // safely read a shortcut from the preferences
-    private static String[] getConfigStringArray(String key) {
-        String s = Main.pref.get(key, null);
-        if (s == null || s.equals("null") || s.equals(""))
-            return null;
-        return s.split(";");
-    }
-
     // bootstrap
     private static boolean initdone = false;
     private static void doInit() {

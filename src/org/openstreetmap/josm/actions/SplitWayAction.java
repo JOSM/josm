@@ -122,7 +122,10 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             for (Entry<Way, Integer> entry : wayOccurenceCounter.entrySet()) {
                 if (entry.getValue().equals(selectedNodes.size())) {
                     if (selectedWay != null) {
-                        JOptionPane.showMessageDialog(Main.parent, tr("There is more than one way using the node(s) you selected. Please select the way also."));
+                        JOptionPane.showMessageDialog(Main.parent,
+                        trn("There is more than one way using the node you selected. Please select the way also.",
+                        "There is more than one way using the nodes you selected. Please select the way also.",
+                        selectedNodes.size()));
                         return;
                     }
                     selectedWay = entry.getKey();
@@ -130,7 +133,8 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             }
 
             if (selectedWay == null) {
-                JOptionPane.showMessageDialog(Main.parent, tr("The selected nodes do not share the same way."));
+                JOptionPane.showMessageDialog(Main.parent,
+                tr("The selected nodes do not share the same way."));
                 return;
             }
 
@@ -143,8 +147,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             }
             if (!nds.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
-                        trn("The selected way does not contain the selected node.",
-                                "The selected way does not contain all the selected nodes.", selectedNodes.size()));
+                trn("The selected way does not contain the selected node.",
+                "The selected way does not contain all the selected nodes.",
+                selectedNodes.size()));
                 return;
             }
         }

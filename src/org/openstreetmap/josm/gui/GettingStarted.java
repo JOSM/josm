@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.EventQueue;
 
 import javax.swing.JScrollPane;
@@ -141,7 +140,7 @@ public class GettingStarted extends JPanel {
 
         ArrayList<Future<String>> linkContent = new ArrayList<Future<String>>();
         for(int i=0; i < links.size(); i++) {
-            String[] obj = (String[])links.get(i);
+            String[] obj = links.get(i);
             int targetVersion = Integer.parseInt(obj[1]);
             String condition = obj[0];
             Boolean isLocalized = !obj[2].equals("");

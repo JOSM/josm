@@ -24,8 +24,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * The user can click on an object, which gets deleted if possible. When Ctrl is
  * pressed when releasing the button, the objects and all its references are
- * deleted. The exact definition of "all its references" are in
- * {@link #deleteWithReferences deleteWithReferences}.
+ * deleted.
  *
  * If the user did not press Ctrl and the object has any references, the user
  * is informed and nothing is deleted.

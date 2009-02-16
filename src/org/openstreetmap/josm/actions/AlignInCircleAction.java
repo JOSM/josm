@@ -59,7 +59,7 @@ public final class AlignInCircleAction extends JosmAction {
                     }
                 }
             }
-            result += mat[0][i] * Math.pow(-1, (double) i) * determinant(temp);
+            result += mat[0][i] * Math.pow(-1, i) * determinant(temp);
         }
         return result;
     }
@@ -135,7 +135,6 @@ public final class AlignInCircleAction extends JosmAction {
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Way> ways = new LinkedList<Way>();
         Node center = null;
-        Node node = null;
         double radius = 0;
         boolean regular = false;
 
@@ -160,12 +159,11 @@ public final class AlignInCircleAction extends JosmAction {
             // When one more node, part of the way, is selected, set the radius equal to the
             // distance between two nodes.
             if (nodes.size() > 0) {
-                if (nodes.size() == 1 && way.nodes.contains((Node) nodes.toArray()[0])) {
-                    node = (Node) nodes.toArray()[0];
+                if (nodes.size() == 1 && way.nodes.contains(nodes.toArray()[0])) {
                     regular = true;
                 } else {
 
-                    center = (Node) nodes.toArray()[way.nodes.contains((Node) nodes.toArray()[0]) ? 1 : 0];
+                    center = (Node) nodes.toArray()[way.nodes.contains(nodes.toArray()[0]) ? 1 : 0];
                     if (nodes.size() == 2)
                         radius = distance(((Node) nodes.toArray()[0]).eastNorth, ((Node) nodes.toArray()[1]).eastNorth);
                 }

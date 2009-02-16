@@ -178,7 +178,7 @@ public class MapFrame extends JPanel implements Destroyable {
 
     public void addMapMode(IconToggleButton b) {
         toolBarActions.add(b);
-        toolGroup.add((AbstractButton)b);
+        toolGroup.add(b);
     }
 
     /**

@@ -4,10 +4,10 @@ import java.util.Comparator;
 
 import javax.swing.JMenuItem;
 
-public class PresetTextComparator implements Comparator {
+public class PresetTextComparator implements Comparator<JMenuItem> {
 	//TODO add error checking and stuff
-	public int compare(Object arg0, Object arg1) {
-		return ((JMenuItem)arg0).getText().compareTo(((JMenuItem)arg1).getText());
+	public int compare(JMenuItem arg0, JMenuItem arg1) {
+		return arg0.getText().compareTo(arg1.getText());
 	}
 
 

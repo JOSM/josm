@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.ScrollPane;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -55,7 +53,7 @@ public class PreferenceDialog extends JTabbedPane {
      * @return The created panel ready to add other controls.
      */
     public JPanel createPreferenceTab(String icon, String title, String desc) {
-        return createPreferenceTab(icon, title, desc, true);
+        return createPreferenceTab(icon, title, desc, false);
     }
 
     /**

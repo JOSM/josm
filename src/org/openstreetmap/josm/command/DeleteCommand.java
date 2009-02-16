@@ -128,19 +128,6 @@ public class DeleteCommand extends Command {
         return new DeleteCommand(v.data);
     }
 
-    /**
-     * Try to delete all given primitives.
-     *
-     * If a node is used by a way, it's removed from that way. If a node or a way is used by a
-     * relation, inform the user and do not delete.
-     *
-     * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
-     * they are part of a relation, inform the user and do not delete.
-     *
-     * @param selection The objects to delete.
-     * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
-     * @return command A command to perform the deletions, or null of there is nothing to delete.
-     */
     private static int testRelation(Relation ref, OsmPrimitive osm) {
         NameVisitor n = new NameVisitor();
         ref.visit(n);
@@ -174,6 +161,19 @@ public class DeleteCommand extends Command {
         return delete(selection, true);
     }
 
+    /**
+     * Try to delete all given primitives.
+     *
+     * If a node is used by a way, it's removed from that way. If a node or a way is used by a
+     * relation, inform the user and do not delete.
+     *
+     * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
+     * they are part of a relation, inform the user and do not delete.
+     *
+     * @param selection The objects to delete.
+     * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
+     * @return command A command to perform the deletions, or null of there is nothing to delete.
+     */
     public static Command delete(Collection<? extends OsmPrimitive> selection, boolean alsoDeleteNodesInWay) {
         if (selection.isEmpty())
             return null;

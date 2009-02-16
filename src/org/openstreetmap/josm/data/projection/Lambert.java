@@ -205,11 +205,11 @@ public class Lambert implements Projection {
      * Initializes from projected coordinates (conic projection). Note that
      * reference ellipsoid used by Lambert is Clark
      *
-     * @param coord projected coordinates pair in meters
-     * @param Xs    false east (coordinate system origin) in meters
-     * @param Ys    false north (coordinate system origin) in meters
-     * @param c     projection constant
-     * @param n     projection exponent
+     * @param eastNorth projected coordinates pair in meters
+     * @param Xs        false east (coordinate system origin) in meters
+     * @param Ys        false north (coordinate system origin) in meters
+     * @param c         projection constant
+     * @param n         projection exponent
      * @return LatLon in radian
      */
     private LatLon Geographic(EastNorth eastNorth, double Xs, double Ys, double c, double n) {
@@ -235,9 +235,6 @@ public class Lambert implements Projection {
     /**
      * Translate latitude/longitude in WGS84, (ellipsoid GRS80) to Lambert
      * geographic, (ellipsoid Clark)
-     *
-     * @param wgs
-     * @return
      */
     private LatLon GRS802Clark(LatLon wgs) {
         double lat = Math.toRadians(wgs.lat()); // degree to radian
@@ -255,10 +252,6 @@ public class Lambert implements Projection {
         return Geographic(X, Y, Z, Ellipsoid.clarke);
     }
 
-    /**
-     * @param lambert
-     * @return
-     */
     private LatLon Clark2GRS80(LatLon lambert) {
         double lat = lambert.lat(); // in radian
         double lon = lambert.lon();

@@ -62,7 +62,6 @@ import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
-import org.openstreetmap.josm.data.DataSetChecker;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**

@@ -40,7 +40,6 @@ import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -221,11 +220,6 @@ public class OsmDataLayer extends Layer {
 
     @Override public void mergeFrom(final Layer from) {
         final MergeVisitor visitor = new MergeVisitor(data,((OsmDataLayer)from).data);
-//        int i=0;
-        int max = ((OsmDataLayer)from).data.allPrimitives().size();
-
-//        System.out.format("Add/Merge data:");
-
         for (final OsmPrimitive osm : ((OsmDataLayer)from).data.allPrimitives()) {
 //            i++;
 //            if(i%100 == 0) {

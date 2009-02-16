@@ -30,7 +30,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         double sizex = this.mv.scale * this.mv.getWidth();
         double sizey = this.mv.scale * this.mv.getHeight();
         for (int zoom = 0; zoom <= 150; zoom++, sizex *= 1.1, sizey *= 1.1) {
-            if (sizex > this.mv.world.east() || sizey > this.mv.world.north()) {
+            if (sizex > MapView.world.east() || sizey > MapView.world.north()) {
                 preventChange=true;
                 setValue(zoom);
                 preventChange=false;

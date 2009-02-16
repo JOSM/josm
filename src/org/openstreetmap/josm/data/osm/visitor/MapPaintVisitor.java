@@ -1,5 +1,7 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+/* License: GPL. Copyright 2007 by Immanuel Scholz and others */
 package org.openstreetmap.josm.data.osm.visitor;
+
+/* To enable debugging or profiling remove the double / signs */
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -46,7 +48,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected boolean drawMultipolygon;
     protected boolean drawRestriction;
     protected boolean leftHandTraffic;
-    protected boolean restrictionDebug;
+    //protected boolean restrictionDebug;
     protected int showNames;
     protected int showIcons;
     protected int useStrokes;
@@ -69,12 +71,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     private EastNorth minEN;
     private EastNorth maxEN;
 
-    protected int profilerVisibleNodes;
-    protected int profilerVisibleWays;
-    protected int profilerVisibleAreas;
-    protected int profilerSegments;
-    protected int profilerVisibleSegments;
-    protected boolean profilerOmitDraw;
+    //protected int profilerVisibleNodes;
+    //protected int profilerVisibleWays;
+    //protected int profilerVisibleAreas;
+    //protected int profilerSegments;
+    //protected int profilerVisibleSegments;
+    //protected boolean profilerOmitDraw;
 
     protected boolean isZoomOk(ElemStyle e) {
         if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -83,11 +85,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(e == null) /* the default for things that don't have a rule (show, if scale is smaller than 1500m) */
             return (circum < 1500);
 
-        // formula to calculate a map scale: natural size / map size = scale
-        // example: 876000mm (876m as displayed) / 22mm (roughly estimated screen size of legend bar) = 39818
-        //
-        // so the exact "correcting value" below depends only on the screen size and resolution
-        // XXX - do we need a Preference setting for this (if things vary widely)?
+        /* formula to calculate a map scale: natural size / map size = scale
+           example: 876000mm (876m as displayed) / 22mm (roughly estimated screen size of legend bar) = 39818
+
+           so the exact "correcting value" below depends only on the screen size and resolution
+           XXX - do we need a Preference setting for this (if things vary widely)? */
         return !(circum >= e.maxScale / 22 || circum < e.minScale / 22);
     }
 
@@ -131,7 +133,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * @param n The node to draw.
      */
     public void visit(Node n) {
-        // check, if the node is visible at all
+        /* check, if the node is visible at all */
         if((n.eastNorth.east()  > maxEN.east() ) ||
            (n.eastNorth.north() > maxEN.north()) ||
            (n.eastNorth.east()  < minEN.east() ) ||
@@ -144,8 +146,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(n);
 
-        if(profilerOmitDraw)
-            return;
+        //if(profilerOmitDraw)
+        //    return;
 
         if (nodeStyle != null && isZoomOk(nodeStyle) && showIcons > dist)
             drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.selected);
@@ -170,7 +172,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return;
         }
 
-        // check, if the way is visible at all
+        /* check, if the way is visible at all */
         double minx = 10000;
         double maxx = -10000;
         double miny = 10000;
@@ -207,46 +209,46 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(wayStyle==null)
         {
-            // way without style
-            profilerVisibleWays++;
-            if(!profilerOmitDraw)
-                drawWay(w, null, untaggedColor, w.selected);
+            /* way without style */
+            //profilerVisibleWays++;
+            //if(!profilerOmitDraw)
+            drawWay(w, null, untaggedColor, w.selected);
         }
         else if(wayStyle instanceof LineElemStyle)
         {
-            // way with line style
-            profilerVisibleWays++;
-            if(!profilerOmitDraw)
-                drawWay(w, (LineElemStyle)wayStyle, untaggedColor, w.selected);
+            /* way with line style */
+            //profilerVisibleWays++;
+            //if(!profilerOmitDraw)
+            drawWay(w, (LineElemStyle)wayStyle, untaggedColor, w.selected);
         }
         else if (wayStyle instanceof AreaElemStyle)
         {
-            // way with area style
-            if(!profilerOmitDraw)
+            /* way with area style */
+            //if(!profilerOmitDraw)
+            //{
+            if (fillAreas > dist)
             {
-                if (fillAreas > dist)
-                {
-                    profilerVisibleAreas++;
-                    drawArea(w, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
-                    if(!w.isClosed())
-                        w.putError(tr("Area style way is not closed."), true);
-                }
-                drawWay(w, ((AreaElemStyle)wayStyle).line, ((AreaElemStyle)wayStyle).color, w.selected);
+            //    profilerVisibleAreas++;
+                drawArea(w, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
+                if(!w.isClosed())
+                    w.putError(tr("Area style way is not closed."), true);
             }
+            drawWay(w, ((AreaElemStyle)wayStyle).line, ((AreaElemStyle)wayStyle).color, w.selected);
+            //}
         }
     }
 
     public void drawWay(Way w, LineElemStyle l, Color color, Boolean selected) {
-        // show direction arrows, if draw.segment.relevant_directions_only is not set,
-        // the way is tagged with a direction key
-        // (even if the tag is negated as in oneway=false) or the way is selected
+        /* show direction arrows, if draw.segment.relevant_directions_only is not set,
+           the way is tagged with a direction key
+           (even if the tag is negated as in oneway=false) or the way is selected */
         boolean showDirection = w.selected || ((!useRealWidth) && (showDirectionArrow
         && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
-        // head only takes over control if the option is true,
-        // the direction should be shown at all and not only because it's selected
+        /* head only takes over control if the option is true,
+           the direction should be shown at all and not only because it's selected */
         boolean showOnlyHeadArrowOnly = showDirection && !w.selected && showHeadArrowOnly;
         int width = defaultSegmentWidth;
-        int realWidth = 0; //the real width of the element in meters
+        int realWidth = 0; /* the real width of the element in meters */
         int dashed = 0;
         Color dashedColor = null;
         Node lastN;
@@ -272,7 +274,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         else if(w.selected)
             color = selectedColor;
 
-        // draw overlays under the way
+        /* draw overlays under the way */
         if(l != null && l.overlays != null)
         {
             for(LineElemStyle s : l.overlays)
@@ -293,7 +295,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
         }
 
-        // draw the way
+        /* draw the way */
         lastN = null;
         Iterator<Node> it = w.nodes.iterator();
         while (it.hasNext())
@@ -305,7 +307,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             lastN = n;
         }
 
-        // draw overlays above the way
+        /* draw overlays above the way */
         if(l != null && l.overlays != null)
         {
             for(LineElemStyle s : l.overlays)
@@ -391,7 +393,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                                 joined = true;
                                 if(c.selected) selected = true;
                                 --left;
-                                if(n == null) n = new ArrayList(w.nodes);
+                                if(n == null) n = new ArrayList<Node>(w.nodes);
                                 n.remove((mode == 21 || mode == 22) ? nl : 0);
                                 if(mode == 21)
                                     n.addAll(c.nodes);
@@ -465,9 +467,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         r.mappaintVisibleCode = 0;
 
-        // TODO: is it possible to do this like the nodes/ways code?
-        if(profilerOmitDraw)
-            return;
+        /* TODO: is it possible to do this like the nodes/ways code? */
+        //if(profilerOmitDraw)
+        //    return;
 
         if(selectedCall)
         {
@@ -505,11 +507,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
     }
 
-    // this current experimental implementation will only work for standard restrictions:
-    // from(Way) / via(Node) / to(Way)
+    /* this current experimental implementation will only work for standard restrictions:
+       from(Way) / via(Node) / to(Way) */
     public void drawRestriction(Relation r) {
-        if(restrictionDebug)
-            System.out.println("Restriction: " + r.keys.get("name") + " restriction " + r.keys.get("restriction"));
+        //if(restrictionDebug)
+        //    System.out.println("Restriction: " + r.keys.get("name") + " restriction " + r.keys.get("restriction"));
 
         r.clearErrors();
 
@@ -517,11 +519,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Way toWay = null;
         Node via = null;
 
-        // find the "from", "via" and "to" elements
+        /* find the "from", "via" and "to" elements */
         for (RelationMember m : r.members)
         {
-            if(restrictionDebug)
-                System.out.println("member " + m.member + " selected " + r.selected);
+            //if(restrictionDebug)
+            //    System.out.println("member " + m.member + " selected " + r.selected);
 
             if(m.member == null)
                 r.putError(tr("Empty member in relation."), true);
@@ -537,11 +539,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(m.member instanceof Way)
                 {
                     Way w = (Way) m.member;
-                    ElemStyle style = getPrimitiveStyle(w);
-                    //if(r.selected) {
-                    //    drawWay(w, null /*(LineElemStyle)style*/, selectedColor, true);
-                    //    w.mappaintDrawnCode = paintid;
-                    //}
                     if(w.nodes.size() < 2)
                     {
                         r.putError(tr("Way ''{0}'' with less than two points.",
@@ -593,18 +590,18 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return;
         }
 
-        // check if "from" way starts or ends at via
+        /* check if "from" way starts or ends at via */
         if(fromWay.nodes.get(0) != via && fromWay.nodes.get(fromWay.nodes.size()-1) != via) {
             r.putError(tr("The \"from\" way doesn't start or end at a \"via\" node."), true);
             return;
         }
-        // check if "to" way starts or ends at via
+        /* check if "to" way starts or ends at via */
         /*if(toWay.nodes.get(0) != via && toWay.nodes.get(toWay.nodes.size()-1) != via) {
             r.putError(tr("to way doesn't start or end at a via node"), true);
-            //return;
+            return;
         }*/
 
-        // find the "direct" nodes before the via node
+        /* find the "direct" nodes before the via node */
         Node fromNode = null;
         try
         {
@@ -619,17 +616,17 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             r.putError(tr("The \"{0}\" way must contain at least 2 nodes.", "from"), true);
         }
 
-        // find the "direct" node after the via node
+        /* find the "direct" node after the via node */
         Node toNode = null;
         try
         {
             if(toWay.nodes.get(0) == via) {
-                if(restrictionDebug)
-                    System.out.println("To way heading away from via");
+                //if(restrictionDebug)
+                //    System.out.println("To way heading away from via");
                 toNode = toWay.nodes.get(1);
             } else {
-                if(restrictionDebug)
-                    System.out.println("To way heading towards via");
+                //if(restrictionDebug)
+                //    System.out.println("To way heading towards via");
                 toNode = toWay.nodes.get(toWay.nodes.size()-2);
             }
         } catch (IndexOutOfBoundsException ioobe) {
@@ -639,23 +636,25 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Point pFrom = nc.getPoint(fromNode.eastNorth);
         Point pVia = nc.getPoint(via.eastNorth);
 
-        if(restrictionDebug) {
-            Point pTo = nc.getPoint(toNode.eastNorth);
+        //if(restrictionDebug) {
+        //    Point pTo = nc.getPoint(toNode.eastNorth);
 
-            // debug output of interesting nodes
-            System.out.println("From: " + fromNode);
-            drawNode(fromNode, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-            System.out.println("Via: " + via);
-            drawNode(via, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-            System.out.println("To: " + toNode);
-            drawNode(toNode, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-            System.out.println("From X: " + pFrom.x + " Y " + pFrom.y);
-            System.out.println("Via  X: " + pVia.x  + " Y " + pVia.y);
-            System.out.println("To   X: " + pTo.x   + " Y " + pTo.y);
-        }
+        //    /* debug output of interesting nodes */
+        //    System.out.println("From: " + fromNode);
+        //    drawNode(fromNode, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+        //    System.out.println("Via: " + via);
+        //    drawNode(via, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+        //    System.out.println("To: " + toNode);
+        //    drawNode(toNode, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+        //    System.out.println("From X: " + pFrom.x + " Y " + pFrom.y);
+        //    System.out.println("Via  X: " + pVia.x  + " Y " + pVia.y);
+        //    System.out.println("To   X: " + pTo.x   + " Y " + pTo.y);
+        //}
 
-        // starting from via, go back the "from" way a few pixels
-        // (calculate the vector vx/vy with the specified length and the direction away from the "via" node along the first segment of the "from" way)
+        /* starting from via, go back the "from" way a few pixels
+           (calculate the vector vx/vy with the specified length and the direction
+           away from the "via" node along the first segment of the "from" way)
+        */
         double distanceFromVia=14;
         double dx = (pFrom.x >= pVia.x) ? (pFrom.x - pVia.x) : (pVia.x - pFrom.x);
         double dy = (pFrom.y >= pVia.y) ? (pFrom.y - pVia.y) : (pVia.y - pFrom.y);
@@ -674,11 +673,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(pFrom.x < pVia.x) vx = -vx;
         if(pFrom.y < pVia.y) vy = -vy;
 
-        if(restrictionDebug)
-            System.out.println("vx " + vx + " vy " + vy);
+        //if(restrictionDebug)
+        //    System.out.println("vx " + vx + " vy " + vy);
 
-        // go a few pixels away from the way (in a right angle)
-        // (calculate the vx2/vy2 vector with the specified length and the direction 90degrees away from the first segment of the "from" way)
+        /* go a few pixels away from the way (in a right angle)
+           (calculate the vx2/vy2 vector with the specified length and the direction
+           90degrees away from the first segment of the "from" way)
+        */
         double distanceFromWay=8;
         double vx2 = 0;
         double vy2 = 0;
@@ -732,12 +733,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return;
         }
 
-        // rotate icon with direction last node in from to
-        if(restrictionDebug)
-            System.out.println("Deg1 " + fromAngleDeg + " Deg2 " + (fromAngleDeg + 180) + " Icon " + iconAngle);
+        /* rotate icon with direction last node in from to */
+        //if(restrictionDebug)
+        //    System.out.println("Deg1 " + fromAngleDeg + " Deg2 " + (fromAngleDeg + 180) + " Icon " + iconAngle);
         ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, nodeStyle.icon, iconAngle);
 
-        // scale down icon to 16*16 pixels
+        /* scale down icon to 16*16 pixels */
         ImageIcon smallIcon = new ImageIcon(rotatedIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
         int w = smallIcon.getIconWidth(), h=smallIcon.getIconHeight();
         smallIcon.paintIcon ( Main.map.mapView, g, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2 );
@@ -1040,14 +1041,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     {
         Polygon polygon = getPolygon(w);
 
-        // set the opacity (alpha) level of the filled polygon
+        /* set the opacity (alpha) level of the filled polygon */
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
     }
 
     protected void drawAreaPolygon(Polygon polygon, Color color)
     {
-        // set the opacity (alpha) level of the filled polygon
+        /* set the opacity (alpha) level of the filled polygon */
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
     }
@@ -1056,7 +1057,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Point p = nc.getPoint(n.eastNorth);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
-        profilerVisibleNodes++;
+        //profilerVisibleNodes++;
 
         int w = icon.getIconWidth(), h=icon.getIconHeight();
         icon.paintIcon ( Main.map.mapView, g, p.x-w/2, p.y-h/2 );
@@ -1091,7 +1092,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, int dashed, Color dashedColor) {
-        profilerSegments++;
+        //profilerSegments++;
         if (col != currentColor || width != currentWidth || dashed != currentDashed || dashedColor != currentDashedColor) {
             displaySegments(col, width, dashed, dashedColor);
         }
@@ -1101,7 +1102,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if (!isSegmentVisible(p1, p2)) {
             return;
         }
-        profilerVisibleSegments++;
+        //profilerVisibleSegments++;
         currentPath.moveTo(p1.x, p1.y);
         currentPath.lineTo(p2.x, p2.y);
 
@@ -1165,7 +1166,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     || (p.y > nc.getHeight()))
                 return;
 
-            profilerVisibleNodes++;
+            //profilerVisibleNodes++;
 
             g.setColor(color);
             if (fill) {
@@ -1196,11 +1197,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
     }
 
-    // Shows areas before non-areas
+    /* Shows areas before non-areas */
     public void visitAll(DataSet data, Boolean virtual) {
 
-        boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
-        profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
+        //boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
+        //profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
 
         useStyleCache = Main.pref.getBoolean("mappaint.cache",true);
         fillAreas = Main.pref.getInteger("mappaint.fillareas", 10000000);
@@ -1212,24 +1213,24 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         LatLon ll2 = nc.getLatLon(100,0);
         dist = ll1.greatCircleDistance(ll2);
 
-        long profilerStart = java.lang.System.currentTimeMillis();
-        long profilerLast = profilerStart;
-        int profilerN;
-        if(profiler)
-            System.out.println("Mappaint Profiler (" +
-                (useStyleCache ? "cache=true, " : "cache=false, ") +
-                "fillareas " + fillAreas + ", " +
-                "fillalpha=" + fillAlpha + "%, " +
-                "dist=" + (int)dist + "m)");
+        //long profilerStart = java.lang.System.currentTimeMillis();
+        //long profilerLast = profilerStart;
+        //int profilerN;
+        //if(profiler)
+        //    System.out.println("Mappaint Profiler (" +
+        //        (useStyleCache ? "cache=true, " : "cache=false, ") +
+        //        "fillareas " + fillAreas + ", " +
+        //        "fillalpha=" + fillAlpha + "%, " +
+        //        "dist=" + (int)dist + "m)");
 
         getSettings(virtual);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
-        circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; // circumference of the earth in meter
+        circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; /* circumference of the earth in meter */
         styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction",true);
-        restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
+        //restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String currentLocale = Locale.getDefault().getLanguage();
@@ -1242,40 +1243,40 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         ++paintid;
         viewid = nc.getViewID();
 
-        profilerVisibleNodes = 0;
-        profilerVisibleWays = 0;
-        profilerVisibleAreas = 0;
-        profilerSegments = 0;
-        profilerVisibleSegments = 0;
+        //profilerVisibleNodes = 0;
+        //profilerVisibleWays = 0;
+        //profilerVisibleAreas = 0;
+        //profilerSegments = 0;
+        //profilerVisibleSegments = 0;
 
-        if(profiler)
-        {
-            System.out.format("Prepare  : %5dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Prepare  : %5dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
         if (fillAreas > dist && styles != null && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
             /*** RELATIONS ***/
-            profilerN = 0;
+        //    profilerN = 0;
             for (final Relation osm : data.relations)
             {
                 if(!osm.deleted && !osm.incomplete && osm.mappaintVisibleCode != viewid)
                 {
                     osm.visit(this);
-                    profilerN++;
+        //            profilerN++;
                 }
             }
 
-            if(profiler)
-            {
-                System.out.format("Relations: %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-                profilerLast = java.lang.System.currentTimeMillis();
-            }
+        //    if(profiler)
+        //    {
+        //        System.out.format("Relations: %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //        profilerLast = java.lang.System.currentTimeMillis();
+        //    }
 
             /*** AREAS ***/
-            profilerN = 0;
+        //    profilerN = 0;
             for (final Way osm : data.ways)
             {
                 if (!osm.incomplete && !osm.deleted
@@ -1284,122 +1285,122 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     if(isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid)
                     {
                         osm.visit(this);
-                        profilerN++;
+        //                profilerN++;
                     } else
-                        noAreaWays.add((Way)osm);
+                        noAreaWays.add(osm);
                 }
             }
 
-            if(profiler)
-            {
-                System.out.format("Areas    : %5dms, calls=%7d, visible=%d\n",
-                    (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleAreas);
-                profilerLast = java.lang.System.currentTimeMillis();
-            }
+        //    if(profiler)
+        //    {
+        //        System.out.format("Areas    : %5dms, calls=%7d, visible=%d\n",
+        //            (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleAreas);
+        //        profilerLast = java.lang.System.currentTimeMillis();
+        //    }
 
             /*** WAYS ***/
-            profilerN = 0;
+        //    profilerN = 0;
             fillAreas = 0;
             for (final OsmPrimitive osm : noAreaWays)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
 
-            if(profiler)
-            {
-                System.out.format("Ways     : %5dms, calls=%7d, visible=%d\n",
-                    (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
-                profilerLast = java.lang.System.currentTimeMillis();
-            }
+        //    if(profiler)
+        //    {
+        //        System.out.format("Ways     : %5dms, calls=%7d, visible=%d\n",
+        //            (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
+        //        profilerLast = java.lang.System.currentTimeMillis();
+        //    }
         }
         else
         {
             /*** WAYS (filling disabled)  ***/
-            profilerN = 0;
+        //    profilerN = 0;
             for (final OsmPrimitive osm : data.ways)
                 if (!osm.incomplete && !osm.deleted && !osm.selected
                 && osm.mappaintVisibleCode != viewid )
                 {
                     osm.visit(this);
-                    profilerN++;
+        //            profilerN++;
                 }
 
-            if(profiler)
-            {
-                System.out.format("Ways     : %5dms, calls=%7d, visible=%d\n",
-                    (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
-                profilerLast = java.lang.System.currentTimeMillis();
-            }
+        //    if(profiler)
+        //    {
+        //        System.out.format("Ways     : %5dms, calls=%7d, visible=%d\n",
+        //            (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
+        //        profilerLast = java.lang.System.currentTimeMillis();
+        //    }
         }
 
         /*** SELECTED  ***/
         selectedCall = true;
-        profilerN = 0;
+        //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected()) {
             if (!osm.incomplete && !osm.deleted && !(osm instanceof Node)
             && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
         }
 
-        if(profiler)
-        {
-            System.out.format("Selected : %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Selected : %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
         /*** DISPLAY CACHED SEGMENTS (WAYS) NOW ***/
         displaySegments();
 
         /*** NODES ***/
-        profilerN = 0;
+        //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
             if (!osm.incomplete && !osm.deleted
             && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);
-                profilerN++;
+        //        profilerN++;
             }
 
-        if(profiler)
-        {
-            System.out.format("Nodes    : %5dms, calls=%7d, visible=%d\n",
-                (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleNodes);
-            profilerLast = java.lang.System.currentTimeMillis();
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Nodes    : %5dms, calls=%7d, visible=%d\n",
+        //        (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleNodes);
+        //    profilerLast = java.lang.System.currentTimeMillis();
+        //}
 
         /*** VIRTUAL  ***/
         if (virtualNodeSize != 0)
         {
-            profilerN = 0;
+        //    profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
                 if (!osm.incomplete && !osm.deleted
                 && osm.mappaintVisibleCode != viewid )
                 {
-                    // TODO: move this into the SimplePaint code?
-                    if(!profilerOmitDraw)
+                    /* TODO: move this into the SimplePaint code? */
+        //            if(!profilerOmitDraw)
                         visitVirtual((Way)osm);
-                    profilerN++;
+        //            profilerN++;
                 }
 
-            if(profiler)
-            {
-                System.out.format("Virtual  : %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-                profilerLast = java.lang.System.currentTimeMillis();
-            }
+        //    if(profiler)
+        //    {
+        //        System.out.format("Virtual  : %5dms, calls=%7d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+        //        profilerLast = java.lang.System.currentTimeMillis();
+        //    }
 
             displaySegments(null);
         }
 
-        if(profiler)
-        {
-            System.out.format("Segments :          calls=%7d, visible=%d\n", profilerSegments, profilerVisibleSegments);
-            System.out.format("All      : %5dms\n", (profilerLast-profilerStart));
-        }
+        //if(profiler)
+        //{
+        //    System.out.format("Segments :          calls=%7d, visible=%d\n", profilerSegments, profilerVisibleSegments);
+        //    System.out.format("All      : %5dms\n", (profilerLast-profilerStart));
+        //}
     }
 
     /**

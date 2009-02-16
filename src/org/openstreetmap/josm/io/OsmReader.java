@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -435,7 +433,7 @@ public class OsmReader {
           }
 
           // Cache the ways here for much better search performance
-          HashMap hm = new HashMap(10000);
+          HashMap<Long, Way> hm = new HashMap<Long, Way>(10000);
           for (Way wy : ds.ways)
             hm.put(wy.id, wy);
 
@@ -453,7 +451,7 @@ public class OsmReader {
                               adder.visit((Node)em.member);
                          }
                     } else if (emd.type.equals("way")) {
-                         em.member = (OsmPrimitive)hm.get(emd.id);
+                         em.member = hm.get(emd.id);
                          if (em.member == null)
                             em.member = findWay(emd.id);
                          if (em.member == null) {

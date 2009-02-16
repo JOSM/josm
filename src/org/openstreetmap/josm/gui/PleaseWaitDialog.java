@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;

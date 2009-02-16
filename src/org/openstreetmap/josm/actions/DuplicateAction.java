@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.data.SelectionChangedListener;

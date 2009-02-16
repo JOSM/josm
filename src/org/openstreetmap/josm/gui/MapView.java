@@ -364,8 +364,8 @@ public class MapView extends NavigatableComponent {
          * the user to re-select the tool after i.e. moving a layer. While testing I found
          * that I switch layers and actions at the same time and it was annoying to mind the
          * order. This way it works as visual clue for new users */
-        for (Enumeration e = Main.map.toolGroup.getElements() ; e.hasMoreElements() ;) {
-            AbstractButton x=(AbstractButton)e.nextElement();
+        for (Enumeration<AbstractButton> e = Main.map.toolGroup.getElements() ; e.hasMoreElements() ;) {
+            AbstractButton x=e.nextElement();
             x.setEnabled(((MapMode)x.getAction()).layerIsSupported(layer));
         }
         repaint();
@@ -399,7 +399,6 @@ public class MapView extends NavigatableComponent {
      * This implementation can be used for resolving ticket #1461.
      *
      * @return <code>true</code> if a zoom operation has been performed
-     * @author Jan Peter Stotz
      */
     public boolean zoomToEditLayerBoundingBox() {
         // workaround for #1461 (zoom to download bounding box instead of all data)

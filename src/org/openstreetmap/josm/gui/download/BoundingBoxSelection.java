@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusAdapter;
@@ -11,8 +10,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.util.HashMap;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,7 +20,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent; 
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
@@ -86,7 +82,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         KeyListener osmUrlKeyListener = new KeyListener() {
             public void keyPressed(KeyEvent keyEvent) {}
             public void keyReleased(KeyEvent keyEvent) {
-                if (keyEvent.getKeyCode() == keyEvent.VK_ENTER && parseURL(gui))
+                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER && parseURL(gui))
                     gui.closeDownloadDialog(true);
             }
             public void keyTyped(KeyEvent keyEvent) {}

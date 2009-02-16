@@ -3,11 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.InputEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
