@@ -6,21 +6,19 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
-import org.openstreetmap.josm.actions.OpenLocationAction;
-import org.openstreetmap.josm.actions.OrthogonalizeAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
@@ -38,6 +36,8 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.actions.OpenLocationAction;
+import org.openstreetmap.josm.actions.OrthogonalizeAction;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
@@ -46,7 +46,9 @@ import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
+import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
+import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
 import org.openstreetmap.josm.actions.UndoAction;
 import org.openstreetmap.josm.actions.UnselectAllAction;
@@ -61,7 +63,6 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
-import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -129,6 +130,7 @@ public class MainMenu extends JMenuBar {
     /* Help menu */
     public final HelpAction help = new HelpAction();
     public final JosmAction about = new AboutAction();
+    public final JosmAction statusreport = new ShowStatusReportAction();
 
     public final JMenu fileMenu = new JMenu(tr("File"));
     public final JMenu editMenu = new JMenu(tr("Edit"));
@@ -266,7 +268,10 @@ public class MainMenu extends JMenuBar {
             }
         });
         helpMenu.add(check);*/
-        current = helpMenu.add(help); // why is help not a JosmAction?
+        
+        helpMenu.add(statusreport);
+        
+        current = helpMenu.add(help); // FIXME why is help not a JosmAction?
         current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
                 Shortcut.GROUP_DIRECT).getKeyStroke());
         add(helpMenu, about);
