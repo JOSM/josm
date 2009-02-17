@@ -217,6 +217,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
         mousePos = e.getPoint();
         initialMousePos = e.getPoint();
+        
+        if(selectedSegment != null)
+            Main.ds.setSelected(selectedSegment.way);
     }
 
     /**
