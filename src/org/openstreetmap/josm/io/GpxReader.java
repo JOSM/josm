@@ -223,10 +223,17 @@ public class GpxReader {
                 }
                 break;
             case wpt:
-                if (qName.equals("ele") || qName.equals("magvar")
-                        || qName.equals("geoidheight") || qName.equals("name")
-                        || qName.equals("sym") || qName.equals("type")) {
+                if (   qName.equals("ele")  || qName.equals("magvar")
+                    || qName.equals("name") || qName.equals("geoidheight")
+                    || qName.equals("type") || qName.equals("sym")) {
                     currentWayPoint.attr.put(qName, accumulator.toString());
+                } else if(qName.equals("hdop") /*|| qName.equals("vdop") ||
+                        qName.equals("pdop")*/) {
+                    try {
+                        currentWayPoint.attr.put(qName, Float.parseFloat(accumulator.toString()));
+                    } catch(Exception e) {
+                        currentWayPoint.attr.put(qName, new Float(0));
+                    }
                 } else if (qName.equals("time")) {
                     currentWayPoint.attr.put(qName, accumulator.toString());
                     currentWayPoint.setTime();

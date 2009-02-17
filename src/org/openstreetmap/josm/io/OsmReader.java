@@ -477,7 +477,7 @@ public class OsmReader {
       * Parse the given input source and return the dataset.
       * @param ref The dataset that is search in for references first. If
       *      the Reference is not found here, Main.ds is searched and a copy of the
-      *  elemet found there is returned.
+      *  element found there is returned.
       */
      public static DataSet parseDataSet(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
           return parseDataSetOsm(source, ref, pleaseWaitDlg).ds;

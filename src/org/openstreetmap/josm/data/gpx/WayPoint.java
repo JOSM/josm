@@ -17,7 +17,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
     public final LatLon latlon;
     public final EastNorth eastNorth;
     public double time;
-    public Color speedLineColor;
+    public Color customColoring;
     public boolean drawLine;
     public int dir;
 

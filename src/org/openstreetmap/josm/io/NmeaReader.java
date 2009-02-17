@@ -308,10 +308,8 @@ public class NmeaReader {
                 }
                 // h-dilution
                 accu=e[GPGGA.HDOP.position];
-                if(!accu.equals("")) {
-                    Double.parseDouble(accu);
-                    currentwp.attr.put("hdop", accu);
-                }
+                if(!accu.equals(""))
+                    currentwp.attr.put("hdop", Float.parseFloat(accu));
                 // fix
                 accu=e[GPGGA.QUALITY.position];
                 if(!accu.equals("")) {
@@ -355,22 +353,16 @@ public class NmeaReader {
             } else if(e[0].equals("$GPGSA")) {
                 // vdop
                 accu=e[GPGSA.VDOP.position];
-                if(!accu.equals("")) {
-                    Double.parseDouble(accu);
-                    currentwp.attr.put("vdop", accu);
-                }
+                if(!accu.equals(""))
+                    currentwp.attr.put("vdop", Float.parseFloat(accu));
                 // hdop
                 accu=e[GPGSA.HDOP.position];
-                if(!accu.equals("")) {
-                    Double.parseDouble(accu);
-                    currentwp.attr.put("hdop", accu);
-                }
+                if(!accu.equals(""))
+                    currentwp.attr.put("hdop", Float.parseFloat(accu));
                 // pdop
                 accu=e[GPGSA.PDOP.position];
-                if(!accu.equals("")) {
-                    Double.parseDouble(accu);
-                    currentwp.attr.put("pdop", accu);
-                }
+                if(!accu.equals(""))
+                    currentwp.attr.put("pdop", Float.parseFloat(accu));
             }
             else if(e[0].equals("$GPRMC")) {
                 // coordinates

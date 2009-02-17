@@ -9,13 +9,17 @@ import java.awt.event.ActionListener;
 import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.Box;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
@@ -26,8 +30,11 @@ public class DrawingPreference implements PreferenceSetting {
     private JTextField drawRawGpsMaxLineLength = new JTextField(8);
     private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
     private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
-    private JCheckBox colorTracks = new JCheckBox(tr("Color tracks by velocity."));
-    private JComboBox colorTracksTune = new JComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
+    private ButtonGroup colorGroup;
+    private JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
+    private JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
+    private JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
+    private JComboBox colorTypeVelocityTune = new JComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
     private JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
     private JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
@@ -48,13 +55,11 @@ public class DrawingPreference implements PreferenceSetting {
         // drawRawGpsLines
         drawRawGpsLines.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                            forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
-                            drawRawGpsMaxLineLength.setEnabled(drawRawGpsLines.isSelected());
-                            drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
-                            drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-                            drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-                            colorTracks.setEnabled(drawRawGpsLines.isSelected());
-                            colorTracksTune.setEnabled(colorTracks.isSelected() && drawRawGpsLines.isSelected());
+                forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
+                drawRawGpsMaxLineLength.setEnabled(drawRawGpsLines.isSelected());
+                drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
+                drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
+                drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
             }
         });
         drawRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines"));
@@ -99,28 +104,52 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(new JLabel(tr("Minimum distance (pixels)")), GBC.std().insets(60,0,0,0));
         panel.add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
-        // colorTracks
-        colorTracks.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                            colorTracksTune.setEnabled(colorTracks.isSelected() && drawRawGpsLines.isSelected());
-            }
-        });
-        colorTracks.setSelected(Main.pref.getBoolean("draw.rawgps.colors"));
-        colorTracks.setToolTipText(tr("Choose the hue for the track color by the velocity at that point."));
-        colorTracks.setEnabled(drawRawGpsLines.isSelected());
-        panel.add(colorTracks, GBC.std().insets(40,0,0,0));
-        
-        // color Tracks by Velocity Tune
-        int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
-        colorTracksTune.setSelectedIndex(ccts==10 ? 2 : (ccts==20 ? 1 : 0));
-        colorTracksTune.setToolTipText(tr("Allows to tune the track coloring for different average speeds."));
-        colorTracksTune.setEnabled(colorTracks.isSelected() && colorTracks.isEnabled());
-        panel.add(colorTracksTune, GBC.eop().insets(5,0,0,5));
-        
         // largeGpsPoints
         largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large"));
         largeGpsPoints.setToolTipText(tr("Draw larger dots for the GPS points."));
         panel.add(largeGpsPoints, GBC.eop().insets(20,0,0,0));
+
+        // colorTracks
+        colorGroup = new ButtonGroup();
+        colorGroup.add(colorTypeNone);
+        colorGroup.add(colorTypeVelocity);
+        colorGroup.add(colorTypeDilution);
+
+        colorTypeVelocity.addChangeListener(new ChangeListener(){
+            public void stateChanged(ChangeEvent e) {
+                colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
+            }
+        });
+
+        switch(Main.pref.getInteger("draw.rawgps.colors", 0)) {
+            case 0:
+                colorTypeNone.setSelected(true);
+                break;
+            case 1:
+                colorTypeVelocity.setSelected(true);
+                break;
+            case 2:
+                colorTypeDilution.setSelected(true);
+                break;
+        }
+
+        colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
+        colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
+        colorTypeDilution.setToolTipText(tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to logs that information."));
+
+        // color Tracks by Velocity Tune
+        int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
+        colorTypeVelocityTune.setSelectedIndex(ccts==10 ? 2 : (ccts==20 ? 1 : 0));
+        colorTypeVelocityTune.setToolTipText(tr("Allows to tune the track coloring for different average speeds."));
+        colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected() && colorTypeVelocity.isEnabled());
+
+        panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
+
+        panel.add(new JLabel(tr("Track and Point Coloring")), GBC.eol().insets(20,0,0,0));
+        panel.add(colorTypeNone, GBC.eol().insets(40,0,0,0));
+        panel.add(colorTypeVelocity, GBC.std().insets(40,0,0,0));
+        panel.add(colorTypeVelocityTune, GBC.eop().insets(5,0,0,5));
+        panel.add(colorTypeDilution, GBC.eol().insets(40,0,0,0));
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         JScrollPane scrollpane = new JScrollPane(panel);
@@ -197,8 +226,13 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
         Main.pref.put("draw.rawgps.alternatedirection", drawGpsArrowsFast.isSelected());
         Main.pref.put("draw.rawgps.min-arrow-distance", drawGpsArrowsMinDist.getText());
-        Main.pref.put("draw.rawgps.colors", colorTracks.isSelected());
-        int ccti=colorTracksTune.getSelectedIndex();
+        if(colorTypeVelocity.isSelected())
+            Main.pref.putInteger("draw.rawgps.colors", 1);
+        else if(colorTypeDilution.isSelected())
+            Main.pref.putInteger("draw.rawgps.colors", 2);
+        else
+            Main.pref.putInteger("draw.rawgps.colors", 0);
+        int ccti=colorTypeVelocityTune.getSelectedIndex();
         Main.pref.putInteger("draw.rawgps.colorTracksTune", ccti==2 ? 10 : (ccti==1 ? 20 : 45));
         Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
         Main.pref.put("draw.segment.direction", directionHint.isSelected());
