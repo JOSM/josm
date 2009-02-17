@@ -146,15 +146,15 @@ public final class Way extends OsmPrimitive {
     public Boolean isClosed() {
         return nodes.size() >= 3 && lastNode() == firstNode();
     }
-    
+
     public Node lastNode() {
         return nodes.get(nodes.size()-1);
     }
-    
+
     public Node firstNode() {
         return nodes.get(0);
     }
-    
+
     public boolean isFirstLastNode(Node n) {
         return n == firstNode() || n == lastNode();
     }

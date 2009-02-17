@@ -517,7 +517,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         Way fromWay = null;
         Way toWay = null;
-        Node via = null;
+        OsmPrimitive via = null;
 
         /* find the "from", "via" and "to" elements */
         for (RelationMember m : r.members)
@@ -556,6 +556,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         else {
                             toWay = w;
                         }
+                    } else if("via".equals(m.role)) {
+                        if(via != null)
+                            r.putError(tr("More than one \"via\" found."), true);
+                        else
+                            via = w;
                     }
                     else
                         r.putError(tr("Unknown role ''{0}''.", m.role), true);
@@ -564,11 +569,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 {
                     Node n = (Node) m.member;
                     if("via".equals(m.role))
+                    {
                         if(via != null)
-                            System.out.println("More than one \"via\" found.");
-                        else {
+                            r.putError(tr("More than one \"via\" found."), true);
+                        else
                             via = n;
-                        }
+                    }
                     else
                         r.putError(tr("Unknown role ''{0}''.", m.role), true);
                 }
@@ -586,57 +592,61 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return;
         }
         if (via == null) {
-            r.putError(tr("No \"via\" node found."), true);
+            r.putError(tr("No \"via\" node or way found."), true);
             return;
         }
 
-        /* check if "from" way starts or ends at via */
-        if(fromWay.nodes.get(0) != via && fromWay.nodes.get(fromWay.nodes.size()-1) != via) {
-            r.putError(tr("The \"from\" way doesn't start or end at a \"via\" node."), true);
-            return;
+        Node viaNode;
+        if(via instanceof Node)
+        {
+            viaNode = (Node) via;
+            if(!fromWay.isFirstLastNode(viaNode)) {
+                r.putError(tr("The \"from\" way doesn't start or end at a \"via\" node."), true);
+                return;
+            }
+            if(!toWay.isFirstLastNode(viaNode))
+                r.putError(tr("The \"to\" way doesn't start or end at a \"via\" node."), true);
         }
-        /* check if "to" way starts or ends at via */
-        /*if(toWay.nodes.get(0) != via && toWay.nodes.get(toWay.nodes.size()-1) != via) {
-            r.putError(tr("to way doesn't start or end at a via node"), true);
-            return;
-        }*/
+        else
+        {
+            Way viaWay = (Way) via;
+            Node firstNode = viaWay.firstNode();
+            Node lastNode = viaWay.lastNode();
+            if(fromWay.isFirstLastNode(firstNode))
+                viaNode = firstNode;
+            else if(fromWay.isFirstLastNode(lastNode))
+                viaNode = firstNode;
+            else {
+                r.putError(tr("The \"from\" way doesn't start or end at the \"via\" way."), true);
+                return;
+            }
+            if(!toWay.isFirstLastNode(viaNode == firstNode ? lastNode : firstNode))
+                r.putError(tr("The \"to\" way doesn't start or end at the \"via\" way."), true);
+        }
 
         /* find the "direct" nodes before the via node */
         Node fromNode = null;
-        try
-        {
-            if(fromWay.nodes.get(0) == via) {
-                //System.out.println("From way heading away from via");
-                fromNode = fromWay.nodes.get(1);
-            } else {
-                //System.out.println("From way heading towards via");
-                fromNode = fromWay.nodes.get(fromWay.nodes.size()-2);
-            }
-        } catch (IndexOutOfBoundsException ioobe) {
-            r.putError(tr("The \"{0}\" way must contain at least 2 nodes.", "from"), true);
-        }
-
-        /* find the "direct" node after the via node */
-        Node toNode = null;
-        try
-        {
-            if(toWay.nodes.get(0) == via) {
-                //if(restrictionDebug)
-                //    System.out.println("To way heading away from via");
-                toNode = toWay.nodes.get(1);
-            } else {
-                //if(restrictionDebug)
-                //    System.out.println("To way heading towards via");
-                toNode = toWay.nodes.get(toWay.nodes.size()-2);
-            }
-        } catch (IndexOutOfBoundsException ioobe) {
-            r.putError(tr("The \"{0}\" way must contain at least 2 nodes.", "to"), true);
+        if(fromWay.firstNode() == via) {
+            //System.out.println("From way heading away from via");
+            fromNode = fromWay.nodes.get(1);
+        } else {
+            //System.out.println("From way heading towards via");
+            fromNode = fromWay.nodes.get(fromWay.nodes.size()-2);
         }
 
         Point pFrom = nc.getPoint(fromNode.eastNorth);
-        Point pVia = nc.getPoint(via.eastNorth);
+        Point pVia = nc.getPoint(viaNode.eastNorth);
 
         //if(restrictionDebug) {
+        /* find the "direct" node after the via node */
+        //    Node toNode = null;
+        //    if(toWay.firstNode() == via) {
+        //      System.out.println("To way heading away from via");
+        //        toNode = toWay.nodes.get(1);
+        //    } else {
+        //        System.out.println("To way heading towards via");
+        //        toNode = toWay.nodes.get(toWay.nodes.size()-2);
+        //    }
         //    Point pTo = nc.getPoint(toNode.eastNorth);
 
         //    /* debug output of interesting nodes */
@@ -680,7 +690,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
            (calculate the vx2/vy2 vector with the specified length and the direction
            90degrees away from the first segment of the "from" way)
         */
-        double distanceFromWay=8;
+        double distanceFromWay=10;
         double vx2 = 0;
         double vy2 = 0;
         double iconAngle = 0;
