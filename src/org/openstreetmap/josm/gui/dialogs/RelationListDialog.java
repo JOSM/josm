@@ -17,6 +17,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -52,6 +53,27 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * The display list.
      */
     private JList displaylist = new JList(list);
+    
+    private SideButton sbEdit = new SideButton(marktr("Edit"), "edit", "Selection", tr( "Open an editor for the selected relation"), new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            Relation toEdit = getSelected();
+            if (toEdit == null)
+                return;
+            
+            new RelationEditor(toEdit).setVisible(true);
+        }
+    });
+    
+    private SideButton sbDel = new SideButton(marktr("Delete"), "delete", "Selection", tr("Delete the selected relation"), new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            Relation toDelete = getSelected();
+            if (toDelete == null)
+                return;
+            
+            Main.main.undoRedo.add(
+                    new DeleteCommand(Collections.singleton(toDelete)));
+        }
+    });
 
     public RelationListDialog() {
         super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
@@ -76,25 +98,18 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             }
         }), GBC.std());
 
-        buttonPanel.add(new SideButton(marktr("Edit"), "edit", "Selection", tr( "Open an editor for the selected relation"), new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Relation toEdit = (Relation) displaylist.getSelectedValue();
-                if (toEdit != null)
-                    new RelationEditor(toEdit).setVisible(true);
-            }
-        }), GBC.std());
+        buttonPanel.add(sbEdit, GBC.std());
 
-        buttonPanel.add(new SideButton(marktr("Delete"), "delete", "Selection", tr("Delete the selected relation"), new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Relation toDelete = (Relation) displaylist.getSelectedValue();
-                if (toDelete != null) {
-                    Main.main.undoRedo.add(
-                        new DeleteCommand(Collections.singleton(toDelete)));
-                }
-            }
-        }), GBC.eol());
+        buttonPanel.add(sbDel, GBC.eol());
         Layer.listeners.add(this);
         add(buttonPanel, BorderLayout.SOUTH);
+        
+        displaylist.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+               sbEdit.setEnabled(getSelected() != null);
+               sbDel.setEnabled(getSelected() != null);
+            }
+        });
     }
 
     @Override public void setVisible(boolean b) {
@@ -116,6 +131,9 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         } else {
             setTitle(tr("Relations"), false);
         }
+        
+        sbEdit.setEnabled(list.size() > 0);
+        sbDel.setEnabled(list.size() > 0);
     }
 
     public void activeLayerChange(Layer a, Layer b) {
@@ -167,5 +185,14 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      */
     public void removeListSelectionListener(ListSelectionListener listener) {
         displaylist.removeListSelectionListener(listener);
+    }
+    
+    /**
+     * @return The selected relation in the list
+     */
+    private Relation getSelected() {
+        if(list.size() == 1)
+            displaylist.setSelectedIndex(0);
+        return (Relation) displaylist.getSelectedValue();
     }
 }

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.ConflictResolver;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
@@ -49,6 +50,22 @@ public final class ConflictDialog extends ToggleDialog {
     public final Map<OsmPrimitive, OsmPrimitive> conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
     private final DefaultListModel model = new DefaultListModel();
     private final JList displaylist = new JList(model);
+    
+    private final SideButton sbSelect = new SideButton(marktr("Select"), "select", "Conflict",
+            tr("Set the selected elements on the map to the selected items in the list above."), new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
+                    for (Object o : displaylist.getSelectedValues())
+                        sel.add((OsmPrimitive)o);
+                    Main.ds.setSelected(sel);
+                }
+            });
+    private final SideButton sbResolve = new SideButton(marktr("Resolve"), "conflict", "Conflict",
+            tr("Open a merge dialog of all selected items in the list above."), new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+            resolve();
+        }
+    });
 
     public ConflictDialog() {
         super(tr("Conflict"), "conflict", tr("Merging conflicts."),
@@ -64,22 +81,8 @@ public final class ConflictDialog extends ToggleDialog {
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new GridLayout(1,2));
-        buttonPanel.add(new SideButton(marktr("Resolve"), "conflict", "Conflict",
-        tr("Open a merge dialog of all selected items in the list above."), new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                resolve();
-            }
-        }));
-
-        buttonPanel.add(new SideButton(marktr("Select"), "select", "Conflict",
-        tr("Set the selected elements on the map to the selected items in the list above."), new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
-                for (Object o : displaylist.getSelectedValues())
-                    sel.add((OsmPrimitive)o);
-                Main.ds.setSelected(sel);
-            }
-        }));
+        buttonPanel.add(sbResolve);
+        buttonPanel.add(sbSelect);
         add(buttonPanel, BorderLayout.SOUTH);
 
         DataSet.selListeners.add(new SelectionChangedListener(){
@@ -98,21 +101,30 @@ public final class ConflictDialog extends ToggleDialog {
                 Main.map.mapView.repaint();
             }
         });
+        
+        rebuildList();
     }
 
     private final void resolve() {
-        if (displaylist.getSelectedIndex() == -1) {
-            JOptionPane.showMessageDialog(Main.parent,tr("Please select something from the conflict list."));
+        if(model.size() == 1)
+            displaylist.setSelectedIndex(0);
+        
+        if (displaylist.getSelectedIndex() == -1)
             return;
-        }
         Map<OsmPrimitive, OsmPrimitive> sel = new HashMap<OsmPrimitive, OsmPrimitive>();
         for (int i : displaylist.getSelectedIndices()) {
             OsmPrimitive s = (OsmPrimitive)model.get(i);
             sel.put(s, conflicts.get(s));
         }
         ConflictResolver resolver = new ConflictResolver(sel);
-        int answer = JOptionPane.showConfirmDialog(Main.parent, resolver, tr("Resolve Conflicts"), JOptionPane.OK_CANCEL_OPTION);
-        if (answer != JOptionPane.OK_OPTION)
+        int answer = new ExtendedDialog(Main.parent,
+                          tr("Resolve Conflicts"),
+                          resolver,
+                          new String[] { tr("Solve Conflict"), tr("Cancel") },
+                          new String[] { "dialogs/conflict.png", "cancel.png"} 
+        ).getValue(); 
+
+        if (answer != 1)
             return;
         Main.main.undoRedo.add(new ConflictResolveCommand(resolver.conflicts, sel));
         Main.map.mapView.repaint();
@@ -135,6 +147,9 @@ public final class ConflictDialog extends ToggleDialog {
         } else {
             setTitle(tr("Conflicts"), false);
         }
+        
+        sbSelect.setEnabled(model.size() > 0);
+        sbResolve.setEnabled(model.size() > 0);
     }
 
     public final void add(Map<OsmPrimitive, OsmPrimitive> conflicts) {
