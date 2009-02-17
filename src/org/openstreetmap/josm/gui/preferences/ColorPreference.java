@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
@@ -147,9 +148,37 @@ public class ColorPreference implements PreferenceSetting {
                 }
                 int sel = colors.getSelectedRow();
                 JColorChooser chooser = new JColorChooser((Color)colors.getValueAt(sel, 1));
-                int answer = JOptionPane.showConfirmDialog(gui, chooser, tr("Choose a color for {0}", colors.getValueAt(sel, 0)), JOptionPane.OK_CANCEL_OPTION);
+                int answer = JOptionPane.showConfirmDialog(gui, chooser,
+                tr("Choose a color for {0}", getName((String)colors.getValueAt(sel, 0))),
+                JOptionPane.OK_CANCEL_OPTION);
                 if (answer == JOptionPane.OK_OPTION)
                     colors.setValueAt(chooser.getColor(), sel, 1);
+            }
+        });
+        JButton defaultSet = new JButton(tr("Set to default"));
+        defaultSet.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                if (colors.getSelectedRowCount() == 0) {
+                    JOptionPane.showMessageDialog(gui, tr("Please select a color."));
+                    return;
+                }
+                int sel = colors.getSelectedRow();
+                String name = (String)colors.getValueAt(sel, 0);
+                Color c = Main.pref.getDefaultColor(name);
+                if (c != null)
+                    colors.setValueAt(c, sel, 1);
+            }
+        });
+        JButton defaultAll = new JButton(tr("Set all to default"));
+        defaultAll.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                for(int i = 0; i < colors.getRowCount(); ++i)
+                {
+                  String name = (String)colors.getValueAt(i, 0);
+                  Color c = Main.pref.getDefaultColor(name);
+                  if (c != null)
+                      colors.setValueAt(c, i, 1);
+                }
             }
         });
         colors.setToolTipText(tr("Colors used by different objects in JOSM."));
@@ -160,7 +189,12 @@ public class ColorPreference implements PreferenceSetting {
         JScrollPane scrollpane = new JScrollPane(colors);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         panel.add(scrollpane, GBC.eol().fill(GBC.BOTH));
-        panel.add(colorEdit, GBC.eol().anchor(GBC.EAST));
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        panel.add(buttonPanel, GBC.eol().insets(5,0,5,5).fill(GBC.HORIZONTAL));
+        buttonPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+        buttonPanel.add(colorEdit, GBC.std().insets(0,5,0,0));
+        buttonPanel.add(defaultSet, GBC.std().insets(5,5,5,0));
+        buttonPanel.add(defaultAll, GBC.std().insets(0,5,0,0));
         gui.displaycontent.addTab(tr("Colors"), panel);
     }
 

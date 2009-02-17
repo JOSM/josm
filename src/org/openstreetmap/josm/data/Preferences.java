@@ -416,6 +416,11 @@ public class Preferences {
         return colStr.equals("") ? def : ColorHelper.html2color(colStr);
     }
 
+    synchronized public Color getDefaultColor(String colName) {
+        String colStr = defaults.get("color."+colName);
+        return colStr.equals("") ? null : ColorHelper.html2color(colStr);
+    }
+
     synchronized public boolean putColor(String colName, Color val) {
         return put("color."+colName, val != null ? ColorHelper.color2html(val) : null);
     }
