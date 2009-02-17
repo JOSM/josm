@@ -295,6 +295,11 @@ public class SelectAction extends MapMode implements SelectionEnded {
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         // boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
         boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        
+        // We don't want to change to draw tool if the user tries to (de)select
+        // stuff but accidentally clicks in an empty area when selection is empty
+        if(shift || ctrl)
+            cancelDrawMode = true;
 
         mouseDownTime = System.currentTimeMillis();
         didMove = false;
