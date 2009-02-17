@@ -179,6 +179,12 @@ public class GettingStarted extends JPanel {
                 content += linkContent.get(i).get();
             } catch (Exception e) {}
         }
+        
+        linkContent.clear();
+        try {
+            slave.shutdown(); 
+        } catch(SecurityException x) {}
+        
 
         content = "<html>\n"+
             styles +
