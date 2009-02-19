@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -24,7 +25,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ExtendedDialog extends JDialog {
     private int result = 0;
+    private Component parent;
     private final String[] bTexts;
+    
+    // For easy access when inherited
+    protected Object contentConstraints = GBC.eol().anchor(GBC.CENTER).insets(5,10,5,0);
+    protected ArrayList<JButton> buttons = new ArrayList<JButton>();
     
     /**
      * Sets up the dialog. The first button is always the default.
@@ -35,16 +41,20 @@ public class ExtendedDialog extends JDialog {
      * @param buttonIcons The path to the icons that will be displayed on the buttons. Path is relative to JOSM's image directory. File extensions need to be included. If a button should not have an icon pass null.
      */ 
     public ExtendedDialog(Component parent, String title, Component content, String[] buttonTexts, String[] buttonIcons) {
-        super(JOptionPane.getFrameForComponent(parent), title, true);     
+        super(JOptionPane.getFrameForComponent(parent), title, true);  
+        this.parent = parent;
         bTexts = buttonTexts;        
-        setupDialog(parent, title, content, buttonTexts, buttonIcons);
+        setupDialog(content, buttonIcons);
+        setVisible(true);
     }
     
     public ExtendedDialog(Component parent, String title, Component content, String[] buttonTexts) {
         this(parent, title, content, buttonTexts, null);
     }
     
-    // just display a breakable message
+    /**
+     * Sets up the dialog and displays the given message in a breakable label
+     */
     public ExtendedDialog(Component parent, String title, String message, String[] buttonTexts, String[] buttonIcons) {
         super(JOptionPane.getFrameForComponent(parent), title, true);
         
@@ -54,14 +64,23 @@ public class ExtendedDialog extends JDialog {
         lbl.setMaxWidth(Math.round(screenSize.width*2/3));
         
         bTexts = buttonTexts;        
-        setupDialog(parent, title, lbl, buttonTexts, buttonIcons);
+        setupDialog(lbl, buttonIcons);
+        setVisible(true);
     }
     
     public ExtendedDialog(Component parent, String title, String message, String[] buttonTexts) {
         this(parent, title, message, buttonTexts, null);
     }
     
-    private void setupDialog(Component parent, String title, Component content, String[] buttonTexts, String[] buttonIcons) {
+    /**
+     * Constructor that doesn't make the dialog visible immediately. Intended for when inheriting.
+     */
+    public ExtendedDialog(Component parent, String title, String[] buttonTexts, boolean modal) {
+        super(JOptionPane.getFrameForComponent(parent), title, modal);     
+        bTexts = buttonTexts;   
+    }
+    
+    protected void setupDialog(Component content, String[] buttonIcons) {
         setupEscListener();
         
         JButton button;
@@ -87,10 +106,11 @@ public class ExtendedDialog extends JDialog {
             
             if(i == 0) rootPane.setDefaultButton(button);           
             buttonsPanel.add(button, GBC.std().insets(2,2,2,2));
+            buttons.add(button);
         }
         
         JPanel cp = new JPanel(new GridBagLayout());        
-        cp.add(content, GBC.eol().anchor(GBC.CENTER).insets(5,10,5,0));
+        cp.add(content, contentConstraints);
         cp.add(buttonsPanel, GBC.eol().anchor(GBC.CENTER).insets(5,5,5,5));
         
         JScrollPane pane = new JScrollPane(cp);
@@ -101,13 +121,7 @@ public class ExtendedDialog extends JDialog {
         
         // Try to make it not larger than the parent window or at least not larger than 2/3 of the screen
         Dimension d = getSize();
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension x = new Dimension(Math.round(screenSize.width*2/3), Math.round(screenSize.height*2/3));
-        
-        try {
-            if(parent != null)
-                x = JOptionPane.getFrameForComponent(parent).getSize();
-        } catch(NullPointerException e) { }
+        Dimension x = findMaxDialogSize();
         
         boolean limitedInWidth = d.width > x.width;
         boolean limitedInHeight = d.height > x.height;
@@ -121,7 +135,6 @@ public class ExtendedDialog extends JDialog {
         
         setSize(d);
         setLocationRelativeTo(parent);
-        setVisible(true);
     }
     
     /**
@@ -130,6 +143,21 @@ public class ExtendedDialog extends JDialog {
      */    
     public int getValue() {
         return result;
+    }
+    
+    /**
+     * Tries to find a good value of how large the dialog should be
+     * @return Dimension Size of the parent Component or 2/3 of screen size if not available
+     */
+    protected Dimension findMaxDialogSize() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension x = new Dimension(Math.round(screenSize.width*2/3),
+                                    Math.round(screenSize.height*2/3));
+        try {
+            if(parent != null)
+                x = JOptionPane.getFrameForComponent(parent).getSize();
+        } catch(NullPointerException e) { }
+        return x;
     }
     
     /**

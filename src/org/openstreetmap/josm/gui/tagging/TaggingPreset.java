@@ -5,12 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -36,15 +37,14 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
@@ -589,37 +589,53 @@ public class TaggingPreset extends AbstractAction {
         JPanel p = createPanel(sel);
         if (p == null)
             return;
-        int answer = JOptionPane.OK_OPTION;
+              
+        int answer = 1;
         if (p.getComponentCount() != 0) {
-            final JOptionPane optionPane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
-                @Override public void selectInitialValue() {
-                    for (Item i : data) {
-                        if (i.focus) {
-                            i.requestFocusInWindow();
-                            return;
-                        }
-                    }
-                }
-            };
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
-            if(sel.size() == 0)
-                title = tr("Nothing selected!");
-
-            optionPane.createDialog(Main.parent, title).setVisible(true);
-            Object answerObj = optionPane.getValue();
-            if (answerObj == null || answerObj == JOptionPane.UNINITIALIZED_VALUE ||
-                    (answerObj instanceof Integer && (Integer)answerObj != JOptionPane.OK_OPTION))
-                answer = JOptionPane.CANCEL_OPTION;
+            if(sel.size() == 0) {
+                if(originalSelectionEmpty)
+                    title = tr("Nothing selected!");
+                else
+                    title = tr("Selection unsuitable!");
+            }
+            
+            class PresetDialog extends ExtendedDialog {
+                public PresetDialog(Component content, String title, boolean disableApply) {
+                    super(Main.parent,
+                            title,
+                            new String[] { tr("Apply Preset"), tr("Cancel") },
+                            true);
+                    contentConstraints = GBC.eol().fill().insets(5,10,5,0);
+                    setupDialog(content, new String[] {"ok.png", "cancel.png" });
+                    buttons.get(0).setEnabled(!disableApply);
+                    buttons.get(0).setToolTipText(title);
+                    setVisible(true);
+                }
+            }
+            
+            answer = new PresetDialog(p, title, (sel.size() == 0)).getValue();
         }
-        if (sel.size() != 0 && answer == JOptionPane.OK_OPTION) {
+        if (sel.size() != 0 && answer == 1) {
             Command cmd = createCommand(sel);
             if (cmd != null)
                 Main.main.undoRedo.add(cmd);
         }
         Main.ds.setSelected(Main.ds.getSelected()); // force update
     }
-
+    
+    /**
+     * True whenever the original selection given into createSelection was empty
+     */
+    private boolean originalSelectionEmpty = false;
+    
+    /**
+     * Removes all unsuitable OsmPrimitives from the given list
+     * @param participants List of possibile OsmPrimitives to tag
+     * @return Cleaned list with suitable OsmPrimitives only
+     */
     private Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
+        originalSelectionEmpty = participants.size() == 0;
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : participants)
         {
