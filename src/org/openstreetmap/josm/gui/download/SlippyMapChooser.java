@@ -10,9 +10,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.geom.Point2D;
 import java.util.Vector;
 
@@ -26,13 +25,10 @@ import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileSource;
-import org.openstreetmap.gui.jmapviewer.OsmTileSource.CycleMap;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.download.DownloadDialog;
-import org.openstreetmap.josm.gui.download.DownloadSelection;
 
 /**
  * JComponent that displays the slippy map tiles
@@ -40,7 +36,7 @@ import org.openstreetmap.josm.gui.download.DownloadSelection;
  * @author Tim Haussmann
  * 
  */
-public class SlippyMapChooser extends JMapViewer implements DownloadSelection, ComponentListener {
+public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
 
     private DownloadDialog iGui;
 
@@ -57,11 +53,11 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection, C
     // screen size
     private Dimension iScreenSize;
 
-    private TileSource[] sources = { new OsmTileSource.Mapnik(), new OsmTileSource.TilesAtHome(),new OsmTileSource.CycleMap()};
+    private TileSource[] sources = { new OsmTileSource.Mapnik(), new OsmTileSource.TilesAtHome(),
+            new OsmTileSource.CycleMap() };
     TileLoader cachedLoader;
     TileLoader uncachedLoader;
     JPanel slipyyMapTabPanel;
-    boolean firstShown = true;
 
     /**
      * Create the chooser component.
@@ -73,25 +69,26 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection, C
         setZoomContolsVisible(false);
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));
+        // We need to set an initial size - this prevents a wrong zoom selection for 
+        // the area before the component has been displayed the first time   
+        setBounds(new Rectangle(getMinimumSize()));
         setFileCacheEnabled(Main.pref.getBoolean("slippy_map_chooser.file_cache", true));
-        setMaxTilesInmemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
-        addComponentListener(this);
+        setMaxTilesInMemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
 
         String mapStyle = Main.pref.get("slippy_map_chooser.mapstyle", "mapnik");
-        if(mapStyle.equals("osmarender")) {
+        if (mapStyle.equals("osmarender")) {
             iSourceButton.setMapStyle(SourceButton.OSMARENDER);
             this.setTileSource(sources[1]);
-        }else if(mapStyle.equals("cyclemap")){
-        	 iSourceButton.setMapStyle(SourceButton.CYCLEMAP);
-             this.setTileSource(sources[2]);
-        }
-        else {
-            if(!mapStyle.equals("mapnik"))
+        } else if (mapStyle.equals("cyclemap")) {
+            iSourceButton.setMapStyle(SourceButton.CYCLEMAP);
+            this.setTileSource(sources[2]);
+        } else {
+            if (!mapStyle.equals("mapnik"))
                 Main.pref.put("slippy_map_chooser.mapstyle", "mapnik");
         }
     }
 
-    public void setMaxTilesInmemory(int tiles) {
+    public void setMaxTilesInMemory(int tiles) {
         ((MemoryTileCache) getTileCache()).setCacheSize(tiles);
     }
 
@@ -108,10 +105,8 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection, C
         slipyyMapTabPanel.setLayout(new BorderLayout());
         slipyyMapTabPanel.add(this, BorderLayout.CENTER);
         slipyyMapTabPanel.add(new JLabel((tr("Zoom: Mousewheel or double click.   "
-                + "Move map: Hold right mousebutton and move mouse.   Select: Click."))),
-                BorderLayout.SOUTH);
+                + "Move map: Hold right mousebutton and move mouse.   Select: Click."))), BorderLayout.SOUTH);
         iGui.tabpane.add(slipyyMapTabPanel, tr("Slippy map"));
-        iGui.tabpane.addComponentListener(this);
         new OsmMapControl(this, slipyyMapTabPanel, iSizeButton, iSourceButton);
     }
 
@@ -223,9 +218,8 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection, C
      */
     public void resizeSlippyMap() {
         if (iScreenSize == null) {
-            Component c =
-                    iGui.getParent().getParent().getParent().getParent().getParent().getParent()
-                            .getParent().getParent().getParent();
+            Component c = iGui.getParent().getParent().getParent().getParent().getParent().getParent().getParent()
+                    .getParent().getParent();
             // remember the initial set screen dimensions
             iDownloadDialogDimension = c.getSize();
             // retrive the size of the display
@@ -233,9 +227,8 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection, C
         }
 
         // resize
-        Component co =
-                iGui.getParent().getParent().getParent().getParent().getParent().getParent()
-                        .getParent().getParent().getParent();
+        Component co = iGui.getParent().getParent().getParent().getParent().getParent().getParent().getParent()
+                .getParent().getParent();
         Dimension currentDimension = co.getSize();
 
         // enlarge
@@ -265,31 +258,13 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection, C
         if (mapSource == SourceButton.MAPNIK) {
             this.setTileSource(sources[0]);
             Main.pref.put("slippy_map_chooser.mapstyle", "mapnik");
-        }else if (mapSource == SourceButton.CYCLEMAP) {
+        } else if (mapSource == SourceButton.CYCLEMAP) {
             this.setTileSource(sources[2]);
             Main.pref.put("slippy_map_chooser.mapstyle", "cyclemap");
-        }else {
+        } else {
             this.setTileSource(sources[1]);
             Main.pref.put("slippy_map_chooser.mapstyle", "osmarender");
         }
-    }
-
-    public void componentHidden(ComponentEvent e) {
-    }
-
-    public void componentMoved(ComponentEvent e) {
-    }
-
-    public void componentShown(ComponentEvent e) {
-    }
-
-    public void componentResized(ComponentEvent e) {
-        if (!this.equals(e.getSource()) || getHeight() == 0 || getWidth() == 0)
-            return;
-        firstShown = false;
-        // The bounding box has to be set after SlippyMapChooser's size has been
-        // finally set - otherwise the zoom level will be totally wrong (too wide)
-        boundingBoxChanged(iGui);
     }
 
 }
