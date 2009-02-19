@@ -52,6 +52,8 @@ public class WikiReader {
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (line.contains("<div id=\"searchable\">"))
                 inside = true;
+            else if (line.contains("<div class=\"wikipage searchable\">"))
+                inside = true;
             else if (line.contains("<div class=\"buttons\">"))
                 inside = false;
             if (inside) {
