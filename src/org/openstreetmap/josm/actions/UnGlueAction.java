@@ -7,22 +7,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -31,6 +35,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Resulting nodes are identical, up to their position.
  *
  * This is the opposite of the MergeNodesAction.
+ * 
+ * If a single node is selected, it will copy that node and remove all tags from the old one
  */
 
 public class UnGlueAction extends JosmAction { //implements SelectionChangedListener {
@@ -56,7 +62,8 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
     public void actionPerformed(ActionEvent e) {
 
         Collection<OsmPrimitive> selection = Main.ds.getSelected();
-
+        
+        String errMsg = null;
         if (checkSelection(selection)) {
             int count = 0;
             for (Way w : Main.ds.ways) {
@@ -65,7 +72,12 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
                 count++;
             }
             if (count < 2) {
-                JOptionPane.showMessageDialog(Main.parent, tr("This node is not glued to anything else."));
+                // If there aren't enough ways, maybe the user wanted to unglue the nodes
+                // (= copy tags to a new node)
+                if(checkForUnglueNode(selection))
+                    unglueNode(e);
+                else
+                    errMsg = tr("This node is not glued to anything else.");
             } else {
                 // and then do the work.
                 unglueWays();
@@ -85,9 +97,9 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
             }
             if (tmpNodes.size() < 1) {
                 if (selection.size() > 1) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("None of these nodes are glued to anything else."));
+                    errMsg =  tr("None of these nodes are glued to anything else.");
                 } else {
-                    JOptionPane.showMessageDialog(Main.parent, tr("None of this way's nodes are glued to anything else."));
+                    errMsg = tr("None of this way's nodes are glued to anything else.");
                 }
             } else {
                 // and then do the work.
@@ -95,10 +107,11 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
                 unglueWays2();
             }
         } else {
-            JOptionPane.showMessageDialog(Main.parent,
+            errMsg =
                 tr("The current selection cannot be used for unglueing.")+"\n"+
                 "\n"+
                 tr("Select either:")+"\n"+
+                tr("* One tagged node, or")+"\n"+
                 tr("* One node that is used by more than one way, or")+"\n"+
                 tr("* One node that is used by more than one way and one of those ways, or")+"\n"+
                 tr("* One way that has one or more nodes that are used by more than one way, or")+"\n"+
@@ -106,12 +119,76 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
                 "\n"+
                 tr("Note: If a way is selected, this way will get fresh copies of the unglued\n"+
                    "nodes and the new nodes will be selected. Otherwise, all ways will get their\n"+
-                   "own copy and all nodes will be selected.")
-            );
+                   "own copy and all nodes will be selected.");
         }
+        
+        if(errMsg != null)
+            JOptionPane.showMessageDialog(Main.parent, errMsg);
+        
         selectedNode = null;
         selectedWay = null;
         selectedNodes = null;
+    }
+    
+    /**
+     * Assumes there is one tagged Node stored in selectedNode that it will try to unglue
+     * (= copy node and remove all tags from the old one. Relations will not be removed)
+     */
+    private void unglueNode(ActionEvent e) {
+        LinkedList<Command> cmds = new LinkedList<Command>();
+
+        Node c = new Node(selectedNode);
+        c.keys = null;
+        c.tagged = false;
+        c.selected = false;
+        cmds.add(new ChangeCommand(selectedNode, c));
+        
+        Node n = new Node(selectedNode);
+        n.id = 0;
+        
+        // If this wasn't called from menu, place it where the cursor is/was
+        if(e.getSource() instanceof JPanel) {
+            MapView mv = Main.map.mapView;
+            n.eastNorth = mv.getEastNorth(mv.lastMEvent.getX(), mv.lastMEvent.getY());
+            n.coor = Main.proj.eastNorth2latlon(n.eastNorth);
+        }
+        
+        cmds.add(new AddCommand(n));
+        
+        fixRelations(selectedNode, cmds, Collections.singletonList(n));
+        
+        Main.main.undoRedo.add(new SequenceCommand(tr("Unglued Node"), cmds));
+        Main.ds.setSelected(n);
+        Main.map.mapView.repaint();
+    }
+    
+    /**
+     * Checks if selection is suitable for ungluing. This is the case when there's a single,
+     * tagged node selected that's part of at least one way (ungluing an unconnected node does
+     * not make sense. Due to the call order in actionPerformed, this is only called when the
+     * node is only part of one or less ways. 
+     * 
+     * @param The selection to check against
+     * @return Selection is suitable
+     */
+    private boolean checkForUnglueNode(Collection<? extends OsmPrimitive> selection) {
+        if(selection.size() != 1)
+            return false;
+        OsmPrimitive n = (OsmPrimitive) selection.toArray()[0];
+        if(!(n instanceof Node))
+            return false;
+        boolean isPartOfWay = false;
+        for(Way w : Main.ds.ways) {
+            if(w.nodes.contains(n)) {
+                isPartOfWay = true;
+                break;
+            }
+        }
+        if(!isPartOfWay)
+            return false;
+        
+        selectedNode = (Node)n;
+        return  selectedNode.tagged;
     }
 
     /**
