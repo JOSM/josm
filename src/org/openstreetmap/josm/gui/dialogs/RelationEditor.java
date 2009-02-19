@@ -3,15 +3,12 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -21,9 +18,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map.Entry;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,10 +40,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
 /**
@@ -63,7 +59,7 @@ import org.xml.sax.SAXException;
  * @author Frederik Ramm <frederik@remote.org>
  *
  */
-public class RelationEditor extends JFrame {
+public class RelationEditor extends ExtendedDialog {
 
     /**
      * The relation that this editor is working on, and the clone made for
@@ -201,13 +197,21 @@ public class RelationEditor extends JFrame {
      */
     public RelationEditor(Relation relation, Collection<RelationMember> selectedMembers )
     {
-        super(relation == null ? tr("Create new relation") :
-            relation.id == 0 ? tr ("Edit new relation") :
-            tr("Edit relation #{0}", relation.id));
+        // Initalizes ExtendedDialog
+        super(Main.parent,
+                relation == null
+                    ? tr("Create new relation")
+                    : (relation.id == 0
+                            ? tr ("Edit new relation")
+                            : tr("Edit relation #{0}", relation.id)
+                       ),
+                new String[] { tr("Apply Changes"), tr("Cancel")},
+                false
+        );
+
         this.relation = relation;
-
         ordered = !Main.pref.get("osm-server.version", "0.5").equals("0.5");
-
+ordered = true;
         if (relation == null) {
             // create a new relation
             this.clone = new Relation();
@@ -217,42 +221,36 @@ public class RelationEditor extends JFrame {
             if (!ordered) Collections.sort(this.clone.members, memberComparator);
         }
 
-        getContentPane().setLayout(new BorderLayout());
+        JPanel bothTables = setupBasicLayout(selectedMembers);
+
         JTabbedPane tabPane = new JTabbedPane();
-        getContentPane().add(tabPane, BorderLayout.CENTER);
+        tabPane.add(bothTables, tr("Basic"));
 
-        // (ab)use JOptionPane to make this look familiar;
-        // hook up with JOptionPane's property change event
-        // to detect button click
-        final JOptionPane okcancel = new JOptionPane("",
-            JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
-        getContentPane().add(okcancel, BorderLayout.SOUTH);
-
-        okcancel.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
-                if (event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY) && event.getNewValue() != null) {
-                    if ((Integer)event.getNewValue() == JOptionPane.OK_OPTION) {
-                        // clicked ok!
-                        if (RelationEditor.this.relation == null) {
-                            Main.main.undoRedo.add(new AddCommand(clone));
-                            DataSet.fireSelectionChanged(Main.ds.getSelected());
-                        } else if (!RelationEditor.this.relation.realEqual(clone, true)) {
-                            Main.main.undoRedo.add(new ChangeCommand(RelationEditor.this.relation, clone));
-                            DataSet.fireSelectionChanged(Main.ds.getSelected());
-                        }
-                    }
-                    setVisible(false);
-                }
-            }
-        });
+        // This sets the minimum size before scrollbars appear on the dialog
+        tabPane.setPreferredSize(new Dimension(100, 100));
+        contentConstraints = GBC.eol().fill().insets(5,10,5,0);
+        setupDialog(tabPane, new String[] { "ok.png", "cancel.png" });
+        // FIXME: Make it remember last screen position
+        setSize(findMaxDialogSize());
 
         try { setAlwaysOnTop(true); } catch (SecurityException sx) {}
 
-        // Basic Editor panel has two blocks;
-        // a tag table at the top and a membership list below.
+        setVisible(true);
 
+        if(getValue() != 1)
+            return;
+
+        // User clicked "Apply"
+        applyChanges();
+    }
+
+    /**
+     * Basic Editor panel has two blocks: a tag table at the top and a membership list below
+     * @param selectedMembers
+     * @return a JPanel with the described layout
+     */
+    private JPanel setupBasicLayout(Collection<RelationMember> selectedMembers) {
         // setting up the properties table
-
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         propertyData.addTableModelListener(new TableModelListener() {
@@ -318,65 +316,10 @@ public class RelationEditor extends JFrame {
         bothTables.add(status = new JLabel(tr("Members")), GBC.eol().fill(GBC.HORIZONTAL));
         // this is not exactly pretty but the four buttons simply don't fit in one line.
         // we should have smaller buttons for situations like this.
-        JPanel buttonPanel = new JPanel(new GridLayout(2,ordered ? 3 : 2));
+        JPanel buttonPanel = setupBasicButtons();
 
-        if (ordered) {
-            buttonPanel.add(createButton(null, "moveup", tr("Move the currently selected members up"), KeyEvent.VK_U, new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    moveMembers(-1);
-                }
-            }));
-        }
         bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
-
-        buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
-        tr("Add all currently selected objects as members"), KeyEvent.VK_A, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addSelected();
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Remove Selected"),"removeselected",
-        tr("Remove all currently selected objects from relation"), KeyEvent.VK_R, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                deleteSelected();
-            }
-        }));
-
-        if(ordered) {
-            buttonPanel.add(createButton(null, "movedown", tr("Move the currently selected members down"), KeyEvent.VK_N, new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    moveMembers(1);
-                }
-            }));
-        }
-
-        buttonPanel.add(createButton(marktr("Remove"),"remove",
-        tr("Remove the member in the current table row from this relation"), KeyEvent.VK_D, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int[] rows = memberTable.getSelectedRows();
-                RelationMember mem = new RelationMember();
-                for (int row : rows) {
-                    mem.role = memberTable.getValueAt(row, 0).toString();
-                    mem.member = (OsmPrimitive) memberTable.getValueAt(row, 1);
-                    clone.members.remove(mem);
-                }
-                refreshTables();
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Download Members"),"downloadincomplete",
-        tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_L, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                downloadRelationMembers();
-                refreshTables();
-            }
-        }));
-
         bothTables.add(buttonPanel, GBC.eop().fill(GBC.HORIZONTAL));
-
-        tabPane.add(bothTables, tr("Basic"));
-
         refreshTables();
 
         if (selectedMembers != null) {
@@ -397,9 +340,93 @@ public class RelationEditor extends JFrame {
 
             }
         }
+        return bothTables;
+    }
 
-        setSize(new Dimension(600, 500));
-        setLocationRelativeTo(Main.parent);
+    /**
+     * Creates the buttons for the basic editing layout
+     * @return JPanel with basic buttons
+     */
+    private JPanel setupBasicButtons() {
+        JPanel buttonPanel = new JPanel(new GridLayout(2,ordered ? 3 : 2));
+
+        if (ordered) {
+            buttonPanel.add(createButton(marktr("Move Up"), "moveup", tr("Move the currently selected members up"), KeyEvent.VK_U, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    moveMembers(-1);
+                }
+            }));
+        }
+
+        buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
+        tr("Add all currently selected objects as members"), KeyEvent.VK_D, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addSelected();
+            }
+        }));
+
+        buttonPanel.add(createButton(marktr("Remove Selected"),"removeselected",
+        tr("Remove all currently selected objects from relation"), KeyEvent.VK_G, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteSelected();
+            }
+        }));
+
+        if(ordered) {
+            buttonPanel.add(createButton(marktr("Move Down"), "movedown", tr("Move the currently selected members down"), KeyEvent.VK_J, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    moveMembers(1);
+                }
+            }));
+        }
+
+        buttonPanel.add(createButton(marktr("Remove"),"remove",
+        tr("Remove the member in the current table row from this relation"), KeyEvent.VK_M, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int[] rows = memberTable.getSelectedRows();
+                RelationMember mem = new RelationMember();
+                for (int row : rows) {
+                    mem.role = memberTable.getValueAt(row, 0).toString();
+                    mem.member = (OsmPrimitive) memberTable.getValueAt(row, 1);
+                    clone.members.remove(mem);
+                }
+                refreshTables();
+            }
+        }));
+
+        buttonPanel.add(createButton(marktr("Download Members"),"downloadincomplete",
+        tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_K, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                downloadRelationMembers();
+                refreshTables();
+            }
+        }));
+
+        return buttonPanel;
+    }
+
+    /**
+     * This function saves the user's changes. Must be invoked manually.
+     */
+    private void applyChanges() {
+        if (RelationEditor.this.relation == null) {
+            // If the user wanted to create a new relation, but hasn't added any members or
+            // tags, don't add an empty relation
+            clone.checkTagged();
+            if(clone.members.size() == 0 && !clone.tagged)
+                return;
+            Main.main.undoRedo.add(new AddCommand(clone));
+            DataSet.fireSelectionChanged(Main.ds.getSelected());
+        } else if (!RelationEditor.this.relation.realEqual(clone, true)) {
+            Main.main.undoRedo.add(new ChangeCommand(RelationEditor.this.relation, clone));
+            DataSet.fireSelectionChanged(Main.ds.getSelected());
+        }
+    }
+
+    @Override
+    protected Dimension findMaxDialogSize() {
+        // FIXME: Make it remember dialog size
+        return new Dimension(600, 500);
     }
 
     private void refreshTables() {
@@ -420,14 +447,16 @@ public class RelationEditor extends JFrame {
         status.setText(tr("Members: {0}", clone.members.size()));
     }
 
-    private JButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {
-        JButton b = new JButton((name == null) ? null : tr(name), ImageProvider.get("dialogs", iconName));
-        b.setActionCommand(name);
-        b.addActionListener(actionListener);
-        b.setToolTipText(tooltip);
-        b.setMnemonic(mnemonic);
-        b.putClientProperty("help", "Dialog/Properties/"+name);
-        return b;
+    private SideButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {
+        return
+            new SideButton(name, iconName, "relationEditor",
+                tooltip,
+                Shortcut.registerShortcut("relationeditor:"+iconName,
+                        tr("Relation Editor: {0}", name == null ? tooltip : name),
+                        mnemonic,
+                        Shortcut.GROUP_MNEMONIC),
+                actionListener
+            );
     }
 
     private void addSelected() {
