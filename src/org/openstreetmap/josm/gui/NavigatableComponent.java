@@ -3,13 +3,13 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.TreeMap;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeMap;
 
 import javax.swing.JComponent;
 
@@ -45,7 +45,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Center n/e coordinate of the desired screen center.
      */
-    protected EastNorth center;
+    protected EastNorth center = new EastNorth(0, 0);
 
     public NavigatableComponent() {
         setLayout(null);

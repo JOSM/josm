@@ -214,7 +214,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * redraw to (possibly) get rid of helper line if selection changes.
      */
     public void eventDispatched(AWTEvent event) {
-        if(!Main.map.mapView.isDrawableLayer())
+        if(Main.map == null ||Main.map.mapView == null || !Main.map.mapView.isDrawableLayer())
             return;
         InputEvent e = (InputEvent) event;
         ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
@@ -531,7 +531,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             currentBaseNode = null;
             return;
         }
-
+        
         double distance = -1;
         double angle = -1;
 
