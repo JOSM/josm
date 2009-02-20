@@ -174,6 +174,9 @@ public class RelationEditor extends ExtendedDialog {
     // =================== FIXME FIXME FIXME =====================
     // ... until here, and also get rid of the "Collections.sort..." below.
 
+    // We need this twice, so cache result
+    protected final static String applyChangesText = tr("Apply Changes");
+
     /**
      * Creates a new relation editor for the given relation. The relation
      * will be saved if the user selects "ok" in the editor.
@@ -205,13 +208,13 @@ public class RelationEditor extends ExtendedDialog {
                             ? tr ("Edit new relation")
                             : tr("Edit relation #{0}", relation.id)
                        ),
-                new String[] { tr("Apply Changes"), tr("Cancel")},
+                new String[] { applyChangesText, tr("Cancel")},
                 false
         );
 
         this.relation = relation;
         ordered = !Main.pref.get("osm-server.version", "0.5").equals("0.5");
-ordered = true;
+
         if (relation == null) {
             // create a new relation
             this.clone = new Relation();
@@ -234,15 +237,9 @@ ordered = true;
         setSize(findMaxDialogSize());
 
         try { setAlwaysOnTop(true); } catch (SecurityException sx) {}
-
         setVisible(true);
-
-        if(getValue() != 1)
-            return;
-
-        // User clicked "Apply"
-        applyChanges();
     }
+
 
     /**
      * Basic Editor panel has two blocks: a tag table at the top and a membership list below
@@ -421,6 +418,15 @@ ordered = true;
             Main.main.undoRedo.add(new ChangeCommand(RelationEditor.this.relation, clone));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
         }
+    }
+
+    @Override
+    protected void buttonAction(ActionEvent evt) {
+        String a = evt.getActionCommand();
+        if(applyChangesText.equals(a))
+            applyChanges();
+
+        setVisible(false);
     }
 
     @Override
