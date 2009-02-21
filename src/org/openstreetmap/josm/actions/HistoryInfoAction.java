@@ -32,16 +32,19 @@ public class HistoryInfoAction extends JosmAction {
         final Collection<Object> sel = new LinkedList<Object>();
         new Visitor() {
             public void visit(Node n) {
+                if(n.id <= 0) return;
                 OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/node/" + n.id + "/history");
                 sel.add(n);
             }
 
             public void visit(Way w) {
+                if(w.id <= 0) return;
                 OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/way/" + w.id + "/history");
                 sel.add(w);
             }
 
             public void visit(Relation e) {
+                if(e.id <= 0) return;
                 OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/relation/" + e.id + "/history");
                 sel.add(e);
             }
@@ -54,7 +57,7 @@ public class HistoryInfoAction extends JosmAction {
 
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(Main.parent,
-            tr("Please select at least one node, way or relation."));
+            tr("Please select at least one node, way or relation. Only already uploaded elements have a history."));
                 return;
         }
     }
