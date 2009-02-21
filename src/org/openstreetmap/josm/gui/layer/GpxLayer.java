@@ -271,7 +271,6 @@ public class GpxLayer extends Layer {
             new JSeparator(),
             new JMenuItem(new SaveAction(this)),
             new JMenuItem(new SaveAsAction(this)),
-            // new JMenuItem(new UploadTraceAction()),
             color,
             line,
             tagimage,
@@ -632,115 +631,6 @@ public class GpxLayer extends Layer {
             for (Collection<WayPoint> seg : trk.trackSegs) {
                 for (WayPoint p : seg) {
                     v.visit(p.eastNorth);
-                }
-            }
-        }
-    }
-
-    public class UploadTraceAction extends AbstractAction {
-        public UploadTraceAction() {
-            super(tr("Upload this trace..."), ImageProvider.get("uploadtrace"));
-        }
-        public void actionPerformed(ActionEvent e) {
-            JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel(tr("<html>This functionality has been added only recently. Please<br>"+
-            "use with care and check if it works as expected.</html>")), GBC.eop());
-            ButtonGroup bg = new ButtonGroup();
-            JRadioButton c1 = null;
-            JRadioButton c2 = null;
-
-            //TODO
-            //check whether data comes from server
-            //check whether data changed sind last save/open
-
-            c1 = new JRadioButton(tr("Upload track filtered by JOSM"), true);
-            c2 = new JRadioButton(tr("Upload raw file: "), false);
-            c2.setEnabled(false);
-            c1.setEnabled(false);
-            bg.add(c1);
-            bg.add(c2);
-
-            msg.add(c1, GBC.eol());
-            msg.add(c2, GBC.eop());
-
-
-            JLabel description = new JLabel((String) data.attr.get("desc"));
-            JTextField tags = new JTextField();
-            tags.setText((String) data.attr.get("keywords"));
-            msg.add(new JLabel(tr("Description:")), GBC.std());
-            msg.add(description, GBC.eol().fill(GBC.HORIZONTAL));
-            msg.add(new JLabel(tr("Tags (keywords in GPX):")), GBC.std());
-            msg.add(tags, GBC.eol().fill(GBC.HORIZONTAL));
-            JCheckBox c3 = new JCheckBox("public");
-            msg.add(c3, GBC.eop());
-            msg.add(new JLabel("Please ensure that you don't upload your traces twice."), GBC.eop());
-
-            int answer = JOptionPane.showConfirmDialog(Main.parent, msg, tr("GPX-Upload"), JOptionPane.OK_CANCEL_OPTION);
-            if (answer == JOptionPane.OK_OPTION)
-            {
-                try {
-                    String version = Main.pref.get("osm-server.version", "0.5");
-                    URL url = new URL(Main.pref.get("osm-server.url") + "/" + version + "/gpx/create");
-
-                    // create a boundary string
-                    String boundary = MultiPartFormOutputStream.createBoundary();
-                    URLConnection urlConn = MultiPartFormOutputStream.createConnection(url);
-                    urlConn.setRequestProperty("Accept", "*/*");
-                    urlConn.setRequestProperty("Content-Type", MultiPartFormOutputStream.getContentType(boundary));
-                    // set some other request headers...
-                    urlConn.setRequestProperty("Connection", "Keep-Alive");
-                    urlConn.setRequestProperty("Cache-Control", "no-cache");
-                    // no need to connect cuz getOutputStream() does it
-                    MultiPartFormOutputStream out = new MultiPartFormOutputStream(urlConn.getOutputStream(), boundary);
-                    out.writeField("description", description.getText());
-                    out.writeField("tags", tags.getText());
-                    out.writeField("public", (c3.getSelectedObjects() != null) ? "1" : "0");
-                    // upload a file
-                    // out.writeFile("gpx_file", "text/xml", associatedFile);
-                    // can also write bytes directly
-                    // out.writeFile("myFile", "text/plain", "C:\\test.txt",
-                    // "This is some file text.".getBytes("ASCII"));
-                    File tmp = File.createTempFile("josm", "tmp.gpx");
-                    FileOutputStream outs = new FileOutputStream(tmp);
-                    new GpxWriter(outs).write(data);
-                    outs.close();
-                    FileInputStream ins = new FileInputStream(tmp);
-                    new GpxWriter(System.out).write(data);
-                    out.writeFile("gpx_file", "text/xml", data.storageFile.getName(), ins);
-                    out.close();
-                    tmp.delete();
-                    // read response from server
-                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-                    String line = "";
-                    while((line = in.readLine()) != null) {
-                        System.out.println(line);
-                    }
-                    in.close();
-
-                    //TODO check response
-                    /*                  int retCode = urlConn.getResponseCode();
-                    System.out.println("got return: " + retCode);
-                    String retMsg = urlConn.getResponseMessage();
-                    urlConn.disconnect();
-                    if (retCode != 200) {
-                        // Look for a detailed error message from the server
-                        if (urlConn.getHeaderField("Error") != null)
-                            retMsg += "\n" + urlConn.getHeaderField("Error");
-
-                        // Report our error
-                        ByteArrayOutputStream o = new ByteArrayOutputStream();
-                        System.out.println(new String(o.toByteArray(), "UTF-8").toString());
-                        throw new RuntimeException(retCode+" "+retMsg);
-                    }
-                     */
-                } catch (UnknownHostException ex) {
-                    throw new RuntimeException(tr("Unknown host")+": "+ex.getMessage(), ex);
-                } catch (Exception ex) {
-                    //if (cancel)
-                    //  return; // assume cancel
-                    if (ex instanceof RuntimeException)
-                        throw (RuntimeException)ex;
-                    throw new RuntimeException(ex.getMessage(), ex);
                 }
             }
         }
