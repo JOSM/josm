@@ -2122,7 +2122,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="amenity" v="hunting_stand"/>
 		<area colour="amenity_light#f7efb7"/>
-		<icon annotate="true" src="accommodation/shelter.png"/>
+    <icon annotate="true" src="hunting_stand.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
