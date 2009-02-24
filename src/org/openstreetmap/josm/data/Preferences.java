@@ -478,6 +478,18 @@ public class Preferences {
 
     synchronized public Collection<String> getCollection(String key, Collection<String> def) {
         String s = get(key);
+        if(def != null)
+        {
+            String d = null;
+            for(String a : def)
+            {
+                if(d != null)
+                    d += ";" + a;
+                else
+                    d = a;
+            }
+            putDefault(key, d);
+        }
         if(s != null && s.length() != 0)
            return Arrays.asList(s.split(";"));
         return def;

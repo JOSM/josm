@@ -3,10 +3,13 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.Main;
 
 /**
  * An relation, having a set of tags and any number (0...n) of members.
@@ -20,6 +23,9 @@ public final class Relation extends OsmPrimitive {
      * makeBackReferences and/or removeBackReferences should be called.
      */
     public final List<RelationMember> members = new ArrayList<RelationMember>();
+
+    final static String[] defnames = {"name", "ref", "restriction", "note"};
+    static Collection<String> names = null;
 
     @Override public void visit(Visitor visitor) {
         visitor.visit(this);
@@ -81,10 +87,16 @@ public final class Relation extends OsmPrimitive {
                 name = tr("relation");
 
             name += " (";
-            String nameTag = get("name");
-            if (nameTag == null) nameTag = get("ref");
-            if (nameTag == null) nameTag = get("note");
-            if (nameTag != null) name += "\"" + nameTag + "\", ";
+            if(names == null)
+              names = Main.pref.getCollection("relation.nameOrder", Arrays.asList(defnames));
+            String nameTag = null;
+            for (String n : names) {
+                nameTag = get(n);
+                if (nameTag != null) break;
+            }
+            if (nameTag != null)
+                name += "\"" + nameTag + "\", ";
+
             int mbno = members.size();
             name += trn("{0} member", "{0} members", mbno, mbno) + ")";
             if(errors != null)

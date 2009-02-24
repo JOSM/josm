@@ -15,6 +15,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -63,7 +64,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected ElemStyles.StyleSet styles;
     protected double circum;
     protected double dist;
-    protected String regionalNameOrder[];
+    protected Collection<String> regionalNameOrder;
     protected Boolean selectedCall;
     protected Boolean useStyleCache;
     private static int paintid = 0;
@@ -1093,8 +1094,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected String getNodeName(Node n) {
         String name = null;
         if (n.keys != null) {
-            for (int i = 0; i < regionalNameOrder.length; i++) {
-                name = n.keys.get(regionalNameOrder[i]);
+            for (String rn : regionalNameOrder) {
+                name = n.keys.get(rn);
                 if (name != null) break;
             }
         }
@@ -1243,8 +1244,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
-        String currentLocale = Locale.getDefault().getLanguage();
-        regionalNameOrder = Main.pref.get("mappaint.nameOrder", "name:"+currentLocale+";name;int_name;ref;operator;brand").split(";");
+        String[] names = {"name:"+Main.getLanguageCode(), "name", "int_name", "ref", "operator", "brand"};
+        regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
         minEN = nc.getEastNorth(0,nc.getHeight()-1);
         maxEN = nc.getEastNorth(nc.getWidth()-1,0);
 
