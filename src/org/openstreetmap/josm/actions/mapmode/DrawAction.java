@@ -131,37 +131,37 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * (if feature enabled). Also sets the target cursor if appropriate.
      */
     private void addHighlighting() {
+        removeHighlighting();
         // if ctrl key is held ("no join"), don't highlight anything
         if (ctrl) {
-            removeHighlighting();
             resetCursor();
             return;
         }
 
+        // This happens when nothing is selected
+        if(mouseOnExistingNode == null && Main.ds.getSelected().size() == 0 && mousePos != null)
+            mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos);
+
         if (mouseOnExistingNode != null) {
             setJoinCursor(false);
-            // Clean old highlights
-            removeHighlighting();
-            if(drawTargetHighlight) {
-                oldHighlights.add(mouseOnExistingNode);
+            // We also need this list for the statusbar help text
+            oldHighlights.add(mouseOnExistingNode);
+            if(drawTargetHighlight)
                 mouseOnExistingNode.highlighted = true;
-            }
             return;
         }
 
         // Insert the node into all the nearby way segments
         if(mouseOnExistingWays.size() == 0) {
-            removeHighlighting();
             resetCursor();
             return;
         }
 
         setJoinCursor(true);
-        // Clean old highlights
-        removeHighlighting();
 
-        if(!drawTargetHighlight) return;
+        // We also need this list for the statusbar help text
         oldHighlights.addAll(mouseOnExistingWays);
+        if(!drawTargetHighlight) return;
         for(Way w : mouseOnExistingWays) {
             w.highlighted = true;
         }
@@ -174,6 +174,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         for(OsmPrimitive prim : oldHighlights) {
             prim.highlighted = false;
         }
+        oldHighlights = new HashSet<OsmPrimitive>();
     }
 
     @Override public void enterMode() {
@@ -214,12 +215,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * redraw to (possibly) get rid of helper line if selection changes.
      */
     public void eventDispatched(AWTEvent event) {
-        if(Main.map == null ||Main.map.mapView == null || !Main.map.mapView.isDrawableLayer())
+        if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isDrawableLayer())
             return;
-        InputEvent e = (InputEvent) event;
-        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        updateKeyModifiers((InputEvent) event);
+        addHighlighting();
         computeHelperLine();
     }
     /**
@@ -237,6 +236,22 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
+     * This function should be called when the user wishes to finish his current draw action.
+     * If Potlatch Style is enabled, it will switch to select tool, otherwise simply disable
+     * the helper line until the user chooses to draw something else.
+     */
+    private void finishDrawing() {
+        lastUsedNode = null;
+        wayIsFinished = true;
+        Main.map.selectSelectTool(true);
+
+        // Redraw to remove the helper line stub
+        removeHighlighting();
+        computeHelperLine();
+        Main.map.mapView.repaint();
+    }
+
+    /**
      * If user clicked with the left button, add a node at the current mouse
      * position.
      *
@@ -247,25 +262,20 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         if(!Main.map.mapView.isDrawableLayer())
             return;
-        
+
         if(e.getClickCount() > 1 && mousePos != null && mousePos.equals(oldMousePos)) {
             // A double click equals "user clicked last node again, finish way"
             // Change draw tool only if mouse position is nearly the same, as
             // otherwise fast clicks will count as a double click
-            lastUsedNode = null;
-            wayIsFinished = true;
-
-            Main.map.selectSelectTool(true);
+            finishDrawing();
             return;
         }
         oldMousePos = mousePos;
-        
+
         // we copy ctrl/alt/shift from the event just in case our global
         // AWTEvent didn't make it through the security manager. Unclear
         // if that can ever happen but better be safe.
-        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        updateKeyModifiers(e);
         mousePos = e.getPoint();
 
         Collection<OsmPrimitive> selection = Main.ds.getSelected();
@@ -276,12 +286,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         boolean newNode = false;
         Node n = null;
 
-        if (!ctrl)
+        if (!ctrl && !shift)
             n = Main.map.mapView.getNearestNode(mousePos);
 
         if (n != null) {
             // user clicked on node
-            if (shift || selection.isEmpty()) {
+            if (selection.isEmpty()) {
                 // select the clicked node and do nothing else
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
@@ -329,6 +339,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                         Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
                     for (int i : is) wnew.addNode(i + 1, n);
 
+                    // If ALT is pressed, a new way should be created and that new way should get
+                    // selected. This works everytime unless the ways the nodes get inserted into
+                    // are already selected. This is the case when creating a self-overlapping way
+                    // but pressing ALT prevents this. Therefore we must de-select the way manually
+                    // here so /only/ the new way will be selected after this method finishes.
+                    if(alt) wnew.selected = false;
+
                     cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
                     replacedWays.add(insertPoint.getKey());
                     reuseWays.add(wnew);
@@ -350,7 +367,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         boolean extendedWay = false;
         boolean wayIsFinishedTemp = wayIsFinished;
         wayIsFinished = false;
-        if (!shift && selection.size() > 0 && !wayIsFinishedTemp) {
+        if (selection.size() > 0 && !wayIsFinishedTemp) {
             Node selectedNode = null;
             Way selectedWay = null;
 
@@ -372,60 +389,20 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
             }
 
-            // No nodes or ways have been selected, try again with no selection
-            // This occurs when a relation has been selected
-            if(selectedNode == null && selectedWay == null) {
+            // the node from which we make a connection
+            Node n0 = findNodeToContinueFrom(selectedNode, selectedWay);
+            // We have a selection but it isn't suitable. Try again.
+            if(n0 == null) {
                 tryAgain(e);
                 return;
             }
 
-            // the node from which we make a connection
-            Node n0 = null;
-
-            if (selectedNode == null) {
-                if (selectedWay.isFirstLastNode(lastUsedNode)) {
-                    n0 = lastUsedNode;
-                } else {
-                    // We have a way selected, but no suitable node to continue from. Start anew.
-                    tryAgain(e);
-                    return;
-                }
-            } else if (selectedWay == null) {
-                n0 = selectedNode;
-            } else {
-                if (selectedWay.isFirstLastNode(selectedNode)) {
-                    n0 = selectedNode;
-                } else {
-                    // We have a way and node selected, but it's not at the start/end of the way. Start anew.
-                    tryAgain(e);
-                    return;
-                }
-            }
-
-            // Prevent creation of ways that look like this: <---->
-            // This happens if users want to draw a no-exit-sideway from the main way like this:
-            // ^
-            // |<---->
-            // |
-            // The solution isn't ideal because the main way will end in the side way, which is bad for
-            // navigation software ("drive straight on") but at least easier to fix. Maybe users will fix
-            // it on their own, too. At least it's better than producing an error.
-            if(selectedWay != null && selectedWay.nodes != null) {
-                int posn0 = selectedWay.nodes.indexOf(n0);
-                if( posn0 != -1 && // n0 is part of way
-                    (posn0 >= 1                          && n.equals(selectedWay.nodes.get(posn0-1))) || // previous node
-                    (posn0 < selectedWay.nodes.size()-1) && n.equals(selectedWay.nodes.get(posn0+1))) {  // next node
-                    Main.ds.setSelected(n);
-                    lastUsedNode = n;
-                    return;
-                }
-            }
+            if(isSelfContainedWay(selectedWay, n0, n))
+                return;
 
             // User clicked last node again, finish way
             if(n0 == n) {
-                lastUsedNode = null;
-                wayIsFinished = true;
-                Main.map.selectSelectTool(true);
+                finishDrawing();
                 return;
             }
 
@@ -459,7 +436,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
             // Connected to a node that's already in the way
             if(way.nodes.contains(n)) {
-                //System.out.println("Stop drawing, node is part of current way");
                 wayIsFinished = true;
                 selection.clear();
             }
@@ -497,9 +473,70 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         Main.main.undoRedo.add(c);
         if(!wayIsFinished) lastUsedNode = n;
+
         computeHelperLine();
         removeHighlighting();
         Main.map.mapView.repaint();
+    }
+
+    /**
+     * Prevent creation of ways that look like this: <---->
+     * This happens if users want to draw a no-exit-sideway from the main way like this:
+     * ^
+     * |<---->
+     * |
+     * The solution isn't ideal because the main way will end in the side way, which is bad for
+     * navigation software ("drive straight on") but at least easier to fix. Maybe users will fix
+     * it on their own, too. At least it's better than producing an error.
+     *
+     * @param Way the way to check
+     * @param Node the current node (i.e. the one the connection will be made from)
+     * @param Node the target node (i.e. the one the connection will be made to)
+     * @return Boolean True if this would create a selfcontaining way, false otherwise.
+     */
+    private boolean isSelfContainedWay(Way selectedWay, Node currentNode, Node targetNode) {
+        if(selectedWay != null && selectedWay.nodes != null) {
+            int posn0 = selectedWay.nodes.indexOf(currentNode);
+            if( posn0 != -1 && // n0 is part of way
+                (posn0 >= 1                          && targetNode.equals(selectedWay.nodes.get(posn0-1))) || // previous node
+                (posn0 < selectedWay.nodes.size()-1) && targetNode.equals(selectedWay.nodes.get(posn0+1))) {  // next node
+                Main.ds.setSelected(targetNode);
+                lastUsedNode = targetNode;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Finds a node to continue drawing from. Decision is based upon given node and way.
+     * @param selectedNode Currently selected node, may be null
+     * @param selectedWay Currently selected way, may be null
+     * @return Node if a suitable node is found, null otherwise
+     */
+    private Node findNodeToContinueFrom(Node selectedNode, Way selectedWay) {
+        // No nodes or ways have been selected, this occurs when a relation
+        // has been selected or the selection is empty
+        if(selectedNode == null && selectedWay == null)
+            return null;
+
+        if (selectedNode == null) {
+            if (selectedWay.isFirstLastNode(lastUsedNode))
+                return lastUsedNode;
+
+            // We have a way selected, but no suitable node to continue from. Start anew.
+            return null;
+        }
+
+        if (selectedWay == null)
+            return selectedNode;
+
+        if (selectedWay.isFirstLastNode(selectedNode))
+            return selectedNode;
+
+        // We have a way and node selected, but it's not at the start/end of the way. Start anew.
+        return null;
     }
 
     @Override public void mouseMoved(MouseEvent e) {
@@ -509,14 +546,23 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // we copy ctrl/alt/shift from the event just in case our global
         // AWTEvent didn't make it through the security manager. Unclear
         // if that can ever happen but better be safe.
-
-        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        updateKeyModifiers(e);
         mousePos = e.getPoint();
 
         addHighlighting();
         computeHelperLine();
+    }
+
+    private void updateKeyModifiers(InputEvent e) {
+        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+    }
+
+    private void updateKeyModifiers(MouseEvent e) {
+        ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
+        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
     }
 
     /**
@@ -531,7 +577,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             currentBaseNode = null;
             return;
         }
-        
+
         double distance = -1;
         double angle = -1;
 
@@ -547,7 +593,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setHeading(-1);
         Main.map.statusLine.setDist(-1);
 
-        if (!ctrl && mousePos != null) {
+        if (!ctrl && !shift && mousePos != null) {
             currentMouseNode = Main.map.mapView.getNearestNode(mousePos);
         }
 
@@ -585,7 +631,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         if (selectedNode == null) {
             if (selectedWay == null) return;
-            if (lastUsedNode == selectedWay.nodes.get(0) || lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+            if (selectedWay.isFirstLastNode(lastUsedNode)) {
                 currentBaseNode = lastUsedNode;
                 if (lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1) && selectedWay.nodes.size() > 1) {
                     previousNode = selectedWay.nodes.get(selectedWay.nodes.size()-2);
@@ -600,6 +646,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         if (currentBaseNode == null || currentBaseNode == currentMouseNode) {
+            updateStatusLine();
             return; // Don't create zero length way segments.
         }
 
@@ -616,7 +663,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setDist(distance);
         updateStatusLine();
 
-        if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight) return;
+        if (!drawHelperLine || wayIsFinished) return;
         Main.map.mapView.repaint();
     }
 
@@ -738,8 +785,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     // helper for adjustNode
-    static double det(double a, double b, double c, double d)
-    {
+    static double det(double a, double b, double c, double d) {
         return a * d - b * c;
     }
 
@@ -749,9 +795,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // sanity checks
         if (Main.map.mapView == null) return;
         if (mousePos == null) return;
-
-        // if shift key is held ("no auto-connect"), don't draw a line
-        if (shift) return;
 
         // don't draw line if we don't know where from or where to
         if (currentBaseNode == null || currentMouseEastNorth == null) return;
@@ -781,28 +824,77 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     @Override public String getModeHelpText() {
-        String rv;
+        String rv = "";
+        /*
+         *  No modifiers: all (Connect, Node Re-Use, Auto-Weld)
+         *  CTRL: disables node re-use, auto-weld
+         *  Shift: disables node re-use
+         *  ALT: disables connect
+         */
 
-        if (currentBaseNode != null && !shift) {
-            if (mouseOnExistingNode != null) {
-                if (alt && /* FIXME: way exists */true)
-                    rv = tr("Click to create a new way to the existing node.");
+        /*
+         * Status line text generation is split into two parts to keep it maintainable.
+         * First part looks at what will happen to the new node inserted on click and
+         * the second part will look if a connection is made or not.
+         *
+         * Note that this help text is not absolutely accurate as it doesn't catch any special
+         * cases (e.g. when preventing <---> ways). The only special that it catches is when
+         * a way is about to be finished.
+         *
+         * First check what happens to the new node.
+         */
+
+        // oldHighlights stores the current highlights. If this
+        // list is empty we can assume that we won't do any joins
+        if(ctrl || oldHighlights.isEmpty())
+            rv = tr("Create new node.");
+        else if(shift) {
+            // We already know oldHighlights is not empty, but shift is pressed.
+            // We can assume the new node will be joined into an existing way
+            rv = tr("Insert new node into {0} way(s).", oldHighlights.size());
+        } else {
+            // oldHighlights may store a node or way, check if it's a node
+            for(OsmPrimitive x : oldHighlights) {
+                if(x instanceof Node)
+                    rv = tr("Select node under cursor.");
                 else
-                    rv =tr("Click to make a connection to the existing node.");
-            } else {
-                if (alt && /* FIXME: way exists */true)
-                    rv = tr("Click to insert a node and create a new way.");
-                else
-                    rv = tr("Click to insert a new node and make a connection.");
+                    rv = tr("Insert new node into {0} way(s).", oldHighlights.size());
+                break;
             }
         }
-        else {
-            rv = tr("Click to insert a new node.");
+
+        /*
+         * Check whether a connection will be made
+         */
+        if (currentBaseNode != null) {
+            if(alt)
+                rv += " " + tr("Start new way from last node.");
+            else
+                rv += " " + tr("Continue way from last node.");
         }
 
-        //rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
-        //rv.append(tr("Click to add a new node. Ctrl: no node re-use/auto-insert. Shift: no auto-connect. Alt: new way"));
-        return rv.toString();
+        /*
+         * Handle special case: Highlighted node == selected node => finish drawing
+         */
+        Node n = mouseOnExistingNode;
+        if(n != null && Main.ds.getSelectedNodes().contains(n)) {
+            rv = tr("Finish drawing.");
+        }
+
+        /*
+         * Handle special case: Self-Overlapping or closing way
+         */
+        if(Main.ds.getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
+            Way w = (Way) Main.ds.getSelectedWays().iterator().next();
+            for(Node m : w.nodes) {
+                if(m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
+                    rv += " " + tr("Finish drawing.");
+                    break;
+                }
+            }
+        }
+
+        return rv;
     }
 
     @Override public boolean layerIsSupported(Layer l) {
