@@ -100,6 +100,12 @@ public class MapStatus extends JPanel implements Helpful {
     ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 8);
 
     /**
+     * This is the thread that runs in the background and collects the information displayed.
+     * It gets destroyed by MapFrame.java/destroy() when the MapFrame itself is destroyed.
+     */
+    public Thread thread;
+    
+    /**
      * The collector class that waits for notification and then update
      * the display objects.
      *
@@ -293,7 +299,9 @@ public class MapStatus extends JPanel implements Helpful {
 
         // The background thread
         final Collector collector = new Collector(mapFrame);
-        new Thread(collector).start();
+        thread = new Thread(collector, "Map Status Collector");
+        thread.setDaemon(true);
+        thread.start();
 
         // Listen to keyboard/mouse events for pressing/releasing alt key and
         // inform the collector.
@@ -344,7 +352,7 @@ public class MapStatus extends JPanel implements Helpful {
     public String helpTopic() {
         return "Statusline";
     }
-    
+        
     @Override
     public void addMouseListener(MouseListener ml) {
         //super.addMouseListener(ml);

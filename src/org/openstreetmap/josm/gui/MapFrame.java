@@ -143,6 +143,13 @@ public class MapFrame extends JPanel implements Destroyable {
 
         // remove menu entries
         Main.main.menu.viewMenu.setVisible(false);
+        
+        // MapFrame gets destroyed when the last layer is removed, but the status line background
+        // thread that collects the information doesn't get destroyed automatically.
+        if(statusLine.thread == null) return;
+        try {
+            statusLine.thread.interrupt();
+        } catch (Exception e) {}
     }
 
     public Action getDefaultButtonAction() {

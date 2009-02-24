@@ -196,7 +196,7 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     public Iterable<Object> start(final Reader in) {
-        new Thread(){
+        new Thread("XML Reader"){
             @Override public void run() {
                 try {
                     SAXParserFactory.newInstance().newSAXParser().parse(new InputSource(in), parser);
