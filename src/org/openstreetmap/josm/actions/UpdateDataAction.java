@@ -29,7 +29,6 @@ public class UpdateDataAction extends JosmAction {
                 true);
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
         int bboxCount = 0;
         List<Area> areas = new ArrayList<Area>();
