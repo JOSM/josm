@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Cursor;
 import java.awt.Point;
@@ -60,7 +61,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
     private boolean didMove = false;
     private boolean cancelDrawMode = false;
     Node virtualNode = null;
-    WaySegment virtualWay = null;
+    Collection<WaySegment> virtualWays = new ArrayList<WaySegment>();
     SequenceCommand virtualCmds = null;
 
     /**
@@ -146,7 +147,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mouseDragged(MouseEvent e) {
         if(!Main.map.mapView.isVisibleDrawableLayer())
             return;
-        
+
         cancelDrawMode = true;
         if (mode == Mode.select) return;
 
@@ -180,17 +181,23 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if (dx == 0 && dy == 0)
             return;
 
-        if (virtualWay != null)    {
+        if (virtualWays.size() > 0) {
             Collection<Command> virtualCmds = new LinkedList<Command>();
             virtualCmds.add(new AddCommand(virtualNode));
-            Way w = virtualWay.way;
-            Way wnew = new Way(w);
-            wnew.addNode(virtualWay.lowerIndex+1, virtualNode);
-            virtualCmds.add(new ChangeCommand(w, wnew));
+            for(WaySegment virtualWay : virtualWays) {
+                Way w = virtualWay.way;
+                Way wnew = new Way(w);
+                wnew.addNode(virtualWay.lowerIndex+1, virtualNode);
+                virtualCmds.add(new ChangeCommand(w, wnew));
+            }
             virtualCmds.add(new MoveCommand(virtualNode, dx, dy));
-            Main.main.undoRedo.add(new SequenceCommand(tr("Add and move a virtual new node to way"), virtualCmds));
+            String text = trn("Add and move a virtual new node to way",
+            "Add and move a virtual new node to {0} ways", virtualWays.size(),
+            virtualWays.size());
+
+            Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
             selectPrims(Collections.singleton((OsmPrimitive)virtualNode), false, false);
-            virtualWay = null;
+            virtualWays.clear();
             virtualNode = null;
         } else {
             // Currently we support moving and rotating, which do not affect relations.
@@ -221,6 +228,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
                         JOptionPane.showMessageDialog(Main.parent,
                             tr("Cannot move objects outside of the world."));
+                        restoreCursor();
                         return;
                     }
                 }
@@ -238,33 +246,49 @@ public class SelectAction extends MapMode implements SelectionEnded {
         didMove = true;
     }
 
-    private Collection<OsmPrimitive> getNearestCollectionVirtual(Point p) {
+    private Collection<OsmPrimitive> getNearestCollectionVirtual(Point p, boolean allSegements) {
         MapView c = Main.map.mapView;
         int snapDistance = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
         snapDistance *= snapDistance;
         OsmPrimitive osm = c.getNearestNode(p);
-        virtualWay = null;
+        virtualWays.clear();
         virtualNode = null;
+        Node virtualWayNode = null;
 
         if (osm == null)
         {
-            WaySegment nearestWaySeg = c.getNearestWaySegment(p);
-            if (nearestWaySeg != null)
-            {
-                osm = nearestWaySeg.way;
+            Collection<WaySegment> nearestWaySegs = allSegements
+                 ? c.getNearestWaySegments(p)
+                 : Collections.singleton(c.getNearestWaySegment(p));
+
+            for(WaySegment nearestWS : nearestWaySegs) {
+                if (nearestWS == null)
+                    continue;
+
+                osm = nearestWS.way;
                 if(Main.pref.getInteger("mappaint.node.virtual-size", 8) > 0)
                 {
                     Way w = (Way)osm;
-                    Point p1 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex).eastNorth);
-                    Point p2 = c.getPoint(w.nodes.get(nearestWaySeg.lowerIndex+1).eastNorth);
+                    Point p1 = c.getPoint(w.nodes.get(nearestWS.lowerIndex).eastNorth);
+                    Point p2 = c.getPoint(w.nodes.get(nearestWS.lowerIndex+1).eastNorth);
                     if(SimplePaintVisitor.isLargeSegment(p1, p2, Main.pref.getInteger("mappaint.node.virtual-space", 70)))
                     {
                         Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
                         if (p.distanceSq(pc) < snapDistance)
                         {
-                            virtualWay = nearestWaySeg;
-                            virtualNode = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
-                            osm = w;
+                            // Check that only segments on top of each other get added to the
+                            // virtual ways list. Otherwise ways that coincidentally have their
+                            // virtual node at the same spot will be joined which is likely unwanted
+                            if(virtualWayNode != null) {
+                                if(  !w.nodes.get(nearestWS.lowerIndex+1).equals(virtualWayNode)
+                                  && !w.nodes.get(nearestWS.lowerIndex  ).equals(virtualWayNode))
+                                    continue;
+                            } else
+                                virtualWayNode = w.nodes.get(nearestWS.lowerIndex+1);
+
+                            virtualWays.add(nearestWS);
+                            if(virtualNode == null)
+                                virtualNode = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
                         }
                     }
                 }
@@ -287,15 +311,15 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mousePressed(MouseEvent e) {
         if(!Main.map.mapView.isVisibleDrawableLayer())
             return;
-        
+
         cancelDrawMode = false;
         if (! (Boolean)this.getValue("active")) return;
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        // boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
         boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-        
+
         // We don't want to change to draw tool if the user tries to (de)select
         // stuff but accidentally clicks in an empty area when selection is empty
         if(shift || ctrl)
@@ -305,7 +329,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         didMove = false;
         initialMoveThresholdExceeded = false;
 
-        Collection<OsmPrimitive> osmColl = getNearestCollectionVirtual(e.getPoint());
+        Collection<OsmPrimitive> osmColl = getNearestCollectionVirtual(e.getPoint(), alt);
 
         if (ctrl && shift) {
             if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, true, false);
@@ -329,11 +353,15 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if(mode != Mode.move || shift || ctrl)
         {
             virtualNode = null;
-            virtualWay = null;
+            virtualWays.clear();
         }
 
         updateStatusLine();
-        Main.map.mapView.repaint();
+        // Mode.select redraws when selectPrims is called
+        // Mode.move   redraws when mouseDragged is called
+        // Mode.rotate redraws here
+        if(mode == Mode.rotate)
+            Main.map.mapView.repaint();
 
         mousePos = e.getPoint();
     }
@@ -344,7 +372,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mouseReleased(MouseEvent e) {
         if(!Main.map.mapView.isVisibleDrawableLayer())
             return;
-        
+
         if (mode == Mode.select) {
             selectionManager.unregister(Main.map.mapView);
 
@@ -397,7 +425,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
             }
         }
 
-        updateStatusLine();
+        // I don't see why we need this.
+        //updateStatusLine();
         mode = null;
         updateStatusLine();
     }
