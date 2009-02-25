@@ -10,6 +10,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.xml.sax.SAXException;
 
+import javax.swing.JOptionPane;
+
 public class OsmServerObjectReader extends OsmServerReader {
 
     public final static  String TYPE_WAY = "way";
@@ -46,11 +48,16 @@ public class OsmServerObjectReader extends OsmServerReader {
             if (in == null)
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
-            final DataSet data = OsmReader.parseDataSet(in, null, Main.pleaseWaitDlg);
+            final OsmReader osm = OsmReader.parseDataSetOsm(in, null, Main.pleaseWaitDlg);
+            final DataSet data = osm.getDs();
+
 //          String origin = Main.pref.get("osm-server.url")+"/"+Main.pref.get("osm-server.version", "0.5");
 //          Bounds bounds = new Bounds(new LatLon(lat1, lon1), new LatLon(lat2, lon2));
 //          DataSource src = new DataSource(bounds, origin);
 //          data.dataSources.add(src);
+            if (osm.getParseNotes().length() != 0) {
+                JOptionPane.showMessageDialog(Main.parent, osm.getParseNotes());
+            }
             in.close();
             activeConnection = null;
             return data;

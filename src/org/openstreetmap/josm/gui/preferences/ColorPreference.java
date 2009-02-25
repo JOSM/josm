@@ -64,8 +64,11 @@ public class ColorPreference implements PreferenceSetting {
         // fill model with colors:
         Map<String, String> colorKeyList = new TreeMap<String, String>();
         Map<String, String> colorKeyList_mappaint = new TreeMap<String, String>();
+        Map<String, String> colorKeyList_layer = new TreeMap<String, String>();
         for(String key : colorMap.keySet()) {
-            if(key.startsWith("mappaint."))
+            if(key.startsWith("layer "))
+                colorKeyList_layer.put(getName(key), key);
+            else if(key.startsWith("mappaint."))
                 colorKeyList_mappaint.put(getName(key), key);
             else
                 colorKeyList.put(getName(key), key);
@@ -77,6 +80,12 @@ public class ColorPreference implements PreferenceSetting {
             tableModel.addRow(row);
         }
         for (Entry<String, String> k : colorKeyList_mappaint.entrySet()) {
+            Vector<Object> row = new Vector<Object>(2);
+            row.add(k.getValue());
+            row.add(ColorHelper.html2color(colorMap.get(k.getValue())));
+            tableModel.addRow(row);
+        }
+        for (Entry<String, String> k : colorKeyList_layer.entrySet()) {
             Vector<Object> row = new Vector<Object>(2);
             row.add(k.getValue());
             row.add(ColorHelper.html2color(colorMap.get(k.getValue())));
@@ -110,6 +119,13 @@ public class ColorPreference implements PreferenceSetting {
             Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
             m.matches();
             return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
+        }
+        catch (Exception e) {}
+        try
+        {
+            Matcher m = Pattern.compile("layer (.+)").matcher(o);
+            m.matches();
+            return tr("Layer: {0}", tr(m.group(1)));
         }
         catch (Exception e) {}
         return tr(o);

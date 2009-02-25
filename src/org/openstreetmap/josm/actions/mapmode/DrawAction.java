@@ -8,6 +8,7 @@ import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -58,7 +59,12 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
-
+    final private Cursor cursorCrosshair;
+    final private Cursor cursorJoinNode;
+    final private Cursor cursorJoinWay;
+    enum Cursors { crosshair, node, way } 
+    private Cursors currCursor = Cursors.crosshair;
+    
     private static Node lastUsedNode = null;
     private double PHI=Math.toRadians(90);
 
@@ -87,6 +93,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // Add extra shortcut N
         Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
             Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
+        
+        cursorCrosshair = getCursor();
+        cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
+        cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
     }
 
     private static Cursor getCursor() {
@@ -98,32 +108,36 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
-     * Sets a special cursor to indicate that the next click will automatically join into
-     * an existing node or way (if feature is enabled)
-     *
-     * @param way If true, the cursor will indicate it is joined into a way; node otherwise
+     * Displays the given cursor instead of the normal one
+     * @param Cursors One of the available cursors
      */
-    private void setJoinCursor(boolean way) {
-        if(!drawTargetCursor) {
-            resetCursor();
+    private void setCursor(final Cursors c) {
+        if(currCursor.equals(c) || (!drawTargetCursor && currCursor.equals(Cursors.crosshair)))
             return;
-        }
         try {
-            Main.map.mapView.setCursor(
-                    ImageProvider.getCursor("crosshair", (way ? "joinway" : "joinnode"))
-            );
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        resetCursor();
+            // We invoke this to prevent strange things from happening
+            EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    switch(c) {
+                        case way:
+                            Main.map.mapView.setCursor(cursorJoinWay);
+                            break;
+                        case node:
+                            Main.map.mapView.setCursor(cursorJoinNode);
+                            break;
+                        default:
+                            Main.map.mapView.setCursor(cursorCrosshair);
+                            break;    
+                    }
+                }
+            });
+            currCursor = c;
+        } catch(Exception e) {}
     }
-
-    /**
-     * Resets the cursor to the default cursor for drawing mode (i.e. crosshair)
-     */
-    private void resetCursor() {
-        Main.map.mapView.setCursor(getCursor());
+    
+    private void redrawIfRequired() {
+        if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight) return;
+        Main.map.mapView.repaint();
     }
 
     /**
@@ -134,7 +148,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
         // if ctrl key is held ("no join"), don't highlight anything
         if (ctrl) {
-            resetCursor();
+            setCursor(Cursors.crosshair);
             return;
         }
 
@@ -143,7 +157,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos);
 
         if (mouseOnExistingNode != null) {
-            setJoinCursor(false);
+            setCursor(Cursors.node);
             // We also need this list for the statusbar help text
             oldHighlights.add(mouseOnExistingNode);
             if(drawTargetHighlight)
@@ -153,11 +167,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // Insert the node into all the nearby way segments
         if(mouseOnExistingWays.size() == 0) {
-            resetCursor();
+            setCursor(Cursors.crosshair);
             return;
         }
 
-        setJoinCursor(true);
+        setCursor(Cursors.way);
 
         // We also need this list for the statusbar help text
         oldHighlights.addAll(mouseOnExistingWays);
@@ -218,8 +232,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isDrawableLayer())
             return;
         updateKeyModifiers((InputEvent) event);
-        addHighlighting();
         computeHelperLine();
+        addHighlighting();
+        redrawIfRequired();
     }
     /**
      * redraw to (possibly) get rid of helper line if selection changes.
@@ -228,6 +243,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(!Main.map.mapView.isDrawableLayer())
             return;
         computeHelperLine();
+        addHighlighting();
+        redrawIfRequired();
     }
 
     private void tryAgain(MouseEvent e) {
@@ -246,9 +263,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.selectSelectTool(true);
 
         // Redraw to remove the helper line stub
-        removeHighlighting();
         computeHelperLine();
-        Main.map.mapView.repaint();
+        removeHighlighting();
+        redrawIfRequired();
     }
 
     /**
@@ -476,7 +493,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         computeHelperLine();
         removeHighlighting();
-        Main.map.mapView.repaint();
+        redrawIfRequired();
     }
 
     /**
@@ -549,8 +566,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         updateKeyModifiers(e);
         mousePos = e.getPoint();
 
-        addHighlighting();
         computeHelperLine();
+        addHighlighting();
+        redrawIfRequired();
     }
 
     private void updateKeyModifiers(InputEvent e) {
@@ -662,9 +680,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setHeading(hdg);
         Main.map.statusLine.setDist(distance);
         updateStatusLine();
-
-        if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight) return;
-        Main.map.mapView.repaint();
     }
 
     /**

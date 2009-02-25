@@ -106,7 +106,7 @@ public class PluginHandler {
                 if (!p.containsKey(info.stage))
                     p.put(info.stage, new LinkedList<PluginInformation>());
                 p.get(info.stage).add(info);
-            } else {
+            } else if(early) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Plugin not found: {0}.", pluginName));
             }
         }

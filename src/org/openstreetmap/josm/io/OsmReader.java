@@ -74,6 +74,7 @@ public class OsmReader {
       * a newline-terminated string.
       */
      private String parseNotes = new String();
+     private int parseNotesCount = 0;
      public String getParseNotes() {
          return parseNotes;
      }
@@ -372,7 +373,12 @@ public class OsmReader {
                for (long id : e.getValue()) {
                     Node n = findNode(id);
                     if (n == null) {
-                         parseNotes += tr("Skipping a way because it includes a node that doesn''t exist: {0}\n", id);
+                         /* don't report ALL of them, just a few */
+                         if (parseNotesCount++ < 6) {
+                             parseNotes += tr("Skipping a way because it includes a node that doesn''t exist: {0}\n", id);
+                         } else if (parseNotesCount == 6) {
+                             parseNotes += "...\n";
+                         }
                          failed = true;
                          break;
                     }
