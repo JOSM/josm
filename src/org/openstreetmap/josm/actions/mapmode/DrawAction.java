@@ -663,7 +663,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setDist(distance);
         updateStatusLine();
 
-        if (!drawHelperLine || wayIsFinished) return;
+        if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight) return;
         Main.map.mapView.repaint();
     }
 
@@ -790,7 +790,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     public void paint(Graphics g, MapView mv) {
-        if (!drawHelperLine && !drawTargetHighlight) return;
+        if (!drawHelperLine) return;
 
         // sanity checks
         if (Main.map.mapView == null) return;
