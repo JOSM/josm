@@ -718,18 +718,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             propertyData.addRow(new Object[]{e.getKey(), e.getValue()});
         }
 
-        boolean hasTags = !newSelection.isEmpty() && propertyData.getRowCount() > 0;
-        boolean hasSelection = !newSelection.isEmpty();
-        btnAdd.setEnabled(hasSelection);
-        btnEdit.setEnabled(hasTags);
-        btnDel.setEnabled(hasTags);
-        propertyTable.setVisible(hasSelection);
-        propertyTable.getTableHeader().setVisible(hasSelection);
-        selectSth.setVisible(!hasSelection);
-        if(hasTags) propertyTable.changeSelection(0, 0, false, false);
-
-        checkPresets(nodes, ways, relations, closedways);
-
         // re-load membership data
         // this is rather expensive since we have to walk through all members of all existing relationships.
         // could use back references here for speed if necessary.
@@ -758,6 +746,20 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);
+
+        boolean hasSelection = !newSelection.isEmpty();
+        boolean hasTags = hasSelection && propertyData.getRowCount() > 0;
+        boolean hasMemberships = hasSelection && membershipData.getRowCount() > 0;
+        btnAdd.setEnabled(hasSelection);
+        btnEdit.setEnabled(hasTags || hasMemberships);
+        btnDel.setEnabled(hasTags || hasMemberships);
+        propertyTable.setVisible(hasSelection);
+        propertyTable.getTableHeader().setVisible(hasSelection);
+        selectSth.setVisible(!hasSelection);
+        if(hasTags) propertyTable.changeSelection(0, 0, false, false);
+        else if(hasMemberships) membershipTable.changeSelection(0, 0, false, false);
+
+        checkPresets(nodes, ways, relations, closedways);
 
         if(propertyData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
             setTitle(tr("Properties: {0} / Memberships: {1}",
