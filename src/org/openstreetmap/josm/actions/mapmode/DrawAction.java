@@ -242,6 +242,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if(!Main.map.mapView.isDrawableLayer())
             return;
+        wayIsFinished = false;
         computeHelperLine();
         addHighlighting();
         redrawIfRequired();
@@ -805,7 +806,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     public void paint(Graphics g, MapView mv) {
-        if (!drawHelperLine) return;
+        if (!drawHelperLine || wayIsFinished) return;
 
         // sanity checks
         if (Main.map.mapView == null) return;
@@ -881,19 +882,23 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Check whether a connection will be made
          */
-        if (currentBaseNode != null) {
+        if (currentBaseNode != null && !wayIsFinished) {
             if(alt)
                 rv += " " + tr("Start new way from last node.");
             else
                 rv += " " + tr("Continue way from last node.");
         }
-
+        
+        Node n = mouseOnExistingNode;
         /*
          * Handle special case: Highlighted node == selected node => finish drawing
          */
-        Node n = mouseOnExistingNode;
+        
         if(n != null && Main.ds.getSelectedNodes().contains(n)) {
-            rv = tr("Finish drawing.");
+            if(wayIsFinished)
+                rv = tr("Select node under cursor.");
+            else
+                rv = tr("Finish drawing.");
         }
 
         /*
