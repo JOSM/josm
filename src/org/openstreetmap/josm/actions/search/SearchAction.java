@@ -123,7 +123,8 @@ public class SearchAction extends JosmAction {
      * @param s
      */
     public static void searchWithHistory(SearchSetting s) {
-        searchHistory.addFirst(s);
+        if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst()))
+            searchHistory.addFirst(s);
         while (searchHistory.size() > SEARCH_HISTORY_SIZE)
             searchHistory.removeLast();
         lastSearch = s;
@@ -202,5 +203,14 @@ public class SearchAction extends JosmAction {
             return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
         }
 
+        public boolean equals(Object other) {
+            if(!(other instanceof SearchSetting))
+                return false;
+            SearchSetting o = (SearchSetting) other;
+            return (o.caseSensitive == this.caseSensitive
+                 && o.regexSearch == this.regexSearch
+                 && o.mode.equals(this.mode)
+                 && o.text.equals(this.text));
+        }
     }
 }
