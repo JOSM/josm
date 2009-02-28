@@ -138,7 +138,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         } catch(Exception e) {}
     }
     
+    /**
+     * Checks if a map redraw is required and does so if needed. Also updates the status bar
+     */
     private void redrawIfRequired() {
+        updateStatusLine();
         if ((!drawHelperLine || wayIsFinished) && !drawTargetHighlight) return;
         Main.map.mapView.repaint();
     }
@@ -155,8 +159,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         }
 
-        // This happens when nothing is selected
-        if(mouseOnExistingNode == null && Main.ds.getSelected().size() == 0 && mousePos != null)
+        // This happens when nothing is selected, but we still want to highlight the "target node"
+        if(mouseOnExistingNode == null && Main.ds.getSelected().size() == 0
+                && mousePos != null && !shift)
             mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos);
 
         if (mouseOnExistingNode != null) {
@@ -653,7 +658,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Node previousNode = null;
 
         if (selectedNode == null) {
-            if (selectedWay == null) return;
+            if (selectedWay == null)
+                return;
             if (selectedWay.isFirstLastNode(lastUsedNode)) {
                 currentBaseNode = lastUsedNode;
                 if (lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1) && selectedWay.nodes.size() > 1) {
@@ -668,10 +674,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
 
-        if (currentBaseNode == null || currentBaseNode == currentMouseNode) {
-            updateStatusLine();
+        if (currentBaseNode == null || currentBaseNode == currentMouseNode)
             return; // Don't create zero length way segments.
-        }
 
         // find out the distance, in metres, between the base point and the mouse cursor
         LatLon mouseLatLon = Main.proj.eastNorth2latlon(currentMouseEastNorth);
@@ -684,7 +688,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.setHeading(hdg);
         Main.map.statusLine.setDist(distance);
-        updateStatusLine();
+        // Now done in redrawIfRequired()
+        //updateStatusLine();
     }
 
     /**
@@ -874,13 +879,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             rv = tr("Insert new node into {0} way(s).", oldHighlights.size());
         } else {
             // oldHighlights may store a node or way, check if it's a node
-            for(OsmPrimitive x : oldHighlights) {
-                if(x instanceof Node)
-                    rv = tr("Select node under cursor.");
-                else
-                    rv = tr("Insert new node into {0} way(s).", oldHighlights.size());
-                break;
-            }
+            OsmPrimitive x = oldHighlights.iterator().next();
+            if(x instanceof Node)
+                rv = tr("Select node under cursor.");
+            else
+                rv = tr("Insert new node into {0} way(s).", oldHighlights.size());
         }
 
         /*
