@@ -164,7 +164,7 @@ public class HelpAction extends AbstractAction {
     public void setHelpUrl(String url) {
         int i = url.lastIndexOf("/")+1;
         String title = url.substring(i);
-        if(!title.startsWith(languageCode))
+        if(!title.startsWith(languageCode) && !languageCode.equals("En:"))
             title = languageCode + title;
         String langurl = url.substring(0, i) + title;
         if(langurl.equals(this.url) || langurl.equals(url))
@@ -183,6 +183,8 @@ public class HelpAction extends AbstractAction {
                 String message = help.getText();
                 String le = "http://josm-extern." + langurl.substring(7);
                 if(message.indexOf("Describe &quot;") >= 0 && message.indexOf(le) >= 0)
+                    throw new IOException();
+                if(message.indexOf("      Describe ") >= 0)
                     throw new IOException();
                 this.url = langurl;
             } catch (IOException e) {
