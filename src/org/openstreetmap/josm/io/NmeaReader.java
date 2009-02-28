@@ -178,12 +178,12 @@ public class NmeaReader {
 
             StringBuffer sb = new StringBuffer(1024);
             int loopstart_char = rd.read();
+            ps = new NMEAParserState();
             if(loopstart_char == -1) {// zero size file
                 //TODO tell user about the problem?
                 return;
             }
             sb.append((char)loopstart_char);
-            ps = new NMEAParserState();
             ps.p_Date="010100"; // TODO date problem
             while(true) {
                 // don't load unparsable files completely to memory
