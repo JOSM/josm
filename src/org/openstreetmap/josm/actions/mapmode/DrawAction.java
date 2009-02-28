@@ -118,6 +118,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // We invoke this to prevent strange things from happening
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
+                    // Don't change cursor when mode has changed already
+                    if(!(Main.map.mapMode instanceof DrawAction))
+                        return;
                     switch(c) {
                         case way:
                             Main.map.mapView.setCursor(cursorJoinWay);
@@ -193,6 +196,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     @Override public void enterMode() {
         super.enterMode();
+        currCursor = Cursors.crosshair;
         selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);

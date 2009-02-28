@@ -348,7 +348,7 @@ public class RelationEditor extends ExtendedDialog {
         JPanel buttonPanel = new JPanel(new GridLayout(2,ordered ? 3 : 2));
 
         if (ordered) {
-            buttonPanel.add(createButton(marktr("Move Up"), "moveup", tr("Move the currently selected members up"), KeyEvent.VK_U, new ActionListener() {
+            buttonPanel.add(createButton(marktr("Move Up"), "moveup", tr("Move the currently selected members up"), KeyEvent.VK_N, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     moveMembers(-1);
                 }
@@ -363,7 +363,7 @@ public class RelationEditor extends ExtendedDialog {
         }));
 
         buttonPanel.add(createButton(marktr("Remove Selected"),"removeselected",
-        tr("Remove all currently selected objects from relation"), KeyEvent.VK_G, new ActionListener() {
+        tr("Remove all currently selected objects from relation"), KeyEvent.VK_S, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteSelected();
             }
