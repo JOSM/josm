@@ -2351,7 +2351,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
         <item name="Vending machine" icon="presets/vending_machine.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine" />
-            <label text="Edit a Vending_machine" />
+            <label text="Edit a Vending machine" />
             <key key="amenity" value="vending_machine" />
             <combo key="vending" text="Vending products" values="public_transport_tickets,public_transport_plans,parking_tickets,food,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
