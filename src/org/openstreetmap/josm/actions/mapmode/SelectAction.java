@@ -196,7 +196,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             virtualWays.size());
 
             Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
-            selectPrims(Collections.singleton((OsmPrimitive)virtualNode), false, false);
+            selectPrims(Collections.singleton((OsmPrimitive)virtualNode), false, false, false);
             virtualWays.clear();
             virtualNode = null;
         } else {
@@ -332,7 +332,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         Collection<OsmPrimitive> osmColl = getNearestCollectionVirtual(e.getPoint(), alt);
 
         if (ctrl && shift) {
-            if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, true, false);
+            if (Main.ds.getSelected().isEmpty()) selectPrims(osmColl, true, false, false);
             mode = Mode.rotate;
             setCursor(ImageProvider.getCursor("rotate", null));
         } else if (!osmColl.isEmpty()) {
@@ -342,7 +342,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             // move.
             selectPrims(osmColl,
                 shift || Main.ds.getSelected().containsAll(osmColl),
-                ctrl);
+                ctrl, false);
             mode = Mode.move;
         } else {
             mode = Mode.select;
@@ -390,7 +390,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             if (!didMove) {
                 selectPrims(
                     Main.map.mapView.getNearestCollection(e.getPoint()),
-                    shift, ctrl);
+                    shift, ctrl, true);
 
                 // If the user double-clicked a node, change to draw mode
                 List<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(Main.ds.getSelected());
@@ -432,11 +432,11 @@ public class SelectAction extends MapMode implements SelectionEnded {
     }
 
     public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
-        selectPrims(selectionManager.getObjectsInRectangle(r, alt), shift, ctrl);
+        selectPrims(selectionManager.getObjectsInRectangle(r, alt), shift, ctrl, false);
     }
 
-    public void selectPrims(Collection<OsmPrimitive> selectionList, boolean shift, boolean ctrl) {
-        if (shift && ctrl)
+    public void selectPrims(Collection<OsmPrimitive> selectionList, boolean shift, boolean ctrl, boolean released) {
+        if ((shift && ctrl) || (ctrl && !released))
             return; // not allowed together
 
         Collection<OsmPrimitive> curSel;
@@ -446,10 +446,17 @@ public class SelectAction extends MapMode implements SelectionEnded {
             curSel = Main.ds.getSelected();
 
         for (OsmPrimitive osm : selectionList)
+        {
             if (ctrl)
-                curSel.remove(osm);
+            {
+                if(curSel.contains(osm))
+                    curSel.remove(osm);
+                else
+                    curSel.add(osm);
+            }
             else
                 curSel.add(osm);
+        }
         Main.ds.setSelected(curSel);
         Main.map.mapView.repaint();
     }
@@ -462,7 +469,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         } else if (mode == Mode.rotate) {
             return tr("Release the mouse button to stop rotating.");
         } else {
-            return tr("Move objects by dragging; Shift to add to selection (Ctrl to remove); Shift-Ctrl to rotate selected; or change selection");
+            return tr("Move objects by dragging; Shift to add to selection (Ctrl to toggle); Shift-Ctrl to rotate selected; or change selection");
         }
     }
 
