@@ -2931,5 +2931,30 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <role key="to" text="to way" requisite="required" count="1" type="way" />
             </roles>
         </item>
+        <item name="Route" icon="presets/empty.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"/>
+            <label text="Edit a Route" />
+            <key key="type" value="route" />
+            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" default="" delete_if_empty="true" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            <text key="symbol" text="Symbol description" default="" delete_if_empty="true" />
+            <text key="description" text="Description" default="" delete_if_empty="true" />
+            <optional>
+                <text key="network" text="Network" default="" delete_if_empty="true" />
+                <text key="operator" text="Operator" default="" delete_if_empty="true" />
+                <combo key="state" text="State" values="proposed,alternate,temporary,connection" default="" delete_if_empty="true" />
+                <text key="color" text="Color (hex)" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+                <role key="" text="route segment" requisite="optional" type="way" />
+                <role key="forward" text="forward segment" requisite="optional" type="way" />
+                <role key="backward" text="backward segment" requisite="optional" type="way" />
+                <role key="stop_%n" text="halt point" requisite="optional" type="node" />
+                <role key="forward_stop_%n" text="forward halt point" requisite="optional" type="node" />
+                <role key="backward_stop_%n" text="backward halt point" requisite="optional" type="node" />
+            </roles>
+        </item>
     </group> <!-- Relations -->
 </annotations>
