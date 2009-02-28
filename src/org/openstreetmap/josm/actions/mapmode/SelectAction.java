@@ -8,6 +8,7 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -317,7 +318,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
         boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 
         // We don't want to change to draw tool if the user tries to (de)select

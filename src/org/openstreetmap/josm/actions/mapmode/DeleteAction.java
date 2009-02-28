@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.mapmode;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
@@ -71,7 +72,7 @@ public class DeleteAction extends MapMode {
         if(!Main.map.mapView.isDrawableLayer())
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
 
         Command c;
         if (ctrl) {
@@ -98,7 +99,7 @@ public class DeleteAction extends MapMode {
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-        boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
 
         OsmPrimitive sel = Main.map.mapView.getNearestNode(e.getPoint());
         Command c = null;

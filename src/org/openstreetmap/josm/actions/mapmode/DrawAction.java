@@ -578,13 +578,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private void updateKeyModifiers(InputEvent e) {
         ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
         shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
     }
 
     private void updateKeyModifiers(MouseEvent e) {
         ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
+        alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
         shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
     }
 

@@ -76,11 +76,6 @@ public class PlayHeadDragMode extends MapMode {
         }
         mousePos = null;
         dragging = false;
-
-    /*
-        boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
-     */
     }
 
     @Override public String getModeHelpText() {
