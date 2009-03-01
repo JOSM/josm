@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
@@ -62,9 +63,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     final private Cursor cursorCrosshair;
     final private Cursor cursorJoinNode;
     final private Cursor cursorJoinWay;
-    enum Cursors { crosshair, node, way } 
+    enum Cursors { crosshair, node, way }
     private Cursors currCursor = Cursors.crosshair;
-    
+
     private static Node lastUsedNode = null;
     private double PHI=Math.toRadians(90);
 
@@ -93,7 +94,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // Add extra shortcut N
         Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
             Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
-        
+
         cursorCrosshair = getCursor();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
         cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
@@ -130,14 +131,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                             break;
                         default:
                             Main.map.mapView.setCursor(cursorCrosshair);
-                            break;    
+                            break;
                     }
                 }
             });
             currCursor = c;
         } catch(Exception e) {}
     }
-    
+
     /**
      * Checks if a map redraw is required and does so if needed. Also updates the status bar
      */
@@ -876,14 +877,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         else if(shift) {
             // We already know oldHighlights is not empty, but shift is pressed.
             // We can assume the new node will be joined into an existing way
-            rv = tr("Insert new node into {0} way(s).", oldHighlights.size());
+            rv = trn("Insert new node into way.", "Insert new node into {0} ways.",
+            oldHighlights.size(), oldHighlights.size());
         } else {
             // oldHighlights may store a node or way, check if it's a node
             OsmPrimitive x = oldHighlights.iterator().next();
             if(x instanceof Node)
                 rv = tr("Select node under cursor.");
             else
-                rv = tr("Insert new node into {0} way(s).", oldHighlights.size());
+                rv = trn("Insert new node into way.", "Insert new node into {0} ways.",
+                oldHighlights.size(), oldHighlights.size());
         }
 
         /*
@@ -895,12 +898,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             else
                 rv += " " + tr("Continue way from last node.");
         }
-        
+
         Node n = mouseOnExistingNode;
         /*
          * Handle special case: Highlighted node == selected node => finish drawing
          */
-        
+
         if(n != null && Main.ds.getSelectedNodes().contains(n)) {
             if(wayIsFinished)
                 rv = tr("Select node under cursor.");
