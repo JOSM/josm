@@ -138,7 +138,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="tunnel" b="yes"/>
 		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="vehicle/tunnel.png"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
