@@ -23,10 +23,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Date;
 import java.util.List;
@@ -77,6 +79,7 @@ import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
+import org.openstreetmap.josm.tools.AudioUtil;
 
 public class GpxLayer extends Layer {
     public GpxData data;
@@ -204,14 +207,23 @@ public class GpxLayer extends Layer {
                     if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
                         Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
 
-                    // FIXME: properly support multi-selection here.
-                    // Calling importAudio several times just creates N maker layers, which
-                    // is sub-optimal.
+                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
                     File sel[] = fc.getSelectedFiles();
-                    if(sel != null)
-                        for (int i = 0; i < sel.length; i++)
-                            importAudio(sel[i]);
-
+                    if(sel != null) {
+                    	// sort files in increasing order of timestamp (this is the end time, but so long as they don't overlap, that's fine)
+                    	if (sel.length > 1) {
+                    		Arrays.sort(sel, new Comparator<File>() {
+                    			public int compare(File a, File b) {
+                    				return a.lastModified() <= b.lastModified() ? -1 : 1;
+                    			}
+                    		});
+                    	}
+                        double firstStartTime = sel[0].lastModified()/1000.0 /* ms -> seconds */ - AudioUtil.getCalibratedDuration(sel[0]);
+                        for (int i = 0; i < sel.length; i++) {
+                            importAudio(sel[i], ml, firstStartTime);
+                        }
+                    }
+                    Main.main.addLayer(ml);
                     Main.map.repaint();
                 }
             }
@@ -835,18 +847,18 @@ public class GpxLayer extends Layer {
      * Markers are derived from the following
      * (a) explict waypoints in the GPX layer, or
      * (b) named trackpoints in the GPX layer, or
-     * (c) (in future) voice recognised markers in the sound recording
-     * (d) a single marker at the beginning of the track
+     * (d) timestamp on the wav file
+     * (e) (in future) voice recognised markers in the sound recording
+     * (f) a single marker at the beginning of the track
      * @param wavFile : the file to be associated with the markers in the new marker layer
      */
-    private void importAudio(File wavFile) {
+    private void importAudio(File wavFile, MarkerLayer ml, double firstStartTime) {
         String uri = "file:".concat(wavFile.getAbsolutePath());
-        MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
-
         Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
         double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3); /* about 25m */
+        WayPoint wayPointFromTimeStamp = null;
 
         // determine time of first point in track
         double firstTime = -1.0;
@@ -915,9 +927,51 @@ public class GpxLayer extends Layer {
             }
         }
 
-        // (d) analyse audio for spoken markers here, in due course
+        // (d) use timestamp of file as location on track
+        if ((Main.pref.getBoolean("marker.audiofromwavtimestamps", false)) &&
+                data.tracks != null && ! data.tracks.isEmpty())
+        {
+            double lastModified = wavFile.lastModified() / 1000.0; // lastModified is in milliseconds
+            double duration = AudioUtil.getCalibratedDuration(wavFile);
+            double startTime = lastModified - duration;
+            startTime = firstStartTime + (startTime - firstStartTime) /  
+            	Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
+            WayPoint w1 = null;
+            WayPoint w2 = null;
 
-        // (e) simply add a single marker at the start of the track
+        	for (GpxTrack track : data.tracks) {
+        		if (track.trackSegs == null) continue;
+        		for (Collection<WayPoint> seg : track.trackSegs) {
+        			for (WayPoint w : seg) {
+                        if (startTime < w.time) {
+                            w2 = w;
+                            break;
+                        }
+                        w1 = w;
+                    }
+                    if (w2 != null) break;
+                }
+            }	
+
+            if (w1 == null || w2 == null) {
+            	timedMarkersOmitted = true;
+            } else {
+            	EastNorth eastNorth = w1.eastNorth.interpolate(
+            				w2.eastNorth,
+            				(startTime - w1.time)/(w2.time - w1.time));
+                wayPointFromTimeStamp = new WayPoint(Main.proj.eastNorth2latlon(eastNorth));
+                wayPointFromTimeStamp.time = startTime;
+                String name = wavFile.getName();
+                int dot = name.lastIndexOf(".");
+                if (dot > 0) { name = name.substring(0, dot); }
+                wayPointFromTimeStamp.attr.put("name", name);
+                waypoints.add(wayPointFromTimeStamp);
+            }        	
+        }
+        
+        // (e) analyse audio for spoken markers here, in due course
+
+        // (f) simply add a single marker at the start of the track
         if ((Main.pref.getBoolean("marker.audiofromstart") || waypoints.isEmpty()) &&
             data.tracks != null && ! data.tracks.isEmpty())
         {
@@ -960,13 +1014,16 @@ public class GpxLayer extends Layer {
                 name = AudioMarker.inventName(offset);
             AudioMarker am = AudioMarker.create(w.latlon,
                     name, uri, ml, w.time, offset);
+            /* timeFromAudio intended for future use to shift markers of this type on synchronization */
+            if (w == wayPointFromTimeStamp) { 
+            	am.timeFromAudio = true; 
+            }
             ml.data.add(am);
         }
-        Main.main.addLayer(ml);
 
         if (timedMarkersOmitted) {
             JOptionPane.showMessageDialog(Main.parent,
-            tr("Some waypoints with timestamps from before the start of the track were omitted."));
+            tr("Some waypoints with timestamps from before the start of the track or after the end were omitted or moved to the start."));
         }
         if (untimedMarkersOmitted) {
             JOptionPane.showMessageDialog(Main.parent,

@@ -35,6 +35,7 @@ public class AudioPreference implements PreferenceSetting {
     private JCheckBox audioMarkersFromExplicitWaypoints = new JCheckBox(tr("Explicit waypoints with valid timestamps."));
     private JCheckBox audioMarkersFromUntimedWaypoints = new JCheckBox(tr("Explicit waypoints with time estimated from track position."));
     private JCheckBox audioMarkersFromNamedTrackpoints = new JCheckBox(tr("Named trackpoints."));
+    private JCheckBox audioMarkersFromWavTimestamps = new JCheckBox(tr("Modified times (time stamps) of audio files."));
     private JCheckBox audioMarkersFromStart = new JCheckBox(tr("Start of track (will always do this if no other markers available)."));
 
     private JTextField audioLeadIn = new JTextField(8);
@@ -123,6 +124,17 @@ public class AudioPreference implements PreferenceSetting {
         audioMarkersFromNamedTrackpoints.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
         gui.audio.add(audioMarkersFromNamedTrackpoints, GBC.eol().insets(10,0,0,0));
 
+        // audioMarkersFromWavTimestamps
+        audioMarkersFromWavTimestamps.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                if (!audioMarkersFromWavTimestamps.isSelected())
+                    audioMarkersFromWavTimestamps.setSelected(false);
+            }
+        });
+        audioMarkersFromWavTimestamps.setSelected(Main.pref.getBoolean("marker.audiofromwavtimestamps", false));
+        audioMarkersFromWavTimestamps.setToolTipText(tr("Create audio markers at the position on the track corresponding to the modified time of each audio WAV file imported."));
+        gui.audio.add(audioMarkersFromWavTimestamps, GBC.eol().insets(10,0,0,0));
+
         // audioMarkersFromStart
         audioMarkersFromStart.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -165,6 +177,7 @@ public class AudioPreference implements PreferenceSetting {
         Main.pref.put("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());
         Main.pref.put("marker.audiofromuntimedwaypoints", audioMarkersFromUntimedWaypoints.isSelected());
         Main.pref.put("marker.audiofromnamedtrackpoints", audioMarkersFromNamedTrackpoints.isSelected());
+        Main.pref.put("marker.audiofromwavtimestamps", audioMarkersFromWavTimestamps.isSelected());
         Main.pref.put("marker.audiofromstart", audioMarkersFromStart.isSelected());
         Main.pref.put("audio.forwardbackamount", audioForwardBackAmount.getText());
         Main.pref.put("audio.fastfwdmultiplier", audioFastForwardMultiplier.getText());

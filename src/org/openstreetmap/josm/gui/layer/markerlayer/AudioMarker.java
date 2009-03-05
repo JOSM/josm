@@ -19,7 +19,8 @@ public class AudioMarker extends ButtonMarker {
     private URL audioUrl;
     private static AudioMarker recentlyPlayedMarker = null;
     public  double syncOffset;
-
+    public boolean timeFromAudio = false; // as opposed to from the GPX track
+    
     /**
      * Verifies the parameter whether a new AudioMarker can be created and return
      * one or return <code>null</code>.
@@ -36,6 +37,7 @@ public class AudioMarker extends ButtonMarker {
         super(ll, text, "speech.png", parentLayer, time, offset);
         this.audioUrl = audioUrl;
         this.syncOffset = 0.0;
+        this.timeFromAudio = false;
     }
 
     @Override public void actionPerformed(ActionEvent ev) {

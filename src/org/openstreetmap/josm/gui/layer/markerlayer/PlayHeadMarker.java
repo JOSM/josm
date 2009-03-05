@@ -163,7 +163,7 @@ public class PlayHeadMarker extends Marker {
 
         if (ca == null) {
             /* Not close enough to track, or no audio marker found for some other reason */
-            JOptionPane.showMessageDialog(Main.parent, tr("You need to drag the play head near to the GPX track whose associated sound track you were playing."));
+            JOptionPane.showMessageDialog(Main.parent, tr("You need to drag the play head near to the GPX track whose associated sound track you were playing (after the first marker)."));
             endDrag(true);
         } else {
             eastNorth = cw.eastNorth;
