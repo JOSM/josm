@@ -8,6 +8,7 @@ import java.util.HashSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -129,6 +130,31 @@ public final class Way extends OsmPrimitive {
                 name = "*"+name;
         }
         return name;
+    }
+
+    public void removeNode(Node n)
+    {
+        Boolean closed = (lastNode() == n && firstNode() == n);
+        int i;
+        while((i = nodes.indexOf(n)) >= 0)
+            nodes.remove(i);
+        i = nodes.size();
+        if(closed && i > 2) // close again
+            addNode(firstNode());
+        // prevent closed ways with less than 3 different nodes
+        else if(i >= 2 && i <= 3 && nodes.get(0) == nodes.get(i-1))
+            nodes.remove(i-1);
+    }
+
+    public void removeNodes(Collection<? extends OsmPrimitive> selection)
+    {
+       for(OsmPrimitive p : selection)
+       {
+           if(p instanceof Node)
+           {
+               removeNode((Node)p);
+           }
+       }
     }
 
     public void addNode(Node n)

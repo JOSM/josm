@@ -231,7 +231,7 @@ public class DeleteCommand extends Command {
         Collection<Command> cmds = new LinkedList<Command>();
         for (Way w : waysToBeChanged) {
             Way wnew = new Way(w);
-            wnew.nodes.removeAll(del);
+            wnew.removeNodes(del);
             if (wnew.nodes.size() < 2) {
                 del.add(w);
 
