@@ -10,6 +10,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -66,6 +68,12 @@ public class UpdateDataAction extends JosmAction {
             bboxCount++;
         }
 
+        if(bboxCount == 0) {
+            JOptionPane.showMessageDialog(Main.parent,
+                        tr("No data to update found. Have you already opened or downloaded a data layer?"));
+                return;
+        }
+        
         int result = new ExtendedDialog(Main.parent,
                 tr("Update Data"),
                 tr("This action will require {0} individual download requests. "
