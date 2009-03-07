@@ -792,9 +792,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Signpost" icon="presets/empty.png" type="node">
-            <key key="amenity" value="signpost" />
-        </item>
         <item name="Speed Camera" icon="presets/speed_camera.png" type="node">
             <key key="highway" value="speed_camera" />
         </item>
@@ -1629,13 +1626,15 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Attraction" />
             <key key="tourism" value="attraction" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
-        <item name="Information point" icon="presets/information.png" type="node,way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=information" />
-            <label text="Edit Information Point" />
+        <item name="Information Office" icon="presets/informationoffice.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
+            <label text="Edit Information Office" />
             <key key="tourism" value="information" />
-            <combo key="information" text="type" values="office,map,citymap,hikingmap,bicyclemap,board,history,nature,wildlife,guidepost" default="" delete_if_empty="true" />
+            <key key="information" value="office" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
         <item name="Museum" icon="presets/State_Public.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=museum" />
@@ -1669,6 +1668,31 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
+        <item name="(Hiking-)Guidepost" icon="presets/guidepost.png" type="node">
+            <link href="http://wiki.openstreetmap.org/index.php/Proposed_features/Guidepost" />
+            <key key="tourism" value="information" />
+            <key key="information" value="guidepost" />
+        </item>
+        <item name="Map" icon="presets/map.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
+            <key key="tourism" value="information" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="information" text="Map Type" values="map,citymap,hikingmap,bicyclemap" default="map" delete_if_empty="true" />
+            <text key="description" text="Closer Description" default="" delete_if_empty="true" />
+        </item>
+        <item name="Information Board" icon="presets/board.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
+            <key key="tourism" value="information" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="information" text="Board Type" values="board,history,nature,wildlife" default="board" delete_if_empty="true" />
+            <text key="description" text="Closer Description" default="" delete_if_empty="true" />
+        </item>
+        <item name="Other Information Points" icon="presets/information.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism%3Dinformation" />
+            <key key="tourism" value="information" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="description" text="Closer Description" default="" delete_if_empty="true" />
+        </item>
         <item name="Shelter" icon="presets/shelter.png" type="node,way,closedway">
             <label text="Edit Shelter" />
             <key key="amenity" value="shelter" />

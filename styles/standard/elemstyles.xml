@@ -2144,8 +2144,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+    <!-- deprecated; use information=guidepost instead -->
 		<condition k="amenity" v="signpost"/>
-		<icon annotate="true" src="place/locality.png"/>
+    <icon annotate="true" src="misc/deprecated.png"/>
 		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
@@ -2477,14 +2478,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 <!--tourism tags -->
 
 	<rule>
-		<condition k="tourism" v="information"/>
-		<icon annotate="true" src="misc/information.png"/>
-		<area colour="tourism#e180a2"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="tourism" v="hotel"/>
 		<icon annotate="true" src="accommodation.png"/>
 		<area colour="hotel#e1a0a2"/>
@@ -2591,6 +2584,93 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="tourism" v="museum"/>
 		<icon annotate="true" src="sightseeing/museum.png"/>
+		<area colour="tourism#e180a2"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+<!-- information tags -->
+	<rule>
+		<condition k="information" v="guidepost"/>
+		<icon annotate="true" src="misc/information/guidepost.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="office"/>
+		<icon annotate="true" src="misc/information/informationoffice.png"/>
+		<area colour="tourism#e180a2"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="map"/>
+		<icon annotate="true" src="misc/information/map.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="bicyclemap"/>
+		<icon annotate="true" src="misc/information/map_bicycle.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="hikingmap"/>
+		<icon annotate="true" src="misc/information/map_hiking.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="pistemap"/>
+		<icon annotate="true" src="misc/information/map_skiing.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="citymap"/>
+		<icon annotate="true" src="misc/information/map_city.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="board"/>
+		<icon annotate="true" src="misc/information/board.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="nature"/>
+		<icon annotate="true" src="misc/information/board_nature.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="history"/>
+		<icon annotate="true" src="misc/information/board_history.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="information" v="wildlife"/>
+		<icon annotate="true" src="misc/information/board_wildlife.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="tourism" v="information"/>
+		<icon annotate="true" src="misc/information.png"/>
 		<area colour="tourism#e180a2"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
