@@ -2093,7 +2093,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="cinema" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Library" icon="styles/standard/shopping/rental/library.png" type="node,way,closedway">
+        <item name="Library" icon="styles/standard/shop/rental/library.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=library"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=library" />
             <label text="Edit Library" />

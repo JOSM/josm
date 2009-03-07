@@ -1635,7 +1635,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="parking" v="multi-storey"/>
-		<icon annotate="true" src="vehicle/parking/garage.png" priority="10000"/>
+		<icon annotate="true" src="vehicle/parking/multi-storey.png" priority="10000"/>
 		<area colour="amenity_traffic#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1667,7 +1667,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="bicycle_parking"/>
-		<icon annotate="true" src="vehicle/parking/bike.png"/>
+		<icon annotate="true" src="vehicle/parking/bicycle.png"/>
 		<area colour="amenity_traffic#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1755,7 +1755,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="public_building"/>
-		<icon annotate="true" src="public.png"/>
+		<icon annotate="true" src="service.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1763,7 +1763,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="embassy"/>
-		<icon annotate="true" src="public.png"/>
+		<icon annotate="true" src="service.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1771,7 +1771,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="townhall"/>
-		<icon annotate="true" src="public.png"/>
+		<icon annotate="true" src="service.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1779,7 +1779,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="community_centre"/>
-		<icon annotate="true" src="public.png"/>
+		<icon annotate="true" src="service.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
