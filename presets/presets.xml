@@ -1611,6 +1611,12 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="biergarten" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Bar" icon="presets/bar.png" type="node,closedway">
+          <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bar" />
+          <label text="Edit a Bar" />
+          <key key="amenity" value="bar" />
+          <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Nightclub" icon="presets/bar.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub" />
             <label text="Edit Nightclub" />
