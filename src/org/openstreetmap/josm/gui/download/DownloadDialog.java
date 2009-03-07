@@ -50,19 +50,47 @@ public class DownloadDialog extends JPanel {
 
     public interface DownloadTask {
         /**
-         * Execute the download.
+         * Execute the download using the given bounding box
          */
-        void download(DownloadAction action, double minlat, double minlon, double maxlat, double maxlon);
+        void download(DownloadAction action, double minlat, double minlon,
+                double maxlat, double maxlon);
+
+        /**
+         * Execute the download using the given bounding box. Set silent to true if no error
+         * messages should be popped up. Message can be used to display an additional text below
+         * the default description.
+         */
+        void download(DownloadAction action, double minlat, double minlon,
+                double maxlat, double maxlon, boolean silent, String message);
+
+        /**
+         * Execute the download using the given URL
+         * @param newLayer
+         * @param url
+         */
         void loadUrl(boolean newLayer, String url);
+
         /**
          * @return The checkbox presented to the user
          */
         JCheckBox getCheckBox();
+
         /**
          * @return The name of the preferences suffix to use for storing the
          * selection state.
          */
         String getPreferencesSuffix();
+
+        /**
+         * Gets the error message of the task once it executed. If there is no error message, an empty
+         * string is returned.
+         *
+         * WARNING: Never call this in the same thread you requested the download() or it will cause a
+         * dead lock. See actions/downloadTasks/DownloadOsmTaskList.java for a proper implementation.
+         *
+         * @return Error message or empty String
+         */
+        String getErrorMessage();
     }
 
     /**

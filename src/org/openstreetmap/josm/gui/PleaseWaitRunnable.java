@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public abstract class PleaseWaitRunnable implements Runnable {
-
+    public boolean silent = false;
     public String errorMessage;
 
     private boolean closeDialogCalled = false;
@@ -65,6 +65,8 @@ public abstract class PleaseWaitRunnable implements Runnable {
 
             // reset dialog state
             Main.pleaseWaitDlg.setTitle(title);
+            Main.pleaseWaitDlg.cancel.setEnabled(true);
+            Main.pleaseWaitDlg.setCustomText("");
             errorMessage = null;
             closeDialogCalled = false;
 
@@ -130,7 +132,7 @@ public abstract class PleaseWaitRunnable implements Runnable {
                         Main.pleaseWaitDlg.setVisible(false);
                         Main.pleaseWaitDlg.dispose();
                     }
-                    if (errorMessage != null)
+                    if (errorMessage != null && !silent)
                         JOptionPane.showMessageDialog(Main.parent, errorMessage);
                 }
             };

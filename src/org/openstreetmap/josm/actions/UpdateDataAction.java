@@ -6,17 +6,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class UpdateDataAction extends JosmAction {
@@ -73,22 +71,18 @@ public class UpdateDataAction extends JosmAction {
                         tr("No data to update found. Have you already opened or downloaded a data layer?"));
                 return;
         }
-        
+
         int result = new ExtendedDialog(Main.parent,
                 tr("Update Data"),
                 tr("This action will require {0} individual download requests. "
                         + "Do you wish to continue?", bboxCount),
-                new String[] { "Update Data", "Cancel" },
+                new String[] { tr("Update Data"), tr("Cancel") },
                 new String[] { "updatedata.png", "cancel.png" }).getValue();
 
         if(result != 1)
             return;
 
-        DownloadTask osmTask = new DownloadOsmTask();
-        for(Area a : areas) {
-            Rectangle2D td = a.getBounds2D();
-            osmTask.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX());
-        }
+        new DownloadOsmTaskList().download(false, areas);
     }
 
 }

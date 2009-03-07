@@ -25,6 +25,7 @@ public class PleaseWaitDialog extends JDialog {
     private final JProgressBar progressBar = new JProgressBar();
 
     public final JLabel currentAction = new JLabel(I18n.tr("Contacting the OSM server..."));
+    private final JLabel customText = new JLabel("");
     public final BoundedRangeModel progress = progressBar.getModel();
     public final JButton cancel = new JButton(I18n.tr("Cancel"));
 
@@ -34,10 +35,12 @@ public class PleaseWaitDialog extends JDialog {
         JPanel pane = new JPanel(new GridBagLayout());
         pane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         pane.add(currentAction, GBC.eol().fill(GBC.HORIZONTAL));
+        pane.add(customText, GBC.eol().fill(GBC.HORIZONTAL));
         pane.add(progressBar, GBC.eop().fill(GBC.HORIZONTAL));
         pane.add(cancel, GBC.eol().anchor(GBC.CENTER));
         setContentPane(pane);
-        setSize(Main.pref.getInteger("progressdialog.size",600),100);
+        //setSize(Main.pref.getInteger("progressdialog.size",600),100);
+        setCustomText("");
         setLocationRelativeTo(Main.parent);
         addComponentListener(new ComponentListener() {
             public void componentHidden(ComponentEvent e) {}
@@ -54,5 +57,21 @@ public class PleaseWaitDialog extends JDialog {
     public void setIndeterminate(boolean newValue) {    
         UIManager.put("ProgressBar.cycleTime", UIManager.getInt("ProgressBar.repaintInterval") * 100);
         progressBar.setIndeterminate(newValue);
+    }
+    
+    /**
+     * Sets a custom text line below currentAction. Can be used to display additional information
+     * @param text
+     */
+    public void setCustomText(String text) {
+        if(text.length() == 0) {
+            customText.setVisible(false);
+            setSize(Main.pref.getInteger("progressdialog.size", 600), 100);
+            return;
+        }
+        
+        customText.setVisible(true);
+        customText.setText(text);
+        setSize(Main.pref.getInteger("progressdialog.size", 600), 120);
     }
 }

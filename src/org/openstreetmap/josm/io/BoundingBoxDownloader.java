@@ -92,9 +92,9 @@ public class BoundingBoxDownloader extends OsmServerReader {
         try {
             Main.pleaseWaitDlg.progress.setValue(0);
             Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
-            Main.pleaseWaitDlg.setIndeterminate(true); 
+            Main.pleaseWaitDlg.setIndeterminate(true);
             final InputStream in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, Main.pleaseWaitDlg);
-            Main.pleaseWaitDlg.setIndeterminate(false); 
+            Main.pleaseWaitDlg.setIndeterminate(false);
             if (in == null)
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));

@@ -15,10 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,17 +28,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -49,14 +45,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -70,11 +65,8 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.io.GpxWriter;
-import org.openstreetmap.josm.io.MultiPartFormOutputStream;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -379,10 +371,10 @@ public class GpxLayer extends Layer {
         {-ll0,+sl4,-sl4,+ll0},
         {-ll0,-sl9,-ll0,+sl9}
     };
-    
+
     // the different color modes
     enum colorModes { none, velocity, dilution }
-    
+
     @Override public void paint(Graphics g, MapView mv) {
 
         /****************************************************************
@@ -391,30 +383,30 @@ public class GpxLayer extends Layer {
         // Long startTime = System.currentTimeMillis();
         Color neutralColor = getColor(name);
         // also draw lines between points belonging to different segments
-        boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");   
+        boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");
         // draw direction arrows on the lines
-        boolean direction = Main.pref.getBoolean("draw.rawgps.direction");   
+        boolean direction = Main.pref.getBoolean("draw.rawgps.direction");
         // don't draw lines if longer than x meters
-        int maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", -1);        
+        int maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", -1);
         // draw line between points, global setting
-        boolean lines = Main.pref.getBoolean("draw.rawgps.lines");                                
+        boolean lines = Main.pref.getBoolean("draw.rawgps.lines");
         String linesKey = "draw.rawgps.lines.layer "+name;
         // draw lines, per-layer setting
         if (Main.pref.hasKey(linesKey))
-            lines = Main.pref.getBoolean(linesKey);    
+            lines = Main.pref.getBoolean(linesKey);
         // paint large dots for points
         boolean large = Main.pref.getBoolean("draw.rawgps.large");
         // color the lines
         colorModes colored = colorModes.none;
         try {
-            colored = colorModes.values()[Main.pref.getInteger("draw.rawgps.colors", 0)]; 
+            colored = colorModes.values()[Main.pref.getInteger("draw.rawgps.colors", 0)];
         } catch(Exception e) { }
         // paint direction arrow with alternate math. may be faster
-        boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");    
+        boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");
         // don't draw arrows nearer to each other than this
-        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);        
+        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
         // allows to tweak line coloring for different speed levels.
-        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45); 
+        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
         /****************************************************************
          ********** STEP 2a - CHECK CACHE VALIDITY **********************
          ****************************************************************/
@@ -459,7 +451,7 @@ public class GpxLayer extends Layer {
                                     else
                                         trkPnt.customColoring = colors[(int) (velColor)];
                                     break;
-                                
+
                                 case dilution:
                                     if(trkPnt.attr.get("hdop") != null) {
                                         float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
@@ -469,7 +461,7 @@ public class GpxLayer extends Layer {
                                         int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
                                         trkPnt.customColoring = colors[hdopcolor];
                                     }
-                                    break;                                
+                                    break;
                             }
 
                             if (maxLineLength == -1 || dist <= maxLineLength) {
@@ -805,13 +797,7 @@ public class GpxLayer extends Layer {
                 return;
             }
 
-            // FIXME: DownloadTask's "please wait" dialog should display the number of
-            // downloads left, and "cancel" needs to be honoured. An error along the way
-            // should abort the whole process.
-            DownloadTask osmTask = new DownloadOsmTask();
-            for (Rectangle2D td : toDownload) {
-               osmTask.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX());
-            }
+            new DownloadOsmTaskList().download(false, toDownload);
         }
     }
 

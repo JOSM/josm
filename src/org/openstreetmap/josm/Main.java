@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,10 +26,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
-import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
@@ -54,9 +54,9 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHook;
+import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
-import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.Shortcut;
 
 abstract public class Main {
@@ -73,7 +73,7 @@ abstract public class Main {
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
      */
-    public final static Executor worker = Executors.newSingleThreadExecutor();
+    public final static ExecutorService worker = Executors.newSingleThreadExecutor();
     /**
      * Global application preferences
      */
