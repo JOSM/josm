@@ -1668,7 +1668,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="(Hiking-)Guidepost" icon="presets/guidepost.png" type="node">
+        <item name="Guidepost (Hiking)" icon="presets/guidepost.png" type="node">
             <link href="http://wiki.openstreetmap.org/index.php/Proposed_features/Guidepost" />
             <key key="tourism" value="information" />
             <key key="information" value="guidepost" />
