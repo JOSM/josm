@@ -2572,6 +2572,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <space />
             <key key="highway" value="emergency_access_point" />
             <text key="ref" text="Point Number" default="" delete_if_empty="true" />
+            <text key="name" text="Point Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
             <label text="(Use international code, like +12-345-67890)" />
             <space />
