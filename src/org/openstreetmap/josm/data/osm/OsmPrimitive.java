@@ -327,7 +327,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         tagged = false;
         if(uninteresting == null)
             uninteresting = Main.pref.getCollection("tags.uninteresting",
-            Arrays.asList(new String[]{"source","note","converted_by","created_by"}));
+            Arrays.asList(new String[]{"source","note","comment","converted_by","created_by"}));
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
                 if (!uninteresting.contains(e.getKey())) {
