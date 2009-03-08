@@ -798,6 +798,12 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Emergency Phone" icon="presets/telephone.png" type="node">
             <key key="amenity" value="emergency_phone" />
         </item>
+        <item name="Incline" icon="presets/incline.png" type="node">
+          <key key="highway" value="incline" />
+        </item>
+        <item name="Incline Steep" icon="presets/incline_steep.png" type="node">
+          <key key="highway" value="incline_steep" />
+        </item>
         <separator/>
         <item name="Ford" icon="presets/ford.png" type="node,way">
             <label text="Edit Ford" />
