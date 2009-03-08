@@ -37,13 +37,13 @@ public class WikiReader {
     }
 
     private String readNormal(BufferedReader in) throws IOException {
-        StringBuilder b = new StringBuilder("<html>");
+        String b = "<html>";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             line = adjustText(line);
-            b.append(line);
-            b.append("\n");
+            if(!line.contains("[[TranslatedPages]]"))
+              b += line + "\n";
         }
-        return b.toString();
+        return b;
     }
 
     private String readFromTrac(BufferedReader in, String url) throws IOException {
