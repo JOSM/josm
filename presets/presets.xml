@@ -377,7 +377,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
         <item name="Construction" icon="presets/construction.png" type="way">
-            <label text="Edit highway under construction" />
+            <label text="Edit Highway Under Construction" />
 <!--     FIXME: no entry in the Wiki
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=construction" />
@@ -700,11 +700,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Demanding alpine hiking" icon="presets/hiking_grade5.png" type="way">
+        <item name="Demanding Alpine Hiking" icon="presets/hiking_grade5.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
-            <label text="Edit Demanding alpine hiking" />
+            <label text="Edit Demanding Alpine Hiking" />
             <space />
             <key key="highway" value="path" />
             <key key="sac_scale" value="demanding_alpine_hiking" />
@@ -713,11 +713,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Difficult alpine hiking" icon="presets/hiking_grade6.png" type="way">
+        <item name="Difficult Alpine Hiking" icon="presets/hiking_grade6.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:sac_scale"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:sac_scale"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Key:sac_scale" />
-            <label text="Edit Difficult alpine hiking" />
+            <label text="Edit Difficult Alpine Hiking" />
             <space />
             <key key="highway" value="path" />
             <key key="sac_scale" value="difficult_alpine_hiking" />
@@ -1463,7 +1463,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Railway Platform" icon="presets/platform_rail.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=platform"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=platform" />
-            <label text="Edit railway platform" />
+            <label text="Edit Railway Platform" />
             <key key="railway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
@@ -1504,7 +1504,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <item name="Bus Platform" icon="presets/platform_bus.png" type="node,way,closedway">
-            <label text="Edit bus platform" />
+            <label text="Edit Bus Platform" />
             <key key="highway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
