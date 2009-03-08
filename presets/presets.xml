@@ -48,7 +48,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Motorway" icon="presets/motorway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway" />
-            <label text="Edit a Motorway" />
+            <label text="Edit Motorway" />
             <space />
             <key key="highway" value="motorway" />
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
@@ -67,7 +67,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Motorway Link" icon="presets/motorway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_link"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway_link" />
-            <label text="Edit a Motorway Link" />
+            <label text="Edit Motorway Link" />
             <space />
             <key key="highway" value="motorway_link" />
             <optional>
@@ -84,7 +84,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Trunk" icon="presets/trunk.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=trunk" />
-            <label text="Edit a Trunk" />
+            <label text="Edit Trunk" />
             <space />
             <key key="highway" value="trunk" />
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
@@ -103,7 +103,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Trunk Link" icon="presets/trunk.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk_link" 
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=trunk_link"/>
-            <label text="Edit a Trunk Link" />
+            <label text="Edit Trunk Link" />
             <space />
             <key key="highway" value="trunk_link" />
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
@@ -122,7 +122,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Primary" icon="presets/way_primary.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary" 
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=primary" />
-            <label text="Edit a Primary Road" />
+            <label text="Edit Primary Road" />
             <space />
             <key key="highway" value="primary" />
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
@@ -139,7 +139,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <item name="Primary Link" icon="presets/way_primary.png" type="way">
-            <label text="Edit a Primary Link" />
+            <label text="Edit Primary Link" />
             <space />
             <key key="highway" value="primary_link" />
             <optional>
@@ -157,7 +157,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=secondary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=secondary"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=secondary" />
-            <label text="Edit a Secondary Road" />
+            <label text="Edit Secondary Road" />
             <space />
             <key key="highway" value="secondary" />
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
@@ -177,7 +177,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=tertiary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=tertiary"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=tertiary" />
-            <label text="Edit a Tertiary Road" />
+            <label text="Edit Tertiary Road" />
             <space />
             <key key="highway" value="tertiary" />
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
@@ -196,7 +196,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=unclassified"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=unclassified"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=unclassified" />
-            <label text="Edit a Unclassified Road" />
+            <label text="Edit Unclassified Road" />
             <space />
             <key key="highway" value="unclassified" />
             <optional>
@@ -214,7 +214,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Residential" icon="presets/residential.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=residential"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=residential" />
-            <label text="Edit a Residential Street" />
+            <label text="Edit Residential Street" />
             <space />
             <key key="highway" value="residential" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -232,7 +232,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Living Street" icon="presets/living_street.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street" 
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street" />
-            <label text="Edit a Living Street" />
+            <label text="Edit Living Street" />
             <space />
             <key key="highway" value="living_street" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -250,7 +250,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Service" icon="presets/way_unclassified.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=service"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=service" />
-            <label text="Edit a Serviceway" />
+            <label text="Edit Serviceway" />
             <space />
             <key key="highway" value="service" />
             <optional>
@@ -271,7 +271,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:service=parking_aisle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:service=parking_aisle"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:service=parking_aisle" />
-            <label text="Edit a Parking Aisle" />
+            <label text="Edit Parking Aisle" />
             <space />
             <key key="highway" value="service" />
             <key key="service" value="parking_aisle" />
@@ -284,7 +284,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road" />
-            <label text="Edit a Road of unknown type" />
+            <label text="Edit Road of unknown type" />
             <space />
             <key key="highway" value="road" />
             <optional>
@@ -328,7 +328,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:junction=roundabout"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:junction=roundabout"
                   ro.href="http://wiki.openstreetmap.org/wiki/Ro:Tag:junction=roundabout" />
-            <label text="Edit a Junction" />
+            <label text="Edit Junction" />
             <space />
             <key key="junction" value="roundabout" />
             <combo key="highway" text="Type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" delete_if_empty="true" />
@@ -349,7 +349,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:bridge"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:bridge" />
-            <label text="Edit a Bridge" />
+            <label text="Edit Bridge" />
             <space />
             <key key="bridge" value="yes" />
             <optional>
@@ -361,7 +361,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <item name="Tunnel" icon="presets/tunnel.png" type="way">
-            <label text="Edit a Tunnel"/>
+            <label text="Edit Tunnel"/>
             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel" />
@@ -377,7 +377,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
         <item name="Construction" icon="presets/construction.png" type="way">
-            <label text="Edit a highway under construction" />
+            <label text="Edit highway under construction" />
 <!--     FIXME: no entry in the Wiki
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=construction" />
@@ -401,7 +401,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <separator/>
         <item name="Bridleway" icon="presets/equestrian.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bridleway" />
-            <label text="Edit a Bridleway" />
+            <label text="Edit Bridleway" />
             <space />
             <key key="highway" value="bridleway" />
             <optional>
@@ -421,7 +421,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
-            <label text="Edit a Cycleway" />
+            <label text="Edit Cycleway" />
             <space />
             <key key="highway" value="cycleway" />
             <optional>
@@ -440,7 +440,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Footway" icon="presets/footway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=footway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=footway" />
-            <label text="Edit a Footway" />
+            <label text="Edit Footway" />
             <space />
             <key key="highway" value="footway" />
             <optional>
@@ -459,7 +459,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Pedestrian" icon="presets/pedestrian.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=pedestrian"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=pedestrian" />
-            <label text="Edit a Pedestrian Street" />
+            <label text="Edit Pedestrian Street" />
             <space />
             <key key="highway" value="pedestrian" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -478,7 +478,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=steps"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=steps"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=steps" />
-            <label text="Edit a flight of Steps" />
+            <label text="Edit Flight of Steps" />
             <space />
             <key key="highway" value="steps" />
             <optional>
@@ -498,7 +498,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Track" icon="presets/track1.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=track"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=track" />
-            <label text="Edit a Track" />
+            <label text="Edit Track" />
             <space />
             <key key="highway" value="track" />
             <optional>
@@ -518,7 +518,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Track Grade 1" icon="presets/track1.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
-            <label text="Edit a Track of grade 1" />
+            <label text="Edit Track of grade 1" />
             <space />
             <key key="highway" value="track" />
             <key key="tracktype" value="grade1" />
@@ -539,7 +539,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Track Grade 2" icon="presets/track2.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
-            <label text="Edit a Track of grade 2" />
+            <label text="Edit Track of grade 2" />
             <space />
             <key key="highway" value="track" />
             <key key="tracktype" value="grade2" />
@@ -560,7 +560,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Track Grade 3" icon="presets/track3.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
-            <label text="Edit a Track of grade 3" />
+            <label text="Edit Track of grade 3" />
             <space />
             <key key="highway" value="track" />
             <key key="tracktype" value="grade3" />
@@ -581,7 +581,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Track Grade 4" icon="presets/track4.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
-            <label text="Edit a Track of grade 4" />
+            <label text="Edit Track of grade 4" />
             <space />
             <key key="highway" value="track" />
             <key key="tracktype" value="grade4" />
@@ -602,7 +602,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Track Grade 5" icon="presets/track5.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tracktype"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tracktype" />
-            <label text="Edit a Track of grade 5" />
+            <label text="Edit Track of grade 5" />
             <space />
             <key key="highway" value="track" />
             <key key="tracktype" value="grade5" />
@@ -764,7 +764,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Pedestrian Crossing" icon="presets/zebracrossing.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=crossing" />
-            <label text="Edit a crossing" />
+            <label text="Edit Crossing" />
             <key key="highway" value="crossing" />
             <combo key="crossing" text="Type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" default="" delete_if_empty="true" />
             <check key="bicycle" text="Cross by bicycle" default="off" delete_if_empty="true" />
@@ -785,7 +785,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="highway" value="turning_circle" />
         </item>
         <item name="City Limit" icon="presets/citylimit.png" type="node">
-            <label text="Edit a city limit sign" />
+            <label text="Edit City Limit Sign" />
             <space />
             <key key="traffic_sign" value="city_limit" />
             <space />
@@ -821,7 +821,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     <group name="Barriers" icon="presets/barrier.png">
         <item name="Stile" icon="presets/stile.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stile" />
-            <label text="Edit a Stile" />
+            <label text="Edit Stile" />
             <space />
             <key key="barrier" value="stile" />
             <label text="Allowed traffic:" />
@@ -830,7 +830,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
         </item> <!-- stile -->
         <item name="Kissing Gate" icon="presets/empty.png" type="node,way,closedway">
-            <label text="Edit a Kissing Gate" />
+            <label text="Edit Kissing Gate" />
             <space />
             <key key="barrier" value="kissing_gate" />
             <label text="Allowed traffic:" />
@@ -839,7 +839,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
         </item> <!-- kissing_gate -->
         <item name="Hampshire Gate" icon="presets/empty.png" type="node,way,closedway">
-            <label text="Edit a Hampshire Gate" />
+            <label text="Edit Hampshire Gate" />
             <space />
             <key key="barrier" value="hampshire_gate" />
             <label text="Allowed traffic:" />
@@ -852,7 +852,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item> <!-- hampshire_gate -->
         <item name="Bollard" icon="presets/bollard.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=bollard" />
-            <label text="Edit a bollard" />
+            <label text="Edit Bollard" />
             <space />
             <key key="barrier" value="bollard" />
             <label text="Allowed traffic:" />
@@ -863,7 +863,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
         </item> <!-- bollard -->
         <item name="Drawbridge" icon="presets/empty.png" type="node,way,closedway">
-            <label text="Edit a Drawbridge" />
+            <label text="Edit Drawbridge" />
             <space />
             <key key="barrier" value="drawbridge" />
             <label text="Allowed traffic:" />
@@ -879,7 +879,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item> <!-- bus_trap -->
         <item name="Cattle Grid" icon="presets/cattle_grid.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cattle_grid" />
-            <label text="Edit a Cattle Grid" />
+            <label text="Edit Cattle Grid" />
             <space />
             <key key="barrier" value="cattle_grid" />
             <label text="Allowed traffic:" />
@@ -902,7 +902,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- spikes -->
         <item name="Portcullis" icon="presets/empty.png" type="node,way,closedway">
-            <label text="Edit a Portcullis" />
+            <label text="Edit Portcullis" />
             <space />
             <key key="barrier" value="portcullis" />
             <label text="Allowed traffic:" />
@@ -913,7 +913,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item> <!-- portcullis -->
         <item name="Gate" icon="presets/gate.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=gate" />
-            <label text="Edit a Gate" />
+            <label text="Edit Gate" />
             <space />
             <key key="barrier" value="gate" />
             <label text="Allowed traffic:" />
@@ -925,7 +925,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- gate -->
         <item name="Lift Gate" icon="presets/lift_gate.png" type="node,way,closedway">
-            <label text="Edit a Lift Gate" />
+            <label text="Edit Lift Gate" />
             <space />
             <key key="barrier" value="lift_gate" />
             <label text="Allowed traffic:" />
@@ -937,7 +937,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- lift_gate -->
         <item name="Sally Port" icon="presets/empty.png" type="node,way,closedway">
-            <label text="Edit a Sally Port" />
+            <label text="Edit Sally Port" />
             <space />
             <key key="barrier" value="sally_port" />
             <label text="Allowed traffic:" />
@@ -949,7 +949,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- sally_port -->
         <item name="Bump Gate" icon="presets/empty.png" type="node,way,closedway">
-            <label text="Edit a Bump Gate" />
+            <label text="Edit Bump Gate" />
             <space />
             <key key="barrier" value="bump_gate" />
             <label text="Allowed traffic:" />
@@ -997,7 +997,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item> <!-- toll_booth -->
         <item name="Border Control" icon="presets/douane.png" type="node,way,closedway">
-            <label text="Edit a Border Control" />
+            <label text="Edit Border Control" />
             <space />
             <key key="barrier" value="border_control" />
             <label text="Allowed traffic:" />
@@ -1010,7 +1010,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item> <!-- border_control -->
         <separator/>
         <item name="Entrance" icon="presets/empty.png" type="node,way,closedway">
-            <label text="Edit a Entrance" />
+            <label text="Edit Entrance" />
             <space />
             <key key="barrier" value="entrance" />
             <label text="Allowed traffic:" />
@@ -1026,14 +1026,14 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     <group name="Water" icon="presets/waterway.png">
       <item name="Spring" icon="presets/spring.png" type="node,way,closedway">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring" />
-        <label text="Edit a Spring" />
+        <label text="Edit Spring" />
         <key key="natural" value="spring" />
         <text key="name" text="Name" default="" delete_if_empty="true" />
       </item>
       <separator/>
       <item name="Drain" icon="presets/waterway.png" type="node,way,closedway">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=drain" />
-        <label text="Edit a Drain" />
+        <label text="Edit Drain" />
         <space />
         <key key="waterway" value="drain" />
         <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1041,7 +1041,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
       </item>
       <item name="Stream" icon="presets/waterway.png" type="node,way,closedway">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=stream" />
-        <label text="Edit a Stream" />
+        <label text="Edit Stream" />
         <space />
         <key key="waterway" value="stream" />
         <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1049,7 +1049,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
       </item>
       <item name="Canal" icon="presets/waterway.png" type="node,way,closedway">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal" />
-        <label text="Edit a Canal" />
+        <label text="Edit Canal" />
         <space />
         <key key="waterway" value="canal" />
         <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1059,7 +1059,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=river"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=river"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:waterway=river" />
-            <label text="Edit a River" />
+            <label text="Edit River" />
             <space />
             <key key="waterway" value="river" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1100,7 +1100,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Riverbank" icon="presets/waterway.png" type="node,way,closedway">
           <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
                 de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=riverbank" />
-          <label text="Edit a riverbank" />
+          <label text="Edit Riverbank" />
           <key key="waterway" value="riverbank" />
           <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
@@ -1145,7 +1145,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <separator/>
         <item name="Ferry Route" icon="presets/ferry.png" type="node,way,closedway">
           <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry" />
-          <label text="Edit a Ferry" />
+          <label text="Edit Ferry" />
           <space />
           <key key="route" value="ferry" />
           <optional>
@@ -1155,14 +1155,14 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <separator/>
         <item name="Boatyard" icon="presets/boatyard.png" type="node,way,closedway">
           <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=boatyard" />
-          <label text="Edit a Boatyard" />
+          <label text="Edit Boatyard" />
           <space />
           <key key="waterway" value="boatyard" />
           <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Dock" icon="presets/waterway.png" type="node,way,closedway">
           <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dock" />
-          <label text="Edit a Dock" />
+          <label text="Edit Dock" />
           <space />
           <key key="waterway" value="dock" />
           <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1170,7 +1170,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <separator/>
         <item name="Dam" icon="presets/empty.png" type="node,way,closedway">
           <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam" />
-          <label text="Edit a Dam" />
+          <label text="Edit Dam" />
           <space />
           <key key="waterway" value="dam" />
           <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1183,13 +1183,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
         <item name="Weir" icon="presets/weir.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=weir" />
-            <label text="Edit a Weir" />
+            <label text="Edit Weir" />
             <space />
             <key key="waterway" value="weir" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Waterfall" icon="presets/waterfall.png" type="node,way,closedway">
-            <label text="Edit a Waterfall" />
+            <label text="Edit Waterfall" />
             <space />
             <key key="waterway" value="waterfall" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1228,51 +1228,51 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     <group name="Railway" icon="presets/railway.png">
         <item name="Rail" icon="presets/railway.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=rail" />
-            <label text="Edit a Rail" />
+            <label text="Edit Rail" />
             <space />
             <key key="railway" value="rail" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Narrow Gauge Rail" icon="presets/railway.png" type="node,way,closedway">
-            <label text="Edit a Narrow Gauge Rail" />
+            <label text="Edit Narrow Gauge Rail" />
             <space />
             <key key="railway" value="narrow_gauge" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Monorail" icon="presets/railway.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=monorail" />
-            <label text="Edit a Monorail" />
+            <label text="Edit Monorail" />
             <space />
             <key key="railway" value="monorail" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Preserved" icon="presets/rail_preserved.png" type="node,way,closedway">
-            <label text="Edit a Preserved Railway" />
+            <label text="Edit Preserved Railway" />
             <space />
             <key key="railway" value="preserved" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Light Rail" icon="presets/rail_light.png" type="node,way,closedway">
-            <label text="Edit a Light Rail" />
+            <label text="Edit Light Rail" />
             <space />
             <key key="railway" value="light_rail" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Subway" icon="presets/rail_light.png" type="node,way,closedway">
-            <label text="Edit a Subway" />
+            <label text="Edit Subway" />
             <space />
             <key key="railway" value="subway" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Tram" icon="presets/tram.png" type="node,way,closedway">
-            <label text="Edit a Tram" />
+            <label text="Edit Tram" />
             <space />
             <key key="railway" value="tram" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
         </item>
         <item name="Bus Guideway" icon="presets/busway.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bus_guideway" />
-            <label text="Edit a Bus Guideway" />
+            <label text="Edit Bus Guideway" />
             <space />
             <key key="highway" value="bus_guideway" />
             <optional>
@@ -1290,7 +1290,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
         <separator/>
         <item name="Disused Rail" icon="presets/railway.png" type="node,way,closedway">
-            <label text="Edit a Disused Railway" />
+            <label text="Edit Disused Railway" />
             <space />
             <key key="railway" value="disused" />
             <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
@@ -1321,24 +1321,24 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     <group name="Aerialway" icon="presets/aerialway.png">
         <item name="Chair Lift" icon="presets/chair_lift.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=chair_lift" />
-            <label text="Edit a Chair Lift" />
+            <label text="Edit Chair Lift" />
             <key key="aerialway" value="chair_lift" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Drag Lift" icon="presets/drag_lift.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=drag_lift" />
-            <label text="Edit a Drag Lift" />
+            <label text="Edit Drag Lift" />
             <key key="aerialway" value="drag_lift" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Cable Car" icon="presets/cable_car.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aerialway=cable_car" />
-            <label text="Edit a Cable Car" />
+            <label text="Edit Cable Car" />
             <key key="aerialway" value="cable_car" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Station" icon="presets/aerialway_station.png" type="node,way,closedway">
-            <label text="Edit a Station" />
+            <label text="Edit Station" />
             <key key="aerialway" value="station" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
@@ -1457,7 +1457,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Railway Platform" icon="presets/platform_rail.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=platform"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=platform" />
-            <label text="Edit a railway platform" />
+            <label text="Edit railway platform" />
             <key key="railway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
@@ -1480,7 +1480,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Bus Station" icon="presets/bus.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bus_station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bus_station" />
-            <label text="Edit a Bus Station" />
+            <label text="Edit Bus Station" />
             <key key="amenity" value="bus_station" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1498,7 +1498,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
         <item name="Bus Platform" icon="presets/platform_bus.png" type="node,way,closedway">
-            <label text="Edit a bus platform" />
+            <label text="Edit bus platform" />
             <key key="highway" value="platform" />
             <space />
             <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
@@ -1508,14 +1508,14 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <separator/>
         <item name="Taxi" icon="presets/taxi.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=taxi" />
-            <label text="Edit a Taxi station" />
+            <label text="Edit Taxi station" />
             <key key="amenity" value="taxi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Airport" icon="presets/plane.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=aerodrome" />
-            <label text="Edit an airport" />
+            <label text="Edit Airport" />
             <key key="aeroway" value="aerodrome" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <optional>
@@ -1610,7 +1610,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
         <item name="Bar" icon="presets/bar.png" type="node,closedway">
           <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bar" />
-          <label text="Edit a Bar" />
+          <label text="Edit Bar" />
           <key key="amenity" value="bar" />
           <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
@@ -1744,12 +1744,12 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Wayside Cross" icon="presets/wayside_cross.png" type="node,way,closedway">
-            <label text="Edit a Wayside Cross" />
+            <label text="Edit Wayside Cross" />
             <key key="historic" value="wayside_cross" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Wayside Shrine" icon="presets/wayside_shrine.png" type="node,way,closedway">
-            <label text="Edit a Wayside Shrine" />
+            <label text="Edit Wayside Shrine" />
             <key key="historic" value="wayside_shrine" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
@@ -2157,7 +2157,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
                   de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
-            <label text="Edit address information" />
+            <label text="Edit Address Information" />
             <space />
             <text key="addr:housenumber" text="House number" default="" delete_if_empty="true" />
             <optional>
@@ -2171,7 +2171,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Address Interpolation" icon="presets/addresses.png" type="node,way,closedway">
            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
                  de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
-            <label text="Edit address interpolation" />
+            <label text="Edit Address Interpolation" />
             <space />
             <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all" default="odd" />
         </item>
@@ -2260,14 +2260,14 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Power Station" icon="presets/power.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line" />
-            <label text="Edit power station" />
+            <label text="Edit Power Station" />
             <key key="power" value="station" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
         <item name="Power Sub Station" icon="presets/power.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=sub_station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=sub_station" />
-            <label text="Edit power sub station" />
+            <label text="Edit Power Sub Station" />
             <key key="power" value="sub_station" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
@@ -2283,7 +2283,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Power Line" icon="presets/power.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line" />
-            <label text="Edit power line" />
+            <label text="Edit Power Line" />
             <key key="power" value="line" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
@@ -2309,7 +2309,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Telephone" icon="presets/telephone.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=telephone"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=telephone" />
-            <label text="Edit a Telephone" />
+            <label text="Edit Telephone" />
             <key key="amenity" value="telephone" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <check key="payment:coins" text="Coins" default="off" delete_if_empty="true" />
@@ -2322,7 +2322,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Recycling" icon="presets/recycling.png" type="node,way,closedway">
            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=recycling"
                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=recycling" />
-            <label text="Edit a Recycling station" />
+            <label text="Edit Recycling station" />
             <key key="amenity" value="recycling" />
             <check key="recycling:batteries" text="Batteries" default="off" delete_if_empty="true" />
             <check key="recycling:cans" text="Cans" default="off" delete_if_empty="true" />
@@ -2336,7 +2336,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="bench" />
         </item>
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node,way,closedway">
-            <label text="Edit a Hunting Stand" />
+            <label text="Edit Hunting Stand" />
             <key key="amenity" value="hunting_stand" />
             <check key="shelter" text="Shelter" default="off" delete_if_empty="true" />
             <check key="hide" text="Hide" default="off" delete_if_empty="true" />
@@ -2346,7 +2346,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Fountain" icon="presets/spring.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fountain"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fountain" />
-            <label text="Edit a Fountain" />
+            <label text="Edit Fountain" />
             <key key="amenity" value="fountain" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
@@ -2359,7 +2359,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
         <item name="Baby Hatch" icon="presets/empty.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch" />
-            <label text="Edit a Baby Hatch" />
+            <label text="Edit Baby Hatch" />
             <key key="amenity" value="baby_hatch" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
@@ -2385,7 +2385,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
         <item name="Vending machine" icon="presets/vending_machine.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine" />
-            <label text="Edit a Vending machine" />
+            <label text="Edit Vending machine" />
             <key key="amenity" value="vending_machine" />
             <combo key="vending" text="Vending products" values="public_transport_tickets,public_transport_plans,parking_tickets,food,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
@@ -2587,7 +2587,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     <separator/>
     <group name="Places" icon="presets/places.png">
         <item name="Continent" icon="presets/places.png" type="node,way,closedway">
-            <label text="Edit a Continent" />
+            <label text="Edit Continent" />
             <space />
             <key key="place" value="continent" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2727,7 +2727,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
       <item name="Tree" icon="presets/tree.png" type="node,way,closedway">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree"
               fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:natural=tree"  />
-        <label text="Edit a Tree" />
+        <label text="Edit Tree" />
         <key key="natural" value="tree" />
         <text key="name" text="Name" default="" delete_if_empty="true" />
         <text key="type" text="Type" default="" delete_if_empty="true" />
@@ -2940,7 +2940,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:multipolygon" />
-            <label text="Edit a Multipolygon" />
+            <label text="Edit Multipolygon" />
             <key key="type" value="multipolygon" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2953,7 +2953,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Turn restriction" icon="presets/empty.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:restriction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:restriction"/>
-            <label text="Edit a Turn Restriction" />
+            <label text="Edit Turn Restriction" />
             <key key="type" value="restriction" />
             <combo key="restriction" text="Restriction" values="no_left_turn,no_right_turn,no_straight_on,no_u_turn,only_right_turn,only_left_turn,only_straight_on" default="" delete_if_empty="true" />
             <optional>
@@ -2968,7 +2968,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Route" icon="presets/empty.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"/>
-            <label text="Edit a Route" />
+            <label text="Edit Route" />
             <key key="type" value="route" />
             <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" default="" delete_if_empty="true" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
