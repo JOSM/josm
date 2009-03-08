@@ -189,11 +189,13 @@ public class TaggingPreset extends AbstractAction {
 
         private QuadStateCheckBox check;
         private QuadStateCheckBox.State initialState;
+        private boolean def;
 
         @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineBooleanUsage(sel, key);
+            def = default_;
 
             if(locale_text == null)
                 locale_text = tr(text);
@@ -201,10 +203,10 @@ public class TaggingPreset extends AbstractAction {
             String oneValue = null;
             for (String s : usage.values) oneValue = s;
             if (usage.values.size() < 2 && (oneValue == null || OsmUtils.trueval.equals(oneValue) || OsmUtils.falseval.equals(oneValue))) {
-                if(default_)
+                if(def)
                 {
                     for (OsmPrimitive s : sel)
-                        if(s.keys != null && s.keys.size() > 0) default_ = false;
+                        if(s.keys != null && s.keys.size() > 0) def = false;
                 }
 
                 // all selected objects share the same value which is either true or false or unset,
@@ -213,7 +215,7 @@ public class TaggingPreset extends AbstractAction {
                             QuadStateCheckBox.State.SELECTED :
                             OsmUtils.falseval.equals(oneValue) ?
                             QuadStateCheckBox.State.NOT_SELECTED :
-                            default_ ? QuadStateCheckBox.State.SELECTED
+                            def ? QuadStateCheckBox.State.SELECTED
                             : QuadStateCheckBox.State.UNSET;
                 check = new QuadStateCheckBox(locale_text, initialState,
                         new QuadStateCheckBox.State[] {
@@ -221,6 +223,7 @@ public class TaggingPreset extends AbstractAction {
                         QuadStateCheckBox.State.NOT_SELECTED,
                         QuadStateCheckBox.State.UNSET });
             } else {
+                def = false;
                 // the objects have different values, or one or more objects have something
                 // else than true/false. we display a quad-state check box
                 // in "partial" state.
@@ -237,7 +240,7 @@ public class TaggingPreset extends AbstractAction {
 
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
             // if the user hasn't changed anything, don't create a command.
-            if (check.getState() == initialState) return;
+            if (check.getState() == initialState && !def) return;
 
             // otherwise change things according to the selected value.
             cmds.add(new ChangePropertyCommand(sel, key,
@@ -589,7 +592,7 @@ public class TaggingPreset extends AbstractAction {
         JPanel p = createPanel(sel);
         if (p == null)
             return;
-              
+
         int answer = 1;
         if (p.getComponentCount() != 0) {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
@@ -599,7 +602,7 @@ public class TaggingPreset extends AbstractAction {
                 else
                     title = tr("Selection unsuitable!");
             }
-            
+
             class PresetDialog extends ExtendedDialog {
                 public PresetDialog(Component content, String title, boolean disableApply) {
                     super(Main.parent,
@@ -613,7 +616,7 @@ public class TaggingPreset extends AbstractAction {
                     setVisible(true);
                 }
             }
-            
+
             answer = new PresetDialog(p, title, (sel.size() == 0)).getValue();
         }
         if (sel.size() != 0 && answer == 1) {
@@ -623,12 +626,12 @@ public class TaggingPreset extends AbstractAction {
         }
         Main.ds.setSelected(Main.ds.getSelected()); // force update
     }
-    
+
     /**
      * True whenever the original selection given into createSelection was empty
      */
     private boolean originalSelectionEmpty = false;
-    
+
     /**
      * Removes all unsuitable OsmPrimitives from the given list
      * @param participants List of possibile OsmPrimitives to tag
