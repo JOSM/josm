@@ -159,14 +159,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * "tagged".
      * Initialized by checkTagged()
      */
-    private static Collection<String> uninteresting = null;
+    public static Collection<String> uninteresting = null;
 
     /**
      * Contains a list of direction-dependent keys that make an object
      * direction dependent.
      * Initialized by checkDirectionTagged()
      */
-    private static Collection<String> directionKeys = null;
+    public static Collection<String> directionKeys = null;
 
     /**
      * Implementation of the visitor scheme. Subclasses have to call the correct
@@ -326,8 +326,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public void checkTagged() {
         tagged = false;
         if(uninteresting == null)
-            uninteresting = new HashSet<String>(Arrays.asList(Main.pref.get("tags.uninteresting",
-            "source;note;converted_by;created_by").split(";")));
+            uninteresting = Main.pref.getCollection("tags.uninteresting",
+            Arrays.asList(new String[]{"source","note","converted_by","created_by"}));
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
                 if (!uninteresting.contains(e.getKey())) {
@@ -344,8 +344,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public void checkDirectionTagged() {
         hasDirectionKeys = false;
         if(directionKeys == null)
-            directionKeys = new HashSet<String>(Arrays.asList(Main.pref.get("tags.direction",
-            "oneway;incline;incline_steep;aerialway").split(";")));
+            directionKeys = Main.pref.getCollection("tags.direction",
+            Arrays.asList(new String[]{"oneway","incline","incline_steep","aerialway"}));
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
                 if (directionKeys.contains(e.getKey())) {
