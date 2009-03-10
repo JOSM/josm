@@ -140,7 +140,7 @@ public class MainApplication extends Main {
                     "\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
                     "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
                     "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
-                    "\t--no-fullscreen                           "+tr("Don't launch in fullscreen mode")+"\n"+
+                    "\t--[no-]fullscreen                         "+tr("Launch in fullscreen mode")+"\n"+
                     "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
                     "\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
                     tr("examples")+":\n"+
@@ -175,7 +175,9 @@ public class MainApplication extends Main {
         mainFrame.setVisible(true);
         splash.closeSplash();
 
-        if (!args.containsKey("no-fullscreen") && !args.containsKey("geometry") && Main.pref.get("gui.geometry").length() == 0 && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
+        if (((!args.containsKey("no-fullscreen") && !args.containsKey("geometry")
+        && Main.pref.get("gui.geometry").length() == 0) || args.containsKey("fullscreen"))
+        && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         EventQueue.invokeLater(new Runnable(){
