@@ -521,8 +521,8 @@ public class Preferences {
     }
 
     private void setSystemProperties() {
-        Properties sysProp = System.getProperties();
         if (getBoolean(ProxyPreferences.PROXY_ENABLE)) {
+            Properties sysProp = System.getProperties();
             sysProp.put("proxySet", "true");
             sysProp.put("http.proxyHost", get(ProxyPreferences.PROXY_HOST));
             sysProp.put("proxyPort", get(ProxyPreferences.PROXY_PORT));
@@ -530,13 +530,8 @@ public class Preferences {
                 sysProp.put("proxyUser", get(ProxyPreferences.PROXY_USER));
                 sysProp.put("proxyPassword", get(ProxyPreferences.PROXY_PASS));
             }
-        }/* else {
-            sysProp.put("proxySet", "false");
-            sysProp.remove("http.proxyHost");
-            sysProp.remove("proxyPort");
-            sysProp.remove("proxyUser");
-            sysProp.remove("proxyPassword");
-        }*/
-        System.setProperties(sysProp);
+            System.setProperties(sysProp);
+        }
+        AboutAction.setUserAgent();
     }
 }

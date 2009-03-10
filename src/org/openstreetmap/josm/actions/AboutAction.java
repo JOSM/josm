@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -83,6 +84,12 @@ public class AboutAction extends JosmAction {
 
     static public String getTextBlock() {
         return revision.getText();
+    }
+
+    static public void setUserAgent() {
+        Properties sysProp = System.getProperties();
+        sysProp.put("http.agent", "JOSM/1.5 ("+version+")");
+        System.setProperties(sysProp);
     }
 
     /**

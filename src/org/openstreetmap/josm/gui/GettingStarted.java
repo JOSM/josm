@@ -273,7 +273,9 @@ public class GettingStarted extends JPanel {
                 + "(latest untested: {1} &#150; not recommended)</font>",
                 curVersion, latest, myVersion)
                 + "</div>";
-            } catch(Exception e) {e.printStackTrace();}
+            } catch(Exception e) {
+              // e.printStackTrace();
+            }
 
             return "";
         }

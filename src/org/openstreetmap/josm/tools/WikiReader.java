@@ -13,7 +13,6 @@ import java.net.URL;
  */
 public class WikiReader {
 
-    public static final String JOSM_EXTERN = "http://josm-extern.";
     private final String baseurl;
 
     public WikiReader(String baseurl) {
@@ -37,18 +36,17 @@ public class WikiReader {
     }
 
     private String readNormal(BufferedReader in) throws IOException {
-        String b = "<html>";
+        String b = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            line = adjustText(line);
             if(!line.contains("[[TranslatedPages]]"))
-              b += line + "\n";
+                b += line.replaceAll(" />", ">") + "\n";
         }
-        return b;
+        return "<html>" + b + "</html>";
     }
 
     private String readFromTrac(BufferedReader in, String url) throws IOException {
         boolean inside = false;
-        StringBuilder b = new StringBuilder("<html>");
+        String b = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (line.contains("<div id=\"searchable\">"))
                 inside = true;
@@ -57,21 +55,11 @@ public class WikiReader {
             else if (line.contains("<div class=\"buttons\">"))
                 inside = false;
             if (inside) {
-                line = line.replaceAll("<img src=\"/", "<img src=\""+baseurl+"/");
-                line = line.replaceAll("href=\"/", "href=\""+baseurl+"/");
-                if (!line.contains("$"))
-                    line = line.replaceAll("<p>Describe \"([^\"]+)\" here</p>", "<p>Describe \"$1\" <a href=\""+JOSM_EXTERN+url.substring(7)+"\">here</a></p>");
-                line = adjustText(line);
-                b.append(line);
-                b.append("\n");
+                b += line.replaceAll("<img src=\"/", "<img src=\""+baseurl+"/")
+                         .replaceAll("href=\"/", "href=\""+baseurl+"/")
+                         .replaceAll(" />", ">") + "\n";
             }
         }
-        b.append("</html>");
-        return b.toString();
-    }
-
-    private String adjustText(String text) {
-        text = text.replaceAll(" />", ">");
-        return text;
+        return "<html>" + b + "</html>";
     }
 }
