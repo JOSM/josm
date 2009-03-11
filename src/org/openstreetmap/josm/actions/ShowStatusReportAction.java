@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * @author xeen
- * 
+ *
  * Opens a dialog with useful status information like version numbers for Java, JOSM and plugins
  * Also includes preferences with stripped username and password
  */
@@ -71,7 +71,7 @@ public final class ShowStatusReportAction extends JosmAction {
                         continue;
                     if (line.trim().toLowerCase().startsWith("marker.show"))
                         continue;
-                    
+
                     text.append(line);
                     text.append("\n");
                 }
@@ -81,7 +81,7 @@ public final class ShowStatusReportAction extends JosmAction {
         } catch (Exception x) {
             x.printStackTrace();
         }
-        
+
         JTextArea ta = new JTextArea(text.toString());
         ta.setWrapStyleWord(true);
         ta.setLineWrap(true);
@@ -92,7 +92,7 @@ public final class ShowStatusReportAction extends JosmAction {
         int result = new ExtendedDialog(Main.parent, tr(tr("Status Report")), sp,
                 new String[] {tr("Copy to clipboard and close"), tr("Close") },
                 new String[] {"copy.png", "cancel.png" }).getValue();
-        
+
         if(result != 1) return;
         try {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
