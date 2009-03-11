@@ -61,8 +61,8 @@ public class HelpAction extends AbstractAction {
                     return;
                 if (e.getURL() == null)
                     help.setText("<html>404 not found</html>");
-                else if (e.getURL().toString().startsWith(WikiReader.JOSM_EXTERN))
-                    OpenBrowser.displayUrl("http://"+e.getURL().toString().substring(WikiReader.JOSM_EXTERN.length())+"?action=edit");
+                else if (e.getURL().toString().endsWith("action=edit"))
+                    OpenBrowser.displayUrl(e.getURL().toString());
                 else
                     setHelpUrl(e.getURL().toString());
             }
@@ -167,36 +167,47 @@ public class HelpAction extends AbstractAction {
         if(!title.startsWith(languageCode) && !languageCode.equals("En:"))
             title = languageCode + title;
         String langurl = url.substring(0, i) + title;
-        if(langurl.equals(this.url) || langurl.equals(url))
+        boolean loaded = false;
+        if(!langurl.equals(this.url) && !langurl.equals(url))
         {
-            this.url = url;
-            try {
-                help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
-            } catch (IOException ex) {
-                help.setText(tr("Error while loading page {0}",url));
-            }
+            loaded = loadHelpUrl(url, langurl, true);
         }
-        else
-        {
-            try {
-                help.read(new StringReader(reader.read(langurl)), help.getEditorKit().createDefaultDocument());
-                String message = help.getText();
-                String le = "http://josm-extern." + langurl.substring(7);
-                if(message.indexOf("Describe &quot;") >= 0 && message.indexOf(le) >= 0)
-                    throw new IOException();
-                if(message.indexOf("      Describe ") >= 0)
-                    throw new IOException();
-                this.url = langurl;
-            } catch (IOException e) {
-                this.url = url;
-                try {
-                    help.read(new StringReader(reader.read(url)), help.getEditorKit().createDefaultDocument());
-                } catch (IOException ex) {
-                    help.setText(tr("Error while loading page {0}",url));
-                }
-            }
-        }
+        if(!loaded)
+            loaded = loadHelpUrl(url, langurl, false);
+        if(!loaded)
+            help.setText(tr("Error while loading page {0}",url));
         helpBrowser.setVisible(true);
+    }
+
+    private boolean loadHelpUrl(String url, String langurl, boolean lang)
+    {
+      this.url = lang ? langurl : url;
+      boolean loaded = false;
+      try {
+          help.read(new StringReader(reader.read(this.url)),
+          help.getEditorKit().createDefaultDocument());
+          if(help.getText().indexOf("      Describe ") >= 0)
+          {
+              if(lang)
+                  throw new IOException();
+              else
+              {
+                if(url.equals(langurl))
+                {
+                    help.setText("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A>.",
+                    url+"?action=edit")+"</HTML>");
+                }
+                else
+                {
+                    help.setText("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A> or <A HREF=\"{1}\">your language</A>.",
+                    url+"?action=edit", langurl+"?action=edit")+"</HTML>");
+                }
+              }
+          }
+          loaded = true;
+      } catch (IOException ex) {
+      }
+      return loaded;
     }
 
     /**
