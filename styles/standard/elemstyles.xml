@@ -640,7 +640,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="gate"/>
-		<icon annotate="true" src="vehicle/gate.png"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
