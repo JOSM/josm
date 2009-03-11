@@ -46,19 +46,24 @@ public class WikiReader {
 
     private String readFromTrac(BufferedReader in, String url) throws IOException {
         boolean inside = false;
+        boolean transl = false;
         String b = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (line.contains("<div id=\"searchable\">"))
                 inside = true;
+            else if (line.contains("<div class=\"wiki-toc trac-nav\""))
+                transl = true;
             else if (line.contains("<div class=\"wikipage searchable\">"))
                 inside = true;
             else if (line.contains("<div class=\"buttons\">"))
                 inside = false;
-            if (inside) {
+            if (inside && !transl) {
                 b += line.replaceAll("<img src=\"/", "<img src=\""+baseurl+"/")
                          .replaceAll("href=\"/", "href=\""+baseurl+"/")
                          .replaceAll(" />", ">") + "\n";
             }
+            else if (transl && line.contains("</div>"))
+                transl = false;
         }
         return "<html>" + b + "</html>";
     }
