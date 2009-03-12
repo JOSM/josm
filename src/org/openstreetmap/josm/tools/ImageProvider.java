@@ -222,6 +222,7 @@ public class ImageProvider {
     static {
         try {
             sources.add(ClassLoader.getSystemClassLoader());
+            sources.add(org.openstreetmap.josm.gui.MainApplication.class.getClassLoader());
         } catch (SecurityException ex) {
             sources.add(ImageProvider.class.getClassLoader());
         }
