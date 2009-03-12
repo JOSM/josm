@@ -53,16 +53,18 @@ public class AboutAction extends JosmAction {
     private static String time;
 
     static {
+        boolean manifest = false;
         URL u = Main.class.getResource("/REVISION");
         if(u == null) {
             try {
+                manifest = true;
                 u = new URL("jar:" + Main.class.getProtectionDomain().getCodeSource().getLocation().toString()
                         + "!/META-INF/MANIFEST.MF");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
         }
-        revision = loadFile(u);
+        revision = loadFile(u, manifest);
 
         Pattern versionPattern = Pattern.compile(".*?(?:Revision|Main-Version): ([0-9]*(?: SVN)?).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
         Matcher match = versionPattern.matcher(revision.getText());
@@ -121,8 +123,8 @@ public class AboutAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         JTabbedPane about = new JTabbedPane();
 
-        JTextArea readme = loadFile(Main.class.getResource("/README"));
-        JTextArea contribution = loadFile(Main.class.getResource("/CONTRIBUTION"));
+        JTextArea readme = loadFile(Main.class.getResource("/README"), false);
+        JTextArea contribution = loadFile(Main.class.getResource("/CONTRIBUTION"), false);
 
         JPanel info = new JPanel(new GridBagLayout());
         JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
@@ -186,7 +188,7 @@ public class AboutAction extends JosmAction {
      * @param resource The resource url to load
      * @return  An read-only text area with the content of "resource"
      */
-    private static JTextArea loadFile(URL resource) {
+    private static JTextArea loadFile(URL resource, boolean manifest) {
         JTextArea area = new JTextArea(tr("File could not be found."));
         area.setEditable(false);
         Font font = Font.getFont("monospaced");
@@ -197,12 +199,16 @@ public class AboutAction extends JosmAction {
         BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(resource.openStream()));
-            StringBuilder sb = new StringBuilder();
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                sb.append(line);
-                sb.append('\n');
+            String s = "";
+            for (String line = in.readLine(); line != null; line = in.readLine())
+                s += line + "\n";
+            if(manifest)
+            {
+                s = Pattern.compile("\n ", Pattern.DOTALL).matcher(s).replaceAll("");
+                s = Pattern.compile("^(SHA1-Digest|Name): .*?$", Pattern.DOTALL|Pattern.MULTILINE).matcher(s).replaceAll("");
+                s = Pattern.compile("\n+$", Pattern.DOTALL).matcher(s).replaceAll("");
             }
-            area.setText(sb.toString());
+            area.setText(s);
             area.setCaretPosition(0);
         } catch (IOException e) {
             e.printStackTrace();
