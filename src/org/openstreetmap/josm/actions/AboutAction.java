@@ -141,8 +141,6 @@ public class AboutAction extends JosmAction {
         info.add(new UrlLabel("http://josm.openstreetmap.de"), GBC.eol().fill(GBC.HORIZONTAL));
         info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10,0,10,0));
         info.add(new UrlLabel("http://josm.openstreetmap.de/newticket"), GBC.eol().fill(GBC.HORIZONTAL));
-        info.add(new JLabel(tr("News about JOSM")), GBC.std().insets(10,0,10,0));
-        info.add(new UrlLabel("http://www.opengeodata.org/?cat=17"), GBC.eol().fill(GBC.HORIZONTAL));
 
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
