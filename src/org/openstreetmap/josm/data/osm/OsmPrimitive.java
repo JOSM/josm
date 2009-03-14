@@ -344,8 +344,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public void checkDirectionTagged() {
         hasDirectionKeys = false;
         if(directionKeys == null)
+            /* this list only works for keys but not for values (e.g. highway=incline won't work here) */
             directionKeys = Main.pref.getCollection("tags.direction",
-            Arrays.asList(new String[]{"oneway","incline","incline_steep","aerialway"}));
+            Arrays.asList(new String[]{"oneway","incline","incline_steep","aerialway","junction"}));
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
                 if (directionKeys.contains(e.getKey())) {
