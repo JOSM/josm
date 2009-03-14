@@ -3603,6 +3603,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="mountain_pass" b="yes"/>
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon src="misc/landmark/mountain_pass.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
