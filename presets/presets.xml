@@ -1807,7 +1807,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <space />
             <combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
         </item>
-        <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway.relation">
+        <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway,relation">
             <label text="Edit Racetrack" />
             <key key="leisure" value="track" />
             <text key="name" text="Name" default="" delete_if_empty="true" />

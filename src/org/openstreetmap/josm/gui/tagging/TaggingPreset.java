@@ -451,8 +451,8 @@ public class TaggingPreset extends AbstractAction {
      * and the 16x16 icons for SMALL_ICON.
      */
     public void setIcon(String iconName) {
-        String s = Main.pref.get("taggingpreset.iconpaths");
-        ImageIcon icon = ImageProvider.getIfAvailable((s != null ? s.split(";") : null), "presets", null, iconName);
+        Collection<String> s = Main.pref.getCollection("taggingpreset.iconpaths", null);
+        ImageIcon icon = ImageProvider.getIfAvailable(s, "presets", null, iconName);
         if (icon == null)
         {
             System.out.println("Could not get presets icon " + iconName);

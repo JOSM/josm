@@ -65,6 +65,20 @@
 		</jar>
 	</target>
 
+	<target name="distmac" depends="dist">
+		<!-- modify MacOS X Info.plist file to hold the SVN version number -->
+		<copy file="macosx/JOSM.app/Contents/Info.plist" todir="build"/>
+		<replace file="build/Info.plist" token="@SVNVersion@" value="${version.entry.commit.revision}"/>
+		<!-- create ZIP file with MacOS X application bundle -->
+		<zip destfile="dist/josm-custom-macosx.zip" update="true">
+			<zipfileset dir="build" includes="CONTRIBUTION README LICENSE"/>
+			<zipfileset dir="macosx" includes="JOSM.app/Contents JOSM.app/Contents/MacOS JOSM.app/Contents/Resources JOSM.app/Contents/Resources/Java JOSM.app/Contents/PkgInfo JOSM.app/Contents/Resources/JOSM.icns"/>
+			<zipfileset dir="build" includes="Info.plist" prefix="JOSM.app/Contents"/>
+			<zipfileset dir="dist" includes="josm-custom.jar" prefix="JOSM.app/Contents/Resources/Java"/>
+			<zipfileset dir="macosx" includes="JOSM.app/Contents/MacOS/JOSM" filemode="755"/>
+		</zip>
+	</target>
+
 	<target name="compile" depends="init">
 		<javac srcdir="src" classpathref="classpath" destdir="build"
 				target="1.5" source="1.5" debug="on" encoding="UTF-8">
