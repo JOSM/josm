@@ -149,25 +149,24 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Return the nearest point to the screen point given.
-     * If a node within 10 pixel is found, the nearest node is returned.
+     * If a node within snapDistance pixel is found, the nearest node is returned.
      */
     public final Node getNearestNode(Point p) {
-        double minDistanceSq = Double.MAX_VALUE;
+        double minDistanceSq = snapDistance;
         Node minPrimitive = null;
         for (Node n : getData().nodes) {
             if (n.deleted || n.incomplete)
                 continue;
             Point sp = getPoint(n.eastNorth);
             double dist = p.distanceSq(sp);
-            if (minDistanceSq > dist && dist < snapDistance) {
-                minDistanceSq = p.distanceSq(sp);
+            if (dist < minDistanceSq) {
+                minDistanceSq = dist;
                 minPrimitive = n;
             }
-            // prefer already selected node when multiple nodes on one point
-            else if(minDistanceSq == dist && n.selected && !minPrimitive.selected)
-            {
+            // when multiple nodes on one point, prefer new or selected nodes
+            else if(dist == minDistanceSq && ((n.id == 0 && n.selected)
+            || (!minPrimitive.selected && (n.selected || n.id == 0))))
                 minPrimitive = n;
-            }
         }
         return minPrimitive;
     }
