@@ -141,6 +141,7 @@ public class OsmReader {
            */
           private OsmPrimitive current;
           private String generator;
+          private Map<String, String> keys = new HashMap<String, String>();
 //          int n = 0;
 
           @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
@@ -256,7 +257,13 @@ public class OsmReader {
 
                     } else if (qName.equals("tag")) {
 //                         tagsN++;
-                         current.put(atts.getValue("k"), atts.getValue("v"));
+                        String key = atts.getValue("k");
+                        String internedKey = keys.get(key);
+                        if (internedKey == null) {
+                            internedKey = key;
+                            keys.put(key, key);
+                        }
+                         current.put(internedKey, atts.getValue("v"));
                     }
                } catch (NumberFormatException x) {
                     x.printStackTrace(); // SAXException does not chain correctly
