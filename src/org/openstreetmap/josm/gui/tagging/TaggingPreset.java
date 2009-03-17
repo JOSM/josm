@@ -381,7 +381,13 @@ public class TaggingPreset extends AbstractAction {
         @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null)
                 locale_text = text == null ? tr("More information about this feature") : tr(text);
-            p.add(new UrlLabel(locale_href, locale_text), GBC.eol().anchor(GBC.WEST));
+            String url = locale_href;
+            if (url == null) {
+                url = href;
+            }
+            if (url != null) {
+                p.add(new UrlLabel(url, locale_text), GBC.eol().anchor(GBC.WEST));
+            }
         }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
