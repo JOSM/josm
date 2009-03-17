@@ -307,7 +307,7 @@ abstract public class Main {
                 System.out.println("Ignoring malformed geometry: "+geometry);
         }
         if (bounds == null)
-            bounds = !args.containsKey("no-fullscreen") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
+            bounds = !args.containsKey("no-maximize") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
 
             // preinitialize a wait dialog for all early downloads (e.g. via command line)
             pleaseWaitDlg = new PleaseWaitDialog(null);

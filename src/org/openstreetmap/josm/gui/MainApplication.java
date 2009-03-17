@@ -140,7 +140,7 @@ public class MainApplication extends Main {
                     "\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
                     "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
                     "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
-                    "\t--[no-]fullscreen                         "+tr("Launch in fullscreen mode")+"\n"+
+                    "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
                     "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
                     "\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
                     tr("examples")+":\n"+
@@ -175,8 +175,8 @@ public class MainApplication extends Main {
         mainFrame.setVisible(true);
         splash.closeSplash();
 
-        if (((!args.containsKey("no-fullscreen") && !args.containsKey("geometry")
-        && Main.pref.get("gui.geometry").length() == 0) || args.containsKey("fullscreen"))
+        if (((!args.containsKey("no-maximize") && !args.containsKey("geometry")
+        && Main.pref.get("gui.geometry").length() == 0) || args.containsKey("maximize"))
         && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
