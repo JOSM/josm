@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.xml.sax.SAXException;
@@ -29,14 +30,27 @@ public abstract class PleaseWaitRunnable implements Runnable {
 
     private boolean closeDialogCalled = false;
     private boolean cancelled = false;
+    private boolean ignoreException;
 
     private final String title;
+    
+    /**
+     * Create the runnable object with a given message for the user.
+     */    
+    public PleaseWaitRunnable(String title) {
+        this(title, false);
+    }
 
     /**
      * Create the runnable object with a given message for the user.
+     * @param title Message for user
+     * @param ignoreException If true, exception will be propaged to calling code. If false then 
+     * exception will be thrown directly in EDT. When this runnable is executed using executor framework
+     * then use false unless you read result of task (because exception will get lost if you don't)
      */
-    public PleaseWaitRunnable(String title) {
+    public PleaseWaitRunnable(String title, boolean ignoreException) {
         this.title = title;
+        this.ignoreException = ignoreException;
         Main.pleaseWaitDlg.cancel.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 if (!cancelled) {
@@ -60,41 +74,52 @@ public abstract class PleaseWaitRunnable implements Runnable {
 
     public final void run() {
         try {
-            if (cancelled)
-                return; // since realRun isn't executed, do not call to finish
+            try {
+                if (cancelled)
+                    return; // since realRun isn't executed, do not call to finish
 
-            // reset dialog state
-            Main.pleaseWaitDlg.setTitle(title);
-            Main.pleaseWaitDlg.cancel.setEnabled(true);
-            Main.pleaseWaitDlg.setCustomText("");
-            errorMessage = null;
-            closeDialogCalled = false;
+                // reset dialog state
+                Main.pleaseWaitDlg.setTitle(title);
+                Main.pleaseWaitDlg.cancel.setEnabled(true);
+                Main.pleaseWaitDlg.setCustomText("");
+                errorMessage = null;
+                closeDialogCalled = false;
 
-            // show the dialog
-            synchronized (this) {
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        synchronized (PleaseWaitRunnable.this) {
-                            PleaseWaitRunnable.this.notifyAll();
+                // show the dialog
+                synchronized (this) {
+                    EventQueue.invokeLater(new Runnable() {
+                        public void run() {
+                            synchronized (PleaseWaitRunnable.this) {
+                                PleaseWaitRunnable.this.notifyAll();
+                            }
+                            Main.pleaseWaitDlg.setVisible(true);
                         }
-                        Main.pleaseWaitDlg.setVisible(true);
-                    }
-                });
-                try {wait();} catch (InterruptedException e) {}
-            }
+                    });
+                    try {wait();} catch (InterruptedException e) {}
+                }
 
-            realRun();
-        } catch (SAXException x) {
-            x.printStackTrace();
-            errorMessage = tr("Error while parsing")+": "+x.getMessage();
-        } catch (FileNotFoundException x) {
-            x.printStackTrace();
-            errorMessage = tr("File not found")+": "+x.getMessage();
-        } catch (IOException x) {
-            x.printStackTrace();
-            errorMessage = x.getMessage();
-        } finally {
-            closeDialog();
+                realRun();
+            } catch (SAXException x) {
+                x.printStackTrace();
+                errorMessage = tr("Error while parsing")+": "+x.getMessage();
+            } catch (FileNotFoundException x) {
+                x.printStackTrace();
+                errorMessage = tr("File not found")+": "+x.getMessage();
+            } catch (IOException x) {
+                x.printStackTrace();
+                errorMessage = x.getMessage();
+            } finally {
+                closeDialog();
+            }
+        } catch (final Throwable e) {
+            if (!ignoreException) {
+                // Exception has to thrown in EDT to be shown to user
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        throw new RuntimeException(e);
+                    }                
+                });
+            }
         }
     }
 
