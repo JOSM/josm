@@ -2718,13 +2718,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="boundary" value="civil" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="political" icon="presets/boundaries.png" type="closedway,relation">
+        <item name="Political" icon="presets/boundaries.png" type="closedway,relation">
             <label text="Edit Political Boundary" />
             <space />
             <key key="boundary" value="political" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="National_park" icon="presets/boundaries.png" type="closedway,relation">
+        <item name="National park" icon="presets/boundaries.png" type="closedway,relation">
             <label text="Edit National Park Boundary" />
             <space />
             <key key="boundary" value="national_park" />
