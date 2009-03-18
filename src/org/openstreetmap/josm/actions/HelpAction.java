@@ -133,8 +133,12 @@ public class HelpAction extends AbstractAction {
     private String contextSensitiveHelp(Object c) {
         if (c instanceof Helpful)
             return ((Helpful)c).helpTopic();
-        if (c instanceof JMenu)
-            return "Menu/"+((JMenu)c).getText();
+        if (c instanceof JMenu) {
+            JMenu b = (JMenu)c;
+            if (b.getClientProperty("help") != null)
+                return (String)b.getClientProperty("help");
+            return "Menu/"+b.getText();
+        }
         if (c instanceof AbstractButton) {
             AbstractButton b = (AbstractButton)c;
             if (b.getClientProperty("help") != null)
@@ -162,11 +166,15 @@ public class HelpAction extends AbstractAction {
      * @param url The url this content is the representation of
      */
     public void setHelpUrl(String url) {
-        int i = url.lastIndexOf("/")+1;
-        String title = url.substring(i);
-        if(!title.startsWith(languageCode) && !languageCode.equals("En:"))
-            title = languageCode + title;
-        String langurl = url.substring(0, i) + title;
+        int i = url.indexOf("/wiki/Help/")+6;
+        String langurl = url;
+        if(i > 0)
+        {
+            String title = url.substring(i);
+            if(!title.startsWith(languageCode) && !languageCode.equals("En:"))
+                title = languageCode + title;
+            langurl = url.substring(0, i) + title;
+        }
         boolean loaded = false;
         if(!langurl.equals(this.url) && !langurl.equals(url))
         {

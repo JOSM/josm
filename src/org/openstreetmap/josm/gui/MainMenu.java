@@ -2,6 +2,7 @@
 
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -13,6 +14,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+
+/* For the fullscreen action */
+import java.awt.Frame;
+import java.awt.GraphicsEnvironment;
+import java.awt.GraphicsDevice;
+import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
@@ -134,13 +141,14 @@ public class MainMenu extends JMenuBar {
     public final JosmAction about = new AboutAction();
     public final JosmAction statusreport = new ShowStatusReportAction();
 
-    public final JMenu fileMenu = new JMenu(tr("File"));
-    public final JMenu editMenu = new JMenu(tr("Edit"));
-    public final JMenu viewMenu = new JMenu(tr("View"));
-    public final JMenu toolsMenu = new JMenu(tr("Tools"));
-    public final JMenu audioMenu = new JMenu(tr("Audio"));
-    public final JMenu presetsMenu = new JMenu(tr("Presets"));
-    public final JMenu helpMenu = new JMenu(tr("Help"));
+    public final JMenu fileMenu = addMenu(marktr("File"), KeyEvent.VK_F, 0);
+    public final JMenu editMenu = addMenu(marktr("Edit"), KeyEvent.VK_E, 1);
+    public final JMenu viewMenu = addMenu(marktr("View"), KeyEvent.VK_V, 2);
+    public final JMenu toolsMenu = addMenu(marktr("Tools"), KeyEvent.VK_T, 3);
+    public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 4);
+    public JMenu audioMenu = null;
+    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 5);
+    public final int defaultMenuPos = 5;
 
     /**
      * Add a JosmAction to a menu.
@@ -159,16 +167,14 @@ public class MainMenu extends JMenuBar {
         }
         return menuitem;
     }
-
-    /**
-     * Add a menu to the main menu.
-     *
-     * This method handles all the shortcut handling.
-     */
-    public void add(JMenu menu, int mnemonicKey, String shortName) {
-        Shortcut.registerShortcut("menu:" + shortName, tr("Menu: {0}", menu.getText()), mnemonicKey,
+    public JMenu addMenu(String name, int mnemonicKey, int position)
+    {
+        JMenu menu = new JMenu(tr(name));
+        Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", tr(name)), mnemonicKey,
                 Shortcut.GROUP_MNEMONIC).setMnemonic(menu);
-        add(menu);
+        add(menu, position);
+        menu.putClientProperty("help", "Menu/"+name);
+        return menu;
     }
 
     public MainMenu() {
@@ -187,7 +193,6 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, update);
         fileMenu.addSeparator();
         add(fileMenu, exit);
-        add(fileMenu, KeyEvent.VK_F, "file");
 
         add(editMenu, undo);
         add(editMenu, redo);
@@ -204,7 +209,6 @@ public class MainMenu extends JMenuBar {
         add(editMenu, search);
         editMenu.addSeparator();
         add(editMenu, preferences);
-        add(editMenu, KeyEvent.VK_E, "edit");
 
         // TODO move code to an "action" like the others?
         final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe View"));
@@ -228,7 +232,33 @@ public class MainMenu extends JMenuBar {
             JosmAction autoScaleAction = new AutoScaleAction(mode);
             add(viewMenu, autoScaleAction);
         }
-        add(viewMenu, KeyEvent.VK_V, "view");
+
+        //
+        // Full Screen action
+        //
+        final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+        if (Main.platform instanceof PlatformHookUnixoid && gd.isFullScreenSupported()) {
+            final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(tr("Full Screen"));
+            fullscreen.setSelected(Main.pref.getBoolean("draw.fullscreen", false));
+            fullscreen.setAccelerator(Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle Full Screen view"),
+                    KeyEvent.VK_F11, Shortcut.GROUP_DIRECT).getKeyStroke());
+
+            fullscreen.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ev) {
+                    Main.pref.put("draw.fullscreen", fullscreen.isSelected());
+
+                    if (Main.pref.getBoolean("draw.fullscreen")) {
+                        Frame frame = (Frame)Main.parent;
+                        gd.setFullScreenWindow(frame);
+                    } else {
+                        gd.setFullScreenWindow(null);
+                    }
+                }
+            });
+            viewMenu.addSeparator();
+            viewMenu.add(fullscreen);
+        }
 
         add(toolsMenu, splitWay);
         add(toolsMenu, combineWay);
@@ -248,11 +278,9 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, unglueNodes);
         toolsMenu.addSeparator();
         add(toolsMenu, historyinfo);
-        add(toolsMenu, KeyEvent.VK_T, "tools");
-
-        add(presetsMenu, KeyEvent.VK_P, "presets");
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
+            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_A, 5);
             add(audioMenu, audioPlayPause);
             add(audioMenu, audioNext);
             add(audioMenu, audioPrev);
@@ -260,24 +288,13 @@ public class MainMenu extends JMenuBar {
             add(audioMenu, audioBack);
             add(audioMenu, audioSlower);
             add(audioMenu, audioFaster);
-            add(audioMenu, KeyEvent.VK_A, "audio");
         }
 
-		/* TODO: Anyone really using this feature? */
-        /*JMenuItem check = new JMenuItem("DEBUG: Check Dataset");
-        check.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                DataSetChecker.check();
-            }
-        });
-        helpMenu.add(check);*/
-        
         helpMenu.add(statusreport);
-        
+
         current = helpMenu.add(help); // FIXME why is help not a JosmAction?
         current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
                 Shortcut.GROUP_DIRECT).getKeyStroke());
         add(helpMenu, about);
-        add(helpMenu, KeyEvent.VK_H, "help");
     }
 }
