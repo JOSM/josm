@@ -156,7 +156,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if (n.selected)
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        else if (n.tagged)
+        else if (n.isTagged())
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
         else
             drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
@@ -244,7 +244,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
            the way is tagged with a direction key
            (even if the tag is negated as in oneway=false) or the way is selected */
         boolean showDirection = w.selected || ((!useRealWidth) && (showDirectionArrow
-        && (!showRelevantDirectionsOnly || w.hasDirectionKeys)));
+        && (!showRelevantDirectionsOnly || w.hasDirectionKeys())));
         /* head only takes over control if the option is true,
            the direction should be shown at all and not only because it's selected */
         boolean showOnlyHeadArrowOnly = showDirection && !w.selected && showHeadArrowOnly;

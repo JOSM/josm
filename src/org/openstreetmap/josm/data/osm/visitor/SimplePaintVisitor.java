@@ -162,7 +162,7 @@ public class SimplePaintVisitor implements Visitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.deleted && !osm.selected && osm.tagged)
+            if (!osm.deleted && !osm.selected && osm.isTagged())
             {
                 osm.visit(this);
         //        profilerN++;
@@ -170,7 +170,7 @@ public class SimplePaintVisitor implements Visitor {
         displaySegments();
 
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.deleted && !osm.selected && !osm.tagged)
+            if (!osm.deleted && !osm.selected && !osm.isTagged())
             {
                 osm.visit(this);
         //        profilerN++;
@@ -254,7 +254,7 @@ public class SimplePaintVisitor implements Visitor {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if (n.selected)
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        else if(n.tagged)
+        else if(n.isTagged())
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
         else
             drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
@@ -300,7 +300,7 @@ public class SimplePaintVisitor implements Visitor {
            (even if the tag is negated as in oneway=false) or the way is selected */
 
         boolean showThisDirectionArrow = w.selected
-        || (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys));
+        || (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys()));
         /* head only takes over control if the option is true,
            the direction should be shown at all and not only because it's selected */
         boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !w.selected && showHeadArrowOnly;
@@ -312,7 +312,7 @@ public class SimplePaintVisitor implements Visitor {
             wayColor = highlightColor;
         } else if(w.selected) {
             wayColor = selectedColor;
-        } else if (!w.tagged) {
+        } else if (!w.isTagged()) {
             wayColor = untaggedWayColor;
         } else {
             wayColor = dfltWayColor;

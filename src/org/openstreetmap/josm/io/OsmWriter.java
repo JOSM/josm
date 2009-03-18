@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.DateUtils;
 
 /**
  * Save the dataset into a stream as osm intern xml format. This is not using any
@@ -200,8 +201,8 @@ public class OsmWriter extends XmlWriter implements Visitor {
             if (action != null)
                 out.print(" action='"+action+"'");
         }
-        if (osm.timestamp != null) {
-            out.print(" timestamp='"+osm.timestamp+"'");
+        if (!osm.isTimestampEmpty()) {
+            out.print(" timestamp='"+DateUtils.fromDate(osm.getTimestamp())+"'");
         }
         // user and visible added with 0.4 API
         if (osm.user != null) {

@@ -91,7 +91,6 @@ public final class Way extends OsmPrimitive {
         super.cloneFrom(osm);
         nodes.clear();
         nodes.addAll(((Way)osm).nodes);
-        checkDirectionTagged();
     }
 
     @Override public String toString() {

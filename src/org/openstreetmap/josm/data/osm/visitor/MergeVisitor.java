@@ -234,20 +234,20 @@ public class MergeVisitor implements Visitor {
                 return true; // no merge needed.
             }
             if (my.realEqual(other, true)) {
-                Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
-                Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();
+                Date myd = my.getTimestamp();
+                Date otherd = other.getTimestamp();
 
                 // they differ in modified/timestamp combination only. Auto-resolve it.
                 merged.put(other, my);
                 if (myd.before(otherd)) {
                     my.modified = other.modified;
-                    my.timestamp = other.timestamp;
+                    my.setTimestamp(other.getTimestamp());
                 }
                 return true; // merge done.
             }
             if (my.id == other.id && my.id != 0) {
-                Date myd = my.timestamp == null ? new Date(0) : my.getTimestamp();
-                Date otherd = other.timestamp == null ? new Date(0) : other.getTimestamp();
+                Date myd = my.getTimestamp();
+                Date otherd = other.getTimestamp();
 
                 if (my.incomplete || other.incomplete) {
                     if (my.incomplete) {

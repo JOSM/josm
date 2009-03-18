@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AddVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.tools.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -100,12 +101,10 @@ public class OsmReader {
                osm.modified = modified;
                osm.selected = selected;
                osm.deleted = deleted;
-               osm.timestamp = timestamp;
+               osm.setTimestamp(getTimestamp());
                osm.user = user;
                osm.visible = visible;
                osm.version = version;
-               osm.checkTagged();
-               osm.checkDirectionTagged();
                osm.mappaintStyle = null;
           }
      }
@@ -303,16 +302,7 @@ public class OsmReader {
 
           String time = atts.getValue("timestamp");
           if (time != null && time.length() != 0) {
-               /* Do not parse the date here since it wastes a HUGE amount of time.
-                * Moved into OsmPrimitive.
-               try {
-                    current.timestamp = DateParser.parse(time);
-               } catch (ParseException e) {
-                    e.printStackTrace();
-                    throw new SAXException(tr("Couldn''t read time format \"{0}\".",time));
-               }
-               */
-               current.timestamp = time;
+               current.setTimestamp(DateUtils.fromString(time));
           }
 
           // user attribute added in 0.4 API

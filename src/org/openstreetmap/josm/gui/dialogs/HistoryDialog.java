@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -170,7 +171,7 @@ public class HistoryDialog extends ToggleDialog implements SelectionChangedListe
                 orderedHistory.addAll(cache.get(osm));
             data.setRowCount(0);
             for (HistoryItem i : orderedHistory)
-                data.addRow(new Object[]{i.osm, i.osm.timestamp, i.visible});
+                data.addRow(new Object[]{i.osm, DateUtils.fromDate(i.osm.getTimestamp()), i.visible});
             historyPane.setVisible(true);
             notLoaded.setVisible(false);
         }

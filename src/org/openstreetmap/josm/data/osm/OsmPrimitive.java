@@ -3,21 +3,17 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import org.openstreetmap.josm.tools.DateParser;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 
 
@@ -106,41 +102,35 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public User user = null;
 
     /**
-     * true if this object is considered "tagged". To be "tagged", an object
-     * must have one or more "non-standard" tags. "created_by" and "source"
-     * are typically considered "standard" tags and do not make an object
-     * "tagged".
-     */
-    public boolean tagged = false;
-
-    /**
-     * true if this object has direction dependent tags (e.g. oneway)
-     */
-    public boolean hasDirectionKeys = false;
-
-    /**
      * If set to true, this object is currently selected.
      */
     public volatile boolean selected = false;
-    
+
     /**
      * If set to true, this object is highlighted. Currently this is only used to
-     * show which ways/nodes will connect 
+     * show which ways/nodes will connect
      */
     public volatile boolean highlighted = false;
+
+    private int timestamp;
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = (int)(timestamp.getTime() / 1000);
+    }
 
     /**
      * Time of last modification to this object. This is not set by JOSM but
      * read from the server and delivered back to the server unmodified. It is
      * used to check against edit conflicts.
+     *
      */
-    public String timestamp = null;
+    public Date getTimestamp() {
+        return new Date(timestamp * 1000l);
+    }
 
-    /**
-     * The timestamp is only parsed when this is really necessary, and this
-     * is the cache for the result.
-     */
-    public Date parsedTimestamp = null;
+    public boolean isTimestampEmpty() {
+        return timestamp == 0;
+    }
 
     /**
      * If set to true, this object is incomplete, which means only the id
@@ -154,19 +144,35 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      */
     public int version = -1;
 
+    private static Collection<String> uninteresting = null;
     /**
      * Contains a list of "uninteresting" keys that do not make an object
      * "tagged".
      * Initialized by checkTagged()
      */
-    public static Collection<String> uninteresting = null;
+    public static Collection<String> getUninterestingKeys() {
+        if(uninteresting == null) {
+            uninteresting = Main.pref.getCollection("tags.uninteresting",
+                    Arrays.asList(new String[]{"source","note","comment","converted_by","created_by"}));
+        }
+        return uninteresting;
+    }
+
+
+    private static Collection<String> directionKeys = null;
 
     /**
      * Contains a list of direction-dependent keys that make an object
      * direction dependent.
      * Initialized by checkDirectionTagged()
      */
-    public static Collection<String> directionKeys = null;
+    public static Collection<String> getDirectionKeys() {
+        if(directionKeys == null) {
+            directionKeys = Main.pref.getCollection("tags.direction",
+                    Arrays.asList(new String[]{"oneway","incline","incline_steep","aerialway"}));
+        }
+        return directionKeys;
+    }
 
     /**
      * Implementation of the visitor scheme. Subclasses have to call the correct
@@ -179,22 +185,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         this.deleted = deleted;
         selected = false;
         modified = true;
-    }
-
-    /**
-     * Returns the timestamp for this object, or the current time if none is set.
-     * Internally, parses the timestamp from XML into a Date object and caches it
-     * for possible repeated calls.
-     */
-    public Date getTimestamp() {
-        if (parsedTimestamp == null) {
-            try {
-                parsedTimestamp = DateParser.parse(timestamp);
-            } catch (ParseException ex) {
-                parsedTimestamp = new Date();
-            }
-        }
-        return parsedTimestamp;
     }
 
     /**
@@ -241,8 +231,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
                 keys = new HashMap<String, String>();
             keys.put(key, value);
         }
-        checkTagged();
-        checkDirectionTagged();
         mappaintStyle = null;
     }
     /**
@@ -254,8 +242,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
             if (keys.isEmpty())
                 keys = null;
         }
-        checkTagged();
-        checkDirectionTagged();
         mappaintStyle = null;
     }
 
@@ -291,7 +277,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         selected = osm.selected;
         timestamp = osm.timestamp;
         version = osm.version;
-        tagged = osm.tagged;
         incomplete = osm.incomplete;
         clearCached();
         clearErrors();
@@ -303,57 +288,48 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * @param semanticOnly if <code>true</code>, modified flag and timestamp are not compared
      */
     public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-        return
-            id == osm.id &&
-            incomplete == osm.incomplete &&
-            (semanticOnly || (modified == osm.modified)) &&
-            deleted == osm.deleted &&
-            (semanticOnly || (timestamp == null ? osm.timestamp==null : timestamp.equals(osm.timestamp))) &&
-            (semanticOnly || (version==osm.version)) &&
-            (semanticOnly || (user == null ? osm.user==null : user==osm.user)) &&
-            (semanticOnly || (visible == osm.visible)) &&
-            (keys == null ? osm.keys==null : keys.equals(osm.keys));
-    }
-
-    public String getTimeStr() {
-        return timestamp == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestamp);
+        return id == osm.id
+        && incomplete == osm.incomplete
+        && deleted == osm.deleted
+        && (semanticOnly || (modified == osm.modified
+         && timestamp == osm.timestamp
+         && version == osm.version
+         && visible == osm.visible
+         && (user == null ? osm.user==null : user==osm.user)))
+        && (keys == null ? osm.keys==null : keys.equals(osm.keys));
     }
 
     /**
-     * Updates the "tagged" flag. "keys" property should probably be made private
-     * to make sure this gets called when keys are set.
+     * true if this object is considered "tagged". To be "tagged", an object
+     * must have one or more "non-standard" tags. "created_by" and "source"
+     * are typically considered "standard" tags and do not make an object
+     * "tagged".
      */
-    public void checkTagged() {
-        tagged = false;
-        if(uninteresting == null)
-            uninteresting = Main.pref.getCollection("tags.uninteresting",
-            Arrays.asList(new String[]{"source","note","comment","converted_by","created_by"}));
+    public boolean isTagged() {
+        // TODO Cache value after keys are made private
+        getUninterestingKeys();
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
                 if (!uninteresting.contains(e.getKey())) {
-                    tagged = true;
-                    break;
+                    return true;
                 }
             }
         }
+        return false;
     }
     /**
-     * Updates the "hasDirectionKeys" flag. "keys" property should probably be made private
-     * to make sure this gets called when keys are set.
+     * true if this object has direction dependent tags (e.g. oneway)
      */
-    public void checkDirectionTagged() {
-        hasDirectionKeys = false;
-        if(directionKeys == null)
-            /* this list only works for keys but not for values (e.g. highway=incline won't work here) */
-            directionKeys = Main.pref.getCollection("tags.direction",
-            Arrays.asList(new String[]{"oneway","incline","incline_steep","aerialway","junction"}));
+    public boolean hasDirectionKeys() {
+        // TODO Cache value after keys are made private
+        getDirectionKeys();
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
                 if (directionKeys.contains(e.getKey())) {
-                    hasDirectionKeys = true;
-                    break;
+                    return true;
                 }
             }
         }
+        return false;
     }
 }

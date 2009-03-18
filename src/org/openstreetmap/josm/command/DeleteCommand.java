@@ -188,7 +188,7 @@ public class DeleteCommand extends Command {
             for (OsmPrimitive osm : del) {
                 if (osm instanceof Way) {
                     for (Node n : ((Way) osm).nodes) {
-                        if (!n.tagged) {
+                        if (!n.isTagged()) {
                             CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
                             n.visit(v);
                             v.data.removeAll(del);
@@ -321,8 +321,6 @@ public class DeleteCommand extends Command {
             Way wnew2 = new Way();
             if (wnew.keys != null) {
                 wnew2.keys = new HashMap<String, String>(wnew.keys);
-                wnew2.checkTagged();
-                wnew2.checkDirectionTagged();
             }
             wnew2.nodes.addAll(n2);
             cmds.add(new AddCommand(wnew2));

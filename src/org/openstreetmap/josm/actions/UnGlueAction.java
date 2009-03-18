@@ -139,7 +139,6 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
 
         Node c = new Node(selectedNode);
         c.keys = null;
-        c.tagged = false;
         c.selected = false;
         cmds.add(new ChangeCommand(selectedNode, c));
         
@@ -188,7 +187,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
             return false;
         
         selectedNode = (Node)n;
-        return  selectedNode.tagged;
+        return  selectedNode.isTagged();
     }
 
     /**

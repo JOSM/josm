@@ -60,6 +60,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -401,13 +402,13 @@ public class OsmDataLayer extends Layer {
                     trkseg = new ArrayList<WayPoint>();
                     trk.trackSegs.add(trkseg);
                 }
-                if (!n.tagged) {
+                if (!n.isTagged()) {
                     doneNodes.add(n);
                 }
-                WayPoint wpt = new WayPoint(n.coor);
-                if (n.timestamp != null)
+                WayPoint wpt = new WayPoint(n.coor);                
+                if (!n.isTimestampEmpty())
                 {
-                    wpt.attr.put("time", n.timestamp);
+                    wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
                     wpt.setTime();
                 }
                 trkseg.add(wpt);
@@ -419,8 +420,8 @@ public class OsmDataLayer extends Layer {
         for (Node n : data.nodes) {
             if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;
             WayPoint wpt = new WayPoint(n.coor);
-            if (n.timestamp != null) {
-                wpt.attr.put("time", n.timestamp);
+            if (!n.isTimestampEmpty()) {
+                wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
                 wpt.setTime();
             }
             if (n.keys != null && n.keys.containsKey("name")) {

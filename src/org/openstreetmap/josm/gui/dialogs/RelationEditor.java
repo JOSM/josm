@@ -409,8 +409,7 @@ public class RelationEditor extends ExtendedDialog {
         if (RelationEditor.this.relation == null) {
             // If the user wanted to create a new relation, but hasn't added any members or
             // tags, don't add an empty relation
-            clone.checkTagged();
-            if(clone.members.size() == 0 && !clone.tagged)
+            if(clone.members.size() == 0 && !clone.isTagged())
                 return;
             Main.main.undoRedo.add(new AddCommand(clone));
             DataSet.fireSelectionChanged(Main.ds.getSelected());

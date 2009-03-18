@@ -67,6 +67,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -659,8 +660,7 @@ public class GpxLayer extends Layer {
                         String timestr = p.getString("time");
                         if(timestr != null)
                         {
-                            timestr = timestr.replace("Z","+00:00");
-                            n.timestamp = timestr;
+                            n.setTimestamp(DateUtils.fromString(timestr));
                         }
                         ds.nodes.add(n);
                         w.nodes.add(n);

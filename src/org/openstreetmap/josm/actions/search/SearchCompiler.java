@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.DateUtils;
 
 /**
  * Implements a google-like search.
@@ -145,7 +146,7 @@ public class SearchCompiler {
                 String value = null;
 
                 if (key.equals("timestamp"))
-                    value = osm.getTimeStr();
+                    value = DateUtils.fromDate(osm.getTimestamp());
                 else
                     value = osm.get(key);
 
@@ -314,7 +315,7 @@ public class SearchCompiler {
 
     private static class Untagged extends Match {
         @Override public boolean match(OsmPrimitive osm) {
-            return !osm.tagged;
+            return !osm.isTagged();
         }
         @Override public String toString() {return "untagged";}
     }
