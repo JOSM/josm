@@ -256,7 +256,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(l != null)
         {
-            color = l.color;
+            if (l.color != null) color = l.color;
             width = l.width;
             realWidth = l.realWidth;
             dashed = l.dashed;
