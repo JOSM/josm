@@ -194,7 +194,7 @@ public class ColorPreference implements PreferenceSetting {
             }
             @Override public void valueChanged(ListSelectionEvent e) {
                 super.valueChanged(e);
-                int sel = colors.getSelectedRow();
+                int sel = getSelectedRow();
                 remove.setEnabled(sel > 0 && isRemoveColor(sel));
                 colorEdit.setEnabled(sel > 0);
                 defaultSet.setEnabled(sel > 0);
