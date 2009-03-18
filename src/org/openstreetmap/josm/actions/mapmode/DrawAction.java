@@ -324,6 +324,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
                 Main.ds.setSelected(n);
+                selection = Main.ds.getSelected();
                 return;
             }
         } else {
@@ -395,7 +396,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         boolean extendedWay = false;
         boolean wayIsFinishedTemp = wayIsFinished;
         wayIsFinished = false;
-        if (selection.size() > 0 && !wayIsFinishedTemp) {
+        if (selection.size() > 0) {
             Node selectedNode = null;
             Way selectedWay = null;
 
@@ -424,58 +425,60 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 tryAgain(e);
                 return;
             }
+            if(!wayIsFinishedTemp)
+            {
+                if(isSelfContainedWay(selectedWay, n0, n))
+                    return;
 
-            if(isSelfContainedWay(selectedWay, n0, n))
-                return;
-
-            // User clicked last node again, finish way
-            if(n0 == n) {
-                finishDrawing();
-                return;
-            }
-
-            // Ok we know now that we'll insert a line segment, but will it connect to an
-            // existing way or make a new way of its own? The "alt" modifier means that the
-            // user wants a new way.
-            Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
-
-            // Don't allow creation of self-overlapping ways
-            if(way != null) {
-                int nodeCount=0;
-                for (Node p : way.nodes)
-                    if(p.equals(n0)) nodeCount++;
-                if(nodeCount > 1) way = null;
-            }
-
-            if (way == null) {
-                way = new Way();
-                way.addNode(n0);
-                cmds.add(new AddCommand(way));
-            } else {
-                int i;
-                if ((i = replacedWays.indexOf(way)) != -1) {
-                    way = reuseWays.get(i);
-                } else {
-                    Way wnew = new Way(way);
-                    cmds.add(new ChangeCommand(way, wnew));
-                    way = wnew;
+                // User clicked last node again, finish way
+                if(n0 == n) {
+                    finishDrawing();
+                    return;
                 }
+
+                // Ok we know now that we'll insert a line segment, but will it connect to an
+                // existing way or make a new way of its own? The "alt" modifier means that the
+                // user wants a new way.
+                Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
+
+                // Don't allow creation of self-overlapping ways
+                if(way != null) {
+                    int nodeCount=0;
+                    for (Node p : way.nodes)
+                        if(p.equals(n0)) nodeCount++;
+                    if(nodeCount > 1) way = null;
+                }
+
+                if (way == null) {
+                    way = new Way();
+                    way.addNode(n0);
+                    cmds.add(new AddCommand(way));
+                } else {
+                    int i;
+                    if ((i = replacedWays.indexOf(way)) != -1) {
+                        way = reuseWays.get(i);
+                    } else {
+                        Way wnew = new Way(way);
+                        cmds.add(new ChangeCommand(way, wnew));
+                        way = wnew;
+                    }
+                }
+
+                // Connected to a node that's already in the way
+                if(way.nodes.contains(n)) {
+                    wayIsFinished = true;
+                    selection.clear();
+                }
+
+                // Add new node to way
+                if (way.nodes.get(way.nodes.size() - 1) == n0)
+                    way.addNode(n);
+                else
+                    way.addNode(0, n);
+
+                extendedWay = true;
+                Main.ds.setSelected(way);
             }
-
-            // Connected to a node that's already in the way
-            if(way.nodes.contains(n)) {
-                wayIsFinished = true;
-                selection.clear();
-            }
-
-            // Add new node to way
-            if (way.nodes.get(way.nodes.size() - 1) == n0)
-                way.addNode(n);
-            else
-                way.addNode(0, n);
-
-            extendedWay = true;
-            Main.ds.setSelected(way);
         }
 
         String title;

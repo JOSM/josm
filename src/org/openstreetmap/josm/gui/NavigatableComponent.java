@@ -164,7 +164,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 minPrimitive = n;
             }
             // when multiple nodes on one point, prefer new or selected nodes
-            else if(dist == minDistanceSq && ((n.id == 0 && n.selected)
+            else if(dist == minDistanceSq && minPrimitive != null
+            && ((n.id == 0 && n.selected)
             || (!minPrimitive.selected && (n.selected || n.id == 0))))
                 minPrimitive = n;
         }
