@@ -381,8 +381,9 @@ public class OsmDataLayer extends Layer {
         }
     }
 
-    public static GpxData toGpxData(DataSet data) {
+    public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
+        gpxData.storageFile = file;
         HashSet<Node> doneNodes = new HashSet<Node>();
         for (Way w : data.ways) {
             if (w.incomplete || w.deleted) continue;
@@ -432,7 +433,7 @@ public class OsmDataLayer extends Layer {
     }
 
     public GpxData toGpxData() {
-        return toGpxData(data);
+        return toGpxData(data, associatedFile);
     }
 
     public class ConvertToGpxLayerAction extends AbstractAction {

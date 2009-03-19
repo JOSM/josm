@@ -668,7 +668,8 @@ public class GpxLayer extends Layer {
                     ds.ways.add(w);
                 }
             }
-            Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", GpxLayer.this.name), null));
+            Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", GpxLayer.this.name),
+                        data.storageFile));
             Main.main.removeLayer(GpxLayer.this);
         }
     }

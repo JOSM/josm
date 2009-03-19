@@ -15,9 +15,9 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
- * A layer encapsulates the gui componente of one dataset and its representation.
+ * A layer encapsulates the gui component of one dataset and its representation.
  *
- * Some layers may display data directly importet from OSM server. Other only
+ * Some layers may display data directly imported from OSM server. Other only
  * display background images. Some can be edited, some not. Some are static and
  * other changes dynamically (auto-updated).
  *
