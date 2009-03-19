@@ -52,70 +52,6 @@ public class GettingStarted extends JPanel {
     }
 
     /**
-     * This class encapsulates the "reading URL" task and can be executed in background and in
-     * parallel. Since the MOTD is many separate pages this speeds things up quite a lot. If no
-     * localized version is available, it automatically falls back to the international one.
-     */
-    private class readMOTD implements Callable<String> {
-        private boolean isLocalized;
-        private boolean isHelp;
-        private String urlLoc;
-        private String urlIntl;
-        private String urlBase;
-
-        /**
-         * Read a MOTD page
-         * @param isLocalized If true, tries to get localized version as defined in urlLoc
-         * @param urlBase Base URL (i.e. http://www.openstreetmap.de/wiki/)
-         * @param urlLoc Part to append to base URL to receive localized version
-         * @param urlIntl Part to append to base URL to receive international version
-         * @param makeList If true, the URL's contents will be wrapped in a list (<ul><li>)
-         */
-        readMOTD(boolean isLocalized, String urlBase, String urlLoc, String urlIntl, boolean makeList) {
-          this.isLocalized = isLocalized;
-          this.urlBase = urlBase;
-          this.urlLoc = urlLoc;
-          this.urlIntl = urlIntl;
-          this.isHelp = makeList;
-        }
-
-        /*
-         * Does the actual work
-         * @see java.util.concurrent.Callable#call()
-         */
-        public String call() {
-            WikiReader wr = new WikiReader(urlBase);
-            String content = "";
-            try {
-                // If we hit a non-localized link here, we already know there's no translated
-                // version available
-                String message = isLocalized ? wr.read(urlLoc) : "";
-                // Look for non-localized version
-                if (message.equals(""))
-                    message = wr.read(urlIntl);
-
-                if (!message.equals(""))
-                    if(isHelp)
-                        content += message;
-                    else
-                        content += "<ul><li>"+ message.substring(8)
-                                            .replaceAll("\n *\\* +","</li><li>")+"</li></ul>";
-            } catch (IOException ioe) {
-                try {
-                    if(isHelp)
-                        content += wr.read(urlIntl);
-                    else
-                        content += "<ul><li>"+wr.read(urlIntl).substring(8)
-                                            .replaceAll("\n *\\* +","</li><li>")+"</li></ul>";
-                } catch (IOException ioe2) {
-                }
-            }
-
-            return content;
-        }
-    }
-
-    /**
      * Grabs current MOTD from cache or webpage and parses it.
      */
     private class assignContent extends CacheCustomContent {
@@ -133,106 +69,25 @@ public class GettingStarted extends JPanel {
             String motd = "";
             String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
             WikiReader wr = new WikiReader(baseurl);
-            String motdcontent = "";
-            try {
-                motdcontent = wr.read(baseurl + "/wiki/MessageOfTheDay?format=txt");
-            } catch (IOException ioe) {
-                motdcontent = "<html>" + styles + "<body><h1>" +
-                    "JOSM - " + tr("Java OpenStreetMap Editor") +
-                    "</h1>\n<h2 align=\"center\">(" +
-                    tr ("Message of the day not available") +
-                    ")</h2>";
-            }
-
+            String vers = "";
             String languageCode = Main.getLanguageCodeU();
-
-            // Finds wiki links like (underscores inserted for readability):
-            // [wiki:LANGCODE:messageoftheday_CONDITON_REVISION LANGCODE]
-            // Langcode usually consists of two letters describing the language and may be omitted
-            // Condition may be one of the following: >  <  <=  =>
-            // Revision is the JOSM version
-            Pattern versionPattern = Pattern.compile(
-                    "\\[wiki:(?:[A-Z]+:)?MessageOfTheDay(\\>\\=|\\<\\=|\\<|\\>)([0-9]+)\\s*([A-Z]*)\\]",
-                    Pattern.CASE_INSENSITIVE);
-            // 1=condition, 2=targetVersion, 3=lang
-            Matcher matcher = versionPattern.matcher(motdcontent);
-            matcher.reset();
-
-            ArrayList<String[]> links = new ArrayList<String[]>();
-            String linksList="";
-            while (matcher.find()) {
-                // Discards all but the selected locale and non-localized links
-                if(!(matcher.group(3)+":").equals(languageCode) && !matcher.group(3).equals(""))
-                    continue;
-
-                links.add(new String[] {matcher.group(1), matcher.group(2), matcher.group(3)});
-                linksList += matcher.group(1)+matcher.group(2)+matcher.group(3)+": ";
-            }
-
-            // We cannot use Main.worker here because it's single-threaded and
-            // setting it to multi-threading will cause problems elsewhere
-            ExecutorService slave = Executors.newCachedThreadPool();
-
-            ArrayList<Future<String>> linkContents = new ArrayList<Future<String>>();
-            for(int i=0; i < links.size(); i++) {
-                String[] obj = links.get(i);
-                int targetVersion = Integer.parseInt(obj[1]);
-                String condition = obj[0];
-                Boolean isLocalized = !obj[2].equals("");
-
-                // Prefer localized over non-localized links, if they're otherwise the same
-                if(!isLocalized && linksList.indexOf(condition + obj[1] + languageCode + " ") >= 0)
-                    continue;
-
-                boolean included = false;
-
-                if(myVersion == 0)
-                  included = true;
-                else if(condition.equals(">="))
-                  included=myVersion >= targetVersion;
-                else if(condition.equals(">"))
-                  included = myVersion > targetVersion;
-                else if(condition.equals("<"))
-                  included=myVersion < targetVersion;
-                else
-                  included = myVersion <= targetVersion;
-
-                if(!included) continue;
-
-                boolean isHelp = targetVersion == 1;
-                String urlStart = baseurl + "/wiki/";
-                String urlEnd = "MessageOfTheDay" + condition + targetVersion
-                                    + (isHelp ? "" : "?format=txt");
-                String urlLoc = urlStart + languageCode + urlEnd;
-                String urlIntl = urlStart + urlEnd;
-
-                // This adds all links to the worker which will download them concurrently
-                linkContents.add(slave.submit(new readMOTD(isLocalized, baseurl, urlLoc, urlIntl, isHelp)));
-            }
-            // Gets newest version numbers
-            linkContents.add(slave.submit(new readMOTD(false, baseurl, "",
-                    baseurl + "/version?format=txt", true)));
-
-            for(int i=0; i < linkContents.size()-1; i++) {
-                try {
-                    motd += linkContents.get(i).get();
-                } catch (Exception e) {}
-            }
-
-            motd = "<html>"
-                + styles
-                + "<h1>JOSM - "
-                + tr("Java OpenStreetMap Editor")
-                + "</h1>"
-                + motd.replace("</html>", "")
-                + getVersionNumber(linkContents.get(linkContents.size()-1))
-                + "</html>";
-
-            linkContents.clear();
             try {
-                slave.shutdown();
-            } catch(SecurityException x) {}
-
+                motd = wr.read(baseurl + "/wiki/"+languageCode+"StartupPage");
+            } catch (IOException ioe) {
+                try {
+                    motd = wr.read(baseurl + "/wiki/StartupPage");
+                } catch (IOException ioe2) {
+                    motd = "<html>" + styles + "<body><h1>" +
+                        "JOSM - " + tr("Java OpenStreetMap Editor") +
+                        "</h1>\n<h2 align=\"center\">(" +
+                        tr("Message of the day not available") +
+                        ")</h2></html>";
+                }
+            }
+            try {
+                vers = wr.read(baseurl + "/version?format=txt");
+                motd = motd.replace("</html>", getVersionNumber(vers)+"</html>");
+            } catch (IOException ioe) {}
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
 
@@ -256,9 +111,8 @@ public class GettingStarted extends JPanel {
          * @param Future<String> that contains the version page
          * @return String with HTML Code
          */
-        private String getVersionNumber(Future<String> linkContent) {
+        private String getVersionNumber(String str) {
             try {
-                String str = linkContent.get();
                 Matcher m = Pattern.compile(".*josm-tested\\.jar: *(\\d+).*", Pattern.DOTALL).matcher(str);
                 m.matches();
                 int curVersion = Integer.parseInt(m.group(1));
