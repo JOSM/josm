@@ -32,7 +32,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
-import org.openstreetmap.josm.gui.ExtendedDialog; 
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -149,13 +149,13 @@ public class PluginHandler {
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
-                    
-                    int result = new ExtendedDialog(Main.parent, 
-                        tr("Disable plugin"), 
+
+                    int result = new ExtendedDialog(Main.parent,
+                        tr("Disable plugin"),
                         tr("Could not load plugin {0}. Delete from preferences?", info.name),
-                        new String[] {tr("Disable plugin"), tr("Cancel")}, 
-                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
-                    
+                        new String[] {tr("Disable plugin"), tr("Keep plugin")},
+                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+
                     if(result == 1)
                     {
                         plugins.remove(info.name);
@@ -250,8 +250,8 @@ public class PluginHandler {
         }
 
         if (plugin != null) {
-            int answer = new ExtendedDialog(Main.parent, 
-                tr("Disable plugin"), 
+            int answer = new ExtendedDialog(Main.parent,
+                tr("Disable plugin"),
                 tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)
                     + "\n"
                     + (plugin.info.author != null
@@ -261,8 +261,8 @@ public class PluginHandler {
                     + tr("Try updating to the newest version of this plugin before reporting a bug.")
                     + "\n"
                     + tr("Should the plugin be disabled?"),
-                new String[] {tr("Disable plugin"), tr("Cancel")}, 
-                new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
+                new String[] {tr("Disable plugin"), tr("Cancel")},
+                new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
             if (answer == 1) {
                 LinkedList<String> plugins = new LinkedList<String>(Arrays.asList(Main.pref.get("plugins").split(",")));
                 if (plugins.contains(plugin.info.name)) {
