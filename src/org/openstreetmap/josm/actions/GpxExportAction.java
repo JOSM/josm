@@ -131,7 +131,7 @@ public class GpxExportAction extends DiskAccessAction {
         else if (layer instanceof GpxLayer)
             gpxData = ((GpxLayer)layer).data;
         else
-            gpxData = OsmDataLayer.toGpxData(Main.ds);
+            gpxData = OsmDataLayer.toGpxData(Main.ds, file);
         // TODO: add copyright, etc.
         try {
             FileOutputStream fo = new FileOutputStream(file);

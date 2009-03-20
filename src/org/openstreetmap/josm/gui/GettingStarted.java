@@ -84,10 +84,8 @@ public class GettingStarted extends JPanel {
                         ")</h2></html>";
                 }
             }
-            try {
-                vers = wr.read(baseurl + "/version?format=txt");
-                motd = motd.replace("</html>", getVersionNumber(vers)+"</html>");
-            } catch (IOException ioe) {}
+            motd = motd.replace("<!-- VERSION -->", tr("- running version is {0}",
+            AboutAction.getVersionString()));
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
 
@@ -104,34 +102,6 @@ public class GettingStarted extends JPanel {
             // 2. Cannot be written (e.g. while developing). Obviously we don't want to update
             //    everytime because of something we can't read.
             return Main.pref.getInteger("cache.motd.html.version", myVersion) == myVersion;
-        }
-
-        /**
-         * Tries to read the version number from a given Future<String>
-         * @param Future<String> that contains the version page
-         * @return String with HTML Code
-         */
-        private String getVersionNumber(String str) {
-            try {
-                Matcher m = Pattern.compile(".*josm-tested\\.jar: *(\\d+).*", Pattern.DOTALL).matcher(str);
-                m.matches();
-                int curVersion = Integer.parseInt(m.group(1));
-                m = Pattern.compile(".*josm-latest\\.jar: *(\\d+).*", Pattern.DOTALL).matcher(str);
-                m.matches();
-                int latest = Integer.parseInt(m.group(1));
-                return "<div style=\"text-align:right;font-size:small;font-weight:normal;\">"
-                + "<b>"
-                + (curVersion > myVersion ? tr("Update available") + " &#151; ": "")
-                + tr("Version Details:") + "</b> "
-                + tr("Yours: {2}; Current: {0}; <font style=\"font-size:x-small\">"
-                + "(latest untested: {1} &#150; not recommended)</font>",
-                curVersion, latest, myVersion)
-                + "</div>";
-            } catch(Exception e) {
-              // e.printStackTrace();
-            }
-
-            return "";
         }
     }
 
