@@ -166,7 +166,7 @@ public class HelpAction extends AbstractAction {
      * @param url The url this content is the representation of
      */
     public void setHelpUrl(String url) {
-        int i = url.indexOf("/wiki/Help/")+6;
+        int i = url.indexOf("/wiki/Help")+6;
         String langurl = url;
         if(i > 0)
         {
