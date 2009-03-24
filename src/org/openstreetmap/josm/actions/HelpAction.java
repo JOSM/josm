@@ -171,7 +171,7 @@ public class HelpAction extends AbstractAction {
         if(i > 0)
         {
             String title = url.substring(i);
-            if(!title.startsWith(languageCode) && !languageCode.equals("En:"))
+            if(languageCode.length() != 0 && !title.startsWith(languageCode))
                 title = languageCode + title;
             langurl = url.substring(0, i) + title;
         }
@@ -194,7 +194,7 @@ public class HelpAction extends AbstractAction {
       try {
           help.read(new StringReader(reader.read(this.url)),
           help.getEditorKit().createDefaultDocument());
-          if(help.getText().indexOf("      Describe ") >= 0)
+          if(help.getText().length() == 0)
           {
               if(lang)
                   throw new IOException();

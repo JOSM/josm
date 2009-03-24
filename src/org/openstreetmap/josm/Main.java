@@ -423,11 +423,19 @@ abstract public class Main {
 
     static public String getLanguageCodeU()
     {
-        String languageCode = Locale.getDefault().getLanguage();
+        String languageCode = getLanguageCode();
+        if(languageCode.equals("en"))
+            return "";
         return languageCode.substring(0,1).toUpperCase() + languageCode.substring(1) + ":";
     }
     static public String getLanguageCode()
     {
+        String full = Locale.getDefault().toString();
+        if(full.equals("iw_IL"))
+            return "he";
+        /* list of non-single codes supported by josm */
+        else if(full.equals("en_GB"))
+            return full;
         return Locale.getDefault().getLanguage();
     }
 

@@ -66,26 +66,20 @@ public class GettingStarted extends JPanel {
          * @see org.openstreetmap.josm.io.CacheCustomContent#updateData()
          */
         protected byte[] updateData() {
-            String motd = "";
-            String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
-            WikiReader wr = new WikiReader(baseurl);
-            String vers = "";
-            String languageCode = Main.getLanguageCodeU();
-            try {
-                motd = wr.read(baseurl + "/wiki/"+languageCode+"StartupPage");
-            } catch (IOException ioe) {
-                try {
-                    motd = wr.read(baseurl + "/wiki/StartupPage");
-                } catch (IOException ioe2) {
-                    motd = "<html>" + styles + "<body><h1>" +
-                        "JOSM - " + tr("Java OpenStreetMap Editor") +
-                        "</h1>\n<h2 align=\"center\">(" +
-                        tr("Message of the day not available") +
-                        ")</h2></html>";
-                }
+            String motd = new WikiReader().readLang("StartupPage");
+            if(motd.length() == 0)
+            {
+                motd = "<html>" + styles + "<body><h1>" +
+                "JOSM - " + tr("Java OpenStreetMap Editor") +
+                "</h1>\n<h2 align=\"center\">(" +
+                tr("Message of the day not available") +
+                ")</h2></html>";
             }
-            motd = motd.replace("<!-- VERSION -->", tr("- running version is {0}",
-            AboutAction.getVersionString()));
+            else
+            {
+                motd = motd.replace("<!-- VERSION -->", tr("- running version is {0}",
+                AboutAction.getVersionString()));
+            }
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
 
