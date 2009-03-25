@@ -18,6 +18,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -35,26 +36,47 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
     private void pasteKeys(Collection<Command> clist, Collection<? extends OsmPrimitive> pasteBufferSubset, Collection<OsmPrimitive> selectionSubset) {
         /* scan the paste buffer, and add tags to each of the selected objects.
          * If a tag already exists, it is overwritten */
-        if (selectionSubset != null && ! selectionSubset.isEmpty()) {
-            for (Iterator<? extends OsmPrimitive> it = pasteBufferSubset.iterator(); it.hasNext();) {
-                OsmPrimitive osm = it.next();
-                Map<String, String> m = osm.keys;
-                if(m != null)
-                {
-                    for (String key : m.keySet()) {
-                        if (! key.equals("created_by"))
-                            clist.add(new ChangePropertyCommand(selectionSubset, key, osm.keys.get(key)));
-                    }
-                }
+        if (selectionSubset == null || selectionSubset.isEmpty())
+            return;
+
+        for (Iterator<? extends OsmPrimitive> it = pasteBufferSubset.iterator(); it.hasNext();) {
+            OsmPrimitive osm = it.next();
+            Map<String, String> m = osm.keys;
+            if(m == null)
+                continue;
+
+            for (String key : m.keySet()) {
+                if (! key.equals("created_by"))
+                    clist.add(new ChangePropertyCommand(selectionSubset, key, osm.keys.get(key)));
             }
         }
     }
 
     public void actionPerformed(ActionEvent e) {
         Collection<Command> clist = new LinkedList<Command>();
-        pasteKeys(clist, Main.pasteBuffer.nodes, Main.ds.getSelectedNodes());
-        pasteKeys(clist, Main.pasteBuffer.ways, Main.ds.getSelectedWays());
-        pasteKeys(clist, Main.pasteBuffer.relations, Main.ds.getSelectedRelations());
+        String pbSource = "Multiple Sources";
+        if(Main.pasteBuffer.dataSources.size() == 1)
+            pbSource = ((DataSource) Main.pasteBuffer.dataSources.toArray()[0]).origin;
+
+        boolean pbNodes = Main.pasteBuffer.nodes.size() > 0;
+        boolean pbWays  = Main.pasteBuffer.ways.size() > 0;
+
+        boolean seNodes = Main.ds.getSelectedNodes().size() > 0;
+        boolean seWays  = Main.ds.getSelectedWays().size() > 0;
+        boolean seRels  = Main.ds.getSelectedRelations().size() > 0;
+
+        if(!seNodes && seWays && !seRels && pbNodes && pbSource.equals("Copied Nodes")) {
+            // Copy from nodes to ways
+            pasteKeys(clist, Main.pasteBuffer.nodes, Main.ds.getSelectedWays());
+        } else if(seNodes && !seWays && !seRels && pbWays && pbSource.equals("Copied Ways")) {
+            // Copy from ways to nodes
+            pasteKeys(clist, Main.pasteBuffer.ways, Main.ds.getSelectedNodes());
+        } else {
+            // Copy from equal to equal
+            pasteKeys(clist, Main.pasteBuffer.nodes, Main.ds.getSelectedNodes());
+            pasteKeys(clist, Main.pasteBuffer.ways, Main.ds.getSelectedWays());
+            pasteKeys(clist, Main.pasteBuffer.relations, Main.ds.getSelectedRelations());
+        }
         Main.main.undoRedo.add(new SequenceCommand(tr("Paste Tags"), clist));
         Main.ds.setSelected(Main.ds.getSelected()); // to force selection listeners, in particular the tag panel, to update
         Main.map.mapView.repaint();

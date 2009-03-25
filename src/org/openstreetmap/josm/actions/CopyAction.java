@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
@@ -44,7 +45,7 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 
     public void actionPerformed(ActionEvent e) {
         if(noSelection()) return;
-        
+
         Main.pasteBuffer = copyData();
         Main.main.menu.paste.setEnabled(true); /* now we have a paste buffer we can make paste available */
 
@@ -52,15 +53,15 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
             a.pasteBufferChanged(Main.pasteBuffer);
         }
     }
-    
+
     public static DataSet copyData() {
         /* New pasteBuffer - will be assigned to the global one at the end */
         final DataSet pasteBuffer = new DataSet();
         final HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>();
         /* temporarily maps old nodes to new so we can do a true deep copy */
-        
+
         if(noSelection()) return pasteBuffer;
-        
+
         /* scan the selected objects, mapping them to copies; when copying a way or relation,
          * the copy references the copies of their child objects */
         new Visitor(){
@@ -86,7 +87,6 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
                     }
                     nodes.add((Node)map.get(n));
                 }
-                wnew.nodes.clear();
                 wnew.nodes.addAll(nodes);
                 pasteBuffer.addPrimitive(wnew);
             }
@@ -108,16 +108,24 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
             public void visitAll() {
                 for (OsmPrimitive osm : Main.ds.getSelected())
                     osm.visit(this);
+
+                // Used internally only (in PasteTagsAction), therefore no need to translate these
+                if(Main.ds.getSelectedNodes().size() > 0)
+                    pasteBuffer.dataSources.add(new DataSource(null, "Copied Nodes"));
+                if(Main.ds.getSelectedWays().size() > 0)
+                    pasteBuffer.dataSources.add(new DataSource(null, "Copied Ways"));
+                if(Main.ds.getSelectedRelations().size() > 0)
+                    pasteBuffer.dataSources.add(new DataSource(null, "Copied Relations"));
             }
         }.visitAll();
-        
+
         return pasteBuffer;
     }
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         setEnabled(! newSelection.isEmpty());
     }
-    
+
     private static boolean noSelection() {
         Collection<OsmPrimitive> sel = Main.ds.getSelected();
         if (sel.isEmpty()) {
