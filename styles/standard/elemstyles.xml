@@ -952,7 +952,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="railway" v="station"/>
 		<area colour="railwaypoint#f7efb7"/>
-		<icon annotate="true" src="transport/railway.png"/>
+		<icon annotate="true" src="transport/railway_station.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -967,7 +967,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="railway" v="tram_station"/>
 		<area colour="railwaypoint#f7efb7"/>
-		<icon annotate="true" src="transport/railway.png"/>
+		<icon annotate="true" src="transport/railway_station.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1803,14 +1803,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="religion" v="bahai"/>
-		<icon annotate="true" src="religion/church/bahai.png"/>
+		<icon annotate="true" src="religion/bahai.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="buddhist"/>
-		<icon annotate="true" src="religion/church/buddhism.png"/>
+		<icon annotate="true" src="religion/buddhism.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1824,49 +1824,49 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="religion" v="hindu"/>
-		<icon annotate="true" src="religion/church/hinduism.png"/>
+		<icon annotate="true" src="religion/hinduism.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="jain"/>
-		<icon annotate="true" src="religion/church/jainism.png"/>
+		<icon annotate="true" src="religion/jainism.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="jewish"/>
-		<icon annotate="true" src="religion/church/synagogue.png"/>
+		<icon annotate="true" src="religion/jewish.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="muslim"/>
-		<icon annotate="true" src="religion/church/mosque.png"/>
+		<icon annotate="true" src="religion/muslim.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="sikh"/>
-		<icon annotate="true" src="religion/church/sikhism.png"/>
+		<icon annotate="true" src="religion/sikhism.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="shinto"/>
-		<icon annotate="true" src="religion/church/shinto.png"/>
+		<icon annotate="true" src="religion/shinto.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="taoist"/>
-		<icon annotate="true" src="religion/church/taoism.png"/>
+		<icon annotate="true" src="religion/taoism.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1881,7 +1881,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="amenity" v="grave_yard"/>
-		<icon annotate="true" src="religion/cemetery.png"/>
+		<icon annotate="true" src="rendering/landuse/cemetery.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2771,7 +2771,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="vineyard"/>
 		<area colour="green#b1e0c2"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="shop/groceries/fruits.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2892,7 +2892,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="railway"/>
 		<area colour="railland#888888"/>
-		<icon src="transport/railway.png"/>
+		<icon src="transport/railway_station.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2917,7 +2917,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="landuse" v="cemetery"/>
 		<area colour="cemetery#b1efc8"/>
-		<icon src="religion/cemetery.png"/>
+		<icon src="rendering/landuse/cemetery.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
