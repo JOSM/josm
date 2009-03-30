@@ -252,7 +252,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if(!Main.map.mapView.isDrawableLayer())
             return;
-        wayIsFinished = false;
         computeHelperLine();
         addHighlighting();
         redrawIfRequired();
@@ -325,6 +324,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // have to switch modes)
                 Main.ds.setSelected(n);
                 selection = Main.ds.getSelected();
+                // The user explicitly selected a node, so let him continue drawing
+                wayIsFinished = false;
                 return;
             }
         } else {
@@ -906,7 +907,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Handle special case: Highlighted node == selected node => finish drawing
          */
-
         if(n != null && Main.ds.getSelectedNodes().contains(n)) {
             if(wayIsFinished)
                 rv = tr("Select node under cursor.");
