@@ -88,6 +88,14 @@ public class MapView extends NavigatableComponent {
         addComponentListener(new ComponentAdapter(){
             @Override public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
+                
+                MapSlider zoomSlider = new MapSlider(MapView.this);
+                add(zoomSlider);
+                zoomSlider.setBounds(3, 0, 114, 30);
+
+                MapScaler scaler = new MapScaler(MapView.this, Main.proj);
+                add(scaler);
+                scaler.setLocation(10,30);
 
                 if (!zoomToEditLayerBoundingBox())
                     new AutoScaleAction("data").actionPerformed(null);
@@ -114,14 +122,6 @@ public class MapView extends NavigatableComponent {
                     Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "RIGHT");
                     Main.contentPane.getActionMap().put("RIGHT", mv);
                 }
-
-                MapSlider zoomSlider = new MapSlider(MapView.this);
-                add(zoomSlider);
-                zoomSlider.setBounds(3, 0, 114, 30);
-
-                MapScaler scaler = new MapScaler(MapView.this, Main.proj);
-                add(scaler);
-                scaler.setLocation(10,30);
             }
         });
 

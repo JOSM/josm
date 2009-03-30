@@ -181,19 +181,14 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      * @param e The wheel event.
      */
     public void mouseWheelMoved(MouseWheelEvent e) {
-        int w = nc.getWidth();
-        int h = nc.getHeight();
+        double newScale = nc.getScale() * Math.pow(0.8, - e.getWheelRotation());
 
-        double zoom = Math.max(0.1, 1 + e.getWheelRotation()/5.0);
-        double zoomfactor = (zoom-1)/2+1;
-
-        double newHalfWidth = w*zoomfactor - w/2;
-        double newHalfHeight = h*zoomfactor - h/2;
-        double centerx = e.getX() - (e.getX()-w/2)*newHalfWidth*2/w;
-        double centery = e.getY() - (e.getY()-h/2)*newHalfHeight*2/h;
-        EastNorth newCenter = nc.getEastNorth((int)centerx, (int)centery);
-
-        nc.zoomTo(newCenter, nc.getScale()*zoom);
+        // New center position so that point under the mouse pointer stays the same place as it was before zooming
+        // You will get the formula by simplifying this expression: newCenter = oldCenter + mouseCoordinatesInNewZoom - mouseCoordinatesInOldZoom 
+        double newX = nc.center.east() - (e.getX() - nc.getWidth()/2.0) * (newScale - nc.scale);
+        double newY = nc.center.north() + (e.getY() - nc.getHeight()/2.0) * (newScale - nc.scale);
+                      
+        nc.zoomTo(new EastNorth(newX, newY), newScale);
     }
 
     /**
