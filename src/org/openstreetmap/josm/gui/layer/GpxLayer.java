@@ -83,6 +83,7 @@ public class GpxLayer extends Layer {
     private Color computeCacheColorUsed;
     private colorModes computeCacheColored;
     private int computeCacheColorTracksTune;
+    private boolean isLocalFile;
 
     public GpxLayer(GpxData d) {
         super((String) d.attr.get("name"));
@@ -94,6 +95,12 @@ public class GpxLayer extends Layer {
     public GpxLayer(GpxData d, String name) {
         this(d);
         this.name = name;
+    }
+
+    public GpxLayer(GpxData d, String name, boolean isLocal) {
+        this(d);
+        this.name = name;
+        this.isLocalFile = isLocal;
     }
 
     @Override public Icon getIcon() {
@@ -203,14 +210,14 @@ public class GpxLayer extends Layer {
                     MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
                     File sel[] = fc.getSelectedFiles();
                     if(sel != null) {
-                    	// sort files in increasing order of timestamp (this is the end time, but so long as they don't overlap, that's fine)
-                    	if (sel.length > 1) {
-                    		Arrays.sort(sel, new Comparator<File>() {
-                    			public int compare(File a, File b) {
-                    				return a.lastModified() <= b.lastModified() ? -1 : 1;
-                    			}
-                    		});
-                    	}
+                        // sort files in increasing order of timestamp (this is the end time, but so long as they don't overlap, that's fine)
+                        if (sel.length > 1) {
+                            Arrays.sort(sel, new Comparator<File>() {
+                                public int compare(File a, File b) {
+                                    return a.lastModified() <= b.lastModified() ? -1 : 1;
+                                }
+                            });
+                        }
                         double firstStartTime = sel[0].lastModified()/1000.0 /* ms -> seconds */ - AudioUtil.getCalibratedDuration(sel[0]);
                         for (int i = 0; i < sel.length; i++) {
                             importAudio(sel[i], ml, firstStartTime);
@@ -390,7 +397,7 @@ public class GpxLayer extends Layer {
         // don't draw lines if longer than x meters
         int maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", -1);
         // draw line between points, global setting
-        boolean lines = Main.pref.getBoolean("draw.rawgps.lines");
+        boolean lines = (Main.pref.getBoolean("draw.rawgps.lines") || (Main.pref.getBoolean("draw.rawgps.lines.localfiles") && this.isLocalFile));
         String linesKey = "draw.rawgps.lines.layer "+name;
         // draw lines, per-layer setting
         if (Main.pref.hasKey(linesKey))
@@ -922,14 +929,14 @@ public class GpxLayer extends Layer {
             double duration = AudioUtil.getCalibratedDuration(wavFile);
             double startTime = lastModified - duration;
             startTime = firstStartTime + (startTime - firstStartTime) /  
-            	Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
+                Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
             WayPoint w1 = null;
             WayPoint w2 = null;
 
-        	for (GpxTrack track : data.tracks) {
-        		if (track.trackSegs == null) continue;
-        		for (Collection<WayPoint> seg : track.trackSegs) {
-        			for (WayPoint w : seg) {
+            for (GpxTrack track : data.tracks) {
+                if (track.trackSegs == null) continue;
+                for (Collection<WayPoint> seg : track.trackSegs) {
+                    for (WayPoint w : seg) {
                         if (startTime < w.time) {
                             w2 = w;
                             break;
@@ -938,14 +945,14 @@ public class GpxLayer extends Layer {
                     }
                     if (w2 != null) break;
                 }
-            }	
+            }    
 
             if (w1 == null || w2 == null) {
-            	timedMarkersOmitted = true;
+                timedMarkersOmitted = true;
             } else {
-            	EastNorth eastNorth = w1.eastNorth.interpolate(
-            				w2.eastNorth,
-            				(startTime - w1.time)/(w2.time - w1.time));
+                EastNorth eastNorth = w1.eastNorth.interpolate(
+                            w2.eastNorth,
+                            (startTime - w1.time)/(w2.time - w1.time));
                 wayPointFromTimeStamp = new WayPoint(Main.proj.eastNorth2latlon(eastNorth));
                 wayPointFromTimeStamp.time = startTime;
                 String name = wavFile.getName();
@@ -953,7 +960,7 @@ public class GpxLayer extends Layer {
                 if (dot > 0) { name = name.substring(0, dot); }
                 wayPointFromTimeStamp.attr.put("name", name);
                 waypoints.add(wayPointFromTimeStamp);
-            }        	
+            }            
         }
         
         // (e) analyse audio for spoken markers here, in due course
@@ -1003,7 +1010,7 @@ public class GpxLayer extends Layer {
                     name, uri, ml, w.time, offset);
             /* timeFromAudio intended for future use to shift markers of this type on synchronization */
             if (w == wayPointFromTimeStamp) { 
-            	am.timeFromAudio = true; 
+                am.timeFromAudio = true; 
             }
             ml.data.add(am);
         }

@@ -116,7 +116,7 @@ public class OpenFileAction extends DiskAccessAction {
             }
             r = new GpxReader(is,file.getAbsoluteFile().getParentFile());
             r.data.storageFile = file;
-            GpxLayer gpxLayer = new GpxLayer(r.data, fn);
+            GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
             Main.main.addLayer(gpxLayer);
             if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
                 MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
@@ -154,7 +154,7 @@ public class OpenFileAction extends DiskAccessAction {
             NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
             if(r.getNumberOfCoordinates()>0) {
                 r.data.storageFile = file;
-                GpxLayer gpxLayer = new GpxLayer(r.data, fn);
+                GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
                 Main.main.addLayer(gpxLayer);
                 if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
                     MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);

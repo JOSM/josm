@@ -26,7 +26,11 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class DrawingPreference implements PreferenceSetting {
 
-    private JCheckBox drawRawGpsLines = new JCheckBox(tr("Draw lines between raw gps points."));
+    private ButtonGroup gpsLinesGroup;
+    private JRadioButton drawRawGpsLinesAll = new JRadioButton(tr("All"));
+    private JRadioButton drawRawGpsLinesLocal = new JRadioButton(tr("Local files"));
+    private JRadioButton drawRawGpsLinesNone = new JRadioButton(tr("None"));
+    private ActionListener drawRawGpsLinesActionListener;
     private JTextField drawRawGpsMaxLineLength = new JTextField(8);
     private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
     private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
@@ -53,30 +57,49 @@ public class DrawingPreference implements PreferenceSetting {
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
         // drawRawGpsLines
-        drawRawGpsLines.addActionListener(new ActionListener(){
+        gpsLinesGroup = new ButtonGroup();
+        gpsLinesGroup.add(drawRawGpsLinesNone);
+        gpsLinesGroup.add(drawRawGpsLinesLocal);
+        gpsLinesGroup.add(drawRawGpsLinesAll);
+
+        if(Main.pref.getBoolean("draw.rawgps.lines")) {
+            drawRawGpsLinesAll.setSelected(true);
+        } else if (Main.pref.getBoolean("draw.rawgps.lines.localfiles")) {
+            drawRawGpsLinesLocal.setSelected(true);
+        } else {
+            drawRawGpsLinesNone.setSelected(true);
+        }
+
+        panel.add(new JLabel(tr("Draw lines between raw GPS points")), GBC.eol().insets(20,0,0,0));
+        panel.add(drawRawGpsLinesNone, GBC.eol().insets(40,0,0,0));
+        panel.add(drawRawGpsLinesLocal, GBC.eol().insets(40,0,0,0));
+        panel.add(drawRawGpsLinesAll, GBC.eol().insets(40,0,0,0));
+
+        drawRawGpsLinesActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
-                drawRawGpsMaxLineLength.setEnabled(drawRawGpsLines.isSelected());
-                drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
+                forceRawGpsLines.setEnabled(!drawRawGpsLinesNone.isSelected());
+                drawRawGpsMaxLineLength.setEnabled(!drawRawGpsLinesNone.isSelected());
+                drawGpsArrows.setEnabled(!drawRawGpsLinesNone.isSelected() );
                 drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
                 drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
             }
-        });
-        drawRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines"));
-        drawRawGpsLines.setToolTipText(tr("If your gps device draws too few lines, select this to draw lines along your way."));
-        panel.add(drawRawGpsLines, GBC.eol().insets(20,0,0,0));
+        };
+
+        drawRawGpsLinesNone.addActionListener(drawRawGpsLinesActionListener);
+        drawRawGpsLinesLocal.addActionListener(drawRawGpsLinesActionListener);
+        drawRawGpsLinesAll.addActionListener(drawRawGpsLinesActionListener);
 
         // drawRawGpsMaxLineLength
         drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length", -1)));
         drawRawGpsMaxLineLength.setToolTipText(tr("Maximum length (in meters) to draw lines. Set to '-1' to draw all lines."));
-        drawRawGpsMaxLineLength.setEnabled(drawRawGpsLines.isSelected());
+        drawRawGpsMaxLineLength.setEnabled(!drawRawGpsLinesNone.isSelected());
         panel.add(new JLabel(tr("Maximum length (meters)")), GBC.std().insets(40,0,0,0));
         panel.add(drawRawGpsMaxLineLength, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         // forceRawGpsLines
         forceRawGpsLines.setToolTipText(tr("Force drawing of lines if the imported data contain no line information."));
         forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force"));
-        forceRawGpsLines.setEnabled(drawRawGpsLines.isSelected());
+        forceRawGpsLines.setEnabled(!drawRawGpsLinesNone.isSelected());
         panel.add(forceRawGpsLines, GBC.eop().insets(40,0,0,0));
 
         // drawGpsArrows
@@ -88,7 +111,7 @@ public class DrawingPreference implements PreferenceSetting {
         });
         drawGpsArrows.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
         drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction"));
-        drawGpsArrows.setEnabled(drawRawGpsLines.isSelected());
+        drawGpsArrows.setEnabled(!drawRawGpsLinesNone.isSelected());
         panel.add(drawGpsArrows, GBC.eop().insets(40,0,0,0));
 
         // drawGpsArrowsFast
@@ -220,7 +243,8 @@ public class DrawingPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        Main.pref.put("draw.rawgps.lines", drawRawGpsLines.isSelected());
+        Main.pref.put("draw.rawgps.lines", drawRawGpsLinesAll.isSelected());
+        Main.pref.put("draw.rawgps.lines.localfiles", drawRawGpsLinesLocal.isSelected());
         Main.pref.put("draw.rawgps.max-line-length", drawRawGpsMaxLineLength.getText());
         Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());
         Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
