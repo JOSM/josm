@@ -48,6 +48,9 @@ public class HelpAction extends AbstractAction {
     private String languageCode = Main.getLanguageCodeU();
     private JFrame helpBrowser = new JFrame(tr("JOSM Online Help"));
     private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
+    private String pathbase = Main.pref.get("help.pathbase", "/wiki/");
+    private String pathhelp = Main.pref.get("help.pathhelp", "Help/");
+    private String pathmenu = Main.pref.get("help.pathmenu", "Menu/");
     private JEditorPane help = new JEditorPane();
     private WikiReader reader = new WikiReader(baseurl);
     private String url;
@@ -118,12 +121,12 @@ public class HelpAction extends AbstractAction {
                 topic = contextSensitiveHelp(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
             if (topic == null) {
                 helpBrowser.setVisible(false);
-                setHelpUrl(baseurl+"/wiki/Help");
+                setHelpUrl(baseurl+pathbase+"Help");
             } else
                 help(topic);
         } else {
             helpBrowser.setVisible(false);
-            setHelpUrl(baseurl+"/wiki/Help");
+            setHelpUrl(baseurl+pathbase+"Help");
         }
     }
 
@@ -137,7 +140,7 @@ public class HelpAction extends AbstractAction {
             JMenu b = (JMenu)c;
             if (b.getClientProperty("help") != null)
                 return (String)b.getClientProperty("help");
-            return "Menu/"+b.getText();
+            return pathmenu+b.getText();
         }
         if (c instanceof AbstractButton) {
             AbstractButton b = (AbstractButton)c;
@@ -158,7 +161,7 @@ public class HelpAction extends AbstractAction {
      */
     public void help(String topic) {
         helpBrowser.setVisible(false);
-        setHelpUrl(baseurl+"/wiki/Help/"+topic);
+        setHelpUrl(baseurl+pathbase+pathhelp+topic);
     }
 
     /**
@@ -166,10 +169,10 @@ public class HelpAction extends AbstractAction {
      * @param url The url this content is the representation of
      */
     public void setHelpUrl(String url) {
-        int i = url.indexOf("/wiki/Help")+6;
         String langurl = url;
-        if(i > 0)
+        if(url.startsWith(baseurl+pathbase))
         {
+            int i = pathbase.length()+baseurl.length();
             String title = url.substring(i);
             if(languageCode.length() != 0 && !title.startsWith(languageCode))
                 title = languageCode + title;
@@ -192,9 +195,8 @@ public class HelpAction extends AbstractAction {
       this.url = lang ? langurl : url;
       boolean loaded = false;
       try {
-          help.read(new StringReader(reader.read(this.url)),
-          help.getEditorKit().createDefaultDocument());
-          if(help.getText().length() == 0)
+          String txt = reader.read(this.url);
+          if(txt.length() == 0)
           {
               if(lang)
                   throw new IOException();
@@ -202,16 +204,18 @@ public class HelpAction extends AbstractAction {
               {
                 if(url.equals(langurl))
                 {
-                    help.setText("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A>.",
+                    txt = ("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A>.",
                     url+"?action=edit")+"</HTML>");
                 }
                 else
                 {
-                    help.setText("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A> or <A HREF=\"{1}\">your language</A>.",
+                    txt = ("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A> or <A HREF=\"{1}\">your language</A>.",
                     url+"?action=edit", langurl+"?action=edit")+"</HTML>");
                 }
               }
           }
+          help.setText(txt);
+          help.setCaretPosition(0);
           loaded = true;
       } catch (IOException ex) {
       }
