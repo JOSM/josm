@@ -555,11 +555,11 @@
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'tourism'"/>
+		<xsl:with-param name="key" select="'religion'"/>
 		<xsl:with-param name="column" select="10"/>
 		<xsl:with-param name="row" select="1"/>
     </xsl:call-template>
-	
+
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'historic'"/>
 		<xsl:with-param name="column" select="10"/>
@@ -594,9 +594,15 @@
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'religion'"/>
+		<xsl:with-param name="key" select="'tourism'"/>
 		<xsl:with-param name="column" select="13"/>
 		<xsl:with-param name="row" select="1"/>
+    </xsl:call-template>
+		
+    <xsl:call-template name="topic">
+		<xsl:with-param name="key" select="'information'"/>
+		<xsl:with-param name="column" select="13"/>
+		<xsl:with-param name="row" select="19"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
