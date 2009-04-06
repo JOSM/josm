@@ -31,7 +31,6 @@ public class OsmServerLocationReader extends OsmServerReader {
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
             final DataSet data = OsmReader.parseDataSet(in, null, Main.pleaseWaitDlg);
-//          String origin = Main.pref.get("osm-server.url")+"/"+Main.pref.get("osm-server.version", "0.5");
 //          Bounds bounds = new Bounds(new LatLon(lat1, lon1), new LatLon(lat2, lon2));
 //          DataSource src = new DataSource(bounds, origin);
 //          data.dataSources.add(src);

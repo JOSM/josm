@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  * @author imi
  */
-public class CollectBackReferencesVisitor implements Visitor {
+public class CollectBackReferencesVisitor extends AbstractVisitor {
 
     private final DataSet ds;
     private final boolean indirectRefs;

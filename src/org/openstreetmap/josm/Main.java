@@ -303,8 +303,9 @@ abstract public class Main {
                     // remember this geometry
                     Main.pref.put("gui.geometry", geometry);
                 }
-            } else
+            } else {
                 System.out.println("Ignoring malformed geometry: "+geometry);
+            }
         }
         if (bounds == null)
             bounds = !args.containsKey("no-maximize") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
@@ -431,10 +432,10 @@ abstract public class Main {
     static public String getLanguageCode()
     {
         String full = Locale.getDefault().toString();
-        if(full.equals("iw_IL"))
+        if (full.equals("iw_IL"))
             return "he";
         /* list of non-single codes supported by josm */
-        else if(full.equals("en_GB"))
+        else if (full.equals("en_GB"))
             return full;
         return Locale.getDefault().getLanguage();
     }
@@ -443,20 +444,20 @@ abstract public class Main {
         // save the current window geometry
         String newGeometry = "";
         try {
-            if(((JFrame)parent).getExtendedState() == JFrame.NORMAL) {
+            if (((JFrame)parent).getExtendedState() == JFrame.NORMAL) {
                 Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
                 Rectangle bounds = parent.getBounds();
                 int width = (int)bounds.getWidth();
                 int height = (int)bounds.getHeight();
                 int x = (int)bounds.getX();
                 int y = (int)bounds.getY();
-                if(width > screenDimension.width)
+                if (width > screenDimension.width)
                     width = screenDimension.width;
-                if(height > screenDimension.height)
+                if (height > screenDimension.height)
                     width = screenDimension.height;
-                if(x < 0)
+                if (x < 0)
                     x = 0;
-                if(y < 0)
+                if (y < 0)
                     y = 0;
                 newGeometry = width + "x" + height + "+" + x + "+" + y;
             }

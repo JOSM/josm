@@ -8,26 +8,26 @@ import java.net.Proxy;
 // This is also a java.net.URLStreamHandler
 // Basically a copy of sun.net.www.protocol.http.Handler
 public class MyHttpHandler extends sun.net.www.protocol.http.Handler  {
-            protected String proxy;
-            protected int proxyPort;
+    protected String proxy;
+    protected int proxyPort;
 
-            public MyHttpHandler() {
-                super();
-                proxy = null;
-                proxyPort = -1;
-            }
+    public MyHttpHandler() {
+        super();
+        proxy = null;
+        proxyPort = -1;
+    }
 
-            protected java.net.URLConnection openConnection(URL u)
-                    throws IOException {
-                return openConnection(u, (Proxy) null);
-            }
-            public MyHttpHandler(String proxy, int port) {
-                this.proxy = proxy;
-                proxyPort = port;
-            }
+    protected java.net.URLConnection openConnection(URL u)
+    throws IOException {
+        return openConnection(u, (Proxy) null);
+    }
+    public MyHttpHandler(String proxy, int port) {
+        this.proxy = proxy;
+        proxyPort = port;
+    }
 
-            protected java.net.URLConnection openConnection(URL u, Proxy p)
-                    throws IOException {
-                return new MyHttpURLConnection(u, p, this);
-            }
+    protected java.net.URLConnection openConnection(URL u, Proxy p)
+    throws IOException {
+        return new MyHttpURLConnection(u, p, this);
+    }
 }

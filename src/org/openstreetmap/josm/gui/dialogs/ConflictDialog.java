@@ -1,8 +1,8 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -32,11 +31,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ConflictResolveCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.ConflictResolver;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -170,7 +170,7 @@ public final class ConflictDialog extends ToggleDialog {
         if (preferencesColor.equals(Main.pref.getColor(marktr("background"), Color.black)))
             return;
         g.setColor(preferencesColor);
-        Visitor conflictPainter = new Visitor(){
+        Visitor conflictPainter = new AbstractVisitor(){
             public void visit(Node n) {
                 Point p = nc.getPoint(n.eastNorth);
                 g.drawRect(p.x-1, p.y-1, 2, 2);

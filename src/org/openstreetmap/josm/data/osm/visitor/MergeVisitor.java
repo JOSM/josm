@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  * @author imi
  */
-public class MergeVisitor implements Visitor {
+public class MergeVisitor extends AbstractVisitor {
 
     /**
      * Map from primitives in the database to visited primitives. (Attention: The other way

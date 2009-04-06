@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.Way;
  * EastNorth values as reference.
  * @author imi
  */
-public class BoundingXYVisitor implements Visitor {
+public class BoundingXYVisitor extends AbstractVisitor {
 
     public EastNorth min, max;
 

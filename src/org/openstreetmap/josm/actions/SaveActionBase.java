@@ -5,10 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -17,11 +18,11 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.io.OsmWriter;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxWriter;
+import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public abstract class SaveActionBase extends DiskAccessAction {
@@ -158,7 +159,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
                     tmpFile = new File(file.getPath() + "~");
                     copy(file, tmpFile);
                 }
-                OsmWriter.output(new FileOutputStream(file), new OsmWriter.All(layer.data, false));
+                OsmWriter w = new OsmWriter(new PrintWriter(new FileOutputStream(file)), false, layer.data.version);
+                w.header();
+                w.writeDataSources(layer.data);
+                w.writeContent(layer.data);
+                w.footer();
+                // FIXME - how to close?
                 if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null))
                     tmpFile.delete();
             } else {

@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -73,7 +74,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
         selectedWay = null;
         selectedNodes = null;
 
-        Visitor splitVisitor = new Visitor(){
+        Visitor splitVisitor = new AbstractVisitor() {
             public void visit(Node n) {
                 if (selectedNodes == null)
                     selectedNodes = new LinkedList<Node>();

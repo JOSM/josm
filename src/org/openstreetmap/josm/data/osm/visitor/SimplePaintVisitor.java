@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
  *
  * @author imi
  */
-public class SimplePaintVisitor implements Visitor {
+public class SimplePaintVisitor extends AbstractVisitor {
 
     public final static Color darkerblue = new Color(0,0,96);
     public final static Color darkblue = new Color(0,0,128);

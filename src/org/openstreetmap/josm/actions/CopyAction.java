@@ -7,10 +7,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.LinkedList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -18,12 +18,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class CopyAction extends JosmAction implements SelectionChangedListener {
@@ -64,7 +64,7 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
 
         /* scan the selected objects, mapping them to copies; when copying a way or relation,
          * the copy references the copies of their child objects */
-        new Visitor(){
+        new AbstractVisitor() {
             public void visit(Node n) {
                 /* check if already in pasteBuffer - e.g. two ways are selected which share a node;
                  * or a way and a node in that way is selected, we'll see it twice, once via the

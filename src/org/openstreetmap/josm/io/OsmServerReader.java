@@ -26,6 +26,9 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 public abstract class OsmServerReader extends OsmConnection {
+    
+    private OsmApi api = new OsmApi();
+    
     /**
      * Open a connection to the given url and return a reader on the input stream
      * from that connection. In case of user cancel, return <code>null</code>.
@@ -34,15 +37,14 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      */
     protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
-        String version = Main.pref.get("osm-server.version", "0.5");
-        urlStr = Main.pref.get("osm-server.url")+"/"+version+"/" + urlStr;
+        api.initialize();
+        urlStr = api.getBaseUrl() + urlStr;
         return getInputStreamRaw(urlStr, pleaseWaitDlg);
     }
 
     protected InputStream getInputStreamRaw(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
 
 //        System.out.println("download: "+urlStr);
-        initAuthentication();
         URL url = new URL(urlStr);
         activeConnection = (HttpURLConnection)url.openConnection();
         if (cancel) {

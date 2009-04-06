@@ -5,14 +5,13 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -25,140 +24,124 @@ import org.openstreetmap.josm.tools.DateUtils;
 public class OsmWriter extends XmlWriter implements Visitor {
 
     /**
-     * The counter for new created objects. Starting at -1 and goes down.
+     * The counter for newly created objects. Starts at -1 and goes down.
      */
     private long newIdCounter = -1;
+ 
     /**
      * All newly created ids and their primitive that uses it. This is a back reference
      * map to allow references to use the correnct primitives.
      */
     public HashMap<OsmPrimitive, Long> usedNewIds = new HashMap<OsmPrimitive, Long>();
 
-    private final boolean osmConform;
-    private final Changeset changeset;
-
-    public abstract static class Osm implements OsmWriterInterface {
-        public void header(PrintWriter out) {
-            out.print("<osm version='");
-            out.print(Main.pref.get("osm-server.version", "0.5"));
-            out.println("' generator='JOSM'>");
-        }
-        public void footer(PrintWriter out) {
-            out.println("</osm>");
-        }
-    }
-
-    // simple helper to write the object's class to the out stream
-    private Visitor typeWriteVisitor = new Visitor() {
-        public void visit(Node n) { out.print("node"); }
-        public void visit(Way w) { out.print("way"); }
-        public void visit(Relation e) { out.print("relation"); }
-    };
-
-    /**
-     * An output writer for function output that writes everything of the given dataset into
-     * the xml
-     */
-    public static final class All extends Osm {
-        private final DataSet ds;
-        private final boolean osmConform;
-
-        /**
-         * Construct an writer function
-         * @param osmConform <code>true</code>, if the xml should be 100% osm conform. In this
-         *      case, not all information can be retrieved later (as example, modified state
-         *      is lost and id's remain 0 instead of decrementing from -1)
-         */
-        public All(DataSet ds, boolean osmConform) {
-            this.ds = ds;
-            this.osmConform = osmConform;
-        }
-
-        public void write(PrintWriter out) {
-            Visitor writer = new OsmWriter(out, osmConform, null);
-            for (Node n : ds.nodes)
-                if (shouldWrite(n))
-                    writer.visit(n);
-            for (Way w : ds.ways)
-                if (shouldWrite(w))
-                    writer.visit(w);
-            for (Relation e : ds.relations)
-                if (shouldWrite(e))
-                    writer.visit(e);
-        }
-
-        private boolean shouldWrite(OsmPrimitive osm) {
-            return osm.id != 0 || !osm.deleted;
-        }
-
-        @Override public void header(PrintWriter out) {
-            super.header(out);
-            for (DataSource s : ds.dataSources) {
-                out.println("  <bounds minlat='"
-                + s.bounds.min.lat()+"' minlon='"
-                + s.bounds.min.lon()+"' maxlat='"
-                + s.bounds.max.lat()+"' maxlon='"
-                + s.bounds.max.lon()
-                +"' origin='"+XmlWriter.encode(s.origin)+"' />");
-            }
-        }
-    }
-
-    /**
-     * An output writer for functino output that writes only one specific primitive into
-     * the xml
-     */
-    public static final class Single extends Osm {
-        private final OsmPrimitive osm;
-        private final boolean osmConform;
-        private final Changeset changeset;
-
-        public Single(OsmPrimitive osm, boolean osmConform, Changeset changeset) {
-            this.osm = osm;
-            this.osmConform = osmConform;
-            this.changeset = changeset;
-        }
-
-        public void write(PrintWriter out) {
-            osm.visit(new OsmWriter(out, osmConform, changeset));
-        }
-    }
-
-    public OsmWriter(PrintWriter out, boolean osmConform, Changeset changeset) {
+    private boolean osmConform;
+    private boolean withBody = true;
+    private String version;
+    private Changeset changeset;
+    
+    public OsmWriter(PrintWriter out, boolean osmConform, String version) {
         super(out);
         this.osmConform = osmConform;
-        this.changeset = changeset;
+        this.version = version;
+    }
+    
+    public void setWithBody(boolean wb) {
+        this.withBody = wb;
+    }
+    public void setChangeset(Changeset cs) {
+        this.changeset = cs;
+    }
+    public void setVersion(String v) {
+        this.version = v;
+    }
+    
+    public void header() {
+        out.println("<?xml version='1.0' encoding='UTF-8'?>");
+        out.print("<osm version='");
+        out.print(version);
+        out.println("' generator='JOSM'>");
+    }
+    public void footer() {
+        out.println("</osm>");
+    }
+
+    public void writeContent(DataSet ds) {
+        for (Node n : ds.nodes)
+            if (shouldWrite(n))
+                visit(n);
+        for (Way w : ds.ways)
+            if (shouldWrite(w))
+                visit(w);
+        for (Relation e : ds.relations)
+            if (shouldWrite(e))
+                visit(e);
+    }
+
+    private boolean shouldWrite(OsmPrimitive osm) {
+        return osm.id != 0 || !osm.deleted;
+    }
+
+    public void writeDataSources(DataSet ds) {
+        for (DataSource s : ds.dataSources) {
+            out.println("  <bounds minlat='"
+                    + s.bounds.min.lat()+"' minlon='"
+                    + s.bounds.min.lon()+"' maxlat='"
+                    + s.bounds.max.lat()+"' maxlon='"
+                    + s.bounds.max.lon()
+                    +"' origin='"+XmlWriter.encode(s.origin)+"' />");
+        }
     }
 
     public void visit(Node n) {
         if (n.incomplete) return;
         addCommon(n, "node");
         out.print(" lat='"+n.coor.lat()+"' lon='"+n.coor.lon()+"'");
-        addTags(n, "node", true);
+        if (!withBody) {
+            out.println("/>");  
+        } else {
+            addTags(n, "node", true);
+        }
     }
 
     public void visit(Way w) {
         if (w.incomplete) return;
         addCommon(w, "way");
-        out.println(">");
-        for (Node n : w.nodes)
-            out.println("    <nd ref='"+getUsedId(n)+"' />");
-        addTags(w, "way", false);
+        if (!withBody) {
+            out.println("/>");  
+        } else {
+            out.println(">");
+            for (Node n : w.nodes)
+                out.println("    <nd ref='"+getUsedId(n)+"' />");
+            addTags(w, "way", false);
+        }
     }
 
     public void visit(Relation e) {
         if (e.incomplete) return;
         addCommon(e, "relation");
-        out.println(">");
-        for (RelationMember em : e.members) {
-            out.print("    <member type='");
-            em.member.visit(typeWriteVisitor);
-            out.println("' ref='"+getUsedId(em.member)+"' role='" +
-                XmlWriter.encode(em.role) + "' />");
+        if (!withBody) {
+            out.println("/>");  
+        } else {
+            out.println(">");
+            for (RelationMember em : e.members) {
+                out.print("    <member type='");
+                out.print(OsmApi.which(em.member));
+                out.println("' ref='"+getUsedId(em.member)+"' role='" +
+                        XmlWriter.encode(em.role) + "' />");
+            }
+            addTags(e, "relation", false);
         }
-        addTags(e, "relation", false);
     }
 
+    public void visit(Changeset cs) {
+        addCommon(cs, "changeset");
+        out.println(">\n");
+        addTags(cs, "changeset", false);
+    }
+
+    public final void footer(PrintWriter out) {
+        out.println("</osm>");
+    }
 
     /**
      * Return the id for the given osm primitive (may access the usedId map)
@@ -191,7 +174,11 @@ public class OsmWriter extends XmlWriter implements Visitor {
      * id, action, user, and visible.
      */
     private void addCommon(OsmPrimitive osm, String tagname) {
-        out.print("  <"+tagname+" id='"+getUsedId(osm)+"'");
+        long id = getUsedId(osm);
+        out.print("  <"+tagname);
+        if (id != 0) {
+             out.print(" id='"+getUsedId(osm)+"'");
+        }
         if (!osmConform) {
             String action = null;
             if (osm.deleted)

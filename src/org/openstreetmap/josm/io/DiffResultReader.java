@@ -4,8 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -26,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  */
-public class DiffResultReader implements Visitor {
+public class DiffResultReader extends AbstractVisitor {
 
     /**
      * mapping from old id to new id/version
@@ -64,13 +63,13 @@ public class DiffResultReader implements Visitor {
     /**
      * Parse the given input source and return the dataset.
      */
-    public static void parseDiffResult(InputStream source, Collection<OsmPrimitive> osm, Collection<OsmPrimitive> processed, Map<OsmPrimitive,Long> newIdMap, PleaseWaitDialog pleaseWaitDlg)
+    public static void parseDiffResult(String source, Collection<OsmPrimitive> osm, Collection<OsmPrimitive> processed, Map<OsmPrimitive,Long> newIdMap, PleaseWaitDialog pleaseWaitDlg)
     throws SAXException, IOException {
 
        DiffResultReader drr = new DiffResultReader();
        drr.processed = processed;
        drr.newIdMap = newIdMap;
-       InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
+       InputSource inputSource = new InputSource(new StringReader(source));
        try {
            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, drr.new Parser());
        } catch (ParserConfigurationException e1) {
@@ -84,10 +83,10 @@ public class DiffResultReader implements Visitor {
        }
 
        for (OsmPrimitive p : osm) {
-           System.out.println("old: "+ p);
+           //System.out.println("old: "+ p);
            p.visit(drr);
-           System.out.println("new: "+ p);
-           System.out.println("");
+           //System.out.println("new: "+ p);
+           //System.out.println("");
        }
     }
 

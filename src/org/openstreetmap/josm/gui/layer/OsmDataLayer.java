@@ -20,12 +20,12 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -42,20 +42,20 @@ import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -72,7 +72,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class OsmDataLayer extends Layer {
 
-    public final static class DataCountVisitor implements Visitor {
+    public final static class DataCountVisitor extends AbstractVisitor {
         public final int[] normal = new int[3];
         public final int[] deleted = new int[3];
         public final String[] names = {"node", "way", "relation"};
@@ -214,6 +214,7 @@ public class OsmDataLayer extends Layer {
         String tool = "";
         tool += undeletedSize(data.nodes)+" "+trn("node", "nodes", undeletedSize(data.nodes))+", ";
         tool += undeletedSize(data.ways)+" "+trn("way", "ways", undeletedSize(data.ways));
+        if (data.version != null) tool += ", " + tr("version {0}", data.version);
         if (associatedFile != null)
             tool = "<html>"+tool+"<br>"+associatedFile.getPath()+"</html>";
         return tool;
@@ -235,6 +236,16 @@ public class OsmDataLayer extends Layer {
         // copy the merged layer's data source info
         for (DataSource src : ((OsmDataLayer)from).data.dataSources)
             data.dataSources.add(src);
+        
+        // copy the merged layer's API version, downgrade if required
+        if (data.version == null) {
+            data.version = ((OsmDataLayer)from).data.version;
+        } else {
+            if ("0.5".equals(data.version) ^ "0.5".equals(((OsmDataLayer)from).data.version)) {
+                System.err.println("Warning: mixing 0.6 and 0.5 data results in version 0.5");
+                data.version = "0.5";
+            }
+        }
         fireDataChange();
         // repaint to make sure new data is displayed properly.
         Main.map.mapView.repaint();
@@ -348,6 +359,8 @@ public class OsmDataLayer extends Layer {
                 s += tr(" ({0} deleted.)",counter.deleted[i]);
             p.add(new JLabel(s, ImageProvider.get("data", counter.names[i]), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
         }
+        p.add(new JLabel(tr("API version: {0}", (data.version != null) ? data.version : tr("unset"))));
+
         return p;
     }
 
@@ -446,8 +459,7 @@ public class OsmDataLayer extends Layer {
         }
     }
 
-    public boolean containsPoint(LatLon coor)
-    {
+    public boolean containsPoint(LatLon coor) {
         // we'll assume that if this has no data sources
         // that it also has no borders
         if (this.data.dataSources.isEmpty())

@@ -48,7 +48,9 @@ public class OsmConnection {
      * Initialize the http defaults and the authenticator.
      */
     static {
-        //TODO: refactor this crap (maybe just insert the damn auth http-header by yourself)
+        // TODO: current authentication handling is sub-optimal in that it seems to use the same authenticator for
+        // any kind of request. HTTP requests executed by plugins, e.g. to password-protected WMS servers,
+        // will use the same username/password which is undesirable.
         try {
             HttpURLConnection.setFollowRedirects(true);
             Authenticator.setDefault(authentication);

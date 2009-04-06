@@ -2,7 +2,6 @@
 //Licence: GPL
 package org.openstreetmap.josm.gui;
 
-import org.xnap.commons.i18n.I18nFactory;
 import static org.openstreetmap.josm.tools.I18n.i18n;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * Main window class application.
@@ -93,8 +93,8 @@ public class MainApplication extends Main {
 
         String localeName = null; // The locale to use
 
-        //Check if passed as parameter
-        if(args.containsKey("language"))
+        // Check if passed as parameter
+        if (args.containsKey("language"))
             localeName = (String)(args.get("language").toArray()[0]);
 
         if (localeName == null)
@@ -103,7 +103,7 @@ public class MainApplication extends Main {
         if (localeName != null) {
             Locale l;
             Locale d = Locale.getDefault();
-            if(localeName.equals("he")) localeName = "iw_IL";
+            if (localeName.equals("he")) localeName = "iw_IL";
             int i = localeName.indexOf('_');
             if (i > 0) {
                 l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
@@ -114,14 +114,11 @@ public class MainApplication extends Main {
                 Locale.setDefault(l);
                 i18n = I18nFactory.getI18n(MainApplication.class);
             } catch (MissingResourceException ex) {
-                if(!l.getLanguage().equals("en"))
-                {
+                if (!l.getLanguage().equals("en")) {
                     System.out.println(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
                     l.getDisplayName(), d.getDisplayName()));
                     Locale.setDefault(d);
-                }
-                else
-                {
+                } else {
                     i18n = null;
                 }
             }
@@ -164,6 +161,7 @@ public class MainApplication extends Main {
 
         splash.setStatus(tr("Setting defaults"));
         preConstructorInit(args);
+        removeObsoletePreferences();
         splash.setStatus(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
@@ -180,11 +178,31 @@ public class MainApplication extends Main {
         && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        EventQueue.invokeLater(new Runnable(){
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
                 main.postConstructorProcessCmdLine(args);
             }
         });
     }
 
-}
+    /**
+     * Removes obsolete preference settings. If you throw out a once-used preference
+     * setting, add it to the list here with an expiry date (written as comment). If you
+     * see something with an expiry date in the past, remove it from the list.
+     */
+    public static void removeObsoletePreferences() {
+        String[] obsolete = {
+           "sample.preference.that.does.not.exist", // sample comment, expiry date should go here
+           "osm-server.version", // remove this around 10/2009
+           "osm-server.additional-versions", // remove this around 10/2009
+           null
+        };
+        for (String i : obsolete) {
+            if (i == null) continue;
+            if (Main.pref.hasKey(i)) {
+                Main.pref.removeFromCollection(i, Main.pref.get(i));
+                System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", i));
+            }
+        }
+    }     
+ }

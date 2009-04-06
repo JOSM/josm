@@ -51,7 +51,6 @@ public class OsmServerObjectReader extends OsmServerReader {
             final OsmReader osm = OsmReader.parseDataSetOsm(in, null, Main.pleaseWaitDlg);
             final DataSet data = osm.getDs();
 
-//          String origin = Main.pref.get("osm-server.url")+"/"+Main.pref.get("osm-server.version", "0.5");
 //          Bounds bounds = new Bounds(new LatLon(lat1, lon1), new LatLon(lat2, lon2));
 //          DataSource src = new DataSource(bounds, origin);
 //          data.dataSources.add(src);

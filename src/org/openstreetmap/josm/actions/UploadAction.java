@@ -153,13 +153,13 @@ public class UploadAction extends JosmAction {
 
         PleaseWaitRunnable uploadTask = new PleaseWaitRunnable(tr("Uploading data")){
             @Override protected void realRun() throws SAXException {
-                server.uploadOsm(all);
+                server.uploadOsm(Main.ds.version, all);
             }
             @Override protected void finish() {
                 Main.main.editLayer().cleanData(server.processed, !add.isEmpty());
             }
             @Override protected void cancel() {
-                server.cancel();
+                // FIXME server.cancel();
             }
         };
         Main.worker.execute(uploadTask);

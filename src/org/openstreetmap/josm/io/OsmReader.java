@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -129,11 +127,6 @@ public class OsmReader {
       */
      private Map<OsmPrimitiveData, Collection<RelationMemberData>> relations = new HashMap<OsmPrimitiveData, Collection<RelationMemberData>>();
 
-     /**
-      * List of protocol versions that will be accepted on reading
-      */
-     private HashSet<String> allowedVersions = new HashSet<String>();
-
      private class Parser extends DefaultHandler {
           /**
            * The current osm primitive to be read.
@@ -163,35 +156,15 @@ public class OsmReader {
                     if (qName.equals("osm")) {
                          if (atts == null)
                               throw new SAXException(tr("Unknown version"));
-                         if (!allowedVersions.contains(atts.getValue("version")))
-                              throw new SAXException(tr("Unknown version")+": "+atts.getValue("version"));
+                         String v = atts.getValue("version");
+                         if (v == null) 
+                             throw new SAXException(tr("Version number missing from OSM data"));
+                         if (!(v.equals("0.5") || v.equals("0.6"))) 
+                             throw new SAXException(tr("Unknown version: {0}", v));
                          // save generator attribute for later use when creating DataSource objects
                          generator = atts.getValue("generator");
-
-
-                    } else if (qName.equals("bound")) {
-                         // old style bounds.
-                         // TODO: remove this around 1st October 2008.
-                         // - this is a bit of a hack; since we still write out old style bound objects,
-                         // we don't want to load them both. so when writing, we add a "note" tag the our
-                         // old-style bound, and when reading, ignore those with a "note".
-                         String note = atts.getValue("note");
-                         if (note == null) {
-                             System.out.println("Notice: old style <bound> element detected; support for these will be dropped in a future release.");
-                             String bbox = atts.getValue("box");
-                             String origin = atts.getValue("origin");
-                             if (origin == null) origin = "";
-                             if (bbox != null) {
-                                  String[] b = bbox.split(",");
-                                  Bounds bounds = new Bounds();
-                                  if (b.length == 4)
-                                       bounds = new Bounds(
-                                                 new LatLon(Double.parseDouble(b[0]),Double.parseDouble(b[1])),
-                                                 new LatLon(Double.parseDouble(b[2]),Double.parseDouble(b[3])));
-                                  DataSource src = new DataSource(bounds, origin);
-                                  ds.dataSources.add(src);
-                             }
-                         }
+                         ds.version = v;
+                         
                     } else if (qName.equals("bounds")) {
                          // new style bounds.
                          String minlon = atts.getValue("minlon");
@@ -276,20 +249,6 @@ public class OsmReader {
           private double getDouble(Attributes atts, String value) {
                return Double.parseDouble(atts.getValue(value));
           }
-     }
-
-     /**
-      * Constructor initializes list of allowed protocol versions.
-      */
-     public OsmReader() {
-          // first add the main server version
-          allowedVersions.add(Main.pref.get("osm-server.version", "0.5"));
-          // now also add all compatible versions
-          String[] additionalVersions =
-               Main.pref.get("osm-server.additional-versions", "").split("/,/");
-          if (additionalVersions.length == 1 && additionalVersions[0].length() == 0)
-               additionalVersions = new String[] {};
-          allowedVersions.addAll(Arrays.asList(additionalVersions));
      }
 
      /**
@@ -489,7 +448,6 @@ public class OsmReader {
      public static OsmReader parseDataSetOsm(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
           OsmReader osm = new OsmReader();
           osm.references = ref == null ? new DataSet() : ref;
-
 
           currSource = source;
 

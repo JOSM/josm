@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class NameVisitor implements Visitor {
+public class NameVisitor extends AbstractVisitor {
 
     /**
      * The name of the item class

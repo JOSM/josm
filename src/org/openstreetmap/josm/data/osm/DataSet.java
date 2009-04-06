@@ -24,6 +24,11 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 public class DataSet implements Cloneable {
 
     /**
+     * The API version that created this data set, if any.
+     */
+    public String version;
+    
+    /**
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
      */
@@ -208,6 +213,7 @@ public class DataSet implements Cloneable {
             ds.relations.add(new Relation(e));
         for (DataSource source : dataSources)
             ds.dataSources.add(new DataSource(source.bounds, source.origin));
+        ds.version = version;
         return ds;
     }
 

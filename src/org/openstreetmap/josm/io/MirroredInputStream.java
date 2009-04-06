@@ -21,62 +21,49 @@ import org.openstreetmap.josm.Main;
 public class MirroredInputStream extends InputStream {
     InputStream fs = null;
 
-    public MirroredInputStream(String name) throws IOException
-    {
+    public MirroredInputStream(String name) throws IOException {
         this(name, null, -1L);
     }
 
-    public MirroredInputStream(String name, long maxTime) throws IOException
-    {
+    public MirroredInputStream(String name, long maxTime) throws IOException {
         this(name, null, maxTime);
     }
 
-    public MirroredInputStream(String name, String destDir, long maxTime) throws IOException
-    {
+    public MirroredInputStream(String name, String destDir, long maxTime) throws IOException {
         URL url;
         File file = null;
-        try
-        {
+        try {
             url = new URL(name);
-            if(url.getProtocol().equals("file"))
-            {
+            if (url.getProtocol().equals("file")) {
                 file = new File(name.substring("file:/".length()));
-                if(!file.exists())
+                if (!file.exists())
                     file = new File(name.substring("file://".length()));
-            }
-            else
+            } else {
                 file = checkLocal(url, destDir, maxTime);
-        }
-        catch(java.net.MalformedURLException e)
-        {
-            if(name.startsWith("resource://"))
-            {
+            }
+        } catch (java.net.MalformedURLException e) {
+            if(name.startsWith("resource://")) {
                 fs = getClass().getResourceAsStream(
                 name.substring("resource:/".length()));
                 return;
             }
-            else
-                file = new File(name);
+            file = new File(name);
         }
-        if(file == null)
+        if (file == null)
             throw new IOException();
         fs = new FileInputStream(file);
     }
 
-    private File checkLocal(URL url, String destDir, long maxTime)
-    {
+    private File checkLocal(URL url, String destDir, long maxTime) {
         String localPath = Main.pref.get("mirror." + url);
         File file = null;
-        if(localPath != null && localPath.length() > 0)
-        {
+        if (localPath != null && localPath.length() > 0) {
             String[] lp = localPath.split(";");
             file = new File(lp[1]);
-            if(maxTime <= 0)
+            if (maxTime <= 0)
                 maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
-            if(System.currentTimeMillis() - Long.parseLong(lp[0]) < maxTime*1000)
-            {
-                if(file.exists())
-                {
+            if (System.currentTimeMillis() - Long.parseLong(lp[0]) < maxTime*1000) {
+                if(file.exists()) {
                     return file;
                 }
             }
@@ -85,52 +72,38 @@ public class MirroredInputStream extends InputStream {
             destDir = Main.pref.getPreferencesDir();
 
         File destDirFile = new File(destDir);
-        if(!destDirFile.exists() )
+        if (!destDirFile.exists())
             destDirFile.mkdirs();
 
         localPath = "mirror_" + new File(url.getPath()).getName();
         destDirFile = new File(destDir, localPath + ".tmp");
         BufferedOutputStream bos = null;
         BufferedInputStream bis = null;
-        try
-        {
+        try {
             URLConnection conn = url.openConnection();
             conn.setConnectTimeout(5000);
             bis = new BufferedInputStream(conn.getInputStream());
             bos = new BufferedOutputStream( new FileOutputStream(destDirFile));
             byte[] buffer = new byte[4096];
             int length;
-            while((length = bis.read(buffer)) > -1)
+            while ((length = bis.read(buffer)) > -1)
                 bos.write(buffer, 0, length);
-        }
-        catch(IOException ioe)
-        {
-            if(file != null)
+        } catch(IOException ioe) {
+            if (file != null)
                 return file;
-            else
-                return null;
-        }
-        finally
-        {
-            if(bis != null)
-            {
-                try
-                {
+            return null;
+        } finally {
+            if (bis != null) {
+                try {
                     bis.close();
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(bos != null)
-            {
-                try
-                {
+            if (bos != null) {
+                try {
                     bos.close();
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

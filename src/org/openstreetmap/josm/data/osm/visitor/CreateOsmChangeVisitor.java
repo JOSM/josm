@@ -5,12 +5,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmWriter;
 
 /**
@@ -21,72 +21,64 @@ import org.openstreetmap.josm.io.OsmWriter;
  * @author fred
  *
  */
-public class CreateOsmChangeVisitor implements Visitor {
+public class CreateOsmChangeVisitor extends AbstractVisitor {
 
-    StringBuffer document;
-    String currentMode;
-    Changeset changeset;
-    PrintWriter writer;
-    StringWriter swriter;
-    OsmWriter osmwriter;
+    private String currentMode;
+    private PrintWriter writer;
+    private StringWriter swriter;
+    private OsmWriter osmwriter;
+    private OsmApi api;
 
-    public CreateOsmChangeVisitor(Changeset changeset) {
+    public CreateOsmChangeVisitor(Changeset changeset, OsmApi api) {
         writer = new PrintWriter(swriter = new StringWriter());
         writer.write("<osmChange version=\"");
-        writer.write(Main.pref.get("osm-server.version", "0.6"));
+        writer.write(api.getVersion());
         writer.write("\" generator=\"JOSM\">\n");
-        this.changeset = changeset;
-        osmwriter = new OsmWriter(writer, false, changeset);
+        this.api = api;
+        // need to set osmConform = false here so that negative IDs get transmitted.
+        // this also enables unnecessary and (if the API were more strict) potentially
+        // harmful action="..." attributes. 
+        osmwriter = new OsmWriter(writer, false, api.getVersion());
+        osmwriter.setChangeset(changeset);
     }
 
+    // FIXME: This should really NOT use a visitor pattern, it looks
+    // stupid. Just have one method named "write" instead of three "visit"s.
+    
     public void visit(Node n) {
         if (n.deleted) {
             switchMode("delete");
-            writer.write("<node id=\"");
-            writer.write(Long.toString(n.id));
-            writer.write("\" version=\"");
-            writer.write(Long.toString(n.version));
-            writer.write("\" changeset=\"");
-            writer.write(Long.toString(changeset.id));
-            writer.write("\" />\n");
+            osmwriter.setWithBody(false);
+            osmwriter.visit(n);
         } else {
             switchMode((n.id == 0) ? "create" : "modify");
-            n.visit(osmwriter);
+            osmwriter.setWithBody(true);
+            osmwriter.visit(n);
         }
     }
-
     public void visit(Way w) {
         if (w.deleted) {
             switchMode("delete");
-            writer.write("<way id=\"");
-            writer.write(Long.toString(w.id));
-            writer.write("\" version=\"");
-            writer.write(Long.toString(w.version));
-            writer.write("\" changeset=\"");
-            writer.write(Long.toString(changeset.id));
-            writer.write("\" />\n");
+            osmwriter.setWithBody(false);
+            osmwriter.visit(w);
         } else {
             switchMode((w.id == 0) ? "create" : "modify");
-            w.visit(osmwriter);
+            osmwriter.setWithBody(true);
+            osmwriter.visit(w);
         }
     }
-
     public void visit(Relation r) {
         if (r.deleted) {
             switchMode("delete");
-            writer.write("<relation id=\"");
-            writer.write(Long.toString(r.id));
-            writer.write("\" version=\"");
-            writer.write(Long.toString(r.version));
-            writer.write("\" changeset=\"");
-            writer.write(Long.toString(changeset.id));
-            writer.write("\" />\n");
+            osmwriter.setWithBody(false);
+            osmwriter.visit(r);
         } else {
             switchMode((r.id == 0) ? "create" : "modify");
-            r.visit(osmwriter);
+            osmwriter.setWithBody(true);
+            osmwriter.visit(r);
         }
     }
-
+    
     private void switchMode(String newMode) {
         if ((newMode != null && !newMode.equals(currentMode))||(newMode == null && currentMode != null)) {
             if (currentMode != null) {
@@ -98,7 +90,7 @@ public class CreateOsmChangeVisitor implements Visitor {
                 writer.write("<");
                 writer.write(newMode);
                 writer.write(" version=\"");
-                writer.write(Main.pref.get("osm-server.version", "0.6"));
+                writer.write(api.getVersion());
                 writer.write("\" generator=\"JOSM\">\n");
             }
             currentMode = newMode;

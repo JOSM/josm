@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  * @author imi
  */
-public class DeleteVisitor implements Visitor {
+public class DeleteVisitor extends AbstractVisitor {
 
     private final DataSet ds;
 
