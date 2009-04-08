@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
@@ -76,8 +77,8 @@ public class OsmApi extends OsmConnection {
      */
     private boolean initialized = false;
     
-    private ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    private OsmWriter osmWriter = new OsmWriter(new PrintWriter(bao), true, null);
+    private StringWriter swriter = new StringWriter();
+    private OsmWriter osmWriter = new OsmWriter(new PrintWriter(swriter), true, null);
 
     /**
      * A parser for the "capabilities" response XML
@@ -158,13 +159,13 @@ public class OsmApi extends OsmConnection {
      * @return XML string
      */
     private String toXml(OsmPrimitive o, boolean addBody) {
-        bao.reset();
+        swriter.getBuffer().setLength(0);
         osmWriter.setWithBody(addBody);
         osmWriter.header();
         o.visit(osmWriter);
         osmWriter.footer();
         osmWriter.out.flush();
-        return bao.toString();
+        return swriter.toString();
     }
     
     /**
@@ -364,7 +365,7 @@ public class OsmApi extends OsmConnection {
                 if (requestBody != null) {
                     activeConnection.setDoOutput(true);
                     OutputStream out = activeConnection.getOutputStream();
-                    BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out));
+                    BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
                     bwr.write(requestBody);
                     bwr.flush();
                     out.close();

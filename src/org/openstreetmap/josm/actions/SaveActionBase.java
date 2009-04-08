@@ -159,7 +159,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                     tmpFile = new File(file.getPath() + "~");
                     copy(file, tmpFile);
                 }
-                OsmWriter w = new OsmWriter(new PrintWriter(new FileOutputStream(file)), false, layer.data.version);
+                OsmWriter w = new OsmWriter(new PrintWriter(file, "UTF-8"), false, layer.data.version);
                 w.header();
                 w.writeDataSources(layer.data);
                 w.writeContent(layer.data);
