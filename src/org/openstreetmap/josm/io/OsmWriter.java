@@ -201,4 +201,12 @@ public class OsmWriter extends XmlWriter implements Visitor {
         if (this.changeset != null && this.changeset.id != 0)
             out.print(" changeset='"+this.changeset.id+"'" );
     }
+    
+    public void close() {
+        out.close();
+    }
+    
+    public void flush() {
+        out.flush();
+    }
 }

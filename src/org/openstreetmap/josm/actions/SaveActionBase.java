@@ -164,6 +164,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 w.writeDataSources(layer.data);
                 w.writeContent(layer.data);
                 w.footer();
+                w.close();
                 // FIXME - how to close?
                 if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null))
                     tmpFile.delete();
