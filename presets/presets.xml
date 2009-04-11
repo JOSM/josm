@@ -2179,7 +2179,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                  de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
             <label text="Edit Address Interpolation" />
             <space />
-            <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all" default="odd" />
+            <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" />
         </item>
     </group> <!-- Buildings -->
     <group name="Man Made" icon="presets/works.png">

@@ -3869,6 +3869,13 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>40000</scale_max>
 	</rule>
 
+        <rule>
+                <condition k="addr:interpolation" v="alphabetic"/>
+                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
+                <scale_min>1</scale_min>
+                <scale_max>40000</scale_max>
+        </rule>
+
 <!--"deprecated" tags -->
 
 	<!-- historic=museum -> tourism=museum -->
