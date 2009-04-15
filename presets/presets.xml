@@ -813,11 +813,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <text key="name" text="Name" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Mountain Pass" icon="presets/mountain_pass.png" type="node,closedway">
+        <item name="Mountain Pass" icon="presets/mountain_pass.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:mountain_pass" />
             <label text="Edit Mountain Pass" />
             <space />
-            <key key="highway" value="mountain_pass" />
+            <key key="mountain_pass" value="yes" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <text key="ele" text="Elevation" default="" delete_if_empty="true" />
