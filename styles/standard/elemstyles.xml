@@ -2466,9 +2466,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
-	<!-- duplicate of shop_centre? -->
+	<!-- duplicate of shoppping_centre? -->
 	<rule>
-		<condition k="shop" v="shop_center"/>
+		<condition k="shop" v="shoppping_centre"/>
 		<icon annotate="true" src="shop/mall.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
@@ -2931,7 +2931,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="landuse" v="leisure_ground"/>
+		<condition k="landuse" v="recreation_ground"/>
 		<area colour="green#b1e0c2"/>
 		<icon src="leisure/common.png"/>
 		<scale_min>1</scale_min>
