@@ -292,7 +292,6 @@ public class OsmApi extends OsmConnection {
         }
         
         CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, this);
-        String diff = duv.getDocument();
         
         ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
     
@@ -307,6 +306,7 @@ public class OsmApi extends OsmConnection {
         Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
         if (cancel) throw new OsmTransferCancelledException();
     
+        String diff = duv.getDocument();
         String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);  
         try {
             DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
