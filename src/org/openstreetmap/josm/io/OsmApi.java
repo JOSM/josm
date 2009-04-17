@@ -19,6 +19,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.SAXParserFactory;
@@ -263,7 +264,9 @@ public class OsmApi extends OsmConnection {
     public void createChangeset(String comment) throws OsmTransferException {
         changeset = new Changeset();
         Main.pleaseWaitDlg.currentAction.setText(tr("Opening changeset..."));
-        changeset.put("created_by", "JOSM");
+        Properties sysProp = System.getProperties();
+        Object ua = sysProp.get("http.agent");
+        changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
         changeset.put("comment", comment);
         createPrimitive(changeset);
     }

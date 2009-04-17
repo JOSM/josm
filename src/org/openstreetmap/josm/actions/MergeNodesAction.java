@@ -173,21 +173,15 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
                 String combined = TigerUtils.combineTags(e.getKey(), e.getValue());
                 newNode.put(e.getKey(), combined);
             } else if (e.getValue().size() > 1) {
-                if("created_by".equals(e.getKey()))
-                {
-                    newNode.put("created_by", "JOSM");
-                }
-                else
-                {
-                    JComboBox c = new JComboBox(e.getValue().toArray());
-                    c.setEditable(true);
-                    p.add(new JLabel(e.getKey()), GBC.std());
-                    p.add(Box.createHorizontalStrut(10), GBC.std());
-                    p.add(c, GBC.eol());
-                    components.put(e.getKey(), c);
-                }
-            } else
+                JComboBox c = new JComboBox(e.getValue().toArray());
+                c.setEditable(true);
+                p.add(new JLabel(e.getKey()), GBC.std());
+                p.add(Box.createHorizontalStrut(10), GBC.std());
+                p.add(c, GBC.eol());
+                components.put(e.getKey(), c);
+            } else {
                 newNode.put(e.getKey(), e.getValue().iterator().next());
+            }
         }
 
         if (!components.isEmpty()) {

@@ -151,7 +151,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * Initialized by checkTagged()
      */
     public static Collection<String> getUninterestingKeys() {
-        if(uninteresting == null) {
+        if (uninteresting == null) {
             uninteresting = Main.pref.getCollection("tags.uninteresting",
                     Arrays.asList(new String[]{"source","note","comment","converted_by","created_by"}));
         }
@@ -302,8 +302,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     /**
      * true if this object is considered "tagged". To be "tagged", an object
-     * must have one or more "non-standard" tags. "created_by" and "source"
-     * are typically considered "standard" tags and do not make an object
+     * must have one or more "interesting" tags. "created_by" and "source"
+     * are typically considered "uninteresting" and do not make an object
      * "tagged".
      */
     public boolean isTagged() {
