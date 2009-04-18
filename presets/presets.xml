@@ -967,7 +967,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- bump_gate -->
         <item name="Cycle Barrier" icon="presets/empty.png" type="node">
-            <link href:de="http://de.wikipedia.org/wiki/Umlaufgitter" />
+            <link de.href="http://de.wikipedia.org/wiki/Umlaufgitter" />
             <key key="barrier" value="cycle_barrier" />
         </item> <!-- bump_gate -->
         <item name="Hedge" icon="presets/empty.png" type="way,closedway,relation">
@@ -1466,7 +1466,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Railway Platform" />
             <key key="railway" value="platform" />
             <space />
-            <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference (track number)" default="" delete_if_empty="true" />
             <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             <check key="area" text="Area" default="off" delete_if_empty="true" />
         </item>
@@ -1507,7 +1507,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Bus Platform" />
             <key key="highway" value="platform" />
             <space />
-            <text key="Ref" text="Reference (track number)" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference (track number)" default="" delete_if_empty="true" />
             <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             <check key="area" text="Area" default="off" delete_if_empty="true" />
         </item>
