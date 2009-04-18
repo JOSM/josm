@@ -2304,7 +2304,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="toilets" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Reference number" default="" delete_if_empty="true" />
-            <combo key="charge" text="Charge" values="yes,no" default="" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
             <text key="note" text="Note" default="" delete_if_empty="true" />
         </item>
         <item name="Post Box" icon="presets/letter.png" type="node">
