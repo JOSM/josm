@@ -690,6 +690,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="services"/>
+		<area colour="services#c0c0c0"/>
 		<icon annotate="true" src="vehicle/services.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -697,6 +698,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="ford"/>
+		<line width="2" realwidth="5" colour="ford#ff0000"/>
 		<icon annotate="true" src="vehicle/ford.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -896,6 +898,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="waterway" v="boatyard"/>
 		<icon annotate="true" src="nautical/boatyard.png"/>
+		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -933,7 +936,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<condition k="waterway" v="dam"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
 		<line width="2" colour="manmade#d8d8d8"/>
-		<!-- it's not possible to have both line and area, line seems more likely -->
+		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1088,6 +1091,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="railway" v="turntable"/>
 		<icon annotate="true" src="transport/turntable.png"/>
+		<area colour="rail#404040"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="railway" v="platform"/>
+		<line width="2" colour="rail#404040"/>
 		<area colour="rail#404040"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1268,6 +1279,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="power" v="station"/>
+		<icon annotate="true" src="misc/landmark/power.png"/>
+		<area colour="power#eeeeee"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="power" v="sub_station"/>
 		<icon annotate="true" src="misc/landmark/power.png"/>
 		<area colour="power#eeeeee"/>
@@ -1351,6 +1370,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="man_made" v="pier"/>
+		<area colour="pier#660000"/>
 		<line width="2" colour="pier#660000"/>
 		<icon annotate="true" src="nautical/pier.png"/>
 		<scale_min>1</scale_min>
@@ -2518,6 +2538,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="tourism" v="alpine_hut"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<area colour="hotel#e1a0a2"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="tourism" v="camp_site"/>
 		<icon annotate="true" src="accommodation/camping.png"/>
 		<area colour="hotel#e1a0a2"/>
@@ -2576,6 +2604,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="tourism" v="artwork"/>
 		<icon annotate="true" src="service/arts_centre.png"/>
+		<line width="2" colour="tourism#e180a2"/>
 		<area colour="tourism#e180a2"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
