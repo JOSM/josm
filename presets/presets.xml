@@ -1924,7 +1924,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="sport" value="skiing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="piste:type" text="Piste type" values="downhill,nordic,snow_park" default="" delete_if_empty="true" />
-            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermedia,advance,expert,freeride" default="" delete_if_empty="true" />
+            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
         <item name="Shooting" icon="presets/range.png" type="node,closedway">
