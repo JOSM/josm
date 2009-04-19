@@ -575,6 +575,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="highway" v="pedestrian"/>
 		<line width="3" realwidth="5" colour="foot#00ff00"/>
+		<area colour="foot#00ff00"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
@@ -723,6 +724,13 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<condition k="highway" v="construction"/>
 		<line width="2" realwidth="5" colour="construction#ffff00" dashed="true"/>
 		<icon src="misc/construction.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="emergency_access_point"/>
+		<icon src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1333,6 +1341,30 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="power_source" v="coal"/>
+		<icon annotate="true" src="misc/landmark/power/fossil.png"/>
+		<area colour="power#eeeeee"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="power_source" v="gas"/>
+		<icon annotate="true" src="misc/landmark/power/fossil.png"/>
+		<area colour="power#eeeeee"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="power_source" v="photovoltaic"/>
+		<icon annotate="true" src="misc/landmark/power/fossil.png"/>
+		<area colour="power#eeeeee"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="power_source" v="nuclear"/>
 		<icon annotate="true" src="misc/landmark/power/nuclear.png"/>
 		<area colour="power#eeeeee"/>
@@ -1915,7 +1947,28 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="religion" v="spiritualist"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="religion" v="taoist"/>
+		<icon annotate="true" src="religion/taoism.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="unitarian"/>
+		<icon annotate="true" src="religion/taoism.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="religion" v="zoroastrian"/>
 		<icon annotate="true" src="religion/taoism.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2479,6 +2532,22 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="shop" v="shoes"/>
 		<icon annotate="true" src="shop/shoes.png"/>
+		<area colour="shop#00005f"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="sports"/>
+		<icon annotate="true" src="sport/multi.png"/>
+		<area colour="shop#00005f"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="stationery"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3076,6 +3145,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="natural" v="cliff"/>
 		<icon src="misc/no_icon.png"/>
+		<line width="2" colour="natural#002f00"/>
 		<area colour="natural#002f00"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3123,6 +3193,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="natural" v="marsh"/>
+		<icon src="misc/deprecated.png"/>
+		<area colour="deprecated#ff0000"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="natural" v="wetland"/>
 		<icon src="misc/no_icon.png"/>
 		<area colour="marsh#4f4ff3"/>
 		<scale_min>1</scale_min>
