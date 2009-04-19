@@ -2156,7 +2156,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Place of Worship" />
             <key key="amenity" value="place_of_worship" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" default="" delete_if_empty="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
         </item>
         <separator/>
@@ -2513,12 +2513,12 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="shop" value="outdoor" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>    
-        <item name="sports" icon="presets/empty.png" type="node,closedway">
+        <item name="Sports" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Sports Shop" />
             <key key="shop" value="sports" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="optician" icon="presets/empty.png" type="node,closedway">
+        <item name="Optician" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Optician" />
             <key key="shop" value="optician" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2844,7 +2844,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Graveyard" />
             <key key="amenity" value="grave_yard" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" default="" delete_if_empty="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
         </item>
         <item name="Cemetery" icon="presets/cemetery.png" type="node,closedway,relation">
@@ -2853,7 +2853,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <space />
             <key key="landuse" value="cemetery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarianist,zoroastrian" default="" delete_if_empty="true" />
+            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" default="" delete_if_empty="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
         </item>
         <item name="Retail" icon="presets/landuse.png" type="node,closedway,relation">
