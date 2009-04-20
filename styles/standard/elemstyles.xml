@@ -598,8 +598,15 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="direction" v="clockwise"/>
+		<icon annotate="true" src="vehicle/restriction/roundabout_left.png" priority="10000"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="highway" v="mini_roundabout"/>
-		<icon annotate="true" src="vehicle/restriction/roundabout_left.png"/>
+		<icon annotate="true" src="vehicle/restriction/roundabout_right.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2585,9 +2592,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
-	<!-- duplicate of shoppping_centre? -->
+	<!-- duplicate of shopping_centre? -->
 	<rule>
-		<condition k="shop" v="shoppping_centre"/>
+		<condition k="shop" v="shopping_centre"/>
 		<icon annotate="true" src="shop/mall.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
