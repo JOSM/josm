@@ -1113,6 +1113,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="platform"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="2" colour="rail#404040"/>
 		<area colour="rail#404040"/>
 		<scale_min>1</scale_min>
@@ -1202,6 +1203,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="aerialway" v="gondola"/>
+		<line width="1" colour="aerialway#663300" dashed="9"/>
+		<icon annotate="true" src="transport/aerialway/cable_car.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="aerialway" v="chair_lift"/>
 		<line width="1" colour="aerialway#663300" dashed="6"/>
 		<icon annotate="true" src="transport/aerialway/chair_lift.png"/>
@@ -1221,14 +1230,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<condition k="aerialway" v="station"/>
 		<area colour="aerialway#663300"/>
 		<icon annotate="true" src="transport/aerialway/station.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="aerialway" v="gondola"/>
-		<line width="1" colour="aerialway#663300" dashed="9"/>
-		<icon annotate="true" src="transport/aerialway/cable_car.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1969,14 +1970,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="religion" v="unitarian"/>
-		<icon annotate="true" src="religion/taoism.png"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="religion" v="zoroastrian"/>
-		<icon annotate="true" src="religion/taoism.png"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3201,6 +3202,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="natural" v="marsh"/>
 		<icon src="misc/deprecated.png"/>
+		<line dashed="true" colour="deprecated#ff0000"/>
 		<area colour="deprecated#ff0000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>

@@ -351,7 +351,7 @@
 		<xsl:with-param name="row" select="8"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'surface'"/>
+		<xsl:with-param name="key" select="'direction'"/>
 		<xsl:with-param name="column" select="2"/>
 		<xsl:with-param name="row" select="15"/>
     </xsl:call-template>
@@ -574,18 +574,13 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'power'"/>
 		<xsl:with-param name="column" select="11"/>
-		<xsl:with-param name="row" select="25"/>
+		<xsl:with-param name="row" select="23"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'power_source'"/>
 		<xsl:with-param name="column" select="11"/>
 		<xsl:with-param name="row" select="30"/>
     </xsl:call-template>	
-    <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'military'"/>
-		<xsl:with-param name="column" select="11"/>
-		<xsl:with-param name="row" select="36"/>
-    </xsl:call-template>
 	
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'shop'"/>
@@ -597,12 +592,16 @@
 		<xsl:with-param name="key" select="'tourism'"/>
 		<xsl:with-param name="column" select="13"/>
 		<xsl:with-param name="row" select="1"/>
-    </xsl:call-template>
-		
+    </xsl:call-template>		
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'information'"/>
 		<xsl:with-param name="column" select="13"/>
 		<xsl:with-param name="row" select="19"/>
+    </xsl:call-template>
+    <xsl:call-template name="topic">
+		<xsl:with-param name="key" select="'military'"/>
+		<xsl:with-param name="column" select="13"/>
+		<xsl:with-param name="row" select="36"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
