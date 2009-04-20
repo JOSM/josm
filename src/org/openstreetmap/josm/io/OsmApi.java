@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.SAXParserFactory;
@@ -77,6 +78,22 @@ public class OsmApi extends OsmConnection {
      * true if successfully initialized
      */
     private boolean initialized = false;
+
+    /**
+     * list of server error messages (as transported in the Error: header) and their translations.
+     */
+    public static final HashMap<String,String> serverErrorTranslations;
+
+    static {
+        serverErrorTranslations = new HashMap<String,String>();
+        serverErrorTranslations.put("Database offline for maintenance", 
+            tr("Database offline for maintenance"));
+        serverErrorTranslations.put("You must make your edits public to upload new data",
+            tr("You must make your edits public to upload new data"));
+        // FIXME there is one additional server error message that goes
+        // "You requested too many nodes (limit is #{APP_CONFIG['max_number_of_nodes']}). Either request a smaller area, or use planet.osm"
+        // but we would have to switch this mechanism to using regular expressions if we wanted to translate that...
+    }
     
     private StringWriter swriter = new StringWriter();
     private OsmWriter osmWriter = new OsmWriter(new PrintWriter(swriter), true, null);
@@ -409,7 +426,9 @@ public class OsmApi extends OsmConnection {
                 // Look for a detailed error message from the server
                 if (activeConnection.getHeaderField("Error") != null) {
                     statusMessage.append(": ");
-                    statusMessage.append(activeConnection.getHeaderField("Error"));
+                    String er = activeConnection.getHeaderField("Error");
+                    if (serverErrorTranslations.containsKey(er)) er = serverErrorTranslations.get(er);
+                    statusMessage.append(er);
                 }
                 activeConnection.disconnect();
                 
