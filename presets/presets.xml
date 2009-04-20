@@ -1343,7 +1343,14 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="aerialway" value="cable_car" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Gondola" icon="presets/cable_car.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit Gondola" />
+            <key key="aerialway" value="gondola" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Station" icon="presets/aerialway_station.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps" />
             <label text="Edit Station" />
             <key key="aerialway" value="station" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
