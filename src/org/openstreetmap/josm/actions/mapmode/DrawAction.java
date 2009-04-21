@@ -161,8 +161,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         // This happens when nothing is selected, but we still want to highlight the "target node"
-        if(mouseOnExistingNode == null && Main.ds.getSelected().size() == 0
-                && mousePos != null && !shift)
+        if (mouseOnExistingNode == null && Main.ds.getSelected().size() == 0
+                && mousePos != null)
             mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos);
 
         if (mouseOnExistingNode != null) {
@@ -175,7 +175,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         // Insert the node into all the nearby way segments
-        if(mouseOnExistingWays.size() == 0) {
+        if (mouseOnExistingWays.size() == 0) {
             setCursor(Cursors.crosshair);
             return;
         }
@@ -184,8 +184,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // We also need this list for the statusbar help text
         oldHighlights.addAll(mouseOnExistingWays);
-        if(!drawTargetHighlight) return;
-        for(Way w : mouseOnExistingWays) {
+        if (!drawTargetHighlight) return;
+        for (Way w : mouseOnExistingWays) {
             w.highlighted = true;
         }
     }
@@ -313,7 +313,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         boolean newNode = false;
         Node n = null;
 
-        if (!ctrl && !shift)
+        if (!ctrl)
             n = Main.map.mapView.getNearestNode(mousePos);
 
         if (n != null) {
@@ -394,10 +394,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // he must have a way and a node selected (connection is made to the selected node).
 
         // If the above does not apply, the selection is cleared and a new try is started
+        
+  
+        
         boolean extendedWay = false;
         boolean wayIsFinishedTemp = wayIsFinished;
         wayIsFinished = false;
-        if (selection.size() > 0) {
+        
+        // don't draw lines if shift is held
+        if (selection.size() > 0 && !shift) {
             Node selectedNode = null;
             Way selectedWay = null;
 
@@ -626,7 +631,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setHeading(-1);
         Main.map.statusLine.setDist(-1);
 
-        if (!ctrl && !shift && mousePos != null) {
+        if (!ctrl && mousePos != null) {
             currentMouseNode = Main.map.mapView.getNearestNode(mousePos);
         }
 
@@ -820,7 +825,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     public void paint(Graphics g, MapView mv) {
-        if (!drawHelperLine || wayIsFinished) return;
+        if (!drawHelperLine || wayIsFinished || shift) return;
 
         // sanity checks
         if (Main.map.mapView == null) return;
@@ -858,8 +863,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          *  No modifiers: all (Connect, Node Re-Use, Auto-Weld)
          *  CTRL: disables node re-use, auto-weld
-         *  Shift: disables node re-use
-         *  ALT: disables connect
+         *  Shift: do not make connection
+         *  ALT: make connection but start new way in doing so
          */
 
         /*
@@ -876,17 +881,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // oldHighlights stores the current highlights. If this
         // list is empty we can assume that we won't do any joins
-        if(ctrl || oldHighlights.isEmpty())
+        if (ctrl || oldHighlights.isEmpty()) {
             rv = tr("Create new node.");
-        else if(shift) {
-            // We already know oldHighlights is not empty, but shift is pressed.
-            // We can assume the new node will be joined into an existing way
-            rv = trn("Insert new node into way.", "Insert new node into {0} ways.",
-            oldHighlights.size(), oldHighlights.size());
         } else {
             // oldHighlights may store a node or way, check if it's a node
             OsmPrimitive x = oldHighlights.iterator().next();
-            if(x instanceof Node)
+            if (x instanceof Node)
                 rv = tr("Select node under cursor.");
             else
                 rv = trn("Insert new node into way.", "Insert new node into {0} ways.",
@@ -897,7 +897,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
          * Check whether a connection will be made
          */
         if (currentBaseNode != null && !wayIsFinished) {
-            if(alt)
+            if (alt)
                 rv += " " + tr("Start new way from last node.");
             else
                 rv += " " + tr("Continue way from last node.");
@@ -907,8 +907,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Handle special case: Highlighted node == selected node => finish drawing
          */
-        if(n != null && Main.ds.getSelectedNodes().contains(n)) {
-            if(wayIsFinished)
+        if (n != null && Main.ds.getSelectedNodes().contains(n)) {
+            if (wayIsFinished)
                 rv = tr("Select node under cursor.");
             else
                 rv = tr("Finish drawing.");
@@ -917,10 +917,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Handle special case: Self-Overlapping or closing way
          */
-        if(Main.ds.getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
+        if (Main.ds.getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
             Way w = (Way) Main.ds.getSelectedWays().iterator().next();
-            for(Node m : w.nodes) {
-                if(m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
+            for (Node m : w.nodes) {
+                if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
                     rv += " " + tr("Finish drawing.");
                     break;
                 }
