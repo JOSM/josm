@@ -1641,14 +1641,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
-        <item name="Information Office" icon="presets/informationoffice.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
-            <label text="Edit Information Office" />
-            <key key="tourism" value="information" />
-            <key key="information" value="office" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
-        </item>
         <item name="Museum" icon="presets/State_Public.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=museum" />
             <label text="Edit Museum" />
@@ -1681,10 +1673,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Guidepost (Hiking)" icon="presets/guidepost.png" type="node">
-            <link href="http://wiki.openstreetmap.org/index.php/Proposed_features/Guidepost" />
+        <item name="Information Office" icon="presets/informationoffice.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
+            <label text="Edit Information Office" />
             <key key="tourism" value="information" />
-            <key key="information" value="guidepost" />
+            <key key="information" value="office" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
         <item name="Map" icon="presets/map.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
@@ -1700,12 +1695,18 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <combo key="information" text="Board Type" values="board,history,nature,wildlife" default="board" delete_if_empty="true" />
             <text key="description" text="Closer Description" default="" delete_if_empty="true" />
         </item>
+        <item name="Guidepost (Hiking)" icon="presets/guidepost.png" type="node">
+            <link href="http://wiki.openstreetmap.org/index.php/Proposed_features/Guidepost" />
+            <key key="tourism" value="information" />
+            <key key="information" value="guidepost" />
+        </item>
         <item name="Other Information Points" icon="presets/information.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism%3Dinformation" />
             <key key="tourism" value="information" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="description" text="Closer Description" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Shelter" icon="presets/shelter.png" type="node,closedway">
             <label text="Edit Shelter" />
             <key key="amenity" value="shelter" />
@@ -2949,6 +2950,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Landuse -->
+    <separator/>
 <!-- FIXME: element role not yet supported! -->
     <group name="Relations" icon="presets/empty.png">
         <item name="Multipolygon" icon="presets/empty.png" type="relation">
