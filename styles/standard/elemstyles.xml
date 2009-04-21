@@ -352,6 +352,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="bollard"/>
 		<icon annotate="true" src="vehicle/restriction/bollard.png"/>
+        <line width="3" colour="barrier#F0F050"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -362,14 +363,10 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
-		<condition k="barrier" v="speed_bump"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
 		<condition k="barrier" v="hedge"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+        <line width="3" colour="barrier#F0F050"/>
+        <area colour="barrier#F0F050"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -381,19 +378,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 	<rule>
 		<condition k="barrier" v="fence"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="barrier" v="wood_fence"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="barrier" v="wire_fence"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+        <line width="3" colour="barrier#F0F050"/>
+        <area colour="barrier#F0F050"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -404,8 +391,113 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
-		<condition k="barrier"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
+		<condition k="barrier" v="lift_gate"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="wall"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+        <line width="3" colour="barrier#F0F050"/>
+        <area colour="barrier#F0F050"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="toll_booth"/>
+		<icon annotate="true" src="vehicle/toll_booth.png"/>
+        <area colour="barrier#F0F050"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="kissing_gate"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="city_wall"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+        <line width="3" colour="barrier#F0F050"/>
+        <area colour="barrier#F0F050"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="entrance"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="retaining_wall"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+        <line width="3" colour="barrier#F0F050"/>
+        <area colour="barrier#F0F050"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="cattle_grid"/>
+		<icon annotate="true" src="vehicle/cattle_grid.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="block"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+        <line width="3" colour="barrier#F0F050"/>
+        <area colour="barrier#F0F050"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="border_control"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="bump_gate"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="sally_port"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="portcullis"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="spikes"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="bus_trap"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="drawbridge"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
+		<condition k="barrier" v="hampshire_gate"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -655,14 +747,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="cattle_grid"/>
-		<icon annotate="true" src="vehicle/cattle_grid.png"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="highway" v="toll_booth"/>
-		<icon annotate="true" src="vehicle/toll_booth.png"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -683,7 +775,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="viaduct"/>
-		<line width="2" realwidth="5" dashed="true" colour="viaduct#ff0000"/>
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -738,6 +830,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="highway" v="emergency_access_point"/>
 		<icon src="misc/no_icon.png"/>
+		<area colour="emergency_access_point#c0c0c0"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1007,7 +1100,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="viaduct"/>
-		<line width="2" realwidth="5" dashed="true" colour="viaduct#ff0000"/>
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1652,14 +1745,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
-		<condition k="amenity" v="baby_hatch"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<area colour="amenity#ecba52"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="amenity" v="biergarten"/>
 		<icon annotate="true" src="food/biergarten.png"/>
 		<area colour="amenity#ecba52"/>
@@ -2082,6 +2167,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<condition k="amenity" v="nursery"/>
 		<area colour="health#eeeeee"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="baby_hatch"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<area colour="health#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
