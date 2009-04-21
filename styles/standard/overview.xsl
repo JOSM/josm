@@ -356,31 +356,31 @@
 		<xsl:with-param name="row" select="15"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'bridge'"/>
+		<xsl:with-param name="key" select="'junction'"/>
 		<xsl:with-param name="column" select="2"/>
-		<xsl:with-param name="row" select="21"/>
+		<xsl:with-param name="row" select="17"/>
+    </xsl:call-template>
+	<xsl:call-template name="topic">
+		<xsl:with-param name="key" select="'restriction'"/>
+		<xsl:with-param name="column" select="2"/>
+		<xsl:with-param name="row" select="20"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'tunnel'"/>
 		<xsl:with-param name="column" select="2"/>
-		<xsl:with-param name="row" select="33"/>
+		<xsl:with-param name="row" select="36"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'mountain_pass'"/>
 		<xsl:with-param name="column" select="2"/>
-		<xsl:with-param name="row" select="37"/>
-    </xsl:call-template>
-    <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'junction'"/>
-		<xsl:with-param name="column" select="2"/>
 		<xsl:with-param name="row" select="40"/>
     </xsl:call-template>
+    
 	<xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'barrier'"/>
 		<xsl:with-param name="column" select="3"/>
-		<xsl:with-param name="row" select="30"/>
+		<xsl:with-param name="row" select="29"/>
     </xsl:call-template>
-	
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'access'"/>
 		<xsl:with-param name="column" select="3"/>
@@ -492,11 +492,6 @@
 		<xsl:with-param name="column" select="4"/>
 		<xsl:with-param name="row" select="21"/>
     </xsl:call-template>
-	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'restriction'"/>
-		<xsl:with-param name="column" select="4"/>
-		<xsl:with-param name="row" select="25"/>
-    </xsl:call-template>
 		
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'railway'"/>
@@ -507,6 +502,11 @@
 		<xsl:with-param name="key" select="'service'"/>
 		<xsl:with-param name="column" select="5"/>
 		<xsl:with-param name="row" select="21"/>
+    </xsl:call-template>
+    <xsl:call-template name="topic">
+		<xsl:with-param name="key" select="'bridge'"/>
+		<xsl:with-param name="column" select="5"/>
+		<xsl:with-param name="row" select="26"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'route'"/>
@@ -534,7 +534,6 @@
 		<xsl:with-param name="column" select="6"/>
 		<xsl:with-param name="row" select="25"/>
     </xsl:call-template>
-	
 
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'amenity'"/>
@@ -561,9 +560,9 @@
     </xsl:call-template>
 
     <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'historic'"/>
+		<xsl:with-param name="key" select="'information'"/>
 		<xsl:with-param name="column" select="10"/>
-		<xsl:with-param name="row" select="19"/>
+		<xsl:with-param name="row" select="16"/>
     </xsl:call-template>
 	
     <xsl:call-template name="topic">
@@ -594,7 +593,7 @@
 		<xsl:with-param name="row" select="1"/>
     </xsl:call-template>		
     <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'information'"/>
+		<xsl:with-param name="key" select="'historic'"/>
 		<xsl:with-param name="column" select="13"/>
 		<xsl:with-param name="row" select="19"/>
     </xsl:call-template>
