@@ -6,9 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 
@@ -29,6 +28,7 @@ public class OsmServerWriter {
      * than where passed in the list to upload*.
      */
     public Collection<OsmPrimitive> processed;
+   
 
     private OsmApi api = new OsmApi();
     
@@ -73,23 +73,9 @@ public class OsmServerWriter {
         boolean useDiffUploads = Main.pref.getBoolean("osm-server.atomic-upload",
             "0.6".equals(api.getVersion()));
 
-        // solicit commit comment from user
-        String comment = null;
-        while (useChangesets && comment == null) {
-            comment = JOptionPane.showInputDialog(Main.parent,
-                 tr("Provide a brief comment for the changes you are uploading:"),
-                 tr("Commit comment"), JOptionPane.QUESTION_MESSAGE);
-            if (comment == null)
-                return;
-            // Don't let people just hit enter
-            if (comment.trim().length() >= 3)
-                break;
-            comment = null;
-        }
-        
         // create changeset if required
         try {
-            if (useChangesets) api.createChangeset(comment);
+            if (useChangesets) api.createChangeset(UploadAction.lastCommitComment);
         } catch (OsmTransferException ex) {
             dealWithTransferException(ex);
             return;

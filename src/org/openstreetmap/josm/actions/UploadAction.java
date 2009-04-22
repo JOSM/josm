@@ -14,6 +14,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -35,6 +36,13 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class UploadAction extends JosmAction {
 
+    /**
+     * Last commit message used for uploading changes.
+     * FIXME save this in preferences, or even offer list of 10 last recently used comments?
+     * FIXME ugly hack; value is filled here and retrieved in the OsmApi class; find better way
+     */
+    public static String lastCommitComment; 
+    
     /** Upload Hook */
     public interface UploadHook {
         /**
@@ -97,12 +105,28 @@ public class UploadAction extends JosmAction {
                     l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
                     p.add(new JScrollPane(l), GBC.eol().fill());
                 }
+                
+                p.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
+                final JTextField cmt = new JTextField(lastCommitComment);
+                p.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
 
-                return new ExtendedDialog(Main.parent, 
+                while(true) {
+                    int result = new ExtendedDialog(Main.parent, 
                         tr("Upload these changes?"), 
                         p,
                         new String[] {tr("Upload Changes"), tr("Cancel")}, 
-                        new String[] {"upload.png", "cancel.png"}).getValue() == 1;  
+                        new String[] {"upload.png", "cancel.png"}).getValue();
+                    
+                    // cancel pressed
+                    if (result != 1) return false;
+                    
+                    // don't allow empty commit message
+                    if (cmt.getText().trim().length() < 3) continue;
+                    
+                    lastCommitComment = cmt.getText().trim();
+                    break;
+                }
+                return true;
             }
         });
     }
