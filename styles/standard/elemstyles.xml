@@ -3999,6 +3999,12 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<!-- special display of unreviewed tiger data (USA) -->
+	<rule>
+		<condition k="tiger:reviewed" v="no"/>
+		<linemod mode="under" width="10" colour="#808000"/>
+	</rule>
+
 	<!-- lot's of "openGeoDB:..." tags can be found in germany -->
 	<rule>
 		<condition k="openGeoDB:type" v="Stadt"/>
@@ -4214,5 +4220,6 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
+
 
 </rules>
