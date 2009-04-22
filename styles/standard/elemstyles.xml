@@ -1174,7 +1174,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="railway" v="abandoned"/>
-		<line width="1" colour="oldrail#202020" dashed="true"/>
+		<line width="1" colour="oldrail#202020" dashed="true" priority="-10000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
