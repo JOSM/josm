@@ -2439,6 +2439,14 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 
 	<rule>
+		<condition k="shop" v="alcohol"/>
+		<icon annotate="true" src="shop/beverages.png"/>
+		<area colour="shop#00005f"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="shop" v="beverages"/>
 		<icon annotate="true" src="shop/beverages.png"/>
 		<area colour="shop#00005f"/>

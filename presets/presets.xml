@@ -2437,8 +2437,14 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="shop" value="organic" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Alcohol" icon="presets/empty.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=alcohol" />
+            <label text="Edit Alcohol Shop" />
+            <key key="shop" value="alcohol" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Beverages" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Beverages  Shop" />
+            <label text="Edit Beverages Shop" />
             <key key="shop" value="beverages" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
