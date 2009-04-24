@@ -70,11 +70,6 @@ public class RelationEditor extends ExtendedDialog {
     private JLabel status;
 
     /**
-     * True if the relation is ordered (API 0.6). False for API 0.5.
-     */
-    boolean ordered;
-
-    /**
      * The property data.
      */
     private final DefaultTableModel propertyData = new DefaultTableModel() {
@@ -103,76 +98,6 @@ public class RelationEditor extends ExtendedDialog {
      */
     private final JTable propertyTable = new JTable(propertyData);
     private final JTable memberTable = new JTable(memberData);
-
-    // =================== FIXME =====================
-    // As soon as API 0.5 is dead, drop all the collation stuff from here ...
-
-    /**
-     * Collator for sorting the roles and entries of the member table.
-     */
-    private static final Collator collator;
-    static {
-        collator = Collator.getInstance();
-        collator.setStrength(Collator.PRIMARY);
-    }
-
-    /**
-     * Compare role strings.
-     */
-    private static int compareRole(String s1, String s2) {
-        int last1 = s1.lastIndexOf('_');
-        if (last1 > 0) {
-            int last2 = s2.lastIndexOf('_');
-            if (last2 == last1) {
-                String prefix1 = s1.substring(0, last1);
-                String prefix2 = s2.substring(0, last2);
-
-                if (prefix1.equalsIgnoreCase(prefix2)) {
-                    // Both roles have the same prefix, now determine the
-                    // suffix.
-                    String suffix1 = s1.substring(last1 + 1, s1.length());
-                    String suffix2 = s2.substring(last2 + 1, s2.length());
-
-                    if (suffix1.matches("\\d+") && suffix2.matches("\\d+")) {
-                        // Suffix is an number -> compare it.
-                        int i1 = Integer.parseInt(suffix1);
-                        int i2 = Integer.parseInt(suffix2);
-
-                        return i1 - i2;
-                    }
-                }
-            }
-        }
-        if(s1.length() == 0 && s2.length() != 0)
-            return 1;
-        else if(s2.length() == 0 && s1.length() != 0)
-            return -1;
-
-        // Default handling if the role name is nothing like "stop_xx"
-        return collator.compare(s1, s2);
-    }
-
-
-    /**
-     * Compare two OsmPrimitives.
-     */
-    private static int compareMembers(OsmPrimitive o1, OsmPrimitive o2) {
-        return collator.compare(o1.getName(), o2.getName());
-    }
-
-    private final Comparator<RelationMember> memberComparator = new Comparator<RelationMember>() {
-        public int compare(RelationMember r1, RelationMember r2) {
-            int roleResult = compareRole(r1.role, r2.role);
-
-            if (roleResult == 0)
-                roleResult = compareMembers(r1.member, r2.member);
-
-            return roleResult;
-        }
-    };
-
-    // =================== FIXME FIXME FIXME =====================
-    // ... until here, and also get rid of the "Collections.sort..." below.
 
     // We need this twice, so cache result
     protected final static String applyChangesText = tr("Apply Changes");
@@ -213,7 +138,6 @@ public class RelationEditor extends ExtendedDialog {
         );
 
         this.relation = relation;
-        ordered = !Main.pref.get("osm-server.version", "0.5").equals("0.5");
 
         if (relation == null) {
             // create a new relation
@@ -221,7 +145,6 @@ public class RelationEditor extends ExtendedDialog {
         } else {
             // edit an existing relation
             this.clone = new Relation(relation);
-            if (!ordered) Collections.sort(this.clone.members, memberComparator);
         }
 
         JPanel bothTables = setupBasicLayout(selectedMembers);
@@ -345,15 +268,13 @@ public class RelationEditor extends ExtendedDialog {
      * @return JPanel with basic buttons
      */
     private JPanel setupBasicButtons() {
-        JPanel buttonPanel = new JPanel(new GridLayout(2,ordered ? 3 : 2));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 3));
 
-        if (ordered) {
-            buttonPanel.add(createButton(marktr("Move Up"), "moveup", tr("Move the currently selected members up"), KeyEvent.VK_N, new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    moveMembers(-1);
-                }
-            }));
-        }
+        buttonPanel.add(createButton(marktr("Move Up"), "moveup", tr("Move the currently selected members up"), KeyEvent.VK_N, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                moveMembers(-1);
+            }
+        }));
 
         buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
         tr("Add all currently selected objects as members"), KeyEvent.VK_D, new ActionListener() {
@@ -369,13 +290,11 @@ public class RelationEditor extends ExtendedDialog {
             }
         }));
 
-        if(ordered) {
-            buttonPanel.add(createButton(marktr("Move Down"), "movedown", tr("Move the currently selected members down"), KeyEvent.VK_J, new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    moveMembers(1);
-                }
-            }));
-        }
+        buttonPanel.add(createButton(marktr("Move Down"), "movedown", tr("Move the currently selected members down"), KeyEvent.VK_J, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                moveMembers(1);
+            }
+        }));
 
         buttonPanel.add(createButton(marktr("Remove"),"remove",
         tr("Remove the member in the current table row from this relation"), KeyEvent.VK_M, new ActionListener() {
@@ -466,32 +385,18 @@ public class RelationEditor extends ExtendedDialog {
 
     private void addSelected() {
         for (OsmPrimitive p : Main.ds.getSelected()) {
-            boolean skip = false;
             // ordered relations may have the same member multiple times.
             // TODO: visual indication of the fact that one is there more than once?
-            if (!ordered)
-            {
-                for (RelationMember rm : clone.members) {
-                    if (rm.member == p || p == relation)
-                    {
-                        skip = true;
-                        break;
-                    }
-                }
-            }
-            if (!skip)
-            {
-                RelationMember em = new RelationMember();
-                em.member = p;
-                em.role = "";
-                // when working with ordered relations, we make an effort to
-                // add the element before the first selected member.
-                int[] rows = memberTable.getSelectedRows();
-                if (ordered && rows.length > 0) {
-                    clone.members.add(rows[0], em);
-                } else {
-                    clone.members.add(em);
-                }
+            RelationMember em = new RelationMember();
+            em.member = p;
+            em.role = "";
+            // when working with ordered relations, we make an effort to
+            // add the element before the first selected member.
+            int[] rows = memberTable.getSelectedRows();
+            if (rows.length > 0) {
+                clone.members.add(rows[0], em);
+            } else {
+                clone.members.add(em);
             }
         }
         refreshTables();

@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * A dialog showing all known relations, with buttons to add, edit, and
  * delete them.
  *
- * We don't have such dialogs for nodes, segments, and ways, becaus those
+ * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
  *
  * @author Frederik Ramm <frederik@remote.org>
