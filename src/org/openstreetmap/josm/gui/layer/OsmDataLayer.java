@@ -18,6 +18,7 @@ import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -233,9 +234,15 @@ public class OsmDataLayer extends Layer {
         visitor.fixReferences();
 //        System.out.println("");
 
-        // copy the merged layer's data source info
-        for (DataSource src : ((OsmDataLayer)from).data.dataSources)
-            data.dataSources.add(src);
+        Area a = data.getDataSourceArea();
+        
+        // copy the merged layer's data source info; 
+        // only add source rectangles if they are not contained in the
+        // layer already.
+        for (DataSource src : ((OsmDataLayer)from).data.dataSources) {
+            if (a == null || !a.contains(src.bounds.asRect()))
+                data.dataSources.add(src);
+        }
         
         // copy the merged layer's API version, downgrade if required
         if (data.version == null) {
