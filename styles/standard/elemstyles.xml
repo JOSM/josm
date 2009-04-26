@@ -667,7 +667,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="highway" v="pedestrian"/>
 		<line width="3" realwidth="5" colour="foot#00ff00"/>
-		<area colour="foot#00ff00"/>
+		<!-- seems to be common to use area=yes for areas here -->
+		<!-- some people seem to have problems that polylines displayed as areas, so comment this out -->
+		<!--<area colour="foot#00ff00"/>-->
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
@@ -1524,7 +1526,9 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="man_made" v="pier"/>
-		<area colour="pier#660000"/>
+		<!-- seems to be common to use area=yes for areas here -->
+		<!-- some people seem to have problems that polylines displayed as areas, so comment this out -->
+		<!--<area colour="pier#660000"/>-->
 		<line width="2" colour="pier#660000"/>
 		<icon annotate="true" src="nautical/pier.png"/>
 		<scale_min>1</scale_min>
