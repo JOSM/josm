@@ -108,7 +108,7 @@ public class DataSet implements Cloneable {
         }
     }
 
-    public Collection<OsmPrimitive> getSelectedPhysical() {
+    public Collection<OsmPrimitive> getSelectedNodesAndWays() {
         Collection<OsmPrimitive> sel = getSelected(nodes);
         sel.addAll(getSelected(ways));
         return sel;

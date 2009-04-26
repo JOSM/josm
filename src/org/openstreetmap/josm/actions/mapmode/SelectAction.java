@@ -203,7 +203,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         } else {
             // Currently we support moving and rotating, which do not affect relations.
             // So don't add them in the first place to make handling easier
-            Collection<OsmPrimitive> selection = Main.ds.getSelectedPhysical();
+            Collection<OsmPrimitive> selection = Main.ds.getSelectedNodesAndWays();
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
             // when rotating, having only one node makes no sense - quit silently
