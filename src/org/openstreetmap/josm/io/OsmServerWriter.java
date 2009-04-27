@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -124,10 +126,7 @@ public class OsmServerWriter {
     }
 
     private void dealWithTransferException (OsmTransferException e) {
-        Main.pleaseWaitDlg.currentAction.setText(tr("Transfer aborted due to error (will wait for 5 seconds):") + e.getMessage());
-        try {
-            Thread.sleep(5000);
-        }
-        catch (InterruptedException ex) {}
+        JOptionPane.showMessageDialog(Main.parent, 
+            /* tr("Error during upload: ") + */ e.getMessage());
     }
 }

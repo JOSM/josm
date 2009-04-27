@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -18,7 +20,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -77,22 +78,6 @@ public class OsmApi extends OsmConnection {
      * true if successfully initialized
      */
     private boolean initialized = false;
-
-    /**
-     * list of server error messages (as transported in the Error: header) and their translations.
-     */
-    public static final HashMap<String,String> serverErrorTranslations;
-
-    static {
-        serverErrorTranslations = new HashMap<String,String>();
-        serverErrorTranslations.put("Database offline for maintenance", 
-            tr("Database offline for maintenance"));
-        serverErrorTranslations.put("You must make your edits public to upload new data",
-            tr("You must make your edits public to upload new data"));
-        // FIXME there is one additional server error message that goes
-        // "You requested too many nodes (limit is #{APP_CONFIG['max_number_of_nodes']}). Either request a smaller area, or use planet.osm"
-        // but we would have to switch this mechanism to using regular expressions if we wanted to translate that...
-    }
     
     private StringWriter swriter = new StringWriter();
     private OsmWriter osmWriter = new OsmWriter(new PrintWriter(swriter), true, null);
@@ -399,9 +384,9 @@ public class OsmApi extends OsmConnection {
                     OutputStream out = activeConnection.getOutputStream();
                     out.close();
                 }
+                
                 activeConnection.connect();
                 System.out.println(activeConnection.getResponseMessage());
-
                 int retCode = activeConnection.getResponseCode();
                 
                 if (retCode >= 500) {
@@ -413,7 +398,17 @@ public class OsmApi extends OsmConnection {
 
                 // populate return fields.
                 responseBody.setLength(0);
-                BufferedReader in = new BufferedReader(new InputStreamReader(activeConnection.getInputStream()));
+                
+                // If the API returned an error code like 403 forbidden, getInputStream
+                // will fail with an IOException.
+                InputStream i = null;
+                try {
+                    i = activeConnection.getInputStream();
+                } catch (IOException ioe) {
+                    i = activeConnection.getErrorStream();
+                }
+                BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                
                 String s;
                 while((s = in.readLine()) != null) {
                     responseBody.append(s);
@@ -421,13 +416,16 @@ public class OsmApi extends OsmConnection {
                 }
 
                 statusMessage.setLength(0);
-                statusMessage.append (activeConnection.getResponseMessage());
                 // Look for a detailed error message from the server
                 if (activeConnection.getHeaderField("Error") != null) {
-                    statusMessage.append(": ");
                     String er = activeConnection.getHeaderField("Error");
-                    if (serverErrorTranslations.containsKey(er)) er = serverErrorTranslations.get(er);
-                    statusMessage.append(er);
+                    System.err.println("Error header: " + er);
+                    statusMessage.append(tr(er));
+                } else if (retCode != 200 && responseBody.length()>0) {
+                    System.err.println("Error body: " + responseBody);
+                    statusMessage.append(tr(responseBody.toString()));
+                } else {
+                    statusMessage.append(activeConnection.getResponseMessage());
                 }
                 activeConnection.disconnect();
                 
