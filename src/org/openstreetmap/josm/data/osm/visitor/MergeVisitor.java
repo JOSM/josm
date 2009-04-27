@@ -57,7 +57,7 @@ public class MergeVisitor extends AbstractVisitor {
             Collection<P> myprims, Collection<P> mergeprims,
             HashMap<Long, P> primhash) {
         // 1. Try to find an identical prim with the same id.
-        if (mergeAfterId(myprims, primhash, other))
+        if (mergeById(myprims, primhash, other))
             return;
 
         // 2. Try to find a prim we can merge with the prim from the other ds.
@@ -199,6 +199,7 @@ public class MergeVisitor extends AbstractVisitor {
             if (my.id == 0 && other.id != 0) {
                 my.id = other.id;
                 my.modified = other.modified; // match a new node
+                my.version = other.version;
             } else if (my.id != 0 && other.id != 0 && other.modified)
                 my.modified = true;
         }
@@ -217,7 +218,7 @@ public class MergeVisitor extends AbstractVisitor {
     /**
      * @return <code>true</code>, if no merge is needed or merge is performed already.
      */
-    private <P extends OsmPrimitive> boolean mergeAfterId(
+    private <P extends OsmPrimitive> boolean mergeById(
             Collection<P> primitives, HashMap<Long, P> hash, P other) {
         // Fast-path merging of identical objects
         if (hash.containsKey(other.id)) {
@@ -234,21 +235,16 @@ public class MergeVisitor extends AbstractVisitor {
                 return true; // no merge needed.
             }
             if (my.realEqual(other, true)) {
-                Date myd = my.getTimestamp();
-                Date otherd = other.getTimestamp();
-
-                // they differ in modified/timestamp combination only. Auto-resolve it.
+                // they differ in modified/version combination only. Auto-resolve it.
                 merged.put(other, my);
-                if (myd.before(otherd)) {
+                if (my.version < other.version) {
+                    my.version = other.version;
                     my.modified = other.modified;
                     my.setTimestamp(other.getTimestamp());
                 }
                 return true; // merge done.
             }
             if (my.id == other.id && my.id != 0) {
-                Date myd = my.getTimestamp();
-                Date otherd = other.getTimestamp();
-
                 if (my.incomplete || other.incomplete) {
                     if (my.incomplete) {
                         my.cloneFrom(other);
@@ -256,17 +252,17 @@ public class MergeVisitor extends AbstractVisitor {
                 } else if (my.modified && other.modified) {
                     conflicts.put(my, other);
                 } else if (!my.modified && !other.modified) {
-                    if (myd.before(otherd)) {
+                    if (my.version < other.version) {
                         my.cloneFrom(other);
                     }
                 } else if (other.modified) {
-                    if (myd.after(otherd)) {
+                    if (my.version > other.version) {
                         conflicts.put(my, other);
                     } else {
                         my.cloneFrom(other);
                     }
                 } else if (my.modified) {
-                    if (myd.before(otherd)) {
+                    if (my.version < other.version) {
                         conflicts.put(my, other);
                     }
                 }
