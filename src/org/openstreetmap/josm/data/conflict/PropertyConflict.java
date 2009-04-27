@@ -27,5 +27,6 @@ public class PropertyConflict extends ConflictItem {
 
     @Override public void apply(OsmPrimitive target, OsmPrimitive other) {
         target.put(key, other.get(key));
+        target.version = Math.max(target.version, other.version);
     }
 }

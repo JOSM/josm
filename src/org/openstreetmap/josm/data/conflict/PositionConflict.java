@@ -24,6 +24,7 @@ public class PositionConflict extends ConflictItem {
         if (target instanceof Node) {
             ((Node)target).coor = ((Node)other).coor;
             ((Node)target).eastNorth = ((Node)other).eastNorth;
+            target.version = Math.max(target.version, other.version);
         }
     }
 }

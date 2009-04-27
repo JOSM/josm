@@ -21,5 +21,6 @@ public class DeleteConflict extends ConflictItem {
 
     @Override public void apply(OsmPrimitive target, OsmPrimitive other) {
         target.deleted = other.deleted;
+        target.version = Math.max(target.version, other.version);
     }
 }
