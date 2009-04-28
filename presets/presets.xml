@@ -825,37 +825,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
     </group> <!-- Waypoints -->
     <group name="Barriers" icon="presets/barrier.png">
-        <item name="Stile" icon="presets/stile.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stile" />
-            <label text="Edit Stile" />
-            <space />
-            <key key="barrier" value="stile" />
-            <label text="Allowed traffic:" />
-            <space />
-            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
-            <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
-        </item> <!-- stile -->
-        <item name="Kissing Gate" icon="presets/empty.png" type="node">
-            <label text="Edit Kissing Gate" />
-            <space />
-            <key key="barrier" value="kissing_gate" />
-            <label text="Allowed traffic:" />
-            <space />
-            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
-            <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
-        </item> <!-- kissing_gate -->
-        <item name="Hampshire Gate" icon="presets/empty.png" type="node">
-            <label text="Edit Hampshire Gate" />
-            <space />
-            <key key="barrier" value="hampshire_gate" />
-            <label text="Allowed traffic:" />
-            <space />
-            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
-            <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
-            <check key="horse" text="Horse" default="off" delete_if_empty="true" />
-            <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
-            <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item> <!-- hampshire_gate -->
+
+        <!-- *** node barriers *** -->    
         <item name="Bollard" icon="presets/bollard.png" type="node,way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=bollard" />
             <label text="Edit Bollard" />
@@ -868,21 +839,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
         </item> <!-- bollard -->
-        <item name="Drawbridge" icon="presets/empty.png" type="node">
-            <label text="Edit Drawbridge" />
-            <space />
-            <key key="barrier" value="drawbridge" />
-            <label text="Allowed traffic:" />
-            <space />
-            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
-            <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
-            <check key="horse" text="Horse" default="off" delete_if_empty="true" />
-            <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
-            <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item> <!-- drawbridge -->
-        <item name="Bus Trap" icon="presets/empty.png" type="node">
-            <key key="barrier" value="bus_trap" />
-        </item> <!-- bus_trap -->
+        <item name="Cycle Barrier" icon="presets/empty.png" type="node">
+            <link de.href="http://de.wikipedia.org/wiki/Umlaufgitter" />
+            <key key="barrier" value="cycle_barrier" />
+        </item> <!-- cycle_barrier -->
+        <item name="Block" icon="presets/empty.png" type="node,way,closedway">
+            <key key="barrier" value="block" />
+        </item> <!-- block -->
         <item name="Cattle Grid" icon="presets/cattle_grid.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cattle_grid" />
             <label text="Edit Cattle Grid" />
@@ -895,6 +858,9 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- cattle_grid -->
+        <item name="Bus Trap" icon="presets/empty.png" type="node">
+            <key key="barrier" value="bus_trap" />
+        </item> <!-- bus_trap -->
         <item name="Spikes" icon="presets/empty.png" type="node">
             <label text="Edit Spikes" />
             <space />
@@ -907,16 +873,65 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- spikes -->
-        <item name="Portcullis" icon="presets/empty.png" type="node">
-            <label text="Edit Portcullis" />
+        <item name="Toll Booth" icon="presets/toll_station.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=toll_booth" />
+            <label text="Edit Toll Booth" />
             <space />
-            <key key="barrier" value="portcullis" />
+            <key key="barrier" value="toll_booth" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            </optional>
+        </item> <!-- toll_booth -->
+        <item name="Border Control" icon="presets/douane.png" type="node">
+            <label text="Edit Border Control" />
+            <space />
+            <key key="barrier" value="border_control" />
             <label text="Allowed traffic:" />
             <space />
+            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
+            <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item> <!-- portcullis -->
+        </item> <!-- border_control -->
+        <separator/>
+        
+        <!-- *** linear barriers *** -->    
+        <item name="Hedge" icon="presets/empty.png" type="way,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=hedge" />
+            <key key="barrier" value="hedge" />
+        </item> <!-- hedge -->
+        <item name="Fence" icon="presets/empty.png" type="way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence" />
+            <key key="barrier" value="fence" />
+        </item> <!-- fence -->
+        <item name="Wall" icon="presets/empty.png" type="way,closedway">
+            <key key="barrier" value="wall" />
+        </item> <!-- wall -->
+        <item name="City Wall" icon="presets/empty.png" type="way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=city_wall" />
+            <key key="barrier" value="city_wall" />
+        </item> <!-- city_wall -->
+        <item name="Retaining Wall" icon="presets/empty.png" type="way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=retaining_wall" />
+            <key key="barrier" value="retaining_wall" />
+        </item> <!-- retaining_wall -->
+        <separator/>
+        
+        <!-- *** access *** -->    
+        <item name="Entrance" icon="presets/empty.png" type="node">
+            <label text="Edit Entrance" />
+            <space />
+            <key key="barrier" value="entrance" />
+            <label text="Allowed traffic:" />
+            <space />
+            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
+            <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
+            <check key="horse" text="Horse" default="off" delete_if_empty="true" />
+            <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
+            <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
+        </item> <!-- entrance -->
         <item name="Gate" icon="presets/gate.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=gate" />
             <label text="Edit Gate" />
@@ -942,10 +957,10 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- lift_gate -->
-        <item name="Sally Port" icon="presets/empty.png" type="node">
-            <label text="Edit Sally Port" />
+        <item name="Hampshire Gate" icon="presets/empty.png" type="node">
+            <label text="Edit Hampshire Gate" />
             <space />
-            <key key="barrier" value="sally_port" />
+            <key key="barrier" value="hampshire_gate" />
             <label text="Allowed traffic:" />
             <space />
             <check key="foot" text="Foot" default="on" delete_if_empty="true" />
@@ -953,7 +968,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item> <!-- sally_port -->
+        </item> <!-- hampshire_gate -->
         <item name="Bump Gate" icon="presets/empty.png" type="node">
             <label text="Edit Bump Gate" />
             <space />
@@ -966,46 +981,29 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- bump_gate -->
-        <item name="Cycle Barrier" icon="presets/empty.png" type="node">
-            <link de.href="http://de.wikipedia.org/wiki/Umlaufgitter" />
-            <key key="barrier" value="cycle_barrier" />
-        </item> <!-- bump_gate -->
-        <item name="Hedge" icon="presets/empty.png" type="way,closedway,relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=hedge" />
-            <key key="barrier" value="hedge" />
-        </item> <!-- hedge -->
-        <item name="Fence" icon="presets/empty.png" type="way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence" />
-            <key key="barrier" value="fence" />
-        </item> <!-- fence -->
-        <item name="Block" icon="presets/empty.png" type="node,way,closedway">
-            <key key="barrier" value="block" />
-        </item> <!-- block -->
-        <item name="Wall" icon="presets/empty.png" type="way,closedway">
-            <key key="barrier" value="wall" />
-        </item> <!-- wall -->
-        <item name="City Wall" icon="presets/empty.png" type="way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=city_wall" />
-            <key key="barrier" value="city_wall" />
-        </item> <!-- city_wall -->
-        <item name="Retaining Wall" icon="presets/empty.png" type="way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=retaining_wall" />
-            <key key="barrier" value="retaining_wall" />
-        </item> <!-- retaining_wall -->
-        <item name="Toll Booth" icon="presets/toll_station.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=toll_booth" />
-            <label text="Edit Toll Booth" />
+        <item name="Kissing Gate" icon="presets/empty.png" type="node">
+            <label text="Edit Kissing Gate" />
             <space />
-            <key key="barrier" value="toll_booth" />
-            <optional>
-                <text key="name" text="Name" default="" delete_if_empty="true" />
-                <text key="operator" text="Operator" default="" delete_if_empty="true" />
-            </optional>
-        </item> <!-- toll_booth -->
-        <item name="Border Control" icon="presets/douane.png" type="node">
-            <label text="Edit Border Control" />
+            <key key="barrier" value="kissing_gate" />
+            <label text="Allowed traffic:" />
             <space />
-            <key key="barrier" value="border_control" />
+            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
+            <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
+        </item> <!-- kissing_gate -->
+        <item name="Stile" icon="presets/stile.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stile" />
+            <label text="Edit Stile" />
+            <space />
+            <key key="barrier" value="stile" />
+            <label text="Allowed traffic:" />
+            <space />
+            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
+            <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
+        </item> <!-- stile -->
+        <item name="Sally Port" icon="presets/empty.png" type="node">
+            <label text="Edit Sally Port" />
+            <space />
+            <key key="barrier" value="sally_port" />
             <label text="Allowed traffic:" />
             <space />
             <check key="foot" text="Foot" default="on" delete_if_empty="true" />
@@ -1013,20 +1011,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item> <!-- border_control -->
-        <separator/>
-        <item name="Entrance" icon="presets/empty.png" type="node">
-            <label text="Edit Entrance" />
-            <space />
-            <key key="barrier" value="entrance" />
-            <label text="Allowed traffic:" />
-            <space />
-            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
-            <check key="bicycle" text="Bicycle" default="on" delete_if_empty="true" />
-            <check key="horse" text="Horse" default="off" delete_if_empty="true" />
-            <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
-            <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
-        </item> <!-- entrance -->
+        </item> <!-- sally_port -->
+        
     </group> <!-- Barriers -->
     <separator/>
     <group name="Water" icon="presets/waterway.png">
