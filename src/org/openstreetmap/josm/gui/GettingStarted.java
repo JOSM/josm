@@ -60,6 +60,7 @@ public class GettingStarted extends JPanel {
         }
 
         final private int myVersion = AboutAction.getVersionNumber();
+        final private String myLang = Main.getLanguageCodeU();
 
         /**
          * This function gets executed whenever the cached files need updating
@@ -82,6 +83,7 @@ public class GettingStarted extends JPanel {
             }
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
+            Main.pref.put("cache.motd.html.lang", myLang);
 
             return motd.getBytes();
         }
@@ -95,7 +97,8 @@ public class GettingStarted extends JPanel {
             // 1. Not yet written - but so isn't the interval variable, so it gets updated anyway
             // 2. Cannot be written (e.g. while developing). Obviously we don't want to update
             //    everytime because of something we can't read.
-            return Main.pref.getInteger("cache.motd.html.version", myVersion) == myVersion;
+            return (Main.pref.getInteger("cache.motd.html.version", myVersion) == myVersion)
+					 && Main.pref.get("cache.motd.html.lang").equals(myLang);
         }
     }
 

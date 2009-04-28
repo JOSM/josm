@@ -30,15 +30,16 @@ an integral part of JOSM and may be under any license.
 Copyright and Contributors
 ==========================
 
-JOSM was written by Immanuel Scholz <imi@eigenheimstrasse.de>.
+JOSM was written by Immanuel Scholz <imi AT eigenheimstrasse.de>.
 
 Major code contributions from (in alphabetical order):
 
-David Earl <david@frankieandshadow.com>
-Gabriel Ebner <ge@gabrielebner.at>
-Ulf Lamping <ulf.lamping@web.de>
-Raphael Mack <ramack@raphael-mack.de>
-Frederik Ramm <frederik@remote.org>
+David Earl <david AT frankieandshadow.com>
+Gabriel Ebner <ge AT gabrielebner.at>
+Ulf Lamping <ulf.lamping AT web.de>
+Raphael Mack <ramack AT raphael-mack.de>
+Frederik Ramm <frederik AT remote.org>
+Dirk Stöcker <openstreetmap AT dstoecker.de>
 
 Please add your name liberally if you think you have made a major
 contribution (or add names of others who have).
@@ -46,7 +47,7 @@ contribution (or add names of others who have).
 Many minor contributions and patches by others; see SVN history
 at http://josm.openstreetmap.de/svn/ for details.
 
-The current JOSM maintainer is Frederik Ramm <frederik@remote.org>.
+The current JOSM maintainer is Dirk Stöcker.
 
 Copyright rests with the contributors.
 
