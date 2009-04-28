@@ -1728,6 +1728,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="historic" value="archaeological_site" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Battlefield" icon="presets/battlefield.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=battlefield" />
+            <label text="Edit Battlefield" />
+            <key key="historic" value="battlefield" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
         <item name="Monument" icon="presets/monument.png" type="node,closedway">
             <label text="Edit Monument" />
             <key key="historic" value="monument" />
@@ -1737,12 +1744,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=memorial" />
             <label text="Edit Memorial" />
             <key key="historic" value="memorial" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Battlefield" icon="presets/battlefield.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=battlefield" />
-            <label text="Edit Battlefield" />
-            <key key="historic" value="battlefield" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Wayside Cross" icon="presets/wayside_cross.png" type="node,closedway">
@@ -2626,6 +2627,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="place" value="county" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="City" icon="presets/places.png" type="node,closedway">
             <label text="Edit City" />
             <space />
@@ -2658,6 +2660,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="place" value="hamlet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Locality" icon="presets/locality.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=locality" />
             <label text="Edit Locality" />
@@ -2766,6 +2769,30 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="leisure" value="nature_reserve" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
+        <item name="Scree" icon="presets/empty.png" type="node,closedway,relation">
+            <label text="Edit Scree" />
+            <key key="natural" value="scree" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Scrub" icon="presets/empty.png" type="node,closedway,relation">
+            <label text="Edit Scrub" />
+            <key key="natural" value="scrub" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Fell" icon="presets/empty.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell" />
+            <label text="Edit Fell" />
+            <key key="natural" value="fell" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Heath" icon="presets/empty.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath" />
+            <label text="Edit Heath" />
+            <key key="natural" value="heath" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
         <item name="Farmyard" icon="presets/landuse.png" type="closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmyard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=farmyard" />
@@ -2798,6 +2825,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="landuse" value="allotments" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Garden" icon="presets/empty.png" type="node,closedway,relation">
             <label text="Edit Garden" />
             <key key="leisure" value="garden" />
@@ -2883,7 +2911,19 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="landuse" value="railway" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Military" icon="presets/military.png" type="node,closedway,relation">
+            <label text="Edit Military Landuse" />
+            <space />
+            <key key="landuse" value="military" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <separator/>
+        <item name="Construction area" icon="presets/construction.png" type="node,closedway,relation">
+            <label text="Edit Construction Landuse" />
+            <space />
+            <key key="landuse" value="construction" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Brownfield" icon="presets/landuse.png" type="node,closedway,relation">
             <label text="Edit Brownfield Landuse" />
             <space />
@@ -2896,12 +2936,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="landuse" value="greenfield" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Construction area" icon="presets/construction.png" type="node,closedway,relation">
-            <label text="Edit Construction Landuse" />
-            <space />
-            <key key="landuse" value="construction" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
         <item name="Landfill" icon="presets/landuse.png" type="node,closedway,relation">
             <label text="Edit Landfill Landuse" />
             <space />
@@ -2912,35 +2946,6 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Quarry Landuse" />
             <space />
             <key key="landuse" value="quarry" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Military" icon="presets/military.png" type="node,closedway,relation">
-            <label text="Edit Military Landuse" />
-            <space />
-            <key key="landuse" value="military" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <separator/>
-        <item name="Scree" icon="presets/empty.png" type="node,closedway,relation">
-            <label text="Edit Scree" />
-            <key key="natural" value="scree" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Scrub" icon="presets/empty.png" type="node,closedway,relation">
-            <label text="Edit Scrub" />
-            <key key="natural" value="scrub" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Fell" icon="presets/empty.png" type="node,closedway,relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell" />
-            <label text="Edit Fell" />
-            <key key="natural" value="fell" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Heath" icon="presets/empty.png" type="node,closedway,relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath" />
-            <label text="Edit Heath" />
-            <key key="natural" value="heath" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Landuse -->
