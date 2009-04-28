@@ -366,22 +366,22 @@ public class OsmApi extends OsmConnection {
                 activeConnection.setRequestMethod(requestMethod);
                 addAuth(activeConnection);
 
-                if (requestBody != null) {
+                if (requestMethod.equals("PUT") || requestMethod.equals("POST")) {
                     activeConnection.setDoOutput(true);
+                    activeConnection.setRequestProperty("Content-type", "text/xml");
                     OutputStream out = activeConnection.getOutputStream();
-                    BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                    bwr.write(requestBody);
-                    bwr.flush();
-                    out.close();
-                } else {
+
                     // It seems that certain bits of the Ruby API are very unhappy upon
                     // receipt of a PUT/POST message withtout a Content-length header,
                     // even if the request has no payload.
                     // Since Java will not generate a Content-length header unless
-                    // we use the output stream, we create one and write no data to 
-                    // it, instead of not creating one. -- fr 6-Apr-09
-                    activeConnection.setDoOutput(true);
-                    OutputStream out = activeConnection.getOutputStream();
+                    // we use the output stream, we create an output stream for PUT/POST
+                    // even if there is no payload.
+                    if (requestBody != null) {
+                        BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                        bwr.write(requestBody);
+                        bwr.flush();
+                    }
                     out.close();
                 }
                 
