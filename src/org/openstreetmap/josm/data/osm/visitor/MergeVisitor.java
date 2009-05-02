@@ -216,21 +216,39 @@ public class MergeVisitor extends AbstractVisitor {
     }
 
     /**
-     * @return <code>true</code>, if no merge is needed or merge is performed already.
+     * Tries to merge a primitive <code>other</code> into an existing primitive with the same id.
+     * 
+     * @param myPrimitives the complete set of my primitives (potential merge targets) 
+     * @param myPrimitivesWithID the map of primitives (potential merge targets) with an id <> 0, for faster lookup
+     *    by id. Key is the id, value the primitive with the given value. myPrimitives.valueSet() is a 
+     *    subset of primitives.
+     * @param other  the other primitive which is to be merged with a primitive in primitives if possible
+     * @return true, if this method was able to merge <code>other</code> with an existing node; false, otherwise  
      */
     private <P extends OsmPrimitive> boolean mergeById(
-            Collection<P> primitives, HashMap<Long, P> hash, P other) {
-        // Fast-path merging of identical objects
-        if (hash.containsKey(other.id)) {
-            P my = hash.get(other.id);
-            if (my.realEqual(other, true)) {
+            Collection<P> myPrimitives, HashMap<Long, P> myPrimitivesWithID, P other) {
+        
+        // merge other into an existing primitive with the same id, if possible
+        //
+        if (myPrimitivesWithID.containsKey(other.id)) {
+            P my = myPrimitivesWithID.get(other.id);
+            if (my.realEqual(other, true /* compare semantic fields only */)) {
+                // make sure the merge target becomes the higher version number
+                // and the later timestamp
+                //
+                my.version = Math.max(other.version, my.version);
+                if (other.getTimestamp().after(my.getTimestamp())) {
+                    my.setTimestamp(other.getTimestamp());
+                }
                 merged.put(other, my);
                 return true;
             }
         }
 
-        for (P my : primitives) {
-            if (my.realEqual(other, false)) {
+        // try to merge into one of the existing primitives 
+        //
+        for (P my : myPrimitives) {
+            if (my.realEqual(other, false /* compare all fields */)) {
                 merged.put(other, my);
                 return true; // no merge needed.
             }
