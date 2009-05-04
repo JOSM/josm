@@ -94,6 +94,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="2" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="on" delete_if_empty="true" />
+                <check key="motorroad" text="Motorroad" default="on" delete_if_empty="false" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
@@ -109,9 +110,10 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="2" delete_if_empty="true" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="1" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="on" delete_if_empty="true" />
+                <check key="motorroad" text="Motorroad" default="on" delete_if_empty="false" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
@@ -132,6 +134,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+                <check key="motorroad" text="Motorroad" default="off" delete_if_empty="false" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
@@ -147,6 +150,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+                <check key="motorroad" text="Motorroad" default="off" delete_if_empty="false" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
