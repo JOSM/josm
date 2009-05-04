@@ -2955,7 +2955,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
     </group> <!-- Landuse -->
     <separator/>
 <!-- FIXME: element role not yet supported! -->
-    <group name="Relations" icon="presets/empty.png">
+    <group name="Relations" icon="presets/relations.png">
         <item name="Multipolygon" icon="presets/empty.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"
