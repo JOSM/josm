@@ -18,6 +18,20 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * @author Raphael Mack <ramack@raphael-mack.de>
  */
 public class GpxData extends WithAttributes {
+    
+    public static final String META_PREFIX = "meta.";
+    public static final String META_AUTHOR_NAME = META_PREFIX + "author.name"; 
+    public static final String META_AUTHOR_EMAIL = META_PREFIX + "author.email";
+    public static final String META_AUTHOR_LINK = META_PREFIX + "author.link";
+    public static final String META_COPYRIGHT_AUTHOR = META_PREFIX + "copyright.author";
+    public static final String META_COPYRIGHT_LICENSE = META_PREFIX + "copyright.license";
+    public static final String META_COPYRIGHT_YEAR = META_PREFIX + "copyright.year";
+    public static final String META_DESC = META_PREFIX + "desc";
+    public static final String META_KEYWORDS = META_PREFIX + "keywords";
+    public static final String META_LINKS = META_PREFIX + "links";
+    public static final String META_NAME = META_PREFIX + "name";
+    public static final String META_TIME = META_PREFIX + "time";
+    
     public File storageFile;
     public boolean fromServer;
 
@@ -36,8 +50,8 @@ public class GpxData extends WithAttributes {
         for (Map.Entry<String, Object> ent : other.attr.entrySet()) {
             // TODO: Detect conflicts.
             String k = ent.getKey();
-            if (k.equals("link") && attr.containsKey("link")) {
-                ((Collection<GpxLink>) attr.get("link")).addAll(
+            if (k.equals(META_LINKS) && attr.containsKey(META_LINKS)) {
+                ((Collection<GpxLink>) attr.get(META_LINKS)).addAll(
                     (Collection<GpxLink>) ent.getValue());
             } else {
                 attr.put(k, ent.getValue());

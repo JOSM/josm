@@ -44,7 +44,9 @@ public class GpxWriter extends XmlWriter {
     public void write(GpxData data) {
         this.data = data;
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
-        out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\">");
+        out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+        		"    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" + 
+        		"    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
         indent = "  ";
         writeMetaData();
         writeWayPoints();
@@ -55,12 +57,12 @@ public class GpxWriter extends XmlWriter {
     }
 
     private void writeAttr(Map<String, Object> attr) {
-        boolean hasAuthor = false;
+        // FIXME this loop is evil, because it does not assure the
+        // correct element order specified by the xml schema.
+        // for now it works, but future extension could get very complex and unmaintainable 
         for (Map.Entry<String, Object> ent : attr.entrySet()) {
             String k = ent.getKey();
-            if (k.indexOf("author") == 0) {
-                hasAuthor = true;
-            } else if (k.equals("link")) {
+            if (k.equals("link")) {
                 for (GpxLink link : (Collection<GpxLink>) ent.getValue()) {
                     gpxLink(link);
                 }
@@ -68,21 +70,55 @@ public class GpxWriter extends XmlWriter {
                 simpleTag(k, (String) ent.getValue());
             }
         }
-
-        if (hasAuthor) {
-            open("author");
-            simpleTag("name", (String) attr.get("authorname"));
-            simpleTag("email", (String) attr.get("authoremail"));
-            gpxLink((GpxLink) attr.get("authorlink"));
-            closeln("author");
-        }
-
-        // TODO: copyright
     }
 
     private void writeMetaData() {
+        Map<String, Object> attr = data.attr;
         openln("metadata");
-        writeAttr(data.attr);
+        
+        // write the description
+        if (attr.containsKey(GpxData.META_DESC)) simpleTag("desc", (String)attr.get(GpxData.META_DESC));
+        
+        // write the author details
+        if (attr.containsKey(GpxData.META_AUTHOR_NAME) 
+                || attr.containsKey(GpxData.META_AUTHOR_EMAIL)) {
+            openln("author");
+            // write the name
+            simpleTag("name", (String) attr.get(GpxData.META_AUTHOR_NAME));
+            // write the email address
+            if(attr.containsKey(GpxData.META_AUTHOR_EMAIL)) {
+                String[] tmp = ((String)attr.get(GpxData.META_AUTHOR_EMAIL)).split("@");
+                if(tmp.length == 2) {
+                    inline("email", "id=\"" + tmp[0] + "\" domain=\""+tmp[1]+"\"");
+                }
+            }
+            // write the author link
+            gpxLink((GpxLink) attr.get(GpxData.META_AUTHOR_LINK));
+            closeln("author");
+        }
+
+        // write the copyright details
+        if(attr.containsKey(GpxData.META_COPYRIGHT_LICENSE) 
+                || attr.containsKey(GpxData.META_COPYRIGHT_YEAR)) {
+            openAtt("copyright", "author=\""+ attr.get(GpxData.META_COPYRIGHT_AUTHOR) +"\"");
+            if(attr.containsKey(GpxData.META_COPYRIGHT_YEAR)) {
+                simpleTag("year", (String) attr.get(GpxData.META_COPYRIGHT_YEAR));
+            }
+            if(attr.containsKey(GpxData.META_COPYRIGHT_LICENSE)) {
+                simpleTag("license", encode((String) attr.get(GpxData.META_COPYRIGHT_LICENSE)));
+            }
+            closeln("copyright");
+        }
+        
+        // write links
+        if(attr.containsKey(GpxData.META_LINKS)) {
+            for (GpxLink link : (Collection<GpxLink>) attr.get(GpxData.META_LINKS)) {
+                gpxLink(link);
+            }
+        }
+        
+        // write keywords 
+        if (attr.containsKey(GpxData.META_KEYWORDS)) simpleTag("keywords", (String)attr.get(GpxData.META_KEYWORDS));
 
         data.recalculateBounds();
         Bounds bounds = data.bounds;

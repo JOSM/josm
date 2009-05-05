@@ -27,11 +27,11 @@ import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxWriter;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -106,6 +106,13 @@ public class GpxExportAction extends DiskAccessAction {
         JLabel warning = new JLabel("<html><font size='-2'>&nbsp;</html");
         p.add(warning, GBC.eol().fill(GBC.HORIZONTAL).insets(15,0,0,0));
         addDependencies(author, authorName, email, copyright, predefined, copyrightYear, nameLabel, emailLabel, copyrightLabel, copyrightYearLabel, warning);
+        
+        // if the user name is not the email address, but the osm user name
+        // move it from the email textfield to the author textfield
+        if(!email.getText().contains("@")) {
+            authorName.setText(email.getText());
+            email.setText("");
+        }
 
         p.add(new JLabel(tr("Keywords")), GBC.eol());
         JTextField keywords = new JTextField();
@@ -132,7 +139,24 @@ public class GpxExportAction extends DiskAccessAction {
             gpxData = ((GpxLayer)layer).data;
         else
             gpxData = OsmDataLayer.toGpxData(Main.ds, file);
-        // TODO: add copyright, etc.
+        
+        // add author and copyright details to the gpx data
+        if(author.isSelected()) {
+            if(authorName.getText().length() > 0) {
+                gpxData.attr.put(GpxData.META_AUTHOR_NAME, authorName.getText());
+                gpxData.attr.put(GpxData.META_COPYRIGHT_AUTHOR, authorName.getText());
+            }
+            if(email.getText().length() > 0) gpxData.attr.put(GpxData.META_AUTHOR_EMAIL, email.getText());
+            if(copyright.getText().length() > 0) gpxData.attr.put(GpxData.META_COPYRIGHT_LICENSE, copyright.getText());
+            if(copyrightYear.getText().length() > 0) gpxData.attr.put(GpxData.META_COPYRIGHT_YEAR, copyrightYear.getText());
+        }
+        
+        // add the description to the gpx data
+        if(desc.getText().length() > 0) gpxData.attr.put(GpxData.META_DESC, desc.getText());
+        
+        // add keywords to the gpx data
+        if(keywords.getText().length() > 0) gpxData.attr.put(GpxData.META_KEYWORDS, keywords.getText());
+        
         try {
             FileOutputStream fo = new FileOutputStream(file);
             new GpxWriter(fo).write(gpxData);
