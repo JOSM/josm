@@ -87,6 +87,7 @@ public class OpenFileAction extends DiskAccessAction {
                 for (int i = 0; i < 5; i++) {
                     j = notes.indexOf('\n', j + 1);
                 }
+                j = j >= 0 ? j : notes.length();
                 JOptionPane.showMessageDialog(Main.parent, notes.substring(0, j));
             }
         }
