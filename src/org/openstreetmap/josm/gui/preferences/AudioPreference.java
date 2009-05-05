@@ -2,9 +2,6 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -45,46 +42,21 @@ public class AudioPreference implements PreferenceSetting {
 
     public void addGui(PreferenceDialog gui) {
         // audioMenuVisible
-        audioMenuVisible.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!audioMenuVisible.isSelected())
-                    audioMenuVisible.setSelected(false);
-                audioMenuVisible.setEnabled(audioMenuVisible.isSelected());
-            }
-        });
         audioMenuVisible.setSelected(! Main.pref.getBoolean("audio.menuinvisible"));
         audioMenuVisible.setToolTipText(tr("Show or hide the audio menu entry on the main menu bar."));
         gui.audio.add(audioMenuVisible, GBC.eol().insets(0,0,0,0));
 
         // audioTraceVisible
-        markerAudioTraceVisible.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!markerAudioTraceVisible.isSelected())
-                    markerAudioTraceVisible.setSelected(false);
-            }
-        });
         markerAudioTraceVisible.setSelected(Main.pref.getBoolean("marker.traceaudio", true));
         markerAudioTraceVisible.setToolTipText(tr("Display a moving icon representing the point on the synchronized track where the audio currently playing was recorded."));
         gui.audio.add(markerAudioTraceVisible, GBC.eol().insets(0,0,0,0));
 
         // buttonLabels
-        markerButtonLabels.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!markerButtonLabels.isSelected())
-                    markerButtonLabels.setSelected(false);
-            }
-        });
         markerButtonLabels.setSelected(Main.pref.getBoolean("marker.buttonlabels"));
         markerButtonLabels.setToolTipText(tr("Put text labels against audio (and image and web) markers as well as their button icons."));
         gui.audio.add(markerButtonLabels, GBC.eol().insets(0,0,0,0));
 
         // makeAutoMarkers
-        makeAutoMarkers.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!makeAutoMarkers.isSelected())
-                    makeAutoMarkers.setSelected(false);
-            }
-        });
         makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
         makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
         gui.audio.add(makeAutoMarkers, GBC.eol().insets(0,0,0,0));
@@ -92,56 +64,26 @@ public class AudioPreference implements PreferenceSetting {
         gui.audio.add(new JLabel(tr("When importing audio, make markers from...")), GBC.eol());
 
         // audioMarkersFromExplicitWaypoints
-        audioMarkersFromExplicitWaypoints.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!audioMarkersFromExplicitWaypoints.isSelected())
-                    audioMarkersFromExplicitWaypoints.setSelected(false);
-            }
-        });
         audioMarkersFromExplicitWaypoints.setSelected(Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true));
         audioMarkersFromExplicitWaypoints.setToolTipText(tr("When importing audio, apply it to any waypoints in the GPX layer."));
         gui.audio.add(audioMarkersFromExplicitWaypoints, GBC.eol().insets(10,0,0,0));
 
         // audioMarkersFromUntimedWaypoints
-        audioMarkersFromUntimedWaypoints.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!audioMarkersFromUntimedWaypoints.isSelected())
-                    audioMarkersFromUntimedWaypoints.setSelected(false);
-            }
-        });
         audioMarkersFromUntimedWaypoints.setSelected(Main.pref.getBoolean("marker.audiofromuntimedwaypoints", true));
         audioMarkersFromUntimedWaypoints.setToolTipText(tr("When importing audio, apply it to any waypoints in the GPX layer."));
         gui.audio.add(audioMarkersFromUntimedWaypoints, GBC.eol().insets(10,0,0,0));
 
         // audioMarkersFromNamedTrackpoints
-        audioMarkersFromNamedTrackpoints.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!audioMarkersFromNamedTrackpoints.isSelected())
-                    audioMarkersFromNamedTrackpoints.setSelected(false);
-            }
-        });
         audioMarkersFromNamedTrackpoints.setSelected(Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false));
         audioMarkersFromNamedTrackpoints.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
         gui.audio.add(audioMarkersFromNamedTrackpoints, GBC.eol().insets(10,0,0,0));
 
         // audioMarkersFromWavTimestamps
-        audioMarkersFromWavTimestamps.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!audioMarkersFromWavTimestamps.isSelected())
-                    audioMarkersFromWavTimestamps.setSelected(false);
-            }
-        });
         audioMarkersFromWavTimestamps.setSelected(Main.pref.getBoolean("marker.audiofromwavtimestamps", false));
         audioMarkersFromWavTimestamps.setToolTipText(tr("Create audio markers at the position on the track corresponding to the modified time of each audio WAV file imported."));
         gui.audio.add(audioMarkersFromWavTimestamps, GBC.eol().insets(10,0,0,0));
 
         // audioMarkersFromStart
-        audioMarkersFromStart.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!audioMarkersFromStart.isSelected())
-                    audioMarkersFromStart.setSelected(false);
-            }
-        });
         audioMarkersFromStart.setSelected(Main.pref.getBoolean("marker.audiofromstart"));
         audioMarkersFromStart.setToolTipText(tr("Automatically create audio markers from trackpoints (rather than explicit waypoints) with names or descriptions."));
         gui.audio.add(audioMarkersFromStart, GBC.eol().insets(10,0,0,0));
