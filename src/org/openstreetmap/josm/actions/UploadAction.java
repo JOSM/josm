@@ -8,23 +8,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.historycombobox.StringUtils;
+import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.tools.GBC;
-import org.xml.sax.SAXException;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.xml.sax.SAXException;
 
 /**
  * Action that opens a connection to the osm server and uploads all changes.
@@ -35,14 +37,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class UploadAction extends JosmAction {
-
-    /**
-     * Last commit message used for uploading changes.
-     * FIXME save this in preferences, or even offer list of 10 last recently used comments?
-     * FIXME ugly hack; value is filled here and retrieved in the OsmApi class; find better way
-     */
-    public static String lastCommitComment; 
     
+    public static final String HISTORY_KEY = "upload.comment.history"; 
+
     /** Upload Hook */
     public interface UploadHook {
         /**
@@ -107,7 +104,10 @@ public class UploadAction extends JosmAction {
                 }
                 
                 p.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
-                final JTextField cmt = new JTextField(lastCommitComment);
+                SuggestingJHistoryComboBox cmt = new SuggestingJHistoryComboBox();
+                List<String> cmtHistory = StringUtils.stringToList(Main.pref.get(HISTORY_KEY), SuggestingJHistoryComboBox.DELIM);
+                cmt.setHistory(cmtHistory);
+                //final JTextField cmt = new JTextField(lastCommitComment);
                 p.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
 
                 while(true) {
@@ -123,7 +123,10 @@ public class UploadAction extends JosmAction {
                     // don't allow empty commit message
                     if (cmt.getText().trim().length() < 3) continue;
                     
-                    lastCommitComment = cmt.getText().trim();
+                    // store the history of comments
+                    cmt.addCurrentItemToHistory();
+                    Main.pref.put(HISTORY_KEY, StringUtils.listToString(cmt.getHistory(), SuggestingJHistoryComboBox.DELIM));
+                    
                     break;
                 }
                 return true;

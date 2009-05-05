@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -12,6 +13,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.gui.historycombobox.JHistoryComboBox;
+import org.openstreetmap.josm.gui.historycombobox.StringUtils;
 
 /**
  * Class that uploads all changes to the osm server.
@@ -77,7 +80,15 @@ public class OsmServerWriter {
 
         // create changeset if required
         try {
-            if (useChangesets) api.createChangeset(UploadAction.lastCommitComment);
+            if (useChangesets) {
+                // add the last entered comment to the changeset
+                String cmt = "";
+                List<String> history = StringUtils.stringToList(Main.pref.get(UploadAction.HISTORY_KEY), JHistoryComboBox.DELIM);
+                if(history.size() > 0) {
+                    cmt = history.get(0);
+                }
+                api.createChangeset(cmt);
+            }
         } catch (OsmTransferException ex) {
             dealWithTransferException(ex);
             return;
