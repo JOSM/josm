@@ -395,7 +395,12 @@ public class GpxLayer extends Layer {
         // draw direction arrows on the lines
         boolean direction = Main.pref.getBoolean("draw.rawgps.direction");
         // don't draw lines if longer than x meters
-        int maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", -1);
+        int maxLineLength;
+        if (this.isLocalFile) {
+            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", -1);
+        } else {
+            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", 200);
+        }
         // draw line between points, global setting
         boolean lines = (Main.pref.getBoolean("draw.rawgps.lines") || (Main.pref.getBoolean("draw.rawgps.lines.localfiles") && this.isLocalFile));
         String linesKey = "draw.rawgps.lines.layer "+name;
