@@ -163,6 +163,7 @@ public class OsmApi extends OsmConnection {
     private String toXml(OsmPrimitive o, boolean addBody) {
         swriter.getBuffer().setLength(0);
         osmWriter.setWithBody(addBody);
+        osmWriter.setChangeset(changeset);
         osmWriter.header();
         o.visit(osmWriter);
         osmWriter.footer();
