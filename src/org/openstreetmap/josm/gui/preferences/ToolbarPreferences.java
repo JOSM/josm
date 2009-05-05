@@ -66,9 +66,10 @@ public class ToolbarPreferences implements PreferenceSetting {
                 }
                 for (TreePath selectedAction : actionsTree.getSelectionPaths()) {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectedAction.getLastPathComponent();
-                    if (node.getUserObject() == null || node.getUserObject() instanceof Action) {
+                    if (node.getUserObject() == null)
+                        selected.add(leadItem++, null);
+                    else if (node.getUserObject() == null || node.getUserObject() instanceof Action)
                         selected.add(leadItem++, ((Action)node.getUserObject()).getValue("toolbar"));
-                    }
                 }
             } else if (e.getActionCommand().equals(">") && selectedList.getSelectedIndex() != -1) {
                 while (selectedList.getSelectedIndex() != -1) {
