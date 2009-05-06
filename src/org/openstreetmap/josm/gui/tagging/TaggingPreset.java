@@ -62,6 +62,7 @@ public class TaggingPreset extends AbstractAction {
 
     public TaggingPresetMenu group = null;
     public String name;
+    public String locale_name;
 
     public static abstract class Item {
         public boolean focus = false;
@@ -440,12 +441,18 @@ public class TaggingPreset extends AbstractAction {
         putValue(Action.NAME, getName());
         putValue("toolbar", "tagging_" + getRawName());
         putValue(SHORT_DESCRIPTION, (group != null ?
-        tr("Use preset ''{0}'' of group ''{1}''", tr(name), group.getName()) :
-        tr("Use preset ''{0}''", tr(name))));
+        tr("Use preset ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
+        tr("Use preset ''{0}''", getLocaleName())));
+    }
+
+    public String getLocaleName() {
+        if(locale_name == null)
+            locale_name = tr(name);
+        return locale_name;
     }
 
     public String getName() {
-        return group != null ? group.getName() + "/" + tr(name) : tr(name);
+        return group != null ? group.getName() + "/" + getLocaleName() : getLocaleName();
     }
     public String getRawName() {
         return group != null ? group.getRawName() + "/" + name : name;

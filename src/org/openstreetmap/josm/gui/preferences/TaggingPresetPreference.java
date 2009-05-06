@@ -149,7 +149,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
                 else
                 {
                     JMenuItem mi = new JMenuItem(p);
-                    mi.setText(tr(p.name));
+                    mi.setText(p.getLocaleName());
                     m.add(mi);
                 }
             }
