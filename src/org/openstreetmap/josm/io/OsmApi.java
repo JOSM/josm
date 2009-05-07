@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.concurrent.FutureTask;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -32,19 +33,20 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Class that encapsulates the communications with the OSM API. 
- * 
- * All interaction with the server-side OSM API should go through this class. 
+ * Class that encapsulates the communications with the OSM API.
+ *
+ * All interaction with the server-side OSM API should go through this class.
  *
  * It is conceivable to extract this into an interface later and create various
  * classes implementing the interface, to be able to talk to various kinds of servers.
- * 
+ *
  */
 public class OsmApi extends OsmConnection {
 
@@ -62,23 +64,23 @@ public class OsmApi extends OsmConnection {
      * Minimum API version accepted by server, from capabilities response
      */
     private String minVersion = null;
-    
+
     /**
      * Maximum API version accepted by server, from capabilities response
      */
     private String maxVersion = null;
-    
+
     /**
      * Maximum downloadable area from server (degrees squared), from capabilities response
      * FIXME: make download dialog use this, instead of hard-coded default.
      */
     private String maxArea = null;
-    
+
     /**
      * true if successfully initialized
      */
     private boolean initialized = false;
-    
+
     private StringWriter swriter = new StringWriter();
     private OsmWriter osmWriter = new OsmWriter(new PrintWriter(swriter), true, null);
 
@@ -107,15 +109,15 @@ public class OsmApi extends OsmConnection {
         if (o instanceof Changeset) return "changeset";
         return "";
     }
-    
-    /** 
+
+    /**
      * Returns the OSM protocol version we use to talk to the server.
      * @return protocol version, or null if not yet negotiated.
      */
     public String getVersion() {
         return version;
     }
-    
+
     /**
      * Returns true if the negotiated version supports changesets.
      * @return true if the negotiated version supports changesets.
@@ -123,7 +125,7 @@ public class OsmApi extends OsmConnection {
     public boolean hasChangesetSupport() {
         return ((version != null) && (version.compareTo("0.6")>=0));
     }
-    
+
     /**
      * Initializes this component by negotiating a protocol version with the server.
      */
@@ -140,12 +142,12 @@ public class OsmApi extends OsmConnection {
                 version = "0.5";
             } else {
                 System.err.println(tr("This version of JOSM is incompatible with the configured server."));
-                System.err.println(tr("It supports protocol versions 0.5 and 0.6, while the server says it supports {0} to {1}.", 
+                System.err.println(tr("It supports protocol versions 0.5 and 0.6, while the server says it supports {0} to {1}.",
                     minVersion, maxVersion));
                 initialized = false;
             }
-            System.out.println(tr("Communications with {0} established using protocol version {1}", 
-                Main.pref.get("osm-server.url"), 
+            System.out.println(tr("Communications with {0} established using protocol version {1}",
+                Main.pref.get("osm-server.url"),
                 version));
             osmWriter.setVersion(version);
         } catch (Exception ex) {
@@ -153,7 +155,7 @@ public class OsmApi extends OsmConnection {
             ex.printStackTrace();
         }
     }
-    
+
     /**
      * Makes an XML string from an OSM primitive. Uses the OsmWriter class.
      * @param o the OSM primitive
@@ -170,7 +172,7 @@ public class OsmApi extends OsmConnection {
         osmWriter.out.flush();
         return swriter.toString();
     }
-    
+
     /**
      * Helper that makes an int from the first whitespace separated token in a string.
      * @param s the string
@@ -182,7 +184,7 @@ public class OsmApi extends OsmConnection {
         try {
             return Integer.parseInt(t.nextToken());
         } catch (Exception x) {
-            throw new OsmTransferException("Cannot read numeric value from response");
+            throw new OsmTransferException(tr("Cannot read numeric value from response"));
         }
     }
 
@@ -197,10 +199,10 @@ public class OsmApi extends OsmConnection {
         try {
             return Long.parseLong(t.nextToken());
         } catch (Exception x) {
-            throw new OsmTransferException("Cannot read numeric value from response");
+            throw new OsmTransferException(tr("Cannot read numeric value from response"));
         }
-    }    
-    
+    }
+
     /**
      * Returns the base URL for API requests, including the negotiated version number.
      * @return base URL string
@@ -212,16 +214,16 @@ public class OsmApi extends OsmConnection {
             rv.append(version);
         }
         rv.append("/");
-        // this works around a ruby (or lighttpd) bug where two consecutive slashes in 
+        // this works around a ruby (or lighttpd) bug where two consecutive slashes in
         // an URL will cause a "404 not found" response.
         int p; while ((p = rv.indexOf("//", 6)) > -1) { rv.delete(p, p + 1); }
         return rv.toString();
     }
 
-    /** 
+    /**
      * Creates an OSM primitive on the server. The OsmPrimitive object passed in
      * is modified by giving it the server-assigned id.
-     * 
+     *
      * @param osm the primitive
      * @throws OsmTransferException if something goes wrong
      */
@@ -229,12 +231,12 @@ public class OsmApi extends OsmConnection {
         osm.id = parseLong(sendRequest("PUT", which(osm)+"/create", toXml(osm, true)));
         osm.version = 1;
     }
-    
+
     /**
      * Modifies an OSM primitive on the server. For protocols greater than 0.5,
-     * the OsmPrimitive object passed in is modified by giving it the server-assigned 
+     * the OsmPrimitive object passed in is modified by giving it the server-assigned
      * version.
-     * 
+     *
      * @param osm the primitive
      * @throws OsmTransferException if something goes wrong
      */
@@ -246,8 +248,8 @@ public class OsmApi extends OsmConnection {
             // normal mode (0.6 and up) returns new object version.
             osm.version = parseInt(sendRequest("PUT", which(osm)+"/" + osm.id, toXml(osm, true)));
         }
-    }    
-    
+    }
+
     /**
      * Deletes an OSM primitive on the server.
      * @param osm the primitive
@@ -256,8 +258,8 @@ public class OsmApi extends OsmConnection {
     public void deletePrimitive(OsmPrimitive osm) throws OsmTransferException {
         // legacy mode does not require payload. normal mode (0.6 and up) requires payload for version matching.
         sendRequest("DELETE", which(osm)+"/" + osm.id, version.equals("0.5") ? null : toXml(osm, false));
-    }   
-    
+    }
+
     /**
      * Creates a new changeset on the server to use for subsequent calls.
      * @param comment the "commit comment" for the new changeset
@@ -275,7 +277,7 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Closes a changeset on the server.
-     * 
+     *
      * @throws OsmTransferException if something goes wrong.
      */
     public void stopChangeset() throws OsmTransferException {
@@ -285,41 +287,129 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Uploads a list of changes in "diff" form the the server. 
+     * Uploads a list of changes in "diff" form to the server.
+     *
      * @param list the list of changed OSM Primitives
      * @return list of processed primitives
-     * @throws OsmTransferException if something is wrong.
+     * @throws OsmTransferException if something is wrong
+     * @throws OsmTransferCancelledException  if the upload was cancelled by the user
      */
-    public Collection<OsmPrimitive> uploadDiff(Collection<OsmPrimitive> list) throws OsmTransferException {
-    
+    public Collection<OsmPrimitive> uploadDiff(final Collection<OsmPrimitive> list) throws OsmTransferException {
+
         if (changeset == null) {
             throw new OsmTransferException(tr("No changeset present for diff upload"));
         }
-        
-        CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, this);
-        
-        ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
-    
-        for (OsmPrimitive osm : list) {
-            int progress = Main.pleaseWaitDlg.progress.getValue();
-            Main.pleaseWaitDlg.currentAction.setText(tr("Preparing..."));
-            if (cancel) throw new OsmTransferCancelledException();
-            osm.visit(duv);
-            Main.pleaseWaitDlg.progress.setValue(progress+1);
+
+
+        final ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
+
+        // this is the asynchronous update task
+        //
+        class UploadDiffTask extends  PleaseWaitRunnable {
+
+            private boolean uploadCancelled = false;
+            private boolean uploadFailed = false;
+            private Throwable lastThrowable = null;
+
+            public UploadDiffTask(String title) {
+                super(title,false /* don't ignore exceptions */);
+            }
+
+            @Override protected void realRun() throws SAXException, IOException {
+                CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
+
+                for (OsmPrimitive osm : list) {
+                    int progress = Main.pleaseWaitDlg.progress.getValue();
+                    Main.pleaseWaitDlg.currentAction.setText(tr("Preparing..."));
+                    osm.visit(duv);
+                    Main.pleaseWaitDlg.progress.setValue(progress+1);
+                }
+
+                Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
+
+                String diff = duv.getDocument();
+                try {
+                    String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
+                    DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
+                } catch (Exception sxe) {
+                    if (isUploadCancelled()) {
+                        // ignore exceptions thrown because the connection is aborted,
+                        // i.e. IOExceptions or SocketExceptions
+                        //
+                        System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
+                        return;
+                    }
+                    uploadFailed = true;
+                    // remember last exception and don't throw it. If it was thrown again it would
+                    // have to be encapsulated in a RuntimeException which would be nested in yet
+                    // another RuntimeException by parent classes.
+                    // Rather check isUploadFailed() and retrieve getLastThrowable() after the task
+                    // is completed
+                    //
+                    lastThrowable = sxe;
+                }
+            }
+
+            @Override protected void finish() {
+                // do nothing
+            }
+
+            @Override protected void cancel() {
+                activeConnection.disconnect();
+                uploadCancelled = true;
+            }
+
+            public boolean isUploadCancelled() {
+                return uploadCancelled;
+            }
+
+            public boolean isUploadFailed() {
+                return uploadFailed;
+            }
+
+            public Throwable getLastThrowable() {
+                return lastThrowable;
+            }
         }
-    
-        Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
-        if (cancel) throw new OsmTransferCancelledException();
-    
-        String diff = duv.getDocument();
-        String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);  
+
+        UploadDiffTask uploadTask = new UploadDiffTask(tr("Uploading data"));
+
+        // run  data upload as asynchronous task
+        //
         try {
-            DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
-        } catch (Exception sxe) {
-            throw new OsmTransferException(tr("Error processing changeset upload response"), sxe);
+            Void result = null;
+            FutureTask<Void> task = new FutureTask<Void>(uploadTask, result);
+            task.run();
+            task.get(); // wait for the task to complete, no return value expected, though
+        }  catch(Throwable e) {
+            if (uploadTask.isUploadCancelled()) {
+                throw new OsmTransferCancelledException();
+            }
+            throw new OsmTransferException(e);
         }
+
+        // handle failed upload
+        //
+        if (uploadTask.isUploadFailed()) {
+            if (uploadTask.getLastThrowable() != null && uploadTask.getLastThrowable() instanceof OsmTransferException) {
+                OsmTransferException e = (OsmTransferException)uploadTask.getLastThrowable();
+                throw e;
+            }
+            // shouldn't happen, but just in case
+            //
+            throw new OsmTransferException(tr("Data upload failed for unknown reason"));
+        }
+
+        // handle cancelled upload
+        //
+        if (uploadTask.isUploadCancelled()) {
+            throw new OsmTransferCancelledException();
+        }
+
         return processed;
     }
+
+
 
     private void sleepAndListen() throws OsmTransferCancelledException {
         // System.out.print("backing off for 10 seconds...");
@@ -338,26 +428,26 @@ public class OsmApi extends OsmConnection {
      *
      * This method will automatically re-try any requests that are answered with a 5xx
      * error code, or that resulted in a timeout exception from the TCP layer.
-     * 
+     *
      * @param requestMethod The http method used when talking with the server.
      * @param urlSuffix The suffix to add at the server url, not including the version number,
      *    but including any object ids (e.g. "/way/1234/history").
      * @param requestBody the body of the HTTP request, if any.
-     * 
+     *
      * @return the body of the HTTP response, if and only if the response code was "200 OK".
-     * @exception OsmTransferException if the HTTP return code was not 200 (and retries have 
-     *    been exhausted), or rewrapping a Java exception. 
+     * @exception OsmTransferException if the HTTP return code was not 200 (and retries have
+     *    been exhausted), or rewrapping a Java exception.
      */
     private String sendRequest(String requestMethod, String urlSuffix,
             String requestBody) throws OsmTransferException {
 
         if (!initialized) throw new OsmTransferException(tr("Not initialized"));
-        
+
         StringBuffer responseBody = new StringBuffer();
         StringBuffer statusMessage = new StringBuffer();
 
-        int retries = 5; // configurable? 
-        
+        int retries = 5; // configurable?
+
         while(true) { // the retry loop
             try {
                 URL url = new URL(new URL(getBaseUrl()), urlSuffix, new MyHttpHandler());
@@ -385,11 +475,11 @@ public class OsmApi extends OsmConnection {
                     }
                     out.close();
                 }
-                
+
                 activeConnection.connect();
                 System.out.println(activeConnection.getResponseMessage());
                 int retCode = activeConnection.getResponseCode();
-                
+
                 if (retCode >= 500) {
                     if (retries-- > 0) {
                         sleepAndListen();
@@ -399,7 +489,7 @@ public class OsmApi extends OsmConnection {
 
                 // populate return fields.
                 responseBody.setLength(0);
-                
+
                 // If the API returned an error code like 403 forbidden, getInputStream
                 // will fail with an IOException.
                 InputStream i = null;
@@ -409,7 +499,7 @@ public class OsmApi extends OsmConnection {
                     i = activeConnection.getErrorStream();
                 }
                 BufferedReader in = new BufferedReader(new InputStreamReader(i));
-                
+
                 String s;
                 while((s = in.readLine()) != null) {
                     responseBody.append(s);
@@ -429,7 +519,7 @@ public class OsmApi extends OsmConnection {
                     statusMessage.append(activeConnection.getResponseMessage());
                 }
                 activeConnection.disconnect();
-                
+
                 if (retCode != 200) {
                     throw new OsmTransferException(statusMessage.toString());
                 }

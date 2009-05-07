@@ -137,6 +137,13 @@ public class OsmServerWriter {
     }
 
     private void dealWithTransferException (OsmTransferException e) {
+        if (e instanceof OsmTransferCancelledException) {
+            // ignore - don't bother the user with yet another message that he
+            // has successfully cancelled the data upload
+            //
+            return; 
+        }
+        
         JOptionPane.showMessageDialog(Main.parent, 
             /* tr("Error during upload: ") + */ e.getMessage());
     }
