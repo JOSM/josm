@@ -34,7 +34,8 @@ public interface Projection {
         new Epsg4326(),
         new Mercator(),
         new Lambert(),
-        new LambertEST()
+        new LambertEST(),
+        new SwissGrid()
     };
 
     /**
