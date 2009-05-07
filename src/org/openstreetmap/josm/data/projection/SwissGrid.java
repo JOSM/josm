@@ -43,8 +43,8 @@ public class SwissGrid implements Projection {
     protected void alertCoordinatesOutOfRange() {
         JOptionPane.showMessageDialog(Main.parent,
                 tr("The projection \"{0}\" is designed for\n"
-                + "latitudes between 45.7' and 47.9'\n"
-                + "and longitutes between 5.7' and 10.6' only.\n"
+                + "latitudes between 45.7\u00b0 and 47.9\u00b0\n"
+                + "and longitutes between 5.7\u00b0 and 10.6\u00b0 only.\n"
                 + "Use another projection system if you are not working\n"
                 + "on a data set of Switzerland or Liechtenstein.\n"
                 + "Do not upload any data after this message.", this.toString()),

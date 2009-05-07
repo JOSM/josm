@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.LinkedList;
 import java.util.Vector;
 
 /**
@@ -57,15 +58,27 @@ public class I18n {
      */
     public static final Locale[] getAvailableTranslations() {
         Vector<Locale> v = new Vector<Locale>();
+        LinkedList<String>str = new LinkedList<String>();
         Locale[] l = Locale.getAvailableLocales();
         for (int i = 0; i < l.length; i++) {
-            String cn = TR_BASE + l[i];
+            String loc = l[i].toString();
+            String cn = TR_BASE + loc;
             try {
                 Class.forName(cn);
                 v.add(l[i]);
+                str.add(loc);
             } catch (ClassNotFoundException e) {
             }
         }
+        /* hmm, don't know why this is necessary */
+        try {
+          if(!str.contains("nb"))
+            v.add(new Locale("nb"));
+        } catch (Exception e) {}
+        try {
+          if(!str.contains("gl"))
+            v.add(new Locale("gl"));
+        } catch (Exception e) {}
         l = new Locale[v.size()];
         l = v.toArray(l);
         Arrays.sort(l, new Comparator<Locale>() {

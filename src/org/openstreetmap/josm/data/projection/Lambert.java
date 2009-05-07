@@ -108,7 +108,7 @@ public class Lambert implements Projection {
                     && dontDisplayErrors == false) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The projection \"{0}\" is designed for\n"
-                        + "latitudes between 46.1° and 57° only.\n"
+                        + "latitudes between 46.1\u00b0 and 57\u00b0 only.\n"
                         + "Use another projection system if you are not using\n"
                         + "a French WMS server.\n"
                         + "Do not upload any data after this message.", this.toString()));

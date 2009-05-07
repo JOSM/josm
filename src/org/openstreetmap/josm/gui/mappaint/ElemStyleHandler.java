@@ -2,6 +2,8 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
 
+import javax.swing.ImageIcon;
+
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -169,12 +171,14 @@ public class ElemStyleHandler extends DefaultHandler
             }
             else if (qName.equals("icon"))
             {
-                hadIcon = inIcon = true;
+                inIcon = true;
                 for (int count=0; count<atts.getLength(); count++)
                 {
-                    if (atts.getQName(count).equals("src"))
-                        rule.icon.icon = MapPaintStyles.getIcon(atts.getValue(count), styleName);
-                    else if (atts.getQName(count).equals("annotate"))
+                    if (atts.getQName(count).equals("src")) {
+                        ImageIcon icon = MapPaintStyles.getIcon(atts.getValue(count), styleName);
+                        hadIcon = (icon != null);
+                        rule.icon.icon = icon;
+                    } else if (atts.getQName(count).equals("annotate"))
                         rule.icon.annotate = Boolean.parseBoolean (atts.getValue(count));
                     else if(atts.getQName(count).equals("priority"))
                         rule.icon.priority = Integer.parseInt(atts.getValue(count));
