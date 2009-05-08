@@ -2,7 +2,7 @@
 
 	<!-- All jar files necessary to run only JOSM (no tests) -->
 	<fileset id="josm_required_libs" dir="lib">
-		<include name="gettext-commons-0.9.2.jar"/>
+		<include name="gettext-commons-0.9.6.jar"/>
 		<include name="metadata-extractor-2.3.1-nosun.jar"/>
 	</fileset>
 
