@@ -109,7 +109,11 @@ public class SuggestingJHistoryComboBox extends JHistoryComboBox implements KeyL
 			if (suggestion.startsWith(text)) {
 				textField.setActionCommand("SUGGEST");
 				doc.setConsumeEvents(true);
-				textField.setText(suggestion);
+				// avoid unbound recursion via setText() -> replace() -> 
+				// suggest() -> setText() ... in some environments
+				if (! text.equals(suggestion)) {
+				    textField.setText(suggestion);
+				}
 				textField.setSelectionStart(text.length());
 				textField.setSelectionEnd(textField.getText().length());
 				doc.setConsumeEvents(false);
