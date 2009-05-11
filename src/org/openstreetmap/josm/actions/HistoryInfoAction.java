@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -28,24 +29,40 @@ public class HistoryInfoAction extends JosmAction {
         tr("History of Element"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
     }
 
+    /**
+     * replies the base URL for browsing the the history of an OSM primitive
+     * 
+     * @return the base URL, i.e. http://api.openstreetmap.org/browse
+     */
+    protected String getBaseURL() {
+        String baseUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
+        Pattern pattern = Pattern.compile("/api/?$");
+        String ret =  pattern.matcher(baseUrl).replaceAll("/browse");
+        if (ret.equals(baseUrl)) {
+            System.out.println("WARNING: unexpected format of API base URL. Redirection to history page for OSM primitive will probably fail. API base URL is: " + baseUrl);
+        }
+        return ret;
+    }    
+    
     public void actionPerformed(ActionEvent e) {
-        final Collection<Object> sel = new LinkedList<Object>();
+        final Collection<Object> sel = new LinkedList<Object>();        
+        final String baseUrl  = getBaseURL();
         new AbstractVisitor() {
             public void visit(Node n) {
                 if(n.id <= 0) return;
-                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/node/" + n.id + "/history");
+                OpenBrowser.displayUrl(baseUrl + "/node/" + n.id + "/history");
                 sel.add(n);
             }
 
             public void visit(Way w) {
                 if(w.id <= 0) return;
-                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/way/" + w.id + "/history");
+                OpenBrowser.displayUrl(baseUrl + "/way/" + w.id + "/history");
                 sel.add(w);
             }
 
             public void visit(Relation e) {
                 if(e.id <= 0) return;
-                OpenBrowser.displayUrl("http://www.openstreetmap.org/browse/relation/" + e.id + "/history");
+                OpenBrowser.displayUrl(baseUrl + "/relation/" + e.id + "/history");
                 sel.add(e);
             }
 
