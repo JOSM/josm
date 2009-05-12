@@ -23,6 +23,8 @@ import org.openstreetmap.josm.tools.DateUtils;
  */
 public class OsmWriter extends XmlWriter implements Visitor {
 
+    public final String DEFAULT_API_VERSION = "0.6";
+    
     /**
      * The counter for newly created objects. Starts at -1 and goes down.
      */
@@ -42,7 +44,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     public OsmWriter(PrintWriter out, boolean osmConform, String version) {
         super(out);
         this.osmConform = osmConform;
-        this.version = version;
+        this.version = (version == null ? DEFAULT_API_VERSION : version);
     }
     
     public void setWithBody(boolean wb) {
