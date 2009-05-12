@@ -9,6 +9,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,12 +40,11 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.XmlObjectParser.Uniform;
 
 public class PluginSelection {
 
     private Map<String, Boolean> pluginMap;
-    private Map<String, PluginDescription> availablePlugins;
+    private Map<String, PluginInformation> availablePlugins;
 
     public void updateDescription(JPanel pluginPanel) {
         int count = PluginDownloader.downloadDescription();
@@ -62,10 +63,10 @@ public class PluginSelection {
         Boolean done = false;
         drawPanel(pluginPanel);
 
-        Set<PluginDescription> toUpdate = new HashSet<PluginDescription>();
+        Set<PluginInformation> toUpdate = new HashSet<PluginInformation>();
         StringBuilder toUpdateStr = new StringBuilder();
         for (PluginProxy proxy : PluginHandler.pluginList) {
-            PluginDescription description = availablePlugins.get(proxy.info.name);
+            PluginInformation description = availablePlugins.get(proxy.info.name);
             if (description != null && (description.version == null || description.version.equals("")) ?
             (proxy.info.version != null && proxy.info.version.equals("")) : !description.version.equals(proxy.info.version)) {
                 toUpdate.add(description);
@@ -76,11 +77,11 @@ public class PluginSelection {
             JOptionPane.showMessageDialog(Main.parent, tr("All installed plugins are up to date."));
             done = true;
         } else {
-            int answer = new ExtendedDialog(Main.parent, 
-                        tr("Update"), 
+            int answer = new ExtendedDialog(Main.parent,
+                        tr("Update"),
                         tr("Update the following plugins:\n\n{0}", toUpdateStr.toString()),
-                        new String[] {tr("Update Plugins"), tr("Cancel")}, 
-                        new String[] {"dialogs/refresh.png", "cancel.png"}).getValue();  
+                        new String[] {tr("Update Plugins"), tr("Cancel")},
+                        new String[] {"dialogs/refresh.png", "cancel.png"}).getValue();
             if (answer == 1) {
                 PluginDownloader.update(toUpdate);
                 done = true;
@@ -92,7 +93,7 @@ public class PluginSelection {
     }
 
     public Boolean finish() {
-        Collection<PluginDescription> toDownload = new LinkedList<PluginDescription>();
+        Collection<PluginInformation> toDownload = new LinkedList<PluginInformation>();
         String msg = "";
         for (Entry<String, Boolean> entry : pluginMap.entrySet()) {
             if (entry.getValue() && PluginInformation.findPlugin(entry.getKey()) == null) {
@@ -101,16 +102,16 @@ public class PluginSelection {
             }
         }
         if (!toDownload.isEmpty()) {
-            int answer = new ExtendedDialog(Main.parent, 
+            int answer = new ExtendedDialog(Main.parent,
                         tr("Download missing plugins"),
                         tr("Download the following plugins?\n\n{0}", msg),
-                        new String[] {tr("Download Plugins"), tr("Cancel")}, 
-                        new String[] {"download.png", "cancel.png"}).getValue();  
+                        new String[] {tr("Download Plugins"), tr("Cancel")},
+                        new String[] {"download.png", "cancel.png"}).getValue();
             if (answer != 1)
-                for (PluginDescription pd : toDownload)
+                for (PluginInformation pd : toDownload)
                     pluginMap.put(pd.name, false);
             else
-                for (PluginDescription pd : toDownload)
+                for (PluginInformation pd : toDownload)
                     if (!PluginDownloader.downloadPlugin(pd))
                         pluginMap.put(pd.name, false);
 
@@ -144,7 +145,7 @@ public class PluginSelection {
         gbc.anchor = GridBagConstraints.NORTHWEST;
 
         int row = 0;
-        for (final PluginDescription plugin : availablePlugins.values()) {
+        for (final PluginInformation plugin : availablePlugins.values()) {
             boolean enabled = (enabledPlugins != null) && enabledPlugins.contains(plugin.name);
             if (pluginMap.get(plugin.name) == null)
                 pluginMap.put(plugin.name, enabled);
@@ -173,12 +174,12 @@ public class PluginSelection {
             gbc.fill = GridBagConstraints.NONE;
             pluginPanel.add(pluginCheck, gbc);
 
-            pluginCheck.setToolTipText(plugin.resource != null ? ""+plugin.resource : tr("Plugin bundled with JOSM"));
+            pluginCheck.setToolTipText(plugin.downloadlink != null ? ""+plugin.downloadlink : tr("Plugin bundled with JOSM"));
 
             JEditorPane description = new JEditorPane();
             description.setContentType("text/html");
             description.setEditable(false);
-            description.setText("<html><i>"+(plugin.description==null?tr("no description available"):plugin.description)+"</i></html>");
+            description.setText("<html><i>"+plugin.getLinkDescription()+"</i></html>");
             description.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
             description.setBackground(UIManager.getColor("Panel.background"));
             description.addHyperlinkListener(new HyperlinkListener() {
@@ -204,14 +205,14 @@ public class PluginSelection {
                         PluginInformation plinfo = PluginInformation.findPlugin(plugin.name);
                         if ((getLoaded(plugin.name) == null) && (plinfo != null)) {
                             try {
-                                int answer = new ExtendedDialog(Main.parent, 
-                                    tr("Plugin already exists"), 
+                                int answer = new ExtendedDialog(Main.parent,
+                                    tr("Plugin already exists"),
                                     tr("Plugin archive already available. Do you want to download"
                                         + " the current version by deleting existing archive?\n\n{0}",
                                         plinfo.file.getCanonicalPath()),
-                                    new String[] {tr("Delete and Download"), tr("Cancel")}, 
-                                    new String[] {"download.png", "cancel.png"}).getValue();      
-                                    
+                                    new String[] {tr("Delete and Download"), tr("Cancel")},
+                                    new String[] {"download.png", "cancel.png"}).getValue();
+
                                 if (answer == 1) {
                                     if (!plinfo.file.delete()) {
                                         JOptionPane.showMessageDialog(Main.parent, tr("Error deleting plugin file: {0}", plinfo.file.getCanonicalPath()));
@@ -246,8 +247,8 @@ public class PluginSelection {
         return null;
     }
 
-    private Map<String, PluginDescription> getAvailablePlugins() {
-        SortedMap<String, PluginDescription> availablePlugins = new TreeMap<String, PluginDescription>(new Comparator<String>(){
+    private Map<String, PluginInformation> getAvailablePlugins() {
+        SortedMap<String, PluginInformation> availablePlugins = new TreeMap<String, PluginInformation>(new Comparator<String>(){
             public int compare(String o1, String o2) {
                 return o1.compareToIgnoreCase(o2);
             }
@@ -259,23 +260,57 @@ public class PluginSelection {
                 for (File f : pluginFiles) {
                     if (!f.isFile())
                         continue;
-                    if (f.getName().endsWith(".jar")) {
+                    String fname = f.getName();
+                    if (fname.endsWith(".jar")) {
                         try {
-                            PluginInformation info = new PluginInformation(f);
+                            PluginInformation info = new PluginInformation(f,fname.substring(0,fname.length()-4), null);
                             if (!availablePlugins.containsKey(info.name))
-                                availablePlugins.put(info.name, new PluginDescription(
-                                    info.name,
-                                    info.description,
-                                    PluginInformation.fileToURL(f).toString(),
-                                    info.version));
+                                availablePlugins.put(info.name, info);
                         } catch (PluginException x) {
                         }
-                    } else if (f.getName().matches("^[0-9]+-site.*\\.xml$")) {
+                    } else if (fname.matches("^[0-9]+-site.*\\.txt$")) {
                         try {
-                            Uniform<PluginDescription> parser = new Uniform<PluginDescription>(new FileReader(f), "plugin", PluginDescription.class);
-                            for (PluginDescription pd : parser)
-                                if (!availablePlugins.containsKey(pd.name))
-                                    availablePlugins.put(pd.name, pd);
+                            BufferedReader r = new BufferedReader(new FileReader(f));
+                            String name = null;
+                            String url = null;
+                            String manifest = null;
+                            for (String line = r.readLine(); line != null; line = r.readLine())
+                            {
+                                if(line.startsWith("\t"))
+                                {
+                                    line = line.substring(1);
+                                    if(line.length() > 70)
+                                    {
+                                        manifest += line.substring(0,70)+"\n";
+                                        line = " " + line.substring(70);
+                                    }
+                                    manifest += line+"\n";
+                                }
+                                else
+                                {
+                                    if(name != null)
+                                    {
+                                        PluginInformation info = new PluginInformation(null, name.substring(0,name.length()-4),
+                                        new ByteArrayInputStream(manifest.getBytes()));
+                                        info.downloadlink = url;
+                                        if(!availablePlugins.containsKey(info.name))
+                                            availablePlugins.put(info.name, info);
+                                        manifest = null;
+                                    }
+                                    String x[] = line.split(";");
+                                    name = x[0];
+                                    url = x[1];
+                                }
+                            }
+                            if(name != null)
+                            {
+                                PluginInformation info = new PluginInformation(null, name.substring(0,name.length()-4),
+                                new ByteArrayInputStream(manifest.getBytes()));
+                                info.downloadlink = url;
+                                if(!availablePlugins.containsKey(info.name))
+                                    availablePlugins.put(info.name, info);
+                            }
+                            r.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                             JOptionPane.showMessageDialog(Main.parent, tr("Error reading plugin information file: {0}", f.getName()));
@@ -286,12 +321,7 @@ public class PluginSelection {
         }
         for (PluginProxy proxy : PluginHandler.pluginList)
             if (!availablePlugins.containsKey(proxy.info.name))
-                availablePlugins.put(proxy.info.name, new PluginDescription(
-                        proxy.info.name,
-                        proxy.info.description,
-                        proxy.info.file == null ? null :
-                            PluginInformation.fileToURL(proxy.info.file).toString(),
-                        proxy.info.version));
+                availablePlugins.put(proxy.info.name, proxy.info);
         return availablePlugins;
     }
 }

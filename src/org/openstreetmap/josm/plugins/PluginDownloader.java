@@ -33,11 +33,11 @@ import org.xml.sax.SAXException;
 public class PluginDownloader {
 
     private static final class UpdateTask extends PleaseWaitRunnable {
-        private final Collection<PluginDescription> toUpdate;
+        private final Collection<PluginInformation> toUpdate;
         private String errors = "";
         private int count = 0;
 
-        private UpdateTask(Collection<PluginDescription> toUpdate) {
+        private UpdateTask(Collection<PluginInformation> toUpdate) {
             super(tr("Update Plugins"));
             this.toUpdate = toUpdate;
         }
@@ -57,9 +57,9 @@ public class PluginDownloader {
             File pluginDir = Main.pref.getPluginsDirFile();
             if (!pluginDir.exists())
                 pluginDir.mkdirs();
-            for (PluginDescription d : toUpdate) {
+            for (PluginInformation d : toUpdate) {
                 File pluginFile = new File(pluginDir, d.name + ".jar.new");
-                if (download(d.resource, pluginFile))
+                if (download(d.downloadlink, pluginFile))
                     count++;
                 else
                     errors += d.name + "\n";
@@ -68,9 +68,7 @@ public class PluginDownloader {
         }
     }
 
-    private static final Pattern wiki = Pattern.compile("^</td></tr><tr><td><a class=\"ext-link\" href=\"([^\"]*)\"><span class=\"icon\">([^<]*)</span></a></td><td>([^<]*)</td><td>([^<].*)</td><td>(.*)");
-
-    private final static String[] pluginSites = {"http://josm.openstreetmap.de/wiki/Plugins"};
+    private final static String[] pluginSites = {"http://josm.openstreetmap.de/plugin"};
 
     public static Collection<String> getSites() {
         return Main.pref.getCollection("pluginmanager.sites", Arrays.asList(pluginSites));
@@ -82,19 +80,18 @@ public class PluginDownloader {
     public static int downloadDescription() {
         int count = 0;
         for (String site : getSites()) {
+        /* TODO: remove old site files (everything except .jar) */
             try {
                 BufferedReader r = new BufferedReader(new InputStreamReader(new URL(site).openStream()));
-                CharSequence txt;
-                if (site.toLowerCase().endsWith(".xml"))
-                    txt = readXml(r);
-                else
-                    txt = readWiki(r);
+                StringBuilder b = new StringBuilder();
+                for (String line = r.readLine(); line != null; line = r.readLine())
+                    b.append(line+"\n");
                 r.close();
                 new File(Main.pref.getPreferencesDir()+"plugins").mkdir();
                 FileWriter out = new FileWriter(new File(Main.pref
                         .getPluginsDirFile(), count + "-site-"
-                        + site.replaceAll("[/:\\\\ <>|]", "_") + ".xml"));
-                out.append(txt);
+                        + site.replaceAll("[/:\\\\ <>|]", "_") + ".txt"));
+                out.append(b);
                 out.close();
                 count++;
             } catch (IOException x) {
@@ -103,39 +100,14 @@ public class PluginDownloader {
         return count;
     }
 
-    private static CharSequence readXml(BufferedReader r) throws IOException {
-        StringBuilder b = new StringBuilder();
-        for (String line = r.readLine(); line != null; line = r.readLine())
-            b.append(line+"\n");
-        return b;
-    }
-
-    private static CharSequence readWiki(BufferedReader r) throws IOException {
-        StringBuilder b = new StringBuilder("<plugins>\n");
-        for (String line = r.readLine(); line != null; line = r.readLine()) {
-            Matcher m = wiki.matcher(line);
-            if (!m.matches())
-                continue;
-            b.append("  <plugin>\n");
-            b.append("    <name>"+escape(m.group(2))+"</name>\n");
-            b.append("    <resource>"+escape(m.group(1))+"</resource>\n");
-            b.append("    <author>"+escape(m.group(3))+"</author>\n");
-            b.append("    <description>"+escape(m.group(4))+"</description>\n");
-            b.append("    <version>"+escape(m.group(5))+"</version>\n");
-            b.append("  </plugin>\n");
-        }
-        b.append("</plugins>\n");
-        return b;
-    }
-
     private static String escape(String s) {
         return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
 
-    public static boolean downloadPlugin(PluginDescription pd) {
+    public static boolean downloadPlugin(PluginInformation pd) {
         File file = new File(Main.pref.getPluginsDirFile(), pd.name + ".jar");
-        if (!download(pd.resource, file)) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not download plugin: {0} from {1}", pd.name, pd.resource));
+        if (!download(pd.downloadlink, file)) {
+            JOptionPane.showMessageDialog(Main.parent, tr("Could not download plugin: {0} from {1}", pd.name, pd.downloadlink));
         } else {
             try {
                 PluginInformation.findPlugin(pd.name);
@@ -170,7 +142,7 @@ public class PluginDownloader {
         return false;
     }
 
-    public static void update(Collection<PluginDescription> update) {
+    public static void update(Collection<PluginInformation> update) {
         Main.worker.execute(new UpdateTask(update));
     }
 

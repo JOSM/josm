@@ -34,11 +34,13 @@ public class PluginInformation {
     public final String mainversion;
     public final String className;
     public final String requires;
+    public final String link;
     public final String description;
     public final boolean early;
     public final String author;
     public final int stage;
     public final String version;
+    public String downloadlink = null;
     public final List<URL> libraries = new LinkedList<URL>();
 
     public final Map<String, String> attr = new TreeMap<String, String>();
@@ -75,10 +77,23 @@ public class PluginInformation {
                 manifest.read(manifestStream);
             }
             if (manifest != null) {
+                String s;
+                String lang = Main.getLanguageCode()+"_";
                 Attributes attr = manifest.getMainAttributes();
                 className = attr.getValue("Plugin-Class");
+                s = attr.getValue(lang+"Plugin-Link");
+                if(s == null)
+                    s = attr.getValue("Plugin-Link");
+                link = s;
                 requires = attr.getValue("Plugin-Requires");
-                description = attr.getValue("Plugin-Description");
+                s = attr.getValue(lang+"Plugin-Description");
+                if(s == null)
+                {
+                    s = attr.getValue("Plugin-Description");
+                    if(s != null)
+                        s = tr(s);
+                }
+                description = s;
                 early = Boolean.parseBoolean(attr.getValue("Plugin-Early"));
                 String stageStr = attr.getValue("Plugin-Stage");
                 stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
@@ -105,10 +120,11 @@ public class PluginInformation {
                 // resource-only plugin
                 className = null;
                 mainversion = null;
-                description = tr("unknown");
+                description = null;
                 early = false;
                 stage = 50;
                 requires = null;
+                link = null;
                 version = null;
                 author = null;
             }
@@ -120,6 +136,14 @@ public class PluginInformation {
         } catch (IOException e) {
             throw new PluginException(null, name, e);
         }
+    }
+
+    public String getLinkDescription()
+    {
+        String d = description == null ? tr("no description available") : description;
+        if(link != null)
+            d += " <A HREF=\""+link+"\">"+tr("More details")+"</A>";
+        return d;
     }
 
     /**
