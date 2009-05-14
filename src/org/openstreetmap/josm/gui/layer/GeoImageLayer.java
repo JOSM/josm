@@ -249,6 +249,13 @@ public class GeoImageLayer extends Layer {
         currentImage = i;
         final JPanel p = new JPanel(new BorderLayout());
         final ImageEntry e = data.get(currentImage);
+        if (!(e.image.exists() && e.image.canRead()))
+        {
+            JOptionPane.showMessageDialog(Main.parent,
+            tr("Image with path {0} does not exist or is not readable.", e.image),
+            tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         final JScrollPane scroll = new JScrollPane(new JLabel(loadScaledImage(e.image, 580)));
         final JViewport vp = scroll.getViewport();
         p.add(scroll, BorderLayout.CENTER);
