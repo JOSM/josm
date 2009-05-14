@@ -402,7 +402,7 @@ public class GpxLayer extends Layer {
             maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", 200);
         }
         // draw line between points, global setting
-        boolean lines = (Main.pref.getBoolean("draw.rawgps.lines") || (Main.pref.getBoolean("draw.rawgps.lines.localfiles") && this.isLocalFile));
+        boolean lines = (Main.pref.getBoolean("draw.rawgps.lines", true) || (Main.pref.getBoolean("draw.rawgps.lines.localfiles") && this.isLocalFile));
         String linesKey = "draw.rawgps.lines.layer "+name;
         // draw lines, per-layer setting
         if (Main.pref.hasKey(linesKey))

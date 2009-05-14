@@ -123,7 +123,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         Point old = null;
 
         boolean force = Main.pref.getBoolean("draw.rawgps.lines.force");
-        boolean lines = Main.pref.getBoolean("draw.rawgps.lines");
+        boolean lines = Main.pref.getBoolean("draw.rawgps.lines", true);
         String linesKey = "draw.rawgps.lines.layer "+name;
         if (Main.pref.hasKey(linesKey))
             lines = Main.pref.getBoolean(linesKey);
