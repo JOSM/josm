@@ -26,7 +26,7 @@ public final class DuplicateAction extends JosmAction implements SelectionChange
     }
 
     public void actionPerformed(ActionEvent e) {
-        PasteAction.pasteData(CopyAction.copyData(), e);
+        PasteAction.pasteData(CopyAction.copyData(), Main.main.editLayer(), e);
     }
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
