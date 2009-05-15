@@ -12,7 +12,8 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -269,8 +270,9 @@ public class PluginSelection {
                         } catch (PluginException x) {
                         }
                     } else if (fname.matches("^[0-9]+-site.*\\.txt$")) {
+                        int err = 0;
                         try {
-                            BufferedReader r = new BufferedReader(new FileReader(f));
+                            BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f), "utf-8"));
                             String name = null;
                             String url = null;
                             String manifest = null;
@@ -290,16 +292,24 @@ public class PluginSelection {
                                 {
                                     if(name != null)
                                     {
-                                        PluginInformation info = new PluginInformation(null, name.substring(0,name.length()-4),
-                                        new ByteArrayInputStream(manifest.getBytes()));
-                                        info.downloadlink = url;
-                                        if(!availablePlugins.containsKey(info.name))
-                                            availablePlugins.put(info.name, info);
-                                        manifest = null;
+                                        try
+                                        {
+                                            PluginInformation info = new PluginInformation(null, name.substring(0,name.length()-4),
+                                            new ByteArrayInputStream(manifest.getBytes()));
+                                            info.downloadlink = url;
+                                            if(!availablePlugins.containsKey(info.name))
+                                                availablePlugins.put(info.name, info);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            e.printStackTrace();
+                                            ++err;
+                                        }
                                     }
                                     String x[] = line.split(";");
                                     name = x[0];
                                     url = x[1];
+                                    manifest = null;
                                 }
                             }
                             if(name != null)
@@ -313,7 +323,11 @@ public class PluginSelection {
                             r.close();
                         } catch (Exception e) {
                             e.printStackTrace();
-                            JOptionPane.showMessageDialog(Main.parent, tr("Error reading plugin information file: {0}", f.getName()));
+                            ++err;
+                        }
+                        if(err > 0)
+                        {
+                          JOptionPane.showMessageDialog(Main.parent, tr("Error reading plugin information file: {0}", f.getName()));
                         }
                     }
                 }

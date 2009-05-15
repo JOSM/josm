@@ -82,7 +82,7 @@ public class PluginDownloader {
         for (String site : getSites()) {
         /* TODO: remove old site files (everything except .jar) */
             try {
-                BufferedReader r = new BufferedReader(new InputStreamReader(new URL(site).openStream()));
+                BufferedReader r = new BufferedReader(new InputStreamReader(new URL(site).openStream(), "utf-8"));
                 StringBuilder b = new StringBuilder();
                 for (String line = r.readLine(); line != null; line = r.readLine())
                     b.append(line+"\n");
