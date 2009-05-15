@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class PasteAction extends JosmAction {
@@ -34,10 +35,10 @@ public final class PasteAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        pasteData(Main.pasteBuffer, e);
+        pasteData(Main.pasteBuffer, Main.pasteSource, e);
     }
-    
-    public static void pasteData(DataSet pasteBuffer, ActionEvent e) {
+
+    public static void pasteData(DataSet pasteBuffer, Layer source, ActionEvent e) {
         /* Find the middle of the pasteBuffer area */
         double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
         for (Node n : pasteBuffer.nodes) {
@@ -51,6 +52,7 @@ public final class PasteAction extends JosmAction {
 
         EastNorth mPosition;
         if((e.getModifiers() & ActionEvent.CTRL_MASK) ==0){
+            /* adjust the coordinates to the middle of the visible map area */
             mPosition = Main.map.mapView.getCenter();
         } else {
             mPosition = Main.map.mapView.getEastNorth(Main.map.mapView.lastMEvent.getX(), Main.map.mapView.lastMEvent.getY());
@@ -66,9 +68,10 @@ public final class PasteAction extends JosmAction {
         for (Node n : pasteBuffer.nodes) {
             Node nnew = new Node(n);
             nnew.id = 0;
-            /* adjust the coordinates to the middle of the visible map area */
-            nnew.eastNorth = new EastNorth(nnew.eastNorth.east() + offsetEast, nnew.eastNorth.north() + offsetNorth);
-            nnew.coor = Main.proj.eastNorth2latlon(nnew.eastNorth);
+            if (Main.main.editLayer() == source) {
+                nnew.eastNorth = new EastNorth(nnew.eastNorth.east() + offsetEast, nnew.eastNorth.north() + offsetNorth);
+                nnew.coor = Main.proj.eastNorth2latlon(nnew.eastNorth);
+            }
             map.put(n, nnew);
         }
         for (Way w : pasteBuffer.ways) {

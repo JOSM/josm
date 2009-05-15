@@ -86,6 +86,7 @@ abstract public class Main {
      * The global paste buffer.
      */
     public static DataSet pasteBuffer = new DataSet();
+    public static Layer pasteSource;
     /**
      * The projection method used.
      */
@@ -347,7 +348,7 @@ abstract public class Main {
                 int result = new ExtendedDialog(parent, tr("Unsaved Changes"),
                 new javax.swing.JLabel(tr("There are unsaved changes. Discard the changes and continue?")+msg),
                 new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")},
-                new String[] {"save.png", "exit.png", "cancel.png"}).getValue(); 
+                new String[] {"save.png", "exit.png", "cancel.png"}).getValue();
 
                 // Save before exiting
                 if(result == 1) {
