@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.Main;
 
 public final class DuplicateAction extends JosmAction implements SelectionChangedListener {
 
