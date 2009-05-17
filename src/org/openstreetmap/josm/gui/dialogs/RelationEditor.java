@@ -36,9 +36,11 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -194,7 +196,7 @@ public class RelationEditor extends ExtendedDialog {
 
         // setting up the member table
 
-        memberData.setColumnIdentifiers(new String[]{tr("Role"),tr("Occupied By")});
+        memberData.setColumnIdentifiers(new String[]{tr("Role"),tr("Occupied By"), tr("linked")});
         memberTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         memberTable.getColumnModel().getColumn(1).setCellRenderer(new OsmPrimitivRenderer());
         memberData.addTableModelListener(new TableModelListener() {
@@ -365,8 +367,48 @@ public class RelationEditor extends ExtendedDialog {
         // re-load membership data
 
         memberData.setRowCount(0);
-        for (RelationMember em : clone.members) {
-            memberData.addRow(new Object[]{em.role, em.member});
+        for (int i=0; i<clone.members.size(); i++) {
+            
+            // this whole section is aimed at finding out whether the
+            // relation member is "linked" with the next, i.e. whether
+            // (if both are ways) these ways are connected. It should
+            // really produce a much more beautiful output (with a linkage
+            // symbol somehow places betweeen the two member lines!), and
+            // it should cache results, so... FIXME ;-)
+            
+            RelationMember em = clone.members.get(i);
+            boolean linked = false;
+            Node n1 = null;
+            Node n2 = null;
+            RelationMember m = em;
+            while (true) {
+                if (m.member instanceof Way) {
+                    n1 = ((Way) m.member).lastNode();
+                    break;
+                } else if (em.member instanceof Relation) {
+                    m = ((Relation)m.member).lastMember();
+                } else {
+                    break;
+                }
+            }
+            if (i<clone.members.size()-1) {
+                m = clone.members.get(i+1);
+                while (true) {
+                    if (m.member instanceof Way) {
+                        n2 = ((Way) (m.member)).firstNode();
+                        break;
+                    } else if (em.member instanceof Relation) {
+                        m = ((Relation)(m.member)).firstMember();
+                    } else {
+                        break;
+                    }
+                }
+            }
+            linked = (n1 != null) && n1.equals(n2);
+            
+            // end of section to determine linkedness. 
+           
+            memberData.addRow(new Object[]{em.role, em.member, linked ? tr("yes") : tr("no")});
         }
         status.setText(tr("Members: {0}", clone.members.size()));
     }

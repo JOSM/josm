@@ -111,4 +111,11 @@ public final class Relation extends OsmPrimitive {
                 return true;
         return false;
     }
+    
+    public RelationMember firstMember() {
+        return (members.size() == 0) ? null : members.get(0);
+    }
+    public RelationMember lastMember() {
+        return (members.size() == 0) ? null : members.get(members.size() -1);
+    }
 }
