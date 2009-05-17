@@ -4,9 +4,9 @@
 	<classpathentry excluding="build/|dist/|src/|test/" including="images/|presets/|styles/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.3.1-nosun.jar"/>
-	<classpathentry kind="lib" path="lib/gettext-commons-0.9.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jfcunit.jar"/>
-        <classpathentry kind="lib" path="lib/josm-translation.jar"/>
+	<classpathentry kind="lib" path="lib/josm-translation.jar"/>
+	<classpathentry kind="lib" path="lib/gettext-commons-0.9.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
