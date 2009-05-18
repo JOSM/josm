@@ -62,6 +62,8 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
@@ -293,9 +295,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param row
      */
     void membershipEdit(int row) {
-        final RelationEditor editor = new RelationEditor((Relation)membershipData.getValueAt(row, 0),
-                (Collection<RelationMember>) membershipData.getValueAt(row, 1) );
-        editor.setVisible(true);
+        RelationEditor.getEditor((Relation)membershipData.getValueAt(row, 0),
+                (Collection<RelationMember>) membershipData.getValueAt(row, 1) ).setVisible(true);
     }
 
     /**

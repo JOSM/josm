@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -39,8 +40,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
- *
- * @author Frederik Ramm <frederik@remote.org>
  */
 public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataChangeListener {
 
@@ -59,8 +58,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             Relation toEdit = getSelected();
             if (toEdit == null)
                 return;
-            
-            new RelationEditor(toEdit).setVisible(true);
+            RelationEditor.getEditor(toEdit, null).setVisible(true);
         }
     });
     
@@ -94,7 +92,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         buttonPanel.add(new SideButton(marktr("New"), "addrelation", "Selection", tr("Create a new relation"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // call relation editor with null argument to create new relation
-                new RelationEditor(null).setVisible(true);
+                RelationEditor.getEditor(null, null).setVisible(true);
             }
         }), GBC.std());
 

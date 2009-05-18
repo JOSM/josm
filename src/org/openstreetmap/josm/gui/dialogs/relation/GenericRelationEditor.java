@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.gui.dialogs;
+package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -10,12 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map.Entry;
 
 import javax.swing.JLabel;
@@ -42,9 +39,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -61,14 +58,8 @@ import org.xml.sax.SAXException;
  * @author Frederik Ramm <frederik@remote.org>
  *
  */
-public class RelationEditor extends ExtendedDialog {
+public class GenericRelationEditor extends RelationEditor {
 
-    /**
-     * The relation that this editor is working on, and the clone made for
-     * editing.
-     */
-    private final Relation relation;
-    private final Relation clone;
     private JLabel status;
 
     /**
@@ -112,42 +103,10 @@ public class RelationEditor extends ExtendedDialog {
      *
      * @param relation relation to edit, or null to create a new one.
      */
-    public RelationEditor(Relation relation)
-    {
-        this(relation, null);
-    }
-
-    /**
-     * Creates a new relation editor for the given relation. The relation
-     * will be saved if the user selects "ok" in the editor.
-     *
-     * If no relation is given, will create an editor for a new relation.
-     *
-     * @param relation relation to edit, or null to create a new one.
-     */
-    public RelationEditor(Relation relation, Collection<RelationMember> selectedMembers )
+    public GenericRelationEditor(Relation relation, Collection<RelationMember> selectedMembers )
     {
         // Initalizes ExtendedDialog
-        super(Main.parent,
-                relation == null
-                    ? tr("Create new relation")
-                    : (relation.id == 0
-                            ? tr ("Edit new relation")
-                            : tr("Edit relation #{0}", relation.id)
-                       ),
-                new String[] { applyChangesText, tr("Cancel")},
-                false
-        );
-
-        this.relation = relation;
-
-        if (relation == null) {
-            // create a new relation
-            this.clone = new Relation();
-        } else {
-            // edit an existing relation
-            this.clone = new Relation(relation);
-        }
+        super(relation, selectedMembers);
 
         JPanel bothTables = setupBasicLayout(selectedMembers);
 
@@ -327,15 +286,15 @@ public class RelationEditor extends ExtendedDialog {
      * This function saves the user's changes. Must be invoked manually.
      */
     private void applyChanges() {
-        if (RelationEditor.this.relation == null) {
+        if (GenericRelationEditor.this.relation == null) {
             // If the user wanted to create a new relation, but hasn't added any members or
             // tags, don't add an empty relation
             if(clone.members.size() == 0 && !clone.isTagged())
                 return;
             Main.main.undoRedo.add(new AddCommand(clone));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
-        } else if (!RelationEditor.this.relation.realEqual(clone, true)) {
-            Main.main.undoRedo.add(new ChangeCommand(RelationEditor.this.relation, clone));
+        } else if (!GenericRelationEditor.this.relation.realEqual(clone, true)) {
+            Main.main.undoRedo.add(new ChangeCommand(GenericRelationEditor.this.relation, clone));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
         }
     }
