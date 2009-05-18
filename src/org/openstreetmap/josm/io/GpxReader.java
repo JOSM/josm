@@ -236,7 +236,7 @@ public class GpxReader {
                 }
                 if (currentState == state.author) {
                     currentData.attr.put(GpxData.META_AUTHOR_LINK, currentLink);
-                } else if (currentState == state.metadata) {
+                } else if (currentState != state.link) {
                     Map<String, Object> attr = getAttr();
                     if (!attr.containsKey(GpxData.META_LINKS)) {
                         attr.put(GpxData.META_LINKS, new LinkedList<GpxLink>());
