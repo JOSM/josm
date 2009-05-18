@@ -103,7 +103,7 @@ public class AboutAction extends JosmAction {
         try {
             myVersion = Integer.parseInt(version.split(" ")[0]);
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
         return myVersion;
     }
@@ -200,8 +200,7 @@ public class AboutAction extends JosmAction {
             String s = "";
             for (String line = in.readLine(); line != null; line = in.readLine())
                 s += line + "\n";
-            if(manifest)
-            {
+            if (manifest) {
                 s = Pattern.compile("\n ", Pattern.DOTALL).matcher(s).replaceAll("");
                 s = Pattern.compile("^(SHA1-Digest|Name): .*?$", Pattern.DOTALL|Pattern.MULTILINE).matcher(s).replaceAll("");
                 s = Pattern.compile("\n+$", Pattern.DOTALL).matcher(s).replaceAll("");
@@ -209,7 +208,8 @@ public class AboutAction extends JosmAction {
             area.setText(s);
             area.setCaretPosition(0);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Cannot load resource " + resource + ": " + e.getMessage());
+            //e.printStackTrace();
         }
         return area;
     }

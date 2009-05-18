@@ -381,7 +381,7 @@ public class RelationEditor extends ExtendedDialog {
             Node n1 = null;
             Node n2 = null;
             RelationMember m = em;
-            while (true) {
+            while (m != null) {
                 if (m.member instanceof Way) {
                     n1 = ((Way) m.member).lastNode();
                     break;
@@ -393,7 +393,7 @@ public class RelationEditor extends ExtendedDialog {
             }
             if (i<clone.members.size()-1) {
                 m = clone.members.get(i+1);
-                while (true) {
+                while (m != null) {
                     if (m.member instanceof Way) {
                         n2 = ((Way) (m.member)).firstNode();
                         break;

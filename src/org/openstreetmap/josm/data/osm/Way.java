@@ -30,20 +30,21 @@ public final class Way extends OsmPrimitive {
     public boolean isMappaintArea = false;
     public Integer mappaintDrawnAreaCode = 0;
     /* end of mappaint data */
-    @Override protected void clearCached()
-    {
+    @Override protected void clearCached() {
         super.clearCached();
         isMappaintArea = false;
         mappaintDrawnAreaCode = 0;
     }
 
     public void visitNodes(Visitor v) {
+        if (incomplete) return;
         for (Node n : this.nodes)
             v.visit(n);
     }
 
     public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
         ArrayList<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
+        if (incomplete) return chunkSet;
         Node lastN = null;
         for (Node n : this.nodes) {
             if (lastN == null) {
@@ -69,7 +70,7 @@ public final class Way extends OsmPrimitive {
      * Create an identical clone of the argument (including the id)
      */
     public Way(Way clone) {
-            cloneFrom(clone);
+        cloneFrom(clone);
     }
 
     /**
@@ -94,6 +95,7 @@ public final class Way extends OsmPrimitive {
     }
 
     @Override public String toString() {
+        if (incomplete) return "{Way id="+id+" version="+version+" (incomplete)}";
         return "{Way id="+id+" version="+version+" nodes="+Arrays.toString(nodes.toArray())+"}";
     }
 
@@ -102,7 +104,7 @@ public final class Way extends OsmPrimitive {
     }
 
     public int compareTo(OsmPrimitive o) {
-        if(o instanceof Relation)
+        if (o instanceof Relation)
             return 1;
         return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
     }
@@ -131,56 +133,58 @@ public final class Way extends OsmPrimitive {
         return name;
     }
 
-    public void removeNode(Node n)
-    {
-        Boolean closed = (lastNode() == n && firstNode() == n);
+    public void removeNode(Node n) {
+        if (incomplete) return;
+        boolean closed = (lastNode() == n && firstNode() == n);
         int i;
-        while((i = nodes.indexOf(n)) >= 0)
+        while ((i = nodes.indexOf(n)) >= 0)
             nodes.remove(i);
         i = nodes.size();
-        if(closed && i > 2) // close again
+        if (closed && i > 2) // close again
             addNode(firstNode());
         // prevent closed ways with less than 3 different nodes
-        else if(i >= 2 && i <= 3 && nodes.get(0) == nodes.get(i-1))
+        else if (i >= 2 && i <= 3 && nodes.get(0) == nodes.get(i-1))
             nodes.remove(i-1);
     }
 
-    public void removeNodes(Collection<? extends OsmPrimitive> selection)
-    {
-       for(OsmPrimitive p : selection)
-       {
-           if(p instanceof Node)
-           {
+    public void removeNodes(Collection<? extends OsmPrimitive> selection) {
+        if (incomplete) return;
+        for(OsmPrimitive p : selection) {
+           if (p instanceof Node) {
                removeNode((Node)p);
            }
        }
     }
 
-    public void addNode(Node n)
-    {
+    public void addNode(Node n) {
+        if (incomplete) return;
         clearCached();
         nodes.add(n);
     }
 
-    public void addNode(int offs, Node n)
-    {
+    public void addNode(int offs, Node n) {
+        if (incomplete) return;
         clearCached();
         nodes.add(offs, n);
     }
 
-    public Boolean isClosed() {
+    public boolean isClosed() {
+        if (incomplete) return false;
         return nodes.size() >= 3 && lastNode() == firstNode();
     }
 
     public Node lastNode() {
+        if (incomplete) return null;
         return nodes.get(nodes.size()-1);
     }
 
     public Node firstNode() {
+        if (incomplete) return null;
         return nodes.get(0);
     }
 
     public boolean isFirstLastNode(Node n) {
+        if (incomplete) return false; 
         return n == firstNode() || n == lastNode();
     }
 }
