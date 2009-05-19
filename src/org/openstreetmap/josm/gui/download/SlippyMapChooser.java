@@ -104,8 +104,9 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         slipyyMapTabPanel = new JPanel();
         slipyyMapTabPanel.setLayout(new BorderLayout());
         slipyyMapTabPanel.add(this, BorderLayout.CENTER);
-        slipyyMapTabPanel.add(new JLabel((tr("Zoom: Mousewheel or double click.   "
-                + "Move map: Hold right mousebutton and move mouse.   Select: Click."))), BorderLayout.SOUTH);
+        String labelText = "<b>Zoom:</b> Mousewheel, double click or Ctrl + Up/Down "
+                + "<b>Move map:</b> Hold right mousebutton and move mouse or use cursor keys. <b>Select:</b> Click.";
+        slipyyMapTabPanel.add(new JLabel("<html>" + tr(labelText) + "</html>"), BorderLayout.SOUTH);
         iGui.tabpane.add(slipyyMapTabPanel, tr("Slippy map"));
         new OsmMapControl(this, slipyyMapTabPanel, iSizeButton, iSourceButton);
     }
