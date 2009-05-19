@@ -35,7 +35,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.projection.Epsg4326;
+import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.GettingStarted;
@@ -256,8 +256,8 @@ abstract public class Main {
             Main.proj = (Projection)Class.forName(Main.pref.get("projection")).newInstance();
         } catch (final Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, tr("The projection could not be read from preferences. Using EPSG:4326"));
-            Main.proj = new Epsg4326();
+            JOptionPane.showMessageDialog(null, tr("The projection could not be read from preferences. Using Mercartor"));
+            Main.proj = new Mercator();
         }
 
         try {

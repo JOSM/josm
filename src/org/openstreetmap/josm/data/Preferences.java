@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
-import org.openstreetmap.josm.data.projection.Epsg4326;
+import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -343,8 +343,8 @@ public class Preferences {
         put("propertiesdialog.visible", true);
         put("selectionlist.visible", true);
         put("commandstack.visible", true);
-        put("projection", Epsg4326.class.getName());
-        put("osm-server.url", "http://www.openstreetmap.org/api");
+        put("projection", Mercator.class.getName());
+        put("osm-server.url", "http://api.openstreetmap.org/api");
         if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
             put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
         } else {
