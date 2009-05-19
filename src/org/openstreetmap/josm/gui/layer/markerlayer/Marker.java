@@ -16,6 +16,7 @@ import javax.swing.Icon;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
@@ -81,7 +82,7 @@ public class Marker implements ActionListener {
                 // cheapest way to check whether "link" object exists and is a non-empty
                 // collection of GpxLink objects...
                 try {
-                    for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
+                    for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
                         uri = oneLink.uri;
                         break;
                     }

@@ -62,7 +62,7 @@ public class GpxWriter extends XmlWriter {
         // for now it works, but future extension could get very complex and unmaintainable 
         for (Map.Entry<String, Object> ent : attr.entrySet()) {
             String k = ent.getKey();
-            if (k.equals("link")) {
+            if (k.equals(GpxData.META_LINKS)) {
                 for (GpxLink link : (Collection<GpxLink>) ent.getValue()) {
                     gpxLink(link);
                 }

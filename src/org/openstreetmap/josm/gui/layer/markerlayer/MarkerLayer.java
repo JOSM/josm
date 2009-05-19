@@ -79,16 +79,16 @@ public class MarkerLayer extends Layer {
         for (WayPoint wpt : indata.waypoints) {
             /* calculate time differences in waypoints */
             double time = wpt.time;
-            boolean wpt_has_link = wpt.attr.containsKey("link");
+            boolean wpt_has_link = wpt.attr.containsKey(GpxData.META_LINKS);
             if (firstTime < 0 && wpt_has_link) {
                 firstTime = time;
-                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
+                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
                     lastLinkedFile = oneLink.uri;
                     break;
                 }
             }
             if (wpt_has_link) {
-                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get("link")) {
+                for (GpxLink oneLink : (Collection<GpxLink>) wpt.attr.get(GpxData.META_LINKS)) {
                     if (!oneLink.uri.equals(lastLinkedFile))firstTime = time;
                     lastLinkedFile = oneLink.uri;
                     break;
