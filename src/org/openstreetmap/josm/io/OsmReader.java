@@ -205,21 +205,35 @@ public class OsmReader {
                     // ---- PARSING RELATIONS ----
 
                     } else if (qName.equals("relation")) {
-//                         relationsN++;
                          current = new OsmPrimitiveData();
                          readCommon(atts, current);
                          relations.put((OsmPrimitiveData)current, new LinkedList<RelationMemberData>());
                     } else if (qName.equals("member")) {
-//                         membersN++;
                          Collection<RelationMemberData> list = relations.get(current);
                          if (list == null)
                               throw new SAXException(tr("Found <member> element in non-relation."));
                          RelationMemberData emd = new RelationMemberData();
                          emd.relationMember = new RelationMember();
-                         emd.id = getLong(atts, "ref");
-                         emd.type=atts.getValue("type");
-                         emd.relationMember.role = atts.getValue("role");
-
+                         String value = atts.getValue("ref");
+                         if (value == null) {
+                             throw new SAXException(tr("Missing attribute \"ref\" on member in relation {0}",current.id));
+                         }
+                         try {
+                             emd.id = Long.parseLong(value);
+                         } catch(NumberFormatException e) {
+                             throw new SAXException(tr("Illegal value for attribute \"ref\" on member in relation {0}, got {1}", Long.toString(current.id),value));
+                         }
+                         value = atts.getValue("type");
+                         if (value == null) {
+                             throw new SAXException(tr("Missing attribute \"type\" on member {0} in relation {1}", Long.toString(emd.id), Long.toString(current.id)));
+                         }
+                         if (! (value.equals("way") || value.equals("node") || value.equals("relation"))) {
+                             throw new SAXException(tr("Unexpected \"type\" on member {0} in relation {1}, got {2}.", Long.toString(emd.id), Long.toString(current.id), value));
+                         }
+                         emd.type= value;
+                         value = atts.getValue("role");
+                         emd.relationMember.role = value;
+                         
                          if (emd.id == 0)
                               throw new SAXException(tr("Incomplete <member> specification with ref=0"));
 
@@ -270,6 +284,14 @@ public class OsmReader {
                // do not store literally; get object reference for string
                current.user = User.get(user);
           }
+          
+          // uid attribute added in 0.6 API 
+          String uid = atts.getValue("uid");
+          if (uid != null) {
+              if (current.user != null) {
+                  current.user.uid = uid;
+              }
+         }
 
           // visible attribute added in 0.4 API
           String visible = atts.getValue("visible");
@@ -277,20 +299,20 @@ public class OsmReader {
                current.visible = Boolean.parseBoolean(visible);
           }
 
-          // oldversion attribute added in 0.6 API
-
-          // Note there is an asymmetry here: the server will send
-          // the version as "version" the client sends it as
-          // "oldversion". So we take both since which we receive will
-          // depend on reading from a file or reading from the server
-
           String version = atts.getValue("version");
+          current.version = 0;
           if (version != null) {
-               current.version = Integer.parseInt(version);
-          }
-          version = atts.getValue("old_version");
-          if (version != null) {
-               current.version = Integer.parseInt(version);
+              try {
+                  current.version = Integer.parseInt(version);
+              } catch(NumberFormatException e) {
+                  throw new SAXException(tr("Illegal value for attribute \"version\" on OSM primitive with id {0}, got {1}", Long.toString(current.id), version));
+              }
+          } else {
+              // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
+              //
+              if (current.id > 0 && ds.version != null && ds.version.equals("0.6")) {
+                  throw new SAXException(tr("Missing attribute \"version\" on OSM primitive with id {0}", Long.toString(current.id)));
+              }
           }
 
           String action = atts.getValue("action");

@@ -20,6 +20,9 @@ public class User {
 
     /** the username. */
     public String name;
+    
+    /** the user ID (since API 0.6) */
+    public String uid;
 
     /** private constructor, only called from get method. */
     private User(String name) {
