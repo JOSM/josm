@@ -305,10 +305,10 @@ public class GpxLayer extends Layer {
         data.waypoints.size(), data.waypoints.size())).append("<br>");
 
         if (data.attr.containsKey("name"))
-            info.append(tr("Name: {0}", data.attr.get("name"))).append("<br>");
+            info.append(tr("Name: {0}", data.attr.get(data.META_NAME))).append("<br>");
 
         if (data.attr.containsKey("desc"))
-            info.append(tr("Description: {0}", data.attr.get("desc"))).append("<br>");
+            info.append(tr("Description: {0}", data.attr.get(data.META_DESC))).append("<br>");
 
         if(data.tracks.size() > 0){
             boolean first = true;

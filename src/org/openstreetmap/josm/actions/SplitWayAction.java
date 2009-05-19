@@ -266,11 +266,16 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
         // now copy all relations to new way also
         for (Relation r : Main.ds.relations) {
             if (r.deleted || r.incomplete) continue;
+            Relation c = null;
+            int i = 0;
+
             for (RelationMember rm : r.members) {
                 if (rm.member instanceof Way) {
                     if (rm.member == selectedWay)
                     {
-                        Relation c = new Relation(r);
+                        if (c == null)
+                            c = new Relation(r);
+
                         for(Way wayToAdd : newWays)
                         {
                             RelationMember em = new RelationMember();
@@ -278,13 +283,17 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
                             em.role = rm.role;
                             if(em.role.length() > 0)
                                 warnme = true;
-                            c.members.add(em);
+
+                            i++;
+                            c.members.add(i, em);
                         }
-                        commandList.add(new ChangeCommand(r, c));
-                        break;
                     }
                 }
+                i++;
             }
+
+            if (c != null)
+                commandList.add(new ChangeCommand(r, c));
         }
         if(warnme)
             JOptionPane.showMessageDialog(Main.parent, tr("A role based relation membership was copied to all new ways.\nYou should verify this and correct it when necessary."));
