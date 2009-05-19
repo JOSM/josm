@@ -11,11 +11,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.DateUtils;
 
 /**
@@ -319,6 +322,51 @@ public class SearchCompiler {
         }
         @Override public String toString() {return "untagged";}
     }
+        
+    private static class Parent extends Match {
+        private Match child;
+        public Parent(Match m) { child = m; }
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+            boolean isParent = false;
+
+            // "parent" (null) should mean the same as "parent()"
+            // (Always). I.e. match everything
+            if (child == null)
+                child = new Always();
+                
+            if (osm instanceof Way) {
+                for (Node n : ((Way)osm).nodes)
+                    isParent |= child.match(n);
+            } else if (osm instanceof Relation) {
+                for (RelationMember member : ((Relation)osm).members) {
+                    if (member.member != null)
+                        isParent |= child.match(member.member);
+                }
+            }
+            return isParent;
+        }
+        @Override public String toString() {return "parent(" + child + ")";}
+    }
+
+    private static class Child extends Match {
+        private Match parent;
+        public Child(Match m) { parent = m; }
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+            // "child" (null) should mean the same as "child()"
+            // (Always). I.e. match everything
+            if (parent == null)
+                parent = new Always();
+
+            boolean isChild = false;
+            CollectBackReferencesVisitor backRefs = new CollectBackReferencesVisitor(Main.ds);
+            osm.visit(backRefs);
+            for (OsmPrimitive p : backRefs.data) {
+                isChild |= parent.match(p);
+            }
+            return isChild;
+        }
+        @Override public String toString() {return "child(" + parent + ")";}
+    }
 
     public static class ParseError extends Exception {
         public ParseError(String msg) {
@@ -387,7 +435,7 @@ public class SearchCompiler {
         return parsePat();
     }
 
-    private Match parsePat() {
+    private Match parsePat() throws ParseError {
         String tok = tokenizer.readText();
 
         if (tokenizer.readIfEqual(":")) {
@@ -407,6 +455,10 @@ public class SearchCompiler {
             return new Untagged();
         } else if (tok.equals("selected")) {
             return new Selected();
+        } else if (tok.equals("child")) {
+            return new Child(parseParens());
+        } else if (tok.equals("parent")) {
+            return new Parent(parseParens());
         } else {
             return new Any(tok);
         }

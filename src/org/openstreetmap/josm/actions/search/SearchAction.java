@@ -93,6 +93,8 @@ public class SearchAction extends JosmAction {
                 + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
                 + "<li>"+tr("<b>incomplete</b> - all incomplete objects")+"</li>"
                 + "<li>"+tr("<b>untagged</b> - all untagged objects")+"</li>"
+                + "<li>"+tr("<b>child <i>expr</i></b> - all children of objects matching the expression")+"</li>"
+                + "<li>"+tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression")+"</li>"
                 + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"
                 + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains :)")+"</li>"
                 + "<li>"+tr("Use <b>(</b> and <b>)</b> to group expressions")+"</li>"

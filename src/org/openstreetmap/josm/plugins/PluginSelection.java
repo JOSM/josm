@@ -33,10 +33,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
-import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -134,10 +134,17 @@ public class PluginSelection {
 
         if (pluginMap == null)
             pluginMap = new HashMap<String, Boolean>();
-        else
+        else {
             // Keep the map in bounds; possibly slightly pointless.
-            for (final String pname : pluginMap.keySet())
-                if (availablePlugins.get(pname) == null) pluginMap.remove(pname);
+            Set<String> pluginsToRemove = new HashSet<String>();
+            for (final String pname : pluginMap.keySet()) {
+                if (availablePlugins.get(pname) == null) pluginsToRemove.add(pname);
+            }
+            
+            for (String pname : pluginsToRemove) {
+                pluginMap.remove(pname);
+            }
+        }
 
         pluginPanel.removeAll();
 
