@@ -92,7 +92,7 @@ public class SearchCompiler {
         public KeyValue(String key, String value) {this.key = key; this.value = value; }
         @Override public boolean match(OsmPrimitive osm) throws ParseError {
 
-            if (regexSearch) { 
+            if (regexSearch) {
                 if (osm.keys == null)
                     return false;
 
@@ -105,29 +105,13 @@ public class SearchCompiler {
 
                 Pattern searchKey   = null;
                 Pattern searchValue = null;
+                int searchFlags = regexFlags();
 
-                if (caseSensitive) {
-                    try {
-                        searchKey = Pattern.compile(key);
-                    } catch (PatternSyntaxException e) {
-                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
-                    }
-                    try {
-                        searchValue = Pattern.compile(value);
-                    } catch (PatternSyntaxException e) {
-                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
-                    }
-                } else {
-                    try {
-                        searchKey = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
-                    } catch (PatternSyntaxException e) {
-                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
-                    }
-                    try {
-                        searchValue = Pattern.compile(value, Pattern.CASE_INSENSITIVE);
-                    } catch (PatternSyntaxException e) {
-                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
-                    }
+                try {
+                    searchKey = Pattern.compile(key, searchFlags);
+                    searchValue = Pattern.compile(value, searchFlags);
+                } catch (PatternSyntaxException e) {
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 }
 
                 for (Entry<String, String> e : osm.keys.entrySet()) {
@@ -182,18 +166,12 @@ public class SearchCompiler {
 
             if (regexSearch) {
                 search = s;
-                if (caseSensitive) {
-                    try {
-                        searchRegex = Pattern.compile(search);
-                    } catch (PatternSyntaxException e) {
-                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
-                    }
-                } else {
-                    try {
-                        searchRegex = Pattern.compile(search, Pattern.CASE_INSENSITIVE);
-                    } catch (PatternSyntaxException e) {
-                        throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
-                    }
+                int searchFlags = regexFlags();
+
+                try {
+                    searchRegex = Pattern.compile(search, searchFlags);
+                } catch (PatternSyntaxException e) {
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 }
             } else {
                 search = caseSensitive ? s : s.toLowerCase();
@@ -274,11 +252,11 @@ public class SearchCompiler {
         }
         @Override public String toString() {return "nodes="+count;}
     }
-    
+
     private static class NodeCountRange extends Match {
         private int minCount;
         private int maxCount;
-        public NodeCountRange(int minCount, int maxCount) { 
+        public NodeCountRange(int minCount, int maxCount) {
             if(maxCount < minCount) {
                 this.minCount = maxCount;
                 this.maxCount = minCount;
@@ -322,7 +300,7 @@ public class SearchCompiler {
         }
         @Override public String toString() {return "untagged";}
     }
-        
+
     private static class Parent extends Match {
         private Match child;
         public Parent(Match m) { child = m; }
@@ -333,7 +311,7 @@ public class SearchCompiler {
             // (Always). I.e. match everything
             if (child == null)
                 child = new Always();
-                
+
             if (osm instanceof Way) {
                 for (Node n : ((Way)osm).nodes)
                     isParent |= child.match(n);
@@ -473,12 +451,12 @@ public class SearchCompiler {
             try {
                 return new NodeCount(Integer.parseInt(value));
             } catch(Exception x) {}
-        
+
             try {
                 String[] range = value.split("-", 2);
                 return new NodeCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
             } catch(Exception x) {}
-            
+
             return new NodeCount(0);
         } else if (key.equals("id")) {
             try {
@@ -489,5 +467,27 @@ public class SearchCompiler {
         } else {
             return new KeyValue(key, value);
         }
+    }
+
+    private int regexFlags() {
+        int searchFlags = 0;
+
+        // Enables canonical Unicode equivalence so that e.g. the two
+        // forms of "\u00e9gal" and "e\u0301gal" will match.
+        //
+        // It makes sense to match no matter how the character
+        // happened to be constructed.
+        searchFlags |= Pattern.CANON_EQ;
+
+        // Make "." match any character including newline (/s in Perl)
+        searchFlags |= Pattern.DOTALL;
+
+        // CASE_INSENSITIVE by itself only matches US-ASCII case
+        // insensitively, but the OSM data is in Unicode. With
+        // UNICODE_CASE casefolding is made Unicode-aware.
+        if (!caseSensitive)
+            searchFlags |= (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
+        return searchFlags;
     }
 }
