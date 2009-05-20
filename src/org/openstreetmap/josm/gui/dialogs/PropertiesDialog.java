@@ -8,6 +8,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -18,7 +20,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.String;
+import java.awt.event.MouseListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,7 +61,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
@@ -137,7 +138,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         String key = propertyData.getValueAt(row, 0).toString();
         objKey=key;
 
-        String msg = "<html>"+trn("This will change up to {0} object.", "This will change up to {0} objects.", sel.size(), sel.size())+"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
+        String msg = "<html>"+trn("This will change up to {0} object.",
+        "This will change up to {0} objects.", sel.size(), sel.size())
+        +"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JLabel(msg), BorderLayout.NORTH);
@@ -158,8 +161,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         final AutoCompleteComboBox values = new AutoCompleteComboBox();
         values.setRenderer(new DefaultListCellRenderer() {
-            @Override public Component getListCellRendererComponent(JList list,  Object value, int index, boolean isSelected,  boolean cellHasFocus) {
-                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            @Override public Component getListCellRendererComponent(JList list,
+            Object value, int index, boolean isSelected,  boolean cellHasFocus){
+                Component c = super.getListCellRendererComponent(list, value,
+                index, isSelected, cellHasFocus);
                 if (c instanceof JLabel) {
                     String str = null;
                         str=(String) value;
@@ -256,7 +261,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             } else {
                 commands.add(new ChangePropertyCommand(sel, newkey, value));
             }
-            Main.main.undoRedo.add(new SequenceCommand(trn("Change properties of up to {0} object", "Change properties of up to {0} objects", sel.size(), sel.size()), commands));
+            Main.main.undoRedo.add(new SequenceCommand(
+            trn("Change properties of up to {0} object",
+            "Change properties of up to {0} objects", sel.size(), sel.size()),
+            commands));
         }
 
         DataSet.fireSelectionChanged(sel);
@@ -278,7 +286,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param allData
      * @param values
      */
-    private void updateListData(String key, final TreeMap<String, TreeSet<String>> allData, final AutoCompleteComboBox values) {
+    private void updateListData(String key, final TreeMap<String, TreeSet<String>> allData,
+    final AutoCompleteComboBox values) {
         Collection<String> newItems;
         if (allData.containsKey(key)) {
             newItems = allData.get(key);
@@ -308,8 +317,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if (sel.isEmpty()) return;
 
         JPanel p = new JPanel(new BorderLayout());
-        p.add(new JLabel("<html>"+trn("This will change up to {0} object.","This will change up to {0} objects.", sel.size(),sel.size())+"<br><br>"+tr("Please select a key")),
-                BorderLayout.NORTH);
+        p.add(new JLabel("<html>"+trn("This will change up to {0} object.",
+        "This will change up to {0} objects.", sel.size(),sel.size())
+        +"<br><br>"+tr("Please select a key")), BorderLayout.NORTH);
         final TreeMap<String, TreeSet<String>> allData = createAutoCompletionInfo(false);
         final AutoCompleteComboBox keys = new AutoCompleteComboBox();
         keys.setPossibleItems(allData.keySet());
@@ -351,7 +361,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param keys
      * @param values
      */
-    private void addFocusAdapter(final int row, final TreeMap<String, TreeSet<String>> allData,final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
+    private void addFocusAdapter(final int row, final TreeMap<String, TreeSet<String>> allData,
+    final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
         // get the combo box' editor component
         JTextComponent editor = (JTextComponent)values.getEditor()
                 .getEditorComponent();
@@ -441,9 +452,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SideButton btnAdd;
     private final SideButton btnEdit;
     private final SideButton btnDel;
-    private final JMultilineLabel presets = new JMultilineLabel("");
+    private final JPanel presets = new JPanel(new GridBagLayout());
 
-    private final JLabel selectSth = new JLabel("<html><p>" + tr("Please select the objects you want to change properties for.") + "</p></html>");
+    private final JLabel selectSth = new JLabel("<html><p>"
+    + tr("Please select the objects you want to change properties for.") + "</p></html>");
 
     /**
      * Create a new PropertiesDialog
@@ -458,7 +470,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         propertyTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
-            @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            @Override public Component getTableCellRendererComponent(JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
                     String str = null;
@@ -488,7 +501,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         membershipTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            @Override public Component getTableCellRendererComponent(JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
                     nameVisitor.visit((Relation)value);
@@ -499,7 +513,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
 
         membershipTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            @Override public Component getTableCellRendererComponent(JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
                     Collection<RelationMember> col = (Collection<RelationMember>) value;
@@ -524,12 +539,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         // combine both tables and wrap them in a scrollPane
         JPanel bothTables = new JPanel();
         bothTables.setLayout(new GridBagLayout());
+        bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
         bothTables.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
-        bothTables.add(presets, GBC.eol().fill().insets(5, 2, 5, 2));
 
         DblClickWatch dblClickWatch = new DblClickWatch();
         propertyTable.addMouseListener(dblClickWatch);
@@ -539,7 +554,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         add(scrollPane, BorderLayout.CENTER);
 
         selectSth.setPreferredSize(scrollPane.getSize());
-        presets.setPreferredSize(scrollPane.getSize());
+        presets.setSize(scrollPane.getSize());
 
         JPanel buttonPanel = new JPanel(new GridLayout(1,3));
         ActionListener buttonAction = new ActionListener(){
@@ -628,50 +643,84 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     private void checkPresets(int nodes, int ways, int relations, int closedways)
     {
+        /**
+         * Small helper class that manages the highlighting of the label on hover as well as opening
+         * the corresponding preset when clicked
+         */
+        class PresetLabelML implements MouseListener {
+            JLabel label;
+            Font bold;
+            Font normal;
+            TaggingPreset tag;
+            PresetLabelML(JLabel lbl, TaggingPreset t) {
+                super();
+                label = lbl;
+                lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                normal = label.getFont();
+                bold = normal.deriveFont(normal.getStyle() ^ Font.BOLD);
+                tag = t;
+            }
+            public void mouseClicked(MouseEvent arg0) {
+                tag.actionPerformed(null);
+            }
+            public void mouseEntered(MouseEvent arg0) {
+                label.setFont(bold);
+            }
+            public void mouseExited(MouseEvent arg0) {
+                label.setFont(normal);
+            }
+            public void mousePressed(MouseEvent arg0) {}
+            public void mouseReleased(MouseEvent arg0) {}
+        }
+
         LinkedList<TaggingPreset> p = new LinkedList<TaggingPreset>();
+        presets.removeAll();
         int total = nodes+ways+relations+closedways;
-        if(total != 0)
-        {
-            for(TaggingPreset t : TaggingPresetPreference.taggingPresets)
+        if(total == 0) {
+            presets.setVisible(false);
+            return;
+        }
+
+        for(TaggingPreset t : TaggingPresetPreference.taggingPresets) {
+            if(t.types == null || !((relations > 0 && !t.types.contains("relation")) &&
+            (nodes > 0 && !t.types.contains("node")) &&
+            (ways+closedways > 0 && !t.types.contains("way")) &&
+            (closedways > 0 && !t.types.contains("closedway"))))
             {
-                if(t.types == null || !((relations > 0 && !t.types.contains("relation")) &&
-                (nodes > 0 && !t.types.contains("node")) &&
-                (ways+closedways > 0 && !t.types.contains("way")) &&
-                (closedways > 0 && !t.types.contains("closedway"))))
-                {
-                    int found = 0;
-                    for(TaggingPreset.Item i : t.data)
-                    {
-                        if(i instanceof TaggingPreset.Key)
-                        {
-                            String val = ((TaggingPreset.Key)i).value;
-                            String key = ((TaggingPreset.Key)i).key;
-                            // we subtract 100 if not found and add 1 if found
-                            found -= 100;
-                            if(valueCount.containsKey(key))
-                            {
-                                Map<String, Integer> v = valueCount.get(key);
-                                if(v.size() == 1 && v.containsKey(val) && v.get(val) == total)
-                                {
-                                    found += 101;
-                                }
-                            }
-                        }
-                    }
-                    if(found > 0)
-                        p.add(t);
+                int found = 0;
+                for(TaggingPreset.Item i : t.data) {
+                    if(!(i instanceof TaggingPreset.Key))
+                        continue;
+                    String val = ((TaggingPreset.Key)i).value;
+                    String key = ((TaggingPreset.Key)i).key;
+                    // we subtract 100 if not found and add 1 if found
+                    found -= 100;
+                    if(!valueCount.containsKey(key))
+                        continue;
+
+                    Map<String, Integer> v = valueCount.get(key);
+                    if(v.size() == 1 && v.containsKey(val) && v.get(val) == total)
+                        found += 101;
                 }
+
+                if(found <= 0)
+                    continue;
+
+                JLabel lbl = new JLabel(t.getName());
+                lbl.addMouseListener(new PresetLabelML(lbl, t));
+                presets.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
             }
         }
-        String t = "";
-        for(TaggingPreset tp : p)
-        {
-            if(t.length() > 0)
-                t += "\n";
-            t += tp.getName();
-        }
-        presets.setText(t);
-        presets.setVisible(t.length() > 0);
+
+        if(presets.getComponentCount() > 0) {
+            presets.setVisible(true);
+            // This ensures the presets are exactly as high as needed.
+            int height = presets.getComponentCount() * presets.getComponent(0).getHeight();
+            Dimension size = new Dimension(presets.getWidth(), height);
+            presets.setMaximumSize(size);
+            presets.setMinimumSize(size);
+        } else
+            presets.setVisible(false);
     }
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
@@ -745,6 +794,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             membershipData.addRow(new Object[]{e.getKey(), e.getValue()});
         }
 
+        checkPresets(nodes, ways, relations, closedways);
+
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);
 
@@ -759,8 +810,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         selectSth.setVisible(!hasSelection);
         if(hasTags) propertyTable.changeSelection(0, 0, false, false);
         else if(hasMemberships) membershipTable.changeSelection(0, 0, false, false);
-
-        checkPresets(nodes, ways, relations, closedways);
 
         if(propertyData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
             setTitle(tr("Properties: {0} / Memberships: {1}",
