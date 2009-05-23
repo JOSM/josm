@@ -167,19 +167,25 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
                     List<RoleCorrection> roleCorrections = roleCorrectionMap
                             .get(primitive);
-                    for (int i = 0; i < roleCorrections.size(); i++) {
-                        if (roleTableMap.get(primitive)
-                                .getCorrectionTableModel().getApply(i)) {
-                            RoleCorrection roleCorrection = roleCorrections
-                                    .get(i);
-                            Relation newRelation = new Relation(
-                                    roleCorrection.relation);
-                            for (RelationMember member : newRelation.members)
-                                if (member.equals(roleCorrection.member))
+                    for (Relation relation : Main.ds.relations) {
+                        Relation newRelation = new Relation(relation);
+                        Boolean changed = false;
+
+                        for (int i = 0; i < roleCorrections.size(); i++) {
+                            RoleCorrection roleCorrection = roleCorrections.get(i);
+                            if (roleCorrection.relation == relation &&
+                                    roleTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
+
+                                RelationMember member = newRelation.members.get(roleCorrection.position);
+
+                                if (member.equals(roleCorrection.member)) {
                                     member.role = roleCorrection.newRole;
-                            commands.add(new ChangeCommand(
-                                    roleCorrection.relation, newRelation));
+                                    changed = true;
+                                }
+                            }
                         }
+                        if (changed)
+                            commands.add(new ChangeCommand(relation, newRelation));
                     }
                 }
             } else if (answer != JOptionPane.NO_OPTION) {

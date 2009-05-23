@@ -111,10 +111,13 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
 
         for (Relation relation : Main.ds.relations) {
+            int position = 0;
             for (RelationMember member : relation.members) {
                 if (!member.member.realEqual(oldway, true)
-                        || member.role.length() == 0)
+                        || member.role.length() == 0) {
+                    position++;
                     continue;
+                }
 
                 boolean found = false;
                 String newRole = null;
@@ -128,7 +131,9 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
                 if (found)
                     roleCorrectionMap.get(way).add(
-                            new RoleCorrection(relation, member, newRole));
+                            new RoleCorrection(relation, position, member, newRole));
+
+                position++;
             }
         }
 
