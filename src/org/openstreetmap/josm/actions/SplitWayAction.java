@@ -276,6 +276,8 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
                         if (c == null)
                             c = new Relation(r);
 
+                        int j = i;
+                        boolean backwards = rm.role.equals("backward");
                         for(Way wayToAdd : newWays)
                         {
                             RelationMember em = new RelationMember();
@@ -284,9 +286,13 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
                             if(em.role.length() > 0)
                                 warnme = true;
 
-                            i++;
-                            c.members.add(i, em);
+                            j++;
+                            if (backwards)
+                                c.members.add(i, em);
+                            else
+                                c.members.add(j, em);
                         }
+                        i = j;
                     }
                 }
                 i++;
