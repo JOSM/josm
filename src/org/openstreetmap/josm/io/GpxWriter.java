@@ -67,7 +67,7 @@ public class GpxWriter extends XmlWriter {
                     gpxLink(link);
                 }
             } else {
-                simpleTag(k, (String) ent.getValue());
+                simpleTag(k, ent.getValue().toString());
             }
         }
     }
