@@ -260,6 +260,10 @@ public class Preferences {
         return put(key, Double.toString(value));
     }
 
+    synchronized public boolean putLong(final String key, final Long value) {
+        return put(key, Long.toString(value));
+    }
+
     private final void firePreferenceChanged(final String key, final String value) {
         for (final PreferenceChangedListener l : listener)
             l.preferenceChanged(key, value);

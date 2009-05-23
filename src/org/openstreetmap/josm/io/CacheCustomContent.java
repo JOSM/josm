@@ -10,6 +10,13 @@ import java.util.Date;
 
 import org.openstreetmap.josm.Main;
 
+/**
+ * Use this class if you want to cache and store a single file that gets updated regularly.
+ * Unless you flush() it will be kept in memory. If you want to cache a lot of data and/or files,
+ * use CacheFiles
+ * @author xeen
+ *
+ */
 public abstract class CacheCustomContent {
     /**
      * Common intervals
@@ -20,27 +27,27 @@ public abstract class CacheCustomContent {
     final static public int INTERVAL_WEEKLY = INTERVAL_DAILY * 7;
     final static public int INTERVAL_MONTHLY = INTERVAL_WEEKLY * 4;
     final static public int INTERVAL_NEVER = Integer.MAX_VALUE;
-    
+
     /**
-     * Where the data will be stored    
+     * Where the data will be stored
      */
     private byte[] data = null;
-    
+
     /**
      * The ident that identifies the stored file. Includes file-ending.
      */
     final private String ident;
-    
+
     /**
      * The (file-)path where the data will be stored
      */
     final private File path;
-    
+
     /**
      * How often to update the cached version
      */
     final private int updateInterval;
-    
+
     /**
      * This function will be executed when an update is required. It has to be implemented by the
      * inheriting class and should use a worker if it has a long wall time as the function is
@@ -48,18 +55,18 @@ public abstract class CacheCustomContent {
      * @return the data to cache
      */
     protected abstract byte[] updateData();
-    
+
     /**
      * This function serves as a comfort hook to perform additional checks if the cache is valid
      * @return True if the cached copy is still valid
      */
     protected boolean isCacheValid() {
         return true;
-    }    
-    
+    }
+
     /**
      * Initializes the class. Note that all read data will be stored in memory until it is flushed
-     * by flushData(). 
+     * by flushData().
      * @param ident
      * @param updateInterval
      */
@@ -68,7 +75,7 @@ public abstract class CacheCustomContent {
         this.updateInterval = updateInterval;
         this.path = new File(Main.pref.getPreferencesDir(), ident);
     }
-    
+
     /**
      * Updates data if required
      * @return Returns the data
@@ -79,7 +86,7 @@ public abstract class CacheCustomContent {
             return updateForce();
         return getData();
     }
-    
+
     /**
      * Updates data if required
      * @return Returns the data as string
@@ -90,7 +97,7 @@ public abstract class CacheCustomContent {
             return updateForceString();
         return getDataString();
     }
-    
+
     /**
      * Executes an update regardless of updateInterval
      * @return Returns the data
@@ -101,7 +108,7 @@ public abstract class CacheCustomContent {
         Main.pref.putInteger("cache." + ident, (int)(new Date().getTime()/1000));
         return data;
     }
-    
+
     /**
      * Executes an update regardless of updateInterval
      * @return Returns the data as String
@@ -120,7 +127,7 @@ public abstract class CacheCustomContent {
             loadFromDisk();
         return data;
     }
-    
+
     /**
      * Returns the data without performing any updates
      * @return the data as String
@@ -130,7 +137,7 @@ public abstract class CacheCustomContent {
     }
 
     /**
-     * Tries to load the data using the given ident from disk. If this fails, data will be updated 
+     * Tries to load the data using the given ident from disk. If this fails, data will be updated
      */
     private void loadFromDisk() {
         try {
@@ -142,7 +149,7 @@ public abstract class CacheCustomContent {
             this.data = updateForce();
         }
     }
-    
+
     /**
      * Stores the data to disk
      */
@@ -153,8 +160,8 @@ public abstract class CacheCustomContent {
             output.flush();
             output.close();
         } catch(Exception e) {}
-    }       
-    
+    }
+
     /**
      * Flushes the data from memory. Class automatically reloads it from disk or updateData() if
      * required
