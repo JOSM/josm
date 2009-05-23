@@ -128,8 +128,13 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Initializes this component by negotiating a protocol version with the server.
+     * 
+     * @exception UnknownHostException thrown, if the API host is unknown
+     * @exception SocketTimeoutException thrown, if the connection to the API host  times out
+     * @exception ConnectException throw, if the connection to the API host fails 
+     * @exception Exception any other exception 
      */
-    public void initialize() {
+    public void initialize() throws UnknownHostException,SocketTimeoutException, ConnectException,Exception {
         initAuthentication();
         try {
             initialized = true; // note: has to be before the sendRequest or that will throw!
@@ -152,7 +157,7 @@ public class OsmApi extends OsmConnection {
             osmWriter.setVersion(version);
         } catch (Exception ex) {
             initialized = false;
-            ex.printStackTrace();
+            throw ex;
         }
     }
 

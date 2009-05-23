@@ -11,6 +11,8 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.GZIPInputStream;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
@@ -37,7 +39,26 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      */
     protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
-        api.initialize();
+       
+        // initialize API. Abort download in case of configuration or network
+        // errors
+        //
+        try {
+            api.initialize();
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(
+                null,
+                tr(   "Failed to initialize communication with the OSM server {0}.\n"
+                    + "Check the server URL in your preferences and your internet connection.",
+                    Main.pref.get("osm-server.url")
+                ),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE
+            );
+            e.printStackTrace();
+            return null;
+        }
+
         urlStr = api.getBaseUrl() + urlStr;
         return getInputStreamRaw(urlStr, pleaseWaitDlg);
     }

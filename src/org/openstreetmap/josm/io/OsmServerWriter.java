@@ -67,7 +67,26 @@ public class OsmServerWriter {
      */
     public void uploadOsm(String the_version, Collection<OsmPrimitive> list) {
         processed = new LinkedList<OsmPrimitive>();
-        api.initialize();
+        
+        // initialize API. Abort upload in case of configuration or network
+        // errors
+        //
+        try {
+            api.initialize();
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(
+                null,
+                tr(   "Failed to initialize communication with the OSM server {0}.\n"
+                    + "Check the server URL in your preferences and your internet connection.",
+                    Main.pref.get("osm-server.url")
+                ),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE
+            );
+            e.printStackTrace();
+            return;
+        }
+        
 
         Main.pleaseWaitDlg.progress.setMaximum(list.size());
         Main.pleaseWaitDlg.progress.setValue(0);
