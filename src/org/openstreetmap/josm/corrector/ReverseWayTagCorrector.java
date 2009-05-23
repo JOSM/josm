@@ -34,7 +34,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             this.a = a;
             this.b = b;
             startPattern = Pattern.compile(
-                    "^(" + a + "|" + b + ")" + SEPARATOR,
+                    "^(" + a + "|" + b + ")(" + SEPARATOR + "|$)",
                     Pattern.CASE_INSENSITIVE);
             endPattern = Pattern.compile(
                     SEPARATOR + "(" + a + "|" + b + ")$",
@@ -67,7 +67,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             };
 
     @Override
-    public Collection<Command> execute(Way way) throws UserCancelException {
+    public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
                 new HashMap<OsmPrimitive, List<TagCorrection>>();
 
@@ -112,7 +112,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
         for (Relation relation : Main.ds.relations) {
             for (RelationMember member : relation.members) {
-                if (!member.member.realEqual(way, true)
+                if (!member.member.realEqual(oldway, true)
                         || member.role.length() == 0)
                     continue;
 

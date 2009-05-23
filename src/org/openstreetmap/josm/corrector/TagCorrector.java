@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.GBC;
 
 public abstract class TagCorrector<P extends OsmPrimitive> {
 
-    public abstract Collection<Command> execute(P primitive)
+    public abstract Collection<Command> execute(P primitive, P oldprimitive)
         throws UserCancelException;
 
     private String[] applicationOptions = new String[] {

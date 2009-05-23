@@ -227,11 +227,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             newkey = key;
             value = null; // delete the key instead
         }
-        if (newkey.equals("created_by"))
-        {
-            // we don't allow created_by to be changed.
-            return;
-        }
         if (key.equals(newkey) || value == null)
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
         else {
@@ -347,8 +342,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         String key = keys.getEditor().getItem().toString().trim();
         String value = values.getEditor().getItem().toString().trim();
         if (value.equals(""))
-            return;
-        if (key.equals("created_by"))
             return;
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
         DataSet.fireSelectionChanged(sel);

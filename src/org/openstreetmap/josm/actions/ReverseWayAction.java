@@ -66,7 +66,7 @@ public final class ReverseWayAction extends JosmAction {
             if (Main.pref.getBoolean("tag-correction.reverse-way", true)) {
                 try
                 {
-                    final Collection<Command> changePropertyCommands = reverseWayTagCorrector.execute(wnew);
+                    final Collection<Command> changePropertyCommands = reverseWayTagCorrector.execute(w, wnew);
                     propertiesUpdated = propertiesUpdated
                         || (changePropertyCommands != null && !changePropertyCommands.isEmpty());
                     c.addAll(changePropertyCommands);

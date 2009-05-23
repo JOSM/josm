@@ -46,8 +46,7 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
                 continue;
 
             for (String key : m.keySet()) {
-                if (! key.equals("created_by"))
-                    clist.add(new ChangePropertyCommand(selectionSubset, key, osm.keys.get(key)));
+                clist.add(new ChangePropertyCommand(selectionSubset, key, osm.keys.get(key)));
             }
         }
     }
@@ -89,8 +88,6 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
             if (osm.keys == null || osm.keys.isEmpty())
                 continue;
             for (String key : osm.keys.keySet()) {
-                if (key.equals("created_by")) // we ignore created_by
-                    continue;
                 String value = osm.keys.get(key);
                 if (! kvSeen.containsKey(key))
                     kvSeen.put(key, value);
