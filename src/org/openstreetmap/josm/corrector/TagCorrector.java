@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeRelationMemberRoleCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -167,25 +168,12 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
                     List<RoleCorrection> roleCorrections = roleCorrectionMap
                             .get(primitive);
-                    for (Relation relation : Main.ds.relations) {
-                        Relation newRelation = new Relation(relation);
-                        Boolean changed = false;
 
-                        for (int i = 0; i < roleCorrections.size(); i++) {
-                            RoleCorrection roleCorrection = roleCorrections.get(i);
-                            if (roleCorrection.relation == relation &&
-                                    roleTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
-
-                                RelationMember member = newRelation.members.get(roleCorrection.position);
-
-                                if (member.equals(roleCorrection.member)) {
-                                    member.role = roleCorrection.newRole;
-                                    changed = true;
-                                }
-                            }
+                    for (int i = 0; i < roleCorrections.size(); i++) {
+                        RoleCorrection roleCorrection = roleCorrections.get(i);
+                        if (roleTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
+                            commands.add(new ChangeRelationMemberRoleCommand(roleCorrection.relation, roleCorrection.position, roleCorrection.newRole));
                         }
-                        if (changed)
-                            commands.add(new ChangeCommand(relation, newRelation));
                     }
                 }
             } else if (answer != JOptionPane.NO_OPTION) {
