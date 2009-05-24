@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -83,15 +85,13 @@ public class PluginDownloader {
         /* TODO: remove old site files (everything except .jar) */
             try {
                 BufferedReader r = new BufferedReader(new InputStreamReader(new URL(site).openStream(), "utf-8"));
-                StringBuilder b = new StringBuilder();
-                for (String line = r.readLine(); line != null; line = r.readLine())
-                    b.append(line+"\n");
-                r.close();
                 new File(Main.pref.getPreferencesDir()+"plugins").mkdir();
-                FileWriter out = new FileWriter(new File(Main.pref
-                        .getPluginsDirFile(), count + "-site-"
-                        + site.replaceAll("[/:\\\\ <>|]", "_") + ".txt"));
-                out.append(b);
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(new File(Main.pref.getPluginsDirFile(),
+                count + "-site-" + site.replaceAll("[/:\\\\ <>|]", "_") + ".txt")), "utf-8"));
+                for (String line = r.readLine(); line != null; line = r.readLine())
+                    out.append(line+"\n");
+                r.close();
                 out.close();
                 count++;
             } catch (IOException x) {
