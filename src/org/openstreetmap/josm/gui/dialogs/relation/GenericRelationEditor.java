@@ -327,14 +327,14 @@ public class GenericRelationEditor extends RelationEditor {
 
         memberData.setRowCount(0);
         for (int i=0; i<clone.members.size(); i++) {
-            
+
             // this whole section is aimed at finding out whether the
             // relation member is "linked" with the next, i.e. whether
             // (if both are ways) these ways are connected. It should
             // really produce a much more beautiful output (with a linkage
             // symbol somehow places betweeen the two member lines!), and
             // it should cache results, so... FIXME ;-)
-            
+
             RelationMember em = clone.members.get(i);
             boolean linked = false;
             Node n1 = null;
@@ -344,7 +344,7 @@ public class GenericRelationEditor extends RelationEditor {
                 if (m.member instanceof Way) {
                     n1 = ((Way) m.member).lastNode();
                     break;
-                } else if (em.member instanceof Relation) {
+                } else if (m.member instanceof Relation) {
                     m = ((Relation)m.member).lastMember();
                 } else {
                     break;
@@ -356,7 +356,7 @@ public class GenericRelationEditor extends RelationEditor {
                     if (m.member instanceof Way) {
                         n2 = ((Way) (m.member)).firstNode();
                         break;
-                    } else if (em.member instanceof Relation) {
+                    } else if (m.member instanceof Relation) {
                         m = ((Relation)(m.member)).firstMember();
                     } else {
                         break;
@@ -364,9 +364,9 @@ public class GenericRelationEditor extends RelationEditor {
                 }
             }
             linked = (n1 != null) && n1.equals(n2);
-            
-            // end of section to determine linkedness. 
-           
+
+            // end of section to determine linkedness.
+
             memberData.addRow(new Object[]{em.role, em.member, linked ? tr("yes") : tr("no")});
         }
         status.setText(tr("Members: {0}", clone.members.size()));
