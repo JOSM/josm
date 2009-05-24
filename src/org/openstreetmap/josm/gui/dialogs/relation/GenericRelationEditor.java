@@ -337,12 +337,12 @@ public class GenericRelationEditor extends RelationEditor {
 
             RelationMember em = clone.members.get(i);
             boolean linked = false;
-            Node n1 = null;
-            Node n2 = null;
             RelationMember m = em;
+            RelationMember way1 = null;
+            RelationMember way2 = null;
             while (m != null) {
                 if (m.member instanceof Way) {
-                    n1 = ((Way) m.member).lastNode();
+                    way1 = m;
                     break;
                 } else if (m.member instanceof Relation) {
                     m = ((Relation)m.member).lastMember();
@@ -350,24 +350,56 @@ public class GenericRelationEditor extends RelationEditor {
                     break;
                 }
             }
-            if (i<clone.members.size()-1) {
-                m = clone.members.get(i+1);
-                while (m != null) {
-                    if (m.member instanceof Way) {
-                        n2 = ((Way) (m.member)).firstNode();
-                        break;
-                    } else if (m.member instanceof Relation) {
-                        m = ((Relation)(m.member)).firstMember();
-                    } else {
-                        break;
+            if (way1 != null) {
+                int next = i+1;
+                while (next < clone.members.size()) {
+                    m = clone.members.get(next++);
+                    while (m != null) {
+                        if (m.member instanceof Way) {
+                            way2 = m;
+                            break;
+                        } else if (m.member instanceof Relation) {
+                            m = ((Relation)(m.member)).firstMember();
+                        } else {
+                            break;
+                        }
                     }
+                    if (way2 != null)
+                        break;
                 }
             }
-            linked = (n1 != null) && n1.equals(n2);
+            if (way2 != null) {
+                Node way1first = ((Way)(way1.member)).firstNode();
+                Node way1last = ((Way)(way1.member)).lastNode();
+                Node way2first = ((Way)(way2.member)).firstNode();
+                Node way2last = ((Way)(way2.member)).lastNode();
+                if (way1.role.equals("forward")) {
+                    way1first = null;
+                } else if (way1.role.equals("backward")) {
+                    way1last = null;
+                }
+                if (way2.role.equals("forward")) {
+                    way2last = null;
+                } else if (way2.role.equals("backward")) {
+                    way2first = null;
+                }
 
-            // end of section to determine linkedness.
+                if (way1first != null && way2first != null && way1first.equals(way2first)) {
+                    linked = true;
+                } else if (way1first != null && way2last != null && way1first.equals(way2last)) {
+                    linked = true;
+                } else if (way1last != null && way2first != null && way1last.equals(way2first)) {
+                    linked = true;
+                } else if (way1last != null && way2last != null && way1last.equals(way2last)) {
+                    linked = true;
+                }
 
-            memberData.addRow(new Object[]{em.role, em.member, linked ? tr("yes") : tr("no")});
+                // end of section to determine linkedness. 
+
+                memberData.addRow(new Object[]{em.role, em.member, linked ? tr("yes") : tr("no")});
+            } else {
+                memberData.addRow(new Object[]{em.role, em.member, ""});
+            }
         }
         status.setText(tr("Members: {0}", clone.members.size()));
     }
