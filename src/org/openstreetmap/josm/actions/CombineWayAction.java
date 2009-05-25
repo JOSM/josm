@@ -87,7 +87,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
                 if (rm.member instanceof Way) {
                     for(Way w : selectedWays) {
                         if (rm.member == w) {
-                            Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.role);
+                            Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.role == null ? "" : rm.role);
                             HashSet<Way> waylinks = new HashSet<Way>();
                             if (backlinks.containsKey(pair)) {
                                 waylinks = backlinks.get(pair);
@@ -108,14 +108,14 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         // Complain to the user if the ways don't have equal memberships.
         for (HashSet<Way> waylinks : backlinks.values()) {
             if (!waylinks.containsAll(selectedWays)) {
-                int option = new ExtendedDialog(Main.parent, 
-                        tr("Combine ways with different memberships?"), 
+                int option = new ExtendedDialog(Main.parent,
+                        tr("Combine ways with different memberships?"),
                         tr("The selected ways have differing relation memberships.  "
                             + "Do you still want to combine them?"),
-                        new String[] {tr("Combine Anyway"), tr("Cancel")}, 
-                        new String[] {"combineway.png", "cancel.png"}).getValue();  
+                        new String[] {tr("Combine Anyway"), tr("Cancel")},
+                        new String[] {"combineway.png", "cancel.png"}).getValue();
                 if (option == 1) break;
-                
+
                 return;
             }
         }
@@ -137,12 +137,12 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         } else {
             Object secondTry = actuallyCombineWays(selectedWays, true);
             if (secondTry instanceof List) {
-                int option = new ExtendedDialog(Main.parent, 
-                    tr("Change directions?"), 
+                int option = new ExtendedDialog(Main.parent,
+                    tr("Change directions?"),
                     tr("The ways can not be combined in their current directions.  "
                         + "Do you want to reverse some of them?"),
-                    new String[] {tr("Reverse and Combine"), tr("Cancel")}, 
-                    new String[] {"wayflip.png", "cancel.png"}).getValue(); 
+                    new String[] {tr("Reverse and Combine"), tr("Cancel")},
+                    new String[] {"wayflip.png", "cancel.png"}).getValue();
                 if (option != 1) return;
                 nodeList = (List<Node>) secondTry;
             } else {
@@ -186,13 +186,13 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         }
 
         if (!components.isEmpty()) {
-            int answer = new ExtendedDialog(Main.parent, 
-                tr("Enter values for all conflicts."), 
+            int answer = new ExtendedDialog(Main.parent,
+                tr("Enter values for all conflicts."),
                 p,
-                new String[] {tr("Solve Conflicts"), tr("Cancel")}, 
-                new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();  
+                new String[] {tr("Solve Conflicts"), tr("Cancel")},
+                new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
             if (answer != 1) return;
-            
+
             for (Entry<String, JComboBox> e : components.entrySet())
                 newWay.put(e.getKey(), e.getValue().getEditor().getItem().toString());
         }
