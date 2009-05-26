@@ -106,6 +106,41 @@ public final class ConflictDialog extends ToggleDialog {
     }
 
     private final void resolve() {
+        String method = Main.pref.get("conflict.resolution", "traditional");
+        method = method.trim().toLowerCase();
+        if (method.equals("traditional")) {
+            resolveTraditional();            
+        } else if (method.equals("extended")) {
+            resolveExtended();
+        } else {
+            System.out.println(tr("WARNING: unexpected value for preference conflict.resolution, got " + method));
+            resolveTraditional();
+        }
+    }
+    
+    
+    private final void resolveExtended() {
+        if(model.size() == 1)
+            displaylist.setSelectedIndex(0);
+        
+        if (displaylist.getSelectedIndex() == -1)
+            return;
+        
+        int [] selectedRows = displaylist.getSelectedIndices();
+        if (selectedRows == null || selectedRows.length == 0) {
+            return; 
+        }
+        int row = selectedRows[0];
+        OsmPrimitive my = (OsmPrimitive)model.get(row);
+        OsmPrimitive their = conflicts.get(my);
+        ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);      
+        dialog.getConflictResolver().populate(my, their);
+        dialog.setVisible(true);
+        Main.map.mapView.repaint();
+    }
+    
+    
+    private final void resolveTraditional() {
         if(model.size() == 1)
             displaylist.setSelectedIndex(0);
         
@@ -132,16 +167,10 @@ public final class ConflictDialog extends ToggleDialog {
 
     public final void rebuildList() {
         model.removeAllElements();
-        for (OsmPrimitive osm : this.conflicts.keySet())
-            if (osm instanceof Node)
-                model.addElement(osm);
-        for (OsmPrimitive osm : this.conflicts.keySet())
-            if (osm instanceof Way)
-                model.addElement(osm);
-        for (OsmPrimitive osm : this.conflicts.keySet())
-            if (osm instanceof Relation)
-                model.addElement(osm);
-
+        for (OsmPrimitive osm : this.conflicts.keySet()) {
+            model.addElement(osm);
+        }
+        
         if(model.size() != 0) {
             setTitle(tr("Conflicts: {0}", model.size()), true);
         } else {
@@ -196,7 +225,11 @@ public final class ConflictDialog extends ToggleDialog {
                     em.member.visit(this);
             }
         };
-        for (Object o : displaylist.getSelectedValues())
+        for (Object o : displaylist.getSelectedValues()) {
+            if (conflicts.get(o) == null) {
+                continue;
+            }
             conflicts.get(o).visit(conflictPainter);
+        }
     }
 }
