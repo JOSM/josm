@@ -340,12 +340,17 @@ public class GenericRelationEditor extends RelationEditor {
             RelationMember m = em;
             RelationMember way1 = null;
             RelationMember way2 = null;
-            while (m != null) {
+            int depth = 0;
+
+            while (m != null && depth < 10) {
                 if (m.member instanceof Way) {
                     way1 = m;
                     break;
                 } else if (m.member instanceof Relation) {
+                    if (m.member == this.relation)
+                        break;
                     m = ((Relation)m.member).lastMember();
+                    depth++;
                 } else {
                     break;
                 }
@@ -354,12 +359,16 @@ public class GenericRelationEditor extends RelationEditor {
                 int next = i+1;
                 while (next < clone.members.size()) {
                     m = clone.members.get(next++);
-                    while (m != null) {
+                    depth = 0;
+                    while (m != null && depth < 10) {
                         if (m.member instanceof Way) {
                             way2 = m;
                             break;
                         } else if (m.member instanceof Relation) {
+                            if (m.member == this.relation)
+                                break;
                             m = ((Relation)(m.member)).firstMember();
+                            depth++;
                         } else {
                             break;
                         }
