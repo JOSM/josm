@@ -140,7 +140,7 @@ public class PluginSelection {
             for (final String pname : pluginMap.keySet()) {
                 if (availablePlugins.get(pname) == null) pluginsToRemove.add(pname);
             }
-            
+
             for (String pname : pluginsToRemove) {
                 pluginMap.remove(pname);
             }
@@ -271,7 +271,7 @@ public class PluginSelection {
                     String fname = f.getName();
                     if (fname.endsWith(".jar")) {
                         try {
-                            PluginInformation info = new PluginInformation(f,fname.substring(0,fname.length()-4), null);
+                            PluginInformation info = new PluginInformation(f,fname.substring(0,fname.length()-4));
                             if (!availablePlugins.containsKey(info.name))
                                 availablePlugins.put(info.name, info);
                         } catch (PluginException x) {
@@ -301,8 +301,9 @@ public class PluginSelection {
                                     {
                                         try
                                         {
-                                            PluginInformation info = new PluginInformation(null, name.substring(0,name.length()-4),
-                                            new ByteArrayInputStream(manifest.getBytes()));
+                                            PluginInformation info = new PluginInformation(
+                                            new ByteArrayInputStream(manifest.getBytes("utf-8")),
+                                            name.substring(0,name.length()-4));
                                             info.downloadlink = url;
                                             if(!availablePlugins.containsKey(info.name))
                                                 availablePlugins.put(info.name, info);
@@ -321,8 +322,9 @@ public class PluginSelection {
                             }
                             if(name != null)
                             {
-                                PluginInformation info = new PluginInformation(null, name.substring(0,name.length()-4),
-                                new ByteArrayInputStream(manifest.getBytes()));
+                                PluginInformation info = new PluginInformation(
+                                new ByteArrayInputStream(manifest.getBytes("utf-8")),
+                                name.substring(0,name.length()-4));
                                 info.downloadlink = url;
                                 if(!availablePlugins.containsKey(info.name))
                                     availablePlugins.put(info.name, info);

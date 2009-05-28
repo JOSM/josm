@@ -28,20 +28,19 @@ import org.openstreetmap.josm.Main;
  * @author imi
  */
 public class PluginInformation {
-
-    public final File file;
-    public final String name;
-    public final String mainversion;
-    public final String className;
-    public final String requires;
-    public final String link;
-    public final String description;
-    public final boolean early;
-    public final String author;
-    public final int stage;
-    public final String version;
+    public File file = null;
+    public String name = null;
+    public String mainversion = null;
+    public String className = null;
+    public String requires = null;
+    public String link = null;
+    public String description = null;
+    public boolean early = false;
+    public String author = null;
+    public int stage = 50;
+    public String version = null;
     public String downloadlink = null;
-    public final List<URL> libraries = new LinkedList<URL>();
+    public List<URL> libraries = new LinkedList<URL>();
 
     public final Map<String, String> attr = new TreeMap<String, String>();
 
@@ -58,84 +57,75 @@ public class PluginInformation {
      * @param file the plugin jar file.
      */
     public PluginInformation(File file) {
-        this(file, file.getName().substring(0, file.getName().length()-4), null);
+        this(file, file.getName().substring(0, file.getName().length()-4));
     }
 
-    public PluginInformation(File file, String name, InputStream manifestStream) {
+    public PluginInformation(File file, String name) {
         this.name = name;
         this.file = file;
         try {
-            Manifest manifest;
-            JarInputStream jar = null;
-            if (file != null) {
-                jar = new JarInputStream(new FileInputStream(file));
-                manifest = jar.getManifest();
-                if (manifest == null)
-                    throw new IOException(file+" contains no manifest.");
-            } else {
-                manifest = new Manifest();
-                manifest.read(manifestStream);
-            }
-            if (manifest != null) {
-                String s;
-                String lang = Main.getLanguageCode()+"_";
-                Attributes attr = manifest.getMainAttributes();
-                className = attr.getValue("Plugin-Class");
-                s = attr.getValue(lang+"Plugin-Link");
-                if(s == null)
-                    s = attr.getValue("Plugin-Link");
-                link = s;
-                requires = attr.getValue("Plugin-Requires");
-                s = attr.getValue(lang+"Plugin-Description");
-                if(s == null)
-                {
-                    s = attr.getValue("Plugin-Description");
-                    if(s != null)
-                        s = tr(s);
-                }
-                description = s;
-                early = Boolean.parseBoolean(attr.getValue("Plugin-Early"));
-                String stageStr = attr.getValue("Plugin-Stage");
-                stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
-                version = attr.getValue("Plugin-Version");
-                mainversion = attr.getValue("Plugin-Mainversion");
-                author = attr.getValue("Author");
-
-                String classPath = attr.getValue(Attributes.Name.CLASS_PATH);
-                if (classPath != null) {
-                    for (String entry : classPath.split(" ")) {
-                        File entryFile;
-                        if (new File(entry).isAbsolute()) {
-                            entryFile = new File(entry);
-                        } else {
-                            entryFile = new File(file.getParent(), entry);
-                        }
-
-                        libraries.add(fileToURL(entryFile));
-                    }
-                }
-                for (Object o : attr.keySet())
-                    this.attr.put(o.toString(), attr.getValue(o.toString()));
-            } else {
-                // resource-only plugin
-                className = null;
-                mainversion = null;
-                description = null;
-                early = false;
-                stage = 50;
-                requires = null;
-                link = null;
-                version = null;
-                author = null;
-            }
-            if (file != null)
-                libraries.add(0, fileToURL(file));
-
-            if (jar != null)
-                jar.close();
+            JarInputStream jar = new JarInputStream(new FileInputStream(file));
+            Manifest manifest = jar.getManifest();
+            if (manifest == null)
+                throw new IOException(file+" contains no manifest.");
+            scanManifest(manifest);
+            libraries.add(0, fileToURL(file));
+            jar.close();
         } catch (IOException e) {
             throw new PluginException(null, name, e);
         }
+    }
+
+    public PluginInformation(InputStream manifestStream, String name) {
+        this.name = name;
+        try {
+            Manifest manifest = new Manifest();
+            manifest.read(manifestStream);
+            scanManifest(manifest);
+        } catch (IOException e) {
+            throw new PluginException(null, name, e);
+        }
+    }
+
+    private void scanManifest(Manifest manifest)
+    {
+        String lang = Main.getLanguageCode()+"_";
+        Attributes attr = manifest.getMainAttributes();
+        className = attr.getValue("Plugin-Class");
+        String s = attr.getValue(lang+"Plugin-Link");
+        if(s == null)
+            s = attr.getValue("Plugin-Link");
+        link = s;
+        requires = attr.getValue("Plugin-Requires");
+        s = attr.getValue(lang+"Plugin-Description");
+        if(s == null)
+        {
+            s = attr.getValue("Plugin-Description");
+            if(s != null)
+                s = tr(s);
+        }
+        description = s;
+        early = Boolean.parseBoolean(attr.getValue("Plugin-Early"));
+        String stageStr = attr.getValue("Plugin-Stage");
+        stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
+        version = attr.getValue("Plugin-Version");
+        mainversion = attr.getValue("Plugin-Mainversion");
+        author = attr.getValue("Author");
+
+        String classPath = attr.getValue(Attributes.Name.CLASS_PATH);
+        if (classPath != null) {
+            for (String entry : classPath.split(" ")) {
+                File entryFile;
+                if (new File(entry).isAbsolute())
+                    entryFile = new File(entry);
+                else
+                    entryFile = new File(file.getParent(), entry);
+
+                libraries.add(fileToURL(entryFile));
+            }
+        }
+        for (Object o : attr.keySet())
+            this.attr.put(o.toString(), attr.getValue(o.toString()));
     }
 
     public String getLinkDescription()
@@ -220,7 +210,7 @@ public class PluginInformation {
         name = name.replaceAll("[-. ]", "");
         InputStream manifestStream = PluginInformation.class.getResourceAsStream("/org/openstreetmap/josm/plugins/"+name+"/MANIFEST.MF");
         if (manifestStream != null)
-            return new PluginInformation(null, pluginName, manifestStream);
+            return new PluginInformation(manifestStream, pluginName);
 
         Collection<String> locations = getPluginLocations();
 
