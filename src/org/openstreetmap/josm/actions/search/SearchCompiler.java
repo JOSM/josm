@@ -221,16 +221,21 @@ public class SearchCompiler {
     }
 
     private static class ExactType extends Match {
-        private String type;
-        public ExactType(String type) {this.type = type;}
+        private final Class<?> type;
+        public ExactType(String type) throws ParseError {
+            if ("node".equals(type)) {
+                this.type = Node.class;
+            } else if ("way".equals(type)) {
+                this.type = Way.class;
+            } else if ("relation".equals(type)) {
+                this.type = Relation.class;
+            } else {
+                throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation",
+                        type));
+            }
+        }
         @Override public boolean match(OsmPrimitive osm) {
-            if (osm instanceof Node)
-                return type.equals("node");
-            if (osm instanceof Way)
-                return type.equals("way");
-            if (osm instanceof Relation)
-                return type.equals("relation");
-            throw new IllegalStateException("unknown class "+osm.getClass());
+            return osm.getClass() == type;
         }
         @Override public String toString() {return "type="+type;}
     }
@@ -442,27 +447,30 @@ public class SearchCompiler {
         }
     }
 
-    private Match parseKV(String key, String value) {
+    private Match parseKV(String key, String value) throws ParseError {
         if (key.equals("type")) {
             return new ExactType(value);
         } else if (key.equals("user")) {
             return new UserMatch(value);
         } else if (key.equals("nodes")) {
             try {
-                return new NodeCount(Integer.parseInt(value));
-            } catch(Exception x) {}
+                String[] range = value.split("-");
+                if (range.length == 1) {
+                    return new NodeCount(Integer.parseInt(value));
+                } else if (range.length == 2) {
+                    return new NodeCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
+                } else {
+                    throw new ParseError(tr("Wrong number of parameters for nodes operator."));
+                }
+            } catch (NumberFormatException e) {
+                throw new ParseError(tr("Incorrect value of nodes operator: {0}. Nodes operator expects number of nodes or range, for example nodes:10-20", value));
+            }
 
-            try {
-                String[] range = value.split("-", 2);
-                return new NodeCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
-            } catch(Exception x) {}
-
-            return new NodeCount(0);
         } else if (key.equals("id")) {
             try {
                 return new Id(Long.parseLong(value));
             } catch (NumberFormatException x) {
-                return new Id(0);
+                throw new ParseError(tr("Incorrect value of id operator: {0}. Number is expected.", value));
             }
         } else {
             return new KeyValue(key, value);
