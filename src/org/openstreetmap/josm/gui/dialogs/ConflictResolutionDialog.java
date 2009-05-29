@@ -140,7 +140,7 @@ public class ConflictResolutionDialog extends JDialog {
             setEnabled(true);
         }
 
-        @Override
+        
         public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
         }        
@@ -154,7 +154,7 @@ public class ConflictResolutionDialog extends JDialog {
             setEnabled(true);            
         }
 
-        @Override
+        
         public void actionPerformed(ActionEvent arg0) {
             Command cmd = resolver.buildResolveCommand();
             Main.main.undoRedo.add(cmd);
