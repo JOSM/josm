@@ -386,13 +386,12 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected nodes to the start of the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = myNodes.getSelectedRows();
             model.copyMyNodesToTop(rows);            
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(!myNodes.getSelectionModel().isSelectionEmpty());            
         }
@@ -414,13 +413,12 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected nodes to the end of the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = myNodes.getSelectedRows();
             model.copyMyNodesToEnd(rows);  
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(!myNodes.getSelectionModel().isSelectionEmpty());            
         }
@@ -442,7 +440,7 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected nodes before the first selected node in the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] myRows = myNodes.getSelectedRows();
             int [] mergedRows = mergedNodes.getSelectedRows();
@@ -453,7 +451,6 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             model.copyMyNodesBeforeCurrent(myRows, current);            
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {        
             setEnabled(
                     !myNodes.getSelectionModel().isSelectionEmpty()
@@ -478,7 +475,7 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected nodes after the first selected node in the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] myRows = myNodes.getSelectedRows();
             int [] mergedRows = mergedNodes.getSelectedRows();
@@ -489,7 +486,6 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             model.copyMyNodesAfterCurrent(myRows, current);                        
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {        
             setEnabled(
                     !myNodes.getSelectionModel().isSelectionEmpty()
@@ -510,13 +506,12 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected nodes to the start of the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = theirNodes.getSelectedRows();
             model.copyTheirNodesToTop(rows);                        
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(!theirNodes.getSelectionModel().isSelectionEmpty());            
         }
@@ -534,13 +529,12 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected nodes to the end of the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = theirNodes.getSelectedRows();
             model.copyTheirNodesToEnd(rows);  
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(!theirNodes.getSelectionModel().isSelectionEmpty());            
         }
@@ -557,7 +551,7 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected nodes before the first selected node in the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] myRows = theirNodes.getSelectedRows();
             int [] mergedRows = mergedNodes.getSelectedRows();
@@ -568,7 +562,6 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             model.copyTheirNodesBeforeCurrent(myRows, current);            
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {        
             setEnabled(
                     !theirNodes.getSelectionModel().isSelectionEmpty()
@@ -589,7 +582,7 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected nodes after the first selected node in the merged node list"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] myRows = theirNodes.getSelectedRows();
             int [] mergedRows = mergedNodes.getSelectedRows();
@@ -600,7 +593,6 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             model.copyTheirNodesAfterCurrent(myRows, current);                        
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {        
             setEnabled(
                     !theirNodes.getSelectionModel().isSelectionEmpty()
@@ -621,13 +613,12 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Move up the selected nodes by one position"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = mergedNodes.getSelectedRows();
             model.moveUpMergedNodes(rows);            
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             int [] rows = mergedNodes.getSelectedRows();
             setEnabled(
@@ -649,13 +640,12 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Move down the selected nodes by one position"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = mergedNodes.getSelectedRows();
             model.moveDownMergedNodes(rows);                        
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             int [] rows = mergedNodes.getSelectedRows();
             setEnabled(
@@ -677,13 +667,12 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
             putValue(Action.SHORT_DESCRIPTION, tr("Remove the selected nodes from the list of merged nodes"));
             setEnabled(false);
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = mergedNodes.getSelectedRows();
             model.removeMergedNodes(rows);                        
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
             int [] rows = mergedNodes.getSelectedRows();
             setEnabled(
@@ -704,17 +693,16 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
 //            }
             putValue(Action.NAME, tr("Freeze"));
             putValue(Action.SHORT_DESCRIPTION, tr("Freeze the current list of merged nodes."));
-            putValue(Action.SELECTED_KEY, false);
+//            putValue(Action.SELECTED_KEY, false);
             setEnabled(true);
             
         }
-        @Override
+
         public void actionPerformed(ActionEvent arg0) {
             int [] rows = mergedNodes.getSelectedRows();
             model.removeMergedNodes(rows);                        
         }
         
-        @Override
         public void itemStateChanged(ItemEvent e) {
             int state = e.getStateChange();
             if (state == ItemEvent.SELECTED) {
@@ -736,10 +724,9 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
         theirNodes.setEnabled(!newValue);
         mergedNodes.getSelectionModel().clearSelection();
         mergedNodes.setEnabled(!newValue);
-        freezeAction.putValue(Action.SELECTED_KEY, newValue);
+//        freezeAction.putValue(Action.SELECTED_KEY, newValue);
     }
     
-    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(NodeListMergeModel.PROP_FROZEN)) {
             handlePropertyChangeFrozen((Boolean)evt.getOldValue(), (Boolean)evt.getNewValue());
@@ -750,7 +737,4 @@ public class NodeListMerger extends JPanel implements PropertyChangeListener {
     public NodeListMergeModel getModel() {
         return model;
     }
-    
-    
-    
 }

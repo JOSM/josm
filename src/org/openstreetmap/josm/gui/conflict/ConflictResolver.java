@@ -90,7 +90,6 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         loadIcons();
     }
 
-    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         
         if (evt.getPropertyName().equals(TagMergeModel.PROP_NUM_UNDECIDED_TAGS)) {
@@ -118,7 +117,6 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         }
     }
     
-
     public void populate(OsmPrimitive my, OsmPrimitive their) { 
         this.my = my;
         this.their =  their; 
@@ -132,8 +130,6 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             tabbedPane.setEnabledAt(2, true);        
          }
     }
-    
-    
     
     public Command buildResolveCommand() {
         ArrayList<Command> commands = new ArrayList<Command>();

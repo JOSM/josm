@@ -94,7 +94,6 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         setText(getDisplayName(node));
     }
     
-    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
         
@@ -103,5 +102,4 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         renderNode(node,isSelected);
         return this;
     }
-
 }

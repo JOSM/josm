@@ -35,8 +35,6 @@ public class TagMerger extends JPanel {
     private JButton btnKeepTheir;
     AdjustmentSynchronizer adjustmentSynchronizer;
 
-    
-    
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
         pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -66,7 +64,6 @@ public class TagMerger extends JPanel {
          return embeddInScrollPane(theirTable);
     }
     
-    
     protected JScrollPane buildUndecidedTable() {
         undecidedTable  = new JTable(
             model,
@@ -76,7 +73,6 @@ public class TagMerger extends JPanel {
          );
          return embeddInScrollPane(undecidedTable);
     }
-    
     
     protected void build() {
         GridBagConstraints gc = new GridBagConstraints();
@@ -194,7 +190,6 @@ public class TagMerger extends JPanel {
         
     }
     
-    
     public TagMerger() {
         model = new TagMergeModel();
         build();
@@ -204,7 +199,6 @@ public class TagMerger extends JPanel {
     public TagMergeModel getModel() {
         return model;
     }
-    
     
     protected ImageIcon loadIcon(String name) {
        String path = "/images/dialogs/conflict/" + name;
@@ -231,7 +225,6 @@ public class TagMerger extends JPanel {
             setEnabled(false);
         }
         
-        @Override
         public void actionPerformed(ActionEvent arg0) {
             int rows[] = mineTable.getSelectedRows();
             if (rows == null || rows.length == 0) {
@@ -240,7 +233,6 @@ public class TagMerger extends JPanel {
             model.decide(rows, MergeDecisionType.KEEP_MINE);     
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
            setEnabled(mineTable.getSelectedRowCount() > 0);            
         }
@@ -260,7 +252,6 @@ public class TagMerger extends JPanel {
             setEnabled(false);
         }
         
-        @Override
         public void actionPerformed(ActionEvent arg0) {
             int rows[] = theirTable.getSelectedRows();
             if (rows == null || rows.length == 0) {
@@ -269,12 +260,10 @@ public class TagMerger extends JPanel {
             model.decide(rows, MergeDecisionType.KEEP_THEIR);     
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
            setEnabled(theirTable.getSelectedRowCount() > 0);            
         }
     }
-    
     
     class AdjustmentSynchronizer implements AdjustmentListener {
         private ArrayList<Adjustable> synchronizedAdjustables;
@@ -294,7 +283,6 @@ public class TagMerger extends JPanel {
             adjustable.addAdjustmentListener(this);
         }
 
-        @Override
         public void adjustmentValueChanged(AdjustmentEvent e) {
             for (Adjustable a : synchronizedAdjustables) {
                 if (a != e.getAdjustable()) {
@@ -304,10 +292,8 @@ public class TagMerger extends JPanel {
         }
     }
     
-    
     class DoubleClickAdapter extends MouseAdapter {
 
-        @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() != 2) {
                 return;
@@ -334,9 +320,6 @@ public class TagMerger extends JPanel {
         }
     } 
     
-
-
-    
     class UndecideAction extends AbstractAction implements ListSelectionListener  {
 
         public UndecideAction() {
@@ -351,7 +334,6 @@ public class TagMerger extends JPanel {
             setEnabled(false);
         }
         
-        @Override
         public void actionPerformed(ActionEvent arg0) {
             int rows[] = undecidedTable.getSelectedRows();
             if (rows == null || rows.length == 0) {
@@ -360,10 +342,8 @@ public class TagMerger extends JPanel {
             model.decide(rows, MergeDecisionType.UNDECIDED);     
         }
 
-        @Override
         public void valueChanged(ListSelectionEvent e) {
            setEnabled(undecidedTable.getSelectedRowCount() > 0);            
         }    
     }
-    
 }
