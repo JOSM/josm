@@ -72,7 +72,7 @@ public class ElemStyleHandler extends DefaultHandler
     private void error(String message) {
         System.out.println(styleName + " (" + rule.key + "=" + rule.value + "): " + message);
     }
-    
+
     private void startElementLine(String qName, Attributes atts, LineElemStyle line) {
         for (int count=0; count<atts.getLength(); count++)
         {
@@ -109,7 +109,7 @@ public class ElemStyleHandler extends DefaultHandler
                     boolean dashed=Boolean.parseBoolean(atts.getValue(count));
                     if(dashed) {
                         line.dashed = 9;
-                    }                
+                    }
                 }
             } else if (atts.getQName(count).equals("dashedcolour"))
                 line.dashedColor=convertColor(atts.getValue(count));
@@ -193,6 +193,8 @@ public class ElemStyleHandler extends DefaultHandler
                 {
                     if (atts.getQName(count).equals("colour"))
                         rule.area.color=convertColor(atts.getValue(count));
+                    else if (atts.getQName(count).equals("closed"))
+                        rule.area.closed=Boolean.parseBoolean(atts.getValue(count));
                     else if(atts.getQName(count).equals("priority"))
                         rule.area.priority = Integer.parseInt(atts.getValue(count));
                     else

@@ -222,17 +222,18 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
         else if (wayStyle instanceof AreaElemStyle)
         {
+            AreaElemStyle areaStyle = (AreaElemStyle) wayStyle;
             /* way with area style */
             //if(!profilerOmitDraw)
             //{
-            if (fillAreas > dist)
+            if (fillAreas > dist && (!areaStyle.closed || w.isClosed()))
             {
             //    profilerVisibleAreas++;
-                drawArea(w, w.selected ? selectedColor : ((AreaElemStyle)wayStyle).color);
+                drawArea(w, w.selected ? selectedColor : areaStyle.color);
                 if(!w.isClosed())
                     w.putError(tr("Area style way is not closed."), true);
             }
-            drawWay(w, ((AreaElemStyle)wayStyle).line, ((AreaElemStyle)wayStyle).color, w.selected);
+            drawWay(w, areaStyle.line, areaStyle.color, w.selected);
             //}
         }
     }
@@ -455,10 +456,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             if(style instanceof AreaElemStyle)
             {
-                drawWay((Way)osm, ((AreaElemStyle)style).line, selectedColor, true);
-                if(area)
-                    drawArea((Way)osm, areaselected ? selectedColor
-                    : ((AreaElemStyle)style).color);
+                Way way = (Way)osm;
+                AreaElemStyle areaStyle = (AreaElemStyle)style;
+                drawWay(way, areaStyle.line, selectedColor, true);
+                if(area && (!areaStyle.closed || way.isClosed()))
+                    drawArea(way, areaselected ? selectedColor : areaStyle.color);
             }
             else
             {
@@ -906,6 +908,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                             inner = new ArrayList<Polygon>();
                         inner.add(p);
                     }
+                    public boolean isClosed()
+                    {
+                        return (poly.npoints >= 3
+                        && poly.xpoints[0] == poly.xpoints[poly.npoints-1]
+                        && poly.ypoints[0] == poly.ypoints[poly.npoints-1]);
+                    }
                     public Polygon get()
                     {
                         if(inner != null)
@@ -966,12 +974,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     }
                     o.addInner(polygon);
                 }
+                AreaElemStyle areaStyle = (AreaElemStyle)wayStyle;
                 for (PolyData pd : poly)
                 {
-                    if(isPolygonVisible(pd.get()))
+                    Polygon p = pd.get();
+                    if(isPolygonVisible(p) && (!areaStyle.closed || pd.isClosed()))
                     {
-                        drawAreaPolygon(pd.get(), (pd.way.selected || r.selected) ? selectedColor
-                        : ((AreaElemStyle)wayStyle).color);
+                        drawAreaPolygon(p, (pd.way.selected || r.selected) ? selectedColor
+                        : areaStyle.color);
                         visible = true;
                     }
                 }

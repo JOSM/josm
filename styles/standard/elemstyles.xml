@@ -25,10 +25,12 @@ A little help:
 5. area attributes
 	- colour
 	- priority
+	- closed (true or false - when true the area style is ignored for unclosed ways)
 6. icon attributes
 	- icon path to icon, relative to the icon path (default: subdirectory icons in
 	  directory where this file is)
 	- priority
+	- annonate (true or false)
 7. scale_min / scale_max
 	- zoom scale for display
 
@@ -352,7 +354,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="bollard"/>
 		<icon annotate="true" src="vehicle/restriction/bollard.png"/>
-        <line width="3" colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -365,8 +367,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="hedge"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
-        <line width="3" colour="barrier#F0F050"/>
-        <area colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050"/>
+		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -379,8 +381,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="fence"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
-        <line width="3" colour="barrier#F0F050"/>
-        <area colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050"/>
+		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -399,15 +401,15 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
-        <line width="3" colour="barrier#F0F050"/>
-        <area colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050"/>
+		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="barrier" v="toll_booth"/>
 		<icon annotate="true" src="vehicle/toll_booth.png"/>
-        <area colour="barrier#F0F050"/>
+		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -420,8 +422,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="city_wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
-        <line width="3" colour="barrier#F0F050"/>
-        <area colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050"/>
+		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -434,8 +436,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="retaining_wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
-        <line width="3" colour="barrier#F0F050"/>
-        <area colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050"/>
+		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -448,8 +450,8 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="block"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
-        <line width="3" colour="barrier#F0F050"/>
-        <area colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050"/>
+		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -667,9 +669,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="highway" v="pedestrian"/>
 		<line width="3" realwidth="5" colour="foot#00ff00"/>
-		<!-- seems to be common to use area=yes for areas here -->
-		<!-- some people seem to have problems that polylines displayed as areas, so comment this out -->
-		<!--<area colour="foot#00ff00"/>-->
+		<area colour="foot#00ff00" closed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
@@ -848,7 +848,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="junction" v="roundabout"/>
-		<area colour="roundabout#eeeeee"/>
+		<area colour="roundabout#eeeeee" closed="true"/>
 		<!-- tagging a node makes no real sense, a roundabout should be tagged with several nodes, or a highway=mini_roundabout should probably be used -->
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
@@ -1217,7 +1217,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<condition k="railway" v="platform"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="2" colour="rail#404040"/>
-		<area colour="rail#404040"/>
+		<area colour="rail#404040" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1526,9 +1526,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="man_made" v="pier"/>
-		<!-- seems to be common to use area=yes for areas here -->
-		<!-- some people seem to have problems that polylines displayed as areas, so comment this out -->
-		<!--<area colour="pier#660000"/>-->
+		<area colour="pier#660000" closed="true"/>
 		<line width="2" colour="pier#660000"/>
 		<icon annotate="true" src="nautical/pier.png"/>
 		<scale_min>1</scale_min>
@@ -3266,7 +3264,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<condition k="natural" v="cliff"/>
 		<icon src="misc/no_icon.png"/>
 		<line width="2" colour="natural#002f00"/>
-		<area colour="natural#002f00"/>
+		<area colour="natural#002f00" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
