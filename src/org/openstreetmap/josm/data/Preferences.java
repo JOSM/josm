@@ -6,9 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -278,7 +280,8 @@ public class Preferences {
         properties.put("josm.version", AboutAction.getVersionString());
         try {
             setSystemProperties();
-            final PrintWriter out = new PrintWriter(new FileWriter(getPreferencesDir() + "preferences"), false);
+            final PrintWriter out = new PrintWriter(new OutputStreamWriter(
+            new FileOutputStream(getPreferencesDir() + "preferences"), "utf-8"), false);
             for (final Entry<String, String> e : properties.entrySet()) {
                 String s = defaults.get(e.getKey());
                 /* don't save default values */
@@ -295,7 +298,8 @@ public class Preferences {
 
     public void load() throws IOException {
         properties.clear();
-        final BufferedReader in = new BufferedReader(new FileReader(getPreferencesDir()+"preferences"));
+        final BufferedReader in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
         int lineNumber = 0;
         ArrayList<Integer> errLines = new ArrayList<Integer>();
         for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
@@ -361,12 +365,13 @@ public class Preferences {
         File bookmarkFile = new File(getPreferencesDir()+"bookmarks");
         if (!bookmarkFile.exists())
             bookmarkFile.createNewFile();
-        BufferedReader in = new BufferedReader(new FileReader(bookmarkFile));
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(bookmarkFile), "utf-8"));
 
         LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
-        // use pattern matches to scan text, as text may contain a "," itself
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            Matcher m = Pattern.compile("^(.+),(-?\\d+.\\d+),(-?\\d+.\\d+),(-?\\d+.\\d+),(-?\\d+.\\d+)$").matcher(line);
+            // FIXME: legacy code using ',' sign, should be \u001e only
+            Matcher m = Pattern.compile("^(.+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)$").matcher(line);
             if(m.matches())
             {
                 Bookmark b = new Bookmark();
@@ -385,11 +390,12 @@ public class Preferences {
         File bookmarkFile = new File(Main.pref.getPreferencesDir()+"bookmarks");
         if (!bookmarkFile.exists())
             bookmarkFile.createNewFile();
-        PrintWriter out = new PrintWriter(new FileWriter(bookmarkFile));
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(
+        new FileOutputStream(bookmarkFile), "utf-8"));
         for (Bookmark b : bookmarks) {
-            out.print(b.name+",");
+            out.print(b.name+"\u001e");
             for (int i = 0; i < b.latlon.length; ++i)
-                out.print(b.latlon[i]+(i<b.latlon.length-1?",":""));
+                out.print(b.latlon[i]+(i<b.latlon.length-1?"\u001e":""));
             out.println();
         }
         out.close();
@@ -490,14 +496,29 @@ public class Preferences {
             for(String a : def)
             {
                 if(d != null)
-                    d += ";" + a;
+                    d += "\u001e" + a;
                 else
                     d = a;
             }
             putDefault(key, d);
         }
         if(s != null && s.length() != 0)
-           return Arrays.asList(s.split(";"));
+        {
+            if(s.indexOf("\u001e") < 0) /* FIXME: legacy code, remove later */
+            {
+                String r =s;
+                if(r.indexOf("§§§") > 0) /* history dialog */
+                    r = r.replaceAll("§§§","\u001e");
+                else /* old style ';' separation */
+                    r = r.replace(';','\u001e');
+                if(!r.equals(s)) /* save the converted string */
+                {
+                    put(key,r);
+                    s = r;
+                }
+            }
+            return Arrays.asList(s.split("\u001e"));
+        }
         return def;
     }
     synchronized public void removeFromCollection(String key, String value) {
@@ -515,7 +536,7 @@ public class Preferences {
             for(String a : val)
             {
                 if(s != null)
-                    s += ";" + a;
+                    s += "\u001e" + a;
                 else
                     s = a;
             }

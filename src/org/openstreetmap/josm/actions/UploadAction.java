@@ -21,7 +21,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.historycombobox.StringUtils;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.tools.GBC;
@@ -37,8 +36,8 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 public class UploadAction extends JosmAction {
-    
-    public static final String HISTORY_KEY = "upload.comment.history"; 
+
+    public static final String HISTORY_KEY = "upload.comment.history";
 
     /** Upload Hook */
     public interface UploadHook {
@@ -102,31 +101,31 @@ public class UploadAction extends JosmAction {
                     l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
                     p.add(new JScrollPane(l), GBC.eol().fill());
                 }
-                
+
                 p.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
                 SuggestingJHistoryComboBox cmt = new SuggestingJHistoryComboBox();
-                List<String> cmtHistory = StringUtils.stringToList(Main.pref.get(HISTORY_KEY), SuggestingJHistoryComboBox.DELIM);
+                List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, null));
                 cmt.setHistory(cmtHistory);
                 //final JTextField cmt = new JTextField(lastCommitComment);
                 p.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
 
                 while(true) {
-                    int result = new ExtendedDialog(Main.parent, 
-                        tr("Upload these changes?"), 
+                    int result = new ExtendedDialog(Main.parent,
+                        tr("Upload these changes?"),
                         p,
-                        new String[] {tr("Upload Changes"), tr("Cancel")}, 
+                        new String[] {tr("Upload Changes"), tr("Cancel")},
                         new String[] {"upload.png", "cancel.png"}).getValue();
-                    
+
                     // cancel pressed
                     if (result != 1) return false;
-                    
+
                     // don't allow empty commit message
                     if (cmt.getText().trim().length() < 3) continue;
-                    
+
                     // store the history of comments
                     cmt.addCurrentItemToHistory();
-                    Main.pref.put(HISTORY_KEY, StringUtils.listToString(cmt.getHistory(), SuggestingJHistoryComboBox.DELIM));
-                    
+                    Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
+
                     break;
                 }
                 return true;

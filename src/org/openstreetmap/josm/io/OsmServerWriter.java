@@ -14,7 +14,6 @@ import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.historycombobox.JHistoryComboBox;
-import org.openstreetmap.josm.gui.historycombobox.StringUtils;
 
 /**
  * Class that uploads all changes to the osm server.
@@ -33,10 +32,9 @@ public class OsmServerWriter {
      * than where passed in the list to upload*.
      */
     public Collection<OsmPrimitive> processed;
-   
 
     private OsmApi api = new OsmApi();
-    
+
     private static final int MSECS_PER_SECOND = 1000;
     private static final int SECONDS_PER_MINUTE = 60;
     private static final int MSECS_PER_MINUTE = MSECS_PER_SECOND * SECONDS_PER_MINUTE;
@@ -61,13 +59,13 @@ public class OsmServerWriter {
     }
 
     /**
-     * Send the dataset to the server. 
+     * Send the dataset to the server.
      * @param the_version version of the data set
      * @param list list of objects to send
      */
     public void uploadOsm(String the_version, Collection<OsmPrimitive> list) {
         processed = new LinkedList<OsmPrimitive>();
-        
+
         // initialize API. Abort upload in case of configuration or network
         // errors
         //
@@ -86,13 +84,12 @@ public class OsmServerWriter {
             e.printStackTrace();
             return;
         }
-        
 
         Main.pleaseWaitDlg.progress.setMaximum(list.size());
         Main.pleaseWaitDlg.progress.setValue(0);
 
         boolean useChangesets = api.hasChangesetSupport();
-        
+
         // controls whether or not we try and upload the whole bunch in one go
         boolean useDiffUploads = Main.pref.getBoolean("osm-server.atomic-upload",
             "0.6".equals(api.getVersion()));
@@ -102,7 +99,7 @@ public class OsmServerWriter {
             if (useChangesets) {
                 // add the last entered comment to the changeset
                 String cmt = "";
-                List<String> history = StringUtils.stringToList(Main.pref.get(UploadAction.HISTORY_KEY), JHistoryComboBox.DELIM);
+                List<String> history = new LinkedList<String>(Main.pref.getCollection(UploadAction.HISTORY_KEY, null));
                 if(history.size() > 0) {
                     cmt = history.get(0);
                 }
@@ -160,10 +157,10 @@ public class OsmServerWriter {
             // ignore - don't bother the user with yet another message that he
             // has successfully cancelled the data upload
             //
-            return; 
+            return;
         }
-        
-        JOptionPane.showMessageDialog(Main.parent, 
+
+        JOptionPane.showMessageDialog(Main.parent,
             /* tr("Error during upload: ") + */ e.getMessage());
     }
 }
