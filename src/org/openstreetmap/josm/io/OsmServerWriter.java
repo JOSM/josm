@@ -99,7 +99,8 @@ public class OsmServerWriter {
             if (useChangesets) {
                 // add the last entered comment to the changeset
                 String cmt = "";
-                List<String> history = new LinkedList<String>(Main.pref.getCollection(UploadAction.HISTORY_KEY, null));
+                List<String> history = new LinkedList<String>(
+                Main.pref.getCollection(UploadAction.HISTORY_KEY, new LinkedList<String>()));
                 if(history.size() > 0) {
                     cmt = history.get(0);
                 }

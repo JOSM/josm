@@ -104,7 +104,7 @@ public class UploadAction extends JosmAction {
 
                 p.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
                 SuggestingJHistoryComboBox cmt = new SuggestingJHistoryComboBox();
-                List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, null));
+                List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
                 cmt.setHistory(cmtHistory);
                 //final JTextField cmt = new JTextField(lastCommitComment);
                 p.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
