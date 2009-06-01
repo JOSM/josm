@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -24,74 +23,64 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.nodes.NodeListMergeModel;
 import org.openstreetmap.josm.gui.conflict.nodes.NodeListMerger;
+import org.openstreetmap.josm.gui.conflict.relation.RelationMemberListMergeModel;
+import org.openstreetmap.josm.gui.conflict.relation.RelationMemberMerger;
 import org.openstreetmap.josm.gui.conflict.tags.TagMergeModel;
 import org.openstreetmap.josm.gui.conflict.tags.TagMerger;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * An UI component for resolving conflicts between two {@see OsmPrimitive}s.
- *   
- *
+ * 
  */
 public class ConflictResolver extends JPanel implements PropertyChangeListener  {
-    
-   private static final Logger logger = Logger.getLogger(ConflictResolver.class.getName());
+
+    private static final Logger logger = Logger.getLogger(ConflictResolver.class.getName());
 
     private JTabbedPane tabbedPane = null;
     private TagMerger tagMerger;
     private NodeListMerger nodeListMerger;
+    private RelationMemberMerger relationMemberMerger;
     private OsmPrimitive my;
     private OsmPrimitive their;
-    
+
     private ImageIcon mergeComplete;
     private ImageIcon mergeIncomplete;
-    
-    // FIXME copied code -> refactor
-    /**
-     * load an icon given by iconName 
-     * 
-     * @param iconName  the name of the icon (without path, i.e. <tt>copystartleft.png</tt>
-     * @return the icon; null, if the icon was not found 
-     */
-    protected ImageIcon getIcon(String iconName) {
-        String fullIconName  = "/images/dialogs/conflict/" + iconName;
-        URL imageURL   = this.getClass().getResource(fullIconName);            
-        if (imageURL == null) {
-            System.out.println(tr("WARNING: failed to load resource {0}", fullIconName));
-            return null;
-        }
-        return new ImageIcon(imageURL);
-    }
-    
+
     protected void loadIcons() {
-        mergeComplete = getIcon("mergecomplete.png");
-        mergeIncomplete = getIcon("mergeincomplete.png");
+        mergeComplete = ImageProvider.get("dialogs/conflict","mergecomplete.png" );
+        mergeIncomplete = ImageProvider.get("dialogs/conflict","mergeincomplete.png" );
     }
-    
+
     protected void build() {
         tabbedPane = new JTabbedPane();
-        
+
         tagMerger = new TagMerger();
+        tagMerger.setName("panel.tagmerger");
         tagMerger.getModel().addPropertyChangeListener(this);
         tabbedPane.add("Tags", tagMerger);
-        
+
         nodeListMerger = new NodeListMerger();
+        nodeListMerger.setName("panel.nodelistmerger");
         nodeListMerger.getModel().addPropertyChangeListener(this);
         tabbedPane.add("Nodes", nodeListMerger);
-        
-        tabbedPane.add("Members", new JPanel());
-        
+
+        relationMemberMerger = new RelationMemberMerger();
+        relationMemberMerger.setName("panel.relationmembermerger");
+        relationMemberMerger.getModel().addPropertyChangeListener(this);
+        tabbedPane.add("Members", relationMemberMerger);
+
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
     }
-    
-    
+
     public ConflictResolver() {
         build();
         loadIcons();
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        
+
         if (evt.getPropertyName().equals(TagMergeModel.PROP_NUM_UNDECIDED_TAGS)) {
             int newValue = (Integer)evt.getNewValue();
             if (newValue == 0) {
@@ -103,61 +92,103 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 tabbedPane.setToolTipTextAt(0, tr("{0} pending tag conflicts to be resolved"));
                 tabbedPane.setIconAt(0, mergeIncomplete);
             }
-        } else if (evt.getPropertyName().equals(NodeListMergeModel.PROP_FROZEN)) {
+        } else if (evt.getPropertyName().equals(ListMergeModel.PROP_FROZEN)) {
             boolean frozen = (Boolean)evt.getNewValue();
-            if (frozen) {
+            if (frozen && evt.getSource() == nodeListMerger.getModel()) {
                 tabbedPane.setTitleAt(1, tr("Nodes(resolved)"));
-                tabbedPane.setToolTipTextAt(1, tr("Pending conflicts in the node list of this way"));
+                tabbedPane.setToolTipTextAt(1, tr("Merged node list frozen. No pending conflicts in the node list of this way"));
                 tabbedPane.setIconAt(1, mergeComplete);
             } else {
                 tabbedPane.setTitleAt(1, tr("Nodes(with conflicts)"));
-                tabbedPane.setToolTipTextAt(1, tr("Merged node list frozen. No pending conflicts in the node list of this way"));
+                tabbedPane.setToolTipTextAt(1,tr("Pending conflicts in the node list of this way"));
                 tabbedPane.setIconAt(1, mergeIncomplete);
+            }
+            if (frozen && evt.getSource() == relationMemberMerger.getModel()) {
+                tabbedPane.setTitleAt(2, tr("Members(resolved)"));
+                tabbedPane.setToolTipTextAt(2, tr("Merged member list frozen. No pending conflicts in the member list of this relation"));
+                tabbedPane.setIconAt(2, mergeComplete);
+            } else {
+                tabbedPane.setTitleAt(2, tr("Members(with conflicts)"));
+                tabbedPane.setToolTipTextAt(2, tr("Pending conflicts in the member list of this relation"));
+                tabbedPane.setIconAt(2, mergeIncomplete);
             }
         }
     }
-    
-    public void populate(OsmPrimitive my, OsmPrimitive their) { 
+
+    /**
+     * populates the conflict resolver with the conflicts between my and their
+     * 
+     * @param my   my primitive (i.e. the primitive in the local dataset)
+     * @param their their primitive (i.e. the primitive in the server dataset)
+     * 
+     */
+    public void populate(OsmPrimitive my, OsmPrimitive their) {
         this.my = my;
-        this.their =  their; 
+        this.their =  their;
         tagMerger.getModel().populate(my, their);
-        if (my instanceof Way) {
-           nodeListMerger.populate((Way)my, (Way)their);
-           tabbedPane.setEnabledAt(1, true);
-           tabbedPane.setEnabledAt(2, false);
+        tabbedPane.setEnabledAt(0,true);
+        if (my instanceof Node) {
+            tabbedPane.setEnabledAt(1,false);
+            tabbedPane.setEnabledAt(2,false);
+        } else if (my instanceof Way) {
+            nodeListMerger.populate((Way)my, (Way)their);
+            tabbedPane.setEnabledAt(1, true);
+            tabbedPane.setEnabledAt(2, false);
         } else if (my instanceof Relation) {
+            relationMemberMerger.populate((Relation)my, (Relation)their);
             tabbedPane.setEnabledAt(1, false);
-            tabbedPane.setEnabledAt(2, true);        
-         }
+            tabbedPane.setEnabledAt(2, true);
+        }
     }
-    
+
+    /**
+     * Builds the resolution command(s) for for the resolved conflicts in this
+     * ConflictResolver
+     * 
+     * @return the resolution command
+     */
     public Command buildResolveCommand() {
         ArrayList<Command> commands = new ArrayList<Command>();
         TagConflictResolveCommand cmd = tagMerger.getModel().buildResolveCommand(my, their);
         commands.add(cmd);
         if (my instanceof Way && nodeListMerger.getModel().isFrozen()) {
-            commands.add(nodeListMerger.getModel().buildResolveCommand((Way)my, (Way)their));            
+            NodeListMergeModel model  =(NodeListMergeModel)nodeListMerger.getModel();
+            commands.add(model.buildResolveCommand((Way)my, (Way)their));
+        } else if (my instanceof Relation && relationMemberMerger.getModel().isFrozen()) {
+            RelationMemberListMergeModel model  =(RelationMemberListMergeModel)relationMemberMerger.getModel();
+            commands.add(model.buildResolveCommand((Relation)my, (Relation)their));
         }
         if (my instanceof Node) {
-            // resolve the version conflict if this is a node and all tag 
-            // conflicts have been resolved 
-            // 
+            // resolve the version conflict if this is a node and all tag
+            // conflicts have been resolved
+            //
             if (tagMerger.getModel().isResolvedCompletely()) {
                 commands.add(
-                   new VersionConflictResolveCommand(my, their)
+                        new VersionConflictResolveCommand(my, their)
                 );
             }
         } else if (my instanceof Way) {
-            // resolve the version conflict if this is a way, all tag 
+            // resolve the version conflict if this is a way, all tag
             // conflicts have been resolved, and conflicts in the node list
-            // have been resolved 
-            // 
+            // have been resolved
+            //
             if (tagMerger.getModel().isResolvedCompletely() && nodeListMerger.getModel().isFrozen()) {
                 commands.add(
-                   new VersionConflictResolveCommand(my, their)
+                        new VersionConflictResolveCommand(my, their)
                 );
-            }            
+            }
+        }  else if (my instanceof Relation) {
+            // resolve the version conflict if this is a relation, all tag
+            // conflicts and all conflicts in the member list
+            // have been resolved
+            //
+            if (tagMerger.getModel().isResolvedCompletely() && relationMemberMerger.getModel().isFrozen()) {
+                commands.add(
+                        new VersionConflictResolveCommand(my, their)
+                );
+            }
         }
-        return new SequenceCommand("Conflict Resolution", commands);
+
+        return new SequenceCommand(tr("Conflict Resolution"), commands);
     }
 }

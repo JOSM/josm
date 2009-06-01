@@ -10,15 +10,15 @@ import javax.swing.table.TableColumn;
 public class NodeListColumnModel extends DefaultTableColumnModel {
 
     protected void createColumns(TableCellRenderer renderer) {
-        
+
         TableColumn col = null;
-        
-        // column 0 - Node  
+
+        // column 0 - Node
         col = new TableColumn(0);
         col.setHeaderValue(tr("Node"));
         col.setResizable(true);
         col.setCellRenderer(renderer);
-        addColumn(col);        
+        addColumn(col);
     }
 
     public NodeListColumnModel(TableCellRenderer renderer) {

@@ -1,33 +1,26 @@
-package org.openstreetmap.josm.gui.conflict.nodes;
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.conflict.relation;
 
 import java.util.logging.Logger;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.conflict.ListMerger;
 
 /**
- * A UI component for resolving conflicts in the node lists of two {@see Way}s.
- * 
+ * A UI component for resolving conflicts in the member lists of two {@see Relation}
  */
-public class NodeListMerger extends ListMerger<Node> {
-    private static final Logger logger = Logger.getLogger(NodeListMerger.class.getName());
-
-
-    public NodeListMerger() {
-        super(new NodeListMergeModel());
-    }
+public class RelationMemberMerger extends ListMerger<RelationMember> {
+    private static final Logger logger = Logger.getLogger(RelationMemberMerger.class.getName());
 
     @Override
     protected JScrollPane buildMyElementsTable() {
         myEntriesTable  = new JTable(
                 model.getMyTableModel(),
-                new NodeListColumnModel(
-                        new NodeListTableCellRenderer()
-                ),
+                new RelationMemberListColumnModel(),
                 model.getMySelectionModel()
         );
         myEntriesTable.setName("table.mynodes");
@@ -36,13 +29,13 @@ public class NodeListMerger extends ListMerger<Node> {
 
     @Override
     protected JScrollPane buildMergedElementsTable() {
+        logger.info(model.getMergedTableModel().toString());
         mergedEntriesTable  = new JTable(
                 model.getMergedTableModel(),
-                new NodeListColumnModel(
-                        new NodeListTableCellRenderer()
-                ),
+                new RelationMemberListColumnModel(),
                 model.getMergedSelectionModel()
         );
+        mergedEntriesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         mergedEntriesTable.setName("table.mergednodes");
         return embeddInScrollPane(mergedEntriesTable);
     }
@@ -51,17 +44,19 @@ public class NodeListMerger extends ListMerger<Node> {
     protected JScrollPane buildTheirElementsTable() {
         theirEntriesTable  = new JTable(
                 model.getTheirTableModel(),
-                new NodeListColumnModel(
-                        new NodeListTableCellRenderer()
-                ),
+                new RelationMemberListColumnModel(),
                 model.getTheirSelectionModel()
         );
         theirEntriesTable.setName("table.theirnodes");
         return embeddInScrollPane(theirEntriesTable);
     }
 
+    public void populate(Relation my, Relation their) {
+        RelationMemberListMergeModel model = (RelationMemberListMergeModel)getModel();
+        model.populate(my,their);
+    }
 
-    public void populate(Way my, Way their) {
-        ((NodeListMergeModel)model).populate(my, their);
+    public RelationMemberMerger() {
+        super(new RelationMemberListMergeModel());
     }
 }
