@@ -538,15 +538,13 @@ public class TaggingPreset extends AbstractAction {
 
     public static Collection<TaggingPreset> readFromPreferences() {
         LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
-        String allTaggingPresets = Main.pref.get("taggingpreset.sources");
+        LinkedList<String> sources = new LinkedList<String>();
 
-        if (Main.pref.getBoolean("taggingpreset.enable-defaults", true))
-        {
-            allTaggingPresets = "resource://presets/presets.xml"
-            + (allTaggingPresets != null ? ";"+allTaggingPresets : "");
-        }
+        if(Main.pref.getBoolean("taggingpreset.enable-defaults", true))
+            sources.add("resource://presets/presets.xml");
+        sources.addAll(Main.pref.getCollection("taggingpreset.sources", new LinkedList<String>()));
 
-        for(String source : allTaggingPresets.split(";"))
+        for(String source : sources)
         {
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
