@@ -41,6 +41,7 @@ import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
+import org.openstreetmap.josm.actions.MirrorAction;
 import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
@@ -120,6 +121,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction alignInLine = new AlignInLineAction();
     public final JosmAction distribute = new DistributeAction();
     public final JosmAction ortho = new OrthogonalizeAction();
+    public final JosmAction mirror = new MirrorAction();
     public final AddNodeAction addnode = new AddNodeAction();
     public final JosmAction createCircle = new CreateCircleAction();
     public final JosmAction mergeNodes = new MergeNodesAction();
@@ -269,6 +271,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, alignInLine);
         add(toolsMenu, distribute);
         add(toolsMenu, ortho);
+        add(toolsMenu, mirror);
         toolsMenu.addSeparator();
         add(toolsMenu, addnode);
         add(toolsMenu, createCircle);
