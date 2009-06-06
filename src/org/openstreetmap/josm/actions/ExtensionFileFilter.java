@@ -1,11 +1,16 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.filechooser.FileFilter;
+
+import org.openstreetmap.josm.io.FileImporter;
+import org.openstreetmap.josm.io.GpxImporter;
+import org.openstreetmap.josm.io.NMEAImporter;
+import org.openstreetmap.josm.io.OsmImporter;
 
 /**
  * A file filter that filters after the extension. Also includes a list of file
@@ -18,15 +23,8 @@ public class ExtensionFileFilter extends FileFilter {
     private final String description;
     public final String defaultExtension;
 
-    public static final int OSM = 0;
-    public static final int GPX = 1;
-    public static final int NMEA = 2;
-
-    public static ExtensionFileFilter[] filters = {
-        new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files")+ " (*.osm *.xml)"),
-        new ExtensionFileFilter("gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)"),
-        new ExtensionFileFilter("nmea,nme,nma,txt", "nmea", tr("NMEA-0183 Files") + " (*.nmea *.nme *.nma *.txt)"),
-    };
+    public static ArrayList<FileImporter> importers = new ArrayList<FileImporter>(Arrays.asList(new OsmImporter(),
+            new GpxImporter(), new NMEAImporter()));
 
     /**
      * Construct an extension file filter by giving the extension to check after.

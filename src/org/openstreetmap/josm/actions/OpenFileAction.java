@@ -5,30 +5,19 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.InputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.io.GpxReader;
-import org.openstreetmap.josm.io.NmeaReader;
-import org.openstreetmap.josm.io.OsmReader;
-import org.xml.sax.SAXException;
+import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Open a file chooser dialog and select an file to import. Then call the gpx-import
- * driver. Finally open an internal frame into the main window with the gpx data shown.
+ * Open a file chooser dialog and select an file to import. Then call the gpx-import driver. Finally
+ * open an internal frame into the main window with the gpx data shown.
  *
  * @author imi
  */
@@ -57,126 +46,14 @@ public class OpenFileAction extends DiskAccessAction {
     public void openFile(File file) {
         try {
             System.out.println("Open file: " + file.getAbsolutePath() + " (" + file.length() + " bytes)");
-            if (asGpxData(file.getName()))
-                openFileAsGpx(file);
-            else if (asNmeaData(file.getName()))
-                openFileAsNmea(file);
-            else
-                openAsData(file);
-        } catch (SAXException x) {
-            x.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Error while parsing {0}",file.getName())+": "+x.getMessage());
+            for (FileImporter importer : ExtensionFileFilter.importers)
+                if (importer.acceptFile(file))
+                    importer.importData(file);
         } catch (IOException x) {
             x.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not read \"{0}\"",file.getName())+"\n"+x.getMessage());
+            JOptionPane.showMessageDialog(Main.parent, tr("Could not read \"{0}\"", file.getName()) + "\n"
+                    + x.getMessage());
         }
     }
-
-    private void openAsData(File file) throws SAXException, IOException, FileNotFoundException {
-        String fn = file.getName();
-        if (ExtensionFileFilter.filters[ExtensionFileFilter.OSM].acceptName(fn)) {
-            OsmReader osm = OsmReader.parseDataSetOsm(new FileInputStream(file), null, Main.pleaseWaitDlg);
-            DataSet dataSet = osm.getDs();
-            OsmDataLayer layer = new OsmDataLayer(dataSet, file.getName(), file);
-            Main.main.addLayer(layer);
-            layer.fireDataChange();
-            if (osm.getParseNotes().length() != 0) {
-                /* display at most five lines */
-                String notes = osm.getParseNotes();
-                int j = 0;
-                for (int i = 0; i < 5; i++) {
-                    j = notes.indexOf('\n', j + 1);
-                }
-                j = j >= 0 ? j : notes.length();
-                JOptionPane.showMessageDialog(Main.parent, notes.substring(0, j));
-            }
-        }
-        else
-            JOptionPane.showMessageDialog(Main.parent, fn+": "+tr("Unknown file extension: {0}", fn.substring(file.getName().lastIndexOf('.')+1)));
-    }
-
-    private void openFileAsGpx(File file) throws SAXException, IOException, FileNotFoundException {
-        String fn = file.getName();
-        if (ExtensionFileFilter.filters[ExtensionFileFilter.GPX].acceptName(fn)) {
-            GpxReader r = null;
-            InputStream is;
-            if (file.getName().endsWith(".gpx.gz")) {
-                is = new GZIPInputStream(new FileInputStream(file));
-            } else {
-                is = new FileInputStream(file);
-            }
-            // Workaround for SAX BOM bug
-            // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6206835
-            if(!((is.read()==0xef)&&(is.read()==0xbb)&&(is.read()==0xbf))) {
-                is.close();
-                if (file.getName().endsWith(".gpx.gz")) {
-                    is = new GZIPInputStream(new FileInputStream(file));
-                } else {
-                    is = new FileInputStream(file);
-                }
-            }
-            r = new GpxReader(is,file.getAbsoluteFile().getParentFile());
-            r.data.storageFile = file;
-            GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
-            Main.main.addLayer(gpxLayer);
-            if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
-                MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
-                if (ml.data.size() > 0) {
-                    Main.main.addLayer(ml);
-                }
-            }
-
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-    private void showNmeaInfobox(boolean success, NmeaReader r) {
-        String msg = tr("Coordinates imported: ") + r.getNumberOfCoordinates() + "\n" +
-        tr("Malformed sentences: ") + r.getParserMalformed() + "\n" +
-        tr("Checksum errors: ") + r.getParserChecksumErrors() + "\n";
-        if(!success) // don't scare the user unneccessarily
-            msg += tr("Unknown sentences: ") + r.getParserUnknown() + "\n";
-        msg += tr("Zero coordinates: ") + r.getParserZeroCoordinates();
-        if(success) {
-            JOptionPane.showMessageDialog(
-                Main.parent, msg,
-                tr("NMEA import success"),JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(
-                Main.parent, msg,
-                tr("NMEA import faliure!"),JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void openFileAsNmea(File file) throws IOException, FileNotFoundException {
-        String fn = file.getName();
-        if (ExtensionFileFilter.filters[ExtensionFileFilter.NMEA].acceptName(fn)) {
-            NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
-            if(r.getNumberOfCoordinates()>0) {
-                r.data.storageFile = file;
-                GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
-                Main.main.addLayer(gpxLayer);
-                if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
-                    MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
-                    if (ml.data.size() > 0) {
-                        Main.main.addLayer(ml);
-                    }
-                }
-            }
-            showNmeaInfobox(r.getNumberOfCoordinates()>0, r);
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-    private boolean asGpxData(String fn) {
-        return ExtensionFileFilter.filters[ExtensionFileFilter.GPX].acceptName(fn);
-    }
-
-    private boolean asNmeaData(String fn) {
-        return ExtensionFileFilter.filters[ExtensionFileFilter.NMEA].acceptName(fn);
-    }
-
 
 }

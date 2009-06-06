@@ -21,7 +21,9 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.GpxWriter;
+import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -149,9 +151,11 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public static void save(File file, OsmDataLayer layer) {
         File tmpFile = null;
         try {
-            if (ExtensionFileFilter.filters[ExtensionFileFilter.GPX].acceptName(file.getPath())) {
+            GpxImporter gpxImExporter = new GpxImporter();
+            OsmImporter osmImExporter = new OsmImporter();
+            if (gpxImExporter.acceptFile(file))
                 GpxExportAction.exportGpx(file, layer);
-            } else if (ExtensionFileFilter.filters[ExtensionFileFilter.OSM].acceptName(file.getPath())) {
+            else if (osmImExporter.acceptFile(file)) {
                 // use a tmp file because if something errors out in the
                 // process of writing the file, we might just end up with
                 // a truncated file.  That can destroy lots of work.
@@ -193,7 +197,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public static void save(File file, GpxLayer layer) {
         File tmpFile = null;
         try {
-            if (ExtensionFileFilter.filters[ExtensionFileFilter.GPX].acceptName(file.getPath())) {
+            GpxImporter gpxImExporter = new GpxImporter();
+            if (gpxImExporter.acceptFile(file)) {
 
                 // use a tmp file because if something errors out in the
                 // process of writing the file, we might just end up with
