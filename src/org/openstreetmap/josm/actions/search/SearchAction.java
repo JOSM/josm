@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.search;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -78,10 +79,13 @@ public class SearchAction extends JosmAction {
         left.add(regexSearch, GBC.eol());
 
         JPanel right = new JPanel();
-        right.add(new JLabel("<html><ul>"
+        JLabel description = 
+        new JLabel("<html><ul>"
                 + "<li>"+tr("<b>Baker Street</b> - 'Baker' and 'Street' in any key or name.")+"</li>"
                 + "<li>"+tr("<b>\"Baker Street\"</b> - 'Baker Street' in any key or name.")+"</li>"
                 + "<li>"+tr("<b>name:Bak</b> - 'Bak' anywhere in the name.")+"</li>"
+                + "<li>"+tr("<b>type=route</b> - key 'type' with value exactly 'route'.") + "</li>"
+                + "<li>"+tr("<b>type=*</b> - key 'type' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>"
                 + "<li>"+tr("<b>-name:Bak</b> - not 'Bak' in the name.")+"</li>"
                 + "<li>"+tr("<b>foot:</b> - key=foot set to any value.")+"</li>"
                 + "<li>"+tr("<u>Special targets:</u>")+"</li>"
@@ -98,7 +102,9 @@ public class SearchAction extends JosmAction {
                 + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"
                 + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains :)")+"</li>"
                 + "<li>"+tr("Use <b>(</b> and <b>)</b> to group expressions")+"</li>"
-                + "</ul></html>"));
+                + "</ul></html>");
+        description.setFont(description.getFont().deriveFont(Font.PLAIN));
+        right.add(description);
 
         final JPanel p = new JPanel();
         p.add(left);

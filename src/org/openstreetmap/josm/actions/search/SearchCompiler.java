@@ -154,6 +154,128 @@ public class SearchCompiler {
         @Override public String toString() {return key+"="+value;}
     }
 
+    private static class ExactKeyValue extends Match {
+
+        private enum Mode {
+            ANY, ANY_KEY, ANY_VALUE, EXACT, NONE, MISSING_KEY,
+            ANY_KEY_REGEXP, ANY_VALUE_REGEXP, EXACT_REGEXP, MISSING_KEY_REGEXP;
+        }
+
+        private final String key;
+        private final String value;
+        private final Pattern keyPattern;
+        private final Pattern valuePattern;
+        private final Mode mode;
+
+        public ExactKeyValue(boolean regexp, String key, String value) throws ParseError {
+            if (key == "") {
+                throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
+            }
+            this.key = key;
+            this.value = value;
+            if ("".equals(value) && "*".equals(key)) {
+                mode = Mode.NONE;
+            } else if ("".equals(value)) {
+                if (regexp) {
+                    mode = Mode.MISSING_KEY_REGEXP;
+                } else {
+                    mode = Mode.MISSING_KEY;
+                }
+            } else if ("*".equals(key) && "*".equals(value)) {
+                mode = Mode.ANY;
+            } else if ("*".equals(key)) {
+                if (regexp) {
+                    mode = Mode.ANY_KEY_REGEXP;
+                } else {
+                    mode = Mode.ANY_KEY;
+                }
+            } else if ("*".equals(value)) {
+                if (regexp) {
+                    mode = Mode.ANY_VALUE_REGEXP;
+                } else {
+                    mode = Mode.ANY_VALUE;
+                }
+            } else {
+                if (regexp) {
+                    mode = Mode.EXACT_REGEXP;
+                } else {
+                    mode = Mode.EXACT;
+                }
+            }
+
+            if (regexp && key.length() > 0 && !key.equals("*")) {
+                keyPattern = Pattern.compile(key);
+            } else {
+                keyPattern = null;
+            }
+            if (regexp && value.length() > 0 && !value.equals("*")) {
+                valuePattern = Pattern.compile(value);
+            } else {
+                valuePattern = null;
+            }
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) throws ParseError {
+
+            if (osm.keys == null || osm.keys.isEmpty()) {
+                return mode == Mode.NONE;
+            }
+
+            switch (mode) {
+            case NONE:
+                return false;
+            case MISSING_KEY:
+                return osm.get(key) == null;
+            case ANY:
+                return true;
+            case ANY_VALUE:
+                return osm.get(key) != null;
+            case ANY_KEY:
+                for (String v:osm.keys.values()) {
+                    if (v.equals(value)) {
+                        return true;
+                    }
+                }
+                return false;
+            case EXACT:
+                return value.equals(osm.get(key));
+            case ANY_KEY_REGEXP:
+                for (String v:osm.keys.values()) {
+                    if (valuePattern.matcher(v).matches()) {
+                        return true;
+                    }
+                }
+                return false;
+            case ANY_VALUE_REGEXP:
+            case EXACT_REGEXP:
+                for (Entry<String, String> entry:osm.keys.entrySet()) {
+                    if (keyPattern.matcher(entry.getKey()).matches()) {
+                        if (mode == Mode.ANY_VALUE_REGEXP
+                                || valuePattern.matcher(entry.getValue()).matches()) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case MISSING_KEY_REGEXP:
+                for (String k:osm.keys.keySet()) {
+                    if (keyPattern.matcher(k).matches()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            throw new AssertionError("Missed state");
+        }
+
+        @Override
+        public String toString() {
+            return key + '=' + value;
+        }
+
+    }
+
     private class Any extends Match {
         private String s;
         public Any(String s) {this.s = s;}
@@ -368,7 +490,7 @@ public class SearchCompiler {
     public Match parse() throws ParseError {
         Match m = parseJuxta();
         if (!tokenizer.readIfEqual(null)) {
-            throw new ParseError("Unexpected token: " + tokenizer.nextToken());
+            throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
         }
         return m;
     }
@@ -426,6 +548,13 @@ public class SearchCompiler {
             if (tok == null) tok = "";
             if (tok2 == null) tok2 = "";
             return parseKV(tok, tok2);
+        }
+
+        if (tokenizer.readIfEqual("=")) {
+            String tok2 = tokenizer.readText();
+            if (tok == null) tok = "";
+            if (tok2 == null) tok2 = "";
+            return new ExactKeyValue(regexSearch, tok, tok2);
         }
 
         if (tok == null) {

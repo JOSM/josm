@@ -39,14 +39,14 @@ public class PushbackTokenizer {
             StringBuilder s;
             switch (c) {
             case ':':
+            case '=':
                 next = search.read();
-                c = (char) next;
-                if (next == -1 || c == ' ' || c == '\t') {
+                if (next == -1 || next == ' ' || next == '\t') {
                     pushBack(" ");
                 } else {
                     search.unread(next);
                 }
-                return ":";
+                return String.valueOf(c);
             case '-':
                 return "-";
             case '(':
@@ -71,7 +71,7 @@ public class PushbackTokenizer {
                     return " "+s.toString();
                 }
                 c = (char)next;
-                if (c == ' ' || c == '\t' || c == '"' || c == ':' || c == '(' || c == ')' || c == '|') {
+                if (c == ' ' || c == '\t' || c == '"' || c == ':' || c == '(' || c == ')' || c == '|' || c == '=') {
                     search.unread(next);
                     if (s.toString().equals("OR"))
                         return "|";
