@@ -15,7 +15,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -134,7 +133,7 @@ public final class AlignInCircleAction extends JosmAction {
         Collection<OsmPrimitive> sel = Main.ds.getSelected();
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Way> ways = new LinkedList<Way>();
-        Node center = null;
+        EastNorth center = null;
         double radius = 0;
         boolean regular = false;
 
@@ -163,7 +162,7 @@ public final class AlignInCircleAction extends JosmAction {
                     regular = true;
                 } else {
 
-                    center = (Node) nodes.toArray()[way.nodes.contains(nodes.toArray()[0]) ? 1 : 0];
+                    center = ((Node) nodes.toArray()[way.nodes.contains(nodes.toArray()[0]) ? 1 : 0]).eastNorth;
                     if (nodes.size() == 2)
                         radius = distance(((Node) nodes.toArray()[0]).eastNorth, ((Node) nodes.toArray()[1]).eastNorth);
                 }
@@ -183,8 +182,7 @@ public final class AlignInCircleAction extends JosmAction {
 
         // Get average position of circumcircles of the triangles of all triplets of neighbour nodes
         if (center == null) {
-            center = new Node(new LatLon(0, 0));
-            center.eastNorth = new EastNorth(0, 0); // to be independent of projection
+            center = new EastNorth(0, 0);
             Node n0 = (Node) nodes.toArray()[nodes.size() - 1];
             Node n1 = (Node) nodes.toArray()[nodes.size() - 2];
             Node n2;
@@ -195,13 +193,12 @@ public final class AlignInCircleAction extends JosmAction {
                 EastNorth cc = circumcenter(n0.eastNorth, n1.eastNorth, n2.eastNorth);
                 if (cc == null)
                     return;
-                center.eastNorth = new EastNorth(center.eastNorth.east() + cc.east(), center.eastNorth.north()
+                center = new EastNorth(center.east() + cc.east(), center.north()
                         + cc.north());
             }
 
-            center.eastNorth = new EastNorth(center.eastNorth.east() / nodes.size(), center.eastNorth.north()
+            center = new EastNorth(center.east() / nodes.size(), center.north()
                     / nodes.size());
-            center.coor = Main.proj.eastNorth2latlon(center.eastNorth);
         }
 
         // Node "center" now is central to all selected nodes.
@@ -211,7 +208,7 @@ public final class AlignInCircleAction extends JosmAction {
         // relative to the distance from the N or S poles.
         if (radius == 0) {
             for (Node n : nodes) {
-                radius += distance(center.eastNorth, n.eastNorth);
+                radius += distance(center, n.eastNorth);
             }
             radius = radius / nodes.size();
         }
@@ -222,9 +219,9 @@ public final class AlignInCircleAction extends JosmAction {
 
         if (regular) { // Make a regular polygon
             double angle = Math.PI * 2 / nodes.size();
-            pc = new PolarCoor(((Node) nodes.toArray()[0]).eastNorth, center.eastNorth, 0);
+            pc = new PolarCoor(((Node) nodes.toArray()[0]).eastNorth, center, 0);
 
-            if (pc.angle > (new PolarCoor(((Node) nodes.toArray()[1]).eastNorth, center.eastNorth, 0).angle))
+            if (pc.angle > (new PolarCoor(((Node) nodes.toArray()[1]).eastNorth, center, 0).angle))
                 angle *= -1;
 
             pc.radius = radius;
@@ -235,7 +232,7 @@ public final class AlignInCircleAction extends JosmAction {
             }
         } else { // Move each node to that distance from the centre.
             for (Node n : nodes) {
-                pc = new PolarCoor(n.eastNorth, center.eastNorth, 0);
+                pc = new PolarCoor(n.eastNorth, center, 0);
                 pc.radius = radius;
                 EastNorth no = pc.toEastNorth();
                 cmds.add(new MoveCommand(n, no.east() - n.eastNorth.east(), no.north() - n.eastNorth.north()));

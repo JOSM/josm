@@ -16,13 +16,13 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -69,8 +69,7 @@ public final class PasteAction extends JosmAction {
             Node nnew = new Node(n);
             nnew.id = 0;
             if (Main.main.editLayer() == source) {
-                nnew.eastNorth = new EastNorth(nnew.eastNorth.east() + offsetEast, nnew.eastNorth.north() + offsetNorth);
-                nnew.coor = Main.proj.eastNorth2latlon(nnew.eastNorth);
+                nnew.setEastNorth(nnew.eastNorth.add(offsetEast, offsetNorth));
             }
             map.put(n, nnew);
         }

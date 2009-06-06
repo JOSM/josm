@@ -20,7 +20,6 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -148,8 +147,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         // If this wasn't called from menu, place it where the cursor is/was
         if(e.getSource() instanceof JPanel) {
             MapView mv = Main.map.mapView;
-            n.eastNorth = mv.getEastNorth(mv.lastMEvent.getX(), mv.lastMEvent.getY());
-            n.coor = Main.proj.eastNorth2latlon(n.eastNorth);
+            n.setEastNorth(mv.getEastNorth(mv.lastMEvent.getX(), mv.lastMEvent.getY()));
         }
         
         cmds.add(new AddCommand(n));

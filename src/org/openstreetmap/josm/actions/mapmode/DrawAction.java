@@ -800,7 +800,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // fall through to default action.
             // (for semi-parallel lines, intersection might be miles away!)
             if (Main.map.mapView.getPoint(n.eastNorth).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
-                n.eastNorth = intersection;
+                n.setEastNorth(intersection);
                 return;
             }
 
@@ -813,9 +813,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             double b = P.distanceSq(A);
             double c = A.distanceSq(B);
             q = (a - b + c) / (2*c);
-            n.eastNorth = new EastNorth(
-                B.east() + q * (A.east() - B.east()),
-                B.north() + q * (A.north() - B.north()));
+            n.setEastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north()));
         }
     }
 

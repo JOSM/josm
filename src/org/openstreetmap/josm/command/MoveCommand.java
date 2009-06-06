@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -87,8 +86,7 @@ public class MoveCommand extends Command {
      */
     public void moveAgain(double x, double y) {
         for (Node n : objects) {
-            n.eastNorth = new EastNorth(n.eastNorth.east()+x, n.eastNorth.north()+y);
-            n.coor = Main.proj.eastNorth2latlon(n.eastNorth);
+            n.setEastNorth(n.eastNorth.add(x, y));
         }
         this.x += x;
         this.y += y;
@@ -96,8 +94,7 @@ public class MoveCommand extends Command {
 
     @Override public boolean executeCommand() {
         for (Node n : objects) {
-            n.eastNorth = new EastNorth(n.eastNorth.east()+x, n.eastNorth.north()+y);
-            n.coor = Main.proj.eastNorth2latlon(n.eastNorth);
+            n.setEastNorth(n.eastNorth.add(x, y));
             n.modified = true;
         }
         return true;
@@ -107,8 +104,7 @@ public class MoveCommand extends Command {
         Iterator<OldState> it = oldState.iterator();
         for (Node n : objects) {
             OldState os = it.next();
-            n.eastNorth = os.eastNorth;
-            n.coor = os.latlon;
+            n.setEastNorth(os.eastNorth);
             n.modified = os.modified;
         }
     }

@@ -4,8 +4,8 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
@@ -19,7 +19,21 @@ public final class Node extends OsmPrimitive {
 
     public LatLon coor;
     public volatile EastNorth eastNorth;
-
+        
+    public void setCoor(LatLon coor) {
+        this.coor = coor;
+        this.eastNorth = Main.proj.latlon2eastNorth(coor); 
+    }
+        
+    public void setEastNorth(EastNorth eastNorth) {
+       this.eastNorth = eastNorth;
+       this.coor = Main.proj.eastNorth2latlon(eastNorth);
+    }
+    
+    public void setEastNorth(double east, double north) {
+        this.setEastNorth(new EastNorth(east, north));
+    }
+    
     private static CoordinateFormat mCord;
 
     static {
@@ -46,8 +60,7 @@ public final class Node extends OsmPrimitive {
     }
 
     public Node(LatLon latlon) {
-        this.coor = latlon;
-        eastNorth = Main.proj.latlon2eastNorth(latlon);
+        setCoor(latlon);
     }
 
     @Override public void visit(Visitor visitor) {

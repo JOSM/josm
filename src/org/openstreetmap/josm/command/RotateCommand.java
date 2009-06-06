@@ -12,9 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
@@ -35,7 +33,7 @@ public class RotateCommand extends Command {
     /**
      * pivot point
      */
-    private Node pivot;
+    private EastNorth pivot;
 
     /**
      * angle of rotation starting click to pivot
@@ -61,8 +59,7 @@ public class RotateCommand extends Command {
     public RotateCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
 
         this.objects = AllNodesVisitor.getAllNodes(objects);
-        pivot = new Node(new LatLon(0,0));
-        pivot.eastNorth = new EastNorth(0,0);
+        pivot = new EastNorth(0,0);
 
         for (Node n : this.objects) {
             MoveCommand.OldState os = new MoveCommand.OldState();
@@ -70,10 +67,9 @@ public class RotateCommand extends Command {
             os.latlon = n.coor;
             os.modified = n.modified;
             oldState.put(n, os);
-            pivot.eastNorth = new EastNorth(pivot.eastNorth.east()+os.eastNorth.east(), pivot.eastNorth.north()+os.eastNorth.north());
+            pivot = pivot.add(os.eastNorth.east(), os.eastNorth.north());
         }
-        pivot.eastNorth = new EastNorth(pivot.eastNorth.east()/this.objects.size(), pivot.eastNorth.north()/this.objects.size());
-        pivot.coor = Main.proj.eastNorth2latlon(pivot.eastNorth);
+        pivot = new EastNorth(pivot.east()/this.objects.size(), pivot.north()/this.objects.size());
 
         rotationAngle = Math.PI/2;
         rotateAgain(start, end);
@@ -86,8 +82,8 @@ public class RotateCommand extends Command {
      */
     public void rotateAgain(EastNorth start, EastNorth end) {
         // compute angle
-        startAngle = Math.atan2(start.east()-pivot.eastNorth.east(), start.north()-pivot.eastNorth.north());
-        double endAngle = Math.atan2(end.east()-pivot.eastNorth.east(), end.north()-pivot.eastNorth.north());
+        startAngle = Math.atan2(start.east()-pivot.east(), start.north()-pivot.north());
+        double endAngle = Math.atan2(end.east()-pivot.east(), end.north()-pivot.north());
         rotationAngle += startAngle - endAngle;
         rotateNodes(false);
     }
@@ -101,12 +97,11 @@ public class RotateCommand extends Command {
             double cosPhi = Math.cos(rotationAngle);
             double sinPhi = Math.sin(rotationAngle);
             EastNorth oldEastNorth = oldState.get(n).eastNorth;
-            double x = oldEastNorth.east() - pivot.eastNorth.east();
-            double y = oldEastNorth.north() - pivot.eastNorth.north();
-            double nx =  sinPhi * x + cosPhi * y + pivot.eastNorth.east();
-            double ny = -cosPhi * x + sinPhi * y + pivot.eastNorth.north();
-            n.eastNorth = new EastNorth(nx, ny);
-            n.coor = Main.proj.eastNorth2latlon(n.eastNorth);
+            double x = oldEastNorth.east() - pivot.east();
+            double y = oldEastNorth.north() - pivot.north();
+            double nx =  sinPhi * x + cosPhi * y + pivot.east();
+            double ny = -cosPhi * x + sinPhi * y + pivot.north();
+            n.setEastNorth(nx, ny);
             if (setModified)
                 n.modified = true;
         }
@@ -120,8 +115,7 @@ public class RotateCommand extends Command {
     @Override public void undoCommand() {
         for (Node n : objects) {
             MoveCommand.OldState os = oldState.get(n);
-            n.eastNorth = os.eastNorth;
-            n.coor = os.latlon;
+            n.setEastNorth(os.eastNorth);
             n.modified = os.modified;
         }
     }

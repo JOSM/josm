@@ -22,8 +22,7 @@ public class PositionConflict extends ConflictItem {
 
     @Override public void apply(OsmPrimitive target, OsmPrimitive other) {
         if (target instanceof Node) {
-            ((Node)target).coor = ((Node)other).coor;
-            ((Node)target).eastNorth = ((Node)other).eastNorth;
+            ((Node)target).setEastNorth(((Node)other).eastNorth);
             int newversion = Math.max(target.version, other.version);
             // set version on "other" as well in case user decides to keep local
             target.version = newversion;
