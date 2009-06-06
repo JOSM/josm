@@ -166,11 +166,13 @@ abstract public class Main {
      * remove the map as well.
      */
     public final void removeLayer(final Layer layer) {
-        map.mapView.removeLayer(layer);
-        if (layer instanceof OsmDataLayer)
-            ds = new DataSet();
-        if (map.mapView.getAllLayers().isEmpty())
-            setMapFrame(null);
+        if (map != null) {
+            map.mapView.removeLayer(layer);
+            if (layer instanceof OsmDataLayer)
+                ds = new DataSet();
+            if (map.mapView.getAllLayers().isEmpty())
+                setMapFrame(null);
+        }
     }
 
     public Main() {
