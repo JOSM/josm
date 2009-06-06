@@ -104,11 +104,15 @@ public class ElemStyleHandler extends DefaultHandler
             else if (atts.getQName(count).equals("dashed")) {
                 try
                 {
-                    line.dashed=Integer.parseInt(atts.getValue(count));
+                    String[] parts = atts.getValue(count).split(",");
+                    line.dashed = new float[parts.length];
+                    for (int i = 0; i < parts.length; i++) {
+                        line.dashed[i] = (float)(Integer.parseInt(parts[i]));
+                    }
                 } catch (NumberFormatException nfe) {
                     boolean dashed=Boolean.parseBoolean(atts.getValue(count));
                     if(dashed) {
-                        line.dashed = 9;
+                        line.dashed = new float[]{9};
                     }
                 }
             } else if (atts.getQName(count).equals("dashedcolour"))

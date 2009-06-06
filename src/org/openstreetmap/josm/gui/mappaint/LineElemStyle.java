@@ -8,7 +8,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     public int width;
     public int realWidth; //the real width of this line in meter
     public Color color;
-    public int dashed;
+    public float[] dashed;
     public Color dashedColor;
 
     public boolean over;
@@ -56,7 +56,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     {
         width = 1;
         realWidth = 0;
-        dashed = 0;
+        dashed = new float[0];
         dashedColor = null;
         priority = 0;
         color = null;

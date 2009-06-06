@@ -54,7 +54,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected int fillAlpha;
     protected Color untaggedColor;
     protected Color textColor;
-    protected int currentDashed = 0;
+    protected float[] currentDashed = new float[0];
     protected Color currentDashedColor;
     protected int currentWidth = 0;
     protected Stroke currentStroke = null;
@@ -249,7 +249,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         boolean showOnlyHeadArrowOnly = showDirection && !w.selected && showHeadArrowOnly;
         int width = defaultSegmentWidth;
         int realWidth = 0; /* the real width of the element in meters */
-        int dashed = 0;
+        float dashed[] = new float[0];
         Color dashedColor = null;
         Node lastN;
 
@@ -1124,9 +1124,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return name;
     }
 
-    private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, int dashed, Color dashedColor) {
+    private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, float dashed[], Color dashedColor) {
         //profilerSegments++;
-        if (col != currentColor || width != currentWidth || dashed != currentDashed || dashedColor != currentDashedColor) {
+        if (col != currentColor || width != currentWidth || !Arrays.equals(dashed,currentDashed) || dashedColor != currentDashedColor) {
             displaySegments(col, width, dashed, dashedColor);
         }
         Point p1 = nc.getPoint(n1.eastNorth);
@@ -1148,16 +1148,21 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     protected void displaySegments() {
-        displaySegments(null, 0, 0, null);
+        displaySegments(null, 0, new float[0], null);
     }
 
-    protected void displaySegments(Color newColor, int newWidth, int newDash, Color newDashedColor) {
+    protected void displaySegments(Color newColor, int newWidth, float newDash[], Color newDashedColor) {
         if (currentPath != null) {
             Graphics2D g2d = (Graphics2D)g;
             g2d.setColor(inactive ? inactiveColor : currentColor);
             if (currentStroke == null && useStrokes > dist) {
-                if (currentDashed != 0)
-                    g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,new float[] {currentDashed},0));
+                if (currentDashed.length > 0) {
+                    try {
+                        g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashed,0));
+                    } catch (IllegalArgumentException e) {
+                        g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                    }
+                }
                 else
                     g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             }
@@ -1166,8 +1171,17 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if(currentDashedColor != null) {
                 g2d.setColor(currentDashedColor);
                 if (currentStroke == null && useStrokes > dist) {
-                    if (currentDashed != 0)
-                        g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,new float[] {currentDashed},currentDashed));
+                    if (currentDashed.length > 0) {
+                        float[] currentDashedOffset = new float[currentDashed.length];
+                        System.arraycopy(currentDashed, 1, currentDashedOffset, 0, currentDashed.length - 1);
+                        currentDashedOffset[currentDashed.length-1] = currentDashed[0];
+                        float offset = currentDashedOffset[0];
+                        try {
+                            g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashedOffset,offset));
+                        } catch (IllegalArgumentException e) {
+                            g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                        }
+                    }
                     else
                         g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
                 }

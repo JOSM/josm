@@ -13,6 +13,7 @@ A little help:
 	- colour
 	- priority
 	- dashed x - dashed line, length of dashes / spaces in x pixels
+	- dashed x,y - dashed line, x length of dashes / spaces in y pixels
 	- dashedcolour second (background) colour of a dashed line
 4. linemod attributes
 	- all line attributes
@@ -354,7 +355,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	<rule>
 		<condition k="barrier" v="bollard"/>
 		<icon annotate="true" src="vehicle/restriction/bollard.png"/>
-		<line width="3" colour="barrier#F0F050"/>
+		<line width="3" colour="barrier#F0F050" dashed="3,9"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
