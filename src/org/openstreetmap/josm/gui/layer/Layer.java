@@ -64,7 +64,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     /**
      * If a file is associated with this layer, this variable should be set to it.
      */
-    public File associatedFile;
+    private File associatedFile;
 
     /**
      * Create the layer and fill in the necessary components.
@@ -119,4 +119,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      * via command line parameter).
      */
     public void destroy() {}
+
+    public File getAssociatedFile() { return associatedFile; }
+    public void setAssociatedFile(File file) { associatedFile = file; }
 }

@@ -13,7 +13,6 @@ import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -59,7 +58,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
         save(file, layer);
 
         layer.name = file.getName();
-        layer.associatedFile = file;
+        layer.setAssociatedFile(file);
         Main.parent.repaint();
         return true;
     }
@@ -100,24 +99,11 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     public static File openFileDialog(Layer layer) {
-        JFileChooser fc = createAndOpenFileChooser(false, false, layer instanceof GpxLayer ? tr("Save GPX file") : tr("Save OSM file"));
-        if (fc == null)
-            return null;
-
-        File file = fc.getSelectedFile();
-
-        String fn = file.getPath();
-        if (fn.indexOf('.') == -1) {
-            FileFilter ff = fc.getFileFilter();
-            if (ff instanceof ExtensionFileFilter)
-                fn += "." + ((ExtensionFileFilter)ff).defaultExtension;
-            else if (layer instanceof GpxLayer)
-                fn += ".gpx";
-            else
-                fn += ".osm";
-            file = new File(fn);
-        }
-        return file;
+        if (layer instanceof OsmDataLayer)
+            return createAndOpenSaveFileChooser(tr("Save OSM file"), ".osm");
+        else if (layer instanceof GpxLayer)
+            return createAndOpenSaveFileChooser(tr("Save GPX file"), ".gpx");
+        return createAndOpenSaveFileChooser(tr("Save Layer"), ".lay");
     }
 
     private static void copy(File src, File dst) throws IOException {

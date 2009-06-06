@@ -174,7 +174,7 @@ public class GpxLayer extends Layer {
                             if (point.attr.containsKey("name") || point.attr.containsKey("desc"))
                                 namedTrackPoints.waypoints.add(point);
 
-                MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name), associatedFile, me);
+                MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name), getAssociatedFile(), me);
                 if (ml.data.size() > 0) {
                     Main.main.addLayer(ml);
                 }
@@ -202,7 +202,7 @@ public class GpxLayer extends Layer {
                     if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
                         Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
 
-                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), associatedFile, me);
+                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), getAssociatedFile(), me);
                     File sel[] = fc.getSelectedFiles();
                     if(sel != null) {
                         // sort files in increasing order of timestamp (this is the end time, but so long as they don't overlap, that's fine)
@@ -269,7 +269,7 @@ public class GpxLayer extends Layer {
                 line,
                 new JMenuItem(new ConvertToDataLayerAction()),
                 new JSeparator(),
-                new JMenuItem(new RenameLayerAction(associatedFile, this)),
+                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
         return new Component[] {
@@ -286,7 +286,7 @@ public class GpxLayer extends Layer {
             new JMenuItem(new ConvertToDataLayerAction()),
             new JMenuItem(new DownloadAlongTrackAction()),
             new JSeparator(),
-            new JMenuItem(new RenameLayerAction(associatedFile, this)),
+            new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
             new JSeparator(),
             new JMenuItem(new LayerListPopup.InfoAction(this))};
     }
@@ -679,10 +679,13 @@ public class GpxLayer extends Layer {
                 }
             }
             Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", GpxLayer.this.name),
-                        data.storageFile));
+                        getAssociatedFile()));
             Main.main.removeLayer(GpxLayer.this);
         }
     }
+
+    public File getAssociatedFile() { return data.storageFile; }
+    public void setAssociatedFile(File file) { data.storageFile = file; }
 
     /**
      * Action that issues a series of download requests to the API, following the GPX track.
@@ -931,7 +934,7 @@ public class GpxLayer extends Layer {
             double lastModified = wavFile.lastModified() / 1000.0; // lastModified is in milliseconds
             double duration = AudioUtil.getCalibratedDuration(wavFile);
             double startTime = lastModified - duration;
-            startTime = firstStartTime + (startTime - firstStartTime) /  
+            startTime = firstStartTime + (startTime - firstStartTime) /
                 Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
             WayPoint w1 = null;
             WayPoint w2 = null;
@@ -948,7 +951,7 @@ public class GpxLayer extends Layer {
                     }
                     if (w2 != null) break;
                 }
-            }    
+            }
 
             if (w1 == null || w2 == null) {
                 timedMarkersOmitted = true;
@@ -963,9 +966,9 @@ public class GpxLayer extends Layer {
                 if (dot > 0) { name = name.substring(0, dot); }
                 wayPointFromTimeStamp.attr.put("name", name);
                 waypoints.add(wayPointFromTimeStamp);
-            }            
+            }
         }
-        
+
         // (e) analyse audio for spoken markers here, in due course
 
         // (f) simply add a single marker at the start of the track
@@ -1012,8 +1015,8 @@ public class GpxLayer extends Layer {
             AudioMarker am = AudioMarker.create(w.latlon,
                     name, uri, ml, w.time, offset);
             /* timeFromAudio intended for future use to shift markers of this type on synchronization */
-            if (w == wayPointFromTimeStamp) { 
-                am.timeFromAudio = true; 
+            if (w == wayPointFromTimeStamp) {
+                am.timeFromAudio = true;
             }
             ml.data.add(am);
         }

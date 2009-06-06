@@ -106,7 +106,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
     public RawGpsLayer(boolean fromServer, Collection<Collection<GpsPoint>> data, String name, File associatedFile) {
         super(name);
         this.fromServer = fromServer;
-        this.associatedFile = associatedFile;
+        setAssociatedFile(associatedFile);
         this.data = data;
         Main.pref.listener.add(this);
     }
@@ -150,8 +150,9 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
             points += c.size();
         String tool = data.size()+" "+trn("track", "tracks", data.size())
         +" "+points+" "+trn("point", "points", points);
-        if (associatedFile != null)
-            tool = "<html>"+tool+"<br>"+associatedFile.getPath()+"</html>";
+        File f = getAssociatedFile();
+        if (f != null)
+            tool = "<html>"+tool+"<br>"+f.getPath()+"</html>";
         return tool;
     }
 
@@ -241,7 +242,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 line,
                 new JMenuItem(new ConvertToDataLayerAction()),
                 new JSeparator(),
-                new JMenuItem(new RenameLayerAction(associatedFile, this)),
+                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
         return new Component[]{
@@ -253,7 +254,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 line,
                 new JMenuItem(new ConvertToDataLayerAction()),
                 new JSeparator(),
-                new JMenuItem(new RenameLayerAction(associatedFile, this)),
+                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
     }

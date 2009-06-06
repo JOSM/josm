@@ -151,7 +151,7 @@ public class OsmDataLayer extends Layer {
     public OsmDataLayer(final DataSet data, final String name, final File associatedFile) {
         super(name);
         this.data = data;
-        this.associatedFile = associatedFile;
+        this.setAssociatedFile(associatedFile);
     }
 
     /**
@@ -216,8 +216,9 @@ public class OsmDataLayer extends Layer {
         tool += undeletedSize(data.nodes)+" "+trn("node", "nodes", undeletedSize(data.nodes))+", ";
         tool += undeletedSize(data.ways)+" "+trn("way", "ways", undeletedSize(data.ways));
         if (data.version != null) tool += ", " + tr("version {0}", data.version);
-        if (associatedFile != null)
-            tool = "<html>"+tool+"<br>"+associatedFile.getPath()+"</html>";
+        File f = getAssociatedFile();
+        if (f != null)
+            tool = "<html>"+tool+"<br>"+f.getPath()+"</html>";
         return tool;
     }
 
@@ -306,11 +307,12 @@ public class OsmDataLayer extends Layer {
         }
 
         // update the modified flag
-        if (associatedFile != null && processed != null && !dataAdded)
+        boolean b = (getAssociatedFile() != null && processed != null);
+        if (b && !dataAdded)
             return; // do nothing when uploading non-harmful changes.
 
         // modified if server changed the data (esp. the id).
-        uploadedModified = associatedFile != null && processed != null && dataAdded;
+        uploadedModified = b && dataAdded;
         setModified(uploadedModified);
     }
 
@@ -377,7 +379,7 @@ public class OsmDataLayer extends Layer {
                     new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
                     new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
                     new JSeparator(),
-                    new JMenuItem(new RenameLayerAction(associatedFile, this)),
+                    new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
                     new JSeparator(),
                     new JMenuItem(new LayerListPopup.InfoAction(this))};
         }
@@ -390,7 +392,7 @@ public class OsmDataLayer extends Layer {
                 new JMenuItem(new GpxExportAction(this)),
                 new JMenuItem(new ConvertToGpxLayerAction()),
                 new JSeparator(),
-                new JMenuItem(new RenameLayerAction(associatedFile, this)),
+                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
     }
@@ -453,7 +455,7 @@ public class OsmDataLayer extends Layer {
     }
 
     public GpxData toGpxData() {
-        return toGpxData(data, associatedFile);
+        return toGpxData(data, getAssociatedFile());
     }
 
     public class ConvertToGpxLayerAction extends AbstractAction {

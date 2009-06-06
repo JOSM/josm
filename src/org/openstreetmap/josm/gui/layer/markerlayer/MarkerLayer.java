@@ -70,7 +70,7 @@ public class MarkerLayer extends Layer {
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
 
         super(name);
-        this.associatedFile = associatedFile;
+        this.setAssociatedFile(associatedFile);
         this.data = new ArrayList<Marker>();
         this.fromLayer = fromLayer;
         double firstTime = -1.0;
@@ -257,7 +257,7 @@ public class MarkerLayer extends Layer {
         if (Main.pref.getBoolean("marker.traceaudio", true)) {
             components.add (moveaudio);
         }
-        components.add(new JMenuItem(new RenameLayerAction(associatedFile, this)));
+        components.add(new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)));
         components.add(new JSeparator());
         components.add(new JMenuItem(new LayerListPopup.InfoAction(this)));
         return components.toArray(new Component[0]);

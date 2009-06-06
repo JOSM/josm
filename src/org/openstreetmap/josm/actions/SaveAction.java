@@ -7,8 +7,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -28,18 +26,7 @@ public class SaveAction extends SaveActionBase {
     }
 
     @Override public File getFile(Layer layer) {
-        if (layer instanceof OsmDataLayer) {
-            File f = ((OsmDataLayer)layer).associatedFile;
-            if (f != null) {
-                return f;
-            }
-        }
-        if (layer instanceof GpxLayer) {
-            File f = ((GpxLayer)layer).data.storageFile;
-            if (f != null) {
-                return f;
-            }
-        }
-        return openFileDialog(layer);
+        File f = layer.getAssociatedFile();
+        return f == null ? openFileDialog(layer) : f;
     }
 }
