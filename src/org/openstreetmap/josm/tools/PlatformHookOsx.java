@@ -1,14 +1,16 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.PlatformHookUnixoid;
-
 import java.awt.event.KeyEvent;
-import java.lang.reflect.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 import javax.swing.UIManager;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.SelectAction;
 
 /**
   * see PlatformHook.java
@@ -39,6 +41,9 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             // by closing all its windows.
             System.out.println("Failed to register with OSX: " + ex);
         }
+
+        // Ctrl + mouse 1 is suppressing mouseDragged events
+        SelectAction.needMouseMove = true;
     }
     public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;

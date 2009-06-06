@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SelectAction extends MapMode implements SelectionEnded {
-
+    public static boolean needMouseMove = false;
     enum Mode { move, rotate, select }
     private Mode mode = null;
     private long mouseDownTime = 0;
@@ -155,12 +155,12 @@ public class SelectAction extends MapMode implements SelectionEnded {
         // do not count anything as a move if it lasts less than 100 milliseconds.
         if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay)) return;
 
-        if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
-            return;
+        if(mode != Mode.rotate) // button is pressed in rotate mode
+            if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
+                return;
 
-        if (mode == Mode.move) {
+        if (mode == Mode.move)
             setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-        }
 
         if (mousePos == null) {
             mousePos = e.getPoint();
@@ -245,6 +245,15 @@ public class SelectAction extends MapMode implements SelectionEnded {
         mousePos = e.getPoint();
 
         didMove = true;
+    }
+
+    /**
+     * Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
+     *
+     */
+    @Override public void mouseMoved(MouseEvent e) {
+        if (needMouseMove && mode == Mode.rotate)
+            mouseDragged(e);
     }
 
     private Collection<OsmPrimitive> getNearestCollectionVirtual(Point p, boolean allSegements) {
