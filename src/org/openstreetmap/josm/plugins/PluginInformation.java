@@ -30,7 +30,7 @@ import org.openstreetmap.josm.Main;
 public class PluginInformation {
     public File file = null;
     public String name = null;
-    public String mainversion = null;
+    public int mainversion = 0;
     public String className = null;
     public String requires = null;
     public String link = null;
@@ -109,7 +109,11 @@ public class PluginInformation {
         String stageStr = attr.getValue("Plugin-Stage");
         stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
         version = attr.getValue("Plugin-Version");
-        mainversion = attr.getValue("Plugin-Mainversion");
+        try {
+            mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion"));
+        } catch(NumberFormatException e) {
+            e.printStackTrace();
+        }
         author = attr.getValue("Author");
 
         String classPath = attr.getValue(Attributes.Name.CLASS_PATH);

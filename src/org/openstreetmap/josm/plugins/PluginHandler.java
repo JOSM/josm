@@ -75,17 +75,10 @@ public class PluginHandler {
             if (info != null) {
                 if (info.early != early)
                     continue;
-                if (info.mainversion != null) {
-                    int requiredJOSMVersion = 0;
-                    try {
-                        requiredJOSMVersion = Integer.parseInt(info.mainversion);
-                    } catch(NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                    if (requiredJOSMVersion > AboutAction.getVersionNumber()) {
-                        JOptionPane.showMessageDialog(Main.parent, tr("Plugin requires JOSM update: {0}.", pluginName));
-                        continue;
-                    }
+                if (info.mainversion > AboutAction.getVersionNumber()) {
+                    JOptionPane.showMessageDialog(Main.parent, tr("Plugin {0} requires JOSM update to version {1}.", pluginName,
+                    info.mainversion));
+                    continue;
                 }
                 if(info.requires != null)
                 {

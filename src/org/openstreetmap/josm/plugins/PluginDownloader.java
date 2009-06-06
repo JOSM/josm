@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.xml.sax.SAXException;
 
@@ -61,7 +63,7 @@ public class PluginDownloader {
                 pluginDir.mkdirs();
             for (PluginInformation d : toUpdate) {
                 File pluginFile = new File(pluginDir, d.name + ".jar.new");
-                if (download(d.downloadlink, pluginFile))
+                if (download(d, pluginFile))
                     count++;
                 else
                     errors += d.name + "\n";
@@ -100,13 +102,9 @@ public class PluginDownloader {
         return count;
     }
 
-    private static String escape(String s) {
-        return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    }
-
     public static boolean downloadPlugin(PluginInformation pd) {
         File file = new File(Main.pref.getPluginsDirFile(), pd.name + ".jar");
-        if (!download(pd.downloadlink, file)) {
+        if (!download(pd, file)) {
             JOptionPane.showMessageDialog(Main.parent, tr("Could not download plugin: {0} from {1}", pd.name, pd.downloadlink));
         } else {
             try {
@@ -122,9 +120,20 @@ public class PluginDownloader {
         return false;
     }
 
-    private static boolean download(String url, File file) {
+    private static boolean download(PluginInformation pd, File file) {
+        if(pd.mainversion > AboutAction.getVersionNumber())
+        {
+            int answer = new ExtendedDialog(Main.parent,
+                        tr("Skip download"),
+                        tr("JOSM version {0} required for plugin {1}.", pd.mainversion, pd.name),
+                        new String[] {tr("Download Plugin"), tr("Skip Download")},
+                        new String[] {"download.png", "cancel.png"}).getValue();
+            if (answer != 1)
+                return false;
+        }
+
         try {
-            InputStream in = new URL(url).openStream();
+            InputStream in = new URL(pd.downloadlink).openStream();
             OutputStream out = new FileOutputStream(file);
             byte[] buffer = new byte[8192];
             for (int read = in.read(buffer); read != -1; read = in.read(buffer))
