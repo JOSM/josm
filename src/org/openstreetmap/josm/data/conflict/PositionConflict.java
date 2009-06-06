@@ -9,11 +9,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public class PositionConflict extends ConflictItem {
 
     @Override public boolean hasConflict(OsmPrimitive key, OsmPrimitive value) {
-        return key instanceof Node && !((Node)key).coor.equals(((Node)value).coor);
+        return key instanceof Node && !((Node)key).getCoor().equals(((Node)value).getCoor());
     }
 
     @Override protected String str(OsmPrimitive osm) {
-        return osm instanceof Node ? ((Node)osm).coor.lat()+", "+((Node)osm).coor.lon() : null;
+        return osm instanceof Node ? ((Node)osm).getCoor().lat()+", "+((Node)osm).getCoor().lon() : null;
     }
 
     @Override public String key() {
@@ -22,7 +22,7 @@ public class PositionConflict extends ConflictItem {
 
     @Override public void apply(OsmPrimitive target, OsmPrimitive other) {
         if (target instanceof Node) {
-            ((Node)target).setEastNorth(((Node)other).eastNorth);
+            ((Node)target).setEastNorth(((Node)other).getEastNorth());
             int newversion = Math.max(target.version, other.version);
             // set version on "other" as well in case user decides to keep local
             target.version = newversion;

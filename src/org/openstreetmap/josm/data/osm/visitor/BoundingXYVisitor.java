@@ -21,7 +21,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public EastNorth min, max;
 
     public void visit(Node n) {
-        visit(n.eastNorth);
+        visit(n.getEastNorth());
     }
 
     public void visit(Way w) {

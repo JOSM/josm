@@ -154,8 +154,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
             Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex + 1);
 
-            EastNorth en1 = n1.eastNorth;
-            EastNorth en2 = n2.eastNorth;
+            EastNorth en1 = n1.getEastNorth();
+            EastNorth en2 = n2.getEastNorth();
             EastNorth en3 = mv.getEastNorth(mousePos.x, mousePos.y);
 
             double u = ((en3.east() - en1.east()) * (en2.east() - en1.east()) +
@@ -233,9 +233,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if (mousePos.distance(initialMousePos) > 10) {
             Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
             Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
-            EastNorth en3 = n2.eastNorth.add(xoff, yoff);
+            EastNorth en3 = n2.getEastNorth().add(xoff, yoff);
             Node n3 = new Node(Main.proj.eastNorth2latlon(en3));
-            EastNorth en4 = n1.eastNorth.add(xoff, yoff);
+            EastNorth en4 = n1.getEastNorth().add(xoff, yoff);
             Node n4 = new Node(Main.proj.eastNorth2latlon(en4));
             Way wnew = new Way(selectedSegment.way);
             wnew.addNode(selectedSegment.lowerIndex+1, n3);

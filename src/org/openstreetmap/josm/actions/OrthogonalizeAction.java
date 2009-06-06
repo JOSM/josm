@@ -80,8 +80,8 @@ public final class OrthogonalizeAction extends JosmAction {
             for (int i1=0; i1 < way.nodes.size()-1; i1++) {
                 int i2 = (i1+1) % (way.nodes.size()-1);
                 int i3 = (i1+2) % (way.nodes.size()-1);
-                double angle1  =Math.abs(way.nodes.get(i1).eastNorth.heading(way.nodes.get(i2).eastNorth));
-                double angle2 = Math.abs(way.nodes.get(i2).eastNorth.heading(way.nodes.get(i3).eastNorth));
+                double angle1  =Math.abs(way.nodes.get(i1).getEastNorth().heading(way.nodes.get(i2).getEastNorth()));
+                double angle2 = Math.abs(way.nodes.get(i2).getEastNorth().heading(way.nodes.get(i3).getEastNorth()));
                 double delta = Math.abs(angle2 - angle1);
                 while(delta > Math.PI) delta -= Math.PI;
                 if(delta < Math.PI/4) {
@@ -116,7 +116,7 @@ public final class OrthogonalizeAction extends JosmAction {
         if (dirnodes.size() == 2) {
             // When selection contains two nodes, use the nodes to compute a direction
             // to align all ways to
-            align_to_heading = normalize_angle(dirnodes.get(0).eastNorth.heading(dirnodes.get(1).eastNorth));
+            align_to_heading = normalize_angle(dirnodes.get(0).getEastNorth().heading(dirnodes.get(1).getEastNorth()));
             use_dirnodes = true;
         }
 
@@ -130,7 +130,7 @@ public final class OrthogonalizeAction extends JosmAction {
             // Copy necessary data into a more suitable data structure
             EastNorth en[] = new EastNorth[sides];
             for (int i=0; i < sides; i++) {
-                en[i] = new EastNorth(way.nodes.get(i).eastNorth.east(), way.nodes.get(i).eastNorth.north());
+                en[i] = new EastNorth(way.nodes.get(i).getEastNorth().east(), way.nodes.get(i).getEastNorth().north());
             }
 
             if (! use_dirnodes) {
@@ -141,8 +141,8 @@ public final class OrthogonalizeAction extends JosmAction {
                 double headings[] = new double[sides];
                 double weights[] = new double[sides];
                 for (int i=0; i < sides; i++) {
-                    headings[i] = normalize_angle(way.nodes.get(i).eastNorth.heading(way.nodes.get(i+1).eastNorth));
-                    weights[i] = way.nodes.get(i).eastNorth.distance(way.nodes.get(i+1).eastNorth);
+                    headings[i] = normalize_angle(way.nodes.get(i).getEastNorth().heading(way.nodes.get(i+1).getEastNorth()));
+                    weights[i] = way.nodes.get(i).getEastNorth().distance(way.nodes.get(i+1).getEastNorth());
                 }
 
                 // CAVEAT: for orientations near -PI/4 or PI/4 the mapping into ONE orientation fails
@@ -231,9 +231,9 @@ public final class OrthogonalizeAction extends JosmAction {
                 Node n = way.nodes.get(i2);
 
                 LatLon ill = Main.proj.eastNorth2latlon(intersection);
-                if (!ill.equalsEpsilon(n.coor)) {
-                    double dx = intersection.east()-n.eastNorth.east();
-                    double dy = intersection.north()-n.eastNorth.north();
+                if (!ill.equalsEpsilon(n.getCoor())) {
+                    double dx = intersection.east()-n.getEastNorth().east();
+                    double dy = intersection.north()-n.getEastNorth().north();
                     cmds.add(new MoveCommand(n, dx, dy));
                 }
             }

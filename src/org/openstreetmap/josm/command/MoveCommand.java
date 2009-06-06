@@ -69,8 +69,8 @@ public class MoveCommand extends Command {
         this.objects = AllNodesVisitor.getAllNodes(objects);
         for (Node n : this.objects) {
             OldState os = new OldState();
-            os.eastNorth = n.eastNorth;
-            os.latlon = n.coor;
+            os.eastNorth = n.getEastNorth();
+            os.latlon = n.getCoor();
             os.modified = n.modified;
             oldState.add(os);
         }
@@ -86,7 +86,7 @@ public class MoveCommand extends Command {
      */
     public void moveAgain(double x, double y) {
         for (Node n : objects) {
-            n.setEastNorth(n.eastNorth.add(x, y));
+            n.setEastNorth(n.getEastNorth().add(x, y));
         }
         this.x += x;
         this.y += y;
@@ -94,7 +94,7 @@ public class MoveCommand extends Command {
 
     @Override public boolean executeCommand() {
         for (Node n : objects) {
-            n.setEastNorth(n.eastNorth.add(x, y));
+            n.setEastNorth(n.getEastNorth().add(x, y));
             n.modified = true;
         }
         return true;

@@ -97,7 +97,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     public void visit(Node n) {
         if (n.incomplete) return;
         addCommon(n, "node");
-        out.print(" lat='"+n.coor.lat()+"' lon='"+n.coor.lon()+"'");
+        out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
         if (!withBody) {
             out.println("/>");  
         } else {

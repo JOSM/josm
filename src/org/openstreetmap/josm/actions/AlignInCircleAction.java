@@ -88,7 +88,7 @@ public final class AlignInCircleAction extends JosmAction {
         EastNorth result = new EastNorth(bx / (2 * a) + i.east(), -by / (2 * a) + i.north());
 
         Node n = new Node(Main.proj.eastNorth2latlon(result));
-        if (n.coor.isOutSideWorld()) {
+        if (n.getCoor().isOutSideWorld()) {
             JOptionPane.showMessageDialog(Main.parent, tr("Some of the nodes are (almost) in the line"));
             return null;
         }
@@ -162,9 +162,9 @@ public final class AlignInCircleAction extends JosmAction {
                     regular = true;
                 } else {
 
-                    center = ((Node) nodes.toArray()[way.nodes.contains(nodes.toArray()[0]) ? 1 : 0]).eastNorth;
+                    center = ((Node) nodes.toArray()[way.nodes.contains(nodes.toArray()[0]) ? 1 : 0]).getEastNorth();
                     if (nodes.size() == 2)
-                        radius = distance(((Node) nodes.toArray()[0]).eastNorth, ((Node) nodes.toArray()[1]).eastNorth);
+                        radius = distance(((Node) nodes.toArray()[0]).getEastNorth(), ((Node) nodes.toArray()[1]).getEastNorth());
                 }
                 nodes = new LinkedList<Node>();
             }
@@ -190,7 +190,7 @@ public final class AlignInCircleAction extends JosmAction {
                 n2 = n1;
                 n1 = n0;
                 n0 = n;
-                EastNorth cc = circumcenter(n0.eastNorth, n1.eastNorth, n2.eastNorth);
+                EastNorth cc = circumcenter(n0.getEastNorth(), n1.getEastNorth(), n2.getEastNorth());
                 if (cc == null)
                     return;
                 center = new EastNorth(center.east() + cc.east(), center.north()
@@ -208,7 +208,7 @@ public final class AlignInCircleAction extends JosmAction {
         // relative to the distance from the N or S poles.
         if (radius == 0) {
             for (Node n : nodes) {
-                radius += distance(center, n.eastNorth);
+                radius += distance(center, n.getEastNorth());
             }
             radius = radius / nodes.size();
         }
@@ -219,23 +219,23 @@ public final class AlignInCircleAction extends JosmAction {
 
         if (regular) { // Make a regular polygon
             double angle = Math.PI * 2 / nodes.size();
-            pc = new PolarCoor(((Node) nodes.toArray()[0]).eastNorth, center, 0);
+            pc = new PolarCoor(((Node) nodes.toArray()[0]).getEastNorth(), center, 0);
 
-            if (pc.angle > (new PolarCoor(((Node) nodes.toArray()[1]).eastNorth, center, 0).angle))
+            if (pc.angle > (new PolarCoor(((Node) nodes.toArray()[1]).getEastNorth(), center, 0).angle))
                 angle *= -1;
 
             pc.radius = radius;
             for (Node n : nodes) {
                 EastNorth no = pc.toEastNorth();
-                cmds.add(new MoveCommand(n, no.east() - n.eastNorth.east(), no.north() - n.eastNorth.north()));
+                cmds.add(new MoveCommand(n, no.east() - n.getEastNorth().east(), no.north() - n.getEastNorth().north()));
                 pc.angle += angle;
             }
         } else { // Move each node to that distance from the centre.
             for (Node n : nodes) {
-                pc = new PolarCoor(n.eastNorth, center, 0);
+                pc = new PolarCoor(n.getEastNorth(), center, 0);
                 pc.radius = radius;
                 EastNorth no = pc.toEastNorth();
-                cmds.add(new MoveCommand(n, no.east() - n.eastNorth.east(), no.north() - n.eastNorth.north()));
+                cmds.add(new MoveCommand(n, no.east() - n.getEastNorth().east(), no.north() - n.getEastNorth().north()));
             }
         }
 

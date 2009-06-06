@@ -201,12 +201,12 @@ public final class ConflictDialog extends ToggleDialog {
         g.setColor(preferencesColor);
         Visitor conflictPainter = new AbstractVisitor(){
             public void visit(Node n) {
-                Point p = nc.getPoint(n.eastNorth);
+                Point p = nc.getPoint(n.getEastNorth());
                 g.drawRect(p.x-1, p.y-1, 2, 2);
             }
             public void visit(Node n1, Node n2) {
-                Point p1 = nc.getPoint(n1.eastNorth);
-                Point p2 = nc.getPoint(n2.eastNorth);
+                Point p1 = nc.getPoint(n1.getEastNorth());
+                Point p2 = nc.getPoint(n2.getEastNorth());
                 g.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
             public void visit(Way w) {

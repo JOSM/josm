@@ -98,7 +98,7 @@ public class MoveAction extends JosmAction {
                     c = new MoveCommand(selection, distx, disty));
 
         for (Node n : affectedNodes) {
-            if (n.coor.isOutSideWorld()) {
+            if (n.getCoor().isOutSideWorld()) {
                 // Revert move
                 ((MoveCommand) c).moveAgain(-distx, -disty);
                 JOptionPane.showMessageDialog(Main.parent,

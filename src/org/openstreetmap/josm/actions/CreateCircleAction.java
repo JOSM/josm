@@ -104,14 +104,14 @@ public final class CreateCircleAction extends JosmAction {
 
         // let's get some shorter names
         Node   n1 = ((Node)nodes.toArray()[0]);
-        double x1 = n1.eastNorth.east();
-        double y1 = n1.eastNorth.north();
+        double x1 = n1.getEastNorth().east();
+        double y1 = n1.getEastNorth().north();
         Node   n2 = ((Node)nodes.toArray()[1]);
-        double x2 = n2.eastNorth.east();
-        double y2 = n2.eastNorth.north();
+        double x2 = n2.getEastNorth().east();
+        double y2 = n2.getEastNorth().north();
         Node   n3 = ((Node)nodes.toArray()[2]);
-        double x3 = n3.eastNorth.east();
-        double y3 = n3.eastNorth.north();
+        double x3 = n3.getEastNorth().east();
+        double y3 = n3.getEastNorth().north();
 
         // calculate the center (xc/yc)
         double s = 0.5*((x2 - x3)*(x1 - x3) - (y2 - y3)*(y3 - y1));

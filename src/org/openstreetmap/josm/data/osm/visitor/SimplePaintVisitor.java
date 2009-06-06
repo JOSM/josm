@@ -270,10 +270,10 @@ public class SimplePaintVisitor extends AbstractVisitor {
     public void visitVirtual(Way w) {
         Iterator<Node> it = w.nodes.iterator();
         if (it.hasNext()) {
-            Point lastP = nc.getPoint(it.next().eastNorth);
+            Point lastP = nc.getPoint(it.next().getEastNorth());
             while(it.hasNext())
             {
-                Point p = nc.getPoint(it.next().eastNorth);
+                Point p = nc.getPoint(it.next().getEastNorth());
                 if(isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace))
                 {
                     int x = (p.x+lastP.x)/2;
@@ -320,9 +320,9 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         Iterator<Node> it = w.nodes.iterator();
         if (it.hasNext()) {
-            Point lastP = nc.getPoint(it.next().eastNorth);
+            Point lastP = nc.getPoint(it.next().getEastNorth());
             for (int orderNumber = 1; it.hasNext(); orderNumber++) {
-                Point p = nc.getPoint(it.next().eastNorth);
+                Point p = nc.getPoint(it.next().getEastNorth());
                 drawSegment(lastP, p, wayColor,
                     showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
                 if (showOrderNumber)
@@ -351,7 +351,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
             if (m.member.incomplete || m.member.deleted) continue;
 
             if (m.member instanceof Node) {
-                Point p = nc.getPoint(((Node) m.member).eastNorth);
+                Point p = nc.getPoint(((Node) m.member).getEastNorth());
                 if (p.x < 0 || p.y < 0
                     || p.x > nc.getWidth() || p.y > nc.getHeight()) continue;
 
@@ -362,7 +362,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
                 boolean first = true;
                 for (Node n : ((Way) m.member).nodes) {
                     if (n.incomplete || n.deleted) continue;
-                    Point p = nc.getPoint(n.eastNorth);
+                    Point p = nc.getPoint(n.getEastNorth());
                     if (first) {
                         path.moveTo(p.x, p.y);
                         first = false;
@@ -409,7 +409,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
      */
     public void drawNode(Node n, Color color, int size, int radius, boolean fill) {
         if (size > 1) {
-            Point p = nc.getPoint(n.eastNorth);
+            Point p = nc.getPoint(n.getEastNorth());
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
                     || (p.y > nc.getHeight()))
                 return;

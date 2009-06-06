@@ -64,10 +64,10 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         }
         sb.append(" (");
 
-        if (node.coor != null) {
-            sb.append(COORD_FORMATTER.format(node.coor.lat()));
+        if (node.getCoor() != null) {
+            sb.append(COORD_FORMATTER.format(node.getCoor().lat()));
             sb.append(",");
-            sb.append(COORD_FORMATTER.format(node.coor.lon()));
+            sb.append(COORD_FORMATTER.format(node.getCoor().lon()));
         } else {
             sb.append("?,?");
         }

@@ -157,7 +157,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         for (Node n : getData().nodes) {
             if (n.deleted || n.incomplete)
                 continue;
-            Point sp = getPoint(n.eastNorth);
+            Point sp = getPoint(n.getEastNorth());
             double dist = p.distanceSq(sp);
             if (dist < minDistanceSq) {
                 minDistanceSq = dist;
@@ -192,8 +192,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     continue;
                 }
 
-                Point A = getPoint(lastN.eastNorth);
-                Point B = getPoint(n.eastNorth);
+                Point A = getPoint(lastN.getEastNorth());
+                Point B = getPoint(n.getEastNorth());
                 double c = A.distanceSq(B);
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
@@ -301,8 +301,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     lastN = n;
                     continue;
                 }
-                Point A = getPoint(lastN.eastNorth);
-                Point B = getPoint(n.eastNorth);
+                Point A = getPoint(lastN.getEastNorth());
+                Point B = getPoint(n.getEastNorth());
                 double c = A.distanceSq(B);
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
@@ -316,7 +316,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         for (Node n : getData().nodes) {
             if (!n.deleted && !n.incomplete
-                    && getPoint(n.eastNorth).distanceSq(p) < snapDistance) {
+                    && getPoint(n.getEastNorth()).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }
         }
@@ -335,7 +335,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         Collection<Node> nearest = new HashSet<Node>();
         for (Node n : getData().nodes) {
             if (!n.deleted && !n.incomplete
-                    && getPoint(n.eastNorth).distanceSq(p) < snapDistance) {
+                    && getPoint(n.getEastNorth()).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }
         }

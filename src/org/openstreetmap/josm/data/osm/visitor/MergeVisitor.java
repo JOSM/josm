@@ -162,7 +162,7 @@ public class MergeVisitor extends AbstractVisitor {
     }
 
     private static boolean realMatch(Node n1, Node n2) {
-        return n1.coor.equalsEpsilon(n2.coor);
+        return n1.getCoor().equalsEpsilon(n2.getCoor());
     }
 
     private static boolean realMatch(Way w1, Way w2) {

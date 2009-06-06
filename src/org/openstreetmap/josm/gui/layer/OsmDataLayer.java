@@ -426,7 +426,7 @@ public class OsmDataLayer extends Layer {
                 if (!n.isTagged()) {
                     doneNodes.add(n);
                 }
-                WayPoint wpt = new WayPoint(n.coor);                
+                WayPoint wpt = new WayPoint(n.getCoor());                
                 if (!n.isTimestampEmpty())
                 {
                     wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
@@ -440,7 +440,7 @@ public class OsmDataLayer extends Layer {
         // records them?
         for (Node n : data.nodes) {
             if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;
-            WayPoint wpt = new WayPoint(n.coor);
+            WayPoint wpt = new WayPoint(n.getCoor());
             if (!n.isTimestampEmpty()) {
                 wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
                 wpt.setTime();

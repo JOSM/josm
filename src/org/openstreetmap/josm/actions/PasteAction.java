@@ -42,8 +42,8 @@ public final class PasteAction extends JosmAction {
         /* Find the middle of the pasteBuffer area */
         double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
         for (Node n : pasteBuffer.nodes) {
-            double east = n.eastNorth.east();
-            double north = n.eastNorth.north();
+            double east = n.getEastNorth().east();
+            double north = n.getEastNorth().north();
             if (east > maxEast) { maxEast = east; }
             if (east < minEast) { minEast = east; }
             if (north > maxNorth) { maxNorth = north; }
@@ -69,7 +69,7 @@ public final class PasteAction extends JosmAction {
             Node nnew = new Node(n);
             nnew.id = 0;
             if (Main.main.editLayer() == source) {
-                nnew.setEastNorth(nnew.eastNorth.add(offsetEast, offsetNorth));
+                nnew.setEastNorth(nnew.getEastNorth().add(offsetEast, offsetNorth));
             }
             map.put(n, nnew);
         }

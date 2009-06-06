@@ -223,7 +223,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         c = new MoveCommand(selection, dx, dy));
 
                 for (Node n : affectedNodes) {
-                    if (n.coor.isOutSideWorld()) {
+                    if (n.getCoor().isOutSideWorld()) {
                         // Revert move
                         ((MoveCommand) c).moveAgain(-dx, -dy);
 
@@ -279,8 +279,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 if(Main.pref.getInteger("mappaint.node.virtual-size", 8) > 0)
                 {
                     Way w = (Way)osm;
-                    Point p1 = c.getPoint(w.nodes.get(nearestWS.lowerIndex).eastNorth);
-                    Point p2 = c.getPoint(w.nodes.get(nearestWS.lowerIndex+1).eastNorth);
+                    Point p1 = c.getPoint(w.nodes.get(nearestWS.lowerIndex).getEastNorth());
+                    Point p2 = c.getPoint(w.nodes.get(nearestWS.lowerIndex+1).getEastNorth());
                     if(SimplePaintVisitor.isLargeSegment(p1, p2, Main.pref.getInteger("mappaint.node.virtual-space", 70)))
                     {
                         Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);

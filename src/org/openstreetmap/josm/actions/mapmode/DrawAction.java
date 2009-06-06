@@ -331,7 +331,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         } else {
             // no node found in clicked area
             n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
-            if (n.coor.isOutSideWorld()) {
+            if (n.getCoor().isOutSideWorld()) {
                 JOptionPane.showMessageDialog(Main.parent,
                     tr("Cannot add a node outside of the world."));
                 return;
@@ -646,7 +646,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (currentMouseNode != null) {
             // user clicked on node
             if (selection.isEmpty()) return;
-            currentMouseEastNorth = currentMouseNode.eastNorth;
+            currentMouseEastNorth = currentMouseNode.getEastNorth();
             mouseOnExistingNode = currentMouseNode;
         } else {
             // no node found in clicked area
@@ -689,10 +689,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // find out the distance, in metres, between the base point and the mouse cursor
         LatLon mouseLatLon = Main.proj.eastNorth2latlon(currentMouseEastNorth);
-        distance = currentBaseNode.coor.greatCircleDistance(mouseLatLon);
-        double hdg = Math.toDegrees(currentBaseNode.coor.heading(mouseLatLon));
+        distance = currentBaseNode.getCoor().greatCircleDistance(mouseLatLon);
+        double hdg = Math.toDegrees(currentBaseNode.getCoor().heading(mouseLatLon));
         if (previousNode != null) {
-            angle = hdg - Math.toDegrees(previousNode.coor.heading(currentBaseNode.coor));
+            angle = hdg - Math.toDegrees(previousNode.getCoor().heading(currentBaseNode.getCoor()));
             if (angle < 0) angle += 360;
         }
         Main.map.statusLine.setAngle(angle);
@@ -771,11 +771,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // the two segments and adjusts the node position.
             Iterator<Pair<Node,Node>> i = segs.iterator();
             Pair<Node,Node> seg = i.next();
-            EastNorth A = seg.a.eastNorth;
-            EastNorth B = seg.b.eastNorth;
+            EastNorth A = seg.a.getEastNorth();
+            EastNorth B = seg.b.getEastNorth();
             seg = i.next();
-            EastNorth C = seg.a.eastNorth;
-            EastNorth D = seg.b.eastNorth;
+            EastNorth C = seg.a.getEastNorth();
+            EastNorth D = seg.b.getEastNorth();
 
             double u=det(B.east() - A.east(), B.north() - A.north(), C.east() - D.east(), C.north() - D.north());
 
@@ -799,16 +799,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
             // fall through to default action.
             // (for semi-parallel lines, intersection might be miles away!)
-            if (Main.map.mapView.getPoint(n.eastNorth).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
+            if (Main.map.mapView.getPoint(n.getEastNorth()).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
                 n.setEastNorth(intersection);
                 return;
             }
 
         default:
-            EastNorth P = n.eastNorth;
+            EastNorth P = n.getEastNorth();
             seg = segs.iterator().next();
-            A = seg.a.eastNorth;
-            B = seg.b.eastNorth;
+            A = seg.a.getEastNorth();
+            B = seg.b.getEastNorth();
             double a = P.distanceSq(B);
             double b = P.distanceSq(A);
             double c = A.distanceSq(B);
@@ -839,7 +839,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         g2.setColor(selectedColor);
         g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         GeneralPath b = new GeneralPath();
-        Point p1=mv.getPoint(currentBaseNode.eastNorth);
+        Point p1=mv.getPoint(currentBaseNode.getEastNorth());
         Point p2=mv.getPoint(currentMouseEastNorth);
 
         double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;

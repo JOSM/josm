@@ -279,7 +279,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         } else {
             // nodes
             for (Node n : nc.getData().nodes) {
-                if (!n.deleted && !n.incomplete && r.contains(nc.getPoint(n.eastNorth)))
+                if (!n.deleted && !n.incomplete && r.contains(nc.getPoint(n.getEastNorth())))
                     selection.add(n);
             }
 
@@ -289,7 +289,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                         continue;
                 if (alt) {
                     for (Node n : w.nodes) {
-                        if (!n.incomplete && r.contains(nc.getPoint(n.eastNorth))) {
+                        if (!n.incomplete && r.contains(nc.getPoint(n.getEastNorth()))) {
                             selection.add(w);
                             break;
                         }
@@ -297,7 +297,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 } else {
                     boolean allIn = true;
                     for (Node n : w.nodes) {
-                        if (!n.incomplete && !r.contains(nc.getPoint(n.eastNorth))) {
+                        if (!n.incomplete && !r.contains(nc.getPoint(n.getEastNorth()))) {
                             allIn = false;
                             break;
                         }

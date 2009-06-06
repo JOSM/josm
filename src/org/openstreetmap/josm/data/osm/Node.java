@@ -19,21 +19,29 @@ public final class Node extends OsmPrimitive {
 
     public LatLon coor;
     public volatile EastNorth eastNorth;
-        
-    public void setCoor(LatLon coor) {
+
+    public final void setCoor(LatLon coor) {
         this.coor = coor;
-        this.eastNorth = Main.proj.latlon2eastNorth(coor); 
+        this.eastNorth = Main.proj.latlon2eastNorth(coor);
     }
-        
-    public void setEastNorth(EastNorth eastNorth) {
+
+    public final LatLon getCoor() {
+        return coor;
+    }
+
+    public final void setEastNorth(EastNorth eastNorth) {
        this.eastNorth = eastNorth;
        this.coor = Main.proj.eastNorth2latlon(eastNorth);
     }
-    
-    public void setEastNorth(double east, double north) {
+
+    public final void setEastNorth(double east, double north) {
         this.setEastNorth(new EastNorth(east, north));
     }
-    
+
+    public final EastNorth getEastNorth() {
+        return eastNorth;
+    }
+
     private static CoordinateFormat mCord;
 
     static {
@@ -106,4 +114,5 @@ public final class Node extends OsmPrimitive {
         }
         return name;
     }
+
 }

@@ -63,8 +63,8 @@ public class RotateCommand extends Command {
 
         for (Node n : this.objects) {
             MoveCommand.OldState os = new MoveCommand.OldState();
-            os.eastNorth = n.eastNorth;
-            os.latlon = n.coor;
+            os.eastNorth = n.getEastNorth();
+            os.latlon = n.getCoor();
             os.modified = n.modified;
             oldState.put(n, os);
             pivot = pivot.add(os.eastNorth.east(), os.eastNorth.north());

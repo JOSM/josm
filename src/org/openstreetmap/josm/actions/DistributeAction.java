@@ -69,7 +69,7 @@ public final class DistributeAction extends JosmAction {
         for (Node n : nodes) {
             itnodes.remove(n);
             for (Node m : itnodes) {
-                double dist = Math.sqrt(n.eastNorth.distance(m.eastNorth));
+                double dist = Math.sqrt(n.getEastNorth().distance(m.getEastNorth()));
                 if (dist > distance) {
                     nodea = n;
                     nodeb = m;
@@ -83,10 +83,10 @@ public final class DistributeAction extends JosmAction {
         nodes.remove(nodeb);
 
         // Find out co-ords of A and B
-        double ax = nodea.eastNorth.east();
-        double ay = nodea.eastNorth.north();
-        double bx = nodeb.eastNorth.east();
-        double by = nodeb.eastNorth.north();
+        double ax = nodea.getEastNorth().east();
+        double ay = nodea.getEastNorth().north();
+        double bx = nodeb.getEastNorth().east();
+        double by = nodeb.getEastNorth().north();
 
         // A list of commands to do
         Collection<Command> cmds = new LinkedList<Command>();
@@ -103,7 +103,7 @@ public final class DistributeAction extends JosmAction {
             // Find the node that is furthest from B (i.e. closest to A)
             distance = 0.0;
             for (Node n : nodes) {
-                double dist = Math.sqrt(nodeb.eastNorth.distance(n.eastNorth));
+                double dist = Math.sqrt(nodeb.getEastNorth().distance(n.getEastNorth()));
                 if (dist > distance) {
                     s = n;
                     distance = dist;
@@ -111,8 +111,8 @@ public final class DistributeAction extends JosmAction {
             }
 
             // First move the node to A's position, then move it towards B
-            double dx = ax - s.eastNorth.east() + (bx-ax)*pos/num;
-            double dy = ay - s.eastNorth.north() + (by-ay)*pos/num;
+            double dx = ax - s.getEastNorth().east() + (bx-ax)*pos/num;
+            double dy = ay - s.getEastNorth().north() + (by-ay)*pos/num;
 
             cmds.add(new MoveCommand(s, dx, dy));
 

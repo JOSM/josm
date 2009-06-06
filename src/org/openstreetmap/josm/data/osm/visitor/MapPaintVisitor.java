@@ -133,10 +133,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      */
     public void visit(Node n) {
         /* check, if the node is visible at all */
-        if((n.eastNorth.east()  > maxEN.east() ) ||
-           (n.eastNorth.north() > maxEN.north()) ||
-           (n.eastNorth.east()  < minEN.east() ) ||
-           (n.eastNorth.north() < minEN.north()))
+        if((n.getEastNorth().east()  > maxEN.east() ) ||
+           (n.getEastNorth().north() > maxEN.north()) ||
+           (n.getEastNorth().east()  < minEN.east() ) ||
+           (n.getEastNorth().north() < minEN.north()))
         {
             n.mappaintVisibleCode = viewid;
             return;
@@ -179,10 +179,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (Node n : w.nodes)
         {
-            if(n.eastNorth.east() > maxx) maxx = n.eastNorth.east();
-            if(n.eastNorth.north() > maxy) maxy = n.eastNorth.north();
-            if(n.eastNorth.east() < minx) minx = n.eastNorth.east();
-            if(n.eastNorth.north() < miny) miny = n.eastNorth.north();
+            if(n.getEastNorth().east() > maxx) maxx = n.getEastNorth().east();
+            if(n.getEastNorth().north() > maxy) maxy = n.getEastNorth().north();
+            if(n.getEastNorth().east() < minx) minx = n.getEastNorth().east();
+            if(n.getEastNorth().north() < miny) miny = n.getEastNorth().north();
         }
 
         if ((minx > maxEN.east()) ||
@@ -649,8 +649,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             fromNode = fromWay.nodes.get(fromWay.nodes.size()-2);
         }
 
-        Point pFrom = nc.getPoint(fromNode.eastNorth);
-        Point pVia = nc.getPoint(viaNode.eastNorth);
+        Point pFrom = nc.getPoint(fromNode.getEastNorth());
+        Point pVia = nc.getPoint(viaNode.getEastNorth());
 
         //if(restrictionDebug) {
         /* find the "direct" node after the via node */
@@ -886,7 +886,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         way = w;
                         for (Node n : w.nodes)
                         {
-                            p = nc.getPoint(n.eastNorth);
+                            p = nc.getPoint(n.getEastNorth());
                             poly.addPoint(p.x,p.y);
                         }
                     }
@@ -940,12 +940,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
                     for (Node n : wInner.nodes)
                     {
-                        Point pInner = nc.getPoint(n.eastNorth);
+                        Point pInner = nc.getPoint(n.getEastNorth());
                         polygon.addPoint(pInner.x,pInner.y);
                     }
                     if(!wInner.isClosed())
                     {
-                        Point pInner = nc.getPoint(wInner.nodes.get(0).eastNorth);
+                        Point pInner = nc.getPoint(wInner.nodes.get(0).getEastNorth());
                         polygon.addPoint(pInner.x,pInner.y);
                     }
                     PolyData o = null;
@@ -1064,7 +1064,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (Node n : w.nodes)
         {
-            Point p = nc.getPoint(n.eastNorth);
+            Point p = nc.getPoint(n.getEastNorth());
             polygon.addPoint(p.x,p.y);
         }
         return polygon;
@@ -1087,7 +1087,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     protected void drawNode(Node n, ImageIcon icon, boolean annotate, Boolean selected) {
-        Point p = nc.getPoint(n.eastNorth);
+        Point p = nc.getPoint(n.getEastNorth());
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
         //profilerVisibleNodes++;
@@ -1129,8 +1129,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if (col != currentColor || width != currentWidth || !Arrays.equals(dashed,currentDashed) || dashedColor != currentDashedColor) {
             displaySegments(col, width, dashed, dashedColor);
         }
-        Point p1 = nc.getPoint(n1.eastNorth);
-        Point p2 = nc.getPoint(n2.eastNorth);
+        Point p1 = nc.getPoint(n1.getEastNorth());
+        Point p2 = nc.getPoint(n2.getEastNorth());
 
         if (!isSegmentVisible(p1, p2)) {
             return;
@@ -1208,7 +1208,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      */
     public void drawNode(Node n, Color color, int size, int radius, boolean fill) {
         if (isZoomOk(null) && size > 1) {
-            Point p = nc.getPoint(n.eastNorth);
+            Point p = nc.getPoint(n.getEastNorth());
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
                     || (p.y > nc.getHeight()))
                 return;
@@ -1455,8 +1455,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * parents way
      */
     protected void drawOrderNumber(Node n1, Node n2, int orderNumber) {
-        Point p1 = nc.getPoint(n1.eastNorth);
-        Point p2 = nc.getPoint(n2.eastNorth);
+        Point p1 = nc.getPoint(n1.getEastNorth());
+        Point p2 = nc.getPoint(n2.getEastNorth());
         drawOrderNumber(p1, p2, orderNumber);
     }
 }

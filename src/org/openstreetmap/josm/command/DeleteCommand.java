@@ -339,7 +339,7 @@ public class DeleteCommand extends Command {
             for (OsmPrimitive osm : del) {
                 if (osm instanceof Node && osm.id != 0) {
                     Node n = (Node) osm;
-                    if (!a.contains(n.coor)) {
+                    if (!a.contains(n.getCoor())) {
                         JPanel msg = new JPanel(new GridBagLayout());
                         msg.add(new JLabel(
                             "<html>" +

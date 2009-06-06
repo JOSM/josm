@@ -81,10 +81,10 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         if (primitive instanceof Node) {
             Node n = (Node)primitive;
             sb.append(" (");
-            if (n.coor != null) {
-                sb.append(COORD_FORMATTER.format(n.coor.lat()));
+            if (n.getCoor() != null) {
+                sb.append(COORD_FORMATTER.format(n.getCoor().lat()));
                 sb.append(",");
-                sb.append(COORD_FORMATTER.format(n.coor.lon()));
+                sb.append(COORD_FORMATTER.format(n.getCoor().lon()));
             } else {
                 sb.append("?,?");
             }

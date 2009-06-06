@@ -70,7 +70,7 @@ public final class AlignInLineAction extends JosmAction {
         for (Node n : nodes) {
             itnodes.remove(n);
             for (Node m : itnodes) {
-                double dist = Math.sqrt(n.eastNorth.distance(m.eastNorth));
+                double dist = Math.sqrt(n.getEastNorth().distance(m.getEastNorth()));
                 if (dist > distance) {
                     nodea = n;
                     nodeb = m;
@@ -84,10 +84,10 @@ public final class AlignInLineAction extends JosmAction {
         nodes.remove(nodeb);
 
         // Find out co-ords of A and B
-        double ax = nodea.eastNorth.east();
-        double ay = nodea.eastNorth.north();
-        double bx = nodeb.eastNorth.east();
-        double by = nodeb.eastNorth.north();
+        double ax = nodea.getEastNorth().east();
+        double ay = nodea.getEastNorth().north();
+        double bx = nodeb.getEastNorth().east();
+        double by = nodeb.getEastNorth().north();
 
         // A list of commands to do
         Collection<Command> cmds = new LinkedList<Command>();
@@ -95,8 +95,8 @@ public final class AlignInLineAction extends JosmAction {
         // OK, for each node to move, work out where to move it!
         for (Node n : nodes) {
             // Get existing co-ords of node to move
-            double nx = n.eastNorth.east();
-            double ny = n.eastNorth.north();
+            double nx = n.getEastNorth().east();
+            double ny = n.getEastNorth().north();
 
             if (ax == bx) {
                 // Special case if AB is vertical...
@@ -109,14 +109,14 @@ public final class AlignInLineAction extends JosmAction {
                 double m1 = (by - ay) / (bx - ax);
                 double c1 = ay - (ax * m1);
                 double m2 = (-1) / m1;
-                double c2 = n.eastNorth.north() - (n.eastNorth.east() * m2);
+                double c2 = n.getEastNorth().north() - (n.getEastNorth().east() * m2);
 
                 nx = (c2 - c1) / (m1 - m2);
                 ny = (m1 * nx) + c1;
             }
 
             // Add the command to move the node to its new position.
-            cmds.add(new MoveCommand(n, nx - n.eastNorth.east(), ny - n.eastNorth.north() ));
+            cmds.add(new MoveCommand(n, nx - n.getEastNorth().east(), ny - n.getEastNorth().north() ));
         }
 
         // Do it!
