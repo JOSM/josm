@@ -18,16 +18,11 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,12 +62,12 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
-import org.openstreetmap.josm.tools.AudioUtil;
 
 public class GpxLayer extends Layer {
     public GpxData data;
@@ -305,10 +300,10 @@ public class GpxLayer extends Layer {
         data.waypoints.size(), data.waypoints.size())).append("<br>");
 
         if (data.attr.containsKey("name"))
-            info.append(tr("Name: {0}", data.attr.get(data.META_NAME))).append("<br>");
+            info.append(tr("Name: {0}", data.attr.get(GpxData.META_NAME))).append("<br>");
 
         if (data.attr.containsKey("desc"))
-            info.append(tr("Description: {0}", data.attr.get(data.META_DESC))).append("<br>");
+            info.append(tr("Description: {0}", data.attr.get(GpxData.META_DESC))).append("<br>");
 
         if(data.tracks.size() > 0){
             boolean first = true;
@@ -468,6 +463,9 @@ public class GpxLayer extends Layer {
                                 case dilution:
                                     if(trkPnt.attr.get("hdop") != null) {
                                         float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
+                                        if (hdop < 0) {
+                                            hdop = 0;
+                                        }
                                         int hdoplvl = Math.round(hdop * 25);
                                         // High hdop is bad, but high values in colors are green.
                                         // Therefore inverse the logic
