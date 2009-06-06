@@ -229,6 +229,10 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Shortcut.registerSystemShortcut("system:movefocusdown", "reserved", KeyEvent.VK_DOWN, KeyEvent.CTRL_DOWN_MASK); // Move focus to another value or cell within a view, such as a table. See Accessibility Overview.
 
         Shortcut.registerSystemShortcut("system:about", "reserved", 0, -1).setAutomatic(); // About
+
+        Shortcut.registerSystemShortcut("view:zoomin", "reserved", KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
+        Shortcut.registerSystemShortcut("view:zoomout", "reserved", KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
+
     }
     public String makeTooltip(String name, Shortcut sc) {
         String lafid = UIManager.getLookAndFeel().getID();
