@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 
-public class UndecidedTableCellRenderer extends TagMergeTableCellRenderer {
+public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
 
     public final static Color BGCOLOR_UNDECIDED = new Color(255,197,197);
     public final static Color BGCOLOR_MINE = new Color(217,255,217);

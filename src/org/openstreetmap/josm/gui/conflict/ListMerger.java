@@ -2,20 +2,29 @@ package org.openstreetmap.josm.gui.conflict;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Adjustable;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -57,20 +66,25 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
     private RemoveMergedAction removeMergedAction;
     private FreezeAction freezeAction;
 
+    private AdjustmentSynchronizer adjustmentSynchronizer;
 
-
-    protected JScrollPane embeddInScrollPane(JTable table) {
-        JScrollPane pane = new JScrollPane(table);
-        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        return pane;
-    }
+    private  JCheckBox cbLockMyScrolling;
+    private  JCheckBox cbLockMergedScrolling;
+    private  JCheckBox cbLockTheirScrolling;
 
     abstract protected JScrollPane buildMyElementsTable();
     abstract protected JScrollPane buildMergedElementsTable();
     abstract protected JScrollPane buildTheirElementsTable();
 
-
+    protected JScrollPane embeddInScrollPane(JTable table) {
+        JScrollPane pane = new JScrollPane(table);
+        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        if (adjustmentSynchronizer == null) {
+            adjustmentSynchronizer = new AdjustmentSynchronizer();
+        }
+        return pane;
+    }
 
     protected void wireActionsToSelectionModels() {
         myEntriesTable.getSelectionModel().addListSelectionListener(copyStartLeftAction);
@@ -98,8 +112,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         mergedEntriesTable.getSelectionModel().addListSelectionListener(moveDownMergedAction);
         mergedEntriesTable.getSelectionModel().addListSelectionListener(removeMergedAction);
     }
-
-
 
     protected JPanel buildLeftButtonPanel() {
         JPanel pnl = new JPanel();
@@ -205,10 +217,19 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         return pnl;
     }
 
+    protected JPanel buildAdjustmentLockControlPanel(JCheckBox cb) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        panel.add(new JLabel(tr("lock scrolling")));
+        panel.add(cb);
+        return panel;
+    }
+
     protected void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
+        // ------------------
         gc.gridx = 0;
         gc.gridy = 0;
         gc.gridwidth = 1;
@@ -224,44 +245,58 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
         gc.gridx = 2;
         gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
         lbl = new JLabel(tr("Merged version"));
         lbl.setToolTipText(tr("List of merged elements. They will replace the my elements when the merge decisions are applied."));
         add(lbl, gc);
 
         gc.gridx = 4;
         gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
         lbl = new JLabel(tr("Their version"));
         lbl.setToolTipText(tr("List of elements in their dataset, i.e. the server dataset"));
-
         add(lbl, gc);
 
+        // ------------------------------
         gc.gridx = 0;
         gc.gridy = 1;
         gc.gridwidth = 1;
         gc.gridheight = 1;
-        gc.fill = GridBagConstraints.BOTH;
+        gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.weightx = 0.3;
-        gc.weighty = 1.0;
+        gc.weightx = 0.33;
+        gc.weighty = 0.0;
         gc.insets = new Insets(0,0,0,0);
-        add(buildMyElementsTable(), gc);
+        cbLockMyScrolling = new JCheckBox();
+        cbLockMyScrolling.setName("checkbox.lockmyscrolling");
+        add(buildAdjustmentLockControlPanel(cbLockMyScrolling), gc);
 
-        gc.gridx = 1;
+        gc.gridx = 2;
         gc.gridy = 1;
+        cbLockMergedScrolling = new JCheckBox();
+        cbLockMergedScrolling.setName("checkbox.lockmergedscrolling");
+        add(buildAdjustmentLockControlPanel(cbLockMergedScrolling), gc);
+
+        gc.gridx = 4;
+        gc.gridy = 1;
+        cbLockTheirScrolling = new JCheckBox();
+        cbLockTheirScrolling.setName("checkbox.locktheirscrolling");
+        add(buildAdjustmentLockControlPanel(cbLockTheirScrolling), gc);
+
+        // --------------------------------
+        gc.gridx = 0;
+        gc.gridy = 2;
         gc.gridwidth = 1;
         gc.gridheight = 1;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.weightx = 0.33;
+        gc.weighty = 1.0;
+        gc.insets = new Insets(0,0,0,0);
+        JScrollPane pane = buildMyElementsTable();
+        adjustmentSynchronizer.adapt(cbLockMyScrolling, pane.getVerticalScrollBar());
+        add(pane, gc);
+
+        gc.gridx = 1;
+        gc.gridy = 2;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -269,19 +304,17 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         add(buildLeftButtonPanel(), gc);
 
         gc.gridx = 2;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
+        gc.gridy = 2;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.weightx = 0.3;
+        gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(buildMergedElementsTable(), gc);
+        pane = buildMergedElementsTable();
+        adjustmentSynchronizer.adapt(cbLockMergedScrolling, pane.getVerticalScrollBar());
+        add(pane, gc);
 
         gc.gridx = 3;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
+        gc.gridy = 2;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -289,22 +322,23 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         add(buildRightButtonPanel(), gc);
 
         gc.gridx = 4;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
+        gc.gridy = 2;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.weightx = 0.3;
+        gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(buildTheirElementsTable(), gc);
+        pane = buildTheirElementsTable();
+        adjustmentSynchronizer.adapt(cbLockTheirScrolling, pane.getVerticalScrollBar());
+        add(pane, gc);
 
+        // ----------------------------------
         gc.gridx = 2;
-        gc.gridy = 2;
+        gc.gridy = 3;
         gc.gridwidth = 1;
         gc.gridheight = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.3;
+        gc.weightx = 0.0;
         gc.weighty = 0.0;
         add(buildMergedListControlButtons(), gc);
 
@@ -316,7 +350,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         build();
         model.addPropertyChangeListener(this);
     }
-
 
     /**
      * Action for copying selected nodes in the list of my nodes to the list of merged
@@ -665,17 +698,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          * @param btn a toggle button
          */
         public void adapt(final JToggleButton btn) {
-            //            btn.addItemListener(
-            //                    new ItemListener() {
-            //                        public void itemStateChanged(ItemEvent e) {
-            //                            boolean isSelected = (Boolean)getValue(PROP_SELECTED);
-            //                            if (isSelected != (e.getStateChange() == ItemEvent.SELECTED)) {
-            //                                putValue(PROP_SELECTED, e.getStateChange() == ItemEvent.SELECTED);
-            //                            }
-            //                            model.setFrozen(e.getStateChange() == ItemEvent.SELECTED);
-            //                        }
-            //                    }
-            //            );
             btn.addItemListener(this);
             addPropertyChangeListener(
                     new PropertyChangeListener() {
@@ -726,5 +748,150 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
     public ListMergeModel<T> getModel() {
         return model;
+    }
+
+
+
+    /**
+     * Synchronizes scrollbar adjustments between a set of
+     * {@see Adjustable}s. Whenever the adjustment of one of
+     * the registerd Adjustables is updated the adjustment of
+     * the other registered Adjustables is adjusted too.
+     * 
+     */
+    class AdjustmentSynchronizer implements AdjustmentListener {
+
+        private final  ArrayList<Adjustable> synchronizedAdjustables;
+        private final  HashMap<Adjustable, Boolean> enabledMap;
+
+        private final Observable observable;
+
+        public AdjustmentSynchronizer() {
+            synchronizedAdjustables = new ArrayList<Adjustable>();
+            enabledMap = new HashMap<Adjustable, Boolean>();
+            observable = new Observable();
+        }
+
+
+        /**
+         * registers an {@see Adjustable} for participation in synchronized
+         * scrolling.
+         * 
+         * @param adjustable the adjustable
+         */
+        public void participateInSynchronizedScrolling(Adjustable adjustable) {
+            if (adjustable == null)
+                return;
+            if (synchronizedAdjustables.contains(adjustable))
+                return;
+            synchronizedAdjustables.add(adjustable);
+            setParticipatingInSynchronizedScrolling(adjustable, true);
+            adjustable.addAdjustmentListener(this);
+        }
+
+        /**
+         * event handler for {@see AdjustmentEvent}s
+         * 
+         */
+        public void adjustmentValueChanged(AdjustmentEvent e) {
+            if (! enabledMap.get(e.getAdjustable()))
+                return;
+            for (Adjustable a : synchronizedAdjustables) {
+                if (a != e.getAdjustable() && isParticipatingInSynchronizedScrolling(a)) {
+                    a.setValue(e.getValue());
+                }
+            }
+        }
+
+        /**
+         * sets whether adjustable participates in adjustment synchronization
+         * or not
+         * 
+         * @param adjustable the adjustable
+         */
+        protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
+            if (adjustable == null)
+                throw new IllegalArgumentException(tr("argument \"adjustable\" must not be null"));
+
+            if (! synchronizedAdjustables.contains(adjustable))
+                throw new IllegalStateException(tr("adjustable {0} not registered yet. Can't set participation in synchronized adjustment",adjustable));
+
+            enabledMap.put(adjustable, isParticipating);
+            observable.notifyObservers();
+        }
+
+        /**
+         * returns true if an adjustable is participating in synchronized scrolling
+         * 
+         * @param adjustable the adjustable
+         * @return true, if the adjustable is participating in synchronized scrolling, false otherwise
+         * @throws IllegalStateException thrown, if adjustable is not registered for synchronized scrolling
+         */
+        protected boolean isParticipatingInSynchronizedScrolling(Adjustable adjustable) throws IllegalStateException {
+            if (! synchronizedAdjustables.contains(adjustable))
+                throw new IllegalStateException(tr("adjustable {0} not registered yet",adjustable));
+
+            return enabledMap.get(adjustable);
+        }
+
+        /**
+         * wires a {@see JCheckBox} to  the adjustment synchronizer, in such a way  that:
+         * <li>
+         *   <ol>state changes in the checkbox control whether the adjustable participates
+         *      in synchronized adjustment</ol>
+         *   <ol>state changes in this {@see AdjustmentSynchronizer} are reflected in the
+         *      {@see JCheckBox}</ol>
+         * </li>
+         * 
+         * 
+         * @param view  the checkbox to control whether an adjustable participates in synchronized
+         *      adjustment
+         * @param adjustable the adjustable
+         * @exception IllegalArgumentException thrown, if view is null
+         * @exception IllegalArgumentException thrown, if adjustable is null
+         */
+        protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalArgumentException, IllegalStateException {
+            if (adjustable == null)
+                throw new IllegalArgumentException(tr("argument \"adjustable\" must not be null"));
+            if (view == null)
+                throw new IllegalArgumentException(tr("argument \"view\" must not be null"));
+
+            if (! synchronizedAdjustables.contains(adjustable)) {
+                participateInSynchronizedScrolling(adjustable);
+            }
+
+            // register an item lister with the check box
+            //
+            view.addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent e) {
+                    switch(e.getStateChange()) {
+                    case ItemEvent.SELECTED:
+                        if (!isParticipatingInSynchronizedScrolling(adjustable)) {
+                            setParticipatingInSynchronizedScrolling(adjustable, true);
+                        }
+                        break;
+                    case ItemEvent.DESELECTED:
+                        if (isParticipatingInSynchronizedScrolling(adjustable)) {
+                            setParticipatingInSynchronizedScrolling(adjustable, false);
+                        }
+                        break;
+                    }
+                }
+            });
+
+
+            observable.addObserver(
+                    new Observer() {
+                        public void update(Observable o, Object arg) {
+                            boolean sync = isParticipatingInSynchronizedScrolling(adjustable);
+                            if (view.isSelected() != sync) {
+                                view.setSelected(sync);
+                            }
+                        }
+                    }
+            );
+            setParticipatingInSynchronizedScrolling(adjustable, true);
+            view.setSelected(true);
+        }
     }
 }

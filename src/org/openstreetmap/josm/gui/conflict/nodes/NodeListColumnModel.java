@@ -13,8 +13,17 @@ public class NodeListColumnModel extends DefaultTableColumnModel {
 
         TableColumn col = null;
 
-        // column 0 - Node
+        // column 0 - Row num
         col = new TableColumn(0);
+        col.setHeaderValue("");
+        col.setResizable(false);
+        col.setWidth(30);
+        col.setMaxWidth(30);
+        col.setCellRenderer(renderer);
+        addColumn(col);
+
+        // column 1 - Node
+        col = new TableColumn(1);
         col.setHeaderValue(tr("Node"));
         col.setResizable(true);
         col.setCellRenderer(renderer);

@@ -12,7 +12,6 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -26,6 +25,11 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.tools.ImageProvider;
+/**
+ * UI component for resolving conflicts in the tag sets of two {@see OsmPrimitive}s.
+ *
+ */
 public class TagMerger extends JPanel {
 
     private JTable mineTable;
@@ -36,6 +40,12 @@ public class TagMerger extends JPanel {
     private JButton btnKeepTheir;
     AdjustmentSynchronizer adjustmentSynchronizer;
 
+    /**
+     * embeds table in a new {@see JScrollPane} and returns th scroll pane
+     * 
+     * @param table the table
+     * @return the scroll pane embedding the table
+     */
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
         pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -45,6 +55,11 @@ public class TagMerger extends JPanel {
         return pane;
     }
 
+    /**
+     * builds the table for my tag set (table already embedded in a scroll pane)
+     * 
+     * @return the table (embedded in a scroll pane)
+     */
     protected JScrollPane buildMineTagTable() {
         mineTable  = new JTable(
                 model,
@@ -56,6 +71,11 @@ public class TagMerger extends JPanel {
         return embeddInScrollPane(mineTable);
     }
 
+    /**
+     * builds the table for their tag set (table already embedded in a scroll pane)
+     * 
+     * @return the table (embedded in a scroll pane)
+     */
     protected JScrollPane buildTheirTable() {
         theirTable  = new JTable(
                 model,
@@ -67,17 +87,26 @@ public class TagMerger extends JPanel {
         return embeddInScrollPane(theirTable);
     }
 
-    protected JScrollPane buildUndecidedTable() {
+    /**
+     * builds the table for the merged tag set (table already embedded in a scroll pane)
+     * 
+     * @return the table (embedded in a scroll pane)
+     */
+
+    protected JScrollPane buildMergedTable() {
         mergedTable  = new JTable(
                 model,
                 new TagMergeColumnModel(
-                        new UndecidedTableCellRenderer()
+                        new MergedTableCellRenderer()
                 )
         );
         mergedTable.setName("table.merged");
         return embeddInScrollPane(mergedTable);
     }
 
+    /**
+     * build the user interface
+     */
     protected void build() {
         GridBagConstraints gc = new GridBagConstraints();
         setLayout(new GridBagLayout());
@@ -151,7 +180,7 @@ public class TagMerger extends JPanel {
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 0.3;
         gc.weighty = 1.0;
-        add(buildUndecidedTable(), gc);
+        add(buildMergedTable(), gc);
 
         gc.gridx = 3;
         gc.gridy = 1;
@@ -204,25 +233,22 @@ public class TagMerger extends JPanel {
         build();
     }
 
+    /**
+     * replies the model used by this tag merger
+     * 
+     * @return the model
+     */
     public TagMergeModel getModel() {
         return model;
     }
 
-    protected ImageIcon loadIcon(String name) {
-        String path = "/images/dialogs/conflict/" + name;
-        URL url = this.getClass().getResource(path);
-        if (url == null) {
-            System.out.println(tr("WARNING: failed to load resource {0}", path));
-            return null;
-        }
-        return new ImageIcon(url);
-    }
-
+    /**
+     * Keeps the currently selected tags in my table in the list of merged tags.
+     *
+     */
     class KeepMineAction extends AbstractAction implements ListSelectionListener {
-
-
         public KeepMineAction() {
-            ImageIcon icon = loadIcon("tagkeepmine.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagkeepmine.png");
             if (icon != null) {
                 putValue(Action.SMALL_ICON, icon);
                 putValue(Action.NAME, "");
@@ -245,10 +271,13 @@ public class TagMerger extends JPanel {
         }
     }
 
+    /**
+     * Keeps the currently selected tags in their table in the list of merged tags.
+     *
+     */
     class KeepTheirAction extends AbstractAction implements ListSelectionListener {
-
         public KeepTheirAction() {
-            ImageIcon icon = loadIcon("tagkeeptheir.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagkeeptheir.png");
             if (icon != null) {
                 putValue(Action.SMALL_ICON, icon);
                 putValue(Action.NAME, "");
@@ -271,6 +300,13 @@ public class TagMerger extends JPanel {
         }
     }
 
+    /**
+     * Synchronizes scrollbar adjustments between a set of
+     * {@see Adjustable}s. Whenever the adjustment of one of
+     * the registerd Adjustables is updated the adjustment of
+     * the other registered Adjustables is adjusted too.
+     * 
+     */
     class AdjustmentSynchronizer implements AdjustmentListener {
         private final ArrayList<Adjustable> synchronizedAdjustables;
 
@@ -296,6 +332,10 @@ public class TagMerger extends JPanel {
         }
     }
 
+    /**
+     * Handler for double clicks on entries in the three tag tables.
+     * 
+     */
     class DoubleClickAdapter extends MouseAdapter {
 
         @Override
@@ -323,10 +363,15 @@ public class TagMerger extends JPanel {
         }
     }
 
+    /**
+     * Sets the currently selected tags in the table of merged tags to state
+     * {@see MergeDecisionType#UNDECIDED}
+     * 
+     */
     class UndecideAction extends AbstractAction implements ListSelectionListener  {
 
         public UndecideAction() {
-            ImageIcon icon = loadIcon("tagundecide.png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagundecide.png");
             if (icon != null) {
                 putValue(Action.SMALL_ICON, icon);
                 putValue(Action.NAME, "");

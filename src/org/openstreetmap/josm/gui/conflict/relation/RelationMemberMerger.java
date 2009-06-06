@@ -24,12 +24,12 @@ public class RelationMemberMerger extends ListMerger<RelationMember> {
                 model.getMySelectionModel()
         );
         myEntriesTable.setName("table.mynodes");
+        myEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(myEntriesTable);
     }
 
     @Override
     protected JScrollPane buildMergedElementsTable() {
-        logger.info(model.getMergedTableModel().toString());
         mergedEntriesTable  = new JTable(
                 model.getMergedTableModel(),
                 new RelationMemberListColumnModel(),
@@ -37,6 +37,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> {
         );
         mergedEntriesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         mergedEntriesTable.setName("table.mergednodes");
+        mergedEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(mergedEntriesTable);
     }
 
@@ -48,6 +49,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> {
                 model.getTheirSelectionModel()
         );
         theirEntriesTable.setName("table.theirnodes");
+        theirEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(theirEntriesTable);
     }
 

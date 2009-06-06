@@ -23,19 +23,19 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class VersionConflictResolveCommand extends Command {
 
-    private OsmPrimitive my;
-    private OsmPrimitive their;
-    
+    private final OsmPrimitive my;
+    private final OsmPrimitive their;
+
     /**
-     * constructor 
-     * @param my  my primitive (i.e. the primitive from the local dataset) 
-     * @param their their primitive (i.e. the primitive from the server) 
+     * constructor
+     * @param my  my primitive (i.e. the primitive from the local dataset)
+     * @param their their primitive (i.e. the primitive from the server)
      */
     public VersionConflictResolveCommand(OsmPrimitive my, OsmPrimitive their) {
-      this.my = my;
-      this.their = their; 
+        this.my = my;
+        this.their = their;
     }
-    
+
     //FIXME copied from TagConflictResolveCommand -> refactor
     /**
      * replies a (localized) display name for the type of an OSM primitive
@@ -49,23 +49,23 @@ public class VersionConflictResolveCommand extends Command {
         if (primitive instanceof Relation) return tr("relation");
         return "";
     }
-    
+
     @Override
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
-            new JLabel(
-               tr("Resolve version conflicts for {0} {1}",getPrimitiveTypeAsString(my), my.id), 
-               ImageProvider.get("data", "object"), 
-               JLabel.HORIZONTAL
-            )
-         );
+                new JLabel(
+                        tr("Resolve version conflicts for {0} {1}",getPrimitiveTypeAsString(my), my.id),
+                        ImageProvider.get("data", "object"),
+                        JLabel.HORIZONTAL
+                )
+        );
     }
 
     @Override
     public boolean executeCommand() {
         super.executeCommand();
         my.version = Math.max(my.version, their.version);
-        Main.map.conflictDialog.conflicts.remove(my);
+        Main.map.conflictDialog.removeConflictForPrimitive(my);
         return true;
     }
 
@@ -78,13 +78,13 @@ public class VersionConflictResolveCommand extends Command {
     @Override
     public void undoCommand() {
         super.undoCommand();
-        
+
         // restore a conflict if necessary
         //
         if (!Main.map.conflictDialog.conflicts.containsKey(my)) {
-            Main.map.conflictDialog.conflicts.put(my,their);
+            Main.map.conflictDialog.addConflict(my, their);
         }
     }
 
-    
+
 }

@@ -31,6 +31,7 @@ public class NodeListMerger extends ListMerger<Node> {
                 model.getMySelectionModel()
         );
         myEntriesTable.setName("table.mynodes");
+        myEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(myEntriesTable);
     }
 
@@ -44,6 +45,7 @@ public class NodeListMerger extends ListMerger<Node> {
                 model.getMergedSelectionModel()
         );
         mergedEntriesTable.setName("table.mergednodes");
+        mergedEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(mergedEntriesTable);
     }
 
@@ -57,6 +59,7 @@ public class NodeListMerger extends ListMerger<Node> {
                 model.getTheirSelectionModel()
         );
         theirEntriesTable.setName("table.theirnodes");
+        theirEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(theirEntriesTable);
     }
 

@@ -36,11 +36,11 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
         // the table model for merged entries is different because it supports
         // editing cells in the first column
         //
-        mergedEntriesTableModel = this.new ListTableModel<RelationMember>(mergedEntries) {
+        mergedEntriesTableModel = this.new EntriesTableModel<RelationMember>(mergedEntries) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 switch(column) {
-                case 0: return true;
+                case 1: return true;
                 default: return false;
                 }
             }
@@ -49,7 +49,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     protected void setValueAt(DefaultTableModel model, Object value, int row, int col) {
-        if (model == getMergedTableModel() && col == 0) {
+        if (model == getMergedTableModel() && col == 1) {
             RelationMember member = mergedEntries.get(row);
             member.role = (String)value;
             fireModelDataChanged();

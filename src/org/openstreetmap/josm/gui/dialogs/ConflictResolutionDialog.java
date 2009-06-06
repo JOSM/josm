@@ -168,6 +168,27 @@ public class ConflictResolutionDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent arg0) {
+            if (! resolver.isCompletelyResolved()) {
+                Object[] options = {
+                        tr("Apply partial resolutions"),
+                        tr("Continue resolving")};
+                int n = JOptionPane.showOptionDialog(null,
+                        tr("<html>You didn''t finish to resolve all conflicts.<br>"
+                                + "Click <strong>{0}</strong> to apply already resolved conflicts anyway.<br>"
+                                + "You can resolve the remaining conflicts later.<br>"
+                                + "Click <strong>{1}</strong> to return to resolving conflicts.</html>"
+                                , options[0].toString(), options[1].toString()
+                        ),
+                        tr("Warning"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        options,
+                        options[1]
+                );
+                if (n == JOptionPane.NO_OPTION || n == JOptionPane.CLOSED_OPTION)
+                    return;
+            }
             Command cmd = resolver.buildResolveCommand();
             Main.main.undoRedo.add(cmd);
             setVisible(false);

@@ -24,32 +24,32 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class TagConflictResolveCommand extends Command {
-    
+
     /** my primitive (in the local dataset). merge decisions are applied to this
      *  primitive
      */
-    private OsmPrimitive my;
-    /** their primitive (in the server dataset) */ 
-    private OsmPrimitive their;
-    
+    private final OsmPrimitive my;
+    /** their primitive (in the server dataset) */
+    private final OsmPrimitive their;
+
     /** the list of merge decisions, represented as {@see TagMergeItem}s */
-    private List<TagMergeItem> mergeItems; 
-    
+    private final List<TagMergeItem> mergeItems;
+
     /**
      * replies the number of decided conflicts
      * 
-     * @return the number of decided conflicts 
+     * @return the number of decided conflicts
      */
     public int getNumDecidedConflicts() {
         int n = 0;
         for (TagMergeItem item: mergeItems) {
             if (!item.getMergeDecision().equals(MergeDecisionType.UNDECIDED)) {
-                n++; 
+                n++;
             }
         }
         return n;
     }
-    
+
     /**
      * replies a (localized) display name for the type of an OSM primitive
      * 
@@ -62,12 +62,12 @@ public class TagConflictResolveCommand extends Command {
         if (primitive instanceof Relation) return tr("relation");
         return "";
     }
-    
+
     /**
-     * constructor 
+     * constructor
      * 
      * @param my  my primitive
-     * @param their  their primitive 
+     * @param their  their primitive
      * @param mergeItems the list of merge decisions, represented as {@see TagMergeItem}s
      */
     public TagConflictResolveCommand(OsmPrimitive my, OsmPrimitive their, List<TagMergeItem> mergeItems) {
@@ -75,17 +75,17 @@ public class TagConflictResolveCommand extends Command {
         this.their = their;
         this.mergeItems = mergeItems;
     }
-    
-    
+
+
     @Override
-    public MutableTreeNode description() {                
+    public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
-          new JLabel(
-             tr("Resolve {0} tag conflicts in {1} {2}",getNumDecidedConflicts(), getPrimitiveTypeAsString(my), my.id), 
-             ImageProvider.get("data", "object"), 
-             JLabel.HORIZONTAL
-          )
-       );
+                new JLabel(
+                        tr("Resolve {0} tag conflicts in {1} {2}",getNumDecidedConflicts(), getPrimitiveTypeAsString(my), my.id),
+                        ImageProvider.get("data", "object"),
+                        JLabel.HORIZONTAL
+                )
+        );
     }
 
     @Override
@@ -94,11 +94,13 @@ public class TagConflictResolveCommand extends Command {
         // OSM primitive 'my'
         //
         super.executeCommand();
-        
+
         // apply the merge decisions to OSM primitive 'my'
         //
         for (TagMergeItem item: mergeItems) {
-            item.applyToMyPrimitive(my);
+            if (! item.getMergeDecision().equals(MergeDecisionType.UNDECIDED)) {
+                item.applyToMyPrimitive(my);
+            }
         }
         return true;
     }
@@ -114,7 +116,7 @@ public class TagConflictResolveCommand extends Command {
         // restore former state of modified primitives
         //
         super.undoCommand();
-        
+
         // restore a conflict if necessary
         //
         if (!Main.map.conflictDialog.conflicts.containsKey(my)) {
@@ -122,5 +124,5 @@ public class TagConflictResolveCommand extends Command {
         }
     }
 
-    
+
 }

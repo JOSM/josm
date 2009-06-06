@@ -50,16 +50,17 @@ public final class ConflictDialog extends ToggleDialog {
     public final Map<OsmPrimitive, OsmPrimitive> conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
     private final DefaultListModel model = new DefaultListModel();
     private final JList displaylist = new JList(model);
-    
+
     private final SideButton sbSelect = new SideButton(marktr("Select"), "select", "Conflict",
             tr("Set the selected elements on the map to the selected items in the list above."), new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
-                    for (Object o : displaylist.getSelectedValues())
-                        sel.add((OsmPrimitive)o);
-                    Main.ds.setSelected(sel);
-                }
-            });
+        public void actionPerformed(ActionEvent e) {
+            Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
+            for (Object o : displaylist.getSelectedValues()) {
+                sel.add((OsmPrimitive)o);
+            }
+            Main.ds.setSelected(sel);
+        }
+    });
     private final SideButton sbResolve = new SideButton(marktr("Resolve"), "conflict", "Conflict",
             tr("Open a merge dialog of all selected items in the list above."), new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -69,13 +70,14 @@ public final class ConflictDialog extends ToggleDialog {
 
     public ConflictDialog() {
         super(tr("Conflict"), "conflict", tr("Merging conflicts."),
-        Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
+                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
         displaylist.setCellRenderer(new OsmPrimitivRenderer());
         displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         displaylist.addMouseListener(new MouseAdapter(){
             @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() >= 2)
+                if (e.getClickCount() >= 2) {
                     resolve();
+                }
             }
         });
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
@@ -101,7 +103,7 @@ public final class ConflictDialog extends ToggleDialog {
                 Main.map.mapView.repaint();
             }
         });
-        
+
         rebuildList();
     }
 
@@ -109,7 +111,7 @@ public final class ConflictDialog extends ToggleDialog {
         String method = Main.pref.get("conflict.resolution", "traditional");
         method = method.trim().toLowerCase();
         if (method.equals("traditional")) {
-            resolveTraditional();            
+            resolveTraditional();
         } else if (method.equals("extended")) {
             resolveExtended();
         } else {
@@ -117,33 +119,34 @@ public final class ConflictDialog extends ToggleDialog {
             resolveTraditional();
         }
     }
-    
-    
+
+
     private final void resolveExtended() {
-        if(model.size() == 1)
+        if(model.size() == 1) {
             displaylist.setSelectedIndex(0);
-        
+        }
+
         if (displaylist.getSelectedIndex() == -1)
             return;
-        
+
         int [] selectedRows = displaylist.getSelectedIndices();
-        if (selectedRows == null || selectedRows.length == 0) {
-            return; 
-        }
+        if (selectedRows == null || selectedRows.length == 0)
+            return;
         int row = selectedRows[0];
         OsmPrimitive my = (OsmPrimitive)model.get(row);
         OsmPrimitive their = conflicts.get(my);
-        ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);      
+        ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
         dialog.getConflictResolver().populate(my, their);
         dialog.setVisible(true);
         Main.map.mapView.repaint();
     }
-    
-    
+
+
     private final void resolveTraditional() {
-        if(model.size() == 1)
+        if(model.size() == 1) {
             displaylist.setSelectedIndex(0);
-        
+        }
+
         if (displaylist.getSelectedIndex() == -1)
             return;
         Map<OsmPrimitive, OsmPrimitive> sel = new HashMap<OsmPrimitive, OsmPrimitive>();
@@ -153,11 +156,11 @@ public final class ConflictDialog extends ToggleDialog {
         }
         ConflictResolver resolver = new ConflictResolver(sel);
         int answer = new ExtendedDialog(Main.parent,
-                          tr("Resolve Conflicts"),
-                          resolver,
-                          new String[] { tr("Solve Conflict"), tr("Cancel") },
-                          new String[] { "dialogs/conflict.png", "cancel.png"} 
-        ).getValue(); 
+                tr("Resolve Conflicts"),
+                resolver,
+                new String[] { tr("Solve Conflict"), tr("Cancel") },
+                new String[] { "dialogs/conflict.png", "cancel.png"}
+        ).getValue();
 
         if (answer != 1)
             return;
@@ -170,13 +173,13 @@ public final class ConflictDialog extends ToggleDialog {
         for (OsmPrimitive osm : this.conflicts.keySet()) {
             model.addElement(osm);
         }
-        
+
         if(model.size() != 0) {
             setTitle(tr("Conflicts: {0}", model.size()), true);
         } else {
             setTitle(tr("Conflicts"), false);
         }
-        
+
         sbSelect.setEnabled(model.size() > 0);
         sbResolve.setEnabled(model.size() > 0);
     }
@@ -184,6 +187,35 @@ public final class ConflictDialog extends ToggleDialog {
     public final void add(Map<OsmPrimitive, OsmPrimitive> conflicts) {
         this.conflicts.putAll(conflicts);
         rebuildList();
+    }
+
+
+    /**
+     * removes a conflict registered for {@see OsmPrimitive} <code>my</code>
+     * 
+     * @param my the {@see OsmPrimitive} for which a conflict is registered
+     *   with this dialog
+     */
+    public void removeConflictForPrimitive(OsmPrimitive my) {
+        if (! conflicts.keySet().contains(my))
+            return;
+        conflicts.remove(my);
+        rebuildList();
+        repaint();
+    }
+
+    /**
+     * registers a conflict with this dialog. The conflict is represented
+     * by a pair of {@see OsmPrimitive} with differences in their tag sets,
+     * their node lists (for {@see Way}s) or their member lists (for {@see Relation}s)
+     * 
+     * @param my  my version of the {@see OsmPrimitive}
+     * @param their their version of the {@see OsmPrimitive}
+     */
+    public void addConflict(OsmPrimitive my, OsmPrimitive their) {
+        conflicts.put(my, their);
+        rebuildList();
+        repaint();
     }
 
     static public Color getColor()
@@ -221,8 +253,9 @@ public final class ConflictDialog extends ToggleDialog {
                 }
             }
             public void visit(Relation e) {
-                for (RelationMember em : e.members)
+                for (RelationMember em : e.members) {
                     em.member.visit(this);
+                }
             }
         };
         for (Object o : displaylist.getSelectedValues()) {

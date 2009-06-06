@@ -5,44 +5,36 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.net.URL;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the {@see TableCellRenderer} used in the node tables of {@see NodeListMerger}.
  * 
- *
  */
 public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
     private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
+    public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
 
-    /**
-     * Load the image icon for an OSM primitive of type node
-     * 
-     * @return the icon; null, if not found
-     */
-    protected ImageIcon loadIcon() {
-        URL url = this.getClass().getResource("/images/data/node.png");;
-        if (url == null) {
-            System.out.println(tr("Failed to load resource /images/data/node.png"));
-            return null;
-        }
-        return new ImageIcon(url);
-    }
+    private ImageIcon icon = null;
+    private Border rowNumberBorder = null;
 
     /**
      * constructor
      */
     public NodeListTableCellRenderer() {
-        setIcon(loadIcon());
+        icon = ImageProvider.get("data", "node");
+        rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
         setOpaque(true);
     }
 
@@ -89,10 +81,32 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
      * @param isSelected
      */
     protected  void renderNode(Node node, boolean isSelected) {
+        setIcon(icon);
+        setBorder(null);
         if (isSelected) {
             setBackground(BGCOLOR_SELECTED);
         }
         setText(getDisplayName(node));
+    }
+
+    protected void renderEmptyRow() {
+        setIcon(null);
+        setBackground(BGCOLOR_EMPTY_ROW);
+        setText("");
+    }
+
+    /**
+     * render the row id
+     * @param row the row index
+     * @param isSelected
+     */
+    protected  void renderRowId(int row, boolean isSelected) {
+        setIcon(null);
+        setBorder(rowNumberBorder);
+        if (isSelected) {
+            setBackground(BGCOLOR_SELECTED);
+        }
+        setText(Integer.toString(row+1));
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
@@ -100,7 +114,21 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
         Node node = (Node)value;
         reset();
-        renderNode(node,isSelected);
+        switch(column) {
+        case 0:
+            renderRowId(row, isSelected);
+            break;
+        case 1:
+            if (node == null) {
+                renderEmptyRow();
+            } else {
+                renderNode(node,isSelected);
+            }
+            break;
+        default:
+            // should not happen
+            throw new RuntimeException(tr("unexpected column index. Got {0}", column));
+        }
         return this;
     }
 }

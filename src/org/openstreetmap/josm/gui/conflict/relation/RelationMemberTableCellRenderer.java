@@ -7,9 +7,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -22,15 +24,16 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * This is the {@see TableCellRenderer} used in the tables of {@see RelationMemberMerger}.
  * 
- *
  */
 public  class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
-    private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
+    private final static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
+    public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
 
     private ImageIcon nodeIcon;
     private ImageIcon wayIcon;
     private ImageIcon relationIcon;
+    private  Border rowNumberBorder = null;
 
     /**
      * Load the image icon for an OSM primitive of type node
@@ -50,6 +53,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         setIcon(null);
         setOpaque(true);
         loadIcons();
+        rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
     }
 
     /**
@@ -99,6 +103,9 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     protected void reset() {
         setBackground(Color.WHITE);
         setForeground(Color.BLACK);
+        setBorder(null);
+        setIcon(null);
+        setToolTipText(null);
     }
 
 
@@ -109,7 +116,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
 
     protected void renderRole(RelationMember member) {
         setText(member.role == null ? "" : member.role);
-        setIcon(null);
+        setToolTipText(member.role == null ? "" : member.role);
     }
 
     protected void renderPrimitive(RelationMember member) {
@@ -128,6 +135,23 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         }
     }
 
+    /**
+     * render the row id
+     * @param row the row index
+     * @param isSelected
+     */
+    protected  void renderRowId(int row, boolean isSelected) {
+        setBorder(rowNumberBorder);
+        setText(Integer.toString(row+1));
+    }
+
+    protected void renderEmptyRow() {
+        setIcon(null);
+        setBackground(BGCOLOR_EMPTY_ROW);
+        setText("");
+    }
+
+
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
@@ -136,10 +160,21 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         setBackground(isSelected);
         switch(column) {
         case 0:
-            renderRole(member);
+            renderRowId(row, isSelected);
             break;
         case 1:
-            renderPrimitive(member);
+            if (member == null) {
+                renderEmptyRow();
+            } else {
+                renderRole(member);
+            }
+            break;
+        case 2:
+            if (member == null) {
+                renderEmptyRow();
+            } else {
+                renderPrimitive(member);
+            }
             break;
         default:
             // should not happen

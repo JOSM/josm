@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -34,7 +33,7 @@ import javax.swing.table.TableModel;
  * decisions. {@see PropertyChangeListener}s can register for property value changes of
  * {@see #PROP_FROZEN}.
  * 
- * ListMergeModel is an abstract class. There methods have to be implemented by subclasses:
+ * ListMergeModel is an abstract class. Three methods have to be implemented by subclasses:
  * <ul>
  *   <li>{@see ListMergeModel#cloneEntry(Object)} - clones an entry of type T</li>
  *   <li>{@see ListMergeModel#isEqualEntry(Object, Object)} - checks whether two entries are equals </li>
@@ -60,9 +59,9 @@ public abstract class ListMergeModel<T> {
     protected DefaultTableModel theirEntriesTableModel;
     protected DefaultTableModel mergedEntriesTableModel;
 
-    protected DefaultListSelectionModel myEntriesSelectionModel;
-    protected DefaultListSelectionModel theirEntriesSelectionModel;
-    protected DefaultListSelectionModel mergedEntriesSelectionModel;
+    protected EntriesSelectionModel<T> myEntriesSelectionModel;
+    protected EntriesSelectionModel<T> theirEntriesSelectionModel;
+    protected EntriesSelectionModel<T> mergedEntriesSelectionModel;
 
     private final ArrayList<PropertyChangeListener> listeners;
     private boolean isFrozen = false;
@@ -99,15 +98,15 @@ public abstract class ListMergeModel<T> {
 
 
     protected void buildMyEntriesTableModel() {
-        myEntriesTableModel = new ListTableModel<T>(myEntries);
+        myEntriesTableModel = new EntriesTableModel<T>(myEntries);
     }
 
     protected void buildTheirEntriesTableModel() {
-        theirEntriesTableModel = new ListTableModel<T>(theirEntries);
+        theirEntriesTableModel = new EntriesTableModel<T>(theirEntries);
     }
 
     protected void buildMergedEntriesTableModel() {
-        mergedEntriesTableModel = new ListTableModel<T>(mergedEntries);
+        mergedEntriesTableModel = new EntriesTableModel<T>(mergedEntries);
     }
 
     public ListMergeModel() {
@@ -119,9 +118,9 @@ public abstract class ListMergeModel<T> {
         buildTheirEntriesTableModel();
         buildMergedEntriesTableModel();
 
-        myEntriesSelectionModel = new DefaultListSelectionModel();
-        theirEntriesSelectionModel = new DefaultListSelectionModel();
-        mergedEntriesSelectionModel = new DefaultListSelectionModel();
+        myEntriesSelectionModel = new EntriesSelectionModel<T>(myEntries);
+        theirEntriesSelectionModel = new EntriesSelectionModel<T>(theirEntries);
+        mergedEntriesSelectionModel =  new EntriesSelectionModel<T>(mergedEntries);
 
         listeners = new ArrayList<PropertyChangeListener>();
 
@@ -176,15 +175,15 @@ public abstract class ListMergeModel<T> {
         return mergedEntriesTableModel;
     }
 
-    public ListSelectionModel getMySelectionModel() {
+    public EntriesSelectionModel getMySelectionModel() {
         return myEntriesSelectionModel;
     }
 
-    public ListSelectionModel getTheirSelectionModel() {
+    public EntriesSelectionModel getTheirSelectionModel() {
         return theirEntriesSelectionModel;
     }
 
-    public ListSelectionModel getMergedSelectionModel() {
+    public EntriesSelectionModel getMergedSelectionModel() {
         return mergedEntriesSelectionModel;
     }
 
@@ -338,7 +337,11 @@ public abstract class ListMergeModel<T> {
         if (current < 0 || current >= mergedEntries.size())
             throw new IllegalArgumentException(tr("parameter current out of range: got {0}", current));
         if (current == mergedEntries.size() -1) {
-            copyMyToEnd(rows);
+            if (source == myEntries) {
+                copyMyToEnd(rows);
+            } else if (source == theirEntries) {
+                copyTheirToEnd(rows);
+            }
         } else {
             for (int i=rows.length -1; i>=0; i--) {
                 int row = rows[i];
@@ -460,22 +463,26 @@ public abstract class ListMergeModel<T> {
     }
 
 
+    protected class EntriesTableModel<T1> extends DefaultTableModel {
+        private final ArrayList<T1> entries;
 
-    protected class ListTableModel<T> extends DefaultTableModel {
-        private final ArrayList<T> entries;
-
-        public ListTableModel(ArrayList<T> nodes) {
+        public EntriesTableModel(ArrayList<T1> nodes) {
             this.entries = nodes;
         }
 
         @Override
         public int getRowCount() {
-            return entries == null ? 0 : entries.size();
+            int count = myEntries.size();
+            count = Math.max(count, mergedEntries.size());
+            count = Math.max(count, theirEntries.size());
+            return count;
         }
 
         @Override
         public Object getValueAt(int row, int column) {
-            return entries.get(row);
+            if (row < entries.size())
+                return entries.get(row);
+            return null;
         }
 
         @Override
@@ -489,6 +496,91 @@ public abstract class ListMergeModel<T> {
         }
     }
 
+    protected class EntriesSelectionModel<T1> extends DefaultListSelectionModel {
+        private final ArrayList<T1> entries;
 
+        public EntriesSelectionModel(ArrayList<T1> nodes) {
+            this.entries = nodes;
+        }
 
+        @Override
+        public void addSelectionInterval(int index0, int index1) {
+            if (entries.isEmpty()) return;
+            if (index0 > entries.size() - 1) return;
+            index0 = Math.min(entries.size()-1, index0);
+            index1 = Math.min(entries.size()-1, index1);
+            super.addSelectionInterval(index0, index1);
+        }
+
+        @Override
+        public void insertIndexInterval(int index, int length, boolean before) {
+            if (entries.isEmpty()) return;
+            if (before) {
+                int newindex = Math.min(entries.size()-1, index);
+                if (newindex < index - length) return;
+                length = length - (index - newindex);
+                super.insertIndexInterval(newindex, length, before);
+            } else {
+                if (index > entries.size() -1) return;
+                length = Math.min(entries.size()-1 - index, length);
+                super.insertIndexInterval(index, length, before);
+            }
+        }
+
+        @Override
+        public void moveLeadSelectionIndex(int leadIndex) {
+            if (entries.isEmpty()) return;
+            leadIndex = Math.max(0, leadIndex);
+            leadIndex = Math.min(entries.size() - 1, leadIndex);
+            super.moveLeadSelectionIndex(leadIndex);
+        }
+
+        @Override
+        public void removeIndexInterval(int index0, int index1) {
+            if (entries.isEmpty()) return;
+            index0 = Math.max(0, index0);
+            index0 = Math.min(entries.size() - 1, index0);
+
+            index1 = Math.max(0, index1);
+            index1 = Math.min(entries.size() - 1, index1);
+            super.removeIndexInterval(index0, index1);
+        }
+
+        @Override
+        public void removeSelectionInterval(int index0, int index1) {
+            if (entries.isEmpty()) return;
+            index0 = Math.max(0, index0);
+            index0 = Math.min(entries.size() - 1, index0);
+
+            index1 = Math.max(0, index1);
+            index1 = Math.min(entries.size() - 1, index1);
+            super.removeSelectionInterval(index0, index1);
+        }
+
+        @Override
+        public void setAnchorSelectionIndex(int anchorIndex) {
+            if (entries.isEmpty()) return;
+            anchorIndex = Math.min(entries.size() - 1, anchorIndex);
+            super.setAnchorSelectionIndex(anchorIndex);
+        }
+
+        @Override
+        public void setLeadSelectionIndex(int leadIndex) {
+            if (entries.isEmpty()) return;
+            leadIndex = Math.min(entries.size() - 1, leadIndex);
+            super.setLeadSelectionIndex(leadIndex);
+        }
+
+        @Override
+        public void setSelectionInterval(int index0, int index1) {
+            if (entries.isEmpty()) return;
+            index0 = Math.max(0, index0);
+            index0 = Math.min(entries.size() - 1, index0);
+
+            index1 = Math.max(0, index1);
+            index1 = Math.min(entries.size() - 1, index1);
+
+            super.setSelectionInterval(index0, index1);
+        }
+    }
 }

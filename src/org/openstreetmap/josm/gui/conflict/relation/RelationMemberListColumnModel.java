@@ -14,14 +14,24 @@ public class RelationMemberListColumnModel extends DefaultTableColumnModel{
 
         // column 0 - Role
         col = new TableColumn(0);
+        col.setHeaderValue("");
+        col.setResizable(false);
+        col.setWidth(20);
+        col.setMaxWidth(20);
+        col.setCellRenderer(renderer);
+        addColumn(col);
+
+        // column 1 - Role
+        col = new TableColumn(1);
         col.setHeaderValue(tr("Role"));
         col.setResizable(true);
         col.setCellRenderer(renderer);
+        col.setMaxWidth(100);
         col.setCellEditor(new RelationMemberTableCellEditor());
         addColumn(col);
 
-        // column 1 - Primitive
-        col = new TableColumn(1);
+        // column 2 - Primitive
+        col = new TableColumn(2);
         col.setHeaderValue(tr("Primitive"));
         col.setResizable(true);
         col.setCellRenderer(renderer);

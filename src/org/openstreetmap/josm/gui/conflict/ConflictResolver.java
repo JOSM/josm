@@ -188,7 +188,31 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 );
             }
         }
-
         return new SequenceCommand(tr("Conflict Resolution"), commands);
+    }
+
+    public boolean isCompletelyResolved() {
+        if (my instanceof Node) {
+            // resolve the version conflict if this is a node and all tag
+            // conflicts have been resolved
+            //
+            if (tagMerger.getModel().isResolvedCompletely())
+                return true;
+        } else if (my instanceof Way) {
+            // resolve the version conflict if this is a way, all tag
+            // conflicts have been resolved, and conflicts in the node list
+            // have been resolved
+            //
+            if (tagMerger.getModel().isResolvedCompletely() && nodeListMerger.getModel().isFrozen())
+                return true;
+        }  else if (my instanceof Relation) {
+            // resolve the version conflict if this is a relation, all tag
+            // conflicts and all conflicts in the member list
+            // have been resolved
+            //
+            if (tagMerger.getModel().isResolvedCompletely() && relationMemberMerger.getModel().isFrozen())
+                return true;
+        }
+        return false;
     }
 }
