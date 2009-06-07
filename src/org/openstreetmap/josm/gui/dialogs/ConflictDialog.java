@@ -108,7 +108,7 @@ public final class ConflictDialog extends ToggleDialog {
     }
 
     private final void resolve() {
-        String method = Main.pref.get("conflict.resolution", "traditional");
+        String method = Main.pref.get("conflict.resolution", "extended");
         method = method.trim().toLowerCase();
         if (method.equals("traditional")) {
             resolveTraditional();
