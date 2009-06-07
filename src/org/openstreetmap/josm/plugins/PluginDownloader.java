@@ -22,9 +22,9 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.concurrent.Future;
 import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
@@ -38,11 +38,14 @@ public class PluginDownloader {
 
     private static final class UpdateTask extends PleaseWaitRunnable {
         private final Collection<PluginInformation> toUpdate;
+        public final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
         private String errors = "";
         private int count = 0;
+        private boolean update;
 
-        private UpdateTask(Collection<PluginInformation> toUpdate) {
-            super(tr("Update Plugins"));
+        private UpdateTask(Collection<PluginInformation> toUpdate, boolean up) {
+            super(up ? tr("Update Plugins") : tr("Download Plugins"));
+            update = up;
             this.toUpdate = toUpdate;
         }
 
@@ -51,10 +54,11 @@ public class PluginDownloader {
         }
 
         @Override protected void finish() {
+            Main.pleaseWaitDlg.setVisible(false);
             if (errors.length() > 0)
                 JOptionPane.showMessageDialog(Main.parent, tr("There were problems with the following plugins:\n\n {0}",errors));
             else
-                JOptionPane.showMessageDialog(Main.parent, trn("{0} Plugin successfully updated. Please restart JOSM.", "{0} Plugins successfully updated. Please restart JOSM.", count, count));
+                JOptionPane.showMessageDialog(Main.parent, trn("{0} Plugin successfully downloaded. Please restart JOSM.", "{0} Plugins successfully downloaded. Please restart JOSM.", count, count));
         }
 
         @Override protected void realRun() throws SAXException, IOException {
@@ -62,9 +66,13 @@ public class PluginDownloader {
             if (!pluginDir.exists())
                 pluginDir.mkdirs();
             for (PluginInformation d : toUpdate) {
+                Main.pleaseWaitDlg.currentAction.setText(tr("Downloading Plugin {0}...", d.name));
                 File pluginFile = new File(pluginDir, d.name + ".jar.new");
                 if (download(d, pluginFile))
+                {
                     count++;
+                    failed.add(d);
+                }
                 else
                     errors += d.name + "\n";
             }
@@ -102,24 +110,6 @@ public class PluginDownloader {
         return count;
     }
 
-    public static boolean downloadPlugin(PluginInformation pd) {
-        File file = new File(Main.pref.getPluginsDirFile(), pd.name + ".jar");
-        if (!download(pd, file)) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not download plugin: {0} from {1}", pd.name, pd.downloadlink));
-        } else {
-            try {
-                PluginInformation.findPlugin(pd.name);
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(Main.parent, tr("The plugin {0} seems to be broken or could not be downloaded automatically.", pd.name));
-            }
-        }
-        if (file.exists())
-            file.delete();
-        return false;
-    }
-
     private static boolean download(PluginInformation pd, File file) {
         if(pd.mainversion > AboutAction.getVersionNumber())
         {
@@ -140,19 +130,29 @@ public class PluginDownloader {
                 out.write(buffer, 0, read);
             out.close();
             in.close();
+            new PluginInformation(file);
             return true;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        file.delete(); /* cleanup */
         return false;
     }
 
     public static void update(Collection<PluginInformation> update) {
-        Main.worker.execute(new UpdateTask(update));
+        Main.worker.execute(new UpdateTask(update, true));
+    }
+
+    public Collection<PluginInformation> download(Collection<PluginInformation> download) {
+        UpdateTask t = new UpdateTask(download, false);
+        try {
+            Future<UpdateTask> ta = Main.worker.submit(t, t);
+            t = ta.get();
+            return t.failed;
+        }
+        catch(java.lang.InterruptedException e) {}
+        catch(java.util.concurrent.ExecutionException e) {}
+        return download;
     }
 
     public static boolean moveUpdatedPlugins() {

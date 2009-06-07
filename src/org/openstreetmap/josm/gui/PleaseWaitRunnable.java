@@ -33,10 +33,10 @@ public abstract class PleaseWaitRunnable implements Runnable {
     private boolean ignoreException;
 
     private final String title;
-    
+
     /**
      * Create the runnable object with a given message for the user.
-     */    
+     */
     public PleaseWaitRunnable(String title) {
         this(title, false);
     }
@@ -44,7 +44,7 @@ public abstract class PleaseWaitRunnable implements Runnable {
     /**
      * Create the runnable object with a given message for the user.
      * @param title Message for user
-     * @param ignoreException If true, exception will be propaged to calling code. If false then 
+     * @param ignoreException If true, exception will be propaged to calling code. If false then
      * exception will be thrown directly in EDT. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
@@ -117,7 +117,7 @@ public abstract class PleaseWaitRunnable implements Runnable {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         throw new RuntimeException(e);
-                    }                
+                    }
                 });
             }
         }

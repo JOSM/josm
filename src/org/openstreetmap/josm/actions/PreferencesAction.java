@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class PreferencesAction extends JosmAction {
+public class PreferencesAction extends JosmAction implements Runnable {
 
     /**
      * Create the preference action with "&Preferences" as label.
@@ -36,6 +36,10 @@ public class PreferencesAction extends JosmAction {
      * Launch the preferences dialog.
      */
     public void actionPerformed(ActionEvent e) {
+        new Thread(this).start();
+    }
+
+    public void run() {
         PreferenceDialog prefDlg = new PreferenceDialog();
         prefDlg.setMinimumSize(new Dimension(400,300));
         JPanel prefPanel = new JPanel(new GridBagLayout());

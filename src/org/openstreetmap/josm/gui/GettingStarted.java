@@ -98,7 +98,7 @@ public class GettingStarted extends JPanel {
             // 2. Cannot be written (e.g. while developing). Obviously we don't want to update
             //    everytime because of something we can't read.
             return (Main.pref.getInteger("cache.motd.html.version", myVersion) == myVersion)
-					 && Main.pref.get("cache.motd.html.lang").equals(myLang);
+            && Main.pref.get("cache.motd.html.lang").equals(myLang);
         }
     }
 

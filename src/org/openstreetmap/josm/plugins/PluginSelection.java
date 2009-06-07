@@ -97,9 +97,26 @@ public class PluginSelection {
         Collection<PluginInformation> toDownload = new LinkedList<PluginInformation>();
         String msg = "";
         for (Entry<String, Boolean> entry : pluginMap.entrySet()) {
-            if (entry.getValue() && PluginInformation.findPlugin(entry.getKey()) == null) {
-                toDownload.add(availablePlugins.get(entry.getKey()));
-                msg += entry.getKey() + "\n";
+            if(entry.getValue())
+            {
+                String name = entry.getKey();
+                PluginInformation ap = availablePlugins.get(name);
+                PluginInformation pi = PluginInformation.findPlugin(name);
+                boolean add = false;
+                if(pi == null)
+                    add = true;
+                else if(!pi.version.equals(ap.version))
+                {
+                    add = true;
+                    for (PluginProxy proxy : PluginHandler.pluginList)
+                        if(proxy.info.name.equals(ap.name))
+                            add = false;
+                }
+                if(add)
+                {
+                    toDownload.add(ap);
+                    msg += name + "\n";
+                }
             }
         }
         if (!toDownload.isEmpty()) {
@@ -108,13 +125,10 @@ public class PluginSelection {
                         tr("Download the following plugins?\n\n{0}", msg),
                         new String[] {tr("Download Plugins"), tr("Cancel")},
                         new String[] {"download.png", "cancel.png"}).getValue();
-            if (answer != 1)
-                for (PluginInformation pd : toDownload)
-                    pluginMap.put(pd.name, false);
-            else
-                for (PluginInformation pd : toDownload)
-                    if (!PluginDownloader.downloadPlugin(pd))
-                        pluginMap.put(pd.name, false);
+            Collection<PluginInformation> error =
+            (answer != 1 ? toDownload : new PluginDownloader().download(toDownload));
+            for (PluginInformation pd : error)
+                pluginMap.put(pd.name, false);
 
         }
         LinkedList<String> plugins = new LinkedList<String>();
@@ -208,30 +222,6 @@ public class PluginSelection {
 
             pluginCheck.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                    // if user enabled a plugin, it is not loaded but found somewhere on disk: offer to delete jar
-                    if (pluginCheck.isSelected()) {
-                        PluginInformation plinfo = PluginInformation.findPlugin(plugin.name);
-                        if ((getLoaded(plugin.name) == null) && (plinfo != null)) {
-                            try {
-                                int answer = new ExtendedDialog(Main.parent,
-                                    tr("Plugin already exists"),
-                                    tr("Plugin archive already available. Do you want to download"
-                                        + " the current version by deleting existing archive?\n\n{0}",
-                                        plinfo.file.getCanonicalPath()),
-                                    new String[] {tr("Delete and Download"), tr("Cancel")},
-                                    new String[] {"download.png", "cancel.png"}).getValue();
-
-                                if (answer == 1) {
-                                    if (!plinfo.file.delete()) {
-                                        JOptionPane.showMessageDialog(Main.parent, tr("Error deleting plugin file: {0}", plinfo.file.getCanonicalPath()));
-                                    }
-                                }
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                                JOptionPane.showMessageDialog(Main.parent, tr("Error deleting plugin file: {0}", e1.getMessage()));
-                            }
-                        }
-                    }
                     pluginMap.put(plugin.name, pluginCheck.isSelected());
                 }
             });

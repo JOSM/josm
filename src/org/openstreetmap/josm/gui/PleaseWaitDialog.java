@@ -53,12 +53,12 @@ public class PleaseWaitDialog extends JDialog {
             }
         });
     }
-    
-    public void setIndeterminate(boolean newValue) {    
+
+    public void setIndeterminate(boolean newValue) {
         UIManager.put("ProgressBar.cycleTime", UIManager.getInt("ProgressBar.repaintInterval") * 100);
         progressBar.setIndeterminate(newValue);
     }
-    
+
     /**
      * Sets a custom text line below currentAction. Can be used to display additional information
      * @param text
@@ -69,7 +69,7 @@ public class PleaseWaitDialog extends JDialog {
             setSize(Main.pref.getInteger("progressdialog.size", 600), 100);
             return;
         }
-        
+
         customText.setVisible(true);
         customText.setText(text);
         setSize(Main.pref.getInteger("progressdialog.size", 600), 120);

@@ -109,11 +109,8 @@ public class PluginInformation {
         String stageStr = attr.getValue("Plugin-Stage");
         stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
         version = attr.getValue("Plugin-Version");
-        try {
-            mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion"));
-        } catch(NumberFormatException e) {
-            e.printStackTrace();
-        }
+        try { mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion")); }
+        catch(NumberFormatException e) {}
         author = attr.getValue("Author");
 
         String classPath = attr.getValue(Attributes.Name.CLASS_PATH);

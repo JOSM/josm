@@ -38,7 +38,7 @@ public class DownloadOsmTask implements DownloadTask {
         private boolean newLayer;
         private int num = 1;
         private String msg = "";
-        
+
         public Task(boolean newLayer, OsmServerReader reader, boolean silent,
                 int numLayers, String msg) {
             super(tr("Downloading data"));
@@ -64,13 +64,13 @@ public class DownloadOsmTask implements DownloadTask {
                 // area doesn't work
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
             }
-            
+
             OsmDataLayer layer = new OsmDataLayer(dataSet, tr("Data Layer {0}", num), null);
             if (newLayer)
                 Main.main.addLayer(layer);
             else
                 Main.main.editLayer().mergeFrom(layer);
-            
+
             Main.pleaseWaitDlg.setCustomText("");
         }
 
@@ -93,7 +93,7 @@ public class DownloadOsmTask implements DownloadTask {
         if (minlon > maxlon) {
             double t = minlon; minlon = maxlon; maxlon = t;
         }
-        
+
         boolean newLayer = action != null
                                 && (action.dialog == null || action.dialog.newLayer.isSelected());
 
@@ -103,11 +103,11 @@ public class DownloadOsmTask implements DownloadTask {
                 getDataLayersCount(),
                 message);
         currentBounds = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
-        // We need submit instead of execute so we can wait for it to finish and get the error 
+        // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
-        task = Main.worker.submit(t, t);       
+        task = Main.worker.submit(t, t);
     }
-    
+
     public void download(DownloadAction action, double minlat, double minlon,
             double maxlat, double maxlon) {
         download(action, minlat, minlon, maxlat, maxlon, false, "");
@@ -134,7 +134,7 @@ public class DownloadOsmTask implements DownloadTask {
     public String getPreferencesSuffix() {
         return "osm";
     }
-    
+
     /**
      * Finds the number of data layers currently opened
      * @return Number of data layers
@@ -148,14 +148,14 @@ public class DownloadOsmTask implements DownloadTask {
                 num++;
         return num;
     }
-    
+
    /*
     * (non-Javadoc)
     * @see org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask#getErrorMessage()
     */
     public String getErrorMessage() {
         if(task == null)
-            return "";        
+            return "";
 
         try {
             Task t = task.get();
