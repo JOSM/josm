@@ -46,6 +46,7 @@ public class PluginSelection {
 
     private Map<String, Boolean> pluginMap;
     private Map<String, PluginInformation> availablePlugins;
+    private Map<String, PluginInformation> localPlugins;
 
     public void updateDescription(JPanel pluginPanel) {
         int count = PluginDownloader.downloadDescription();
@@ -67,9 +68,11 @@ public class PluginSelection {
         Set<PluginInformation> toUpdate = new HashSet<PluginInformation>();
         StringBuilder toUpdateStr = new StringBuilder();
         for (PluginProxy proxy : PluginHandler.pluginList) {
-            PluginInformation description = availablePlugins.get(proxy.info.name);
+            PluginInformation local = localPlugins.get(proxy.info.name);
+            PluginInformation description = availablePlugins.get(local.name);
+
             if (description != null && (description.version == null || description.version.equals("")) ?
-            (proxy.info.version != null && proxy.info.version.equals("")) : !description.version.equals(proxy.info.version)) {
+            (local.version != null && local.version.equals("")) : !description.version.equals(local.version)) {
                 toUpdate.add(description);
                 toUpdateStr.append(description.name+"\n");
             }
@@ -101,7 +104,7 @@ public class PluginSelection {
             {
                 String name = entry.getKey();
                 PluginInformation ap = availablePlugins.get(name);
-                PluginInformation pi = PluginInformation.findPlugin(name);
+                PluginInformation pi = localPlugins.get(name);
                 boolean add = false;
                 if(pi == null)
                     add = true;
@@ -176,16 +179,16 @@ public class PluginSelection {
             if ((remoteversion == null) || remoteversion.equals(""))
                 remoteversion = tr("unknown");
 
-            String localversion;
-            PluginInformation p = PluginInformation.findPlugin(plugin.name);
-            if (p != null) {
+            String localversion = "";
+            PluginInformation p = localPlugins.get(plugin.name);
+            if(p != null)
+            {
                 if (p.version != null && !p.version.equals(""))
                     localversion = p.version;
                 else
                     localversion = tr("unknown");
                 localversion = " (" + localversion + ")";
-            } else
-                localversion = "";
+            }
 
             final JCheckBox pluginCheck = new JCheckBox(
                     tr("{0}: Version {1}{2}", plugin.name, remoteversion, localversion),
@@ -251,6 +254,11 @@ public class PluginSelection {
                 return o1.compareToIgnoreCase(o2);
             }
         });
+        localPlugins = new TreeMap<String, PluginInformation>(new Comparator<String>(){
+            public int compare(String o1, String o2) {
+                return o1.compareToIgnoreCase(o2);
+            }
+        });
         for (String location : PluginInformation.getPluginLocations()) {
             File[] pluginFiles = new File(location).listFiles();
             if (pluginFiles != null) {
@@ -264,6 +272,15 @@ public class PluginSelection {
                             PluginInformation info = new PluginInformation(f,fname.substring(0,fname.length()-4));
                             if (!availablePlugins.containsKey(info.name))
                                 availablePlugins.put(info.name, info);
+                            if (!localPlugins.containsKey(info.name))
+                                localPlugins.put(info.name, info);
+                        } catch (PluginException x) {
+                        }
+                    } else if (fname.endsWith(".jar.new")) {
+                        try {
+                            PluginInformation info = new PluginInformation(f,fname.substring(0,fname.length()-8));
+                            availablePlugins.put(info.name, info);
+                            localPlugins.put(info.name, info);
                         } catch (PluginException x) {
                         }
                     } else if (fname.matches("^[0-9]+-site.*\\.txt$")) {
@@ -333,8 +350,12 @@ public class PluginSelection {
             }
         }
         for (PluginProxy proxy : PluginHandler.pluginList)
+        {
             if (!availablePlugins.containsKey(proxy.info.name))
                 availablePlugins.put(proxy.info.name, proxy.info);
+            if (!localPlugins.containsKey(proxy.info.name))
+                localPlugins.put(proxy.info.name, proxy.info);
+        }
         return availablePlugins;
     }
 }
