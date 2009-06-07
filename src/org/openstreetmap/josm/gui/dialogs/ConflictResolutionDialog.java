@@ -168,7 +168,7 @@ public class ConflictResolutionDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent arg0) {
-            if (! resolver.isCompletelyResolved()) {
+            if (! resolver.isResolvedCompletely()) {
                 Object[] options = {
                         tr("Apply partial resolutions"),
                         tr("Continue resolving")};

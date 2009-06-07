@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.conflict.tags;
 
 import org.junit.*;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.gui.conflict.tags.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 import org.openstreetmap.josm.gui.conflict.tags.TagMergeItem;
 
 import static org.junit.Assert.*;

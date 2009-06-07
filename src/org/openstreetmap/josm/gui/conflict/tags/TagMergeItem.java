@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.HashMap;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 
 /**
  * TagMergeItem represents an individual merge action for a specific pair of key/value.  

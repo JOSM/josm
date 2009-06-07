@@ -4,7 +4,6 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -16,39 +15,24 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
-import org.openstreetmap.josm.gui.conflict.tags.TagMergeItem;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a the resolution of a tag conflict in an {@see OsmPrimitive}
+ * Represents a the resolution of a conflict between the coordinates of two {@see Node}s
  *
  */
-public class TagConflictResolveCommand extends Command {
+public class CoordinateConflictResolveCommand extends Command {
 
-    /** my primitive (in the local dataset). merge decisions are applied to this
-     *  primitive
+    /** my node (in the local dataset). merge decisions are applied to this
+     *  node
      */
-    private final OsmPrimitive my;
-    /** their primitive (in the server dataset) */
-    private final OsmPrimitive their;
+    private final Node my;
+    /** their node (in the server dataset) */
+    private final Node their;
 
-    /** the list of merge decisions, represented as {@see TagMergeItem}s */
-    private final List<TagMergeItem> mergeItems;
+    /** the merge decision */
+    private final MergeDecisionType decision;
 
-    /**
-     * replies the number of decided conflicts
-     * 
-     * @return the number of decided conflicts
-     */
-    public int getNumDecidedConflicts() {
-        int n = 0;
-        for (TagMergeItem item: mergeItems) {
-            if (!item.getMergeDecision().equals(MergeDecisionType.UNDECIDED)) {
-                n++;
-            }
-        }
-        return n;
-    }
 
     /**
      * replies a (localized) display name for the type of an OSM primitive
@@ -66,14 +50,14 @@ public class TagConflictResolveCommand extends Command {
     /**
      * constructor
      * 
-     * @param my  my primitive
-     * @param their  their primitive
-     * @param mergeItems the list of merge decisions, represented as {@see TagMergeItem}s
+     * @param my  my node
+     * @param their  their node
+     * @param decision the merge decision
      */
-    public TagConflictResolveCommand(OsmPrimitive my, OsmPrimitive their, List<TagMergeItem> mergeItems) {
+    public CoordinateConflictResolveCommand(Node my, Node their, MergeDecisionType decision) {
         this.my = my;
         this.their = their;
-        this.mergeItems = mergeItems;
+        this.decision = decision;
     }
 
 
@@ -81,7 +65,7 @@ public class TagConflictResolveCommand extends Command {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve {0} tag conflicts in {1} {2}",getNumDecidedConflicts(), getPrimitiveTypeAsString(my), my.id),
+                        tr("Resolve conflicts in coordinates in {0}",my.id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
@@ -95,13 +79,14 @@ public class TagConflictResolveCommand extends Command {
         //
         super.executeCommand();
 
-        // apply the merge decisions to OSM primitive 'my'
-        //
-        for (TagMergeItem item: mergeItems) {
-            if (! item.getMergeDecision().equals(MergeDecisionType.UNDECIDED)) {
-                item.applyToMyPrimitive(my);
-            }
-        }
+        if (decision.equals(MergeDecisionType.KEEP_MINE)) {
+            // do nothing
+        } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
+            my.setCoor(their.getCoor());
+        } else
+            // should not happen
+            throw new IllegalStateException(tr("cannot resolve undecided conflict"));
+
         return true;
     }
 

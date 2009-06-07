@@ -4,44 +4,45 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represent a command for resolving conflicts in the node list of two
- * {@see Way}s.
+ * Represents a the resolution of a conflict between the coordinates of two {@see Node}s
  *
  */
-public class WayNodesConflictResolverCommand extends Command {
+public class DeletedStateConflictResolveCommand extends Command {
 
-    /** my way */
-    private final Way my;
-    /** their way */
-    private final Way their;
-    /** the list of merged nodes. This becomes the list of news of my way after the
-     *  command is executed
+    /** my primitive (in the local dataset). merge decisions are applied to this
+     *  node
      */
-    private final List<Node> mergedNodeList;
+    private final OsmPrimitive my;
+    /** their primitive (in the server dataset) */
+    private final OsmPrimitive their;
+
+    /** the merge decision */
+    private final MergeDecisionType decision;
+
+
 
     /**
+     * constructor
      * 
-     * @param my my may
-     * @param their their way
-     * @param mergedNodeList  the list of merged nodes
+     * @param my  my node
+     * @param their  their node
+     * @param decision the merge decision
      */
-    public WayNodesConflictResolverCommand(Way my, Way their, List<Node> mergedNodeList) {
+    public DeletedStateConflictResolveCommand(OsmPrimitive my, OsmPrimitive their, MergeDecisionType decision) {
         this.my = my;
         this.their = their;
-        this.mergedNodeList = mergedNodeList;
+        this.decision = decision;
     }
 
 
@@ -49,7 +50,7 @@ public class WayNodesConflictResolverCommand extends Command {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve conflicts in node list of of way {0}", my.id),
+                        tr("Resolve conflicts in deleted state in {0}",my.id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
@@ -58,21 +59,19 @@ public class WayNodesConflictResolverCommand extends Command {
 
     @Override
     public boolean executeCommand() {
-        // remember the current state of 'my' way
+        // remember the current state of modified primitives, i.e. of
+        // OSM primitive 'my'
         //
         super.executeCommand();
 
-        // replace the list of nodes of 'my' way by the list of merged
-        // nodes
-        //
-        my.nodes.clear();
-        for (int i=0; i<mergedNodeList.size();i++) {
-            Node n = mergedNodeList.get(i);
-            my.nodes.add(n);
-            if (! Main.ds.nodes.contains(n)) {
-                System.out.println("Main.ds doesn't include node " + n.toString());
-            }
-        }
+        if (decision.equals(MergeDecisionType.KEEP_MINE)) {
+            // do nothing
+        } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
+            my.deleted = their.deleted;
+        } else
+            // should not happen
+            throw new IllegalStateException(tr("cannot resolve undecided conflict"));
+
         return true;
     }
 
@@ -84,7 +83,7 @@ public class WayNodesConflictResolverCommand extends Command {
 
     @Override
     public void undoCommand() {
-        // restore the former state
+        // restore former state of modified primitives
         //
         super.undoCommand();
 

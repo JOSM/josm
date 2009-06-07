@@ -85,6 +85,4 @@ public class VersionConflictResolveCommand extends Command {
             Main.map.conflictDialog.addConflict(my, their);
         }
     }
-
-
 }

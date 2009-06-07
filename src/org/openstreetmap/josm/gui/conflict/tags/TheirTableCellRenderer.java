@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 
+import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+
 public class TheirTableCellRenderer extends TagMergeTableCellRenderer {
 
     public final static Color BGCOLOR_UNDECIDED = new Color(255,197,197);

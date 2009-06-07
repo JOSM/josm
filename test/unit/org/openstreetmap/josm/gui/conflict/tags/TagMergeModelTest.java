@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 
 public class TagMergeModelTest {
 

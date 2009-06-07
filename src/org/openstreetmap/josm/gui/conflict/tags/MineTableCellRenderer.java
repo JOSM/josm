@@ -2,6 +2,9 @@
 package org.openstreetmap.josm.gui.conflict.tags;
 
 import java.awt.Color;
+
+import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class MineTableCellRenderer extends TagMergeTableCellRenderer {

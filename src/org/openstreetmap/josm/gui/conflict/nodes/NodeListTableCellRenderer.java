@@ -80,13 +80,25 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         return sb.toString();
     }
 
-
+    /**
+     * build the tool tip text for an {@see OsmPrimitive}. It consist of the formatted
+     * key/value pairs for this primitive.
+     * 
+     * @param primitive
+     * @return the tool tip text
+     */
     public String buildToolTipText(OsmPrimitive primitive) {
         StringBuilder sb = new StringBuilder();
+
         sb.append("<html>");
+        // show the id
+        //
         sb.append("<strong>id</strong>=")
         .append(primitive.id)
         .append("<br>");
+
+        // show the key/value-pairs, sorted by key
+        //
         ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
@@ -98,6 +110,9 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
             .append(key)
             .append("</strong>")
             .append("=");
+            // make sure long values are split into several rows. Otherwise
+            // the tool tip window can become to wide
+            //
             String value = primitive.get(key);
             while(value.length() != 0) {
                 sb.append(value.substring(0,Math.min(50, value.length())));
@@ -120,8 +135,6 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         setBackground(Color.WHITE);
         setForeground(Color.BLACK);
     }
-
-
 
     /**
      * render a node
