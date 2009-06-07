@@ -69,7 +69,7 @@ public class PluginPreference implements PreferenceSetting {
 
     private void configureSites() {
         JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(tr("Add either site-josm.xml or Wiki Pages.")), GBC.eol());
+        p.add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
         final DefaultListModel model = new DefaultListModel();
         for (String s : PluginDownloader.getSites())
             model.addElement(s);
@@ -78,7 +78,7 @@ public class PluginPreference implements PreferenceSetting {
         JPanel buttons = new JPanel(new GridBagLayout());
         buttons.add(new JButton(new AbstractAction(tr("Add")){
             public void actionPerformed(ActionEvent e) {
-                String s = JOptionPane.showInputDialog(gui, tr("Add either site-josm.xml or Wiki Pages."));
+                String s = JOptionPane.showInputDialog(gui, tr("Add JOSM Plugin description URL."));
                 if (s != null)
                     model.addElement(s);
             }
@@ -89,7 +89,7 @@ public class PluginPreference implements PreferenceSetting {
                     JOptionPane.showMessageDialog(gui, tr("Please select an entry."));
                     return;
                 }
-                String s = JOptionPane.showInputDialog(gui, tr("Add either site-josm.xml or Wiki Pages."), list.getSelectedValue());
+                String s = JOptionPane.showInputDialog(gui, tr("Edit JOSM Plugin description URL."), list.getSelectedValue());
                 model.setElementAt(s, list.getSelectedIndex());
             }
         }), GBC.eol().fill(GBC.HORIZONTAL));

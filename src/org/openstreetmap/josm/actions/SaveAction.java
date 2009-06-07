@@ -6,7 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -27,6 +30,12 @@ public class SaveAction extends SaveActionBase {
 
     @Override public File getFile(Layer layer) {
         File f = layer.getAssociatedFile();
+        if(f != null && layer instanceof GpxLayer && f.exists() && 1 !=
+        new ExtendedDialog(Main.parent, tr("Overwrite"),
+        tr("File {0} exists. Overwrite?", f.getName()),
+        new String[] {tr("Overwrite"), tr("Cancel")},
+        new String[] {"save_as.png", "cancel.png"}).getValue())
+            f = null;
         return f == null ? openFileDialog(layer) : f;
     }
 }
