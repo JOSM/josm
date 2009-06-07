@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.nodes;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -10,6 +12,7 @@ import org.openstreetmap.josm.command.WayNodesConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.ListRole;
 
 public class NodeListMergeModel extends ListMergeModel<Node>{
 
@@ -27,20 +30,20 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      */
     public void populate(Way my, Way their) {
         if (my == null)
-            throw new IllegalArgumentException("parameter 'way' must not be null");
+            throw new IllegalArgumentException(tr("parameter \"way\" must not be null"));
         if (their == null)
-            throw new IllegalArgumentException("parameter 'their' must not be null");
-        mergedEntries.clear();
-        myEntries.clear();
-        theirEntries.clear();
+            throw new IllegalArgumentException(tr("parameter \"their\" must not be null"));
+        getMergedEntries().clear();
+        getMyEntries().clear();
+        getTheirEntries().clear();
         for (Node n : my.nodes) {
-            myEntries.add(n);
+            getMyEntries().add(n);
         }
         for (Node n : their.nodes) {
-            theirEntries.add(n);
+            getTheirEntries().add(n);
         }
         if (myAndTheirEntriesEqual()) {
-            mergedEntries = new ArrayList<Node>(myEntries);
+            entries.put(ListRole.MERGED_ENTRIES, new ArrayList<Node>(getMyEntries()));
             setFrozen(true);
         } else {
             setFrozen(false);
@@ -61,18 +64,21 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      */
     public WayNodesConflictResolverCommand buildResolveCommand(Way my, Way their) {
         if (my == null)
-            throw new IllegalArgumentException("parameter my most not be null");
+            throw new IllegalArgumentException(tr("parameter \"my\" most not be null"));
         if (their == null)
-            throw new IllegalArgumentException("parameter my most not be null");
+            throw new IllegalArgumentException(tr("parameter \"my\" most not be null"));
         if (! isFrozen())
-            throw new IllegalArgumentException("merged nodes not frozen yet. Can't build resolution command");
-        return new WayNodesConflictResolverCommand(my, their, mergedEntries);
+            throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Can't build resolution command"));
+        return new WayNodesConflictResolverCommand(my, their, getMergedEntries());
     }
 
 
     @Override
     public boolean isEqualEntry(Node e1, Node e2) {
-        return e1.id == e2.id;
+        if (e1.id > 0)
+            return e1.id == e2.id;
+        else
+            return e1 == e2;
     }
 
     @Override
@@ -81,9 +87,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
     }
 
     @Override
-    protected Node cloneEntry(Node entry) {
-        Node n = new Node(entry.id);
-        n.cloneFrom(entry);
-        return n;
+    protected Node cloneEntryForMergedList(Node entry) {
+        return entry;
     }
 }

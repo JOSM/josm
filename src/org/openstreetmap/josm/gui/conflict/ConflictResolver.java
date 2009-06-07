@@ -92,7 +92,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 tabbedPane.setToolTipTextAt(0, tr("{0} pending tag conflicts to be resolved"));
                 tabbedPane.setIconAt(0, mergeIncomplete);
             }
-        } else if (evt.getPropertyName().equals(ListMergeModel.PROP_FROZEN)) {
+        } else if (evt.getPropertyName().equals(ListMergeModel.FROZEN_PROP)) {
             boolean frozen = (Boolean)evt.getNewValue();
             if (frozen && evt.getSource() == nodeListMerger.getModel()) {
                 tabbedPane.setTitleAt(1, tr("Nodes(resolved)"));

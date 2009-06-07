@@ -8,11 +8,10 @@ import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.RelationMemberConflictResolverCommand;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.ListRole;
 /**
  * The model for merging two lists of relation members
  * 
@@ -24,11 +23,16 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
-        return
-        (    (e1.role == null && e2.role == null)
-                || (e1.role != null && e1.role.equals(e2.role))
-        )
-        && e1.member.id == e2.member.id;
+        boolean ret =
+            (    (e1.role == null && e2.role == null)
+                    || (e1.role != null && e1.role.equals(e2.role))
+            );
+        if (e1.member.id > 0 ) {
+            ret = ret && (e1.member.id == e2.member.id);
+        } else {
+            ret = ret && (e1 == e2);
+        }
+        return ret;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
         // the table model for merged entries is different because it supports
         // editing cells in the first column
         //
-        mergedEntriesTableModel = this.new EntriesTableModel<RelationMember>(mergedEntries) {
+        mergedEntriesTableModel = this.new EntriesTableModel(ListRole.MERGED_ENTRIES) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 switch(column) {
@@ -50,7 +54,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
     @Override
     protected void setValueAt(DefaultTableModel model, Object value, int row, int col) {
         if (model == getMergedTableModel() && col == 1) {
-            RelationMember member = mergedEntries.get(row);
+            RelationMember member = getMergedEntries().get(row);
             member.role = (String)value;
             fireModelDataChanged();
         }
@@ -71,19 +75,19 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
         if (their == null)
             throw new IllegalArgumentException(tr("parameter their must not be null"));
 
-        mergedEntries.clear();
-        myEntries.clear();
-        theirEntries.clear();
+        getMergedEntries().clear();
+        getMyEntries().clear();
+        getTheirEntries().clear();
 
         for (RelationMember n : my.members) {
-            myEntries.add(n);
+            getMyEntries().add(n);
         }
         for (RelationMember n : their.members) {
-            theirEntries.add(n);
+            getTheirEntries().add(n);
         }
         if (myAndTheirEntriesEqual()) {
-            for (RelationMember m : myEntries) {
-                mergedEntries.add(cloneEntry(m));
+            for (RelationMember m : getMyEntries()) {
+                getMergedEntries().add(cloneEntryForMergedList(m));
             }
             setFrozen(true);
         } else {
@@ -94,17 +98,10 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
     }
 
     @Override
-    protected RelationMember cloneEntry(RelationMember entry) {
+    protected RelationMember cloneEntryForMergedList(RelationMember entry) {
         RelationMember member = new RelationMember();
         member.role = entry.role;
-        if (entry.member instanceof Node) {
-            member.member = new Node(entry.member.id);
-        } else if (entry.member instanceof Way) {
-            member.member = new Way(entry.member.id);
-        } else if (entry.member instanceof Relation) {
-            member.member = new Relation(entry.member.id);
-        }
-        member.member.cloneFrom(entry.member);
+        member.member = entry.member;
         return member;
     }
 
@@ -125,6 +122,6 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
             throw new IllegalArgumentException(tr("parameter my most not be null"));
         if (! isFrozen())
             throw new IllegalArgumentException(tr("merged nodes not frozen yet. Can't build resolution command"));
-        return new RelationMemberConflictResolverCommand(my, their, mergedEntries);
+        return new RelationMemberConflictResolverCommand(my, their, getMergedEntries());
     }
 }

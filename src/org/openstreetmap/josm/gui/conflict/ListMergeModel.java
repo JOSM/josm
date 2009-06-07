@@ -1,14 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict;
 
+import static org.openstreetmap.josm.gui.conflict.ComparePairType.MY_WITH_MERGED;
+import static org.openstreetmap.josm.gui.conflict.ComparePairType.MY_WITH_THEIR;
+import static org.openstreetmap.josm.gui.conflict.ComparePairType.THEIR_WITH_MERGED;
+import static org.openstreetmap.josm.gui.conflict.ListRole.MERGED_ENTRIES;
+import static org.openstreetmap.josm.gui.conflict.ListRole.MY_ENTRIES;
+import static org.openstreetmap.josm.gui.conflict.ListRole.THEIR_ENTRIES;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Observable;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -35,7 +44,7 @@ import javax.swing.table.TableModel;
  * 
  * ListMergeModel is an abstract class. Three methods have to be implemented by subclasses:
  * <ul>
- *   <li>{@see ListMergeModel#cloneEntry(Object)} - clones an entry of type T</li>
+ *   <li>{@see ListMergeModel#cloneEntryForMergedList(Object)} - clones an entry of type T</li>
  *   <li>{@see ListMergeModel#isEqualEntry(Object, Object)} - checks whether two entries are equals </li>
  *   <li>{@see ListMergeModel#setValueAt(DefaultTableModel, Object, int, int)} - handles values edited in
  *     a JTable, dispatched from {@see TableModel#setValueAt(Object, int, int)} </li>
@@ -45,33 +54,35 @@ import javax.swing.table.TableModel;
  * @param <T>  the type of the list entries
  * @see ListMerger
  */
-public abstract class ListMergeModel<T> {
+public abstract class ListMergeModel<T> extends Observable {
     private static final Logger logger = Logger.getLogger(ListMergeModel.class.getName());
 
-    public static final String PROP_FROZEN = ListMergeModel.class.getName() + ".frozen";
+    public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
 
-    protected ArrayList<T> myEntries;
-    protected ArrayList<T> theirEntries;
-    protected ArrayList<T> mergedEntries;
-
+    protected HashMap<ListRole, ArrayList<T>> entries;
 
     protected DefaultTableModel myEntriesTableModel;
     protected DefaultTableModel theirEntriesTableModel;
     protected DefaultTableModel mergedEntriesTableModel;
 
-    protected EntriesSelectionModel<T> myEntriesSelectionModel;
-    protected EntriesSelectionModel<T> theirEntriesSelectionModel;
-    protected EntriesSelectionModel<T> mergedEntriesSelectionModel;
+    protected EntriesSelectionModel myEntriesSelectionModel;
+    protected EntriesSelectionModel theirEntriesSelectionModel;
+    protected EntriesSelectionModel mergedEntriesSelectionModel;
 
     private final ArrayList<PropertyChangeListener> listeners;
     private boolean isFrozen = false;
+    private final ComparePairListModel comparePairListModel;
+
+
 
     /**
-     * Clones an entry of type T
+     * Creates a clone of an entry of type T suitable to be included in the
+     * list of merged entries
+     * 
      * @param entry the entry
      * @return the cloned entry
      */
-    protected abstract T cloneEntry(T entry);
+    protected abstract T cloneEntryForMergedList(T entry);
 
     /**
      * checks whether two entries are equal. This is not necessarily the same as
@@ -98,35 +109,58 @@ public abstract class ListMergeModel<T> {
 
 
     protected void buildMyEntriesTableModel() {
-        myEntriesTableModel = new EntriesTableModel<T>(myEntries);
+        myEntriesTableModel = new EntriesTableModel(MY_ENTRIES);
     }
 
     protected void buildTheirEntriesTableModel() {
-        theirEntriesTableModel = new EntriesTableModel<T>(theirEntries);
+        theirEntriesTableModel = new EntriesTableModel(THEIR_ENTRIES);
     }
 
     protected void buildMergedEntriesTableModel() {
-        mergedEntriesTableModel = new EntriesTableModel<T>(mergedEntries);
+        mergedEntriesTableModel = new EntriesTableModel(MERGED_ENTRIES);
+    }
+
+    protected ArrayList<T> getMergedEntries() {
+        return entries.get(MERGED_ENTRIES);
+    }
+    protected ArrayList<T> getMyEntries() {
+        return entries.get(MY_ENTRIES);
+    }
+    protected ArrayList<T> getTheirEntries() {
+        return entries.get(THEIR_ENTRIES);
+    }
+
+    public int getMyEntriesSize() {
+        return getMyEntries().size();
+    }
+
+    public int getMergedEntriesSize() {
+        return getMergedEntries().size();
+    }
+
+    public int getTheirEntriesSize() {
+        return getTheirEntries().size();
     }
 
     public ListMergeModel() {
-        myEntries = new ArrayList<T>();
-        theirEntries = new ArrayList<T>();
-        mergedEntries = new ArrayList<T>();
+        entries = new HashMap<ListRole, ArrayList<T>>();
+        for (ListRole role : ListRole.values()) {
+            entries.put(role, new ArrayList<T>());
+        }
 
         buildMyEntriesTableModel();
         buildTheirEntriesTableModel();
         buildMergedEntriesTableModel();
 
-        myEntriesSelectionModel = new EntriesSelectionModel<T>(myEntries);
-        theirEntriesSelectionModel = new EntriesSelectionModel<T>(theirEntries);
-        mergedEntriesSelectionModel =  new EntriesSelectionModel<T>(mergedEntries);
+        myEntriesSelectionModel = new EntriesSelectionModel(entries.get(MY_ENTRIES));
+        theirEntriesSelectionModel = new EntriesSelectionModel(entries.get(THEIR_ENTRIES));
+        mergedEntriesSelectionModel =  new EntriesSelectionModel(entries.get(MERGED_ENTRIES));
 
         listeners = new ArrayList<PropertyChangeListener>();
+        comparePairListModel = new ComparePairListModel();
 
         setFrozen(true);
     }
-
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         synchronized(listeners) {
@@ -146,7 +180,7 @@ public abstract class ListMergeModel<T> {
 
     protected void fireFrozenChanged(boolean oldValue, boolean newValue) {
         synchronized(listeners) {
-            PropertyChangeEvent evt = new PropertyChangeEvent(this, PROP_FROZEN, oldValue, newValue);
+            PropertyChangeEvent evt = new PropertyChangeEvent(this, FROZEN_PROP, oldValue, newValue);
             for (PropertyChangeListener listener: listeners) {
                 listener.propertyChange(evt);
             }
@@ -187,20 +221,21 @@ public abstract class ListMergeModel<T> {
         return mergedEntriesSelectionModel;
     }
 
-
     protected void fireModelDataChanged() {
         myEntriesTableModel.fireTableDataChanged();
         theirEntriesTableModel.fireTableDataChanged();
         mergedEntriesTableModel.fireTableDataChanged();
+        setChanged();
+        notifyObservers();
     }
 
-    protected void copyToTop(List<T> source, int []rows) {
+    protected void copyToTop(ListRole role, int []rows) {
         if (rows == null || rows.length == 0)
             return;
         for (int i = rows.length - 1; i >= 0; i--) {
             int row = rows[i];
-            T n = source.get(row);
-            mergedEntries.add(0, cloneEntry(n));
+            T n = entries.get(role).get(row);
+            entries.get(MERGED_ENTRIES).add(0, cloneEntryForMergedList(n));
         }
         fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(0, rows.length -1);
@@ -214,7 +249,7 @@ public abstract class ListMergeModel<T> {
      * @param rows the indices
      */
     public void copyMyToTop(int [] rows) {
-        copyToTop(myEntries, rows);
+        copyToTop(MY_ENTRIES, rows);
     }
 
     /**
@@ -225,7 +260,7 @@ public abstract class ListMergeModel<T> {
      * @param rows the indices
      */
     public void copyTheirToTop(int [] rows) {
-        copyToTop(theirEntries, rows);
+        copyToTop(THEIR_ENTRIES, rows);
     }
 
     /**
@@ -237,12 +272,13 @@ public abstract class ListMergeModel<T> {
      * @param rows the indices
      */
 
-    public void copyToEnd(List<T> source, int [] rows) {
+    public void copyToEnd(ListRole source, int [] rows) {
         if (rows == null || rows.length == 0)
             return;
+        ArrayList<T> mergedEntries = getMergedEntries();
         for (int row : rows) {
-            T n = source.get(row);
-            mergedEntries.add(cloneEntry(n));
+            T n = entries.get(source).get(row);
+            mergedEntries.add(cloneEntryForMergedList(n));
         }
         fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(mergedEntries.size()-rows.length, mergedEntries.size() -1);
@@ -257,7 +293,7 @@ public abstract class ListMergeModel<T> {
      * @param rows the indices
      */
     public void copyMyToEnd(int [] rows) {
-        copyToEnd(myEntries, rows);
+        copyToEnd(MY_ENTRIES, rows);
     }
 
     /**
@@ -268,7 +304,7 @@ public abstract class ListMergeModel<T> {
      * @param rows the indices
      */
     public void copyTheirToEnd(int [] rows) {
-        copyToEnd(theirEntries, rows);
+        copyToEnd(THEIR_ENTRIES, rows);
     }
 
     /**
@@ -281,15 +317,16 @@ public abstract class ListMergeModel<T> {
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
      * 
      */
-    protected void copyBeforeCurrent(List<T> source, int [] rows, int current) {
+    protected void copyBeforeCurrent(ListRole source, int [] rows, int current) {
         if (rows == null || rows.length == 0)
             return;
+        ArrayList<T> mergedEntries = getMergedEntries();
         if (current < 0 || current >= mergedEntries.size())
             throw new IllegalArgumentException(tr("parameter current out of range: got {0}", current));
         for (int i=rows.length -1; i>=0; i--) {
             int row = rows[i];
-            T n = source.get(row);
-            mergedEntries.add(current, cloneEntry(n));
+            T n = entries.get(source).get(row);
+            mergedEntries.add(current, cloneEntryForMergedList(n));
         }
         fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(current, current + rows.length-1);
@@ -305,7 +342,7 @@ public abstract class ListMergeModel<T> {
      * 
      */
     public void copyMyBeforeCurrent(int [] rows, int current) {
-        copyBeforeCurrent(myEntries,rows,current);
+        copyBeforeCurrent(MY_ENTRIES,rows,current);
     }
 
     /**
@@ -318,7 +355,7 @@ public abstract class ListMergeModel<T> {
      * 
      */
     public void copyTheirBeforeCurrent(int [] rows, int current) {
-        copyBeforeCurrent(theirEntries,rows,current);
+        copyBeforeCurrent(THEIR_ENTRIES,rows,current);
     }
 
     /**
@@ -331,26 +368,25 @@ public abstract class ListMergeModel<T> {
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
      * 
      */
-    protected void copyAfterCurrent(List<T> source, int [] rows, int current) {
+    protected void copyAfterCurrent(ListRole source, int [] rows, int current) {
         if (rows == null || rows.length == 0)
             return;
+        ArrayList<T> mergedEntries = getMergedEntries();
+
         if (current < 0 || current >= mergedEntries.size())
             throw new IllegalArgumentException(tr("parameter current out of range: got {0}", current));
         if (current == mergedEntries.size() -1) {
-            if (source == myEntries) {
-                copyMyToEnd(rows);
-            } else if (source == theirEntries) {
-                copyTheirToEnd(rows);
-            }
+            copyToEnd(source, rows);
         } else {
             for (int i=rows.length -1; i>=0; i--) {
                 int row = rows[i];
-                T n = source.get(row);
-                mergedEntries.add(current+1, cloneEntry(n));
+                T n = entries.get(source).get(row);
+                mergedEntries.add(current+1, cloneEntryForMergedList(n));
             }
         }
         fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(current+1, current + rows.length-1);
+        notifyObservers();
     }
 
     /**
@@ -363,7 +399,7 @@ public abstract class ListMergeModel<T> {
      * 
      */
     public void copyMyAfterCurrent(int [] rows, int current) {
-        copyAfterCurrent(myEntries, rows, current);
+        copyAfterCurrent(MY_ENTRIES, rows, current);
     }
 
     /**
@@ -376,7 +412,7 @@ public abstract class ListMergeModel<T> {
      * 
      */
     public void copyTheirAfterCurrent(int [] rows, int current) {
-        copyAfterCurrent(theirEntries, rows, current);
+        copyAfterCurrent(THEIR_ENTRIES, rows, current);
     }
 
     /**
@@ -392,12 +428,14 @@ public abstract class ListMergeModel<T> {
         if (rows[0] == 0)
             // can't move up
             return;
+        ArrayList<T> mergedEntries = getMergedEntries();
         for (int row: rows) {
             T n = mergedEntries.get(row);
             mergedEntries.remove(row);
             mergedEntries.add(row -1, n);
         }
         fireModelDataChanged();
+        notifyObservers();
         mergedEntriesSelectionModel.clearSelection();
         for (int row: rows) {
             mergedEntriesSelectionModel.addSelectionInterval(row-1, row-1);
@@ -413,6 +451,7 @@ public abstract class ListMergeModel<T> {
     public void moveDownMerged(int [] rows) {
         if (rows == null || rows.length == 0)
             return;
+        ArrayList<T> mergedEntries = getMergedEntries();
         if (rows[rows.length -1] == mergedEntries.size() -1)
             // can't move down
             return;
@@ -423,6 +462,7 @@ public abstract class ListMergeModel<T> {
             mergedEntries.add(row +1, n);
         }
         fireModelDataChanged();
+        notifyObservers();
         mergedEntriesSelectionModel.clearSelection();
         for (int row: rows) {
             mergedEntriesSelectionModel.addSelectionInterval(row+1, row+1);
@@ -438,10 +478,14 @@ public abstract class ListMergeModel<T> {
     public void removeMerged(int [] rows) {
         if (rows == null || rows.length == 0)
             return;
+
+        ArrayList<T> mergedEntries = getMergedEntries();
+
         for (int i = rows.length-1; i>=0;i--) {
             mergedEntries.remove(rows[i]);
         }
         fireModelDataChanged();
+        notifyObservers();
         mergedEntriesSelectionModel.clearSelection();
     }
 
@@ -453,35 +497,50 @@ public abstract class ListMergeModel<T> {
      * @return true, if the lists are equal; false otherwise
      */
     protected boolean myAndTheirEntriesEqual() {
-        if (myEntries.size() != theirEntries.size())
+
+        if (getMyEntries().size() != getTheirEntries().size())
             return false;
-        for (int i=0; i < myEntries.size(); i++) {
-            if (! isEqualEntry(myEntries.get(i), theirEntries.get(i)))
+        for (int i=0; i < getMyEntries().size(); i++) {
+            if (! isEqualEntry(getMyEntries().get(i), getTheirEntries().get(i)))
                 return false;
         }
         return true;
     }
 
 
-    protected class EntriesTableModel<T1> extends DefaultTableModel {
-        private final ArrayList<T1> entries;
+    /**
+     * This an adapter between a {@see JTable} and one of the three entry lists
+     * in the role {@see ListRole} managed by the {@see ListMergeModel}.
+     * 
+     * From the point of view of the {@see JTable} it is a {@see TableModel}.
+     *
+     * @param <T>
+     * @see ListMergeModel#getMyTableModel()
+     * @see ListMergeModel#getTheirTableModel()
+     * @see ListMergeModel#getMergedTableModel()
+     */
+    public class EntriesTableModel extends DefaultTableModel {
+        private final ListRole role;
 
-        public EntriesTableModel(ArrayList<T1> nodes) {
-            this.entries = nodes;
+        /**
+         * 
+         * @param role the role
+         */
+        public EntriesTableModel(ListRole role) {
+            this.role = role;
         }
 
         @Override
         public int getRowCount() {
-            int count = myEntries.size();
-            count = Math.max(count, mergedEntries.size());
-            count = Math.max(count, theirEntries.size());
+            int count = Math.max(getMyEntries().size(), getMergedEntries().size());
+            count = Math.max(count, getTheirEntries().size());
             return count;
         }
 
         @Override
         public Object getValueAt(int row, int column) {
-            if (row < entries.size())
-                return entries.get(row);
+            if (row < entries.get(role).size())
+                return entries.get(role).get(row);
             return null;
         }
 
@@ -494,12 +553,110 @@ public abstract class ListMergeModel<T> {
         public void setValueAt(Object value, int row, int col) {
             ListMergeModel.this.setValueAt(this, value,row,col);
         }
+
+        public ListMergeModel getListMergeModel() {
+            return ListMergeModel.this;
+        }
+
+        /**
+         * replies true if the {@see ListRole} of this {@see EntriesTableModel}
+         * participates in the current {@see ComparePairType}
+         * 
+         * @return true, if the if the {@see ListRole} of this {@see EntriesTableModel}
+         * participates in the current {@see ComparePairType}
+         * 
+         * @see ComparePairListModel#getSelectedComparePair()
+         */
+        public boolean isParticipatingInCurrentComparePair() {
+            return getComparePairListModel()
+            .getSelectedComparePair()
+            .isParticipatingIn(role);
+        }
+
+        /**
+         * replies true if the entry at <code>row</code> is equal to the entry at the
+         * same position in the opposite list of the current {@see ComparePairType}.
+         * 
+         * @param row  the row number
+         * @return true if the entry at <code>row</code> is equal to the entry at the
+         * same position in the opposite list of the current {@see ComparePairType}
+         * @exception IllegalStateException thrown, if this model is not participating in the
+         *   current  {@see ComparePairType}
+         * @see ComparePairType#getOppositeRole(ListRole)
+         * @see #getRole()
+         * @see #getOppositeEntries()
+         */
+        public boolean isSamePositionInOppositeList(int row) {
+            if (!isParticipatingInCurrentComparePair())
+                throw new IllegalStateException(tr("list in role {0} is currently not participating in a compare pair", role.toString()));
+            if (row >= getEntries().size()) return false;
+            if (row >= getOppositeEntries().size()) return false;
+
+            T e1 = getEntries().get(row);
+            T e2 = getOppositeEntries().get(row);
+            return isEqualEntry(e1, e2);
+        }
+
+        /**
+         * replies true if the entry at the current position is present in the opposite list
+         * of the current {@see ComparePairType}.
+         * 
+         * @param row the current row
+         * @return true if the entry at the current position is present in the opposite list
+         * of the current {@see ComparePairType}.
+         * @exception IllegalStateException thrown, if this model is not participating in the
+         *   current  {@see ComparePairType}
+         * @see ComparePairType#getOppositeRole(ListRole)
+         * @see #getRole()
+         * @see #getOppositeEntries()
+         */
+        public boolean isIncludedInOppositeList(int row) {
+            if (!isParticipatingInCurrentComparePair())
+                throw new IllegalStateException(tr("list in role {0} is currently not participating in a compare pair", role.toString()));
+
+            if (row >= getEntries().size()) return false;
+            T e1 = getEntries().get(row);
+            for (T e2: getOppositeEntries()) {
+                if (isEqualEntry(e1, e2)) return true;
+            }
+            return false;
+        }
+
+        protected ArrayList<T> getEntries() {
+            return entries.get(role);
+        }
+
+        /**
+         * replies the opposite list of entries with respect to the current {@see ComparePairType}
+         * 
+         * @return the opposite list of entries
+         */
+        protected ArrayList<T> getOppositeEntries() {
+            ListRole opposite = getComparePairListModel().getSelectedComparePair().getOppositeRole(role);
+            return entries.get(opposite);
+        }
+
+        public ListRole getRole() {
+            return role;
+        }
     }
 
-    protected class EntriesSelectionModel<T1> extends DefaultListSelectionModel {
-        private final ArrayList<T1> entries;
+    /**
+     * This is the selection model to be used in a {@see JTable} which displays
+     * an entry list managed by {@see ListMergeModel}.
+     * 
+     * The model ensures that only rows displaying an entry in the entry list
+     * can be selected. "Empty" rows can't be selected.
+     * 
+     * @see ListMergeModel#getMySelectionModel()
+     * @see ListMergeModel#getMergedSelectionModel()
+     * @see ListMergeModel#getTheirSelectionModel()
+     *
+     */
+    protected class EntriesSelectionModel extends DefaultListSelectionModel {
+        private final ArrayList<T> entries;
 
-        public EntriesSelectionModel(ArrayList<T1> nodes) {
+        public EntriesSelectionModel(ArrayList<T> nodes) {
             this.entries = nodes;
         }
 
@@ -581,6 +738,50 @@ public abstract class ListMergeModel<T> {
             index1 = Math.min(entries.size() - 1, index1);
 
             super.setSelectionInterval(index0, index1);
+        }
+    }
+
+    public ComparePairListModel getComparePairListModel() {
+        return this.comparePairListModel;
+    }
+
+    public class ComparePairListModel extends AbstractListModel implements ComboBoxModel {
+
+        private  int selectedIdx;
+        private final ArrayList<ComparePairType> compareModes;
+
+        public ComparePairListModel() {
+            this.compareModes = new ArrayList<ComparePairType>();
+            compareModes.add(MY_WITH_THEIR);
+            compareModes.add(MY_WITH_MERGED);
+            compareModes.add(THEIR_WITH_MERGED);
+            selectedIdx = 0;
+        }
+
+        public Object getElementAt(int index) {
+            if (index < compareModes.size())
+                return compareModes.get(index);
+            throw new IllegalArgumentException(tr("unexpected value of parameter \"index\". Got {0}", index));
+        }
+
+        public int getSize() {
+            return compareModes.size();
+        }
+
+        public Object getSelectedItem() {
+            return compareModes.get(selectedIdx);
+        }
+
+        public void setSelectedItem(Object anItem) {
+            int i = compareModes.indexOf(anItem);
+            if (i < 0)
+                throw new IllegalStateException(tr("item {0} not found in list", anItem));
+            selectedIdx = i;
+            fireModelDataChanged();
+        }
+
+        public ComparePairType getSelectedComparePair() {
+            return compareModes.get(selectedIdx);
         }
     }
 }

@@ -6,6 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -15,6 +18,8 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.conflict.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -22,12 +27,20 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * 
  */
 public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
+    static private final Logger logger = Logger.getLogger(NodeListTableCellRenderer.class.getName());
     private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
+    public final static Color BGCOLOR_FROZEN = new Color(234,234,234);
+    public final static Color BGCOLOR_PARTICIPAING_IN_COMPARISON = Color.BLACK;
+    public final static Color FGCOLOR_PARTICIPAING_IN_COMPARISON = Color.WHITE;
 
-    private ImageIcon icon = null;
-    private Border rowNumberBorder = null;
+    public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
+    public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
+    public final static Color BGCOLOR_SAME_POSITION_IN_OPPOSITE = new Color(217,255,217);
+
+    private final ImageIcon icon;
+    private final Border rowNumberBorder;
 
     /**
      * constructor
@@ -67,6 +80,39 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         return sb.toString();
     }
 
+
+    public String buildToolTipText(OsmPrimitive primitive) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<strong>id</strong>=")
+        .append(primitive.id)
+        .append("<br>");
+        ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
+        Collections.sort(keyList);
+        for (int i = 0; i < keyList.size(); i++) {
+            if (i > 0) {
+                sb.append("<br>");
+            }
+            String key = keyList.get(i);
+            sb.append("<strong>")
+            .append(key)
+            .append("</strong>")
+            .append("=");
+            String value = primitive.get(key);
+            while(value.length() != 0) {
+                sb.append(value.substring(0,Math.min(50, value.length())));
+                if (value.length() > 50) {
+                    sb.append("<br>");
+                    value = value.substring(50);
+                } else {
+                    value = "";
+                }
+            }
+        }
+        sb.append("</html>");
+        return sb.toString();
+    }
+
     /**
      * reset the renderer
      */
@@ -75,20 +121,37 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         setForeground(Color.BLACK);
     }
 
+
+
     /**
      * render a node
+     * @param model  the model
      * @param node the node
-     * @param isSelected
+     * @param isSelected true, if the current row is selected
      */
-    protected  void renderNode(Node node, boolean isSelected) {
+    protected  void renderNode(ListMergeModel<Node>.EntriesTableModel model, Node node, int row, boolean isSelected) {
         setIcon(icon);
         setBorder(null);
-        if (isSelected) {
+        if (model.getListMergeModel().isFrozen()) {
+            setBackground(BGCOLOR_FROZEN);
+        } else if (isSelected) {
             setBackground(BGCOLOR_SELECTED);
+        } else if (model.isParticipatingInCurrentComparePair()) {
+            if (model.isSamePositionInOppositeList(row)) {
+                setBackground(BGCOLOR_SAME_POSITION_IN_OPPOSITE);
+            } else if (model.isIncludedInOppositeList(row)) {
+                setBackground(BGCOLOR_IN_OPPOSITE);
+            } else {
+                setBackground(BGCOLOR_NOT_IN_OPPOSITE);
+            }
         }
         setText(getDisplayName(node));
+        setToolTipText(buildToolTipText(node));
     }
 
+    /**
+     * render an empty row
+     */
     protected void renderEmptyRow() {
         setIcon(null);
         setBackground(BGCOLOR_EMPTY_ROW);
@@ -97,14 +160,18 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
     /**
      * render the row id
+     * @param model  the model
      * @param row the row index
-     * @param isSelected
+     * @param isSelected true, if the current row is selected
      */
-    protected  void renderRowId(int row, boolean isSelected) {
+    protected  void renderRowId( ListMergeModel<Node>.EntriesTableModel model, int row, boolean isSelected) {
         setIcon(null);
         setBorder(rowNumberBorder);
-        if (isSelected) {
-            setBackground(BGCOLOR_SELECTED);
+        if (model.getListMergeModel().isFrozen()) {
+            setBackground(BGCOLOR_FROZEN);
+        } else if (model.isParticipatingInCurrentComparePair()) {
+            setBackground(BGCOLOR_PARTICIPAING_IN_COMPARISON);
+            setForeground(FGCOLOR_PARTICIPAING_IN_COMPARISON);
         }
         setText(Integer.toString(row+1));
     }
@@ -116,13 +183,13 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         reset();
         switch(column) {
         case 0:
-            renderRowId(row, isSelected);
+            renderRowId(getModel(table),row, isSelected);
             break;
         case 1:
             if (node == null) {
                 renderEmptyRow();
             } else {
-                renderNode(node,isSelected);
+                renderNode(getModel(table), node, row, isSelected);
             }
             break;
         default:
@@ -130,5 +197,14 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
             throw new RuntimeException(tr("unexpected column index. Got {0}", column));
         }
         return this;
+    }
+
+    /**
+     * replies the model
+     * @param table  the table
+     * @return the table model
+     */
+    protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
+        return (ListMergeModel.EntriesTableModel)table.getModel();
     }
 }

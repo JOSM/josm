@@ -15,9 +15,9 @@ public class RelationMemberListColumnModel extends DefaultTableColumnModel{
         // column 0 - Role
         col = new TableColumn(0);
         col.setHeaderValue("");
-        col.setResizable(false);
+        col.setResizable(true);
         col.setWidth(20);
-        col.setMaxWidth(20);
+        col.setPreferredWidth(20);
         col.setCellRenderer(renderer);
         addColumn(col);
 

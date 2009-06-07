@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.conflict.nodes;
 
 import static org.fest.reflect.core.Reflection.field;
+import static org.fest.reflect.core.Reflection.method;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -20,9 +21,10 @@ import org.openstreetmap.josm.data.osm.Way;
 public class NodeListMergeModelTest {
 
     protected List<Node> inspectNodeList(NodeListMergeModel model, String name) {
-        return field(name).ofType(ArrayList.class)
+        return method("get" + name + "Entries")
+        .withReturnType(List.class)
         .in(model)
-        .get();
+        .invoke();
     }
 
     protected DefaultListSelectionModel inspectListSelectionModel(NodeListMergeModel model, String name) throws NoSuchFieldException, IllegalAccessException {
@@ -68,7 +70,7 @@ public class NodeListMergeModelTest {
         model.populate(myWay, theirWay);
         model.copyMyToTop(new int[]{0});
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
 
         assertEquals(1, mergedNodes.size());
         assertEquals(2, mergedNodes.get(0).id);
@@ -91,12 +93,12 @@ public class NodeListMergeModelTest {
 
         model.populate(myWay, theirWay);
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
         model.copyMyToTop(new int[]{0});
 
-        mergedNodes = inspectNodeList(model, "mergedEntries");
+        mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
         assertEquals(2, mergedNodes.get(0).id);
         assertEquals(1, mergedNodes.get(1).id);
@@ -122,12 +124,12 @@ public class NodeListMergeModelTest {
 
         model.populate(myWay, theirWay);
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
         model.copyMyToTop(new int[]{1}); // copy node 3
 
-        mergedNodes = inspectNodeList(model, "mergedEntries");
+        mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
         assertEquals(3, mergedNodes.get(0).id); // my node 3 at position 0
         assertEquals(1, mergedNodes.get(1).id); // already merged node 1 at position 1
@@ -149,12 +151,12 @@ public class NodeListMergeModelTest {
 
         model.populate(myWay, theirWay);
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
         model.copyMyToTop(new int[]{1,2}); // copy node 3 and 4
 
-        mergedNodes = inspectNodeList(model, "mergedEntries");
+        mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(3, mergedNodes.size());
         assertEquals(3, mergedNodes.get(0).id); // my node 3 at position 0
         assertEquals(4, mergedNodes.get(1).id); // my node 4 at position 1
@@ -177,7 +179,7 @@ public class NodeListMergeModelTest {
         model.populate(myWay, theirWay);
         model.copyMyToEnd(new int[]{0});
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
 
         assertEquals(1, mergedNodes.size());
         assertEquals(2, mergedNodes.get(0).id);
@@ -197,12 +199,12 @@ public class NodeListMergeModelTest {
 
         model.populate(myWay, theirWay);
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
         model.copyMyToEnd(new int[]{0});
 
-        mergedNodes = inspectNodeList(model, "mergedEntries");
+        mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
         assertEquals(1, mergedNodes.get(0).id); // already merged node 1 at position 0
         assertEquals(2, mergedNodes.get(1).id); // copied node 2 at position 1
@@ -223,12 +225,12 @@ public class NodeListMergeModelTest {
 
         model.populate(myWay, theirWay);
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
         model.copyMyToEnd(new int[]{1}); // copy node 3
 
-        mergedNodes = inspectNodeList(model, "mergedEntries");
+        mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
         assertEquals(1, mergedNodes.get(0).id); // already merged node 1 at position 0
         assertEquals(3, mergedNodes.get(1).id); // my node 3 at position 1
@@ -251,12 +253,12 @@ public class NodeListMergeModelTest {
 
         model.populate(myWay, theirWay);
 
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(1));
 
         model.copyMyToEnd(new int[]{1,2}); // copy node 3 and 4
 
-        mergedNodes = inspectNodeList(model, "mergedEntries");
+        mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(3, mergedNodes.size());
         assertEquals(1, mergedNodes.get(0).id); // already merged node 1 at position 0
         assertEquals(3, mergedNodes.get(1).id); // my node 3 at position 1
@@ -281,7 +283,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -309,7 +311,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -337,7 +339,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -370,7 +372,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -399,7 +401,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -429,7 +431,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -457,7 +459,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -490,7 +492,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -516,7 +518,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -546,7 +548,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -579,7 +581,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -605,7 +607,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));
@@ -635,7 +637,7 @@ public class NodeListMergeModelTest {
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "mergedEntries");
+        List<Node> mergedNodes = inspectNodeList(model, "Merged");
         mergedNodes.add(new Node(10));
         mergedNodes.add(new Node(11));
         mergedNodes.add(new Node(12));

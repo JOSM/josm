@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.gui.conflict;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Adjustable;
 import java.awt.FlowLayout;
@@ -25,6 +26,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @param T  the type of the entries
  * @see ListMergeModel
  */
-public abstract class ListMerger<T> extends JPanel implements PropertyChangeListener {
+public abstract class ListMerger<T> extends JPanel implements PropertyChangeListener, Observer {
     private static final Logger logger = Logger.getLogger(ListMerger.class.getName());
 
     protected JTable myEntriesTable;
@@ -71,6 +73,13 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
     private  JCheckBox cbLockMyScrolling;
     private  JCheckBox cbLockMergedScrolling;
     private  JCheckBox cbLockTheirScrolling;
+
+    private  JLabel lblMyVersion;
+    private  JLabel lblMergedVersion;
+    private  JLabel lblTheirVersion;
+
+
+    private  JLabel lblFrozenState;
 
     abstract protected JScrollPane buildMyElementsTable();
     abstract protected JScrollPane buildMergedElementsTable();
@@ -203,17 +212,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         removeMergedAction = new RemoveMergedAction();
         pnl.add(new JButton(removeMergedAction), gc);
 
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.gridwidth = 3;
-        gc.weightx = 1.0;
-        freezeAction = new FreezeAction();
-        JToggleButton btn = new JToggleButton(freezeAction);
-        freezeAction.adapt(btn);
-        btn.setName("button.freeze");
-        btn.addItemListener(freezeAction);
-        pnl.add(btn, gc);
-
         return pnl;
     }
 
@@ -223,6 +221,30 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         panel.add(new JLabel(tr("lock scrolling")));
         panel.add(cb);
         return panel;
+    }
+
+    protected JPanel buildComparePairSelectionPanel() {
+        JPanel p = new JPanel();
+        p.setLayout(new FlowLayout(FlowLayout.LEFT));
+        p.add(new JLabel(tr("Compare ")));
+        JComboBox cbComparePair =new JComboBox(model.getComparePairListModel());
+        cbComparePair.setRenderer(new ComparePairListCellRenderer());
+        p.add(cbComparePair);
+        return p;
+    }
+
+    protected JPanel buildFrozeStateControlPanel() {
+        JPanel p = new JPanel();
+        p.setLayout(new FlowLayout(FlowLayout.LEFT));
+        lblFrozenState = new JLabel();
+        p.add(lblFrozenState);
+        freezeAction = new FreezeAction();
+        JToggleButton btn = new JToggleButton(freezeAction);
+        freezeAction.adapt(btn);
+        btn.setName("button.freeze");
+        p.add(btn);
+
+        return p;
     }
 
     protected void build() {
@@ -238,22 +260,22 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(10,0,10,0);
-        JLabel lbl = new JLabel(tr("My version"));
-        lbl.setToolTipText(tr("List of elements in my dataset, i.e. the local dataset"));
-        add(lbl, gc);
+        gc.insets = new Insets(10,0,0,0);
+        lblMyVersion = new JLabel(tr("My version"));
+        lblMyVersion.setToolTipText(tr("List of elements in my dataset, i.e. the local dataset"));
+        add(lblMyVersion, gc);
 
         gc.gridx = 2;
         gc.gridy = 0;
-        lbl = new JLabel(tr("Merged version"));
-        lbl.setToolTipText(tr("List of merged elements. They will replace the my elements when the merge decisions are applied."));
-        add(lbl, gc);
+        lblMergedVersion = new JLabel(tr("Merged version"));
+        lblMergedVersion.setToolTipText(tr("List of merged elements. They will replace the my elements when the merge decisions are applied."));
+        add(lblMergedVersion, gc);
 
         gc.gridx = 4;
         gc.gridy = 0;
-        lbl = new JLabel(tr("Their version"));
-        lbl.setToolTipText(tr("List of elements in their dataset, i.e. the server dataset"));
-        add(lbl, gc);
+        lblTheirVersion = new JLabel(tr("Their version"));
+        lblTheirVersion.setToolTipText(tr("List of elements in their dataset, i.e. the server dataset"));
+        add(lblTheirVersion, gc);
 
         // ------------------------------
         gc.gridx = 0;
@@ -342,11 +364,34 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         gc.weighty = 0.0;
         add(buildMergedListControlButtons(), gc);
 
+        // -----------------------------------
+        gc.gridx = 0;
+        gc.gridy = 4;
+        gc.gridwidth = 2;
+        gc.gridheight = 1;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+        add(buildComparePairSelectionPanel(), gc);
+
+        gc.gridx = 2;
+        gc.gridy = 4;
+        gc.gridwidth = 3;
+        gc.gridheight = 1;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+        add(buildFrozeStateControlPanel(), gc);
+
+
         wireActionsToSelectionModels();
     }
 
     public ListMerger(ListMergeModel<T> model) {
         this.model = model;
+        model.addObserver(this);
         build();
         model.addPropertyChangeListener(this);
     }
@@ -713,13 +758,13 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         public void itemStateChanged(ItemEvent e) {
             int state = e.getStateChange();
             if (state == ItemEvent.SELECTED) {
-                model.setFrozen(true);
                 putValue(Action.NAME, tr("Unfreeze"));
                 putValue(Action.SHORT_DESCRIPTION, tr("Unfreeze the list of merged elements and start merging"));
+                model.setFrozen(true);
             } else if (state == ItemEvent.DESELECTED) {
-                model.setFrozen(false);
                 putValue(Action.NAME, tr("Freeze"));
                 putValue(Action.SHORT_DESCRIPTION, tr("Freeze the current list of merged elements"));
+                model.setFrozen(false);
             }
             boolean isSelected = (Boolean)getValue(PROP_SELECTED);
             if (isSelected != (e.getStateChange() == ItemEvent.SELECTED)) {
@@ -736,18 +781,46 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         theirEntriesTable.setEnabled(!newValue);
         mergedEntriesTable.getSelectionModel().clearSelection();
         mergedEntriesTable.setEnabled(!newValue);
-        freezeAction.putValue(FreezeActionProperties.PROP_SELECTED, newValue);
+        if (freezeAction != null) {
+            freezeAction.putValue(FreezeActionProperties.PROP_SELECTED, newValue);
+        }
+        if (newValue) {
+            lblFrozenState.setText(
+                    tr("<html>Click <strong>{0}</strong> to start merging my and their entries</html>",
+                            freezeAction.getValue(Action.NAME))
+            );
+        } else {
+            lblFrozenState.setText(
+                    tr("<html>Click <strong>{0}</strong> to finish merging my and their entries</html>",
+                            freezeAction.getValue(Action.NAME))
+            );
+        }
     }
 
-
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(ListMergeModel.PROP_FROZEN)) {
+        if (evt.getPropertyName().equals(ListMergeModel.FROZEN_PROP)) {
             handlePropertyChangeFrozen((Boolean)evt.getOldValue(), (Boolean)evt.getNewValue());
         }
     }
 
     public ListMergeModel<T> getModel() {
         return model;
+    }
+
+
+    public void update(Observable o, Object arg) {
+        lblMyVersion.setText(
+                tr("My version ")
+                + trn("({0} entry)", "({0} entries)", model.getMyEntriesSize(), model.getMyEntriesSize())
+        );
+        lblMergedVersion.setText(
+                tr("Merged version ")
+                + trn("({0} entry)", "({0} entries)", model.getMergedEntriesSize(), model.getMergedEntriesSize())
+        );
+        lblTheirVersion.setText(
+                tr("Their version ")
+                + trn("({0} entry)", "({0} entries)", model.getTheirEntriesSize(), model.getTheirEntriesSize())
+        );
     }
 
 

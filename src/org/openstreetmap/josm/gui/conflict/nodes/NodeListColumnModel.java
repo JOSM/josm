@@ -16,9 +16,9 @@ public class NodeListColumnModel extends DefaultTableColumnModel {
         // column 0 - Row num
         col = new TableColumn(0);
         col.setHeaderValue("");
-        col.setResizable(false);
+        col.setResizable(true);
         col.setWidth(30);
-        col.setMaxWidth(30);
+        col.setPreferredWidth(30);
         col.setCellRenderer(renderer);
         addColumn(col);
 

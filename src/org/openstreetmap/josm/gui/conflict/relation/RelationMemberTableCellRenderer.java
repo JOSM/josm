@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.relation;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.conflict.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -29,6 +30,15 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     private final static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
+
+    public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
+    public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
+    public final static Color BGCOLOR_SAME_POSITION_IN_OPPOSITE = new Color(217,255,217);
+
+    public final static Color BGCOLOR_PARTICIPAING_IN_COMPARISON = Color.BLACK;
+    public final static Color FGCOLOR_PARTICIPAING_IN_COMPARISON = Color.WHITE;
+
+    public final static Color BGCOLOR_FROZEN = new Color(234,234,234);
 
     private ImageIcon nodeIcon;
     private ImageIcon wayIcon;
@@ -56,6 +66,39 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
     }
 
+
+    public String buildToolTipText(OsmPrimitive primitive) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<strong>id</strong>=")
+        .append(primitive.id)
+        .append("<br>");
+        ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
+        Collections.sort(keyList);
+        for (int i = 0; i < keyList.size(); i++) {
+            if (i > 0) {
+                sb.append("<br>");
+            }
+            String key = keyList.get(i);
+            sb.append("<strong>")
+            .append(key)
+            .append("</strong>")
+            .append("=");
+            String value = primitive.get(key);
+            while(value.length() != 0) {
+                sb.append(value.substring(0,Math.min(50, value.length())));
+                if (value.length() > 50) {
+                    sb.append("<br>");
+                    value = value.substring(50);
+                } else {
+                    value = "";
+                }
+            }
+        }
+        sb.append("</html>");
+        return sb.toString();
+    }
+
     /**
      * creates the display name for a node. The name is derived from the nodes id,
      * its name (i.e. the value of the tag with key name) and its coordinates.
@@ -66,14 +109,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     protected String getDisplayName(RelationMember member) {
         StringBuilder sb = new StringBuilder();
         OsmPrimitive primitive = member.member;
-        if (primitive instanceof Node) {
-            sb.append(tr("Node"));
-        } else if (primitive instanceof Way) {
-            sb.append(tr("Way"));
-        } else if (primitive instanceof Relation) {
-            sb.append(tr("Relation"));
-        }
-        sb.append(" ");
         if (primitive.get("name") != null) {
             sb.append(primitive.get("name"));
             sb.append("/");
@@ -109,9 +144,44 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     }
 
 
-    protected void setBackground(boolean isSelected) {
-        Color bgc = isSelected ?  BGCOLOR_SELECTED : Color.WHITE;
+    protected void renderBackground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
+        Color bgc = Color.WHITE;
+        if (col == 0) {
+            if (model.getListMergeModel().isFrozen()) {
+                bgc = BGCOLOR_FROZEN;
+            } else if (model.isParticipatingInCurrentComparePair()) {
+                bgc = BGCOLOR_PARTICIPAING_IN_COMPARISON;
+            } else if (isSelected) {
+                bgc = BGCOLOR_SELECTED;
+            }
+        } else {
+            if (model.getListMergeModel().isFrozen()) {
+                bgc = BGCOLOR_FROZEN;
+            } else if (member == null) {
+                bgc = BGCOLOR_EMPTY_ROW;
+            } else if (isSelected) {
+                bgc = BGCOLOR_SELECTED;
+            } else {
+                if (model.isParticipatingInCurrentComparePair()) {
+                    if (model.isSamePositionInOppositeList(row)) {
+                        bgc = BGCOLOR_SAME_POSITION_IN_OPPOSITE;
+                    } else if (model.isIncludedInOppositeList(row)) {
+                        bgc = BGCOLOR_IN_OPPOSITE;
+                    } else {
+                        bgc = BGCOLOR_NOT_IN_OPPOSITE;
+                    }
+                }
+            }
+        }
         setBackground(bgc);
+    }
+
+    protected void renderForeground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
+        Color fgc = Color.BLACK;
+        if (col == 0 && model.isParticipatingInCurrentComparePair() && ! model.getListMergeModel().isFrozen()) {
+            fgc = Color.WHITE;
+        }
+        setForeground(fgc);
     }
 
     protected void renderRole(RelationMember member) {
@@ -122,7 +192,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     protected void renderPrimitive(RelationMember member) {
         String displayName = getDisplayName(member);
         setText(displayName);
-        setToolTipText(displayName);
+        setToolTipText(buildToolTipText(member.member));
         if (member.member instanceof Node) {
             setIcon(nodeIcon);
         } else if (member.member instanceof Way) {
@@ -140,7 +210,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
      * @param row the row index
      * @param isSelected
      */
-    protected  void renderRowId(int row, boolean isSelected) {
+    protected  void renderRowId(int row) {
         setBorder(rowNumberBorder);
         setText(Integer.toString(row+1));
     }
@@ -157,10 +227,11 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
 
         RelationMember member = (RelationMember)value;
         reset();
-        setBackground(isSelected);
+        renderBackground(getModel(table), member, row, column, isSelected);
+        renderForeground(getModel(table), member, row, column, isSelected);
         switch(column) {
         case 0:
-            renderRowId(row, isSelected);
+            renderRowId(row);
             break;
         case 1:
             if (member == null) {
@@ -182,4 +253,12 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         return this;
     }
 
+    /**
+     * replies the model
+     * @param table  the table
+     * @return the table model
+     */
+    protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
+        return (ListMergeModel.EntriesTableModel)table.getModel();
+    }
 }
