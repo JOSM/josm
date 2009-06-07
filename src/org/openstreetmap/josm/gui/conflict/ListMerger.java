@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * A UI component for resolving conflicts in two lists of entries of type T.
- * 
+ *
  * @param T  the type of the entries
  * @see ListMergeModel
  */
@@ -686,7 +686,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
     /**
      * Action for removing the selected entries in the list of merged entries
      * from the list of merged entries.
-     * 
+     *
      */
     class RemoveMergedAction extends AbstractAction implements ListSelectionListener {
 
@@ -739,7 +739,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          * Java 1.5 doesn't known Action.SELECT_KEY. Wires a toggle button to this action
          * such that the action gets notified about item state changes and the button gets
          * notified about selection state changes of the action.
-         * 
+         *
          * @param btn a toggle button
          */
         public void adapt(final JToggleButton btn) {
@@ -810,27 +810,22 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
     public void update(Observable o, Object arg) {
         lblMyVersion.setText(
-                tr("My version ")
-                + trn("({0} entry)", "({0} entries)", model.getMyEntriesSize(), model.getMyEntriesSize())
+                trn("My version ({0} entry)", "My version ({0} entries)", model.getMyEntriesSize(), model.getMyEntriesSize())
         );
         lblMergedVersion.setText(
-                tr("Merged version ")
-                + trn("({0} entry)", "({0} entries)", model.getMergedEntriesSize(), model.getMergedEntriesSize())
+                trn("Merged version ({0} entry)", "Merged version ({0} entries)", model.getMergedEntriesSize(), model.getMergedEntriesSize())
         );
         lblTheirVersion.setText(
-                tr("Their version ")
-                + trn("({0} entry)", "({0} entries)", model.getTheirEntriesSize(), model.getTheirEntriesSize())
+                trn("Their version ({0} entry)", "Their version ({0} entries)", model.getTheirEntriesSize(), model.getTheirEntriesSize())
         );
     }
-
-
 
     /**
      * Synchronizes scrollbar adjustments between a set of
      * {@see Adjustable}s. Whenever the adjustment of one of
      * the registerd Adjustables is updated the adjustment of
      * the other registered Adjustables is adjusted too.
-     * 
+     *
      */
     class AdjustmentSynchronizer implements AdjustmentListener {
 
@@ -849,7 +844,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         /**
          * registers an {@see Adjustable} for participation in synchronized
          * scrolling.
-         * 
+         *
          * @param adjustable the adjustable
          */
         public void participateInSynchronizedScrolling(Adjustable adjustable) {
@@ -864,7 +859,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
         /**
          * event handler for {@see AdjustmentEvent}s
-         * 
+         *
          */
         public void adjustmentValueChanged(AdjustmentEvent e) {
             if (! enabledMap.get(e.getAdjustable()))
@@ -879,7 +874,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         /**
          * sets whether adjustable participates in adjustment synchronization
          * or not
-         * 
+         *
          * @param adjustable the adjustable
          */
         protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
@@ -895,7 +890,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
         /**
          * returns true if an adjustable is participating in synchronized scrolling
-         * 
+         *
          * @param adjustable the adjustable
          * @return true, if the adjustable is participating in synchronized scrolling, false otherwise
          * @throws IllegalStateException thrown, if adjustable is not registered for synchronized scrolling
@@ -915,8 +910,8 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          *   <ol>state changes in this {@see AdjustmentSynchronizer} are reflected in the
          *      {@see JCheckBox}</ol>
          * </li>
-         * 
-         * 
+         *
+         *
          * @param view  the checkbox to control whether an adjustable participates in synchronized
          *      adjustment
          * @param adjustable the adjustable

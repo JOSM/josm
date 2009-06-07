@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JOptionPane;
 
@@ -23,22 +24,14 @@ public class OsmImporter extends FileImporter {
         super(new ExtensionFileFilter("osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)"));
     }
 
+    public OsmImporter(ExtensionFileFilter filter) {
+        super(filter);
+    }
+
     @Override public void importData(File file) throws IOException {
         try {
-            OsmReader osm = OsmReader.parseDataSetOsm(new FileInputStream(file), null, Main.pleaseWaitDlg);
-            DataSet dataSet = osm.getDs();
-            OsmDataLayer layer = new OsmDataLayer(dataSet, file.getName(), file);
-            Main.main.addLayer(layer);
-            layer.fireDataChange();
-            if (osm.getParseNotes().length() != 0) {
-                /* display at most five lines */
-                String notes = osm.getParseNotes();
-                int j = 0;
-                for (int i = 0; i < 5; i++)
-                    j = notes.indexOf('\n', j + 1);
-                j = j >= 0 ? j : notes.length();
-                JOptionPane.showMessageDialog(Main.parent, notes.substring(0, j));
-            }
+            FileInputStream in = new FileInputStream(file);
+            importData(in, file);
         } catch (HeadlessException e) {
             e.printStackTrace();
             throw new IOException(tr("Could not read \"{0}\"", file.getName()));
@@ -48,6 +41,23 @@ public class OsmImporter extends FileImporter {
         } catch (SAXException e) {
             e.printStackTrace();
             throw new IOException(tr("Could not read \"{0}\"", file.getName()));
+        }
+    }
+
+    protected void importData(InputStream in, File associatedFile) throws SAXException, IOException {
+        OsmReader osm = OsmReader.parseDataSetOsm(in, null, Main.pleaseWaitDlg);
+        DataSet dataSet = osm.getDs();
+        OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
+        Main.main.addLayer(layer);
+        layer.fireDataChange();
+        if (osm.getParseNotes().length() != 0) {
+            /* display at most five lines */
+            String notes = osm.getParseNotes();
+            int j = 0;
+            for (int i = 0; i < 5; i++)
+                j = notes.indexOf('\n', j + 1);
+            j = j >= 0 ? j : notes.length();
+            JOptionPane.showMessageDialog(Main.parent, notes.substring(0, j));
         }
     }
 }

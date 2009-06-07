@@ -9,11 +9,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.zip.GZIPOutputStream;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.tools.bzip2.CBZip2OutputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -22,6 +26,8 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.GpxWriter;
+import org.openstreetmap.josm.io.OsmBzip2Importer;
+import org.openstreetmap.josm.io.OsmGzipImporter;
 import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -139,9 +145,14 @@ public abstract class SaveActionBase extends DiskAccessAction {
         try {
             GpxImporter gpxImExporter = new GpxImporter();
             OsmImporter osmImExporter = new OsmImporter();
+            OsmGzipImporter osmGzipImporter = new OsmGzipImporter();
+            OsmBzip2Importer osmBzip2Importer = new OsmBzip2Importer();
             if (gpxImExporter.acceptFile(file))
                 GpxExportAction.exportGpx(file, layer);
-            else if (osmImExporter.acceptFile(file)) {
+            else if (osmImExporter.acceptFile(file) 
+                    || osmGzipImporter.acceptFile(file)
+                    || osmBzip2Importer.acceptFile(file)) 
+            {
                 // use a tmp file because if something errors out in the
                 // process of writing the file, we might just end up with
                 // a truncated file.  That can destroy lots of work.
@@ -149,7 +160,19 @@ public abstract class SaveActionBase extends DiskAccessAction {
                     tmpFile = new File(file.getPath() + "~");
                     copy(file, tmpFile);
                 }
-                OsmWriter w = new OsmWriter(new PrintWriter(file, "UTF-8"), false, layer.data.version);
+
+                // create outputstream and wrap it with gzip or bzip, if necessary
+                OutputStream out = new FileOutputStream(file);
+                if(osmGzipImporter.acceptFile(file)) {
+                    out = new GZIPOutputStream(out);
+                } else if(osmBzip2Importer.acceptFile(file)) {
+                    out.write('B');
+                    out.write('Z');
+                    out = new CBZip2OutputStream(out);
+                }
+                Writer writer = new OutputStreamWriter(out, "UTF-8"); 
+
+                OsmWriter w = new OsmWriter(new PrintWriter(writer), false, layer.data.version);
                 w.header();
                 w.writeDataSources(layer.data);
                 w.writeContent(layer.data);
