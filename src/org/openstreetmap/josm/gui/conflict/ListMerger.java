@@ -52,7 +52,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
     protected ListMergeModel<T> model;
 
-
     private CopyStartLeftAction copyStartLeftAction;
     private CopyBeforeCurrentLeftAction copyBeforeCurrentLeftAction;
     private CopyAfterCurrentLeftAction copyAfterCurrentLeftAction;
@@ -879,7 +878,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          */
         protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
             if (adjustable == null)
-                throw new IllegalArgumentException(tr("argument \"adjustable\" must not be null"));
+                throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "adjustable"));
 
             if (! synchronizedAdjustables.contains(adjustable))
                 throw new IllegalStateException(tr("adjustable {0} not registered yet. Can't set participation in synchronized adjustment",adjustable));
@@ -920,9 +919,9 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          */
         protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalArgumentException, IllegalStateException {
             if (adjustable == null)
-                throw new IllegalArgumentException(tr("argument \"adjustable\" must not be null"));
+                throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "adjustable"));
             if (view == null)
-                throw new IllegalArgumentException(tr("argument \"view\" must not be null"));
+                throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "view"));
 
             if (! synchronizedAdjustables.contains(adjustable)) {
                 participateInSynchronizedScrolling(adjustable);
