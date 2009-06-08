@@ -118,8 +118,9 @@ public class DeleteCommand extends Command {
      */
     public static Command deleteWithReferences(Collection<? extends OsmPrimitive> selection) {
         CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds);
-        for (OsmPrimitive osm : selection)
+        for (OsmPrimitive osm : selection) {
             osm.visit(v);
+        }
         v.data.addAll(selection);
         if (v.data.isEmpty())
             return null;
@@ -140,21 +141,20 @@ public class DeleteCommand extends Command {
                 break;
             }
         }
-        if (role.length() > 0) {
-            return new ExtendedDialog(Main.parent, 
-                        tr("Conflicting relation"), 
-                        tr("Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?",
+        if (role.length() > 0)
+            return new ExtendedDialog(Main.parent,
+                    tr("Conflicting relation"),
+                    tr("Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?",
                             s.name, n.name, role),
-                        new String[] {tr("Delete from relation"), tr("Cancel")}, 
-                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
-        } else {
-            return new ExtendedDialog(Main.parent, 
-                        tr("Conflicting relation"), 
-                        tr("Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?",
+                            new String[] {tr("Delete from relation"), tr("Cancel")},
+                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+        else
+            return new ExtendedDialog(Main.parent,
+                    tr("Conflicting relation"),
+                    tr("Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?",
                             s.name, n.name),
-                        new String[] {tr("Delete from relation"), tr("Cancel")}, 
-                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();  
-        }
+                            new String[] {tr("Delete from relation"), tr("Cancel")},
+                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
     }
 
     public static Command delete(Collection<? extends OsmPrimitive> selection) {
@@ -209,22 +209,23 @@ public class DeleteCommand extends Command {
             CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
             osm.visit(v);
             for (OsmPrimitive ref : v.data) {
-                if (del.contains(ref))
+                if (del.contains(ref)) {
                     continue;
+                }
                 if (ref instanceof Way) {
                     waysToBeChanged.add((Way) ref);
                 } else if (ref instanceof Relation) {
                     if (testRelation((Relation) ref, osm) == 1) {
                         Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
-                        if (relset == null)
+                        if (relset == null) {
                             relset = new HashSet<OsmPrimitive>();
+                        }
                         relset.add(osm);
                         relationsToBeChanged.put(ref, relset);
                     } else
                         return null;
-                } else {
+                } else
                     return null;
-                }
             }
         }
 
@@ -238,14 +239,15 @@ public class DeleteCommand extends Command {
                 CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
                 w.visit(v);
                 for (OsmPrimitive ref : v.data) {
-                    if (del.contains(ref))
+                    if (del.contains(ref)) {
                         continue;
+                    }
                     if (ref instanceof Relation) {
                         Boolean found = false;
                         Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
-                        if (relset == null)
+                        if (relset == null) {
                             relset = new HashSet<OsmPrimitive>();
-                        else {
+                        } else {
                             for (OsmPrimitive m : relset) {
                                 if (m == w) {
                                     found = true;
@@ -260,9 +262,8 @@ public class DeleteCommand extends Command {
                             } else
                                 return null;
                         }
-                    } else {
+                    } else
                         return null;
-                    }
                 }
             } else {
                 cmds.add(new ChangeCommand(w, wnew));
@@ -287,8 +288,46 @@ public class DeleteCommand extends Command {
             cmds.add(new ChangeCommand(cur, rel));
         }
 
-        if (!del.isEmpty())
+        // #2707: ways to be deleted can include new nodes (with node.id == 0).
+        // Remove them from the way before the way is deleted. Otherwise the
+        // deleted way is saved (or sent to the API) with a dangling reference to a node
+        // Example:
+        //  <node id='2' action='delete' visible='true' version='1' ... />
+        //  <node id='1' action='delete' visible='true' version='1' ... />
+        //  <!-- missing node with id -1 because new deleted nodes are not persisted -->
+        //   <way id='3' action='delete' visible='true' version='1'>
+        //     <nd ref='1' />
+        //     <nd ref='-1' />  <!-- heres the problem -->
+        //     <nd ref='2' />
+        //   </way>
+        for (OsmPrimitive primitive : del) {
+            if (! (primitive instanceof Way)) {
+                continue;
+            }
+            Way w = (Way)primitive;
+            if (w.id == 0) { // new ways with id == 0 are fine,
+                continue;    // process existing ways only
+            }
+            Way wnew = new Way(w);
+            ArrayList<Node> nodesToStrip = new ArrayList<Node>();
+            // lookup new nodes which have been added to the set of deleted
+            // nodes ...
+            for (Node n : wnew.nodes) {
+                if (n.id == 0 && del.contains(n)) {
+                    nodesToStrip.add(n);
+                }
+            }
+            // .. and remove them from the way
+            //
+            wnew.nodes.removeAll(nodesToStrip);
+            if (!nodesToStrip.isEmpty()) {
+                cmds.add(new ChangeCommand(w,wnew));
+            }
+        }
+
+        if (!del.isEmpty()) {
             cmds.add(new DeleteCommand(del));
+        }
 
         return new SequenceCommand(tr("Delete"), cmds);
     }
@@ -299,9 +338,8 @@ public class DeleteCommand extends Command {
         n1.addAll(ws.way.nodes.subList(0, ws.lowerIndex + 1));
         n2.addAll(ws.way.nodes.subList(ws.lowerIndex + 1, ws.way.nodes.size()));
 
-        if (n1.size() < 2 && n2.size() < 2) {
+        if (n1.size() < 2 && n2.size() < 2)
             return new DeleteCommand(Collections.singleton(ws.way));
-        }
 
         Way wnew = new Way(ws.way);
         wnew.nodes.clear();
@@ -342,13 +380,13 @@ public class DeleteCommand extends Command {
                     if (!a.contains(n.getCoor())) {
                         JPanel msg = new JPanel(new GridBagLayout());
                         msg.add(new JLabel(
-                            "<html>" +
-                            // leave message in one tr() as there is a grammatical connection.
-                            tr("You are about to delete nodes outside of the area you have downloaded." +
-                            "<br>" +
-                            "This can cause problems because other objects (that you don't see) might use them." +
-                            "<br>" +
-                            "Do you really want to delete?") + "</html>"));
+                                "<html>" +
+                                // leave message in one tr() as there is a grammatical connection.
+                                tr("You are about to delete nodes outside of the area you have downloaded." +
+                                        "<br>" +
+                                        "This can cause problems because other objects (that you don't see) might use them." +
+                                        "<br>" +
+                                "Do you really want to delete?") + "</html>"));
                         return DontShowAgainInfo.show("delete_outside_nodes", msg, false, JOptionPane.YES_NO_OPTION, JOptionPane.YES_OPTION);
                     }
 
