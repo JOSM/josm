@@ -6,14 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
+import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
-import org.openstreetmap.josm.gui.historycombobox.JHistoryComboBox;
 
 /**
  * Class that uploads all changes to the osm server.
@@ -23,6 +21,7 @@ import org.openstreetmap.josm.gui.historycombobox.JHistoryComboBox;
  * deleted. - All remaining objects with modified flag set are updated.
  */
 public class OsmServerWriter {
+    static private final Logger logger = Logger.getLogger(OsmServerWriter.class.getName());
 
     /**
      * This list contains all successfully processed objects. The caller of
@@ -44,26 +43,44 @@ public class OsmServerWriter {
     public String timeLeft(int progress, int list_size) {
         long now = System.currentTimeMillis();
         long elapsed = now - uploadStartTime;
-        if (elapsed == 0)
+        if (elapsed == 0) {
             elapsed = 1;
+        }
         float uploads_per_ms = (float)progress / elapsed;
         float uploads_left = list_size - progress;
         int ms_left = (int)(uploads_left / uploads_per_ms);
         int minutes_left = ms_left / MSECS_PER_MINUTE;
         int seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE ;
         String time_left_str = Integer.toString(minutes_left) + ":";
-        if (seconds_left < 10)
+        if (seconds_left < 10) {
             time_left_str += "0";
+        }
         time_left_str += Integer.toString(seconds_left);
         return time_left_str;
     }
 
     /**
-     * Send the dataset to the server.
-     * @param the_version version of the data set
-     * @param list list of objects to send
+     * retrieves the most recent changeset comment from the preferences
+     * 
+     * @return the most recent changeset comment
      */
-    public void uploadOsm(String the_version, Collection<OsmPrimitive> list) {
+    protected String getChangesetComment() {
+        String cmt = "";
+        List<String> history = new LinkedList<String>(
+                Main.pref.getCollection(UploadAction.HISTORY_KEY, new LinkedList<String>()));
+        if(history.size() > 0) {
+            cmt = history.get(0);
+        }
+        return cmt;
+    }
+
+    /**
+     * Send the dataset to the server.
+     * 
+     * @param apiVersion version of the data set
+     * @param primitives list of objects to send
+     */
+    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives) throws OsmTransferException {
         processed = new LinkedList<OsmPrimitive>();
 
         // initialize API. Abort upload in case of configuration or network
@@ -72,74 +89,55 @@ public class OsmServerWriter {
         try {
             api.initialize();
         } catch(Exception e) {
-            JOptionPane.showMessageDialog(
-                null,
-                tr(   "Failed to initialize communication with the OSM server {0}.\n"
-                    + "Check the server URL in your preferences and your internet connection.",
-                    Main.pref.get("osm-server.url")
-                ),
-                tr("Error"),
-                JOptionPane.ERROR_MESSAGE
-            );
-            e.printStackTrace();
-            return;
+            throw new OsmApiInitializationException(e);
         }
 
-        Main.pleaseWaitDlg.progress.setMaximum(list.size());
+        Main.pleaseWaitDlg.progress.setMaximum(primitives.size());
         Main.pleaseWaitDlg.progress.setValue(0);
 
-        boolean useChangesets = api.hasChangesetSupport();
-
-        // controls whether or not we try and upload the whole bunch in one go
-        boolean useDiffUploads = Main.pref.getBoolean("osm-server.atomic-upload",
-            "0.6".equals(api.getVersion()));
-
-        // create changeset if required
-        try {
-            if (useChangesets) {
-                // add the last entered comment to the changeset
-                String cmt = "";
-                List<String> history = new LinkedList<String>(
-                Main.pref.getCollection(UploadAction.HISTORY_KEY, new LinkedList<String>()));
-                if(history.size() > 0) {
-                    cmt = history.get(0);
-                }
-                api.createChangeset(cmt);
-            }
-        } catch (OsmTransferException ex) {
-            dealWithTransferException(ex);
-            return;
+        // check whether we can use changeset
+        //
+        boolean canUseChangeset = api.hasChangesetSupport();
+        boolean useChangeset = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
+        if (useChangeset && ! canUseChangeset) {
+            System.out.println(tr("WARNING: preference '{0}' or api version {1} of dataset requires to use changesets, but API is not handle them. Ignoring changesets.", "osm-server.atomic-upload", apiVersion));
+            useChangeset = false;
         }
 
-        try {
-            if (useDiffUploads) {
-                // all in one go
-                processed.addAll(api.uploadDiff(list));
-            } else {
-                // upload changes individually (90% of code is for the status display...)
-                NameVisitor v = new NameVisitor();
-                uploadStartTime = System.currentTimeMillis();
-                for (OsmPrimitive osm : list) {
-                    osm.visit(v);
-                    int progress = Main.pleaseWaitDlg.progress.getValue();
-                    String time_left_str = timeLeft(progress, list.size());
-                    Main.pleaseWaitDlg.currentAction.setText(
-                            tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
-                                    Math.round(100.0*progress/list.size()), progress,
-                                    list.size(), time_left_str, tr(v.className), v.name, osm.id));
-                    makeApiRequest(osm);
-                    processed.add(osm);
-                    Main.pleaseWaitDlg.progress.setValue(progress+1);
+        if (useChangeset) {
+            // upload everything in one changeset
+            //
+            try {
+                api.createChangeset(getChangesetComment());
+                processed.addAll(api.uploadDiff(primitives));
+            } catch(OsmTransferException e) {
+                throw e;
+            } finally {
+                try {
+                    if (canUseChangeset) {
+                        api.stopChangeset();
+                    }
+                } catch (Exception ee) {
+                    // ignore nested exception
                 }
             }
-            if (useChangesets) api.stopChangeset();
-        } catch (OsmTransferException e) {
-            try {
-                if (useChangesets) api.stopChangeset();
-            } catch (Exception ee) {
-                // ignore nested exception
+        } else {
+            // upload changes individually (90% of code is for the status display...)
+            //
+            NameVisitor v = new NameVisitor();
+            uploadStartTime = System.currentTimeMillis();
+            for (OsmPrimitive osm : primitives) {
+                osm.visit(v);
+                int progress = Main.pleaseWaitDlg.progress.getValue();
+                String time_left_str = timeLeft(progress, primitives.size());
+                Main.pleaseWaitDlg.currentAction.setText(
+                        tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
+                                Math.round(100.0*progress/primitives.size()), progress,
+                                primitives.size(), time_left_str, tr(v.className), v.name, osm.id));
+                makeApiRequest(osm);
+                processed.add(osm);
+                Main.pleaseWaitDlg.progress.setValue(progress+1);
             }
-            dealWithTransferException(e);
         }
     }
 
@@ -153,15 +151,9 @@ public class OsmServerWriter {
         }
     }
 
-    private void dealWithTransferException (OsmTransferException e) {
-        if (e instanceof OsmTransferCancelledException) {
-            // ignore - don't bother the user with yet another message that he
-            // has successfully cancelled the data upload
-            //
-            return;
+    public void disconnectActiveConnection() {
+        if (api != null && api.activeConnection != null) {
+            api.activeConnection.disconnect();
         }
-
-        JOptionPane.showMessageDialog(Main.parent,
-            /* tr("Error during upload: ") + */ e.getMessage());
     }
 }

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.concurrent.FutureTask;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -33,7 +32,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -49,6 +47,8 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class OsmApi extends OsmConnection {
+    /** max number of retries to send a request in case of HTTP 500 errors or timeouts */
+    static public final int DEFAULT_MAX_NUM_RETRIES = 5;
 
     /**
      * Object describing current changeset
@@ -92,8 +92,9 @@ public class OsmApi extends OsmConnection {
             if (qName.equals("version")) {
                 minVersion = atts.getValue("minimum");
                 maxVersion = atts.getValue("maximum");
-            } else if (qName.equals("area"))
+            } else if (qName.equals("area")) {
                 maxArea = atts.getValue("maximum");
+            }
         }
     }
 
@@ -131,8 +132,8 @@ public class OsmApi extends OsmConnection {
      * 
      * @exception UnknownHostException thrown, if the API host is unknown
      * @exception SocketTimeoutException thrown, if the connection to the API host  times out
-     * @exception ConnectException throw, if the connection to the API host fails 
-     * @exception Exception any other exception 
+     * @exception ConnectException throw, if the connection to the API host fails
+     * @exception Exception any other exception
      */
     public void initialize() throws UnknownHostException,SocketTimeoutException, ConnectException,Exception {
         initAuthentication();
@@ -148,12 +149,12 @@ public class OsmApi extends OsmConnection {
             } else {
                 System.err.println(tr("This version of JOSM is incompatible with the configured server."));
                 System.err.println(tr("It supports protocol versions 0.5 and 0.6, while the server says it supports {0} to {1}.",
-                    minVersion, maxVersion));
+                        minVersion, maxVersion));
                 initialized = false;
             }
             System.out.println(tr("Communications with {0} established using protocol version {1}",
-                Main.pref.get("osm-server.url"),
-                version));
+                    Main.pref.get("osm-server.url"),
+                    version));
             osmWriter.setVersion(version);
         } catch (Exception ex) {
             initialized = false;
@@ -301,114 +302,29 @@ public class OsmApi extends OsmConnection {
      */
     public Collection<OsmPrimitive> uploadDiff(final Collection<OsmPrimitive> list) throws OsmTransferException {
 
-        if (changeset == null) {
+        if (changeset == null)
             throw new OsmTransferException(tr("No changeset present for diff upload"));
-        }
-
 
         final ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
 
-        // this is the asynchronous update task
-        //
-        class UploadDiffTask extends  PleaseWaitRunnable {
 
-            private boolean uploadCancelled = false;
-            private boolean uploadFailed = false;
-            private Throwable lastThrowable = null;
+        CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
 
-            public UploadDiffTask(String title) {
-                super(title,false /* don't ignore exceptions */);
-            }
-
-            @Override protected void realRun() throws SAXException, IOException {
-                CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
-
-                for (OsmPrimitive osm : list) {
-                    int progress = Main.pleaseWaitDlg.progress.getValue();
-                    Main.pleaseWaitDlg.currentAction.setText(tr("Preparing..."));
-                    osm.visit(duv);
-                    Main.pleaseWaitDlg.progress.setValue(progress+1);
-                }
-
-                Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
-
-                String diff = duv.getDocument();
-                try {
-                    String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
-                    DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
-                } catch (Exception sxe) {
-                    if (isUploadCancelled()) {
-                        // ignore exceptions thrown because the connection is aborted,
-                        // i.e. IOExceptions or SocketExceptions
-                        //
-                        System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
-                        return;
-                    }
-                    uploadFailed = true;
-                    // remember last exception and don't throw it. If it was thrown again it would
-                    // have to be encapsulated in a RuntimeException which would be nested in yet
-                    // another RuntimeException by parent classes.
-                    // Rather check isUploadFailed() and retrieve getLastThrowable() after the task
-                    // is completed
-                    //
-                    lastThrowable = sxe;
-                }
-            }
-
-            @Override protected void finish() {
-                // do nothing
-            }
-
-            @Override protected void cancel() {
-                activeConnection.disconnect();
-                uploadCancelled = true;
-            }
-
-            public boolean isUploadCancelled() {
-                return uploadCancelled;
-            }
-
-            public boolean isUploadFailed() {
-                return uploadFailed;
-            }
-
-            public Throwable getLastThrowable() {
-                return lastThrowable;
-            }
+        for (OsmPrimitive osm : list) {
+            int progress = Main.pleaseWaitDlg.progress.getValue();
+            Main.pleaseWaitDlg.currentAction.setText(tr("Preparing..."));
+            osm.visit(duv);
+            Main.pleaseWaitDlg.progress.setValue(progress+1);
         }
 
-        UploadDiffTask uploadTask = new UploadDiffTask(tr("Uploading data"));
+        Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
 
-        // run  data upload as asynchronous task
-        //
+        String diff = duv.getDocument();
+        String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
         try {
-            Void result = null;
-            FutureTask<Void> task = new FutureTask<Void>(uploadTask, result);
-            task.run();
-            task.get(); // wait for the task to complete, no return value expected, though
-        }  catch(Throwable e) {
-            if (uploadTask.isUploadCancelled()) {
-                throw new OsmTransferCancelledException();
-            }
+            DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
+        } catch(Exception e) {
             throw new OsmTransferException(e);
-        }
-
-        // handle failed upload
-        //
-        if (uploadTask.isUploadFailed()) {
-            if (uploadTask.getLastThrowable() != null && uploadTask.getLastThrowable() instanceof OsmTransferException) {
-                OsmTransferException e = (OsmTransferException)uploadTask.getLastThrowable();
-                throw e;
-            }
-            // shouldn't happen, but just in case
-            //
-            throw new OsmTransferException(tr("Data upload failed for unknown reason"));
-        }
-
-        // handle cancelled upload
-        //
-        if (uploadTask.isUploadCancelled()) {
-            throw new OsmTransferCancelledException();
         }
 
         return processed;
@@ -419,9 +335,8 @@ public class OsmApi extends OsmConnection {
     private void sleepAndListen() throws OsmTransferCancelledException {
         // System.out.print("backing off for 10 seconds...");
         for(int i=0; i < 10; i++) {
-            if (cancel || isAuthCancelled()) {
+            if (cancel || isAuthCancelled())
                 throw new OsmTransferCancelledException();
-            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {}
@@ -449,9 +364,10 @@ public class OsmApi extends OsmConnection {
         if (!initialized) throw new OsmTransferException(tr("Not initialized"));
 
         StringBuffer responseBody = new StringBuffer();
-        StringBuffer statusMessage = new StringBuffer();
 
-        int retries = 5; // configurable?
+        int retries = Main.pref.getInteger("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
+        retries = Math.max(0,retries);
+
 
         while(true) { // the retry loop
             try {
@@ -510,35 +426,32 @@ public class OsmApi extends OsmConnection {
                     responseBody.append(s);
                     responseBody.append("\n");
                 }
-
-                statusMessage.setLength(0);
+                String errorHeader = null;
                 // Look for a detailed error message from the server
                 if (activeConnection.getHeaderField("Error") != null) {
-                    String er = activeConnection.getHeaderField("Error");
-                    System.err.println("Error header: " + er);
-                    statusMessage.append(tr(er));
+                    errorHeader = activeConnection.getHeaderField("Error");
+                    System.err.println("Error header: " + errorHeader);
                 } else if (retCode != 200 && responseBody.length()>0) {
                     System.err.println("Error body: " + responseBody);
-                    statusMessage.append(tr(responseBody.toString()));
-                } else {
-                    statusMessage.append(activeConnection.getResponseMessage());
                 }
                 activeConnection.disconnect();
 
-                if (retCode != 200) {
-                    throw new OsmTransferException(statusMessage.toString());
-                }
+                if (retCode != 200)
+                    throw new OsmApiException(retCode,errorHeader,responseBody.toString());
+
                 return responseBody.toString();
             } catch (UnknownHostException e) {
-                throw new OsmTransferException(tr("Unknown host")+": "+e.getMessage(), e);
+                throw new OsmTransferException(e);
             } catch (SocketTimeoutException e) {
-                if (retries-- > 0)
+                if (retries-- > 0) {
                     continue;
-                throw new OsmTransferException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+                }
+                throw new OsmTransferException(e);
             } catch (ConnectException e) {
-                if (retries-- > 0)
+                if (retries-- > 0) {
                     continue;
-                throw new OsmTransferException(e.getMessage()+ " " + e.getClass().getCanonicalName(), e);
+                }
+                throw new OsmTransferException(e);
             } catch (Exception e) {
                 if (e instanceof OsmTransferException) throw (OsmTransferException) e;
                 throw new OsmTransferException(e);
