@@ -1,11 +1,5 @@
 <project name="josm" default="dist" basedir=".">
 
-	<!-- All jar files necessary to run only JOSM (no tests) -->
-	<fileset id="josm_required_libs" dir="lib">
-		<include name="gettext-commons-0.9.6.jar"/>
-		<include name="metadata-extractor-2.3.1-nosun.jar"/>
-	</fileset>
-
 	<!-- Java classpath addition (all jar files to compile tests with this) -->
 	<path id="classpath">
 		<fileset dir="lib">
@@ -14,18 +8,7 @@
 	</path>
 
 	<target name="dist" depends="compile">
-		<!-- jars -->
-		<unjar dest="build">
-			<fileset refid="josm_required_libs" />
-		</unjar>
-
-		<!-- translation -->
-		<unjar dest="build">
-			<fileset dir="lib">
-				<include name="josm-translation.jar" />
-			</fileset>
-		</unjar>
-
+		
 		<exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
 			<env key="LANG" value="C"/>
 			<arg value="info"/>
@@ -36,16 +19,6 @@
 		<delete file="REVISION"/>
 		<property name="version.entry.commit.revision" value="UNKNOWN"/>
 		<property name="version.entry.commit.date" value="UNKNOWN"/>
-
-		<!-- images -->
-		<copy todir="build/images">
-			<fileset dir="images" />
-		</copy>
-
-		<!-- presets -->
-		<copy todir="build/presets">
-			<fileset dir="presets" />
-		</copy>
 
 		<copy file="CONTRIBUTION" todir="build"/>
 		<copy file="README" todir="build"/>
@@ -62,6 +35,13 @@
 				<attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
 				<attribute name="Main-Date" value="${version.entry.commit.date}"/>
 			</manifest>
+			<zipfileset dir="presets" prefix="presets" />
+			<zipfileset dir="images" prefix="images" />
+			<zipfileset src="lib/josm-translation.jar" />
+			
+			<!-- All jar files necessary to run only JOSM (no tests) -->			
+			<zipfileset src="lib/gettext-commons-0.9.6.jar" />
+			<zipfileset src="lib/metadata-extractor-2.3.1-nosun.jar" />
 		</jar>
 	</target>
 
