@@ -96,7 +96,7 @@ public class AutoScaleAction extends JosmAction {
                     double minlon = Double.parseDouble(bounds[1]);
                     double maxlat = Double.parseDouble(bounds[2]);
                     double maxlon = Double.parseDouble(bounds[3]);
-                    
+
                     v.visit(Main.proj.latlon2eastNorth(new LatLon(minlat, minlon)));
                     v.visit(Main.proj.latlon2eastNorth(new LatLon(maxlat, maxlon)));
                 }

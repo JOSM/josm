@@ -317,7 +317,7 @@ public class MapView extends NavigatableComponent {
         EastNorth oldCenter = center;
         double oldScale = this.scale;
 
-        if (box == null || box.min == null || box.max == null || box.min.equals(box.max)) {
+        if (box == null || box.min == null || box.max == null) {
             // no bounds means whole world
             center = getProjection().latlon2eastNorth(new LatLon(0,0));
             EastNorth world = getProjection().latlon2eastNorth(new LatLon(Projection.MAX_LAT,Projection.MAX_LON));
@@ -325,6 +325,8 @@ public class MapView extends NavigatableComponent {
             double scaleY = world.north()*2/h;
             scale = Math.max(scaleX, scaleY); // minimum scale to see all of the screen
         } else {
+            if(box.min.equals(box.max))
+                box.enlargeBoundingBox();
             center = new EastNorth(box.min.east()/2+box.max.east()/2, box.min.north()/2+box.max.north()/2);
             double scaleX = (box.max.east()-box.min.east())/w;
             double scaleY = (box.max.north()-box.min.north())/h;
@@ -364,7 +366,7 @@ public class MapView extends NavigatableComponent {
             for (Layer.LayerChangeListener l : Layer.listeners)
                 l.activeLayerChange(old, layer);
         }
-        
+
         /* This only makes the buttons look disabled. Disabling the actions as well requires
          * the user to re-select the tool after i.e. moving a layer. While testing I found
          * that I switch layers and actions at the same time and it was annoying to mind the
