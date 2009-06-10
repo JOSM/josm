@@ -29,7 +29,7 @@ public class ExtendedDialog extends JDialog {
     private final String[] bTexts;
 
     // For easy access when inherited
-    protected Object contentConstraints = GBC.eol().anchor(GBC.CENTER).insets(5,10,5,0);
+    protected Object contentConstraints = GBC.eol().anchor(GBC.CENTER).fill(GBC.HORIZONTAL).insets(5,10,5,0);
     protected ArrayList<JButton> buttons = new ArrayList<JButton>();
 
     /**
@@ -174,6 +174,10 @@ public class ExtendedDialog extends JDialog {
     private void setupEscListener() {
         Action actionListener = new AbstractAction() {
             public void actionPerformed(ActionEvent actionEvent) {
+                // 0 means that the dialog has been closed otherwise.
+                // We need to set it to zero again, in case the dialog has been re-used
+                // and the result differs from its default value
+                result = 0;
                 setVisible(false);
             }
         };
