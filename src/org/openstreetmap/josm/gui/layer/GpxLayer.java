@@ -805,7 +805,7 @@ public class GpxLayer extends Layer {
             msg.add(new JLabel(tr("<html>This action will require {0} individual<br>download requests. Do you wish<br>to continue?</html>",
                 toDownload.size())), GBC.eol());
 
-            if (JOptionPane.showConfirmDialog(Main.parent, msg,
+            if (toDownload.size() > 1 && JOptionPane.showConfirmDialog(Main.parent, msg,
                 tr("Download from OSM along this track"),
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION) {
                 return;
