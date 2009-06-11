@@ -28,9 +28,9 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 public abstract class OsmServerReader extends OsmConnection {
-    
-    private OsmApi api = new OsmApi();
-    
+
+    private OsmApi api = OsmApi.getOsmApi();
+
     /**
      * Open a connection to the given url and return a reader on the input stream
      * from that connection. In case of user cancel, return <code>null</code>.
@@ -39,7 +39,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      */
     protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
-       
+
         // initialize API. Abort download in case of configuration or network
         // errors
         //
@@ -47,13 +47,13 @@ public abstract class OsmServerReader extends OsmConnection {
             api.initialize();
         } catch(Exception e) {
             JOptionPane.showMessageDialog(
-                null,
-                tr(   "Failed to initialize communication with the OSM server {0}.\n"
-                    + "Check the server URL in your preferences and your internet connection.",
-                    Main.pref.get("osm-server.url")
-                ),
-                tr("Error"),
-                JOptionPane.ERROR_MESSAGE
+                    null,
+                    tr(   "Failed to initialize communication with the OSM server {0}.\n"
+                            + "Check the server URL in your preferences and your internet connection.",
+                            Main.pref.get("osm-server.url")
+                    ),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
             );
             e.printStackTrace();
             return null;
@@ -65,7 +65,7 @@ public abstract class OsmServerReader extends OsmConnection {
 
     protected InputStream getInputStreamRaw(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
 
-//        System.out.println("download: "+urlStr);
+        //        System.out.println("download: "+urlStr);
         URL url = new URL(urlStr);
         activeConnection = (HttpURLConnection)url.openConnection();
         if (cancel) {
@@ -73,8 +73,9 @@ public abstract class OsmServerReader extends OsmConnection {
             return null;
         }
 
-        if (Main.pref.getBoolean("osm-server.use-compression", true))
+        if (Main.pref.getBoolean("osm-server.use-compression", true)) {
             activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
+        }
 
         activeConnection.setConnectTimeout(15000);
 
@@ -88,10 +89,7 @@ public abstract class OsmServerReader extends OsmConnection {
         if (isAuthCancelled() && activeConnection.getResponseCode() == 401)
             return null;
         if (activeConnection.getResponseCode() == 500)
-        {
             throw new IOException(tr("Server returned internal error. Try a reduced area or retry after waiting some time."));
-        }
-//      System.out.println("got return: "+activeConnection.getResponseCode());
 
         String encoding = activeConnection.getContentEncoding();
         InputStream inputStream = new ProgressInputStream(activeConnection, pleaseWaitDlg);

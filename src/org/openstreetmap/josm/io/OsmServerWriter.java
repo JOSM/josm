@@ -32,7 +32,7 @@ public class OsmServerWriter {
      */
     public Collection<OsmPrimitive> processed;
 
-    private OsmApi api = new OsmApi();
+    private OsmApi api = OsmApi.getOsmApi();
 
     private static final int MSECS_PER_SECOND = 1000;
     private static final int SECONDS_PER_MINUTE = 60;
