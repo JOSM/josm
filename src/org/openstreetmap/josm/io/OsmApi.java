@@ -97,16 +97,6 @@ public class OsmApi extends OsmConnection {
     private String version = null;
 
     /**
-     * Minimum API version accepted by server, from capabilities response
-     */
-    //private String minVersion = null;
-
-    /**
-     * Maximum API version accepted by server, from capabilities response
-     */
-    //private String maxVersion = null;
-
-    /**
      * Maximum downloadable area from server (degrees squared), from capabilities response
      * FIXME: make download dialog use this, instead of hard-coded default.
      */
