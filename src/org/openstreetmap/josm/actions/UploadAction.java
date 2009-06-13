@@ -249,7 +249,7 @@ public class UploadAction extends JosmAction {
                 if (m.matches()) {
                     msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                             + "of your nodes, ways or relations.<br>"
-                            + "The conflict is cause by the <strong>{0}</strong> with id <strong>{1}</strong>,<br>"
+                            + "The conflict is caused by the <strong>{0}</strong> with id <strong>{1}</strong>,<br>"
                             + "the server has version {2}, your version is {3}.<br>"
                             + "Please synchronize your local dataset using <br>"
                             + "<strong>File-&gt;Update Data</strong>, resolve<br>"
