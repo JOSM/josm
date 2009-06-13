@@ -18,8 +18,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 
 /**
- * This is the model for resolving conflicts in the values of same properties of
- * {@see OsmPrimitive}. In particular, it represents conflicts in the coordiates of {@see Node}s and
+ * This is the model for resolving conflicts in the properties of thw
+ * {@see OsmPrimitive}s. In particular, it represents conflicts in the coordiates of {@see Node}s and
  * the deleted state of {@see OsmPrimitive}s.
  * 
  * This model is an {@see Observable}. It notifies registered {@see Observer}s whenever the
@@ -68,10 +68,10 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * replies true if there is a coordiate conflict and if this conflict is
+     * replies true if there is a coordinate conflict and if this conflict is
      * resolved
      * 
-     * @return true if there is a coordiate conflict and if this conflict is
+     * @return true if there is a coordinate conflict and if this conflict is
      * resolved; false, otherwise
      */
     public boolean isDecidedCoord() {
@@ -90,9 +90,9 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * replies true if the current decision for the coordiate conflict is <code>decision</code>
+     * replies true if the current decision for the coordinate conflict is <code>decision</code>
      * 
-     * @return true if the current decision for the coordiate conflict is <code>decision</code>;
+     * @return true if the current decision for the coordinate conflict is <code>decision</code>;
      *  false, otherwise
      */
     public boolean isCoordMergeDecision(MergeDecisionType decision) {
@@ -135,14 +135,35 @@ public class PropertiesMergeModel extends Observable {
     }
 
 
+    /**
+     * replies the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
+     * coordinates (i.e. because it is a {@see Way}).
+     * 
+     * @return the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
+     *  coordinates (i.e. because it is a {@see Way}).
+     */
     public LatLon getMyCoords() {
         return myCoords;
     }
 
+    /**
+     * replies the coordinates of their {@see OsmPrimitive}. null, if their primitive hasn't
+     * coordinates (i.e. because it is a {@see Way}).
+     * 
+     * @return the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
+     * coordinates (i.e. because it is a {@see Way}).
+     */
     public LatLon getTheirCoords() {
         return theirCoords;
     }
 
+    /**
+     * replies the coordinates of the merged {@see OsmPrimitive}. null, if the current primitives
+     * have no coordinates or if the conflict is yet {@see MergeDecisionType#UNDECIDED}
+     * 
+     * @return the coordinates of the merged {@see OsmPrimitive}. null, if the current primitives
+     * have no coordinates or if the conflict is yet {@see MergeDecisionType#UNDECIDED}
+     */
     public LatLon getMergedCoords() {
         switch(coordMergeDecision) {
         case KEEP_MINE: return myCoords;
@@ -153,6 +174,11 @@ public class PropertiesMergeModel extends Observable {
         return null;
     }
 
+    /**
+     * decides a conflict between my and their coordinates
+     * 
+     * @param decision the decision
+     */
     public void decideCoordsConflict(MergeDecisionType decision) {
         coordMergeDecision = decision;
         setChanged();
@@ -160,6 +186,10 @@ public class PropertiesMergeModel extends Observable {
         fireCompletelyResolved();
     }
 
+    /**
+     * replies my deleted state,
+     * @return
+     */
     public Boolean getMyDeletedState() {
         return myDeletedState;
     }
@@ -185,6 +215,13 @@ public class PropertiesMergeModel extends Observable {
         fireCompletelyResolved();
     }
 
+    /**
+     * replies true if my and their primitive have a conflict between
+     * their coordinate values
+     * 
+     * @return true if my and their primitive have a conflict between
+     * their coordinate values; false otherwise
+     */
     public boolean hasCoordConflict() {
         if (myCoords == null && theirCoords != null) return true;
         if (myCoords != null && theirCoords == null) return true;
@@ -192,10 +229,22 @@ public class PropertiesMergeModel extends Observable {
         return !myCoords.equalsEpsilon(theirCoords);
     }
 
+    /**
+     * replies true if my and their primitive have a conflict between
+     * their deleted states
+     * 
+     * @return true if my and their primitive have a conflict between
+     * their deleted states
+     */
     public boolean hasDeletedStateConflict() {
         return myDeletedState != theirDeletedState;
     }
 
+    /**
+     * replies true if all conflict in this model are resolved
+     * 
+     * @return true if all conflict in this model are resolved; false otherwise
+     */
     public boolean isResolvedCompletely() {
         boolean ret = true;
         if (hasCoordConflict()) {
@@ -207,13 +256,20 @@ public class PropertiesMergeModel extends Observable {
         return ret;
     }
 
+    /**
+     * builds the command(s) to apply the conflict resolutions to my primitive
+     * 
+     * @param my  my primitive
+     * @param their their primitive
+     * @return the list of commands
+     */
     public List<Command> buildResolveCommand(OsmPrimitive my, OsmPrimitive their) {
         ArrayList<Command> cmds = new ArrayList<Command>();
         if (hasCoordConflict() && isDecidedCoord()) {
             cmds.add(new CoordinateConflictResolveCommand((Node)my, (Node)their, coordMergeDecision));
         }
         if (hasDeletedStateConflict() && isDecidedDeletedState()) {
-            cmds.add(new DeletedStateConflictResolveCommand(my, their, coordMergeDecision));
+            cmds.add(new DeletedStateConflictResolveCommand(my, their, deletedMergeDecision));
         }
         return cmds;
     }
