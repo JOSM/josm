@@ -18,16 +18,16 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 
 /**
- * This is the model for resolving conflicts in the properties of thw
+ * This is the model for resolving conflicts in the properties of the
  * {@see OsmPrimitive}s. In particular, it represents conflicts in the coordiates of {@see Node}s and
  * the deleted state of {@see OsmPrimitive}s.
- * 
+ *
  * This model is an {@see Observable}. It notifies registered {@see Observer}s whenever the
  * internal state changes.
- * 
+ *
  * This model also emits property changes for {@see #RESOLVED_COMPLETELY_PROP}. Property change
  * listeners may register themselves using {@see #addPropertyChangeListener(PropertyChangeListener)}.
- * 
+ *
  * @see Node#getCoor()
  * @see OsmPrimitive#deleted
  *
@@ -70,7 +70,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies true if there is a coordinate conflict and if this conflict is
      * resolved
-     * 
+     *
      * @return true if there is a coordinate conflict and if this conflict is
      * resolved; false, otherwise
      */
@@ -81,7 +81,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies true if there is a  conflict in the deleted state and if this conflict is
      * resolved
-     * 
+     *
      * @return true if there is a conflict in the deleted state and if this conflict is
      * resolved; false, otherwise
      */
@@ -91,7 +91,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * replies true if the current decision for the coordinate conflict is <code>decision</code>
-     * 
+     *
      * @return true if the current decision for the coordinate conflict is <code>decision</code>;
      *  false, otherwise
      */
@@ -101,7 +101,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * replies true if the current decision for the deleted state conflict is <code>decision</code>
-     * 
+     *
      * @return true if the current decision for the deleted state conflict is <code>decision</code>;
      *  false, otherwise
      */
@@ -111,7 +111,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * populates the model with the differences between my and their version
-     * 
+     *
      * @param my my version of the primitive
      * @param their their version of the primitive
      */
@@ -138,7 +138,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
      * coordinates (i.e. because it is a {@see Way}).
-     * 
+     *
      * @return the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
      *  coordinates (i.e. because it is a {@see Way}).
      */
@@ -149,7 +149,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies the coordinates of their {@see OsmPrimitive}. null, if their primitive hasn't
      * coordinates (i.e. because it is a {@see Way}).
-     * 
+     *
      * @return the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
      * coordinates (i.e. because it is a {@see Way}).
      */
@@ -160,7 +160,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies the coordinates of the merged {@see OsmPrimitive}. null, if the current primitives
      * have no coordinates or if the conflict is yet {@see MergeDecisionType#UNDECIDED}
-     * 
+     *
      * @return the coordinates of the merged {@see OsmPrimitive}. null, if the current primitives
      * have no coordinates or if the conflict is yet {@see MergeDecisionType#UNDECIDED}
      */
@@ -176,7 +176,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * decides a conflict between my and their coordinates
-     * 
+     *
      * @param decision the decision
      */
     public void decideCoordsConflict(MergeDecisionType decision) {
@@ -218,7 +218,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies true if my and their primitive have a conflict between
      * their coordinate values
-     * 
+     *
      * @return true if my and their primitive have a conflict between
      * their coordinate values; false otherwise
      */
@@ -232,7 +232,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies true if my and their primitive have a conflict between
      * their deleted states
-     * 
+     *
      * @return true if my and their primitive have a conflict between
      * their deleted states
      */
@@ -242,7 +242,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * replies true if all conflict in this model are resolved
-     * 
+     *
      * @return true if all conflict in this model are resolved; false otherwise
      */
     public boolean isResolvedCompletely() {
@@ -258,7 +258,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * builds the command(s) to apply the conflict resolutions to my primitive
-     * 
+     *
      * @param my  my primitive
      * @param their their primitive
      * @return the list of commands
