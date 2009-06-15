@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -43,6 +44,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
@@ -144,7 +146,9 @@ public class GenericRelationEditor extends RelationEditor {
                         for (int i = 0; i < propertyData.getRowCount(); i++) {
                             String key = propertyData.getValueAt(i, 0).toString();
                             String value = propertyData.getValueAt(i, 1).toString();
-                            if (key.length() > 0 && value.length() > 0) clone.put(key, value);
+                            if (key.length() > 0 && value.length() > 0) {
+                                clone.put(key, value);
+                            }
                         }
                         refreshTables();
                     }
@@ -174,15 +178,17 @@ public class GenericRelationEditor extends RelationEditor {
                 if(cnt > 0)
                 {
                     sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i : memberTable.getSelectedRows())
+                    for (int i : memberTable.getSelectedRows()) {
                         sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
+                    }
                 }
                 else
                 {
                     cnt = memberTable.getRowCount();
                     sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i = 0; i < cnt; ++i)
+                    for (int i = 0; i < cnt; ++i) {
                         sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
+                    }
                 }
                 Main.ds.setSelected(sel);
             }
@@ -238,14 +244,14 @@ public class GenericRelationEditor extends RelationEditor {
         }));
 
         buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
-        tr("Add all currently selected objects as members"), KeyEvent.VK_D, new ActionListener() {
+                tr("Add all currently selected objects as members"), KeyEvent.VK_D, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addSelected();
             }
         }));
 
         buttonPanel.add(createButton(marktr("Remove Selected"),"removeselected",
-        tr("Remove all currently selected objects from relation"), KeyEvent.VK_S, new ActionListener() {
+                tr("Remove all currently selected objects from relation"), KeyEvent.VK_S, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteSelected();
             }
@@ -258,7 +264,7 @@ public class GenericRelationEditor extends RelationEditor {
         }));
 
         buttonPanel.add(createButton(marktr("Remove"),"remove",
-        tr("Remove the member in the current table row from this relation"), KeyEvent.VK_M, new ActionListener() {
+                tr("Remove the member in the current table row from this relation"), KeyEvent.VK_M, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int[] rows = memberTable.getSelectedRows();
                 RelationMember mem = new RelationMember();
@@ -272,7 +278,7 @@ public class GenericRelationEditor extends RelationEditor {
         }));
 
         buttonPanel.add(createButton(marktr("Download Members"),"downloadincomplete",
-        tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_K, new ActionListener() {
+                tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_K, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 downloadRelationMembers();
                 refreshTables();
@@ -302,8 +308,9 @@ public class GenericRelationEditor extends RelationEditor {
     @Override
     protected void buttonAction(ActionEvent evt) {
         String a = evt.getActionCommand();
-        if(applyChangesText.equals(a))
+        if(applyChangesText.equals(a)) {
             applyChanges();
+        }
 
         setVisible(false);
     }
@@ -347,8 +354,9 @@ public class GenericRelationEditor extends RelationEditor {
                     way1 = m;
                     break;
                 } else if (m.member instanceof Relation) {
-                    if (m.member == this.relation)
+                    if (m.member == this.relation) {
                         break;
+                    }
                     m = ((Relation)m.member).lastMember();
                     depth++;
                 } else {
@@ -365,16 +373,18 @@ public class GenericRelationEditor extends RelationEditor {
                             way2 = m;
                             break;
                         } else if (m.member instanceof Relation) {
-                            if (m.member == this.relation)
+                            if (m.member == this.relation) {
                                 break;
+                            }
                             m = ((Relation)(m.member)).firstMember();
                             depth++;
                         } else {
                             break;
                         }
                     }
-                    if (way2 != null)
+                    if (way2 != null) {
                         break;
+                    }
                 }
             }
             if (way2 != null) {
@@ -403,7 +413,7 @@ public class GenericRelationEditor extends RelationEditor {
                     linked = true;
                 }
 
-                // end of section to determine linkedness. 
+                // end of section to determine linkedness.
 
                 memberData.addRow(new Object[]{em.role, em.member, linked ? tr("yes") : tr("no")});
             } else {
@@ -415,14 +425,14 @@ public class GenericRelationEditor extends RelationEditor {
 
     private SideButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {
         return
-            new SideButton(name, iconName, "relationEditor",
+        new SideButton(name, iconName, "relationEditor",
                 tooltip,
                 Shortcut.registerShortcut("relationeditor:"+iconName,
                         tr("Relation Editor: {0}", name == null ? tooltip : name),
                         mnemonic,
                         Shortcut.GROUP_MNEMONIC),
-                actionListener
-            );
+                        actionListener
+        );
     }
 
     private void addSelected() {
@@ -482,7 +492,9 @@ public class GenericRelationEditor extends RelationEditor {
         int i = 0;
         for (RelationMember rm : clone.members) {
             if (rm != null) {
-                while (m[i] != null) i++;
+                while (m[i] != null) {
+                    i++;
+                }
                 m[i++] = rm;
             }
         }
@@ -508,19 +520,21 @@ public class GenericRelationEditor extends RelationEditor {
             }
         }
         if (download) {
-            OsmServerObjectReader reader = new OsmServerObjectReader(clone.id, OsmServerObjectReader.TYPE_REL, true);
+            OsmServerObjectReader reader = new OsmServerObjectReader(clone.id, OsmPrimitiveType.RELATION, true);
             try {
                 DataSet dataSet = reader.parseOsm();
                 if (dataSet != null) {
                     final MergeVisitor visitor = new MergeVisitor(Main.main
                             .editLayer().data, dataSet);
-                    for (final OsmPrimitive osm : dataSet.allPrimitives())
+                    for (final OsmPrimitive osm : dataSet.allPrimitives()) {
                         osm.visit(visitor);
+                    }
                     visitor.fixReferences();
 
                     // copy the merged layer's data source info
-                    for (DataSource src : dataSet.dataSources)
+                    for (DataSource src : dataSet.dataSources) {
                         Main.main.editLayer().data.dataSources.add(src);
+                    }
                     Main.main.editLayer().fireDataChange();
 
                     if (visitor.conflicts.isEmpty())
@@ -529,19 +543,25 @@ public class GenericRelationEditor extends RelationEditor {
                     dlg.add(visitor.conflicts);
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("There were conflicts during import."));
-                    if (!dlg.isVisible())
+                    if (!dlg.isVisible()) {
                         dlg.action
-                                .actionPerformed(new ActionEvent(this, 0, ""));
+                        .actionPerformed(new ActionEvent(this, 0, ""));
+                    }
                 }
-
-            } catch (SAXException e) {
+            } catch(OsmTransferException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this,tr("Error parsing server response.")+": "+e.getMessage(),
-                tr("Error"), JOptionPane.ERROR_MESSAGE);
-            } catch (IOException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this,tr("Cannot connect to server.")+": "+e.getMessage(),
-                tr("Error"), JOptionPane.ERROR_MESSAGE);
+                if (e.getCause() != null) {
+                    if (e.getCause() instanceof SAXException) {
+                        JOptionPane.showMessageDialog(this,tr("Error parsing server response.")+": "+e.getCause().getMessage(),
+                                tr("Error"), JOptionPane.ERROR_MESSAGE);
+                    } else if(e.getCause() instanceof IOException) {
+                        JOptionPane.showMessageDialog(this,tr("Cannot connect to server.")+": "+e.getCause().getMessage(),
+                                tr("Error"), JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this,tr("Error when communicating with server.")+": "+e.getMessage(),
+                            tr("Error"), JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }

@@ -21,6 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmIdReader;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.ProgressInputStream;
 import org.xml.sax.SAXException;
 
@@ -46,10 +47,11 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
             Map<Long, String> ids = idReader.parseIds(in);
             for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
                 if (ids.containsKey(osm.id) && osm.getClass().getName().toLowerCase().endsWith(ids.get(osm.id))) {
-                    if (mode == SearchAction.SearchMode.remove)
+                    if (mode == SearchAction.SearchMode.remove) {
                         sel.remove(osm);
-                    else
+                    } else {
                         sel.add(osm);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -58,6 +60,21 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
         } catch (SAXException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(Main.parent,tr("Parsing error in URL: \"{0}\"",url));
+        } catch(OsmTransferException e) {
+            e.printStackTrace();
+            if (e.getCause() != null) {
+                if (e.getCause() instanceof IOException ) {
+                    JOptionPane.showMessageDialog(Main.parent, tr("Could not read from URL: \"{0}\"",url),
+                            tr("Error"), JOptionPane.ERROR_MESSAGE);
+                } else if (e.getCause() instanceof SAXException) {
+                    JOptionPane.showMessageDialog(Main.parent,tr("Parsing error in URL: \"{0}\"",url),
+                            tr("Error"), JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(Main.parent,tr("Error while communicating with server.",url),
+                        tr("Error"), JOptionPane.ERROR_MESSAGE);
+            }
+
         }
     }
     @Override protected void cancel() {
@@ -65,7 +82,8 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
         idReader.cancel();
     }
     @Override protected void finish() {
-        if (sel != null)
+        if (sel != null) {
             Main.ds.setSelected(sel);
+        }
     }
 }

@@ -21,31 +21,26 @@ public class ProgressInputStream extends InputStream {
     private final URLConnection connection;
     private PleaseWaitDialog pleaseWaitDlg;
 
-    public class OsmServerException extends IOException {
-        private OsmServerException(String e) {
-            super(e);
-        }
-    }
-
-    public ProgressInputStream(URLConnection con, PleaseWaitDialog pleaseWaitDlg) throws IOException, OsmServerException {
+    public ProgressInputStream(URLConnection con, PleaseWaitDialog pleaseWaitDlg) throws OsmTransferException {
         this.connection = con;
 
         try {
             this.in = con.getInputStream();
         } catch (IOException e) {
             if (con.getHeaderField("Error") != null)
-                throw new OsmServerException(tr(con.getHeaderField("Error")));
-            throw e;
+                throw new OsmTransferException(tr(con.getHeaderField("Error")));
+            throw new OsmTransferException(e);
         }
 
         int contentLength = con.getContentLength();
         this.pleaseWaitDlg = pleaseWaitDlg;
         if (pleaseWaitDlg == null)
             return;
-        if (contentLength > 0)
+        if (contentLength > 0) {
             pleaseWaitDlg.progress.setMaximum(contentLength);
-        else
+        } else {
             pleaseWaitDlg.progress.setMaximum(0);
+        }
         pleaseWaitDlg.progress.setValue(0);
     }
 
@@ -55,15 +50,17 @@ public class ProgressInputStream extends InputStream {
 
     @Override public int read(byte[] b, int off, int len) throws IOException {
         int read = in.read(b, off, len);
-        if (read != -1)
+        if (read != -1) {
             advanceTicker(read);
+        }
         return read;
     }
 
     @Override public int read() throws IOException {
         int read = in.read();
-        if (read != -1)
+        if (read != -1) {
             advanceTicker(1);
+        }
         return read;
     }
 
@@ -75,8 +72,9 @@ public class ProgressInputStream extends InputStream {
         if (pleaseWaitDlg == null)
             return;
 
-        if (pleaseWaitDlg.progress.getMaximum() == 0 && connection.getContentLength() != -1)
+        if (pleaseWaitDlg.progress.getMaximum() == 0 && connection.getContentLength() != -1) {
             pleaseWaitDlg.progress.setMaximum(connection.getContentLength());
+        }
 
         readSoFar += amount;
 
@@ -88,10 +86,11 @@ public class ProgressInputStream extends InputStream {
 
             String cur = pleaseWaitDlg.currentAction.getText();
             int i = cur.indexOf(' ');
-            if (i != -1)
+            if (i != -1) {
                 cur = cur.substring(0, i) + progStr;
-            else
+            } else {
                 cur += progStr;
+            }
             pleaseWaitDlg.currentAction.setText(cur);
         }
     }

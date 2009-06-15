@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
 
@@ -31,8 +32,9 @@ import org.xml.sax.SAXException;
 public class DownloadOsmTask implements DownloadTask {
     private static Bounds currentBounds;
     private Future<Task> task = null;
+    private DataSet downloadedData;
 
-    private static class Task extends PleaseWaitRunnable {
+    private class Task extends PleaseWaitRunnable {
         private OsmServerReader reader;
         private DataSet dataSet;
         private boolean newLayer;
@@ -48,7 +50,7 @@ public class DownloadOsmTask implements DownloadTask {
             this.silent = silent;
         }
 
-        @Override public void realRun() throws IOException, SAXException {
+        @Override public void realRun() throws IOException, SAXException, OsmTransferException {
             Main.pleaseWaitDlg.setCustomText(msg);
             dataSet = reader.parseOsm();
         }
@@ -58,29 +60,40 @@ public class DownloadOsmTask implements DownloadTask {
                 return; // user canceled download or error occurred
             if (dataSet.allPrimitives().isEmpty()) {
                 // If silent is set to true, we don't want to see information messages
-                if(!silent)
+                if(!silent) {
                     errorMessage = tr("No data imported.");
+                }
                 // need to synthesize a download bounds lest the visual indication of downloaded
                 // area doesn't work
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
             }
-
+            rememberDownloadedData(dataSet);
             OsmDataLayer layer = new OsmDataLayer(dataSet, tr("Data Layer {0}", num), null);
-            if (newLayer)
+            if (newLayer) {
                 Main.main.addLayer(layer);
-            else
+            } else {
                 Main.main.editLayer().mergeFrom(layer);
+            }
 
             Main.pleaseWaitDlg.setCustomText("");
         }
 
         @Override protected void cancel() {
-            if (reader != null)
+            if (reader != null) {
                 reader.cancel();
+            }
             Main.pleaseWaitDlg.cancel.setEnabled(false);
         }
     }
     private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"), true);
+
+    private void rememberDownloadedData(DataSet ds) {
+        this.downloadedData = ds;
+    }
+
+    public DataSet getDownloadedData() {
+        return downloadedData;
+    }
 
     public void download(DownloadAction action, double minlat, double minlon,
             double maxlat, double maxlon, boolean silent, String message) {
@@ -95,7 +108,7 @@ public class DownloadOsmTask implements DownloadTask {
         }
 
         boolean newLayer = action != null
-                                && (action.dialog == null || action.dialog.newLayer.isSelected());
+        && (action.dialog == null || action.dialog.newLayer.isSelected());
 
         Task t = new Task(newLayer,
                 new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon),
@@ -123,7 +136,7 @@ public class DownloadOsmTask implements DownloadTask {
                 new OsmServerLocationReader(url),
                 false,
                 getDataLayersCount(),
-                "");
+        "");
         task = Main.worker.submit(t, t);
     }
 
@@ -144,15 +157,16 @@ public class DownloadOsmTask implements DownloadTask {
             return 0;
         int num = 0;
         for(Layer l : Main.map.mapView.getAllLayers())
-            if(l instanceof OsmDataLayer)
+            if(l instanceof OsmDataLayer) {
                 num++;
+            }
         return num;
     }
 
-   /*
-    * (non-Javadoc)
-    * @see org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask#getErrorMessage()
-    */
+    /*
+     * (non-Javadoc)
+     * @see org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask#getErrorMessage()
+     */
     public String getErrorMessage() {
         if(task == null)
             return "";
@@ -160,8 +174,8 @@ public class DownloadOsmTask implements DownloadTask {
         try {
             Task t = task.get();
             return t.errorMessage == null
-                ? ""
-                : t.errorMessage;
+            ? ""
+                    : t.errorMessage;
         } catch (Exception e) {
             return "";
         }

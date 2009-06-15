@@ -9,8 +9,10 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -77,24 +79,27 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedPrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (!osm.deleted)
+            if (!osm.deleted) {
                 o.add(osm);
+            }
         return o;
     }
 
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (!osm.deleted && !osm.incomplete)
+            if (!osm.deleted && !osm.incomplete) {
                 o.add(osm);
+            }
         return o;
     }
 
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (!osm.deleted && !osm.incomplete && !(osm instanceof Relation))
+            if (!osm.deleted && !osm.incomplete && !(osm instanceof Relation)) {
                 o.add(osm);
+            }
         return o;
     }
 
@@ -149,8 +154,9 @@ public class DataSet implements Cloneable {
         clearSelection(nodes);
         clearSelection(ways);
         clearSelection(relations);
-        for (OsmPrimitive osm : selection)
+        for (OsmPrimitive osm : selection) {
             osm.selected = true;
+        }
         fireSelectionChanged(selection);
     }
 
@@ -163,8 +169,9 @@ public class DataSet implements Cloneable {
         clearSelection(ways);
         clearSelection(relations);
         for (OsmPrimitive o : osm)
-            if (o != null)
+            if (o != null) {
                 o.selected = true;
+            }
         fireSelectionChanged(Arrays.asList(osm));
     }
 
@@ -175,8 +182,9 @@ public class DataSet implements Cloneable {
     private void clearSelection(Collection<? extends OsmPrimitive> list) {
         if (list == null)
             return;
-        for (OsmPrimitive osm : list)
+        for (OsmPrimitive osm : list) {
             osm.selected = false;
+        }
     }
 
     /**
@@ -188,8 +196,9 @@ public class DataSet implements Cloneable {
         if (list == null)
             return sel;
         for (OsmPrimitive osm : list)
-            if (osm.selected && !osm.deleted)
+            if (osm.selected && !osm.deleted) {
                 sel.add(osm);
+            }
         return sel;
     }
 
@@ -199,20 +208,25 @@ public class DataSet implements Cloneable {
      * @see SelectionChangedListener
      */
     public static void fireSelectionChanged(Collection<? extends OsmPrimitive> sel) {
-        for (SelectionChangedListener l : selListeners)
+        for (SelectionChangedListener l : selListeners) {
             l.selectionChanged(sel);
+        }
     }
 
     @Override public DataSet clone() {
         DataSet ds = new DataSet();
-        for (Node n : nodes)
+        for (Node n : nodes) {
             ds.nodes.add(new Node(n));
-        for (Way w : ways)
+        }
+        for (Way w : ways) {
             ds.ways.add(new Way(w));
-        for (Relation e : relations)
+        }
+        for (Relation e : relations) {
             ds.relations.add(new Relation(e));
-        for (DataSource source : dataSources)
+        }
+        for (DataSource source : dataSources) {
             ds.dataSources.add(new DataSource(source.bounds, source.origin));
+        }
         ds.version = version;
         return ds;
     }
@@ -258,5 +272,42 @@ public class DataSet implements Cloneable {
             }
         });
         return selArr;
+    }
+
+    /**
+     * returns a  primitive with a given id from the data set. null, if no such primitive
+     * exists
+     * 
+     * @param id  the id, > 0 required
+     * @return the primitive
+     * @exception IllegalArgumentException thrown, if id <= 0
+     */
+    public OsmPrimitive getPrimitiveById(long id) {
+        if (id <= 0)
+            throw new IllegalArgumentException(tr("parameter {0} > 0 required. Got {1}.", "id", id));
+        for (OsmPrimitive primitive : nodes) {
+            if (primitive.id == id) return primitive;
+        }
+        for (OsmPrimitive primitive : ways) {
+            if (primitive.id == id) return primitive;
+        }
+        for (OsmPrimitive primitive : relations) {
+            if (primitive.id == id) return primitive;
+        }
+        return null;
+    }
+
+    public Set<Long> getPrimitiveIds() {
+        HashSet<Long> ret = new HashSet<Long>();
+        for (OsmPrimitive primitive : nodes) {
+            ret.add(primitive.id);
+        }
+        for (OsmPrimitive primitive : ways) {
+            ret.add(primitive.id);
+        }
+        for (OsmPrimitive primitive : relations) {
+            ret.add(primitive.id);
+        }
+        return ret;
     }
 }

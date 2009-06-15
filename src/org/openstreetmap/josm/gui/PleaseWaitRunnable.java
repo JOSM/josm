@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
 /**
@@ -108,6 +109,13 @@ public abstract class PleaseWaitRunnable implements Runnable {
             } catch (IOException x) {
                 x.printStackTrace();
                 errorMessage = x.getMessage();
+            } catch(OsmTransferException x) {
+                x.printStackTrace();
+                if (x.getCause() != null) {
+                    errorMessage = x.getCause().getMessage();
+                } else {
+                    errorMessage = x.getMessage();
+                }
             } finally {
                 closeDialog();
             }
@@ -133,7 +141,7 @@ public abstract class PleaseWaitRunnable implements Runnable {
      * exception is thrown, a message box will be displayed and closeDialog
      * is called. finish() is called in any case.
      */
-    protected abstract void realRun() throws SAXException, IOException;
+    protected abstract void realRun() throws SAXException, IOException, OsmTransferException;
 
     /**
      * Finish up the data work. Is guaranteed to be called if realRun is called.
@@ -157,16 +165,18 @@ public abstract class PleaseWaitRunnable implements Runnable {
                         Main.pleaseWaitDlg.setVisible(false);
                         Main.pleaseWaitDlg.dispose();
                     }
-                    if (errorMessage != null && !silent)
+                    if (errorMessage != null && !silent) {
                         JOptionPane.showMessageDialog(Main.parent, errorMessage);
+                    }
                 }
             };
 
             // make sure, this is called in the dispatcher thread ASAP
-            if (EventQueue.isDispatchThread())
+            if (EventQueue.isDispatchThread()) {
                 runnable.run();
-            else
+            } else {
                 EventQueue.invokeAndWait(runnable);
+            }
 
         } catch (InterruptedException e) {
         } catch (InvocationTargetException e) {

@@ -6,23 +6,20 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.xml.sax.SAXException;
-
-import javax.swing.JOptionPane;
 
 public class OsmServerObjectReader extends OsmServerReader {
 
-    public final static  String TYPE_WAY = "way";
-    public final static  String TYPE_REL = "relation";
-    public final static  String TYPE_NODE = "node";
-
     long id;
-    String type;
+    OsmPrimitiveType type;
     boolean full;
 
-    public OsmServerObjectReader(long id, String type, boolean full) {
+    public OsmServerObjectReader(long id, OsmPrimitiveType type, boolean full) {
         this.id = id;
         this.type = type;
         this.full = full;
@@ -33,16 +30,18 @@ public class OsmServerObjectReader extends OsmServerReader {
      * @throws SAXException
      * @throws IOException
      */
-    public DataSet parseOsm() throws SAXException, IOException {
+    @Override
+    public DataSet parseOsm() throws OsmTransferException {
         try {
             Main.pleaseWaitDlg.progress.setValue(0);
             Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
             StringBuffer sb = new StringBuffer();
-            sb.append(type);
+            sb.append(type.getAPIName());
             sb.append("/");
             sb.append(id);
-            if (full)
+            if (full && ! type.equals(OsmPrimitiveType.NODE)) {
                 sb.append("/full");
+            }
 
             final InputStream in = getInputStream(sb.toString(), Main.pleaseWaitDlg);
             if (in == null)
@@ -51,9 +50,6 @@ public class OsmServerObjectReader extends OsmServerReader {
             final OsmReader osm = OsmReader.parseDataSetOsm(in, null, Main.pleaseWaitDlg);
             final DataSet data = osm.getDs();
 
-//          Bounds bounds = new Bounds(new LatLon(lat1, lon1), new LatLon(lat2, lon2));
-//          DataSource src = new DataSource(bounds, origin);
-//          data.dataSources.add(src);
             if (osm.getParseNotes().length() != 0) {
                 JOptionPane.showMessageDialog(Main.parent, osm.getParseNotes());
             }
@@ -63,15 +59,15 @@ public class OsmServerObjectReader extends OsmServerReader {
         } catch (IOException e) {
             if (cancel)
                 return null;
-            throw e;
+            throw new OsmTransferException(e);
         } catch (SAXException e) {
+            throw new OsmTransferException(e);
+        } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             if (cancel)
                 return null;
-            if (e instanceof RuntimeException)
-                throw (RuntimeException)e;
-            throw new RuntimeException(e);
+            throw new OsmTransferException(e);
         }
     }
 

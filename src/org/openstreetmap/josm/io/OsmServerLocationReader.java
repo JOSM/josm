@@ -21,7 +21,8 @@ public class OsmServerLocationReader extends OsmServerReader {
     /**
      * Method to download OSM files from somewhere
      */
-    public DataSet parseOsm() throws SAXException, IOException {
+    @Override
+    public DataSet parseOsm() throws OsmTransferException {
         try {
             Main.pleaseWaitDlg.progress.setValue(0);
             Main.pleaseWaitDlg.currentAction.setText(tr("Contacting Server..."));
@@ -31,24 +32,21 @@ public class OsmServerLocationReader extends OsmServerReader {
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
             final DataSet data = OsmReader.parseDataSet(in, null, Main.pleaseWaitDlg);
-//          Bounds bounds = new Bounds(new LatLon(lat1, lon1), new LatLon(lat2, lon2));
-//          DataSource src = new DataSource(bounds, origin);
-//          data.dataSources.add(src);
             in.close();
             activeConnection = null;
             return data;
         } catch (IOException e) {
             if (cancel)
                 return null;
-            throw e;
+            throw new OsmTransferException(e);
         } catch (SAXException e) {
+            throw new OsmTransferException(e);
+        } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             if (cancel)
                 return null;
-            if (e instanceof RuntimeException)
-                throw (RuntimeException)e;
-            throw new RuntimeException(e);
+            throw new OsmTransferException(e);
         }
     }
 

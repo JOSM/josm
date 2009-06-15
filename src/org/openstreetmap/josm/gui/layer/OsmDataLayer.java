@@ -50,6 +50,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
@@ -76,12 +77,17 @@ public class OsmDataLayer extends Layer {
     public final static class DataCountVisitor extends AbstractVisitor {
         public final int[] normal = new int[3];
         public final int[] deleted = new int[3];
-        public final String[] names = {"node", "way", "relation"};
+        public final String[] names = {
+                OsmPrimitiveType.NODE.getAPIName(),
+                OsmPrimitiveType.WAY.getAPIName(),
+                OsmPrimitiveType.RELATION.getAPIName()
+        };
 
         private void inc(final OsmPrimitive osm, final int i) {
             normal[i]++;
-            if (osm.deleted)
+            if (osm.deleted) {
                 deleted[i]++;
+            }
         }
 
         public void visit(final Node n) {
@@ -200,10 +206,11 @@ public class OsmDataLayer extends Layer {
         }
 
         SimplePaintVisitor painter;
-        if (Main.pref.getBoolean("draw.wireframe"))
+        if (Main.pref.getBoolean("draw.wireframe")) {
             painter = new SimplePaintVisitor();
-        else
+        } else {
             painter = new MapPaintVisitor();
+        }
         painter.setGraphics(g);
         painter.setNavigatableComponent(mv);
         painter.inactive = inactive;
@@ -215,42 +222,50 @@ public class OsmDataLayer extends Layer {
         String tool = "";
         tool += undeletedSize(data.nodes)+" "+trn("node", "nodes", undeletedSize(data.nodes))+", ";
         tool += undeletedSize(data.ways)+" "+trn("way", "ways", undeletedSize(data.ways));
-        if (data.version != null) tool += ", " + tr("version {0}", data.version);
+        if (data.version != null) {
+            tool += ", " + tr("version {0}", data.version);
+        }
         File f = getAssociatedFile();
-        if (f != null)
+        if (f != null) {
             tool = "<html>"+tool+"<br>"+f.getPath()+"</html>";
+        }
         return tool;
     }
 
     @Override public void mergeFrom(final Layer from) {
-        final MergeVisitor visitor = new MergeVisitor(data,((OsmDataLayer)from).data);
-        for (final OsmPrimitive osm : ((OsmDataLayer)from).data.allPrimitives()) {
-//            i++;
-//            if(i%100 == 0) {
-//                double perc = (((double)i) / ((double)max) * 100.0);
-//                System.out.format(" " + (int)perc + "%%");
-//            }
+        mergeFrom(((OsmDataLayer)from).data);
+    }
+
+    /**
+     * merges the primitives in dataset <code>from</code> into the dataset of
+     * this layer
+     * 
+     * @param from  the source data set
+     */
+    public void mergeFrom(final DataSet from) {
+        final MergeVisitor visitor = new MergeVisitor(data,from);
+        for (final OsmPrimitive osm : from.allPrimitives()) {
             osm.visit(visitor);
         }
         visitor.fixReferences();
-//        System.out.println("");
 
         Area a = data.getDataSourceArea();
-        
-        // copy the merged layer's data source info; 
+
+        // copy the merged layer's data source info;
         // only add source rectangles if they are not contained in the
         // layer already.
-        for (DataSource src : ((OsmDataLayer)from).data.dataSources) {
-            if (a == null || !a.contains(src.bounds.asRect()))
+        for (DataSource src : from.dataSources) {
+            if (a == null || !a.contains(src.bounds.asRect())) {
                 data.dataSources.add(src);
+            }
         }
-        
+
         // copy the merged layer's API version, downgrade if required
         if (data.version == null) {
-            data.version = ((OsmDataLayer)from).data.version;
+            data.version = from.version;
         } else {
-            if ("0.5".equals(data.version) ^ "0.5".equals(((OsmDataLayer)from).data.version)) {
-                System.err.println("Warning: mixing 0.6 and 0.5 data results in version 0.5");
+            if ("0.5".equals(data.version) ^ "0.5".equals(from.version)) {
+                System.err.println(tr("Warning: mixing 0.6 and 0.5 data results in version 0.5"));
                 data.version = "0.5";
             }
         }
@@ -262,9 +277,10 @@ public class OsmDataLayer extends Layer {
             return;
         final ConflictDialog dlg = Main.map.conflictDialog;
         dlg.add(visitor.conflicts);
-        JOptionPane.showMessageDialog(Main.parent,tr("There were conflicts during import."));
-        if (!dlg.isVisible())
+        JOptionPane.showMessageDialog(Main.parent,tr("There were {0} conflicts during import.", visitor.conflicts.size()));
+        if (!dlg.isVisible()) {
             dlg.action.actionPerformed(new ActionEvent(this, 0, ""));
+        }
     }
 
     @Override public boolean isMergable(final Layer other) {
@@ -273,8 +289,9 @@ public class OsmDataLayer extends Layer {
 
     @Override public void visitBoundingBox(final BoundingXYVisitor v) {
         for (final Node n : data.nodes)
-            if (!n.deleted && !n.incomplete)
+            if (!n.deleted && !n.incomplete) {
                 v.visit(n);
+            }
     }
 
     /**
@@ -298,12 +315,15 @@ public class OsmDataLayer extends Layer {
         // if uploaded, clean the modified flags as well
         if (processed != null) {
             final Set<OsmPrimitive> processedSet = new HashSet<OsmPrimitive>(processed);
-            for (final Iterator<Node> it = data.nodes.iterator(); it.hasNext();)
+            for (final Iterator<Node> it = data.nodes.iterator(); it.hasNext();) {
                 cleanIterator(it, processedSet);
-            for (final Iterator<Way> it = data.ways.iterator(); it.hasNext();)
+            }
+            for (final Iterator<Way> it = data.ways.iterator(); it.hasNext();) {
                 cleanIterator(it, processedSet);
-            for (final Iterator<Relation> it = data.relations.iterator(); it.hasNext();)
+            }
+            for (final Iterator<Relation> it = data.relations.iterator(); it.hasNext();) {
                 cleanIterator(it, processedSet);
+            }
         }
 
         // update the modified flag
@@ -329,8 +349,9 @@ public class OsmDataLayer extends Layer {
         if (!processed.remove(osm))
             return;
         osm.modified = false;
-        if (osm.deleted)
+        if (osm.deleted) {
             it.remove();
+        }
     }
 
     public boolean isModified() {
@@ -341,8 +362,9 @@ public class OsmDataLayer extends Layer {
         if (modified == this.modified)
             return;
         this.modified = modified;
-        for (final ModifiedChangedListener l : listenerModified)
+        for (final ModifiedChangedListener l : listenerModified) {
             l.modifiedChanged(modified, this);
+        }
     }
 
     /**
@@ -351,21 +373,24 @@ public class OsmDataLayer extends Layer {
     private int undeletedSize(final Collection<? extends OsmPrimitive> list) {
         int size = 0;
         for (final OsmPrimitive osm : list)
-            if (!osm.deleted)
+            if (!osm.deleted) {
                 size++;
+            }
         return size;
     }
 
     @Override public Object getInfoComponent() {
         final DataCountVisitor counter = new DataCountVisitor();
-        for (final OsmPrimitive osm : data.allPrimitives())
+        for (final OsmPrimitive osm : data.allPrimitives()) {
             osm.visit(counter);
+        }
         final JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("{0} consists of:", name)), GBC.eol());
         for (int i = 0; i < counter.normal.length; ++i) {
             String s = counter.normal[i]+" "+trn(counter.names[i],counter.names[i]+"s",counter.normal[i]);
-            if (counter.deleted[i] > 0)
+            if (counter.deleted[i] > 0) {
                 s += tr(" ({0} deleted.)",counter.deleted[i]);
+            }
             p.add(new JLabel(s, ImageProvider.get("data", counter.names[i]), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
         }
         p.add(new JLabel(tr("API version: {0}", (data.version != null) ? data.version : tr("unset"))));
@@ -374,15 +399,14 @@ public class OsmDataLayer extends Layer {
     }
 
     @Override public Component[] getMenuEntries() {
-        if (Main.applet) {
+        if (Main.applet)
             return new Component[]{
-                    new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                    new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
-                    new JSeparator(),
-                    new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
-                    new JSeparator(),
-                    new JMenuItem(new LayerListPopup.InfoAction(this))};
-        }
+                new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
+                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
+                new JSeparator(),
+                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
+                new JSeparator(),
+                new JMenuItem(new LayerListPopup.InfoAction(this))};
         return new Component[]{
                 new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
                 new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
@@ -408,12 +432,15 @@ public class OsmDataLayer extends Layer {
         gpxData.storageFile = file;
         HashSet<Node> doneNodes = new HashSet<Node>();
         for (Way w : data.ways) {
-            if (w.incomplete || w.deleted) continue;
+            if (w.incomplete || w.deleted) {
+                continue;
+            }
             GpxTrack trk = new GpxTrack();
             gpxData.tracks.add(trk);
 
-            if (w.get("name") != null)
+            if (w.get("name") != null) {
                 trk.attr.put("name", w.get("name"));
+            }
 
             ArrayList<WayPoint> trkseg = null;
             for (Node n : w.nodes) {
@@ -428,7 +455,7 @@ public class OsmDataLayer extends Layer {
                 if (!n.isTagged()) {
                     doneNodes.add(n);
                 }
-                WayPoint wpt = new WayPoint(n.getCoor());                
+                WayPoint wpt = new WayPoint(n.getCoor());
                 if (!n.isTimestampEmpty())
                 {
                     wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
@@ -441,7 +468,9 @@ public class OsmDataLayer extends Layer {
         // what is this loop meant to do? it creates waypoints but never
         // records them?
         for (Node n : data.nodes) {
-            if (n.incomplete || n.deleted || doneNodes.contains(n)) continue;
+            if (n.incomplete || n.deleted || doneNodes.contains(n)) {
+                continue;
+            }
             WayPoint wpt = new WayPoint(n.getCoor());
             if (!n.isTimestampEmpty()) {
                 wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));

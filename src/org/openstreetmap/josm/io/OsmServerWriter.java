@@ -100,7 +100,7 @@ public class OsmServerWriter {
         boolean canUseChangeset = api.hasChangesetSupport();
         boolean useChangeset = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
         if (useChangeset && ! canUseChangeset) {
-            System.out.println(tr("WARNING: preference '{0}' or api version {1} of dataset requires to use changesets, but API is not handle them. Ignoring changesets.", "osm-server.atomic-upload", apiVersion));
+            System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use changesets, but API is not handle them. Ignoring changesets.", "osm-server.atomic-upload", apiVersion));
             useChangeset = false;
         }
 

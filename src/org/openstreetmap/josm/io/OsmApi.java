@@ -28,10 +28,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -66,6 +64,7 @@ public class OsmApi extends OsmConnection {
         OsmApi api = instances.get(serverUrl);
         if (api == null) {
             api = new OsmApi(serverUrl);
+            instances.put(serverUrl,api);
         }
         return api;
     }
@@ -79,7 +78,7 @@ public class OsmApi extends OsmConnection {
     static public OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url");
         if (serverUrl == null)
-            throw new IllegalStateException(tr("preference {0} missing. Can't initialize OsmApi", "osm-server.url"));
+            throw new IllegalStateException(tr("preference ''{0}'' missing. Can't initialize OsmApi", "osm-server.url"));
         return getOsmApi(serverUrl);
     }
 
@@ -95,12 +94,6 @@ public class OsmApi extends OsmConnection {
      * API version used for server communications
      */
     private String version = null;
-
-    /**
-     * Maximum downloadable area from server (degrees squared), from capabilities response
-     * FIXME: make download dialog use this, instead of hard-coded default.
-     */
-    private String maxArea = null;
 
     /** the api capabilities */
     private Capabilities capabilities = new Capabilities();
@@ -142,31 +135,6 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * creates an instance of the OSM API. Initializes the server URL with the
-     * value of the preference <code>osm-server.url</code>
-     * 
-     * @exception IllegalStateException thrown, if the preference <code>osm-server.url</code> is not set
-     */
-    protected OsmApi() {
-        this.serverUrl = Main.pref.get("osm-server.url");
-        if (serverUrl == null)
-            throw new IllegalStateException(tr("preference {0} missing. Can't initialize OsmApi", "osm-server.url"));
-    }
-
-    /**
-     * Helper that returns the lower-case type name of an OsmPrimitive
-     * @param o the primitive
-     * @return "node", "way", "relation", or "changeset"
-     */
-    public static String which(OsmPrimitive o) {
-        if (o instanceof Node) return "node";
-        if (o instanceof Way) return "way";
-        if (o instanceof Relation) return "relation";
-        if (o instanceof Changeset) return "changeset";
-        return "";
-    }
-
-    /**
      * Returns the OSM protocol version we use to talk to the server.
      * @return protocol version, or null if not yet negotiated.
      */
@@ -184,11 +152,8 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Initializes this component by negotiating a protocol version with the server.
-     * 
-     * @exception UnknownHostException thrown, if the API host is unknown
-     * @exception SocketTimeoutException thrown, if the connection to the API host  times out
-     * @exception ConnectException throw, if the connection to the API host fails
-     * @exception Exception any other exception
+     *
+     * @exception OsmApiInitializationException thrown, if an exception occurs
      */
     public void initialize() throws OsmApiInitializationException {
         if (initialized)
@@ -237,36 +202,6 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Helper that makes an int from the first whitespace separated token in a string.
-     * @param s the string
-     * @return the integer represenation of the first token in the string
-     * @throws OsmTransferException if the string is empty or does not represent a number
-     */
-    public static int parseInt(String s) throws OsmTransferException {
-        StringTokenizer t = new StringTokenizer(s);
-        try {
-            return Integer.parseInt(t.nextToken());
-        } catch (Exception x) {
-            throw new OsmTransferException(tr("Cannot read numeric value from response"));
-        }
-    }
-
-    /**
-     * Helper that makes a long from the first whitespace separated token in a string.
-     * @param s the string
-     * @return the long represenation of the first token in the string
-     * @throws OsmTransferException if the string is empty or does not represent a number
-     */
-    public static long parseLong(String s) throws OsmTransferException {
-        StringTokenizer t = new StringTokenizer(s);
-        try {
-            return Long.parseLong(t.nextToken());
-        } catch (Exception x) {
-            throw new OsmTransferException(tr("Cannot read numeric value from response"));
-        }
-    }
-
-    /**
      * Returns the base URL for API requests, including the negotiated version number.
      * @return base URL string
      */
@@ -292,8 +227,14 @@ public class OsmApi extends OsmConnection {
      */
     public void createPrimitive(OsmPrimitive osm) throws OsmTransferException {
         initialize();
-        osm.id = parseLong(sendRequest("PUT", which(osm)+"/create", toXml(osm, true)));
-        osm.version = 1;
+        String ret = "";
+        try {
+            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true));
+            osm.id = Long.parseLong(ret.trim());
+            osm.version = 1;
+        } catch(NumberFormatException e){
+            throw new OsmTransferException(tr("unexpected format of id replied by the server, got ''{0}''", ret));
+        }
     }
 
     /**
@@ -308,10 +249,16 @@ public class OsmApi extends OsmConnection {
         initialize();
         if (version.equals("0.5")) {
             // legacy mode does not return the new object version.
-            sendRequest("PUT", which(osm)+"/" + osm.id, toXml(osm, true));
+            sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.id, toXml(osm, true));
         } else {
+            String ret = null;
             // normal mode (0.6 and up) returns new object version.
-            osm.version = parseInt(sendRequest("PUT", which(osm)+"/" + osm.id, toXml(osm, true)));
+            try {
+                ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.id, toXml(osm, true));
+                osm.version = Integer.parseInt(ret.trim());
+            } catch(NumberFormatException e) {
+                throw new OsmTransferException(tr("unexpected format of new version of modified primitive ''{0}'', got ''{1}''", osm.id, ret));
+            }
         }
     }
 
@@ -323,7 +270,7 @@ public class OsmApi extends OsmConnection {
     public void deletePrimitive(OsmPrimitive osm) throws OsmTransferException {
         initialize();
         // legacy mode does not require payload. normal mode (0.6 and up) requires payload for version matching.
-        sendRequest("DELETE", which(osm)+"/" + osm.id, version.equals("0.5") ? null : toXml(osm, false));
+        sendRequest("DELETE", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.id, version.equals("0.5") ? null : toXml(osm, false));
     }
 
     /**
@@ -333,7 +280,7 @@ public class OsmApi extends OsmConnection {
      */
     public void createChangeset(String comment) throws OsmTransferException {
         changeset = new Changeset();
-        Main.pleaseWaitDlg.currentAction.setText(tr("Opening changeset..."));
+        notifyStatusMessage(tr("Opening changeset..."));
         Properties sysProp = System.getProperties();
         Object ua = sysProp.get("http.agent");
         changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
@@ -348,7 +295,7 @@ public class OsmApi extends OsmConnection {
      */
     public void stopChangeset() throws OsmTransferException {
         initialize();
-        Main.pleaseWaitDlg.currentAction.setText(tr("Closing changeset..."));
+        notifyStatusMessage(tr("Closing changeset..."));
         sendRequest("PUT", "changeset" + "/" + changeset.id + "/close", null);
         changeset = null;
     }
@@ -371,14 +318,12 @@ public class OsmApi extends OsmConnection {
 
         CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
 
+        notifyStatusMessage(tr("Preparing..."));
         for (OsmPrimitive osm : list) {
-            int progress = Main.pleaseWaitDlg.progress.getValue();
-            Main.pleaseWaitDlg.currentAction.setText(tr("Preparing..."));
             osm.visit(duv);
-            Main.pleaseWaitDlg.progress.setValue(progress+1);
+            notifyRelativeProgress(1);
         }
-
-        Main.pleaseWaitDlg.currentAction.setText(tr("Uploading..."));
+        notifyStatusMessage(tr("Uploading..."));
 
         String diff = duv.getDocument();
         String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
@@ -515,5 +460,26 @@ public class OsmApi extends OsmConnection {
                 throw new OsmTransferException(e);
             }
         }
+    }
+
+    /**
+     * notifies any listeners about the current state of this API. Currently just
+     * displays the message in the global progress dialog, see {@see Main#pleaseWaitDlg}
+     * 
+     * @param message a status message.
+     */
+    protected void notifyStatusMessage(String message) {
+        Main.pleaseWaitDlg.currentAction.setText(message);
+    }
+
+    /**
+     * notifies any listeners about the current about a relative progress. Currently just
+     * increments the progress monitor in the in the global progress dialog, see {@see Main#pleaseWaitDlg}
+     * 
+     * @param int the delta
+     */
+    protected void notifyRelativeProgress(int delta) {
+        int current= Main.pleaseWaitDlg.progress.getValue();
+        Main.pleaseWaitDlg.progress.setValue(current + delta);
     }
 }

@@ -3,16 +3,24 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -61,8 +69,9 @@ public class DownloadOsmTaskList implements Runnable {
      */
     public void download(boolean newLayer, Collection<Area> areas) {
         List<Rectangle2D> rects = new LinkedList<Rectangle2D>();
-        for(Area a : areas)
+        for(Area a : areas) {
             rects.add(a.getBounds2D());
+        }
 
         download(newLayer, rects);
     }
@@ -75,18 +84,106 @@ public class DownloadOsmTaskList implements Runnable {
 
         for(DownloadTask dt : osmTasks) {
             String err = dt.getErrorMessage();
-            if(err.equals(""))
+            if(err.equals("")) {
                 continue;
+            }
             errors += "* " + err + "\r\n";
         }
 
-        osmTasks.clear();
-        if(errors.equals(""))
+        if(! errors.equals("")) {
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("The following errors occured during mass download:") + "\r\n" + errors,
+                    tr("Errors during Download"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
+        }
 
-        JOptionPane.showMessageDialog(Main.parent,
-                tr("The following errors occured during mass download:") + "\r\n" + errors,
-                tr("Errors during Download"),
-                JOptionPane.ERROR_MESSAGE);
+        Set<Long> myPrimitiveIds = Main.main.editLayer().data.getPrimitiveIds();
+        Set<Long> downloadedIds = getDownloadedIds();
+        myPrimitiveIds.removeAll(downloadedIds);
+        if (! myPrimitiveIds.isEmpty()) {
+            handlePotentiallyDeletedPrimitives(myPrimitiveIds);
+        }
+    }
+
+    protected void checkPotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
+        DataSet ds =  Main.main.editLayer().data;
+        ArrayList<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
+        for (Long id : potentiallyDeleted) {
+            OsmPrimitive primitive = ds.getPrimitiveById(id);
+            if (primitive != null) {
+                toSelect.add(primitive);
+            }
+        }
+        ds.setSelected(toSelect);
+        EventQueue.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        new UpdateSelectionAction().actionPerformed(new ActionEvent(this, 0, ""));
+                    }
+                }
+        );
+    }
+
+    protected void handlePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
+        String [] options = {
+                "Check individually",
+                "Ignore"
+        };
+
+        String message = tr("<html>"
+                +  "There are {0} primitives in your local dataset which<br>"
+                + "might be deleted on the server. If you later try to delete or<br>"
+                + "update them on the server the server is likely to report a<br>"
+                + "conflict.<br>"
+                + "<br>"
+                + "Click <strong>{1}</strong> to check these primitives individually.<br>"
+                + "Click <strong>{2}</strong> to ignore.<br>"
+                + "</html>",
+                potentiallyDeleted.size(), options[0], options[1]
+        );
+
+        int ret = JOptionPane.showOptionDialog(
+                Main.parent,
+                message,
+                tr("Deleted or moved primitives"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+        switch(ret) {
+        case JOptionPane.CLOSED_OPTION: return;
+        case JOptionPane.NO_OPTION: return;
+        case JOptionPane.YES_OPTION: checkPotentiallyDeletedPrimitives(potentiallyDeleted); break;
+        }
+    }
+
+    protected boolean wasDownloaded(long id, DataSet ds) {
+        OsmPrimitive primitive = ds.getPrimitiveById(id);
+        return primitive != null;
+    }
+
+    public boolean wasDownloaded(long id) {
+        for (DownloadTask task : osmTasks) {
+            if(task instanceof DownloadOsmTask) {
+                DataSet ds = ((DownloadOsmTask)task).getDownloadedData();
+                if(wasDownloaded(id,ds)) return true;
+            }
+        }
+        return false;
+    }
+
+
+    public Set<Long> getDownloadedIds() {
+        HashSet<Long> ret = new HashSet<Long>();
+        for (DownloadTask task : osmTasks) {
+            if(task instanceof DownloadOsmTask) {
+                DataSet ds = ((DownloadOsmTask)task).getDownloadedData();
+                ret.addAll(ds.getPrimitiveIds());
+            }
+        }
+        return ret;
     }
 }

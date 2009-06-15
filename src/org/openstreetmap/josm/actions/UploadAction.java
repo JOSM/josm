@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -12,8 +11,7 @@ import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,16 +20,13 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
-import org.openstreetmap.josm.io.DiffResultReader;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -46,10 +41,13 @@ import org.xml.sax.SAXException;
  *
  * An dialog is displayed asking the user to specify a rectangle to grab.
  * The url and account settings from the preferences are used.
+ * 
+ * If the upload fails this action offers various options to resolve conflicts.
  *
  * @author imi
  */
 public class UploadAction extends JosmAction {
+    static private Logger logger = Logger.getLogger(UploadAction.class.getName());
 
     public static final String HISTORY_KEY = "upload.comment.history";
 
@@ -214,7 +212,6 @@ public class UploadAction extends JosmAction {
                         System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
                         return;
                     }
-                    System.out.println("got exception: " + sxe.toString());
                     uploadFailed = true;
                     lastException = sxe;
                 }
@@ -229,61 +226,328 @@ public class UploadAction extends JosmAction {
             @Override protected void cancel() {
                 server.disconnectActiveConnection();
                 uploadCancelled = true;
-            };
-
+            }
         }
+
         Main.worker.execute(new UploadDiffTask());
     }
 
-    public void handleFailedUpload(Exception e) {
+    /**
+     * Synchronizes the local state of an {@see OsmPrimitive} with its state on the
+     * server. The method uses an individual GET for the primitive.
+     * 
+     * @param id the primitive ID
+     */
+    protected void synchronizePrimitive(final String id) {
+
+        /**
+         * The asynchronous task to update a a specific id
+         *
+         */
+        class UpdatePrimitiveTask extends  PleaseWaitRunnable {
+
+            private boolean uploadCancelled = false;
+            private boolean uploadFailed = false;
+            private Exception lastException = null;
+
+            public UpdatePrimitiveTask() {
+                super(tr("Updating primitive"),false /* don't ignore exceptions */);
+            }
+
+            @Override protected void realRun() throws SAXException, IOException {
+                try {
+                    UpdateSelectionAction act = new UpdateSelectionAction();
+                    act.updatePrimitive(Long.parseLong(id));
+                } catch (Exception sxe) {
+                    if (uploadCancelled) {
+                        System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
+                        return;
+                    }
+                    uploadFailed = true;
+                    lastException = sxe;
+                }
+            }
+
+            @Override protected void finish() {
+                if (uploadFailed) {
+                    handleFailedUpload(lastException);
+                }
+            }
+
+            @Override protected void cancel() {
+                OsmApi.getOsmApi().cancel();
+                uploadCancelled = true;
+            }
+        }
+
+        Main.worker.execute(new UpdatePrimitiveTask());
+    }
+
+    /**
+     * Synchronizes the local state of the dataset with the state on the server.
+     * 
+     * Reuses the functionality of {@see UpdateDataAction}.
+     * 
+     * @see UpdateDataAction#actionPerformed(ActionEvent)
+     */
+    protected void synchronizeDataSet() {
+        UpdateDataAction act = new UpdateDataAction();
+        act.actionPerformed(new ActionEvent(this,0,""));
+    }
+
+    /**
+     * Handles the case that a conflict in a specific {@see OsmPrimitive} was detected while
+     * uploading
+     * 
+     * @param primitiveType  the type of the primitive, either <code>node</code>, <code>way</code> or
+     *    <code>relation</code>
+     * @param id  the id of the primitive
+     * @param serverVersion  the version of the primitive on the server
+     * @param myVersion  the version of the primitive in the local dataset
+     */
+    protected void handleUploadConflictForKnownConflict(String primitiveType, String id, String serverVersion, String myVersion) {
+        Object[] options = new Object[] {
+                tr("Synchronize {0} {1} only", tr(primitiveType), id),
+                tr("Synchronize entire dataset"),
+                tr("Cancel")
+        };
+        Object defaultOption = options[0];
+        String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
+                + "of your nodes, ways, or relations.<br>"
+                + "The conflict is caused by the <strong>{0}</strong> with id <strong>{1}</strong>,<br>"
+                + "the server has version {2}, your version is {3}.<br>"
+                + "<br>"
+                + "Click <strong>{4}</strong> to synchronize the conflicting primitive only.<br>"
+                + "Click <strong>{5}</strong> to synchronize the entire local dataset with the server.<br>"
+                + "Click <strong>{6}</strong> to abort and continue editing.<br></html>",
+                tr(primitiveType), id, serverVersion, myVersion,
+                options[0], options[1], options[2]
+        );
+        int optionsType = JOptionPane.YES_NO_CANCEL_OPTION;
+        int ret = JOptionPane.showOptionDialog(
+                null,
+                msg,
+                tr("Conflict detected"),
+                optionsType,
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                options,
+                defaultOption
+        );
+        switch(ret) {
+        case JOptionPane.CLOSED_OPTION: return;
+        case JOptionPane.CANCEL_OPTION: return;
+        case 0: synchronizePrimitive(id); break;
+        case 1: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        }
+    }
+
+    /**
+     * Handles the case that a conflict was detected while uploading where we don't
+     * know what {@see OsmPrimitive} actually caused the conflict (for whatever reason)
+     * 
+     */
+    protected void handleUploadConflictForUnknownConflict() {
+        Object[] options = new Object[] {
+                tr("Synchronize entire dataset"),
+                tr("Cancel")
+        };
+        Object defaultOption = options[0];
+        String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
+                + "of your nodes, ways, or relations.<br>"
+                + "<br>"
+                + "Click <strong>{0}</strong> to synchronize the entire local dataset with the server.<br>"
+                + "Click <strong>{1}</strong> to abort and continue editing.<br></html>",
+                options[0], options[1]
+        );
+        int optionsType = JOptionPane.YES_NO_OPTION;
+        int ret = JOptionPane.showOptionDialog(
+                null,
+                msg,
+                tr("Conflict detected"),
+                optionsType,
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                options,
+                defaultOption
+        );
+        switch(ret) {
+        case JOptionPane.CLOSED_OPTION: return;
+        case 1: return;
+        case 0: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        }
+    }
+
+    /**
+     * handles an upload conflict, i.e. an error indicated by a HTTP return code 409.
+     * 
+     * @param e  the exception
+     */
+    protected void handleUploadConflict(OsmApiException e) {
+        String pattern = "Version mismatch: Provided (\\d+), server had: (\\d+) of (\\S+) (\\d+)";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(e.getErrorHeader());
+        if (m.matches()) {
+            handleUploadConflictForKnownConflict(m.group(3), m.group(4), m.group(2),m.group(1));
+        } else {
+            logger.warning(tr("Warning: error header \"{0}\" did not match expected pattern \"{1}\"", e.getErrorHeader(),pattern));
+            handleUploadConflictForUnknownConflict();
+        }
+    }
+
+    /**
+     * Handles an upload error due to a violated precondition, i.e. a HTTP return code 412
+     * 
+     * @param e the exception
+     */
+    protected void handlePreconditionFailed(OsmApiException e) {
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                tr("<html>Uploading to the server <strong>failed</strong> because your current<br>"
+                        +"dataset violates a precondition.<br>"
+                        +"The error message is:<br>"
+                        + "{0}"
+                        + "</html>",
+                        e.getMessage()
+                ),
+                tr("Precondition violation"),
+                JOptionPane.ERROR_MESSAGE
+        );
+        e.printStackTrace();
+    }
+
+
+    /**
+     * Handles an error due to a delete request on an already deleted
+     * {@see OsmPrimitive}, i.e. a HTTP response code 410, where we know what
+     * {@see OsmPrimitive} is responsible for the error.
+     * 
+     *  Reuses functionality of the {@see UpdateSelectionAction} to resolve
+     *  conflicts due to mismatches in the deleted state.
+     * 
+     * @param primitiveType the type of the primitive
+     * @param id the id of the primitive
+     * 
+     * @see UpdateSelectionAction#handlePrimitiveGoneException(long)
+     */
+    protected void handleGoneForKnownPrimitive(String primitiveType, String id) {
+        UpdateSelectionAction act = new UpdateSelectionAction();
+        act.handlePrimitiveGoneException(Long.parseLong(id));
+    }
+
+    /**
+     * handles the case of an error due to a delete request on an already deleted
+     * {@see OsmPrimitive}, i.e. a HTTP response code 410, where we don't know which
+     * {@see OsmPrimitive} is causing the error.
+     * 
+     * @param e the exception
+     */
+    protected void handleGoneForUnknownPrimitive(OsmApiException e) {
+        String msg =  tr("<html>Uploading <strong>failed</strong> because a primitive you tried to<br>"
+                + "delete on the server is already deleted.<br>"
+                + "<br>"
+                + "The error message is:<br>"
+                + "{0}"
+                + "</html>",
+                e.getMessage()
+        );
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                msg,
+                tr("Primitive already deleted"),
+                JOptionPane.ERROR_MESSAGE
+        );
+
+    }
+
+    /**
+     * Handles an error which is caused by a delete request for an already deleted
+     * {@see OsmPrimitive} on the server, i.e. a HTTP response code of 410.
+     * Note that an <strong>update</strong> on an already deleted object results
+     * in a 409, not a 410.
+     * 
+     * @param e the exception
+     */
+    protected void handleGone(OsmApiException e) {
+        String pattern = "The (\\S+) with the id (\\d+) has already been deleted";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(e.getErrorHeader());
+        if (m.matches()) {
+            handleGoneForKnownPrimitive(m.group(1), m.group(2));
+        } else {
+            logger.warning(tr("Error header \"{0}\" doesn't match expected pattern \"{1}\"",e.getErrorHeader(), pattern));
+            handleGoneForUnknownPrimitive(e);
+        }
+    }
+
+
+    /**
+     * error handler for any exception thrown during upload
+     * 
+     * @param e the exception
+     */
+    protected void handleFailedUpload(Exception e) {
+        // API initialization failed. Notify the user and return.
+        //
         if (e instanceof OsmApiInitializationException) {
-            handleOsmApiInitializationException(e);
+            handleOsmApiInitializationException((OsmApiInitializationException)e);
             return;
         }
+
         if (e instanceof OsmApiException) {
             OsmApiException ex = (OsmApiException)e;
+            // There was an upload conflict. Let the user decide whether
+            // and how to resolve it
+            //
             if(ex.getResponseCode() == HttpURLConnection.HTTP_CONFLICT) {
-                Pattern p = Pattern.compile("Version mismatch: Provided (\\d+), server had: (\\d+) of (\\S+) (\\d+)");
-                Matcher m = p.matcher(ex.getErrorHeader());
-                String msg;
-                if (m.matches()) {
-                    msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
-                            + "of your nodes, ways or relations.<br>"
-                            + "The conflict is caused by the <strong>{0}</strong> with id <strong>{1}</strong>,<br>"
-                            + "the server has version {2}, your version is {3}.<br>"
-                            + "Please synchronize your local dataset using <br>"
-                            + "<strong>File-&gt;Update Data</strong>, resolve<br>"
-                            + "any conflicts and try to upload again.</html>",
-                            m.group(3),m.group(4), m.group(2), m.group(1)
-                    );
-                } else {
-                    msg =  tr("<html>Uploading failed because the server has a newer version of one<br>"
-                            + "of your nodes, ways or relations.<br>"
-                            + "Please synchronize your local dataset using <br>"
-                            + "<strong>File-&gt;Update Data</strong>, resolve<br>"
-                            + "any conflicts and try to upload again.</html>"
-                    );
-                }
-                JOptionPane.showMessageDialog(
-                        null,
-                        msg,
-                        tr("Upload to OSM API failed"),
-                        JOptionPane.WARNING_MESSAGE
-                );
+                handleUploadConflict(ex);
+                return;
+            }
+            // There was a precondition failed. Notify the user.
+            //
+            else if (ex.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+                handlePreconditionFailed(ex);
+                return;
+            }
+            // Tried to delete an already deleted primitive? Let the user
+            // decide whether and how to resolve this conflict.
+            //
+            else if (ex.getResponseCode() == HttpURLConnection.HTTP_GONE) {
+                handleGone(ex);
                 return;
             }
         }
+
+        // For any other exception just notify the user
+        //
+        String msg = e.getMessage().substring(0,Math.min(80, e.getMessage().length()));
+        if (msg.length() < e.getMessage().length()) {
+            msg += " ...";
+        }
+        e.printStackTrace();
         JOptionPane.showMessageDialog(
                 null,
-                e.getMessage(),
+                msg,
                 tr("Upload to OSM API failed"),
                 JOptionPane.ERROR_MESSAGE
         );
+
     }
 
-    protected void handleOsmApiInitializationException(Exception e) {
+    /**
+     * handles an exception caught during OSM API initialization
+     * 
+     * @param e the exception
+     */
+    protected void handleOsmApiInitializationException(OsmApiInitializationException e) {
         JOptionPane.showMessageDialog(
-                null,
+                Main.parent,
                 tr(   "Failed to initialize communication with the OSM server {0}.\n"
                         + "Check the server URL in your preferences and your internet connection.",
                         Main.pref.get("osm-server.url")

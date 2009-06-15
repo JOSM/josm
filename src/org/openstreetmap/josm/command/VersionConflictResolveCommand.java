@@ -12,6 +12,7 @@ import javax.swing.tree.MutableTreeNode;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -36,25 +37,11 @@ public class VersionConflictResolveCommand extends Command {
         this.their = their;
     }
 
-    //FIXME copied from TagConflictResolveCommand -> refactor
-    /**
-     * replies a (localized) display name for the type of an OSM primitive
-     * 
-     * @param primitive the primitive
-     * @return a localized display name
-     */
-    protected String getPrimitiveTypeAsString(OsmPrimitive primitive) {
-        if (primitive instanceof Node) return tr("node");
-        if (primitive instanceof Way) return tr("way");
-        if (primitive instanceof Relation) return tr("relation");
-        return "";
-    }
-
     @Override
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve version conflicts for {0} {1}",getPrimitiveTypeAsString(my), my.id),
+                        tr("Resolve version conflicts for {0} {1}",OsmPrimitiveType.from(my).getLocalizedDisplayNameSingular(), my.id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )

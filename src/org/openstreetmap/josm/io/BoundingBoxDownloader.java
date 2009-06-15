@@ -49,8 +49,9 @@ public class BoundingBoxDownloader extends OsmServerReader {
             for (int i = 0;!done;++i) {
                 Main.pleaseWaitDlg.currentAction.setText(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
                 InputStream in = getInputStream(url+i, Main.pleaseWaitDlg);
-                if (in == null)
+                if (in == null) {
                     break;
+                }
                 GpxData currentGpx = new GpxReader(in, null).data;
                 if (result == null) {
                     result = currentGpx;
@@ -88,7 +89,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
      * Read the data from the osm server address.
      * @return A data set containing all data retrieved from that url
      */
-    public DataSet parseOsm() throws SAXException, IOException {
+    @Override
+    public DataSet parseOsm() throws OsmTransferException {
         try {
             Main.pleaseWaitDlg.progress.setValue(0);
             Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
@@ -105,15 +107,15 @@ public class BoundingBoxDownloader extends OsmServerReader {
         } catch (IOException e) {
             if (cancel)
                 return null;
-            throw e;
+            throw new OsmTransferException(e);
         } catch (SAXException e) {
+            throw new OsmTransferException(e);
+        } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             if (cancel)
                 return null;
-            if (e instanceof RuntimeException)
-                throw (RuntimeException)e;
-            throw new RuntimeException(e);
+            throw new OsmTransferException(e);
         }
     }
 }

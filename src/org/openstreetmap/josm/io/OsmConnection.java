@@ -21,7 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.ExtendedDialog; 
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -32,13 +32,6 @@ import org.openstreetmap.josm.tools.GBC;
  * @author imi
  */
 public class OsmConnection {
-
-    public static class OsmParseException extends Exception {
-        public OsmParseException() {super();}
-        public OsmParseException(String message, Throwable cause) {super(message, cause);}
-        public OsmParseException(String message) {super(message);}
-        public OsmParseException(Throwable cause) {super(cause);}
-    }
 
     protected boolean cancel = false;
     protected HttpURLConnection activeConnection;
@@ -76,8 +69,9 @@ public class OsmConnection {
             String password = Main.pref.get("osm-server.password");
             if (passwordtried || username.equals("") || password.equals("")) {
                 JPanel p = new JPanel(new GridBagLayout());
-                if (!username.equals("") && !password.equals(""))
+                if (!username.equals("") && !password.equals("")) {
                     p.add(new JLabel(tr("Incorrect password or username.")), GBC.eop());
+                }
                 p.add(new JLabel(tr("Username")), GBC.std().insets(0,0,10,0));
                 JTextField usernameField = new JTextField(username, 20);
                 p.add(usernameField, GBC.eol());
@@ -91,12 +85,12 @@ public class OsmConnection {
                 JCheckBox savePassword = new JCheckBox(tr("Save user and password (unencrypted)"), !username.equals("") && !password.equals(""));
                 p.add(savePassword, GBC.eop());
 
-                int choice = new ExtendedDialog(Main.parent, 
-                        tr("Enter Password"), 
+                int choice = new ExtendedDialog(Main.parent,
+                        tr("Enter Password"),
                         p,
-                        new String[] {tr("Login"), tr("Cancel")}, 
-                        new String[] {"ok.png", "cancel.png"}).getValue();  
-                
+                        new String[] {tr("Login"), tr("Cancel")},
+                        new String[] {"ok.png", "cancel.png"}).getValue();
+
                 if (choice != 1) {
                     authCancelled = true;
                     return null;

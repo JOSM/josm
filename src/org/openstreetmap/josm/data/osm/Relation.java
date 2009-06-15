@@ -77,30 +77,37 @@ public final class Relation extends OsmPrimitive {
         return o instanceof Relation ? Long.valueOf(id).compareTo(o.id) : -1;
     }
 
+    @Override
     public String getName() {
         String name;
         if (incomplete) {
             name = tr("incomplete");
         } else {
             name = get("type");
-            if (name == null)
+            if (name == null) {
                 name = tr("relation");
+            }
 
             name += " (";
-            if(names == null)
-              names = Main.pref.getCollection("relation.nameOrder", Arrays.asList(defnames));
+            if(names == null) {
+                names = Main.pref.getCollection("relation.nameOrder", Arrays.asList(defnames));
+            }
             String nameTag = null;
             for (String n : names) {
                 nameTag = get(n);
-                if (nameTag != null) break;
+                if (nameTag != null) {
+                    break;
+                }
             }
-            if (nameTag != null)
+            if (nameTag != null) {
                 name += "\"" + nameTag + "\", ";
+            }
 
             int mbno = members.size();
             name += trn("{0} member", "{0} members", mbno, mbno) + ")";
-            if(errors != null)
+            if(errors != null) {
                 name = "*"+name;
+            }
         }
         return name;
     }
@@ -112,7 +119,7 @@ public final class Relation extends OsmPrimitive {
                 return true;
         return false;
     }
-    
+
     public RelationMember firstMember() {
         if (incomplete) return null;
         return (members.size() == 0) ? null : members.get(0);
@@ -120,5 +127,23 @@ public final class Relation extends OsmPrimitive {
     public RelationMember lastMember() {
         if (incomplete) return null;
         return (members.size() == 0) ? null : members.get(members.size() -1);
+    }
+
+    /**
+     * removes all members with member.member == primitive
+     * 
+     * @param primitive the primitive to check for
+     */
+    public void removeMembersFor(OsmPrimitive primitive) {
+        if (primitive == null)
+            return;
+
+        ArrayList<RelationMember> todelete = new ArrayList<RelationMember>();
+        for (RelationMember member: members) {
+            if (member.member == primitive) {
+                todelete.add(member);
+            }
+        }
+        members.removeAll(todelete);
     }
 }

@@ -33,20 +33,6 @@ public class CoordinateConflictResolveCommand extends Command {
     /** the merge decision */
     private final MergeDecisionType decision;
 
-
-    /**
-     * replies a (localized) display name for the type of an OSM primitive
-     * 
-     * @param primitive the primitive
-     * @return a localized display name
-     */
-    protected String getPrimitiveTypeAsString(OsmPrimitive primitive) {
-        if (primitive instanceof Node) return tr("node");
-        if (primitive instanceof Way) return tr("way");
-        if (primitive instanceof Relation) return tr("relation");
-        return "";
-    }
-
     /**
      * constructor
      * 

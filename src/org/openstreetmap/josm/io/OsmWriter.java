@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -24,12 +25,12 @@ import org.openstreetmap.josm.tools.DateUtils;
 public class OsmWriter extends XmlWriter implements Visitor {
 
     public final String DEFAULT_API_VERSION = "0.6";
-    
+
     /**
      * The counter for newly created objects. Starts at -1 and goes down.
      */
     private long newIdCounter = -1;
- 
+
     /**
      * All newly created ids and their primitive that uses it. This is a back reference
      * map to allow references to use the correnct primitives.
@@ -40,13 +41,13 @@ public class OsmWriter extends XmlWriter implements Visitor {
     private boolean withBody = true;
     private String version;
     private Changeset changeset;
-    
+
     public OsmWriter(PrintWriter out, boolean osmConform, String version) {
         super(out);
         this.osmConform = osmConform;
         this.version = (version == null ? DEFAULT_API_VERSION : version);
     }
-    
+
     public void setWithBody(boolean wb) {
         this.withBody = wb;
     }
@@ -56,7 +57,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     public void setVersion(String v) {
         this.version = v;
     }
-    
+
     public void header() {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.print("<osm version='");
@@ -69,14 +70,17 @@ public class OsmWriter extends XmlWriter implements Visitor {
 
     public void writeContent(DataSet ds) {
         for (Node n : ds.nodes)
-            if (shouldWrite(n))
+            if (shouldWrite(n)) {
                 visit(n);
+            }
         for (Way w : ds.ways)
-            if (shouldWrite(w))
+            if (shouldWrite(w)) {
                 visit(w);
+            }
         for (Relation e : ds.relations)
-            if (shouldWrite(e))
+            if (shouldWrite(e)) {
                 visit(e);
+            }
     }
 
     private boolean shouldWrite(OsmPrimitive osm) {
@@ -99,7 +103,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
         addCommon(n, "node");
         out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
         if (!withBody) {
-            out.println("/>");  
+            out.println("/>");
         } else {
             addTags(n, "node", true);
         }
@@ -109,11 +113,12 @@ public class OsmWriter extends XmlWriter implements Visitor {
         if (w.incomplete) return;
         addCommon(w, "way");
         if (!withBody) {
-            out.println("/>");  
+            out.println("/>");
         } else {
             out.println(">");
-            for (Node n : w.nodes)
+            for (Node n : w.nodes) {
                 out.println("    <nd ref='"+getUsedId(n)+"' />");
+            }
             addTags(w, "way", false);
         }
     }
@@ -122,12 +127,12 @@ public class OsmWriter extends XmlWriter implements Visitor {
         if (e.incomplete) return;
         addCommon(e, "relation");
         if (!withBody) {
-            out.println("/>");  
+            out.println("/>");
         } else {
             out.println(">");
             for (RelationMember em : e.members) {
                 out.print("    <member type='");
-                out.print(OsmApi.which(em.member));
+                out.print(OsmPrimitiveType.from(em.member).getAPIName());
                 out.println("' ref='"+getUsedId(em.member)+"' role='" +
                         XmlWriter.encode(em.role == null ? "" : em.role) + "' />");
             }
@@ -159,16 +164,19 @@ public class OsmWriter extends XmlWriter implements Visitor {
 
     private void addTags(OsmPrimitive osm, String tagname, boolean tagOpen) {
         if (osm.keys != null) {
-            if (tagOpen)
+            if (tagOpen) {
                 out.println(">");
-            for (Entry<String, String> e : osm.keys.entrySet())
+            }
+            for (Entry<String, String> e : osm.keys.entrySet()) {
                 out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
                         "' v='"+XmlWriter.encode(e.getValue())+ "' />");
+            }
             out.println("  </" + tagname + ">");
-        } else if (tagOpen)
+        } else if (tagOpen) {
             out.println(" />");
-        else
+        } else {
             out.println("  </" + tagname + ">");
+        }
     }
 
     /**
@@ -179,16 +187,18 @@ public class OsmWriter extends XmlWriter implements Visitor {
         long id = getUsedId(osm);
         out.print("  <"+tagname);
         if (id != 0) {
-             out.print(" id='"+getUsedId(osm)+"'");
+            out.print(" id='"+getUsedId(osm)+"'");
         }
         if (!osmConform) {
             String action = null;
-            if (osm.deleted)
+            if (osm.deleted) {
                 action = "delete";
-            else if (osm.modified)
+            } else if (osm.modified) {
                 action = "modify";
-            if (action != null)
+            }
+            if (action != null) {
                 out.print(" action='"+action+"'");
+            }
         }
         if (!osm.isTimestampEmpty()) {
             out.print(" timestamp='"+DateUtils.fromDate(osm.getTimestamp())+"'");
@@ -198,16 +208,18 @@ public class OsmWriter extends XmlWriter implements Visitor {
             out.print(" user='"+XmlWriter.encode(osm.user.name)+"'");
         }
         out.print(" visible='"+osm.visible+"'");
-        if (osm.version != -1)
+        if (osm.version != -1) {
             out.print(" version='"+osm.version+"'");
-        if (this.changeset != null && this.changeset.id != 0)
+        }
+        if (this.changeset != null && this.changeset.id != 0) {
             out.print(" changeset='"+this.changeset.id+"'" );
+        }
     }
-    
+
     public void close() {
         out.close();
     }
-    
+
     public void flush() {
         out.flush();
     }

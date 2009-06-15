@@ -3,20 +3,21 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
-import org.xml.sax.SAXException;
 
 /**
  * This DataReader reads directly from the REST API of the osm server.
@@ -38,36 +39,24 @@ public abstract class OsmServerReader extends OsmConnection {
      * @param pleaseWaitDlg
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      */
-    protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
-
-        // initialize API. Abort download in case of configuration or network
-        // errors
-        //
-        try {
-            api.initialize();
-        } catch(Exception e) {
-            JOptionPane.showMessageDialog(
-                    null,
-                    tr(   "Failed to initialize communication with the OSM server {0}.\n"
-                            + "Check the server URL in your preferences and your internet connection.",
-                            Main.pref.get("osm-server.url")
-                    ),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-            e.printStackTrace();
-            return null;
-        }
-
+    protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws OsmTransferException  {
+        api.initialize();
         urlStr = api.getBaseUrl() + urlStr;
         return getInputStreamRaw(urlStr, pleaseWaitDlg);
     }
 
-    protected InputStream getInputStreamRaw(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws IOException {
-
-        //        System.out.println("download: "+urlStr);
-        URL url = new URL(urlStr);
-        activeConnection = (HttpURLConnection)url.openConnection();
+    protected InputStream getInputStreamRaw(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws OsmTransferException {
+        URL url = null;
+        try {
+            url = new URL(urlStr);
+        } catch(MalformedURLException e) {
+            throw new OsmTransferException(e);
+        }
+        try {
+            activeConnection = (HttpURLConnection)url.openConnection();
+        } catch(Exception e) {
+            throw new OsmTransferException(tr("Failed to open connection to API {0}", url.toExternalForm()), e);
+        }
         if (cancel) {
             activeConnection.disconnect();
             return null;
@@ -80,28 +69,50 @@ public abstract class OsmServerReader extends OsmConnection {
         activeConnection.setConnectTimeout(15000);
 
         try {
+            System.out.println("GET " + url);
             activeConnection.connect();
+        } catch (Exception e) {
+            throw new OsmTransferException(tr("Couldn't connect to the osm server. Please check your internet connection."), e);
         }
-        catch (Exception e) {
-            throw new IOException(tr("Couldn't connect to the osm server. Please check your internet connection."));
-        }
+        try {
+            if (isAuthCancelled() && activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+                throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
 
-        if (isAuthCancelled() && activeConnection.getResponseCode() == 401)
-            return null;
-        if (activeConnection.getResponseCode() == 500)
-            throw new IOException(tr("Server returned internal error. Try a reduced area or retry after waiting some time."));
+            if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                String errorHeader = activeConnection.getHeaderField("Error");
+                InputStream i = null;
+                i = activeConnection.getErrorStream();
+                StringBuilder errorBody = new StringBuilder();
+                if (i != null) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                    String s;
+                    while((s = in.readLine()) != null) {
+                        errorBody.append(s);
+                        errorBody.append("\n");
+                    }
+                }
 
-        String encoding = activeConnection.getContentEncoding();
-        InputStream inputStream = new ProgressInputStream(activeConnection, pleaseWaitDlg);
-        if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
-            inputStream = new GZIPInputStream(inputStream);
+                throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString());
+            }
+
+            String encoding = activeConnection.getContentEncoding();
+            InputStream inputStream = new ProgressInputStream(activeConnection, pleaseWaitDlg);
+            if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
+                inputStream = new GZIPInputStream(inputStream);
+            }
+            else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
+                inputStream = new InflaterInputStream(inputStream, new Inflater(true));
+            }
+            return inputStream;
+        } catch(Exception e) {
+            if (e instanceof OsmTransferException)
+                throw (OsmTransferException)e;
+            else
+                throw new OsmTransferException(e);
+
         }
-        else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
-            inputStream = new InflaterInputStream(inputStream, new Inflater(true));
-        }
-        return inputStream;
     }
 
-    public abstract DataSet parseOsm() throws SAXException, IOException;
+    public abstract DataSet parseOsm() throws OsmTransferException;
 
 }

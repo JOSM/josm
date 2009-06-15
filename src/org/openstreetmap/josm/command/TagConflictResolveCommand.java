@@ -13,6 +13,7 @@ import javax.swing.tree.MutableTreeNode;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
@@ -51,19 +52,6 @@ public class TagConflictResolveCommand extends Command {
     }
 
     /**
-     * replies a (localized) display name for the type of an OSM primitive
-     * 
-     * @param primitive the primitive
-     * @return a localized display name
-     */
-    protected String getPrimitiveTypeAsString(OsmPrimitive primitive) {
-        if (primitive instanceof Node) return tr("node");
-        if (primitive instanceof Way) return tr("way");
-        if (primitive instanceof Relation) return tr("relation");
-        return "";
-    }
-
-    /**
      * constructor
      * 
      * @param my  my primitive
@@ -81,7 +69,7 @@ public class TagConflictResolveCommand extends Command {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve {0} tag conflicts in {1} {2}",getNumDecidedConflicts(), getPrimitiveTypeAsString(my), my.id),
+                        tr("Resolve {0} tag conflicts in {1} {2}",getNumDecidedConflicts(), OsmPrimitiveType.from(my).getLocalizedDisplayNameSingular(), my.id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
