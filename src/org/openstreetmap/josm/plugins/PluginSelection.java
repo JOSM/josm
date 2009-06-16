@@ -195,8 +195,8 @@ public class PluginSelection {
             JEditorPane description = new JEditorPane();
             description.setContentType("text/html");
             description.setEditable(false);
-            description.setText("<html><i>"+plugin.getLinkDescription()+"</i></html>");
-            description.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+            description.setText("<html><body bgcolor=\"#" + Integer.toHexString( UIManager.getColor("Panel.background").getRGB() & 0x00ffffff ) +"\"><i>"+plugin.getLinkDescription()+"</i></body></html>");
+            description.setBorder(BorderFactory.createEmptyBorder());
             description.setBackground(UIManager.getColor("Panel.background"));
             description.addHyperlinkListener(new HyperlinkListener() {
                 public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -207,7 +207,7 @@ public class PluginSelection {
             });
 
             gbc.gridy = row++;
-            gbc.insets = new Insets(3,5,5,5);
+            gbc.insets = new Insets(3,25,5,5);
             gbc.weighty = 0.9;
             gbc.weightx = 1.0;
             gbc.anchor = GridBagConstraints.WEST;
