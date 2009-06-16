@@ -105,17 +105,8 @@ public class PluginSelection {
                 String name = entry.getKey();
                 PluginInformation ap = availablePlugins.get(name);
                 PluginInformation pi = localPlugins.get(name);
-                boolean add = false;
-                if(pi == null)
-                    add = true;
-                else if(!pi.version.equals(ap.version))
-                {
-                    add = true;
-                    for (PluginProxy proxy : PluginHandler.pluginList)
-                        if(proxy.info.name.equals(ap.name))
-                            add = false;
-                }
-                if(add)
+                if(pi == null || (pi.version == null && ap.version != null)
+                || (pi.version != null && !pi.version.equals(ap.version)))
                 {
                     toDownload.add(ap);
                     msg += name + "\n";
