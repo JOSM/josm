@@ -20,6 +20,7 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.plugins.PluginHandler;
 
 /**
@@ -58,10 +59,8 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     StringWriter stack = new StringWriter();
                     e.printStackTrace(new PrintWriter(stack));
 
-                    String text = AboutAction.getTextBlock();
-                    text += "Java version: " + System.getProperty("java.version")+"\n";
-                    text += PluginHandler.getBugReportText();
-                    text += "\n" + stack.getBuffer().toString();
+                    String text = ShowStatusReportAction.getReportHeader()
+                    + stack.getBuffer().toString();
 
                     JPanel p = new JPanel(new GridBagLayout());
                     p.add(new JLabel("<html>" + tr("Please report a ticket at {0}","http://josm.openstreetmap.de/newticket") +

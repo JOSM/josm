@@ -40,7 +40,8 @@ public final class ShowStatusReportAction extends JosmAction {
 
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public static String getReportHeader()
+    {
         StringBuilder text = new StringBuilder();
         text.append(AboutAction.getTextBlock());
         text.append("\n");
@@ -56,6 +57,12 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("\n\n");
         text.append(PluginHandler.getBugReportText());
         text.append("\n\n");
+        return text.toString();
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        StringBuilder text = new StringBuilder();
+        text.append(getReportHeader());
         try {
             BufferedReader input = new BufferedReader(new FileReader(Main.pref
                     .getPreferencesDirFile()
