@@ -158,8 +158,16 @@ public class AdvancedPreference implements PreferenceSetting {
         }
         for (String prefKey : data.keySet()) {
             String prefValue = data.get(prefKey);
-            if (prefKey.contains(txtFilter.getText()) ||
-                    prefValue.contains(txtFilter.getText())) {
+            String input[] = txtFilter.getText().split("\\s+");
+            boolean canHas = true;
+
+            // Make 'wmsplugin cache' search for e.g. 'cache.wmsplugin'
+            for (String bit : input) {
+                if (!prefKey.contains(bit) && !prefValue.contains(bit))
+                    canHas = false;
+            }
+
+            if (canHas) {
                 model.addRow(new String[] {prefKey, prefValue});
             }
         }
