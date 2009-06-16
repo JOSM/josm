@@ -101,6 +101,7 @@ public class DownloadOsmTaskList implements Runnable {
         Set<Long> myPrimitiveIds = Main.main.editLayer().data.getPrimitiveIds();
         Set<Long> downloadedIds = getDownloadedIds();
         myPrimitiveIds.removeAll(downloadedIds);
+        myPrimitiveIds.remove(new Long(0));
         if (! myPrimitiveIds.isEmpty()) {
             handlePotentiallyDeletedPrimitives(myPrimitiveIds);
         }
