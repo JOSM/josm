@@ -1498,6 +1498,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="highway" value="bus_stop" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <check key="shelter" text="Shelter" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Bus Platform" icon="presets/platform_bus.png" type="node,closedway">
