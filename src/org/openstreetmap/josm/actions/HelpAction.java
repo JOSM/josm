@@ -204,12 +204,12 @@ public class HelpAction extends AbstractAction {
               {
                 if(url.equals(langurl))
                 {
-                    txt = ("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A>.",
+                    txt = ("<HTML>"+tr("Help page missing. Create it in <A HREF=\"{0}\">english</A>.",
                     url+"?action=edit")+"</HTML>");
                 }
                 else
                 {
-                    txt = ("<HTML>"+tr("Helppage missing. Create it in <A HREF=\"{0}\">english</A> or <A HREF=\"{1}\">your language</A>.",
+                    txt = ("<HTML>"+tr("Help page missing. Create it in <A HREF=\"{0}\">english</A> or <A HREF=\"{1}\">your language</A>.",
                     url+"?action=edit", langurl+"?action=edit")+"</HTML>");
                 }
               }

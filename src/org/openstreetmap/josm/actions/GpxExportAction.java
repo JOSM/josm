@@ -89,7 +89,7 @@ public class GpxExportAction extends DiskAccessAction {
         p.add(nameLabel, GBC.std().insets(10,0,5,0));
         JTextField authorName = new JTextField(Main.pref.get("lastAuthorName"));
         p.add(authorName, GBC.eol().fill(GBC.HORIZONTAL));
-        JLabel emailLabel = new JLabel(tr("Email"));
+        JLabel emailLabel = new JLabel(tr("E-Mail"));
         p.add(emailLabel, GBC.std().insets(10,0,5,0));
         JTextField email = new JTextField(Main.pref.get("osm-server.username"));
         p.add(email, GBC.eol().fill(GBC.HORIZONTAL));

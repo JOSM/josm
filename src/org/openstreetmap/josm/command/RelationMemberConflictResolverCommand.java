@@ -49,7 +49,7 @@ public class RelationMemberConflictResolverCommand extends Command {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve conflicts in member list of of relation {0}", my.id),
+                        tr("Resolve conflicts in member list of relation {0}", my.id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
