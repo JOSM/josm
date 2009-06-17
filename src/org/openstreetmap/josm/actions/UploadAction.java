@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  *
  * An dialog is displayed asking the user to specify a rectangle to grab.
  * The url and account settings from the preferences are used.
- * 
+ *
  * If the upload fails this action offers various options to resolve conflicts.
  *
  * @author imi
@@ -235,7 +235,7 @@ public class UploadAction extends JosmAction {
     /**
      * Synchronizes the local state of an {@see OsmPrimitive} with its state on the
      * server. The method uses an individual GET for the primitive.
-     * 
+     *
      * @param id the primitive ID
      */
     protected void synchronizePrimitive(final String id) {
@@ -285,9 +285,9 @@ public class UploadAction extends JosmAction {
 
     /**
      * Synchronizes the local state of the dataset with the state on the server.
-     * 
+     *
      * Reuses the functionality of {@see UpdateDataAction}.
-     * 
+     *
      * @see UpdateDataAction#actionPerformed(ActionEvent)
      */
     protected void synchronizeDataSet() {
@@ -298,7 +298,7 @@ public class UploadAction extends JosmAction {
     /**
      * Handles the case that a conflict in a specific {@see OsmPrimitive} was detected while
      * uploading
-     * 
+     *
      * @param primitiveType  the type of the primitive, either <code>node</code>, <code>way</code> or
      *    <code>relation</code>
      * @param id  the id of the primitive
@@ -348,7 +348,7 @@ public class UploadAction extends JosmAction {
     /**
      * Handles the case that a conflict was detected while uploading where we don't
      * know what {@see OsmPrimitive} actually caused the conflict (for whatever reason)
-     * 
+     *
      */
     protected void handleUploadConflictForUnknownConflict() {
         Object[] options = new Object[] {
@@ -386,7 +386,7 @@ public class UploadAction extends JosmAction {
 
     /**
      * handles an upload conflict, i.e. an error indicated by a HTTP return code 409.
-     * 
+     *
      * @param e  the exception
      */
     protected void handleUploadConflict(OsmApiException e) {
@@ -403,7 +403,7 @@ public class UploadAction extends JosmAction {
 
     /**
      * Handles an upload error due to a violated precondition, i.e. a HTTP return code 412
-     * 
+     *
      * @param e the exception
      */
     protected void handlePreconditionFailed(OsmApiException e) {
@@ -427,13 +427,13 @@ public class UploadAction extends JosmAction {
      * Handles an error due to a delete request on an already deleted
      * {@see OsmPrimitive}, i.e. a HTTP response code 410, where we know what
      * {@see OsmPrimitive} is responsible for the error.
-     * 
+     *
      *  Reuses functionality of the {@see UpdateSelectionAction} to resolve
      *  conflicts due to mismatches in the deleted state.
-     * 
+     *
      * @param primitiveType the type of the primitive
      * @param id the id of the primitive
-     * 
+     *
      * @see UpdateSelectionAction#handlePrimitiveGoneException(long)
      */
     protected void handleGoneForKnownPrimitive(String primitiveType, String id) {
@@ -445,7 +445,7 @@ public class UploadAction extends JosmAction {
      * handles the case of an error due to a delete request on an already deleted
      * {@see OsmPrimitive}, i.e. a HTTP response code 410, where we don't know which
      * {@see OsmPrimitive} is causing the error.
-     * 
+     *
      * @param e the exception
      */
     protected void handleGoneForUnknownPrimitive(OsmApiException e) {
@@ -471,7 +471,7 @@ public class UploadAction extends JosmAction {
      * {@see OsmPrimitive} on the server, i.e. a HTTP response code of 410.
      * Note that an <strong>update</strong> on an already deleted object results
      * in a 409, not a 410.
-     * 
+     *
      * @param e the exception
      */
     protected void handleGone(OsmApiException e) {
@@ -489,7 +489,7 @@ public class UploadAction extends JosmAction {
 
     /**
      * error handler for any exception thrown during upload
-     * 
+     *
      * @param e the exception
      */
     protected void handleFailedUpload(Exception e) {
@@ -542,7 +542,7 @@ public class UploadAction extends JosmAction {
 
     /**
      * handles an exception caught during OSM API initialization
-     * 
+     *
      * @param e the exception
      */
     protected void handleOsmApiInitializationException(OsmApiInitializationException e) {

@@ -130,7 +130,7 @@ public class DeleteAction extends MapMode {
     @Override public String getModeHelpText() {
         return tr("Click to delete. Shift: delete way segment. Alt: don't delete unused nodes when deleting a way. Ctrl: delete referring objects.");
     }
-    
+
     @Override public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
     }

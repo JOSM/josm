@@ -32,9 +32,9 @@ import org.openstreetmap.josm.Main;
 
 /**
  * JComponent that displays the slippy map tiles
- * 
+ *
  * @author Tim Haussmann
- * 
+ *
  */
 public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
 
@@ -69,8 +69,8 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         setZoomContolsVisible(false);
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));
-        // We need to set an initial size - this prevents a wrong zoom selection for 
-        // the area before the component has been displayed the first time   
+        // We need to set an initial size - this prevents a wrong zoom selection for
+        // the area before the component has been displayed the first time
         setBounds(new Rectangle(getMinimumSize()));
         setFileCacheEnabled(Main.pref.getBoolean("slippy_map_chooser.file_cache", true));
         setMaxTilesInMemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
@@ -179,7 +179,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
     /**
      * Callback for the OsmMapControl. (Re-)Sets the start and end point of the
      * selection rectangle.
-     * 
+     *
      * @param aStart
      * @param aEnd
      */

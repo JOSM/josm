@@ -79,7 +79,7 @@ public class SearchAction extends JosmAction {
         left.add(regexSearch, GBC.eol());
 
         JPanel right = new JPanel();
-        JLabel description = 
+        JLabel description =
         new JLabel("<html><ul>"
                 + "<li>"+tr("<b>Baker Street</b> - 'Baker' and 'Street' in any key or name.")+"</li>"
                 + "<li>"+tr("<b>\"Baker Street\"</b> - 'Baker Street' in any key or name.")+"</li>"
@@ -109,12 +109,12 @@ public class SearchAction extends JosmAction {
         final JPanel p = new JPanel();
         p.add(left);
         p.add(right);
-        
-        int result = new ExtendedDialog(Main.parent, 
-            tr("Search"), 
+
+        int result = new ExtendedDialog(Main.parent,
+            tr("Search"),
             p,
-            new String[] {tr("Start Search"), tr("Cancel")}, 
-            new String[] {"dialogs/search.png", "cancel.png"}).getValue();  
+            new String[] {tr("Start Search"), tr("Cancel")},
+            new String[] {"dialogs/search.png", "cancel.png"}).getValue();
         if(result != 1) return;
 
         // User pressed OK - let's perform the search

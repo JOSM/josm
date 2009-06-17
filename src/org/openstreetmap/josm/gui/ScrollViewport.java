@@ -169,7 +169,7 @@ public class ScrollViewport extends JPanel {
                 newX = compSize.width - viewRect.width;
             }
             break;
-        default : 
+        default :
             throw new IllegalStateException("Unknown direction : [0]" + direction);
         }
 

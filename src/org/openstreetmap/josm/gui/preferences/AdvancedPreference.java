@@ -42,7 +42,7 @@ public class AdvancedPreference implements PreferenceSetting {
     public void addGui(final PreferenceDialog gui) {
         JPanel p = gui.createPreferenceTab("advanced", tr("Advanced Preferences"),
                 tr("Setting Preference entries directly. Use with caution!"), false);
-        
+
         txtFilter = new JTextField();
         JLabel lbFilter = new JLabel(tr("Search: "));
         lbFilter.setLabelFor(txtFilter);
@@ -52,15 +52,15 @@ public class AdvancedPreference implements PreferenceSetting {
             public void changedUpdate(DocumentEvent e) {
                 action();
             }
-            
+
             public void insertUpdate(DocumentEvent e) {
                 action();
             }
-            
+
             public void removeUpdate(DocumentEvent e) {
                 action();
             }
-            
+
             private void action() {
                 dataToModel();
             }
@@ -151,7 +151,7 @@ public class AdvancedPreference implements PreferenceSetting {
             data.put(s, val);
         }
     }
-    
+
     private void dataToModel() {
         while (model.getRowCount() > 0) {
             model.removeRow(0);

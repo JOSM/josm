@@ -54,11 +54,11 @@ public class OsmApi extends OsmConnection {
 
     /**
      * replies the {@see OsmApi} for a given server URL
-     * 
+     *
      * @param serverUrl  the server URL
      * @return the OsmApi
      * @throws IllegalArgumentException thrown, if serverUrl is null
-     * 
+     *
      */
     static public OsmApi getOsmApi(String serverUrl) {
         OsmApi api = instances.get(serverUrl);
@@ -70,10 +70,10 @@ public class OsmApi extends OsmConnection {
     }
     /**
      * replies the {@see OsmApi} for the URL given by the preference <code>osm-server.url</code>
-     * 
+     *
      * @return the OsmApi
      * @exception IllegalStateException thrown, if the preference <code>osm-server.url</code> is not set
-     * 
+     *
      */
     static public OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url");
@@ -124,7 +124,7 @@ public class OsmApi extends OsmConnection {
 
     /**
      * creates an OSM api for a specific server URL
-     * 
+     *
      * @param serverUrl the server URL. Must not be null
      * @exception IllegalArgumentException thrown, if serverUrl is null
      */
@@ -465,7 +465,7 @@ public class OsmApi extends OsmConnection {
     /**
      * notifies any listeners about the current state of this API. Currently just
      * displays the message in the global progress dialog, see {@see Main#pleaseWaitDlg}
-     * 
+     *
      * @param message a status message.
      */
     protected void notifyStatusMessage(String message) {
@@ -475,7 +475,7 @@ public class OsmApi extends OsmConnection {
     /**
      * notifies any listeners about the current about a relative progress. Currently just
      * increments the progress monitor in the in the global progress dialog, see {@see Main#pleaseWaitDlg}
-     * 
+     *
      * @param int the delta
      */
     protected void notifyRelativeProgress(int delta) {

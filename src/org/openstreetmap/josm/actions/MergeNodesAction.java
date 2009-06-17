@@ -144,12 +144,12 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         // Complain to the user if the ways don't have equal memberships.
         for (HashSet<Node> nodelinks : backlinks.values()) {
             if (!nodelinks.containsAll(allNodes)) {
-                int option = new ExtendedDialog(Main.parent, 
-                        tr("Merge nodes with different memberships?"), 
+                int option = new ExtendedDialog(Main.parent,
+                        tr("Merge nodes with different memberships?"),
                         tr("The selected nodes have differing relation memberships.  "
                             + "Do you still want to merge them?"),
-                        new String[] {tr("Merge Anyway"), tr("Cancel")}, 
-                        new String[] {"mergenodes.png", "cancel.png"}).getValue();  
+                        new String[] {tr("Merge Anyway"), tr("Cancel")},
+                        new String[] {"mergenodes.png", "cancel.png"}).getValue();
                 if (option == 1) break;
                 return null;
             }
@@ -185,11 +185,11 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         }
 
         if (!components.isEmpty()) {
-            int answer = new ExtendedDialog(Main.parent, 
-                tr("Enter values for all conflicts."), 
+            int answer = new ExtendedDialog(Main.parent,
+                tr("Enter values for all conflicts."),
                 p,
-                new String[] {tr("Solve Conflicts"), tr("Cancel")}, 
-                new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();  
+                new String[] {tr("Solve Conflicts"), tr("Cancel")},
+                new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
             if (answer != 1)
                 return null;
             for (Entry<String, JComboBox> e : components.entrySet())

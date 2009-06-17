@@ -37,14 +37,14 @@ public class CreateOsmChangeVisitor extends AbstractVisitor {
         this.api = api;
         // need to set osmConform = false here so that negative IDs get transmitted.
         // this also enables unnecessary and (if the API were more strict) potentially
-        // harmful action="..." attributes. 
+        // harmful action="..." attributes.
         osmwriter = new OsmWriter(writer, false, api.getVersion());
         osmwriter.setChangeset(changeset);
     }
 
     // FIXME: This should really NOT use a visitor pattern, it looks
     // stupid. Just have one method named "write" instead of three "visit"s.
-    
+
     public void visit(Node n) {
         if (n.deleted) {
             switchMode("delete");
@@ -78,7 +78,7 @@ public class CreateOsmChangeVisitor extends AbstractVisitor {
             osmwriter.visit(r);
         }
     }
-    
+
     private void switchMode(String newMode) {
         if ((newMode != null && !newMode.equals(currentMode))||(newMode == null && currentMode != null)) {
             if (currentMode != null) {

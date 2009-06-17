@@ -18,9 +18,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * @author Raphael Mack <ramack@raphael-mack.de>
  */
 public class GpxData extends WithAttributes {
-    
+
     public static final String META_PREFIX = "meta.";
-    public static final String META_AUTHOR_NAME = META_PREFIX + "author.name"; 
+    public static final String META_AUTHOR_NAME = META_PREFIX + "author.name";
     public static final String META_AUTHOR_EMAIL = META_PREFIX + "author.email";
     public static final String META_AUTHOR_LINK = META_PREFIX + "author.link";
     public static final String META_COPYRIGHT_AUTHOR = META_PREFIX + "copyright.author";
@@ -31,7 +31,7 @@ public class GpxData extends WithAttributes {
     public static final String META_LINKS = META_PREFIX + "links";
     public static final String META_NAME = META_PREFIX + "name";
     public static final String META_TIME = META_PREFIX + "time";
-    
+
     public File storageFile;
     public boolean fromServer;
 

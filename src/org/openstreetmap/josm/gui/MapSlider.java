@@ -26,7 +26,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
 
     public void propertyChange(PropertyChangeEvent evt) {
         if (getModel().getValueIsAdjusting()) return;
-        
+
         double sizex = this.mv.scale * this.mv.getWidth();
         double sizey = this.mv.scale * this.mv.getHeight();
         for (int zoom = 0; zoom <= 150; zoom++, sizex *= 1.1, sizey *= 1.1) {

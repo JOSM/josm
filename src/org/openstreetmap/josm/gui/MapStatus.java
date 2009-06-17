@@ -104,7 +104,7 @@ public class MapStatus extends JPanel implements Helpful {
      * It gets destroyed by MapFrame.java/destroy() when the MapFrame itself is destroyed.
      */
     public Thread thread;
-    
+
     /**
      * The collector class that waits for notification and then update
      * the display objects.
@@ -352,7 +352,7 @@ public class MapStatus extends JPanel implements Helpful {
     public String helpTopic() {
         return "Statusline";
     }
-        
+
     @Override
     public void addMouseListener(MouseListener ml) {
         //super.addMouseListener(ml);

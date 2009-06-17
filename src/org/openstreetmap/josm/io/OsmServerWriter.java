@@ -61,7 +61,7 @@ public class OsmServerWriter {
 
     /**
      * retrieves the most recent changeset comment from the preferences
-     * 
+     *
      * @return the most recent changeset comment
      */
     protected String getChangesetComment() {
@@ -76,7 +76,7 @@ public class OsmServerWriter {
 
     /**
      * Send the dataset to the server.
-     * 
+     *
      * @param apiVersion version of the data set
      * @param primitives list of objects to send
      */

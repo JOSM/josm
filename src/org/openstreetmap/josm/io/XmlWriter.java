@@ -12,11 +12,11 @@ import java.util.HashMap;
 public class XmlWriter {
 
     protected PrintWriter out;
-    
+
     public XmlWriter(PrintWriter out) {
         this.out = out;
     }
-    
+
     /**
      * Encode the given string in XML1.0 format.
      * Optimized to fast pass strings that don't need encoding (normal case).

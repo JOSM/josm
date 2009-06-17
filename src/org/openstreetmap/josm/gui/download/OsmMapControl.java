@@ -25,7 +25,7 @@ import javax.swing.KeyStroke;
  * Currently implemented is: - zooming in and out with scrollwheel - zooming in
  * and centering by double clicking - selecting an area by clicking and dragging
  * the mouse
- * 
+ *
  * @author Tim Haussmann
  */
 public class OsmMapControl extends MouseAdapter implements MouseMotionListener, MouseListener {

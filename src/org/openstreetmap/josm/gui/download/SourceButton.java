@@ -42,7 +42,7 @@ public class SourceButton {
                 g.drawImage(imageMapnik.getImage(), g.getClipBounds().width
                         - imageMapnik.getIconWidth(), y, null);
             }else if(currentMap == CYCLEMAP){
-            	 g.drawImage(imageCycleMap.getImage(), g.getClipBounds().width
+                 g.drawImage(imageCycleMap.getImage(), g.getClipBounds().width
                          - imageCycleMap.getIconWidth(), y, null);
             }
             else {

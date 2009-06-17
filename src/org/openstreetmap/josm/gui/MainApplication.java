@@ -204,5 +204,5 @@ public class MainApplication extends Main {
                 System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", i));
             }
         }
-    }     
- }
+    }
+}

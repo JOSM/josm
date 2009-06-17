@@ -394,13 +394,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // he must have a way and a node selected (connection is made to the selected node).
 
         // If the above does not apply, the selection is cleared and a new try is started
-        
-  
-        
+
         boolean extendedWay = false;
         boolean wayIsFinishedTemp = wayIsFinished;
         wayIsFinished = false;
-        
+
         // don't draw lines if shift is held
         if (selection.size() > 0 && !shift) {
             Node selectedNode = null;
@@ -924,7 +922,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
             }
         }
-
         return rv;
     }
 

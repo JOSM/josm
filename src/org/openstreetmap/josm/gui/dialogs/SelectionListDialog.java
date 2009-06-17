@@ -261,7 +261,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             while (selectionHistory.size() > SELECTION_HISTORY_SIZE)
                 selectionHistory.removeLast();
         }
-        
+
         int ways = 0;
         int nodes = 0;
         int relations = 0;

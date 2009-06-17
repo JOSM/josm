@@ -3,9 +3,6 @@ package org.openstreetmap.josm.data.osm;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
-
-
-
 /**
  * Represents a single changeset in JOSM. For now its only used during
  * upload but in the future we may do more.
@@ -32,6 +29,4 @@ public final class Changeset extends OsmPrimitive {
         if (arg0 instanceof Changeset) return Long.valueOf(id).compareTo(arg0.id);
         return 1;
     }
-    
-    
 }

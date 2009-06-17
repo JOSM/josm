@@ -31,7 +31,7 @@ public class HistoryInfoAction extends JosmAction {
 
     /**
      * replies the base URL for browsing the the history of an OSM primitive
-     * 
+     *
      * @return the base URL, i.e. http://api.openstreetmap.org/browse
      */
     protected String getBaseURL() {
@@ -42,10 +42,10 @@ public class HistoryInfoAction extends JosmAction {
             System.out.println("WARNING: unexpected format of API base URL. Redirection to history page for OSM primitive will probably fail. API base URL is: " + baseUrl);
         }
         return ret;
-    }    
-    
+    }
+
     public void actionPerformed(ActionEvent e) {
-        final Collection<Object> sel = new LinkedList<Object>();        
+        final Collection<Object> sel = new LinkedList<Object>();
         final String baseUrl  = getBaseURL();
         new AbstractVisitor() {
             public void visit(Node n) {

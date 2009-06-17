@@ -52,7 +52,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * The display list.
      */
     private JList displaylist = new JList(list);
-    
+
     private SideButton sbEdit = new SideButton(marktr("Edit"), "edit", "Selection", tr( "Open an editor for the selected relation"), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             Relation toEdit = getSelected();
@@ -61,13 +61,13 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             RelationEditor.getEditor(toEdit, null).setVisible(true);
         }
     });
-    
+
     private SideButton sbDel = new SideButton(marktr("Delete"), "delete", "Selection", tr("Delete the selected relation"), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             Relation toDelete = getSelected();
             if (toDelete == null)
                 return;
-            
+
             Main.main.undoRedo.add(
                     new DeleteCommand(Collections.singleton(toDelete)));
         }
@@ -101,7 +101,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         buttonPanel.add(sbDel, GBC.eol());
         Layer.listeners.add(this);
         add(buttonPanel, BorderLayout.SOUTH);
-        
+
         displaylist.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                sbEdit.setEnabled(getSelected() != null);
@@ -129,7 +129,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         } else {
             setTitle(tr("Relations"), false);
         }
-        
+
         sbEdit.setEnabled(list.size() > 0);
         sbDel.setEnabled(list.size() > 0);
     }
@@ -184,7 +184,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     public void removeListSelectionListener(ListSelectionListener listener) {
         displaylist.removeListSelectionListener(listener);
     }
-    
+
     /**
      * @return The selected relation in the list
      */

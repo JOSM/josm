@@ -131,7 +131,7 @@ public final class Relation extends OsmPrimitive {
 
     /**
      * removes all members with member.member == primitive
-     * 
+     *
      * @param primitive the primitive to check for
      */
     public void removeMembersFor(OsmPrimitive primitive) {

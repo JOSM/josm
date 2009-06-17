@@ -217,7 +217,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
         mousePos = e.getPoint();
         initialMousePos = e.getPoint();
-        
+
         if(selectedSegment != null)
             Main.ds.setSelected(selectedSegment.way);
     }
@@ -267,8 +267,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             return tr("Drag a way segment to make a rectangle.");
         }
     }
-		
-		@Override public boolean layerIsSupported(Layer l) {
-				return l instanceof OsmDataLayer;
-		}
+
+        @Override public boolean layerIsSupported(Layer l) {
+                return l instanceof OsmDataLayer;
+        }
 }

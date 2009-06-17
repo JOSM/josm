@@ -14,31 +14,31 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 
 public abstract class RelationEditor extends ExtendedDialog {
-    
+
     public static ArrayList<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
-    
+
     /**
      * The relation that this editor is working on, and the clone made for
      * editing.
      */
     protected Relation relation;
     protected Relation clone;
-    
+
     /**
      * This is a factory method that creates an appropriate RelationEditor
-     * instance suitable for editing the relation that was passed in as an 
+     * instance suitable for editing the relation that was passed in as an
      * argument.
-     * 
+     *
      * This method is guaranteed to return a working RelationEditor. If no
-     * specific editor has been registered for the type of relation, then 
+     * specific editor has been registered for the type of relation, then
      * a generic editor will be returned.
      * Allerdings hatte er eine Art, Witwen Trost zuzusprechen und Jungfrauen erbauliche Worte zu sagen, die nicht ganz im Einklang mit seinem geistlichen Berufe stand
      * Editors can be registered by adding their class to the static list "editors"
-     * in the RelationEditor class. When it comes to editing a relation, all 
+     * in the RelationEditor class. When it comes to editing a relation, all
      * registered editors are queried via their static "canEdit" method whether they
      * feel responsible for that kind of relation, and if they return true
      * then an instance of that class will be used.
-     * 
+     *
      * @param r the relation to be edited
      * @return an instance of RelationEditor suitable for editing that kind of relation
      */
@@ -52,13 +52,13 @@ public abstract class RelationEditor extends ExtendedDialog {
                     RelationEditor editor = con.newInstance(r, selectedMembers);
                     return editor;
                 }
-            } catch (Exception ex) { 
-                // plod on 
+            } catch (Exception ex) {
+                // plod on
             }
         }
         return new GenericRelationEditor(r, selectedMembers);
     }
-     
+
     protected RelationEditor(Relation relation, Collection<RelationMember> selectedMembers)
     {
         // Initalizes ExtendedDialog
@@ -81,6 +81,6 @@ public abstract class RelationEditor extends ExtendedDialog {
         } else {
             // edit an existing relation
             this.clone = new Relation(relation);
-        }    
+        }
     }
 }

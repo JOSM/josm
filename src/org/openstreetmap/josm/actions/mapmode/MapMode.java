@@ -71,7 +71,7 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
         if (Main.map != null)
             Main.map.selectMapMode(this);
     }
-    
+
     // By default, all tools will work with all layers. Can be overwritten to require
     // a special type of layer
     public boolean layerIsSupported(Layer l) {

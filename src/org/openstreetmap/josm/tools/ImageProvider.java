@@ -228,7 +228,7 @@ public class ImageProvider {
         }
     }
 
-/* from: http://www.jidesoft.com/blog/2008/02/29/rotate-an-icon-in-java/ 
+/* from: http://www.jidesoft.com/blog/2008/02/29/rotate-an-icon-in-java/
 * License: "feel free to use"
 */
 final static double DEGREE_90 = 90.0 * Math.PI / 180.0;

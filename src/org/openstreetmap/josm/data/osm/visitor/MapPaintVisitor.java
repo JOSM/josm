@@ -267,7 +267,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             int tmpWidth = (int) (100 /  (float) (circum / realWidth));
             if (tmpWidth > width) width = tmpWidth;
-            
+
             /* if we have a "width" tag, try use it */
             /* (this might be slow and could be improved by caching the value in the Way, on the other hand only used if "real width" is enabled) */
             String widthTag = w.get("width");

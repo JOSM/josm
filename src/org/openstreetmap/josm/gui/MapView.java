@@ -88,7 +88,7 @@ public class MapView extends NavigatableComponent {
         addComponentListener(new ComponentAdapter(){
             @Override public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
-                
+
                 MapSlider zoomSlider = new MapSlider(MapView.this);
                 add(zoomSlider);
                 zoomSlider.setBounds(3, 0, 114, 30);
@@ -189,11 +189,11 @@ public class MapView extends NavigatableComponent {
     {
         return activeLayer != null && activeLayer instanceof OsmDataLayer;
     }
-    
+
     public Boolean isVisibleDrawableLayer() {
         return isDrawableLayer() && activeLayer.visible;
     }
-    
+
 
     /**
      * Remove the layer from the mapview. If the layer was in the list before,

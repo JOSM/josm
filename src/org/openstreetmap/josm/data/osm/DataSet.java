@@ -277,7 +277,7 @@ public class DataSet implements Cloneable {
     /**
      * returns a  primitive with a given id from the data set. null, if no such primitive
      * exists
-     * 
+     *
      * @param id  the id, > 0 required
      * @return the primitive
      * @exception IllegalArgumentException thrown, if id <= 0

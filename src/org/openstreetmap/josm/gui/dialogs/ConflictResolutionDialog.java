@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is an extended dialog for resolving conflict between {@see OsmPrimitive}.
- * 
+ *
  *
  */
 public class ConflictResolutionDialog extends JDialog {
@@ -38,7 +38,7 @@ public class ConflictResolutionDialog extends JDialog {
 
     /**
      * restore position and size on screen from preference settings
-     * 
+     *
      */
     protected void restorePositionAndDimension() {
         Point p = new Point();
@@ -78,7 +78,7 @@ public class ConflictResolutionDialog extends JDialog {
 
     /**
      * remember position and size on screen in the preferences
-     * 
+     *
      */
     protected void rememberPositionAndDimension() {
         Point p = getLocation();
@@ -103,7 +103,7 @@ public class ConflictResolutionDialog extends JDialog {
 
     /**
      * builds the sub panel with the control buttons
-     * 
+     *
      * @return the panel
      */
     protected JPanel buildButtonRow() {

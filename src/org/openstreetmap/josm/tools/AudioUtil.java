@@ -19,11 +19,11 @@ import org.openstreetmap.josm.Main;
  *
  */
 public class AudioUtil {
-	
-	static public double getCalibratedDuration(File wavFile) {
+
+    static public double getCalibratedDuration(File wavFile) {
         try {
-        	AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
-        			new URL("file:".concat(wavFile.getAbsolutePath())));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                    new URL("file:".concat(wavFile.getAbsolutePath())));
             AudioFormat audioFormat = audioInputStream.getFormat();
             long filesize = wavFile.length();
             double bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
@@ -33,9 +33,7 @@ public class AudioUtil {
             double calibration = Main.pref.getDouble("audio.calibration", "1.0" /* default, ratio */);
             return naturalLength / calibration;
         } catch (Exception e) {
-        	return 0.0;
+            return 0.0;
         }
-	}
-	
+    }
 }
- 

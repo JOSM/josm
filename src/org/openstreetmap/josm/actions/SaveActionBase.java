@@ -149,9 +149,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
             OsmBzip2Importer osmBzip2Importer = new OsmBzip2Importer();
             if (gpxImExporter.acceptFile(file))
                 GpxExportAction.exportGpx(file, layer);
-            else if (osmImExporter.acceptFile(file) 
+            else if (osmImExporter.acceptFile(file)
                     || osmGzipImporter.acceptFile(file)
-                    || osmBzip2Importer.acceptFile(file)) 
+                    || osmBzip2Importer.acceptFile(file))
             {
                 // use a tmp file because if something errors out in the
                 // process of writing the file, we might just end up with
@@ -170,7 +170,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                     out.write('Z');
                     out = new CBZip2OutputStream(out);
                 }
-                Writer writer = new OutputStreamWriter(out, "UTF-8"); 
+                Writer writer = new OutputStreamWriter(out, "UTF-8");
 
                 OsmWriter w = new OsmWriter(new PrintWriter(writer), false, layer.data.version);
                 w.header();

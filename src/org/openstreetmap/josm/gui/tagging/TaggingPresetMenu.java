@@ -48,60 +48,60 @@ public class TaggingPresetMenu extends TaggingPreset {
             pm.show(co, co.getWidth()/2, co.getHeight()/2);
         }
     }
-	/**
-	 * Sorts the menu items using the translated item text
-	 */
-	public void sortMenu(){
-		TaggingPresetMenu.sortMenu(this.menu);
-	}
+    /**
+     * Sorts the menu items using the translated item text
+     */
+    public void sortMenu(){
+        TaggingPresetMenu.sortMenu(this.menu);
+    }
 
-	/**
-	 * Sorts the menu items using the translated item text
-	 */
-	public static void sortMenu(JMenu menu){
-		Component[] items = menu.getMenuComponents();
-		PresetTextComparator comp = new PresetTextComparator();
-		ArrayList<JMenuItem> sortarray = new ArrayList<JMenuItem>();
-		int lastSeperator = 0;
-		for (int i = 0; i < items.length; i++) {
-			Object item = items[i];
-			if (item instanceof JMenu){
-				sortMenu((JMenu)item);
-			}			
-			if (item instanceof JMenuItem){
-				sortarray.add((JMenuItem)item);
-				if (i == items.length-1){
-					Collections.sort(sortarray, comp);
-					int pos = 0;
-					for (JMenuItem menuItem : sortarray) {
-						int oldPos;
-						if(lastSeperator == 0){
-							oldPos=pos;
-						}else {
-							oldPos = pos+lastSeperator+1;
-						}
-						menu.add(menuItem, oldPos);
-						pos++;
-					}
-					sortarray = new ArrayList<JMenuItem>();
-					lastSeperator = 0;
-				}
-			}else if (item instanceof JSeparator){
-				Collections.sort(sortarray, comp);
-				int pos = 0;
-				for (JMenuItem menuItem : sortarray) {
-					int oldPos;
-					if(lastSeperator == 0){
-						oldPos=pos;
-					}else {
-						oldPos = pos+lastSeperator+1;
-					}
-					menu.add(menuItem, oldPos);
-					pos++;
-				}
-				sortarray = new ArrayList<JMenuItem>();
-				lastSeperator = i;
-			}
-		}
-	}
+    /**
+     * Sorts the menu items using the translated item text
+     */
+    public static void sortMenu(JMenu menu){
+        Component[] items = menu.getMenuComponents();
+        PresetTextComparator comp = new PresetTextComparator();
+        ArrayList<JMenuItem> sortarray = new ArrayList<JMenuItem>();
+        int lastSeperator = 0;
+        for (int i = 0; i < items.length; i++) {
+            Object item = items[i];
+            if (item instanceof JMenu){
+                sortMenu((JMenu)item);
+            }
+            if (item instanceof JMenuItem){
+                sortarray.add((JMenuItem)item);
+                if (i == items.length-1){
+                    Collections.sort(sortarray, comp);
+                    int pos = 0;
+                    for (JMenuItem menuItem : sortarray) {
+                        int oldPos;
+                        if(lastSeperator == 0){
+                            oldPos=pos;
+                        }else {
+                            oldPos = pos+lastSeperator+1;
+                        }
+                        menu.add(menuItem, oldPos);
+                        pos++;
+                    }
+                    sortarray = new ArrayList<JMenuItem>();
+                    lastSeperator = 0;
+                }
+            }else if (item instanceof JSeparator){
+                Collections.sort(sortarray, comp);
+                int pos = 0;
+                for (JMenuItem menuItem : sortarray) {
+                    int oldPos;
+                    if(lastSeperator == 0){
+                        oldPos=pos;
+                    }else {
+                        oldPos = pos+lastSeperator+1;
+                    }
+                    menu.add(menuItem, oldPos);
+                    pos++;
+                }
+                sortarray = new ArrayList<JMenuItem>();
+                lastSeperator = i;
+            }
+        }
+    }
 }

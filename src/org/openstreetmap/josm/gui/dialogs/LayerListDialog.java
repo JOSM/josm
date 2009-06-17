@@ -79,7 +79,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
                     int result = new ExtendedDialog(Main.parent, tr("Unsaved Changes"),
                         tr("There are unsaved changes. Delete the layer anwyay?"),
                         new String[] {tr("Delete Layer"), tr("Cancel")},
-                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue(); 
+                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 
                     if(result != 1) return;
                 }

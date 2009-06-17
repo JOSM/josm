@@ -20,7 +20,7 @@ public class AudioMarker extends ButtonMarker {
     private static AudioMarker recentlyPlayedMarker = null;
     public  double syncOffset;
     public boolean timeFromAudio = false; // as opposed to from the GPX track
-    
+
     /**
      * Verifies the parameter whether a new AudioMarker can be created and return
      * one or return <code>null</code>.

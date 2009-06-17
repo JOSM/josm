@@ -184,7 +184,7 @@ public final class Way extends OsmPrimitive {
     }
 
     public boolean isFirstLastNode(Node n) {
-        if (incomplete || nodes.size() == 0) return false; 
+        if (incomplete || nodes.size() == 0) return false;
         return n == firstNode() || n == lastNode();
     }
 }

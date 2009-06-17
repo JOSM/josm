@@ -192,7 +192,7 @@ public final class ConflictDialog extends ToggleDialog {
 
     /**
      * removes a conflict registered for {@see OsmPrimitive} <code>my</code>
-     * 
+     *
      * @param my the {@see OsmPrimitive} for which a conflict is registered
      *   with this dialog
      */
@@ -208,7 +208,7 @@ public final class ConflictDialog extends ToggleDialog {
      * registers a conflict with this dialog. The conflict is represented
      * by a pair of {@see OsmPrimitive} with differences in their tag sets,
      * their node lists (for {@see Way}s) or their member lists (for {@see Relation}s)
-     * 
+     *
      * @param my  my version of the {@see OsmPrimitive}
      * @param their their version of the {@see OsmPrimitive}
      */

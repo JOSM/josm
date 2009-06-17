@@ -1,18 +1,18 @@
 /* Copyright (c) 2008, Henrik Niehaus
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 3. Neither the name of the project nor the names of its 
- *    contributors may be used to endorse or promote products derived from this 
+ * 3. Neither the name of the project nor the names of its
+ *    contributors may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,76 +36,76 @@ import javax.swing.DefaultComboBoxModel;
 
 public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<String> {
 
-	private int maxSize = 10;
-	
-	private List<HistoryChangedListener> listeners = new ArrayList<HistoryChangedListener>();
-	
-	public ComboBoxHistory(int size) {
-		maxSize = size;
-	}
-	
-	/**
-	 * Adds or moves an element to the top of the history
-	 */
-	public void addElement(Object o) {
-		String newEntry = (String)o;
-		
-		// if history contains this object already, delete it,
-		// so that it looks like a move to the top
-		for (int i = 0; i < getSize(); i++) {
-			String oldEntry = (String) getElementAt(i);
-			if(oldEntry.equals(newEntry)) {
-				removeElementAt(i);
-			}
-		}
-		
-		// insert element at the top
-		insertElementAt(o, 0);
-		
-		// remove an element, if the history gets too large
-		if(getSize()> maxSize) {
-			removeElementAt(getSize()-1);
-		}
-		
-		// set selected item to the one just added
-		setSelectedItem(o);
-		
-		fireHistoryChanged();
-	}
-	
-	public Iterator<String> iterator() {
-		return new Iterator<String>() {
+    private int maxSize = 10;
 
-			private int position = -1;
-			
-			public void remove() {
-				removeElementAt(position);
-			}
+    private List<HistoryChangedListener> listeners = new ArrayList<HistoryChangedListener>();
 
-			public boolean hasNext() {
-				if(position < getSize()-1 && getSize()>0) {
-					return true;
-				}
-				return false;
-			}
+    public ComboBoxHistory(int size) {
+        maxSize = size;
+    }
 
-			public String next() {
-				position++;
-				return getElementAt(position).toString();
-			}
-			
-		};
-	}
+    /**
+     * Adds or moves an element to the top of the history
+     */
+    public void addElement(Object o) {
+        String newEntry = (String)o;
 
-	public void setItems(List<String> items) {
-	    removeAllElements();
-	    Collections.reverse(items);
-	    for (String item : items) {
+        // if history contains this object already, delete it,
+        // so that it looks like a move to the top
+        for (int i = 0; i < getSize(); i++) {
+            String oldEntry = (String) getElementAt(i);
+            if(oldEntry.equals(newEntry)) {
+                removeElementAt(i);
+            }
+        }
+
+        // insert element at the top
+        insertElementAt(o, 0);
+
+        // remove an element, if the history gets too large
+        if(getSize()> maxSize) {
+            removeElementAt(getSize()-1);
+        }
+
+        // set selected item to the one just added
+        setSelectedItem(o);
+
+        fireHistoryChanged();
+    }
+
+    public Iterator<String> iterator() {
+        return new Iterator<String>() {
+
+            private int position = -1;
+
+            public void remove() {
+                removeElementAt(position);
+            }
+
+            public boolean hasNext() {
+                if(position < getSize()-1 && getSize()>0) {
+                    return true;
+                }
+                return false;
+            }
+
+            public String next() {
+                position++;
+                return getElementAt(position).toString();
+            }
+
+        };
+    }
+
+    public void setItems(List<String> items) {
+        removeAllElements();
+        Collections.reverse(items);
+        for (String item : items) {
             addElement(item);
         }
-	    Collections.reverse(items);
-	}
-	
+        Collections.reverse(items);
+    }
+
     public List<String> asList() {
         List<String> list = new ArrayList<String>(maxSize);
         for (String item : this) {
@@ -113,15 +113,15 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
         }
         return list;
     }
-    
+
     public void addHistoryChangedListener(HistoryChangedListener l) {
         listeners.add(l);
     }
-    
+
     public void removeHistoryChangedListener(HistoryChangedListener l) {
         listeners.remove(l);
     }
-    
+
     private void fireHistoryChanged() {
         for (HistoryChangedListener l : listeners) {
             l.historyChanged(asList());

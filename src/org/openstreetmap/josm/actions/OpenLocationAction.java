@@ -42,11 +42,11 @@ public class OpenLocationAction extends JosmAction {
         JTextField urltext = new JTextField(40);
         all.add(urltext, GBC.eol());
         all.add(layer, GBC.eol());
-        int answer = new ExtendedDialog(Main.parent, 
-                        tr("Download Location"), 
+        int answer = new ExtendedDialog(Main.parent,
+                        tr("Download Location"),
                         all,
-                        new String[] {tr("Download URL"), tr("Cancel")}, 
-                        new String[] {"download.png", "cancel.png"}).getValue();  
+                        new String[] {tr("Download URL"), tr("Cancel")},
+                        new String[] {"download.png", "cancel.png"}).getValue();
         if (answer != 1) return;
         openUrl(layer.isSelected(), urltext.getText());
     }

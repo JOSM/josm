@@ -217,17 +217,17 @@ public class MergeVisitor extends AbstractVisitor {
 
     /**
      * Tries to merge a primitive <code>other</code> into an existing primitive with the same id.
-     * 
-     * @param myPrimitives the complete set of my primitives (potential merge targets) 
+     *
+     * @param myPrimitives the complete set of my primitives (potential merge targets)
      * @param myPrimitivesWithID the map of primitives (potential merge targets) with an id <> 0, for faster lookup
-     *    by id. Key is the id, value the primitive with the given value. myPrimitives.valueSet() is a 
+     *    by id. Key is the id, value the primitive with the given value. myPrimitives.valueSet() is a
      *    subset of primitives.
      * @param other  the other primitive which is to be merged with a primitive in primitives if possible
-     * @return true, if this method was able to merge <code>other</code> with an existing node; false, otherwise  
+     * @return true, if this method was able to merge <code>other</code> with an existing node; false, otherwise
      */
     private <P extends OsmPrimitive> boolean mergeById(
             Collection<P> myPrimitives, HashMap<Long, P> myPrimitivesWithID, P other) {
-        
+
         // merge other into an existing primitive with the same id, if possible
         //
         if (myPrimitivesWithID.containsKey(other.id)) {
@@ -245,7 +245,7 @@ public class MergeVisitor extends AbstractVisitor {
             }
         }
 
-        // try to merge into one of the existing primitives 
+        // try to merge into one of the existing primitives
         //
         for (P my : myPrimitives) {
             if (my.realEqual(other, false /* compare all fields */)) {

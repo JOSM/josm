@@ -239,7 +239,7 @@ public class OsmDataLayer extends Layer {
     /**
      * merges the primitives in dataset <code>from</code> into the dataset of
      * this layer
-     * 
+     *
      * @param from  the source data set
      */
     public void mergeFrom(final DataSet from) {

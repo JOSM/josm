@@ -157,14 +157,14 @@ public class OsmReader {
                          if (atts == null)
                               throw new SAXException(tr("Unknown version"));
                          String v = atts.getValue("version");
-                         if (v == null) 
+                         if (v == null)
                              throw new SAXException(tr("Version number missing from OSM data"));
-                         if (!(v.equals("0.5") || v.equals("0.6"))) 
+                         if (!(v.equals("0.5") || v.equals("0.6")))
                              throw new SAXException(tr("Unknown version: {0}", v));
                          // save generator attribute for later use when creating DataSource objects
                          generator = atts.getValue("generator");
                          ds.version = v;
-                         
+
                     } else if (qName.equals("bounds")) {
                          // new style bounds.
                          String minlon = atts.getValue("minlon");
@@ -233,7 +233,7 @@ public class OsmReader {
                          emd.type= value;
                          value = atts.getValue("role");
                          emd.relationMember.role = value;
-                         
+
                          if (emd.id == 0)
                               throw new SAXException(tr("Incomplete <member> specification with ref=0"));
 
@@ -284,8 +284,8 @@ public class OsmReader {
                // do not store literally; get object reference for string
                current.user = User.get(user);
           }
-          
-          // uid attribute added in 0.6 API 
+
+          // uid attribute added in 0.6 API
           String uid = atts.getValue("uid");
           if (uid != null) {
               if (current.user != null) {
@@ -483,7 +483,7 @@ public class OsmReader {
           }
 
           Main.pleaseWaitDlg.currentAction.setText(tr("Prepare OSM data..."));
-          Main.pleaseWaitDlg.setIndeterminate(true); 
+          Main.pleaseWaitDlg.setIndeterminate(true);
 
 //          System.out.println("Parser finished: Tags " + tagsN + " Nodes " + nodesN + " Ways " + waysN +
 //            " Relations " + relationsN + " Members " + membersN);
@@ -505,8 +505,8 @@ public class OsmReader {
                     o.id = 0;
 
 //          System.out.println("Data loaded!");
-          Main.pleaseWaitDlg.setIndeterminate(false); 
-          Main.pleaseWaitDlg.progress.setValue(0); 
+          Main.pleaseWaitDlg.setIndeterminate(false);
+          Main.pleaseWaitDlg.progress.setValue(0);
 
           return osm;
      }
