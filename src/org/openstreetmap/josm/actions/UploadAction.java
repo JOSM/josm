@@ -526,9 +526,11 @@ public class UploadAction extends JosmAction {
 
         // For any other exception just notify the user
         //
-        String msg = e.getMessage().substring(0,Math.min(80, e.getMessage().length()));
-        if (msg.length() < e.getMessage().length()) {
-            msg += " ...";
+        String msg;
+        if (e.getMessage() == null) {
+            msg = e.toString();
+        } else {
+            msg = e.getMessage();
         }
         e.printStackTrace();
         JOptionPane.showMessageDialog(
@@ -537,7 +539,6 @@ public class UploadAction extends JosmAction {
                 tr("Upload to OSM API failed"),
                 JOptionPane.ERROR_MESSAGE
         );
-
     }
 
     /**
