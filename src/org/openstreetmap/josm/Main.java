@@ -258,7 +258,7 @@ abstract public class Main {
             Main.proj = (Projection)Class.forName(Main.pref.get("projection")).newInstance();
         } catch (final Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, tr("The projection could not be read from preferences. Using Mercartor"));
+            JOptionPane.showMessageDialog(null, tr("The projection could not be read from preferences. Using Mercator"));
             Main.proj = new Mercator();
         }
 
