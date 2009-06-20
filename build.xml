@@ -76,4 +76,8 @@
 		<delete dir="dist" />
 	</target>
 
+	<target name="dev-deploy" depends="dist">
+		<copy  file="dist/josm-custom.jar" todir="C:\data\projekte\osm\tag-editor-plugin"/>
+	</target>
+
 </project>

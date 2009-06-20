@@ -20,7 +20,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -135,7 +134,7 @@ public class DownloadOsmTaskList implements Runnable {
         String message = tr("<html>"
                 +  "There are {0} primitives in your local dataset which<br>"
                 + "might be deleted on the server. If you later try to delete or<br>"
-                + "update them on the server the server is likely to report a<br>"
+                + "update them the server is likely to report a<br>"
                 + "conflict.<br>"
                 + "<br>"
                 + "Click <strong>{1}</strong> to check these primitives individually.<br>"
@@ -175,7 +174,6 @@ public class DownloadOsmTaskList implements Runnable {
         }
         return false;
     }
-
 
     public Set<Long> getDownloadedIds() {
         HashSet<Long> ret = new HashSet<Long>();

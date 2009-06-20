@@ -83,14 +83,7 @@ public class OsmServerWriter {
     public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives) throws OsmTransferException {
         processed = new LinkedList<OsmPrimitive>();
 
-        // initialize API. Abort upload in case of configuration or network
-        // errors
-        //
-        try {
-            api.initialize();
-        } catch(Exception e) {
-            throw new OsmApiInitializationException(e);
-        }
+        api.initialize();
 
         Main.pleaseWaitDlg.progress.setMaximum(primitives.size());
         Main.pleaseWaitDlg.progress.setValue(0);
@@ -124,6 +117,7 @@ public class OsmServerWriter {
         } else {
             // upload changes individually (90% of code is for the status display...)
             //
+            api.createChangeset(getChangesetComment());
             NameVisitor v = new NameVisitor();
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
@@ -138,6 +132,7 @@ public class OsmServerWriter {
                 processed.add(osm);
                 Main.pleaseWaitDlg.progress.setValue(progress+1);
             }
+            api.stopChangeset();
         }
     }
 

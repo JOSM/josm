@@ -28,7 +28,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.ConflictResolveCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -38,8 +37,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import org.openstreetmap.josm.gui.ConflictResolver;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
@@ -108,20 +105,6 @@ public final class ConflictDialog extends ToggleDialog {
     }
 
     private final void resolve() {
-        String method = Main.pref.get("conflict.resolution", "extended");
-        method = method.trim().toLowerCase();
-        if (method.equals("traditional")) {
-            resolveTraditional();
-        } else if (method.equals("extended")) {
-            resolveExtended();
-        } else {
-            System.out.println(tr("WARNING: unexpected value for preference conflict.resolution, got " + method));
-            resolveTraditional();
-        }
-    }
-
-
-    private final void resolveExtended() {
         if(model.size() == 1) {
             displaylist.setSelectedIndex(0);
         }
@@ -138,33 +121,6 @@ public final class ConflictDialog extends ToggleDialog {
         ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
         dialog.getConflictResolver().populate(my, their);
         dialog.setVisible(true);
-        Main.map.mapView.repaint();
-    }
-
-
-    private final void resolveTraditional() {
-        if(model.size() == 1) {
-            displaylist.setSelectedIndex(0);
-        }
-
-        if (displaylist.getSelectedIndex() == -1)
-            return;
-        Map<OsmPrimitive, OsmPrimitive> sel = new HashMap<OsmPrimitive, OsmPrimitive>();
-        for (int i : displaylist.getSelectedIndices()) {
-            OsmPrimitive s = (OsmPrimitive)model.get(i);
-            sel.put(s, conflicts.get(s));
-        }
-        ConflictResolver resolver = new ConflictResolver(sel);
-        int answer = new ExtendedDialog(Main.parent,
-                tr("Resolve Conflicts"),
-                resolver,
-                new String[] { tr("Solve Conflict"), tr("Cancel") },
-                new String[] { "dialogs/conflict.png", "cancel.png"}
-        ).getValue();
-
-        if (answer != 1)
-            return;
-        Main.main.undoRedo.add(new ConflictResolveCommand(resolver.conflicts, sel));
         Main.map.mapView.repaint();
     }
 

@@ -306,7 +306,6 @@ public class OsmApi extends OsmConnection {
      * @param list the list of changed OSM Primitives
      * @return list of processed primitives
      * @throws OsmTransferException if something is wrong
-     * @throws OsmTransferCancelledException  if the upload was cancelled by the user
      */
     public Collection<OsmPrimitive> uploadDiff(final Collection<OsmPrimitive> list) throws OsmTransferException {
 
