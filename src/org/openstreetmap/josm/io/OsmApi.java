@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -380,7 +379,7 @@ public class OsmApi extends OsmConnection {
                 activeConnection.setRequestMethod(requestMethod);
                 addAuth(activeConnection);
 
-                if (requestMethod.equals("PUT") || requestMethod.equals("POST")) {
+                if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals("DELETE")) {
                     activeConnection.setDoOutput(true);
                     activeConnection.setRequestProperty("Content-type", "text/xml");
                     OutputStream out = activeConnection.getOutputStream();
