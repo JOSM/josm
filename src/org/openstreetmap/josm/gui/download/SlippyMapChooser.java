@@ -18,6 +18,7 @@ import java.util.Vector;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
@@ -83,8 +84,9 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
             iSourceButton.setMapStyle(SourceButton.CYCLEMAP);
             this.setTileSource(sources[2]);
         } else {
-            if (!mapStyle.equals("mapnik"))
+            if (!mapStyle.equals("mapnik")) {
                 Main.pref.put("slippy_map_chooser.mapstyle", "mapnik");
+            }
         }
     }
 
@@ -93,10 +95,11 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
     }
 
     public void setFileCacheEnabled(boolean enabled) {
-        if (enabled)
+        if (enabled) {
             setTileLoader(cachedLoader);
-        else
+        } else {
             setTileLoader(uncachedLoader);
+        }
     }
 
     public void addGui(final DownloadDialog gui) {
@@ -105,7 +108,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         slipyyMapTabPanel.setLayout(new BorderLayout());
         slipyyMapTabPanel.add(this, BorderLayout.CENTER);
         String labelText = "<b>Zoom:</b> Mousewheel, double click or Ctrl + Up/Down "
-                + "<b>Move map:</b> Hold right mousebutton and move mouse or use cursor keys. <b>Select:</b> Click.";
+            + "<b>Move map:</b> Hold right mousebutton and move mouse or use cursor keys. <b>Select:</b> Click.";
         slipyyMapTabPanel.add(new JLabel("<html>" + tr(labelText) + "</html>"), BorderLayout.SOUTH);
         iGui.tabpane.add(slipyyMapTabPanel, tr("Slippy map"));
         new OsmMapControl(this, slipyyMapTabPanel, iSizeButton, iSourceButton);
@@ -202,12 +205,12 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         iSelectionRectStart = pStart;
         iSelectionRectEnd = pEnd;
 
-        Point2D.Double l1 = getPosition(p_max);
-        Point2D.Double l2 = getPosition(p_min);
-        iGui.minlat = Math.min(l2.x, l1.x);
-        iGui.minlon = Math.min(l1.y, l2.y);
-        iGui.maxlat = Math.max(l2.x, l1.x);
-        iGui.maxlon = Math.max(l1.y, l2.y);
+        Coordinate l1 = getPosition(p_max);
+        Coordinate l2 = getPosition(p_min);
+        iGui.minlat = Math.min(l2.getLon(), l1.getLon());
+        iGui.minlon = Math.min(l1.getLat(), l2.getLat());
+        iGui.maxlat = Math.max(l2.getLon(), l1.getLon());
+        iGui.maxlon = Math.max(l1.getLat(), l2.getLat());
 
         iGui.boundingBoxChanged(this);
         repaint();
@@ -220,7 +223,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
     public void resizeSlippyMap() {
         if (iScreenSize == null) {
             Component c = iGui.getParent().getParent().getParent().getParent().getParent().getParent().getParent()
-                    .getParent().getParent();
+            .getParent().getParent();
             // remember the initial set screen dimensions
             iDownloadDialogDimension = c.getSize();
             // retrive the size of the display
@@ -229,7 +232,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
 
         // resize
         Component co = iGui.getParent().getParent().getParent().getParent().getParent().getParent().getParent()
-                .getParent().getParent();
+        .getParent().getParent();
         Dimension currentDimension = co.getSize();
 
         // enlarge
