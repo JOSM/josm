@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.ModifiedChangedListener;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
+import org.openstreetmap.josm.tools.AudioPlayer;
 
 /**
  * This is a component used in the MapFrame for browsing the map. It use is to
@@ -174,6 +175,7 @@ public class MapView extends NavigatableComponent {
             for (Layer.LayerChangeListener l : Layer.listeners)
                 l.activeLayerChange(old, layer);
         }
+        AudioPlayer.reset();
         repaint();
     }
 
@@ -209,6 +211,7 @@ public class MapView extends NavigatableComponent {
             Main.ds.setSelected();
         }
         layer.destroy();
+        AudioPlayer.reset();
     }
 
     private Boolean virtualnodes = false;
@@ -241,6 +244,7 @@ public class MapView extends NavigatableComponent {
             layers.add(layer);
         else
             layers.add(pos, layer);
+        AudioPlayer.reset();
     }
 
 
@@ -375,6 +379,7 @@ public class MapView extends NavigatableComponent {
             AbstractButton x=e.nextElement();
             x.setEnabled(((MapMode)x.getAction()).layerIsSupported(layer));
         }
+        AudioPlayer.reset();
         repaint();
     }
 

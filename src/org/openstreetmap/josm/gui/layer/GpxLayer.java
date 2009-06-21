@@ -202,7 +202,6 @@ public class GpxLayer extends Layer {
                     if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir))
                         Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
 
-                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name), getAssociatedFile(), me);
                     File sel[] = fc.getSelectedFiles();
                     if(sel != null) {
                         // sort files in increasing order of timestamp (this is the end time, but so long as they don't overlap, that's fine)
@@ -213,6 +212,24 @@ public class GpxLayer extends Layer {
                                 }
                             });
                         }
+                    }
+
+                    String names = null;
+                    for (int i = 0; i < sel.length; i++) {
+                        if(names == null)
+                            names = " (";
+                        else
+                            names += ", ";
+                        names += sel[i].getName();
+                    }
+                    if(names != null)
+                        names += ")";
+                    else
+                        names = "";
+                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name) + names,
+                    getAssociatedFile(), me);
+                    if(sel != null)
+                    {
                         double firstStartTime = sel[0].lastModified()/1000.0 /* ms -> seconds */ - AudioUtil.getCalibratedDuration(sel[0]);
                         for (int i = 0; i < sel.length; i++) {
                             importAudio(sel[i], ml, firstStartTime);

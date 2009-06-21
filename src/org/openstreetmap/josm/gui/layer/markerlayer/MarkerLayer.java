@@ -344,66 +344,63 @@ public class MarkerLayer extends Layer {
     }
 
     public static void playAudio() {
-        if (Main.map == null || Main.map.mapView == null)
-            return;
-        for (Layer layer : Main.map.mapView.getAllLayers()) {
-            if (layer.getClass() == MarkerLayer.class) {
-                MarkerLayer markerLayer = (MarkerLayer) layer;
-                for (Marker marker : markerLayer.data) {
-                    if (marker.getClass() == AudioMarker.class) {
-                        ((AudioMarker)marker).play();
-                        break;
-                    }
-                }
-            }
-        }
+        playAdjacentMarker(null, true);
     }
 
     public static void playNextMarker() {
-        playAdjacentMarker(true);
+        playAdjacentMarker(AudioMarker.recentlyPlayedMarker(), true);
     }
 
     public static void playPreviousMarker() {
-        playAdjacentMarker(false);
+        playAdjacentMarker(AudioMarker.recentlyPlayedMarker(), false);
     }
 
-    private static void playAdjacentMarker(boolean next) {
-        Marker startMarker = AudioMarker.recentlyPlayedMarker();
-        if (startMarker == null) {
-            // message?
-            return;
-        }
+    private static Marker getAdjacentMarker(Marker startMarker, boolean next, Layer layer) {
         Marker previousMarker = null;
         boolean nextTime = false;
-        if (Main.map == null || Main.map.mapView == null)
-            return;
-        for (Layer layer : Main.map.mapView.getAllLayers()) {
-            if (layer.getClass() == MarkerLayer.class) {
-                MarkerLayer markerLayer = (MarkerLayer) layer;
-                for (Marker marker : markerLayer.data) {
-                    if (marker == startMarker) {
-                        if (next) {
-                            nextTime = true;
-                        } else {
-                            if (previousMarker == null)
-                                previousMarker = startMarker; // if no previous one, play the first one again
-                            ((AudioMarker)previousMarker).play();
-                            break;
-                        }
-                    } else if (nextTime && marker.getClass() == AudioMarker.class) {
-                        ((AudioMarker)marker).play();
-                        return;
+        if (layer.getClass() == MarkerLayer.class) {
+            MarkerLayer markerLayer = (MarkerLayer) layer;
+            for (Marker marker : markerLayer.data) {
+                if (marker == startMarker) {
+                    if (next)
+                        nextTime = true;
+                    else {
+                        if (previousMarker == null)
+                            previousMarker = startMarker; // if no previous one, play the first one again
+                        return previousMarker;
                     }
-                    if (marker.getClass() == AudioMarker.class)
-                        previousMarker = marker;
                 }
-                if (nextTime) {
-                    // there was no next marker in that layer, so play the last one again
-                    ((AudioMarker)startMarker).play();
-                    return;
+                else if (marker.getClass() == AudioMarker.class)
+                {
+                    if(nextTime || startMarker == null)
+                        return marker;
+                    previousMarker = marker;
                 }
             }
+            if (nextTime) // there was no next marker in that layer, so play the last one again
+                return startMarker;
         }
+        return null;
+    }
+
+    private static void playAdjacentMarker(Marker startMarker, boolean next) {
+        Marker m = null;
+        if (Main.map == null || Main.map.mapView == null)
+            return;
+        Layer l = Main.map.mapView.getActiveLayer();
+        if(l != null)
+            m = getAdjacentMarker(startMarker, next, l);
+        if(m == null)
+        {
+            for (Layer layer : Main.map.mapView.getAllLayers())
+            {
+                m = getAdjacentMarker(startMarker, next, layer);
+                if(m != null)
+                    break;
+            }
+        }
+        if(m != null)
+            ((AudioMarker)m).play();
     }
 
 }

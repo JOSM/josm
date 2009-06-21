@@ -18,7 +18,7 @@ public class AudioMarker extends ButtonMarker {
 
     private URL audioUrl;
     private static AudioMarker recentlyPlayedMarker = null;
-    public  double syncOffset;
+    public double syncOffset;
     public boolean timeFromAudio = false; // as opposed to from the GPX track
 
     /**

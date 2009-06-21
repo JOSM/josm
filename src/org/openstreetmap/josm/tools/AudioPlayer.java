@@ -192,6 +192,16 @@ public class AudioPlayer extends Thread {
         }
     }
 
+    public static void reset() {
+        if(audioPlayer != null)
+        {
+            try {
+                pause();
+            } catch(Exception e) {}
+            audioPlayer.playingUrl = null;
+        }
+    }
+
     private AudioPlayer() {
         state = State.INITIALIZING;
         command = new Execute();

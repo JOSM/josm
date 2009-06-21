@@ -481,7 +481,7 @@ public class UploadAction extends JosmAction {
         if (m.matches()) {
             handleGoneForKnownPrimitive(m.group(1), m.group(2));
         } else {
-            logger.warning(tr("Error header \"{0}\" doesn't match expected pattern \"{1}\"",e.getErrorHeader(), pattern));
+            logger.warning(tr("Error header \"{0}\" does not match expected pattern \"{1}\"",e.getErrorHeader(), pattern));
             handleGoneForUnknownPrimitive(e);
         }
     }

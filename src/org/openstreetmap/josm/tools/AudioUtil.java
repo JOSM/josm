@@ -11,7 +11,6 @@ import javax.sound.sampled.AudioSystem;
 
 import org.openstreetmap.josm.Main;
 
-
 /**
  * Returns calibrated length of recording in seconds.
  *
@@ -19,11 +18,10 @@ import org.openstreetmap.josm.Main;
  *
  */
 public class AudioUtil {
-
     static public double getCalibratedDuration(File wavFile) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
-                    new URL("file:".concat(wavFile.getAbsolutePath())));
+                new URL("file:".concat(wavFile.getAbsolutePath())));
             AudioFormat audioFormat = audioInputStream.getFormat();
             long filesize = wavFile.length();
             double bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
