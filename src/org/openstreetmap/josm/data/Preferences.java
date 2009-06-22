@@ -352,7 +352,6 @@ public class Preferences {
         put("selectionlist.visible", true);
         put("commandstack.visible", true);
         put("projection", Mercator.class.getName());
-        put("osm-server.url", "http://api.openstreetmap.org/api");
         if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
             put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
         } else {

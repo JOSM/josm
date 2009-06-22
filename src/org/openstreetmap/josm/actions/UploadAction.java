@@ -551,7 +551,7 @@ public class UploadAction extends JosmAction {
                 Main.parent,
                 tr(   "Failed to initialize communication with the OSM server {0}.\n"
                         + "Check the server URL in your preferences and your internet connection.",
-                        Main.pref.get("osm-server.url")
+                        Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
                 ),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE

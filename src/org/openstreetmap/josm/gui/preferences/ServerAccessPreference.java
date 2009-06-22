@@ -28,7 +28,7 @@ public class ServerAccessPreference implements PreferenceSetting {
     private JPasswordField osmDataPassword = new JPasswordField(20);
 
     public void addGui(PreferenceDialog gui) {
-        osmDataServer.setText(Main.pref.get("osm-server.url"));
+        osmDataServer.setText(Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api"));
         osmDataUsername.setText(Main.pref.get("osm-server.username"));
         osmDataPassword.setText(Main.pref.get("osm-server.password"));
 

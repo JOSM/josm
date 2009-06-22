@@ -75,7 +75,7 @@ public class OsmApi extends OsmConnection {
      *
      */
     static public OsmApi getOsmApi() {
-        String serverUrl = Main.pref.get("osm-server.url");
+        String serverUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
         if (serverUrl == null)
             throw new IllegalStateException(tr("preference ''{0}'' missing. Can't initialize OsmApi", "osm-server.url"));
         return getOsmApi(serverUrl);
