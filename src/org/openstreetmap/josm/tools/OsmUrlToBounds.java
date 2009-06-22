@@ -27,7 +27,16 @@ public class OsmUrlToBounds {
                 b = new Bounds(
                     new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0])),
                     new LatLon(Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2])));
-
+            } else if (map.containsKey("minlat")) {
+                String s = map.get("minlat");
+                Double minlat = Double.parseDouble(s);
+                s = map.get("minlon");
+                Double minlon = Double.parseDouble(s);
+                s = map.get("maxlat");
+                Double maxlat = Double.parseDouble(s);
+                s = map.get("maxlon");
+                Double maxlon = Double.parseDouble(s);
+                b = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
             } else {
                 double size = 180.0 / Math.pow(2, Integer.parseInt(map.get("zoom")));
                 b = new Bounds(
