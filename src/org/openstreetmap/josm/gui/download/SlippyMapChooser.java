@@ -207,10 +207,10 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
 
         Coordinate l1 = getPosition(p_max);
         Coordinate l2 = getPosition(p_min);
-        iGui.minlat = Math.min(l2.getLon(), l1.getLon());
-        iGui.minlon = Math.min(l1.getLat(), l2.getLat());
-        iGui.maxlat = Math.max(l2.getLon(), l1.getLon());
-        iGui.maxlon = Math.max(l1.getLat(), l2.getLat());
+        iGui.minlon = Math.min(l2.getLon(), l1.getLon());
+        iGui.minlat = Math.min(l1.getLat(), l2.getLat());
+        iGui.maxlon = Math.max(l2.getLon(), l1.getLon());
+        iGui.maxlat = Math.max(l1.getLat(), l2.getLat());
 
         iGui.boundingBoxChanged(this);
         repaint();
