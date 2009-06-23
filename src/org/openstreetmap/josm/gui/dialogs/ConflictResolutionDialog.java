@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.gui.conflict.ConflictResolver;
+import org.openstreetmap.josm.gui.conflict.properties.OperationCancelledException;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -189,8 +190,12 @@ public class ConflictResolutionDialog extends JDialog {
                 if (n == JOptionPane.NO_OPTION || n == JOptionPane.CLOSED_OPTION)
                     return;
             }
-            Command cmd = resolver.buildResolveCommand();
-            Main.main.undoRedo.add(cmd);
+            try {
+                Command cmd = resolver.buildResolveCommand();
+                Main.main.undoRedo.add(cmd);
+            } catch(OperationCancelledException e) {
+                // do nothing. Exception already reported
+            }
             setVisible(false);
         }
     }

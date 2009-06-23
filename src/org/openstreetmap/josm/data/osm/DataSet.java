@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -79,7 +80,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedPrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (!osm.deleted) {
+            if (osm.visible && !osm.deleted) {
                 o.add(osm);
             }
         return o;
@@ -88,7 +89,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (!osm.deleted && !osm.incomplete) {
+            if (osm.visible && !osm.deleted && !osm.incomplete) {
                 o.add(osm);
             }
         return o;
@@ -97,7 +98,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (!osm.deleted && !osm.incomplete && !(osm instanceof Relation)) {
+            if (osm.visible && !osm.deleted && !osm.incomplete && !(osm instanceof Relation)) {
                 o.add(osm);
             }
         return o;
@@ -309,5 +310,58 @@ public class DataSet implements Cloneable {
             ret.add(primitive.id);
         }
         return ret;
+    }
+
+    protected void deleteWay(Way way) {
+        way.nodes.clear();
+        way.delete(true);
+    }
+
+    /**
+     * removes all references from ways in this dataset to a particular node
+     * 
+     * @param node the node
+     */
+    public void unlinkNodeFromWays(Node node) {
+        for (Way way: ways) {
+            if (way.nodes.contains(node)) {
+                way.nodes.remove(node);
+                if (way.nodes.size() < 2) {
+                    deleteWay(way);
+                }
+            }
+        }
+    }
+
+    /**
+     * removes all references from relations in this dataset  to this primitive
+     * 
+     * @param primitive the primitive
+     */
+    public void unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
+        for (Relation relation : relations) {
+            Iterator<RelationMember> it = relation.members.iterator();
+            while(it.hasNext()) {
+                RelationMember member = it.next();
+                if (member.member.equals(primitive)) {
+                    it.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * removes all references from from other primitives  to the
+     * referenced primitive
+     * 
+     * @param referencedPrimitive the referenced primitive
+     */
+    public void unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
+        if (referencedPrimitive instanceof Node) {
+            unlinkNodeFromWays((Node)referencedPrimitive);
+            unlinkPrimitiveFromRelations(referencedPrimitive);
+        } else {
+            unlinkPrimitiveFromRelations(referencedPrimitive);
+        }
     }
 }

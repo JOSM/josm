@@ -38,8 +38,9 @@ public final class Way extends OsmPrimitive {
 
     public void visitNodes(Visitor v) {
         if (incomplete) return;
-        for (Node n : this.nodes)
+        for (Node n : this.nodes) {
             v.visit(n);
+        }
     }
 
     public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
@@ -99,8 +100,19 @@ public final class Way extends OsmPrimitive {
         return "{Way id="+id+" version="+version+" nodes="+Arrays.toString(nodes.toArray())+"}";
     }
 
+    @Deprecated
     @Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
         return osm instanceof Way ? super.realEqual(osm, semanticOnly) && nodes.equals(((Way)osm).nodes) : false;
+    }
+
+    @Override
+    public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
+        if (other == null || ! (other instanceof Way) )
+            return false;
+        if (! super.hasEqualSemanticAttributes(other))
+            return false;
+        Way w = (Way)other;
+        return nodes.equals(w.nodes);
     }
 
     public int compareTo(OsmPrimitive o) {
@@ -109,26 +121,30 @@ public final class Way extends OsmPrimitive {
         return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
     }
 
+    @Override
     public String getName() {
         String name;
         if (incomplete) {
             name = tr("incomplete");
         } else {
             name = get("name");
-            if (name == null) name = get("ref");
+            if (name == null) {
+                name = get("ref");
+            }
             if (name == null) {
                 name =
                     (get("highway") != null) ? tr("highway") :
-                    (get("railway") != null) ? tr("railway") :
-                    (get("waterway") != null) ? tr("waterway") :
-                    (get("landuse") != null) ? tr("landuse") : "";
+                        (get("railway") != null) ? tr("railway") :
+                            (get("waterway") != null) ? tr("waterway") :
+                                (get("landuse") != null) ? tr("landuse") : "";
             }
 
             int nodesNo = new HashSet<Node>(nodes).size();
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
-            if(errors != null)
+            if(errors != null) {
                 name = "*"+name;
+            }
         }
         return name;
     }
@@ -137,23 +153,24 @@ public final class Way extends OsmPrimitive {
         if (incomplete) return;
         boolean closed = (lastNode() == n && firstNode() == n);
         int i;
-        while ((i = nodes.indexOf(n)) >= 0)
+        while ((i = nodes.indexOf(n)) >= 0) {
             nodes.remove(i);
+        }
         i = nodes.size();
-        if (closed && i > 2) // close again
+        if (closed && i > 2) {
             addNode(firstNode());
-        // prevent closed ways with less than 3 different nodes
-        else if (i >= 2 && i <= 3 && nodes.get(0) == nodes.get(i-1))
+        } else if (i >= 2 && i <= 3 && nodes.get(0) == nodes.get(i-1)) {
             nodes.remove(i-1);
+        }
     }
 
     public void removeNodes(Collection<? extends OsmPrimitive> selection) {
         if (incomplete) return;
         for(OsmPrimitive p : selection) {
-           if (p instanceof Node) {
-               removeNode((Node)p);
-           }
-       }
+            if (p instanceof Node) {
+                removeNode((Node)p);
+            }
+        }
     }
 
     public void addNode(Node n) {

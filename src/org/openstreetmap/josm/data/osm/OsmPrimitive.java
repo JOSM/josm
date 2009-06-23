@@ -42,8 +42,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     public void putError(String text, Boolean isError)
     {
-        if(errors == null)
+        if(errors == null) {
             errors = new ArrayList<String>();
+        }
         String s = isError ? tr("Error: {0}", text) : tr("Warning: {0}", text);
         errors.add(s);
     }
@@ -90,8 +91,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     /**
      * Visibility status as specified by the server. The visible attribute was
      * introduced with the 0.4 API to be able to communicate deleted objects
-     * (they will have visible=false). Currently JOSM does never deal with
-     * these, so this is really for future use only.
+     * (they will have visible=false).
      */
     public boolean visible = true;
 
@@ -194,9 +194,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      */
     @Override public boolean equals(Object obj) {
         if (id == 0) return obj == this;
-        if (obj instanceof OsmPrimitive) { // not null too
+        if (obj instanceof OsmPrimitive)
             return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
-        }
         return false;
     }
 
@@ -225,11 +224,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * @param value The value for the key.
      */
     public final void put(String key, String value) {
-        if (value == null)
+        if (value == null) {
             remove(key);
-        else {
-            if (keys == null)
+        } else {
+            if (keys == null) {
                 keys = new HashMap<String, String>();
+            }
             keys.put(key, value);
         }
         mappaintStyle = null;
@@ -240,8 +240,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public final void remove(String key) {
         if (keys != null) {
             keys.remove(key);
-            if (keys.isEmpty())
+            if (keys.isEmpty()) {
                 keys = null;
+            }
         }
         mappaintStyle = null;
     }
@@ -279,6 +280,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         timestamp = osm.timestamp;
         version = osm.version;
         incomplete = osm.incomplete;
+        visible = osm.visible;
         clearCached();
         clearErrors();
     }
@@ -287,17 +289,72 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * Perform an equality compare for all non-volatile fields not only for the id
      * but for the whole object (for conflict resolving)
      * @param semanticOnly if <code>true</code>, modified flag and timestamp are not compared
+     * 
+     * @deprecated
+     * @see #hasEqualSemanticAttributes(OsmPrimitive)
+     * @see #hasEqualTechnicalAttributes(OsmPrimitive)
      */
+    @Deprecated
     public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
         return id == osm.id
         && incomplete == osm.incomplete
         && deleted == osm.deleted
-        && (semanticOnly || (modified == osm.modified
-         && timestamp == osm.timestamp
-         && version == osm.version
-         && visible == osm.visible
-         && (user == null ? osm.user==null : user==osm.user)))
+        && (semanticOnly || (
+                modified == osm.modified
+                && timestamp == osm.timestamp
+                && version == osm.version
+                && visible == osm.visible
+                && (user == null ? osm.user==null : user==osm.user))
+        )
         && (keys == null ? osm.keys==null : keys.equals(osm.keys));
+    }
+
+    /**
+     * Replies true if this primitive and other are equal with respect to their
+     * semantic attributes.
+     * <ol>
+     *   <li>equal id</ol>
+     *   <li>both are complete or both are incomplete</li>
+     *   <li>both have the same tags</li>
+     * </ol>
+     * @param other
+     * @return true if this primitive and other are equal with respect to their
+     * semantic attributes.
+     */
+    public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
+        if (id != other.id)
+            return false;
+        if (incomplete && ! other.incomplete || !incomplete  && other.incomplete)
+            return false;
+        return (keys == null ? other.keys==null : keys.equals(other.keys));
+    }
+
+    /**
+     * Replies true if this primitive and other are equal with respect to their
+     * technical attributes. The attributes:
+     * <ol>
+     *   <li>deleted</ol>
+     *   <li>modified</ol>
+     *   <li>timestamp</ol>
+     *   <li>version</ol>
+     *   <li>visible</ol>
+     *   <li>user</ol>
+     * </ol>
+     * have to be equal
+     * @param other the other primitive
+     * @return true if this primitive and other are equal with respect to their
+     * technical attributes
+     */
+    public boolean hasEqualTechnicalAttributes(OsmPrimitive other) {
+        if (other == null) return false;
+
+        return
+        deleted == other.deleted
+        && modified == other.modified
+        && timestamp == other.timestamp
+        && version == other.version
+        && visible == other.visible
+        && (user == null ? other.user==null : user==other.user);
     }
 
     /**
@@ -311,9 +368,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         getUninterestingKeys();
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
-                if (!uninteresting.contains(e.getKey())) {
+                if (!uninteresting.contains(e.getKey()))
                     return true;
-                }
             }
         }
         return false;
@@ -326,9 +382,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         getDirectionKeys();
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
-                if (directionKeys.contains(e.getKey())) {
+                if (directionKeys.contains(e.getKey()))
                     return true;
-                }
             }
         }
         return false;

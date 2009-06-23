@@ -65,9 +65,19 @@ public class DeletedStateConflictResolveCommand extends Command {
         super.executeCommand();
 
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
-            // do nothing
+            if (my.deleted) {
+                // because my was involved in a conflict it my still be referred
+                // to from a way or a relation. Fix this now.
+                //
+                Main.main.editLayer().data.unlinkReferencesToPrimitive(my);
+            }
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
-            my.deleted = their.deleted;
+            if (their.deleted) {
+                Main.main.editLayer().data.unlinkReferencesToPrimitive(my);
+                my.delete(true);
+            } else {
+                my.deleted = their.deleted;
+            }
         } else
             // should not happen
             throw new IllegalStateException(tr("cannot resolve undecided conflict"));

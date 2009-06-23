@@ -244,10 +244,7 @@ public class OsmDataLayer extends Layer {
      */
     public void mergeFrom(final DataSet from) {
         final MergeVisitor visitor = new MergeVisitor(data,from);
-        for (final OsmPrimitive osm : from.allPrimitives()) {
-            osm.visit(visitor);
-        }
-        visitor.fixReferences();
+        visitor.merge();
 
         Area a = data.getDataSourceArea();
 
@@ -273,11 +270,11 @@ public class OsmDataLayer extends Layer {
         // repaint to make sure new data is displayed properly.
         Main.map.mapView.repaint();
 
-        if (visitor.conflicts.isEmpty())
+        if (visitor.getConflicts().isEmpty())
             return;
         final ConflictDialog dlg = Main.map.conflictDialog;
-        dlg.add(visitor.conflicts);
-        JOptionPane.showMessageDialog(Main.parent,tr("There were {0} conflicts during import.", visitor.conflicts.size()));
+        dlg.add(visitor.getConflicts());
+        JOptionPane.showMessageDialog(Main.parent,tr("There were {0} conflicts during import.", visitor.getConflicts().size()));
         if (!dlg.isVisible()) {
             dlg.action.actionPerformed(new ActionEvent(this, 0, ""));
         }

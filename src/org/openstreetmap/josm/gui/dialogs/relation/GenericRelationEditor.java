@@ -526,10 +526,7 @@ public class GenericRelationEditor extends RelationEditor {
                 if (dataSet != null) {
                     final MergeVisitor visitor = new MergeVisitor(Main.main
                             .editLayer().data, dataSet);
-                    for (final OsmPrimitive osm : dataSet.allPrimitives()) {
-                        osm.visit(visitor);
-                    }
-                    visitor.fixReferences();
+                    visitor.merge();
 
                     // copy the merged layer's data source info
                     for (DataSource src : dataSet.dataSources) {
@@ -537,10 +534,10 @@ public class GenericRelationEditor extends RelationEditor {
                     }
                     Main.main.editLayer().fireDataChange();
 
-                    if (visitor.conflicts.isEmpty())
+                    if (visitor.getConflicts().isEmpty())
                         return;
                     final ConflictDialog dlg = Main.map.conflictDialog;
-                    dlg.add(visitor.conflicts);
+                    dlg.add(visitor.getConflicts());
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("There were conflicts during import."));
                     if (!dlg.isVisible()) {

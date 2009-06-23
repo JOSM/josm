@@ -127,7 +127,7 @@ public class DownloadOsmTaskList implements Runnable {
 
     protected void handlePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
         String [] options = {
-                "Check individually",
+                "Check on the server",
                 "Ignore"
         };
 
@@ -137,7 +137,8 @@ public class DownloadOsmTaskList implements Runnable {
                 + "update them the server is likely to report a<br>"
                 + "conflict.<br>"
                 + "<br>"
-                + "Click <strong>{1}</strong> to check these primitives individually.<br>"
+                + "Click <strong>{1}</strong> to check the state of these primitives<br>"
+                + "on the server.<br>"
                 + "Click <strong>{2}</strong> to ignore.<br>"
                 + "</html>",
                 potentiallyDeleted.size(), options[0], options[1]

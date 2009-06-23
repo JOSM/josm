@@ -1,36 +1,40 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm.visitor;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
- * A visitor that get a data set at construction time and merge every visited object
+ * A visitor that gets a data set at construction time and merges every visited object
  * into it.
  *
  * @author imi
+ * @author Gubaer
  */
 public class MergeVisitor extends AbstractVisitor {
+    private static Logger logger = Logger.getLogger(MergeVisitor.class.getName());
 
     /**
      * Map from primitives in the database to visited primitives. (Attention: The other way
      * round than merged)
      */
-    public Map<OsmPrimitive, OsmPrimitive> conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
+    private Map<OsmPrimitive, OsmPrimitive> conflicts;
 
-    private final DataSet ds;
-    private final DataSet mergeds;
+    private final DataSet myDataSet;
+    private final DataSet theirDataSet;
 
     private final HashMap<Long, Node> nodeshash = new HashMap<Long, Node>();
     private final HashMap<Long, Way> wayshash = new HashMap<Long, Way>();
@@ -41,52 +45,104 @@ public class MergeVisitor extends AbstractVisitor {
      * Key is the primitives in the other's dataset and the value is the one that is now
      * in ds.nodes instead.
      */
-    private final Map<OsmPrimitive, OsmPrimitive> merged
-        = new HashMap<OsmPrimitive, OsmPrimitive>();
+    private Map<OsmPrimitive, OsmPrimitive> merged;
 
-    public MergeVisitor(DataSet ds, DataSet mergeds) {
-        this.ds = ds;
-        this.mergeds = mergeds;
+    /**
+     * constructor
+     * 
+     * The visitor will merge <code>theirDataSet</code> onto <code>myDataSet</code>
+     * 
+     * @param myDataSet  dataset with my primitives
+     * @param theirDataSet dataset with their primitives.
+     */
+    public MergeVisitor(DataSet myDataSet, DataSet theirDataSet) {
+        this.myDataSet = myDataSet;
+        this.theirDataSet = theirDataSet;
 
-        for (Node n : ds.nodes) if (n.id != 0) nodeshash.put(n.id, n);
-        for (Way w : ds.ways) if (w.id != 0) wayshash.put(w.id, w);
-        for (Relation r : ds.relations) if (r.id != 0) relshash.put(r.id, r);
+        for (Node n : myDataSet.nodes) if (n.id != 0) {
+            nodeshash.put(n.id, n);
+        }
+        for (Way w : myDataSet.ways) if (w.id != 0) {
+            wayshash.put(w.id, w);
+        }
+        for (Relation r : myDataSet.relations) if (r.id != 0) {
+            relshash.put(r.id, r);
+        }
+        conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
+        merged = new HashMap<OsmPrimitive, OsmPrimitive>();
     }
 
-    private <P extends OsmPrimitive> void genMerge(P other,
-            Collection<P> myprims, Collection<P> mergeprims,
-            HashMap<Long, P> primhash) {
-        // 1. Try to find an identical prim with the same id.
-        if (mergeById(myprims, primhash, other))
-            return;
+    /**
+     * Merges a primitive <code>other</code> of type <P> onto my primitives.
+     * 
+     * If other.id != 0 it tries to merge it with an corresponding primitive from
+     * my dataset with the same id. If this is not possible a conflict is remembered
+     * in {@see #conflicts}.
+     * 
+     * If other.id == 0 it tries to find a primitive in my dataset with id == 0 which
+     * is semantically equal. If it finds one it merges its technical attributes onto
+     * my primitive.
+     * 
+     * @param <P>  the type of the other primitive
+     * @param other  the other primitive
+     * @param myPrimitives the collection of my relevant primitives (i.e. only my
+     *    primitives of the same type)
+     * @param otherPrimitives  the collection of the other primitives
+     * @param primitivesWithDefinedIds the collection of my primitives with an
+     *   assigned id (i.e. id != 0)
+     */
+    protected <P extends OsmPrimitive> void mergePrimitive(P other,
+            Collection<P> myPrimitives, Collection<P> otherPrimitives,
+            HashMap<Long, P> primitivesWithDefinedIds) {
 
-        // 2. Try to find a prim we can merge with the prim from the other ds.
-        for (P my : myprims) {
-            // LinkedList.contains calls equal, and OsmPrimitive.equal
-            // compares just the id.
-            if (match(my, other) && !mergeprims.contains(my)) {
-                merged.put(other, my);
-                mergeCommon(my, other);
+        if (other.id > 0 ) {
+            // try to merge onto a matching primitive with the same
+            // defined id
+            //
+            if (mergeById(myPrimitives, primitivesWithDefinedIds, other))
                 return;
+        } else {
+            // try to merge onto a primitive with which has no id assigned
+            // yet but which is equal in its semantic attributes
+            //
+            for (P my : myPrimitives) {
+                if (my.id >0 ) {
+                    continue;
+                }
+                if (my.hasEqualSemanticAttributes(other)) {
+                    // copy the technical attributes from their
+                    // version
+                    if (other.deleted) {
+                        myDataSet.unlinkReferencesToPrimitive(my);
+                        my.delete(true);
+                    }
+                    my.visible = other.visible;
+                    my.user = other.user;
+                    my.setTimestamp(other.getTimestamp());
+                    my.modified = other.modified;
+                    merged.put(other, my);
+                    return;
+                }
             }
         }
-
-        // 3. No idea how to merge that.  Simply add it unchanged.
-        myprims.add(other);
+        // If we get here we didn't find a suitable primitive in
+        // my dataset. Just add other to my dataset.
+        //
+        myPrimitives.add(other);
     }
 
     public void visit(Node other) {
-        genMerge(other, ds.nodes, mergeds.nodes, nodeshash);
+        mergePrimitive(other, myDataSet.nodes, theirDataSet.nodes, nodeshash);
     }
 
     public void visit(Way other) {
         fixWay(other);
-        genMerge(other, ds.ways, mergeds.ways, wayshash);
+        mergePrimitive(other, myDataSet.ways, theirDataSet.ways, wayshash);
     }
 
     public void visit(Relation other) {
         fixRelation(other);
-        genMerge(other, ds.relations, mergeds.relations, relshash);
+        mergePrimitive(other, myDataSet.relations, theirDataSet.relations, relshash);
     }
 
     /**
@@ -94,13 +150,18 @@ public class MergeVisitor extends AbstractVisitor {
      * data.
      */
     public void fixReferences() {
-        for (Way w : ds.ways) fixWay(w);
-        for (Relation r : ds.relations) fixRelation(r);
+        for (Way w : myDataSet.ways) {
+            fixWay(w);
+        }
+        for (Relation r : myDataSet.relations) {
+            fixRelation(r);
+        }
         for (OsmPrimitive osm : conflicts.values())
-            if (osm instanceof Way)
+            if (osm instanceof Way) {
                 fixWay((Way)osm);
-            else if (osm instanceof Relation)
+            } else if (osm instanceof Relation) {
                 fixRelation((Relation) osm);
+            }
     }
 
     private void fixWay(Way w) {
@@ -109,8 +170,9 @@ public class MergeVisitor extends AbstractVisitor {
         for (Node n : w.nodes) {
             Node otherN = (Node) merged.get(n);
             newNodes.add(otherN == null ? n : otherN);
-            if (otherN != null)
+            if (otherN != null) {
                 replacedSomething = true;
+            }
         }
         if (replacedSomething) {
             w.nodes.clear();
@@ -138,156 +200,112 @@ public class MergeVisitor extends AbstractVisitor {
         }
     }
 
-    private static <P extends OsmPrimitive> boolean match(P p1, P p2) {
-        if ((p1.id == 0 || p2.id == 0) && !p1.incomplete && !p2.incomplete) {
-            return realMatch(p1, p2);
-        }
-        return p1.id == p2.id;
-    }
-
-    /** @return true if the prims have pretty much the same data, i.e. the
-     * same position, the same members, ...
-     */
-    // Java cannot dispatch on generics...
-    private static boolean realMatch(OsmPrimitive p1, OsmPrimitive p2) {
-        if (p1 instanceof Node && p2 instanceof Node) {
-            return realMatch((Node) p1, (Node) p2);
-        } else if (p1 instanceof Way && p2 instanceof Way) {
-            return realMatch((Way) p1, (Way) p2);
-        } else if (p1 instanceof Relation && p2 instanceof Relation) {
-            return realMatch((Relation) p1, (Relation) p2);
-        } else {
-            throw new RuntimeException("arguments have unknown type");
-        }
-    }
-
-    private static boolean realMatch(Node n1, Node n2) {
-        return n1.getCoor().equalsEpsilon(n2.getCoor());
-    }
-
-    private static boolean realMatch(Way w1, Way w2) {
-        if (w1.nodes.size() != w2.nodes.size())
-            return false;
-        Iterator<Node> it = w1.nodes.iterator();
-        for (Node n : w2.nodes)
-            if (!match(n, it.next()))
-                return false;
-        return true;
-    }
-
-    private static boolean realMatch(Relation w1, Relation w2) {
-        // FIXME this is not perfect yet...
-        if (w1.members.size() != w2.members.size())
-            return false;
-        for (RelationMember em : w1.members) {
-            if (!w2.members.contains(em)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Merge the common parts of an osm primitive.
-     * @param my The object, the information gets merged into
-     * @param other The object, the information gets merged from
-     */
-    private void mergeCommon(OsmPrimitive my, OsmPrimitive other) {
-        if (other.deleted)
-            my.delete(true);
-        if (my.id == 0 || !my.modified || other.modified) {
-            if (my.id == 0 && other.id != 0) {
-                my.id = other.id;
-                my.modified = other.modified; // match a new node
-                my.version = other.version;
-            } else if (my.id != 0 && other.id != 0 && other.modified)
-                my.modified = true;
-        }
-        if (other.keys == null)
-            return;
-        if (my.keySet().containsAll(other.keys.keySet()))
-            return;
-        if (my.keys == null)
-            my.keys = other.keys;
-        else
-            my.keys.putAll(other.keys);
-
-        my.modified = true;
-    }
-
     /**
      * Tries to merge a primitive <code>other</code> into an existing primitive with the same id.
      *
      * @param myPrimitives the complete set of my primitives (potential merge targets)
-     * @param myPrimitivesWithID the map of primitives (potential merge targets) with an id <> 0, for faster lookup
+     * @param myPrimitivesWithDefinedIds the map of primitives (potential merge targets) with an id <> 0, for faster lookup
      *    by id. Key is the id, value the primitive with the given value. myPrimitives.valueSet() is a
      *    subset of primitives.
-     * @param other  the other primitive which is to be merged with a primitive in primitives if possible
+     * @param other  the other primitive which is to be merged onto a primitive in my primitives
      * @return true, if this method was able to merge <code>other</code> with an existing node; false, otherwise
      */
     private <P extends OsmPrimitive> boolean mergeById(
-            Collection<P> myPrimitives, HashMap<Long, P> myPrimitivesWithID, P other) {
+            Collection<P> myPrimitives, HashMap<Long, P> myPrimitivesWithDefinedIds, P other) {
 
         // merge other into an existing primitive with the same id, if possible
         //
-        if (myPrimitivesWithID.containsKey(other.id)) {
-            P my = myPrimitivesWithID.get(other.id);
-            if (my.realEqual(other, true /* compare semantic fields only */)) {
-                // make sure the merge target becomes the higher version number
-                // and the later timestamp
-                //
-                my.version = Math.max(other.version, my.version);
-                if (other.getTimestamp().after(my.getTimestamp())) {
-                    my.setTimestamp(other.getTimestamp());
+        if (myPrimitivesWithDefinedIds.containsKey(other.id)) {
+            P my = myPrimitivesWithDefinedIds.get(other.id);
+            if (my.version <= other.version) {
+                if (! my.visible && other.visible) {
+                    // should not happen
+                    //
+                    logger.warning(tr("My primitive with id {0} and version {1} is visible although "
+                            + "their primitive with lower version {2} is not visible. "
+                            + "Can't deal with this inconsistency. Keeping my primitive. ",
+                            Long.toString(my.id),Long.toString(my.version), Long.toString(other.version)
+                    ));
+                    merged.put(other, my);
+                } else if (my.visible && ! other.visible) {
+                    // this is always a conflict because the user has to decide whether
+                    // he wants to create a clone of its local primitive or whether he
+                    // wants to purge my from the local dataset. He can't keep it unchanged
+                    // because it was deleted on the server.
+                    //
+                    conflicts.put(my,other);
+                } else if (! my.modified && other.modified) {
+                    // my not modified. We can assume that other is the most recent version.
+                    // clone it onto my. But check first, whether other is deleted. if so,
+                    // make sure that my is not references anymore in myDataSet.
+                    //
+                    if (other.deleted) {
+                        myDataSet.unlinkReferencesToPrimitive(my);
+                    }
+                    my.cloneFrom(other);
+                    merged.put(other, my);
+                } else if (! my.modified && !other.modified) {
+                    // nothing to merge
+                    //
+                    merged.put(other,my);
+                } else if (my.deleted != other.deleted) {
+                    // if we get here my is modified. Differences in deleted state
+                    // have to be resolved manually
+                    //
+                    conflicts.put(my,other);
+                } else if (! my.hasEqualSemanticAttributes(other)) {
+                    // my is modified and is not semantically equal with other. Can't automatically
+                    // resolve the differences
+                    // =>  create a conflict
+                    conflicts.put(my,other);
+                } else {
+                    // clone from other, but keep the modified flag. Clone will mainly copy
+                    // technical attributes like timestamp or user information. Semantic
+                    // attributes should already be equal if we get here.
+                    //
+                    my.cloneFrom(other);
+                    my.modified = true;
+                    merged.put(other, my);
                 }
+            } else {
+                // my.version > other.version => keep my version
                 merged.put(other, my);
-                return true;
             }
-        }
-
-        // try to merge into one of the existing primitives
-        //
-        for (P my : myPrimitives) {
-            if (my.realEqual(other, false /* compare all fields */)) {
-                merged.put(other, my);
-                return true; // no merge needed.
-            }
-            if (my.realEqual(other, true)) {
-                // they differ in modified/version combination only. Auto-resolve it.
-                merged.put(other, my);
-                if (my.version < other.version) {
-                    my.version = other.version;
-                    my.modified = other.modified;
-                    my.setTimestamp(other.getTimestamp());
-                }
-                return true; // merge done.
-            }
-            if (my.id == other.id && my.id != 0) {
-                if (my.incomplete || other.incomplete) {
-                    if (my.incomplete) {
-                        my.cloneFrom(other);
-                    }
-                } else if (my.modified && other.modified) {
-                    conflicts.put(my, other);
-                } else if (!my.modified && !other.modified) {
-                    if (my.version < other.version) {
-                        my.cloneFrom(other);
-                    }
-                } else if (other.modified) {
-                    if (my.version > other.version) {
-                        conflicts.put(my, other);
-                    } else {
-                        my.cloneFrom(other);
-                    }
-                } else if (my.modified) {
-                    if (my.version < other.version) {
-                        conflicts.put(my, other);
-                    }
-                }
-                merged.put(other, my);
-                return true;
-            }
+            return true;
         }
         return false;
+    }
+
+
+    /**
+     * Runs the merge operation. Successfully merged {@see OsmPrimitive}s are in
+     * {@see #getMyDataSet()}.
+     * 
+     * See {@see #getConflicts()} for a map of conflicts after the merge operation.
+     */
+    public void merge() {
+        for (final OsmPrimitive primitive : theirDataSet.allPrimitives()) {
+            primitive.visit(this);
+        }
+        fixReferences();
+    }
+
+    /**
+     * replies my dataset
+     * 
+     * @return
+     */
+    public DataSet getMyDataSet() {
+        return myDataSet;
+    }
+
+
+    /**
+     * replies the map of conflicts
+     * 
+     * @return the map of conflicts
+     */
+    public Map<OsmPrimitive, OsmPrimitive> getConflicts() {
+        return conflicts;
     }
 }

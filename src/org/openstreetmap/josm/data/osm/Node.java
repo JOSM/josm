@@ -30,8 +30,8 @@ public final class Node extends OsmPrimitive {
     }
 
     public final void setEastNorth(EastNorth eastNorth) {
-       this.eastNorth = eastNorth;
-       this.coor = Main.proj.eastNorth2latlon(eastNorth);
+        this.eastNorth = eastNorth;
+        this.coor = Main.proj.eastNorth2latlon(eastNorth);
     }
 
     public final void setEastNorth(double east, double north) {
@@ -86,6 +86,12 @@ public final class Node extends OsmPrimitive {
         return "{Node id="+id+",version="+version+",lat="+coor.lat()+",lon="+coor.lon()+"}";
     }
 
+    /**
+     * @deprecated
+     * @see #hasEqualSemanticAttributes(OsmPrimitive)
+     * @see #hasEqualTechnicalAttributes(OsmPrimitive)
+     */
+    @Deprecated
     @Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
         if (osm instanceof Node) {
             if (super.realEqual(osm, semanticOnly)) {
@@ -98,18 +104,35 @@ public final class Node extends OsmPrimitive {
         return false;
     }
 
+    @Override
+    public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
+        if (other == null || ! (other instanceof Node) )
+            return false;
+        if (! super.hasEqualSemanticAttributes(other))
+            return false;
+        Node n = (Node)other;
+        if (coor == null && n.coor == null)
+            return true;
+        else if (coor != null && n.coor != null)
+            return coor.equals(n.coor);
+        else
+            return false;
+    }
+
     public int compareTo(OsmPrimitive o) {
         return o instanceof Node ? Long.valueOf(id).compareTo(o.id) : 1;
     }
 
+    @Override
     public String getName() {
         String name;
         if (incomplete) {
             name = tr("incomplete");
         } else {
             name = get("name");
-            if (name == null)
+            if (name == null) {
                 name = id == 0 ? tr("node") : ""+id;
+            }
             name += " (" + coor.latToString(mCord) + ", " + coor.lonToString(mCord) + ")";
         }
         return name;

@@ -5,7 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -32,6 +34,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * 
  */
 public class PurgePrimitivesCommand extends Command{
+
 
     /**
      * Represents a pair of {@see OsmPrimitive} where the parent referrs to
@@ -140,6 +143,8 @@ public class PurgePrimitivesCommand extends Command{
      */
     private ArrayList<OsmParentChildPair> pairs;
 
+    private Map<OsmPrimitive, OsmPrimitive> resolvedConflicts;
+
     /**
      * constructor
      * @param node  the node to undelete
@@ -148,6 +153,7 @@ public class PurgePrimitivesCommand extends Command{
         this.primitive = primitive;
         purgedPrimitives = new ArrayList<OsmPrimitive>();
         pairs = new ArrayList<OsmParentChildPair>();
+        resolvedConflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
     }
 
     @Override
@@ -179,7 +185,7 @@ public class PurgePrimitivesCommand extends Command{
         for (OsmParentChildPair pair: pairs) {
             if (pair.getParent() instanceof Way) {
                 Way w = (Way)pair.getParent();
-                System.out.println("removing reference from way " + w.id);
+                System.out.println(tr("removing reference from way {0}",w.id));
                 w.nodes.remove(primitive);
                 // if a way ends up with less than two node we
                 // remember it on the "hive"
@@ -193,7 +199,7 @@ public class PurgePrimitivesCommand extends Command{
                 }
             } else if (pair.getParent() instanceof Relation) {
                 Relation r = (Relation)pair.getParent();
-                System.out.println("removing reference from relation " + r.id);
+                System.out.println(tr("removing reference from relation {0}",r.id));
                 r.removeMembersFor(primitive);
             }
         }
@@ -219,6 +225,10 @@ public class PurgePrimitivesCommand extends Command{
                 Main.ds.relations.remove(toPurge);
             }
             purgedPrimitives.add(toPurge);
+            if (Main.map.conflictDialog.conflicts.containsKey(toPurge)) {
+                resolvedConflicts.put(toPurge, Main.map.conflictDialog.conflicts.get(toPurge));
+                Main.map.conflictDialog.removeConflictForPrimitive(toPurge);
+            }
         }
         return super.executeCommand();
     }
@@ -235,8 +245,17 @@ public class PurgePrimitivesCommand extends Command{
 
     @Override
     public void undoCommand() {
+
+        // restore purged primitives
+        //
         for (OsmPrimitive purged : purgedPrimitives) {
             Main.ds.addPrimitive(purged);
+        }
+
+        // restore conflicts
+        //
+        for (OsmPrimitive primitive : resolvedConflicts.keySet()) {
+            Main.map.conflictDialog.addConflict(primitive, resolvedConflicts.get(primitive));
         }
 
         // will restore the former references to the purged nodes

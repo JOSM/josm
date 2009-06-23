@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -322,6 +323,7 @@ public class OsmApi extends OsmConnection {
             notifyRelativeProgress(1);
         }
         notifyStatusMessage(tr("Uploading..."));
+        setAutoProgressIndication(true);
 
         String diff = duv.getDocument();
         String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
@@ -329,6 +331,8 @@ public class OsmApi extends OsmConnection {
             DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
         } catch(Exception e) {
             throw new OsmTransferException(e);
+        } finally {
+            setAutoProgressIndication(false);
         }
 
         return processed;
@@ -479,5 +483,16 @@ public class OsmApi extends OsmConnection {
     protected void notifyRelativeProgress(int delta) {
         int current= Main.pleaseWaitDlg.progress.getValue();
         Main.pleaseWaitDlg.progress.setValue(current + delta);
+    }
+
+
+    protected void setAutoProgressIndication(final boolean enabled) {
+        EventQueue.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        Main.pleaseWaitDlg.setIndeterminate(enabled);
+                    }
+                }
+        );
     }
 }

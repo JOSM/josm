@@ -32,7 +32,7 @@ public class RelationMember {
     }
 
     @Override public boolean equals(Object other) {
-        if (!(other instanceof RelationMember)) return false;
+        if (other == null || !(other instanceof RelationMember)) return false;
         RelationMember otherMember = (RelationMember) other;
         return otherMember.role.equals(role) && otherMember.member.equals(member);
     }
