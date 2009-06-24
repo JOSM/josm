@@ -245,9 +245,13 @@ public class MergeVisitor extends AbstractVisitor {
                     my.cloneFrom(other);
                     merged.put(other, my);
                 } else if (! my.modified && !other.modified) {
-                    // nothing to merge
+                    // both not modified. Keep mine
                     //
                     merged.put(other,my);
+                } else if (my.modified && ! other.modified && my.version == other.version) {
+                    // my is same as other but mine is modified
+                    // => keep mine
+                    merged.put(other, my);
                 } else if (my.deleted != other.deleted) {
                     // if we get here my is modified. Differences in deleted state
                     // have to be resolved manually

@@ -336,7 +336,7 @@ public class PropertiesMergeModel extends Observable {
         if (myCoords == null && theirCoords != null) return true;
         if (myCoords != null && theirCoords == null) return true;
         if (myCoords == null && theirCoords == null) return false;
-        return !myCoords.equalsEpsilon(theirCoords);
+        return !myCoords.equals(theirCoords);
     }
 
     /**
