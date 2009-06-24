@@ -14,7 +14,7 @@ public class Capabilities {
         capabilities = new HashMap<String, HashMap<String,String>>();
     }
 
-    public boolean isDefind(String element, String attribute) {
+    public boolean isDefined(String element, String attribute) {
         if (! capabilities.containsKey(element)) return false;
         HashMap<String, String> e = capabilities.get(element);
         if (e == null) return false;
@@ -28,7 +28,16 @@ public class Capabilities {
         return e.get(attribute);
     }
 
-    public Double getDouble(String element, String attribute) {
+    /**
+     * replies the value of configuration item in the capabilities as
+     * double value
+     * 
+     * @param element  the name of the element
+     * @param attribute the name of the attribute
+     * @return the value; null, if the respective configuration item doesn't exist
+     * @throws NumberFormatException  if the value is not a valid double
+     */
+    public Double getDouble(String element, String attribute) throws NumberFormatException {
         String s = get(element, attribute);
         if (s == null) return null;
         return Double.parseDouble(s);

@@ -111,6 +111,7 @@ public class OsmServerWriter {
                         api.stopChangeset();
                     }
                 } catch (Exception ee) {
+                    ee.printStackTrace();
                     // ignore nested exception
                 }
             }

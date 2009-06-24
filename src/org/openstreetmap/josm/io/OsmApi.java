@@ -326,8 +326,8 @@ public class OsmApi extends OsmConnection {
         setAutoProgressIndication(true);
 
         String diff = duv.getDocument();
-        String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
         try {
+            String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
             DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
         } catch(Exception e) {
             throw new OsmTransferException(e);
@@ -494,5 +494,14 @@ public class OsmApi extends OsmConnection {
                     }
                 }
         );
+    }
+
+    /**
+     * returns the API capabilities; null, if the API is not initialized yet
+     * 
+     * @return the API capabilities
+     */
+    public Capabilities getCapabilities() {
+        return capabilities;
     }
 }

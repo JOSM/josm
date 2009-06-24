@@ -80,6 +80,11 @@ public class UploadAction extends JosmAction {
                 Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload to OSM...")), KeyEvent.VK_U, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
 
         /**
+         * Checks server capabilities before upload.
+         */
+        uploadHooks.add(new ApiPreconditionChecker());
+
+        /**
          * Displays a screen where the actions that would be taken are displayed and
          * give the user the possibility to cancel the upload.
          */
