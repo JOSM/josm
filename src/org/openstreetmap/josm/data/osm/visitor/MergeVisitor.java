@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -102,7 +101,7 @@ public class MergeVisitor extends AbstractVisitor {
             if (mergeById(myPrimitives, primitivesWithDefinedIds, other))
                 return;
         } else {
-            // try to merge onto a primitive with which has no id assigned
+            // try to merge onto a primitive  which has no id assigned
             // yet but which is equal in its semantic attributes
             //
             for (P my : myPrimitives) {
@@ -234,6 +233,17 @@ public class MergeVisitor extends AbstractVisitor {
                     // because it was deleted on the server.
                     //
                     conflicts.put(my,other);
+                } else if (my.incomplete) {
+                    // my is incomplete, other completes it
+                    // => merge other onto my
+                    //
+                    my.incomplete = false;
+                    my.cloneFrom(other);
+                    merged.put(other, my);
+                } else if (my.deleted != other.deleted) {
+                    // differences in deleted state have to be resolved manually
+                    //
+                    conflicts.put(my,other);
                 } else if (! my.modified && other.modified) {
                     // my not modified. We can assume that other is the most recent version.
                     // clone it onto my. But check first, whether other is deleted. if so,
@@ -244,19 +254,19 @@ public class MergeVisitor extends AbstractVisitor {
                     }
                     my.cloneFrom(other);
                     merged.put(other, my);
-                } else if (! my.modified && !other.modified) {
+                } else if (! my.modified && !other.modified && my.version == other.version) {
                     // both not modified. Keep mine
                     //
+                    merged.put(other,my);
+                } else if (! my.modified && !other.modified && my.version < other.version) {
+                    // my not modified but other is newer. clone other onto mine.
+                    //
+                    my.cloneFrom(other);
                     merged.put(other,my);
                 } else if (my.modified && ! other.modified && my.version == other.version) {
                     // my is same as other but mine is modified
                     // => keep mine
                     merged.put(other, my);
-                } else if (my.deleted != other.deleted) {
-                    // if we get here my is modified. Differences in deleted state
-                    // have to be resolved manually
-                    //
-                    conflicts.put(my,other);
                 } else if (! my.hasEqualSemanticAttributes(other)) {
                     // my is modified and is not semantically equal with other. Can't automatically
                     // resolve the differences
