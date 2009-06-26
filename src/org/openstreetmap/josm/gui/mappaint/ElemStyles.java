@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.Main;
 
 public class ElemStyles
@@ -53,7 +54,7 @@ public class ElemStyles
             }
             return ret;
         }
-        private ElemStyle get(Map<String, String> keys)
+        private ElemStyle get(Map<String, String> keys, boolean noclosed)
         {
             AreaElemStyle retArea = null;
             LineElemStyle retLine = null;
@@ -67,7 +68,8 @@ public class ElemStyles
                 AreaElemStyle styleArea;
                 LineElemStyle styleLine;
                 String idx = "n" + key + "=" + val;
-                if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+                if((styleArea = areas.get(idx)) != null && (retArea == null
+                || styleArea.priority > retArea.priority) && (!noclosed || !styleArea.closed))
                     retArea = styleArea;
                 if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
                 {
@@ -77,7 +79,8 @@ public class ElemStyles
                 if((styleLine = modifiers.get(idx)) != null)
                     over.put(idx, styleLine);
                 idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
-                if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+                if((styleArea = areas.get(idx)) != null && (retArea == null
+                || styleArea.priority > retArea.priority) && (!noclosed || !styleArea.closed))
                     retArea = styleArea;
                 if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
                 {
@@ -87,7 +90,8 @@ public class ElemStyles
                 if((styleLine = modifiers.get(idx)) != null)
                     over.put(idx, styleLine);
                 idx = "x" + key;
-                if((styleArea = areas.get(idx)) != null && (retArea == null || styleArea.priority > retArea.priority))
+                if((styleArea = areas.get(idx)) != null && (retArea == null
+                || styleArea.priority > retArea.priority) && (!noclosed || !styleArea.closed))
                     retArea = styleArea;
                 if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
                 {
@@ -117,7 +121,8 @@ public class ElemStyles
         public ElemStyle get(OsmPrimitive osm)
         {
             return (osm.keys == null) ? null :
-            ((osm instanceof Node) ? getNode(osm.keys) : get(osm.keys));
+            ((osm instanceof Node) ? getNode(osm.keys) : get(osm.keys,
+            osm instanceof Way && !((Way)osm).isClosed()));
         }
 
         public IconElemStyle getIcon(OsmPrimitive osm)
@@ -129,14 +134,18 @@ public class ElemStyles
         {
             if(o.keys != null && !(o instanceof Node))
             {
+                boolean noclosed = o instanceof Way && !((Way)o).isClosed();
                 Iterator<String> iterator = o.keys.keySet().iterator();
                 while(iterator.hasNext())
                 {
                     String key = iterator.next();
                     String val = o.keys.get(key);
-                    if(areas.containsKey("n" + key + "=" + val)
-                    || areas.containsKey("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))
-                    || areas.containsKey("x" + key))
+                    AreaElemStyle s = areas.get("n" + key + "=" + val);
+                    if(s == null || (s.closed && noclosed))
+                        s = areas.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val));
+                    if(s == null || (s.closed && noclosed))
+                        s = areas.get("x" + key);
+                    if(s != null && !(s.closed && noclosed))
                         return true;
                 }
             }

@@ -226,7 +226,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /* way with area style */
             //if(!profilerOmitDraw)
             //{
-            if (fillAreas > dist && (!areaStyle.closed || w.isClosed()))
+            if (fillAreas > dist)
             {
             //    profilerVisibleAreas++;
                 drawArea(w, w.selected ? selectedColor : areaStyle.color);
@@ -459,7 +459,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 Way way = (Way)osm;
                 AreaElemStyle areaStyle = (AreaElemStyle)style;
                 drawWay(way, areaStyle.line, selectedColor, true);
-                if(area && (!areaStyle.closed || way.isClosed()))
+                if(area)
                     drawArea(way, areaselected ? selectedColor : areaStyle.color);
             }
             else
@@ -978,7 +978,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 for (PolyData pd : poly)
                 {
                     Polygon p = pd.get();
-                    if(isPolygonVisible(p) && (!areaStyle.closed || pd.isClosed()))
+                    if(isPolygonVisible(p))
                     {
                         drawAreaPolygon(p, (pd.way.selected || r.selected) ? selectedColor
                         : areaStyle.color);
