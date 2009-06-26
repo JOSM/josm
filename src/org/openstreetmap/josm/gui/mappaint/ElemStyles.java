@@ -125,6 +125,18 @@ public class ElemStyles
             osm instanceof Way && !((Way)osm).isClosed()));
         }
 
+        public ElemStyle getArea(Way osm)
+        {
+            if(osm.keys != null)
+            {
+                /* force area mode also for unclosed ways */
+                ElemStyle style = get(osm.keys, false);
+                if(style != null && style instanceof AreaElemStyle)
+                    return style;
+            }
+            return null;
+        }
+
         public IconElemStyle getIcon(OsmPrimitive osm)
         {
             return (osm.keys == null) ? null : getNode(osm.keys);

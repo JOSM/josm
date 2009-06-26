@@ -365,8 +365,9 @@ public class GenericRelationEditor extends RelationEditor {
             }
             if (way1 != null) {
                 int next = i+1;
-                while (next < clone.members.size()) {
-                    m = clone.members.get(next++);
+                while (next <= clone.members.size()) {
+                    m = clone.members.get(next == clone.members.size() ? 0 : next);
+                    next++;
                     depth = 0;
                     while (m != null && depth < 10) {
                         if (m.member instanceof Way) {

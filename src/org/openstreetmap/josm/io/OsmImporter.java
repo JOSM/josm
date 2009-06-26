@@ -37,10 +37,10 @@ public class OsmImporter extends FileImporter {
             throw new IOException(tr("Could not read \"{0}\"", file.getName()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new IOException(tr("Could not read \"{0}\"", file.getName()));
+            throw new IOException(tr("File \"{0}\" does not exist", file.getName()));
         } catch (SAXException e) {
             e.printStackTrace();
-            throw new IOException(tr("Could not read \"{0}\"", file.getName()));
+            throw new IOException(tr("Parsing file \"{0}\" failed", file.getName()));
         }
     }
 

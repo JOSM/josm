@@ -832,8 +832,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             for (Way w : outer)
             {
-               if(wayStyle == null || !(wayStyle instanceof AreaElemStyle))
-                   wayStyle = styles.get(w);
+               if(wayStyle == null)
+                   wayStyle = styles.getArea(w);
             }
             r.mappaintStyle = wayStyle;
         }

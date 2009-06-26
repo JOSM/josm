@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
@@ -49,11 +50,12 @@ public class GpxImporter extends FileImporter {
                 if (ml.data.size() > 0)
                     Main.main.addLayer(ml);
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new IOException(tr("File \"{0}\" does not exist", file.getName()));
         } catch (SAXException e) {
             e.printStackTrace();
-            throw new IOException(tr("Could not read \"{0}\"", file.getName()));
+            throw new IOException(tr("Parsing file \"{0}\" failed", file.getName()));
         }
-
     }
-
 }
