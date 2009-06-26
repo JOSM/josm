@@ -240,6 +240,10 @@ public class MergeVisitor extends AbstractVisitor {
                     my.incomplete = false;
                     my.cloneFrom(other);
                     merged.put(other, my);
+                } else if (my.deleted && ! other.deleted && my.version == other.version) {
+                    // same version, but my is deleted. Assume mine takes precedence
+                    // otherwise too many conflicts when refreshing from the server
+                    merged.put(other, my);
                 } else if (my.deleted != other.deleted) {
                     // differences in deleted state have to be resolved manually
                     //
