@@ -419,7 +419,7 @@ public class UploadAction extends JosmAction {
                         +"The error message is:<br>"
                         + "{0}"
                         + "</html>",
-                        e.getMessage()
+                        e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
                 ),
                 tr("Precondition violation"),
                 JOptionPane.ERROR_MESSAGE
@@ -460,7 +460,7 @@ public class UploadAction extends JosmAction {
                 + "The error message is:<br>"
                 + "{0}"
                 + "</html>",
-                e.getMessage()
+                e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         );
         JOptionPane.showMessageDialog(
                 Main.parent,
