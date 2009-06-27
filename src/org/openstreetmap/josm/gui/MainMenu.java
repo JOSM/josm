@@ -37,6 +37,7 @@ import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
+import org.openstreetmap.josm.actions.InfoAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -129,6 +130,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction mergeNodes = new MergeNodesAction();
     public final JosmAction joinNodeWay = new JoinNodeWayAction();
     public final JosmAction unglueNodes = new UnGlueAction();
+    public final InfoAction info = new InfoAction();
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
 
     /* Audio menu */
@@ -283,6 +285,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, joinNodeWay);
         add(toolsMenu, unglueNodes);
         toolsMenu.addSeparator();
+        add(toolsMenu, info);
         add(toolsMenu, historyinfo);
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
