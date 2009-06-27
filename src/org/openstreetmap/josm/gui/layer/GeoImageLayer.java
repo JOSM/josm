@@ -24,8 +24,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.WeakHashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -51,6 +55,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
@@ -66,6 +71,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.GeoImageLayer.ImageLoader.ImageLoadedListener;
 import org.openstreetmap.josm.tools.DateParser;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
@@ -78,14 +84,189 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class GeoImageLayer extends Layer {
 
-    private static final class ImageEntry implements Comparable<ImageEntry> {
-        File image;
+    /**
+     * Allows to load and scale images. Loaded images are kept in cache (using soft reference). Both
+     * synchronous and asynchronous loading is supported
+     *
+     */
+    public static class ImageLoader implements ImageObserver {
+
+        public static class Entry {
+            final File file;
+            final int width;
+            final int height;
+            final int maxSize;
+            private final ImageLoadedListener listener;
+
+            volatile Image scaledImage;
+
+
+            public Entry(File file, int width, int height, int maxSize, ImageLoadedListener listener) {
+                this.file = file;
+                this.height = height;
+                this.width = width;
+                this.maxSize = maxSize;
+                this.listener = listener;
+            }
+        }
+
+        public interface ImageLoadedListener {
+            void imageLoaded();
+        }
+
+        private final List<ImageLoader.Entry> queue = new ArrayList<ImageLoader.Entry>();
+        private final WeakHashMap<File, SoftReference<Image>> loadedImageCache = new WeakHashMap<File, SoftReference<Image>>();
+        private ImageLoader.Entry currentEntry;
+
+        private Image getOrLoadImage(File file) {
+            SoftReference<Image> cachedImageRef = loadedImageCache.get(file);
+            if (cachedImageRef != null) {
+                Image cachedImage = cachedImageRef.get();
+                if (cachedImage != null) {
+                    return cachedImage;
+                }
+            }
+            return Toolkit.getDefaultToolkit().createImage(currentEntry.file.getAbsolutePath());
+        }
+
+        private BufferedImage createResizedCopy(Image originalImage,
+                int scaledWidth, int scaledHeight)
+        {
+            BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = scaledBI.createGraphics();
+            while (!g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null))
+            {
+                try {
+                    Thread.sleep(10);
+                } catch(InterruptedException ie) {}
+            }
+            g.dispose();
+            return scaledBI;
+        }
+        private void loadImage() {
+            if (currentEntry != null) {
+                return;
+            }
+            while (!queue.isEmpty()) {
+                currentEntry = queue.get(0);
+                queue.remove(0);
+
+                Image newImage = getOrLoadImage(currentEntry.file);
+                if (newImage.getWidth(this) == -1) {
+                    break;
+                } else {
+                    finishImage(newImage, currentEntry);
+                    currentEntry = null;
+                }
+            }
+        }
+
+        private void finishImage(Image img, ImageLoader.Entry entry) {
+            loadedImageCache.put(entry.file, new SoftReference<Image>(img));
+            if (entry.maxSize != -1) {
+                int w = img.getWidth(null);
+                int h = img.getHeight(null);
+                if (w>h) {
+                    h = Math.round(entry.maxSize*((float)h/w));
+                    w = entry.maxSize;
+                } else {
+                    w = Math.round(entry.maxSize*((float)w/h));
+                    h = entry.maxSize;
+                }
+                entry.scaledImage = createResizedCopy(img, w, h);
+            } else if (entry.width != -1 && entry.height != -1) {
+                entry.scaledImage = createResizedCopy(img, entry.width, entry.height);
+            } else {
+                entry.scaledImage = img;
+            }
+            if (entry.listener != null) {
+                entry.listener.imageLoaded();
+            }
+        }
+
+        public synchronized ImageLoader.Entry loadImage(File file, int width, int height, int maxSize, ImageLoadedListener listener) {
+            ImageLoader.Entry e = new Entry(file, width, height, maxSize, listener);
+            queue.add(e);
+            loadImage();
+            return e;
+        }
+
+        public Image waitForImage(File file, int width, int height) {
+            return waitForImage(file, width, height, -1);
+        }
+
+        public Image waitForImage(File file, int maxSize) {
+            return waitForImage(file, -1, -1, maxSize);
+        }
+
+        public Image waitForImage(File file) {
+            return waitForImage(file, -1, -1, -1);
+        }
+
+        private synchronized Image waitForImage(File file, int width, int height, int maxSize) {
+            ImageLoader.Entry entry;
+            if (currentEntry != null && currentEntry.file.equals(file)) {
+                entry = currentEntry;
+            } else {
+                entry = new Entry(file, width, height, maxSize, null);
+                queue.add(0, entry);
+            }
+            loadImage();
+
+            while (true) {
+                if (entry.scaledImage != null) {
+                    return entry.scaledImage;
+                }
+                try {
+                    wait();
+                } catch (InterruptedException e) {}
+            }
+        }
+
+        public synchronized boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+            if ((infoflags & ImageObserver.ALLBITS) != 0) {
+                finishImage(img, currentEntry);
+                currentEntry = null;
+                loadImage();
+                notifyAll();
+            }
+            return true;
+        }
+    }
+
+    private static final int ICON_SIZE = 16;
+    private static ImageLoader imageLoader = new ImageLoader();
+
+    private static final class ImageEntry implements Comparable<ImageEntry>, ImageLoadedListener {
+
+        private static final Image EMPTY_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_BINARY);
+
+        final File image;
+        ImageLoader.Entry icon;
+
         Date time;
         LatLon coor;
         EastNorth pos;
-        Icon icon;
+
+        public ImageEntry(File image) {
+            this.image = image;
+            icon = imageLoader.loadImage(image, ICON_SIZE, ICON_SIZE, -1, this);
+        }
+
         public int compareTo(ImageEntry image) {
             return time.compareTo(image.time);
+        }
+
+        public Image getIcon() {
+            if (icon.scaledImage == null) {
+                return EMPTY_IMAGE;
+            } else {
+                return icon.scaledImage;
+            }
+        }
+
+        public void imageLoaded() {
+            Main.map.mapView.repaint();
         }
     }
 
@@ -108,17 +289,17 @@ public class GeoImageLayer extends Layer {
             for (GpxTrack trk : gpxLayer.data.tracks) {
                 for (Collection<WayPoint> segment : trk.trackSegs) {
                     for (WayPoint p : segment) {
-                    if (!p.attr.containsKey("time"))
-                        throw new IOException(tr("No time for point {0} x {1}",p.latlon.lat(),p.latlon.lon()));
-                    Date d = null;
-                    try {
-                        d = DateParser.parse((String) p.attr.get("time"));
-                    } catch (ParseException e) {
-                        throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.attr.get("time"),p.latlon.lat(),p.latlon.lon()));
+                        if (!p.attr.containsKey("time"))
+                            throw new IOException(tr("No time for point {0} x {1}",p.latlon.lat(),p.latlon.lon()));
+                        Date d = null;
+                        try {
+                            d = DateParser.parse((String) p.attr.get("time"));
+                        } catch (ParseException e) {
+                            throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.attr.get("time"),p.latlon.lat(),p.latlon.lon()));
+                        }
+                        gps.add(new TimedPoint(d, p.eastNorth));
                     }
-                    gps.add(new TimedPoint(d, p.eastNorth));
                 }
-            }
             }
 
             if (gps.isEmpty()) {
@@ -136,7 +317,7 @@ public class GeoImageLayer extends Layer {
                 Main.pleaseWaitDlg.currentAction.setText(tr("Reading {0}...",f.getName()));
                 Main.pleaseWaitDlg.progress.setValue(i++);
 
-                ImageEntry e = new ImageEntry();
+                ImageEntry e = new ImageEntry(f);
                 try {
                     e.time = ExifReader.readTime(f);
                 } catch (ParseException e1) {
@@ -144,8 +325,6 @@ public class GeoImageLayer extends Layer {
                 }
                 if (e.time == null)
                     continue;
-                e.image = f;
-                e.icon = loadScaledImage(f, 16);
 
                 data.add(e);
             }
@@ -171,7 +350,7 @@ public class GeoImageLayer extends Layer {
     private boolean mousePressed = false;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     private MouseAdapter mouseAdapter;
-    private int currentImage;
+    private ImageViewerDialog imageViewerDialog;
 
     public static final class GpsTimeIncorrect extends Exception {
         public GpsTimeIncorrect(String message, Throwable cause) {
@@ -225,7 +404,7 @@ public class GeoImageLayer extends Layer {
                     if (e.pos == null)
                         continue;
                     Point p = Main.map.mapView.getPoint(e.pos);
-                    Rectangle r = new Rectangle(p.x-e.icon.getIconWidth()/2, p.y-e.icon.getIconHeight()/2, e.icon.getIconWidth(), e.icon.getIconHeight());
+                    Rectangle r = new Rectangle(p.x-ICON_SIZE/2, p.y-ICON_SIZE/2, ICON_SIZE, ICON_SIZE);
                     if (r.contains(ev.getPoint())) {
                         showImage(i-1);
                         break;
@@ -245,111 +424,131 @@ public class GeoImageLayer extends Layer {
         });
     }
 
-    private void showImage(int i) {
-        currentImage = i;
-        final JPanel p = new JPanel(new BorderLayout());
-        final ImageEntry e = data.get(currentImage);
-        if (!(e.image.exists() && e.image.canRead()))
-        {
-            JOptionPane.showMessageDialog(Main.parent,
-            tr("Image with path {0} does not exist or is not readable.", e.image),
-            tr("Warning"), JOptionPane.WARNING_MESSAGE);
-            return;
+    private class ImageViewerDialog {
+
+        private int currentImage;
+        private ImageEntry currentImageEntry;
+
+        private final JDialog dlg;
+        private final JButton nextButton;
+        private final JButton prevButton;
+        private final JToggleButton scaleToggle;
+        private final JToggleButton centerToggle;
+        private final JViewport imageViewport;
+        private final JLabel imageLabel;
+
+        private class ImageAction implements ActionListener {
+
+            private final int offset;
+
+            public ImageAction(int offset) {
+                this.offset = offset;
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                showImage(currentImage + offset);
+            }
+
         }
-        final JScrollPane scroll = new JScrollPane(new JLabel(loadScaledImage(e.image, 580)));
-        final JViewport vp = scroll.getViewport();
-        p.add(scroll, BorderLayout.CENTER);
 
-        final JToggleButton scale = new JToggleButton(ImageProvider.get("dialogs", "zoom-best-fit"));
-        final JButton next  = new JButton(ImageProvider.get("dialogs", "next"));
-        final JButton prev = new JButton(ImageProvider.get("dialogs", "previous"));
-        final JToggleButton cent = new JToggleButton(ImageProvider.get("dialogs", "centreview"));
+        public ImageViewerDialog(ImageEntry firstImage) {
+            final JPanel p = new JPanel(new BorderLayout());
+            imageLabel = new JLabel(new ImageIcon(imageLoader.waitForImage(firstImage.image, 580)));
+            final JScrollPane scroll = new JScrollPane(imageLabel);
+            scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+            scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            imageViewport = scroll.getViewport();
+            p.add(scroll, BorderLayout.CENTER);
 
-        JPanel p2 = new JPanel();
-        p2.add(prev);
-        p2.add(scale);
-        p2.add(cent);
-        p2.add(next);
-        prev.setEnabled(currentImage>0?true:false);
-        next.setEnabled(currentImage<data.size()-1?true:false);
-        p.add(p2, BorderLayout.SOUTH);
-        final JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
-        final JDialog dlg = pane.createDialog(Main.parent, e.image+" ("+e.coor.toDisplayString()+")");
-        scale.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent ev) {
-                p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                if (scale.getModel().isSelected())
-                    ((JLabel)vp.getView()).setIcon(loadScaledImage(e.image, Math.max(vp.getWidth(), vp.getHeight())));
-                else
-                    ((JLabel)vp.getView()).setIcon(new ImageIcon(e.image.getPath()));
-                p.setCursor(Cursor.getDefaultCursor());
-            }
-        });
-        scale.setSelected(true);
-        cent.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent ev) {
-                final ImageEntry e = data.get(currentImage);
-                if (cent.getModel().isSelected())
-                    Main.map.mapView.zoomTo(e.pos, Main.map.mapView.getScale());
-            }
-        });
+            scaleToggle = new JToggleButton(ImageProvider.get("dialogs", "zoom-best-fit"));
+            nextButton  = new JButton(ImageProvider.get("dialogs", "next"));
+            prevButton = new JButton(ImageProvider.get("dialogs", "previous"));
+            centerToggle = new JToggleButton(ImageProvider.get("dialogs", "centreview"));
 
-        ActionListener nextprevAction = new ActionListener(){
-            public void actionPerformed(ActionEvent ev) {
-                p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                if (ev.getActionCommand().equals("Next")) {
-                    currentImage++;
-                    if(currentImage>=data.size()-1) next.setEnabled(false);
-                    prev.setEnabled(true);
-                } else {
-                    currentImage--;
-                    if(currentImage<=0) prev.setEnabled(false);
-                    next.setEnabled(true);
+            JPanel p2 = new JPanel();
+            p2.add(prevButton);
+            p2.add(scaleToggle);
+            p2.add(centerToggle);
+            p2.add(nextButton);
+            p.add(p2, BorderLayout.SOUTH);
+            final JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
+            dlg = pane.createDialog(Main.parent, "");
+            scaleToggle.addActionListener(new ImageAction(0));
+            scaleToggle.setSelected(true);
+            centerToggle.addActionListener(new ImageAction(0));
+
+            nextButton.setActionCommand("Next");
+            prevButton.setActionCommand("Previous");
+            nextButton.setMnemonic(KeyEvent.VK_RIGHT);
+            prevButton.setMnemonic(KeyEvent.VK_LEFT);
+            scaleToggle.setMnemonic(KeyEvent.VK_F);
+            centerToggle.setMnemonic(KeyEvent.VK_C);
+            nextButton.setToolTipText("Show next image");
+            prevButton.setToolTipText("Show previous image");
+            centerToggle.setToolTipText("Centre image location in main display");
+            scaleToggle.setToolTipText("Scale image to fit");
+
+            prevButton.addActionListener(new ImageAction(-1));
+            nextButton.addActionListener(new ImageAction(1));
+            centerToggle.setSelected(false);
+
+            dlg.addComponentListener(new ComponentListener() {
+                boolean ignoreEvent = true;
+                public void componentHidden(ComponentEvent e) {}
+                public void componentMoved(ComponentEvent e) {}
+                public void componentResized(ComponentEvent ev) {
+                    // we ignore the first resize event, as the picture is scaled already on load:
+                    if (scaleToggle.getModel().isSelected() && !ignoreEvent) {
+                        imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image,
+                                Math.max(imageViewport.getWidth(), imageViewport.getHeight()))));
+                    }
+                    ignoreEvent = false;
                 }
+                public void componentShown(ComponentEvent e) {}
 
-                final ImageEntry e = data.get(currentImage);
-                if (scale.getModel().isSelected())
-                    ((JLabel)vp.getView()).setIcon(loadScaledImage(e.image, Math.max(vp.getWidth(), vp.getHeight())));
-                else
-                    ((JLabel)vp.getView()).setIcon(new ImageIcon(e.image.getPath()));
-                dlg.setTitle(e.image+" ("+e.coor.toDisplayString()+")");
-                if (cent.getModel().isSelected())
-                    Main.map.mapView.zoomTo(e.pos, Main.map.mapView.getScale());
-                p.setCursor(Cursor.getDefaultCursor());
+            });
+            dlg.setModal(false);
+            dlg.setResizable(true);
+            dlg.pack();
+        }
+
+        public void showImage(int index) {
+            dlg.setVisible(true);
+            dlg.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            if (index < 0) {
+                index = 0;
+            } else if (index >= data.size() - 1) {
+                index = data.size() - 1;
             }
-        };
-        next.setActionCommand("Next");
-        prev.setActionCommand("Previous");
-        next.setMnemonic(KeyEvent.VK_RIGHT);
-        prev.setMnemonic(KeyEvent.VK_LEFT);
-        scale.setMnemonic(KeyEvent.VK_F);
-        cent.setMnemonic(KeyEvent.VK_C);
-        next.setToolTipText("Show next image");
-        prev.setToolTipText("Show previous image");
-        cent.setToolTipText("Centre image location in main display");
-        scale.setToolTipText("Scale image to fit");
 
-        prev.addActionListener(nextprevAction);
-        next.addActionListener(nextprevAction);
-        cent.setSelected(false);
+            currentImage = index;
+            currentImageEntry = data.get(currentImage);
 
-        dlg.addComponentListener(new ComponentListener() {
-            boolean ignoreEvent = true;
-            public void componentHidden(ComponentEvent e) {}
-            public void componentMoved(ComponentEvent e) {}
-            public void componentResized(ComponentEvent ev) {
-                // we ignore the first resize event, as the picture is scaled already on load:
-                if (scale.getModel().isSelected() && !ignoreEvent) {
-                    ((JLabel)vp.getView()).setIcon(loadScaledImage(e.image, Math.max(vp.getWidth(), vp.getHeight())));
-                }
-                ignoreEvent = false;
-            }
-            public void componentShown(ComponentEvent e) {}
+            prevButton.setEnabled(currentImage > 0);
+            nextButton.setEnabled(currentImage < data.size() - 1);
 
-        });
-        dlg.setModal(false);
-        dlg.setVisible(true);
-        dlg.setResizable(true);
+            if (scaleToggle.getModel().isSelected())
+                imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image,
+                        Math.max(imageViewport.getWidth(), imageViewport.getHeight()))));
+            else
+                imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image)));
+
+            if (centerToggle.getModel().isSelected())
+                Main.map.mapView.zoomTo(currentImageEntry.pos, Main.map.mapView.getScale());
+
+            dlg.setTitle(currentImageEntry.image +
+                    " (" + currentImageEntry.coor.toDisplayString() + ")");
+            dlg.setCursor(Cursor.getDefaultCursor());
+        }
+
+    }
+
+    private void showImage(int i) {
+        if (imageViewerDialog == null) {
+            imageViewerDialog = new ImageViewerDialog(data.get(i));
+        }
+        imageViewerDialog.showImage(i);
     }
 
     @Override public Icon getIcon() {
@@ -371,7 +570,7 @@ public class GeoImageLayer extends Layer {
             @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 ImageEntry e = (ImageEntry)value;
-                setIcon(e.icon);
+                setIcon(new ImageIcon(e.getIcon()));
                 setText(e.image.getName()+" ("+dateFormat.format(new Date(e.time.getTime()+(delta+gpstimezone)))+")");
                 if (e.pos == null)
                     setForeground(Color.red);
@@ -401,21 +600,38 @@ public class GeoImageLayer extends Layer {
     }
 
     @Override public void paint(Graphics g, MapView mv) {
-        boolean clickedFound = false;
-        for (ImageEntry e : data) {
+        int clickedIndex = -1;
+
+        // First select beveled icon (for cases where are more icons on the same spot)
+        Point mousePosition = mv.getMousePosition();
+        if (mousePosition != null  && mousePressed) {
+            for (int i = data.size() - 1; i >= 0; i--) {
+                ImageEntry e = data.get(i);
+                if (e.pos == null) {
+                    continue;
+                }
+
+                Point p = mv.getPoint(e.pos);
+                Rectangle r = new Rectangle(p.x-ICON_SIZE / 2, p.y-ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
+                if (r.contains(mousePosition)) {
+                    clickedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < data.size(); i++) {
+            ImageEntry e = data.get(i);
             if (e.pos != null) {
                 Point p = mv.getPoint(e.pos);
-                Rectangle r = new Rectangle(p.x-e.icon.getIconWidth()/2, p.y-e.icon.getIconHeight()/2, e.icon.getIconWidth(), e.icon.getIconHeight());
-                e.icon.paintIcon(mv, g, r.x, r.y);
+                Rectangle r = new Rectangle(p.x-ICON_SIZE / 2, p.y-ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
+                g.drawImage(e.getIcon(), r.x, r.y, null);
                 Border b = null;
-                Point mousePosition = mv.getMousePosition();
-                if (mousePosition == null)
-                    continue; // mouse outside the whole window
-                if (!clickedFound && mousePressed && r.contains(mousePosition)) {
+                if (i == clickedIndex) {
                     b = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-                    clickedFound = true;
-                } else
+                } else {
                     b = BorderFactory.createBevelBorder(BevelBorder.RAISED);
+                }
                 Insets inset = b.getBorderInsets(mv);
                 r.grow((inset.top+inset.bottom)/2, (inset.left+inset.right)/2);
                 b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
@@ -476,8 +692,10 @@ public class GeoImageLayer extends Layer {
                 }
                 lastTP = tp;
             }
-            if (e.pos != null)
-                e.coor = Main.proj.eastNorth2latlon(e.pos);
+            if (e.pos == null) {
+                e.pos = gps.getLast().pos;
+            }
+            e.coor = Main.proj.eastNorth2latlon(e.pos);
         }
     }
 
@@ -495,7 +713,7 @@ public class GeoImageLayer extends Layer {
         }
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Image")), GBC.eol());
-        p.add(new JLabel(loadScaledImage(f, 300)), GBC.eop());
+        p.add(new JLabel(new ImageIcon(imageLoader.waitForImage(f, 300))), GBC.eop());
         p.add(new JLabel(tr("Enter shown date (mm/dd/yyyy HH:MM:SS)")), GBC.eol());
         JTextField gpsText = new JTextField(dateFormat.format(new Date(exifDate.getTime()+delta)));
         p.add(gpsText, GBC.eol().fill(GBC.HORIZONTAL));
@@ -530,37 +748,4 @@ public class GeoImageLayer extends Layer {
         }
     }
 
-    private static Icon loadScaledImage(File f, int maxSize) {
-        Image img = Toolkit.getDefaultToolkit().createImage(f.getPath());
-        while (img.getWidth(null) < 0 || img.getHeight(null) < 0) {
-          try {
-            Thread.sleep(10);
-          } catch(InterruptedException ie) {}
-        }
-        int w = img.getWidth(null);
-        int h = img.getHeight(null);
-        if (w>h) {
-            h = Math.round(maxSize*((float)h/w));
-            w = maxSize;
-        } else {
-            w = Math.round(maxSize*((float)w/h));
-            h = maxSize;
-        }
-        return new ImageIcon(createResizedCopy(img, w, h));
-    }
-
-    private static BufferedImage createResizedCopy(Image originalImage,
-    int scaledWidth, int scaledHeight)
-    {
-        BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = scaledBI.createGraphics();
-        while (!g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null))
-        {
-          try {
-            Thread.sleep(10);
-          } catch(InterruptedException ie) {}
-        }
-        g.dispose();
-        return scaledBI;
-    }
 }
