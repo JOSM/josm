@@ -24,7 +24,6 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
-import org.openstreetmap.josm.io.MultiFetchServerObjectReaderTest;
 
 public class MergeVisitorTest {
     private static Logger logger = Logger.getLogger(MergeVisitorTest.class.getName());
@@ -38,7 +37,7 @@ public class MergeVisitorTest {
         // load properties
         //
         try {
-            testProperties.load(MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-unit-env.properties"));
+            testProperties.load(MergeVisitorTest.class.getResourceAsStream("/test-unit-env.properties"));
         } catch(Exception e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
