@@ -39,8 +39,8 @@ public class MergeVisitorTest {
         try {
             testProperties.load(MergeVisitorTest.class.getResourceAsStream("/test-unit-env.properties"));
         } catch(Exception e){
-            logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
-            fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
+            logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "/test-unit-env.properties"));
+            fail(MessageFormat.format("failed to load property file ''{0}''", "/test-unit-env.properties"));
         }
 
         // check josm.home
