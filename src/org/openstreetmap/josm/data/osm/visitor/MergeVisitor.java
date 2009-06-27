@@ -109,17 +109,19 @@ public class MergeVisitor extends AbstractVisitor {
                     continue;
                 }
                 if (my.hasEqualSemanticAttributes(other)) {
-                    // copy the technical attributes from their
-                    // version
-                    if (other.deleted) {
-                        myDataSet.unlinkReferencesToPrimitive(my);
-                        my.delete(true);
+                    if (my.deleted != other.deleted) {
+                        // differences in deleted state have to be merged manually
+                        //
+                        conflicts.put(my, other);
+                    } else {
+                        // copy the technical attributes from other
+                        // version
+                        my.visible = other.visible;
+                        my.user = other.user;
+                        my.setTimestamp(other.getTimestamp());
+                        my.modified = other.modified;
+                        merged.put(other, my);
                     }
-                    my.visible = other.visible;
-                    my.user = other.user;
-                    my.setTimestamp(other.getTimestamp());
-                    my.modified = other.modified;
-                    merged.put(other, my);
                     return;
                 }
             }
