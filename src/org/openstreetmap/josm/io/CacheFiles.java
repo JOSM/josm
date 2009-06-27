@@ -57,7 +57,8 @@ public class CacheFiles {
        String pref = Main.pref.getPluginsDirFile().getPath();
        boolean dir_writeable;
        this.ident = ident;
-       this.dir = new File(pref + "/" + ident + "/cache/");
+       String cacheDir = Main.pref.get("cache." + ident + "." + "path", pref + "/" + ident + "/cache/");
+       this.dir = new File(cacheDir);
        try {
            this.dir.mkdirs();
            dir_writeable = true;
