@@ -36,7 +36,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             startPattern = Pattern.compile(
                     "^(" + a + "|" + b + ")(" + SEPARATOR + "|$)",
                     Pattern.CASE_INSENSITIVE);
-            endPattern = Pattern.compile(
+            endPattern = Pattern.compile("^.*" +
                     SEPARATOR + "(" + a + "|" + b + ")$",
                     Pattern.CASE_INSENSITIVE);
         }
@@ -63,7 +63,8 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     private static PrefixSuffixSwitcher[] prefixSuffixSwitchers =
             new PrefixSuffixSwitcher[] {
                 new PrefixSuffixSwitcher("left", "right"),
-                new PrefixSuffixSwitcher("forward", "backward")
+                new PrefixSuffixSwitcher("forward", "backward"),
+                new PrefixSuffixSwitcher("forwards", "backwards")
             };
 
     @Override

@@ -262,17 +262,24 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             newSelection.add(wayToAdd);
 
         }
+        Boolean warnmerole=false;
         Boolean warnme=false;
         // now copy all relations to new way also
         for (Relation r : Main.ds.relations) {
             if (r.deleted || r.incomplete) continue;
             Relation c = null;
+            String type = "";
             int i = 0;
+
+            if(r.keys != null)
+                type = r.keys.get("type");
 
             for (RelationMember rm : r.members) {
                 if (rm.member instanceof Way) {
                     if (rm.member == selectedWay)
                     {
+                        if(!("route".equals(type)) && !("multipolygon".equals(type)))
+                            warnme = true;
                         if (c == null)
                             c = new Relation(r);
 
@@ -283,8 +290,8 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
                             RelationMember em = new RelationMember();
                             em.member = wayToAdd;
                             em.role = rm.role;
-                            if(em.role.length() > 0)
-                                warnme = true;
+                            if(em.role.length() > 0 && !("multipolygon".equals(type)))
+                                warnmerole = true;
 
                             j++;
                             if (backwards)
@@ -301,8 +308,10 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             if (c != null)
                 commandList.add(new ChangeCommand(r, c));
         }
-        if(warnme)
+        if(warnmerole)
             JOptionPane.showMessageDialog(Main.parent, tr("A role based relation membership was copied to all new ways.\nYou should verify this and correct it when necessary."));
+        else if(warnme)
+            JOptionPane.showMessageDialog(Main.parent, tr("A relation membership was copied to all new ways.\nYou should verify this and correct it when necessary."));
 
         NameVisitor v = new NameVisitor();
         v.visit(selectedWay);

@@ -264,7 +264,7 @@ public class GenericRelationEditor extends RelationEditor {
         }));
 
         buttonPanel.add(createButton(marktr("Remove"),"remove",
-                tr("Remove the member in the current table row from this relation"), KeyEvent.VK_M, new ActionListener() {
+                tr("Remove the member in the current table row from this relation"), KeyEvent.VK_X, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int[] rows = memberTable.getSelectedRows();
                 RelationMember mem = new RelationMember();
