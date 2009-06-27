@@ -102,7 +102,7 @@ public class MergeVisitorTest {
     }
 
     /**
-     * two  nodes, my is unmodified, their is updated and has a higherversion
+     * two  nodes, my is unmodified, their is updated and has a higher version
      * => their version is going to be the merged version
      * 
      */
@@ -310,7 +310,7 @@ public class MergeVisitorTest {
     /**
      * My and their node are new but semantically equal. Both are deleted.
      * 
-     * => create a conflict
+     * => take mine
      * 
      */
     @Test
@@ -423,7 +423,7 @@ public class MergeVisitorTest {
     /**
      * my node is incomplete, their node is complete
      * 
-     * => merge it onto my node. My node becoms complete
+     * => merge it onto my node. My node becomes complete
      * 
      */
     @Test
