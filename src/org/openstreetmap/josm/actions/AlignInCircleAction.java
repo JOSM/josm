@@ -182,23 +182,27 @@ public final class AlignInCircleAction extends JosmAction {
 
         // Get average position of circumcircles of the triangles of all triplets of neighbour nodes
         if (center == null) {
-            center = new EastNorth(0, 0);
-            Node n0 = (Node) nodes.toArray()[nodes.size() - 1];
-            Node n1 = (Node) nodes.toArray()[nodes.size() - 2];
-            Node n2;
-            for (Node n : nodes) {
-                n2 = n1;
-                n1 = n0;
-                n0 = n;
-                EastNorth cc = circumcenter(n0.getEastNorth(), n1.getEastNorth(), n2.getEastNorth());
-                if (cc == null)
-                    return;
-                center = new EastNorth(center.east() + cc.east(), center.north()
-                        + cc.north());
-            }
 
-            center = new EastNorth(center.east() / nodes.size(), center.north()
-                    / nodes.size());
+            // Compute the centroid of nodes
+
+            // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
+            double area = 0;
+            double north = 0;
+            double east = 0;
+
+            // Integrate the area, east and north centroid, we'll compute the final value based on the result of integration
+            for (int i=0; i<nodes.size(); i++) {
+                EastNorth n0 = ((Node) nodes.toArray()[i]).getEastNorth();
+                EastNorth n1 = ((Node) nodes.toArray()[(i+1) % nodes.size()]).getEastNorth();
+
+                area  += n0.east()*n1.north()-n1.east()*n0.north();
+                east  += (n0.east() +n1.east()) *(n0.east()*n1.north()-n1.east()*n0.north());
+                north += (n0.north()+n1.north())*(n0.east()*n1.north()-n1.east()*n0.north());
+            }
+            area  /= 2;
+            north /= 6*area;
+            east  /= 6*area;
+            center = new EastNorth(east, north);
         }
 
         // Node "center" now is central to all selected nodes.
