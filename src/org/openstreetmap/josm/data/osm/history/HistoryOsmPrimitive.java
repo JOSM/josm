@@ -1,8 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 
@@ -113,6 +115,10 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     public boolean hasTag(String key) {
         return tags.get(key) != null;
+    }
+
+    public Map<String,String> getTags() {
+        return Collections.unmodifiableMap(tags);
     }
 
     @Override

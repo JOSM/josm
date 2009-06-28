@@ -84,7 +84,10 @@ public class HistoryBrowserTest extends JFrame {
 
     public HistoryBrowserTest(){
         build();
-        populate(OsmPrimitiveType.NODE,354117);
+        //populate(OsmPrimitiveType.NODE,354117);
+        //populate(OsmPrimitiveType.WAY,37951);
+        populate(OsmPrimitiveType.RELATION,5055);
+
     }
 
     static public void main(String args[]) {

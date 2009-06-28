@@ -9,6 +9,15 @@ import java.util.NoSuchElementException;
 
 public class HistoryDataSet {
 
+    private static HistoryDataSet historyDataSet;
+
+    public static HistoryDataSet getInstance() {
+        if (historyDataSet == null) {
+            historyDataSet = new HistoryDataSet();
+        }
+        return  historyDataSet;
+    }
+
     private HashMap<Long, ArrayList<HistoryOsmPrimitive>> data;
 
     public HistoryDataSet() {
@@ -43,7 +52,22 @@ public class HistoryDataSet {
     public History getHistory(long id) {
         ArrayList<HistoryOsmPrimitive> versions = data.get(id);
         if (versions == null)
-            throw new NoSuchElementException(tr("Didn't find an historized primitive with id {0} in this dataset", id));
+            return null;
         return new History(id, versions);
+    }
+
+    /**
+     * merges the histories from the {@see HistoryDataSet} other in this history data set
+     * 
+     * @param other the other history data set. Ignored if null.
+     */
+    public void mergeInto(HistoryDataSet other) {
+        if (other == null)
+            return;
+        for (Long id : other.data.keySet()) {
+            if (!this.data.keySet().contains(id)) {
+                this.data.put(id, other.data.get(id));
+            }
+        }
     }
 }
