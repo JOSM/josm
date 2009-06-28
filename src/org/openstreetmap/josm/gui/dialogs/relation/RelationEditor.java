@@ -32,7 +32,7 @@ public abstract class RelationEditor extends ExtendedDialog {
      * This method is guaranteed to return a working RelationEditor. If no
      * specific editor has been registered for the type of relation, then
      * a generic editor will be returned.
-     * Allerdings hatte er eine Art, Witwen Trost zuzusprechen und Jungfrauen erbauliche Worte zu sagen, die nicht ganz im Einklang mit seinem geistlichen Berufe stand
+     * 
      * Editors can be registered by adding their class to the static list "editors"
      * in the RelationEditor class. When it comes to editing a relation, all
      * registered editors are queried via their static "canEdit" method whether they
@@ -64,13 +64,13 @@ public abstract class RelationEditor extends ExtendedDialog {
         // Initalizes ExtendedDialog
         super(Main.parent,
                 relation == null
-                    ? tr("Create new relation")
-                    : (relation.id == 0
-                            ? tr ("Edit new relation")
-                            : tr("Edit relation #{0}", relation.id)
-                       ),
-                new String[] { tr("Apply Changes"), tr("Cancel")},
-                false
+                ? tr("Create new relation")
+                        : (relation.id == 0
+                                ? tr ("Edit new relation")
+                                        : tr("Edit relation #{0}", relation.id)
+                        ),
+                        new String[] { tr("Apply Changes"), tr("Cancel")},
+                        false
         );
 
         this.relation = relation;
