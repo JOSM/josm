@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
@@ -35,6 +36,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
@@ -416,6 +418,31 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 }
             } else {
                 Collection<OsmPrimitive> selection = Main.ds.getSelected();
+                Collection<OsmPrimitive> s = new TreeSet<OsmPrimitive>();
+                int max = Main.pref.getInteger("warn.move.maxelements", 20);
+                for (OsmPrimitive osm : selection)
+                {
+                    if(osm instanceof Node)
+                        s.add(osm);
+                    else if(osm instanceof Way)
+                    {
+                        s.add(osm);
+                        s.addAll(((Way)osm).nodes);
+                    }
+                    if(s.size() > max)
+                    {
+                        if(1 != new ExtendedDialog(Main.parent, tr("Move elements"),
+                        tr("You did move more than {0} elements. "
+                        + "Moving a large number of elements is often an error.\n"
+                        + "Really move them?", max),
+                        new String[] {tr("Move them"), tr("Undo move")},
+                        new String[] {"reorder.png", "cancel.png"}).getValue())
+                        {
+                            Main.main.undoRedo.undo();
+                        }
+                        break;
+                    }
+                }
                 if (ctrl) {
                     Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
                     Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);
