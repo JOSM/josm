@@ -14,6 +14,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.MirroredInputStream;
 
 /**
  * Helperclass to support the application with images.
@@ -84,6 +86,26 @@ public class ImageProvider {
     {
         if (name == null)
             return null;
+        if (name.startsWith("http://"))
+        {
+            Image img = cache.get(name);
+            if(img == null)
+            {
+                try
+                {
+                    MirroredInputStream is = new MirroredInputStream(name,
+                    new File(Main.pref.getPreferencesDir(), "images").toString());
+                    if(is != null)
+                    {
+                      img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
+                      cache.put(name, img);
+                    }
+                }
+                catch(IOException e) {
+                }
+            }
+            return img == null ? null : new ImageIcon(img);
+        }
         if (subdir == null)
             subdir = "";
         else if (!subdir.equals(""))

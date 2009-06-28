@@ -20,6 +20,7 @@ import org.openstreetmap.josm.Main;
  */
 public class MirroredInputStream extends InputStream {
     InputStream fs = null;
+    File file = null;
 
     public MirroredInputStream(String name) throws IOException {
         this(name, null, -1L);
@@ -29,9 +30,12 @@ public class MirroredInputStream extends InputStream {
         this(name, null, maxTime);
     }
 
+    public MirroredInputStream(String name, String destDir) throws IOException {
+        this(name, destDir, -1L);
+    }
+
     public MirroredInputStream(String name, String destDir, long maxTime) throws IOException {
         URL url;
-        File file = null;
         try {
             url = new URL(name);
             if (url.getProtocol().equals("file")) {
@@ -52,6 +56,11 @@ public class MirroredInputStream extends InputStream {
         if (file == null)
             throw new IOException();
         fs = new FileInputStream(file);
+    }
+
+    public File getFile()
+    {
+       return file;
     }
 
     private File checkLocal(URL url, String destDir, long maxTime) {
