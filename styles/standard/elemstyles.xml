@@ -517,7 +517,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="motorway_link"/>
-		<line width="3" colour="motorway#809bc0"/>
+		<line width="3" realwidth="5" colour="motorway#809bc0"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>200000000</scale_max>
@@ -525,7 +525,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="trunk"/>
-		<line width="3" colour="trunk#7fc97f"/>
+		<line width="3" realwidth="8" colour="trunk#7fc97f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>200000000</scale_max>
@@ -533,7 +533,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="trunk_link"/>
-		<line width="3" colour="trunk#7fc97f"/>
+		<line width="3" realwidth="5" colour="trunk#7fc97f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>200000000</scale_max>
@@ -549,7 +549,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="primary_link"/>
-		<line width="3" colour="primary#fb805f"/>
+		<line width="3" realwidth="5" colour="primary#fb805f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>200000000</scale_max>
@@ -565,7 +565,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 
 	<rule>
 		<condition k="highway" v="secondary_link"/>
-		<line width="3" realwidth="6" colour="secondary#fdbf6f"/>
+		<line width="3" realwidth="5" colour="secondary#fdbf6f"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>300000</scale_max>
