@@ -206,7 +206,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 	<rule>
 		<condition k="bicycle" v="designated"/>
-		<line width="1" realwidth="2" colour="bicycle#ff00ff"/>
+		<!-- see trac #1559 <line width="1" realwidth="2" colour="bicycle#ff00ff"/>-->
 		<icon annotate="true" src="vehicle/restriction/bicycle-designated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -220,7 +220,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 	<rule>
 		<condition k="foot" v="designated"/>
-		<line width="1" realwidth="1" colour="foot#00ff00"/>
+		<!-- see trac #1559 <line width="1" realwidth="1" colour="foot#00ff00"/>-->
 		<icon annotate="true" src="vehicle/restriction/foot-designated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
@@ -248,7 +248,7 @@ in case they have same priority! Using priority settings helps to solve conflict
 	</rule>
 	<rule>
 		<condition k="horse" v="designated"/>
-		<line width="1" realwidth="2" colour="horse#c08000"/>
+		<!-- see trac #1559 <line width="1" realwidth="2" colour="horse#c08000"/>-->
 		<icon src="vehicle/restriction/horse-designated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
