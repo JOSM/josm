@@ -35,7 +35,7 @@
 	</rule>
 	<rule>
 		<condition k="highway" v="mini_roundabout"/>
-		<icon annotate="true" src="vehicle/restriction/roundabout_left.png" priority="10000">
+		<icon annotate="true" src="vehicle/restriction/roundabout_left.png" priority="10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
