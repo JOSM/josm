@@ -1174,17 +1174,23 @@ in case they have same priority! Using priority settings helps to solve conflict
 		<scale_max>50000</scale_max>
 	</rule>
 
+    <!-- disused often appears together with highway=xy -->
+    <!-- -> normal display with line, linemod for combinations -->
 	<rule>
 		<condition k="railway" v="disused"/>
-		<line width="1" colour="oldrail#202020" dashed="true"/>
+		<line width="1" colour="oldrail#202020" dashed="true" priority="-10000"/>
+		<linemod mode="over" width="1" colour="oldrail#202020" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
+    <!-- abandoned often appears together with highway=xy -->
+    <!-- -> normal display with line, linemod for combinations -->
 	<rule>
 		<condition k="railway" v="abandoned"/>
 		<line width="1" colour="oldrail#202020" dashed="true" priority="-10000"/>
+		<linemod mode="over" width="1" colour="oldrail#202020" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
