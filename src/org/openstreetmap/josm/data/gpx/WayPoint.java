@@ -6,6 +6,7 @@ package org.openstreetmap.josm.data.gpx;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 import java.awt.Color;
 
 import org.openstreetmap.josm.Main;
@@ -35,23 +36,47 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
      * Convert the time stamp of the waypoint into seconds from the epoch
      */
     public final static SimpleDateFormat GPXTIMEFMT =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); // ignore timezone
-    public final static SimpleDateFormat GPXTIMEFMT2 =
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); // ignore timezone
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    public final static SimpleDateFormat GPXTIMEFMT_nofrac =
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    public final static SimpleDateFormat GPXTIMEFMT_tz =
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    public final static SimpleDateFormat GPXTIMEFMT_tz_nofrac =
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
-    public void setTime() {
+	private final static Pattern colontz = Pattern.compile(".*[+-][0-9][0-9]:[0-9][0-9]\\z"); 
+	private final static Pattern colontzreplacement = Pattern.compile("([+-][0-9][0-9]):([0-9][0-9])\\z"); 
+
+	public void setTime() {
         if (! attr.containsKey("time")) {
             return;
         }
-        Date d = GPXTIMEFMT.parse(attr.get("time").toString(), new ParsePosition(0));
+        String timestring = attr.get("time").toString();
+        
+        /* make the string timzeone be conanonical - unfortunately the allowed timezone in a 
+         * GPX is Z or +/-hh:mm whereas in simpledateformat it is +/-hhmm only (no colon) 
+         * If no timezone is given, the time will be interpreted as local time by parse. */
+        if (timestring.substring(timestring.length() - 1).equals("Z")) { 
+        	timestring = timestring.substring(0, timestring.length() - 1) + "+0000";
+        } else if (colontz.matcher(timestring).matches()) {
+        	timestring = colontzreplacement.matcher(timestring).replaceFirst("$1$2");
+        }
+        Date d = GPXTIMEFMT_tz.parse(timestring, new ParsePosition(0));
         if (d == null) {
-            d = GPXTIMEFMT2.parse(attr.get("time").toString(), new ParsePosition(0));
+        	d = GPXTIMEFMT_tz_nofrac.parse(timestring, new ParsePosition(0));
+        	if (d == null) {
+        		/* try without a zimezone indication */
+        		d = GPXTIMEFMT.parse(timestring, new ParsePosition(0));            	
+        		if (d == null) {
+        			d = GPXTIMEFMT_nofrac.parse(timestring, new ParsePosition(0));            	
+        		}
+               	// date has parsed in local time, and been adjusted to UTC by parse
+            }
         }
         if (d != null /* parsing ok */) {
             time = d.getTime() / 1000.0; /* ms => seconds */
         }
-    }
-
+}
     /**
      * Convert a time stamp of the waypoint from the <cmt> or <desc> field
      * into seconds from the epoch. Handles the date format as it is used by
