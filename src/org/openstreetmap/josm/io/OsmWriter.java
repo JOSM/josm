@@ -168,8 +168,9 @@ public class OsmWriter extends XmlWriter implements Visitor {
                 out.println(">");
             }
             for (Entry<String, String> e : osm.keys.entrySet()) {
-                out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
-                        "' v='"+XmlWriter.encode(e.getValue())+ "' />");
+                if (!("created_by".equals(e.getKey())))
+                    out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
+                            "' v='"+XmlWriter.encode(e.getValue())+ "' />");
             }
             out.println("  </" + tagname + ">");
         } else if (tagOpen) {
