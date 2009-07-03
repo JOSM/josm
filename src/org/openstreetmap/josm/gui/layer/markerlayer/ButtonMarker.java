@@ -51,18 +51,16 @@ public class ButtonMarker extends Marker {
         Border b;
         Point mousePosition = mv.getMousePosition();
 
-        if (mousePosition != null) {
-            // mouse is inside the window
-            if (mousePressed) {
-                b = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-            } else {
-                b = BorderFactory.createBevelBorder(BevelBorder.RAISED);
-            }
-            Insets inset = b.getBorderInsets(mv);
-            Rectangle r = new Rectangle(buttonRectangle);
-            r.grow((inset.top+inset.bottom)/2, (inset.left+inset.right)/2);
-            b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
+        // mouse is inside the window
+        if (mousePosition != null && mousePressed) {
+            b = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
+        } else {
+            b = BorderFactory.createBevelBorder(BevelBorder.RAISED);
         }
+        Insets inset = b.getBorderInsets(mv);
+        Rectangle r = new Rectangle(buttonRectangle);
+        r.grow((inset.top+inset.bottom)/2, (inset.left+inset.right)/2);
+        b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
         if ((text != null) && (show.equalsIgnoreCase("show")) && Main.pref.getBoolean("marker.buttonlabels", true))
             g.drawString(text, screen.x+4, screen.y+2);
     }
