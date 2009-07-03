@@ -147,7 +147,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         // If this wasn't called from menu, place it where the cursor is/was
         if(e.getSource() instanceof JPanel) {
             MapView mv = Main.map.mapView;
-            n.setEastNorth(mv.getEastNorth(mv.lastMEvent.getX(), mv.lastMEvent.getY()));
+            n.setCoor(mv.getLatLon(mv.lastMEvent.getX(), mv.lastMEvent.getY()));
         }
 
         cmds.add(new AddCommand(n));

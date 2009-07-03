@@ -120,11 +120,13 @@ public class GpxWriter extends XmlWriter {
         // write keywords
         if (attr.containsKey(GpxData.META_KEYWORDS)) simpleTag("keywords", (String)attr.get(GpxData.META_KEYWORDS));
 
-        data.recalculateBounds();
-        Bounds bounds = data.bounds;
-        String b = "minlat=\"" + bounds.min.lat() + "\" minlon=\"" + bounds.min.lon() +
-            "\" maxlat=\"" + bounds.max.lat() + "\" maxlon=\"" + bounds.max.lon() + "\"" ;
-        inline("bounds", b);
+        Bounds bounds = data.recalculateBounds();
+        if(bounds != null)
+        {
+            String b = "minlat=\"" + bounds.min.lat() + "\" minlon=\"" + bounds.min.lon() +
+                "\" maxlat=\"" + bounds.max.lat() + "\" maxlon=\"" + bounds.max.lon() + "\"" ;
+            inline("bounds", b);
+        }
 
         closeln("metadata");
     }

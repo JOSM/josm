@@ -56,11 +56,8 @@ public class ZoomAction extends MapMode implements SelectionEnded {
      * Zoom to the rectangle on the map.
      */
     public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
-        if (r.width >= 3 && r.height >= 3) {
-            double scale = mv.getScale() * r.getWidth()/mv.getWidth();
-            EastNorth newCenter = mv.getEastNorth(r.x+r.width/2, r.y+r.height/2);
-            mv.zoomTo(newCenter, scale);
-        }
+        if (r.width >= 3 && r.height >= 3)
+            mv.zoomToFactor(mv.getEastNorth(r.x+r.width/2, r.y+r.height/2), r.getWidth()/mv.getWidth());
     }
 
     @Override public void enterMode() {

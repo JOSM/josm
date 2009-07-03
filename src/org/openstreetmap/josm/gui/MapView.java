@@ -29,6 +29,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -94,7 +95,7 @@ public class MapView extends NavigatableComponent {
                 add(zoomSlider);
                 zoomSlider.setBounds(3, 0, 114, 30);
 
-                MapScaler scaler = new MapScaler(MapView.this, Main.proj);
+                MapScaler scaler = new MapScaler(MapView.this);
                 add(scaler);
                 scaler.setLocation(10,30);
 
@@ -196,7 +197,6 @@ public class MapView extends NavigatableComponent {
         return isDrawableLayer() && activeLayer.visible;
     }
 
-
     /**
      * Remove the layer from the mapview. If the layer was in the list before,
      * an LayerChange event is fired.
@@ -288,9 +288,9 @@ public class MapView extends NavigatableComponent {
 
         // draw world borders
         tempG.setColor(Color.WHITE);
-        Bounds b = new Bounds();
-        Point min = getPoint(getProjection().latlon2eastNorth(b.min));
-        Point max = getPoint(getProjection().latlon2eastNorth(b.max));
+        ProjectionBounds b = getProjection().getWorldBounds();
+        Point min = getPoint(b.min);
+        Point max = getPoint(b.max);
         int x1 = Math.min(min.x, max.x);
         int y1 = Math.min(min.y, max.y);
         int x2 = Math.max(min.x, max.x);
@@ -306,42 +306,17 @@ public class MapView extends NavigatableComponent {
     }
 
     /**
-     * Set the new dimension to the projection class. Also adjust the components
-     * scale, if in autoScale mode.
+     * Set the new dimension to the view.
      */
     public void recalculateCenterScale(BoundingXYVisitor box) {
-        // -20 to leave some border
-        int w = getWidth()-20;
-        if (w < 20)
-            w = 20;
-        int h = getHeight()-20;
-        if (h < 20)
-            h = 20;
+        if(box == null)
+            box = new BoundingXYVisitor();
+        if(box.getBounds() == null)
+            box.visit(getProjection().getWorldBounds());
+        if(!box.hasExtend())
+             box.enlargeBoundingBox();
 
-        EastNorth oldCenter = center;
-        double oldScale = this.scale;
-
-        if (box == null || box.min == null || box.max == null) {
-            // no bounds means whole world
-            center = getProjection().latlon2eastNorth(new LatLon(0,0));
-            EastNorth world = getProjection().latlon2eastNorth(new LatLon(Projection.MAX_LAT,Projection.MAX_LON));
-            double scaleX = world.east()*2/w;
-            double scaleY = world.north()*2/h;
-            scale = Math.max(scaleX, scaleY); // minimum scale to see all of the screen
-        } else {
-            if(box.min.equals(box.max))
-                box.enlargeBoundingBox();
-            center = new EastNorth(box.min.east()/2+box.max.east()/2, box.min.north()/2+box.max.north()/2);
-            double scaleX = (box.max.east()-box.min.east())/w;
-            double scaleY = (box.max.north()-box.min.north())/h;
-            scale = Math.max(scaleX, scaleY); // minimum scale to see all of the screen
-        }
-
-        if (!center.equals(oldCenter))
-            firePropertyChange("center", oldCenter, center);
-        if (oldScale != scale)
-            firePropertyChange("scale", oldScale, scale);
-        repaint();
+        zoomTo(box.getBounds());
     }
 
     /**
@@ -391,20 +366,6 @@ public class MapView extends NavigatableComponent {
     }
 
     /**
-     * In addition to the base class funcitonality, this keep trak of the autoscale
-     * feature.
-     */
-    @Override public void zoomTo(EastNorth newCenter, double scale) {
-        EastNorth oldCenter = center;
-        double oldScale = this.scale;
-        super.zoomTo(newCenter, scale);
-        if ((oldCenter == null && center != null) || !oldCenter.equals(center))
-            firePropertyChange("center", oldCenter, center);
-        if (oldScale != scale)
-            firePropertyChange("scale", oldScale, scale);
-    }
-
-    /**
      * Tries to zoom to the download boundingbox[es] of the current edit layer
      * (aka {@link OsmDataLayer}). If the edit layer has multiple download bounding
      * boxes it zooms to a large virtual bounding box containing all smaller ones.
@@ -419,11 +380,8 @@ public class MapView extends NavigatableComponent {
         // ... with bounding box[es] of data loaded from OSM or a file...
         BoundingXYVisitor bbox = new BoundingXYVisitor();
         for (DataSource ds : dataSources) {
-            if (ds.bounds != null) {
-                bbox.visit(Main.proj.latlon2eastNorth(ds.bounds.max));
-                bbox.visit(Main.proj.latlon2eastNorth(ds.bounds.min));
-            }
-            if (bbox.max != null && bbox.min != null && !bbox.max.equals(bbox.min)) {
+            bbox.visit(ds.bounds);
+            if (bbox.hasExtend()) {
                 // ... we zoom to it's bounding box
                 recalculateCenterScale(bbox);
                 return true;

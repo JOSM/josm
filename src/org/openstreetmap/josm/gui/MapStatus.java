@@ -37,8 +37,10 @@ import javax.swing.PopupFactory;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -88,8 +90,6 @@ public class MapStatus extends JPanel implements Helpful {
             return new Dimension(25 + chars*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getMinimumSize().height);
         }
     }
-
-    LatLon.CoordinateFormat mCord;
 
     ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
     ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
@@ -262,11 +262,6 @@ public class MapStatus extends JPanel implements Helpful {
     public MapStatus(final MapFrame mapFrame) {
         this.mv = mapFrame.mapView;
 
-        try {
-            mCord = LatLon.CoordinateFormat.valueOf(Main.pref.get("coordinates"));
-        } catch (IllegalArgumentException iae) {
-            mCord =LatLon.CoordinateFormat.DECIMAL_DEGREES;
-        }
         // Listen for mouse movements and set the position text field
         mv.addMouseMotionListener(new MouseMotionListener(){
             public void mouseDragged(MouseEvent e) {
@@ -277,6 +272,7 @@ public class MapStatus extends JPanel implements Helpful {
                     return;
                 // Do not update the view if ctrl is pressed.
                 if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
+                    CoordinateFormat mCord = Node.getCoordinateFormat();
                     LatLon p = mv.getLatLon(e.getX(),e.getY());
                     latText.setText(p.latToString(mCord));
                     lonText.setText(p.lonToString(mCord));

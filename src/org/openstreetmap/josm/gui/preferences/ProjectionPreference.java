@@ -12,8 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements PreferenceSetting {
@@ -27,7 +29,7 @@ public class ProjectionPreference implements PreferenceSetting {
     public void addGui(PreferenceDialog gui) {
 
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
-            if (projectionCombo.getItemAt(i).getClass().getName().equals(Main.pref.get("projection"))) {
+            if (projectionCombo.getItemAt(i).getClass().getName().equals(Main.pref.get("projection", Mercator.class.getName()))) {
                 projectionCombo.setSelectedIndex(i);
                 break;
             }
@@ -53,11 +55,12 @@ public class ProjectionPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        boolean restart = Main.pref.put("projection",
-        projectionCombo.getSelectedItem().getClass().getName());
+        String projname = projectionCombo.getSelectedItem().getClass().getName();
+        if(Main.pref.put("projection", projname))
+            Main.setProjection(projname);
         if(Main.pref.put("coordinates",
         ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name()))
-            restart = true;
-        return restart;
+            Node.setCoordinateFormat();
+        return false;
     }
 }

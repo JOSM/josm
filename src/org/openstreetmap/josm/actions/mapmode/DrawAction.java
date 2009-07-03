@@ -811,7 +811,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             double b = P.distanceSq(A);
             double c = A.distanceSq(B);
             q = (a - b + c) / (2*c);
-            n.setEastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north()));
+            n.setEastNorth(new EastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north())));
         }
     }
 

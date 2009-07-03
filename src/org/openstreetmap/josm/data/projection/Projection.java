@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.projection;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 
 /**
  * Classes implementing this are able to convert lat/lon values to
@@ -11,17 +13,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * @author imi
  */
 public interface Projection {
-
-    /**
-     * Maximum latitude representable.
-     */
-    public static final double MAX_LAT = 85.05112877980659; // Mercator squares the world
-
-    /**
-     * Maximum longditude representable.
-     */
-    public static final double MAX_LON = 180;
-
     /**
      * Minimum difference in location to not be represented as the same position.
      */
@@ -35,7 +26,8 @@ public interface Projection {
         new Mercator(),
         new Lambert(),
         new LambertEST(),
-        new SwissGrid()
+        new SwissGrid(),
+        new UTM()
     };
 
     /**
@@ -68,8 +60,8 @@ public interface Projection {
     String getCacheDirectoryName();
 
     /**
-     * The factor to multiply with an easting coordinate to get from "easting
-     * units per pixel" to "meters per pixel"
+     * Get the bounds of the world
      */
-    double scaleFactor();
+    ProjectionBounds getWorldBounds();
+    Bounds getWorldBoundsLatLon();
 }

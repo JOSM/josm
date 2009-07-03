@@ -26,14 +26,6 @@ public class Bounds {
         this.max = max;
     }
 
-    /**
-     * Construct bounds that span the whole world.
-     */
-    public Bounds() {
-        min = new LatLon(-Projection.MAX_LAT, -Projection.MAX_LON);
-        max = new LatLon(Projection.MAX_LAT, Projection.MAX_LON);
-    }
-
     @Override public String toString() {
         return "Bounds["+min.lat()+","+min.lon()+","+max.lat()+","+max.lon()+"]";
     }

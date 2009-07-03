@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.Main;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -86,8 +87,9 @@ public class LatLon extends Coordinate {
      * by using lat/lon.
      */
     public boolean isOutSideWorld() {
-        return lat() < -Projection.MAX_LAT || lat() > Projection.MAX_LAT ||
-            lon() < -Projection.MAX_LON || lon() > Projection.MAX_LON;
+        Bounds b = Main.proj.getWorldBoundsLatLon();
+        return lat() < b.min.lat() || lat() > b.max.lat() ||
+            lon() < b.min.lon() || lon() > b.max.lon();
     }
 
     /**

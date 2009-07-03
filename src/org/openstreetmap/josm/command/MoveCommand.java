@@ -47,7 +47,6 @@ public class MoveCommand extends Command {
      */
     public static class OldState {
         LatLon latlon;
-        EastNorth eastNorth;
         boolean modified;
     }
 
@@ -69,7 +68,6 @@ public class MoveCommand extends Command {
         this.objects = AllNodesVisitor.getAllNodes(objects);
         for (Node n : this.objects) {
             OldState os = new OldState();
-            os.eastNorth = n.getEastNorth();
             os.latlon = n.getCoor();
             os.modified = n.modified;
             oldState.add(os);
@@ -104,7 +102,7 @@ public class MoveCommand extends Command {
         Iterator<OldState> it = oldState.iterator();
         for (Node n : objects) {
             OldState os = it.next();
-            n.setEastNorth(os.eastNorth);
+            n.setCoor(os.latlon);
             n.modified = os.modified;
         }
     }

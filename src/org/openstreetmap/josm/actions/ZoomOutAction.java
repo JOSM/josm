@@ -19,7 +19,6 @@ public final class ZoomOutAction extends JosmAction {
 
     public void actionPerformed(ActionEvent e) {
         if (Main.map == null) return;
-        double zoom = Main.map.mapView.getScale();
-        Main.map.mapView.zoomTo(Main.map.mapView.getCenter(), zoom /.9);
+        Main.map.mapView.zoomToFactor(1/0.9);
     }
 }

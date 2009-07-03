@@ -15,6 +15,8 @@ import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -23,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Mercator;
 
 /**
  * An component that can be navigated by a mapmover. Used as map view and for the
@@ -32,7 +35,6 @@ import org.openstreetmap.josm.data.projection.Projection;
  */
 public class NavigatableComponent extends JComponent implements Helpful {
 
-    public static final EastNorth world = Main.proj.latlon2eastNorth(new LatLon(Projection.MAX_LAT, Projection.MAX_LON));
     public static final int snapDistance = sqr(Main.pref.getInteger("node.snap-distance", 10));
 
     private static int sqr(int a) { return a*a;}
@@ -41,7 +43,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * every physical pixel on screen are 10 x or 10 y units in the
      * northing/easting space of the projection.
      */
-    protected double scale;
+    private double scale;
     /**
      * Center n/e coordinate of the desired screen center.
      */
@@ -57,35 +59,27 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * Return the OSM-conform zoom factor (0 for whole world, 1 for half, 2 for quarter...)
-     */
-    public int zoom() {
-        double sizex = scale * getWidth();
-        double sizey = scale * getHeight();
-        for (int zoom = 0; zoom <= 32; zoom++, sizex *= 2, sizey *= 2)
-            if (sizex > world.east() || sizey > world.north())
-                return zoom;
-        return 32;
-    }
-
-    /**
      * Return a ID which is unique as long as viewport dimensions are the same
      */
     public Integer getViewID()
     {
         String x = center.east() + "_" + center.north() + "_" + scale + "_" +
-        getWidth() + "_" + getHeight();
+        getWidth() + "_" + getHeight() + "_" + getProjection().toString();
         java.util.zip.CRC32 id = new java.util.zip.CRC32();
         id.update(x.getBytes());
         return new Long(id.getValue()).intValue();
     }
 
-    /**
-     * Return the current scale value.
-     * @return The scale value currently used in display
-     */
-    public double getScale() {
-        return scale;
+    public double getMapScale() {
+        /* TODO: we assume a pixel is 0.025mm */
+        return getDist100Pixel()/(0.00025*100);
+    }
+
+    public double getDist100Pixel()
+    {
+        LatLon ll1 = getLatLon(0,0);
+        LatLon ll2 = getLatLon(100,0);
+        return ll1.greatCircleDistance(ll2);
     }
 
     /**
@@ -109,6 +103,26 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 center.north() - (y - getHeight()/2.0)*scale);
     }
 
+    public ProjectionBounds getProjectionBounds() {
+        return new ProjectionBounds(
+        new EastNorth(
+                center.east() - getWidth()/2.0*scale,
+                center.north() - getHeight()/2.0*scale),
+        new EastNorth(
+                center.east() + getWidth()/2.0*scale,
+                center.north() + getHeight()/2.0*scale));
+    };
+
+    public Bounds getRealBounds() {
+        return new Bounds(
+        getProjection().eastNorth2latlon(new EastNorth(
+                center.east() - getWidth()/2.0*scale,
+                center.north() - getHeight()/2.0*scale)),
+        getProjection().eastNorth2latlon(new EastNorth(
+                center.east() + getWidth()/2.0*scale,
+                center.north() + getHeight()/2.0*scale)));
+    };
+
     /**
      * @param x X-Pixelposition to get coordinate from
      * @param y Y-Pixelposition to get coordinate from
@@ -117,7 +131,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *      on the screen.
      */
     public LatLon getLatLon(int x, int y) {
-
         return getProjection().eastNorth2latlon(getEastNorth(x, y));
     }
 
@@ -140,11 +153,68 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param newCenter The center x-value (easting) to zoom to.
      * @param scale The scale to use.
      */
-    public void zoomTo(EastNorth newCenter, double scale) {
-        center = newCenter;
-        getProjection().eastNorth2latlon(center);
-        this.scale = scale;
-        repaint();
+    private void zoomTo(EastNorth newCenter, double newScale) {
+/* TODO: check that newCenter is really inside visible world and that scale is correct, don't allow zooming out to much */
+        boolean rep = false;
+        if(!newCenter.equals(center))
+        {
+            EastNorth oldCenter = center;
+            center = newCenter;
+            rep = true;
+            firePropertyChange("center", oldCenter, newCenter);
+        }
+        if(scale != newScale)
+        {
+            double oldScale = scale;
+            scale = newScale;
+            rep = true;
+            firePropertyChange("scale", oldScale, newScale);
+        }
+        if(rep)
+            repaint();
+    }
+
+    public void zoomTo(EastNorth newCenter) {
+        zoomTo(newCenter, scale);
+    }
+
+    public void zoomToFactor(double x, double y, double factor) {
+        double newScale = scale*factor;
+        // New center position so that point under the mouse pointer stays the same place as it was before zooming
+        // You will get the formula by simplifying this expression: newCenter = oldCenter + mouseCoordinatesInNewZoom - mouseCoordinatesInOldZoom
+        zoomTo(new EastNorth(
+        center.east() - (x - getWidth()/2.0) * (newScale - scale),
+        center.north() + (y - getHeight()/2.0) * (newScale - scale)),
+        newScale);
+    }
+
+    public void zoomToFactor(EastNorth newCenter, double factor) {
+        zoomTo(newCenter, scale*factor);
+    }
+
+    public void zoomToFactor(double factor) {
+        zoomTo(center, scale*factor);
+    }
+
+    public void zoomTo(ProjectionBounds box) {
+        // -20 to leave some border
+        int w = getWidth()-20;
+        if (w < 20)
+            w = 20;
+        int h = getHeight()-20;
+        if (h < 20)
+            h = 20;
+
+        double scaleX = (box.max.east()-box.min.east())/w;
+        double scaleY = (box.max.north()-box.min.north())/h;
+        double newScale = Math.max(scaleX, scaleY);
+
+        zoomTo(box.getCenter(), newScale);
+    }
+
+    public void zoomTo(Bounds box) {
+        zoomTo(new ProjectionBounds(getProjection().latlon2eastNorth(box.min),
+        getProjection().latlon2eastNorth(box.max)));
     }
 
     /**

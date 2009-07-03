@@ -4,11 +4,11 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 
 /**
  * Projection for the SwissGrid, see http://de.wikipedia.org/wiki/Swiss_Grid.
@@ -18,53 +18,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
  *
  */
 public class SwissGrid implements Projection {
-    private boolean doAlertOnCoordinatesOufOfRange = true;
-
-    /**
-     * replies true if if wgs is in or reasonably close to Switzerland. False otherwise.
-     *
-     * @param wgs  lat/lon in WGS89
-     * @return
-     */
-    protected boolean latlonInAcceptableRange(LatLon wgs) {
-        // coordinate transformation is invoked for boundary values regardless
-        // of current data set.
-        //
-        if (Math.abs(wgs.lon()) == Projection.MAX_LON && Math.abs(wgs.lat()) == Projection.MAX_LAT) {
-            return true;
-        }
-        return   wgs.lon() >= 5.7 && wgs.lon() <= 10.6
-               && wgs.lat() >= 45.7 && wgs.lat() <= 47.9;
-    }
-
-    /**
-     * displays an alert if lat/lon are not reasonably close to Switzerland.
-     */
-    protected void alertCoordinatesOutOfRange() {
-        JOptionPane.showMessageDialog(Main.parent,
-                tr("The projection \"{0}\" is designed for\n"
-                + "latitudes between 45.7\u00b0 and 47.9\u00b0\n"
-                + "and longitutes between 5.7\u00b0 and 10.6\u00b0 only.\n"
-                + "Use another projection system if you are not working\n"
-                + "on a data set of Switzerland or Liechtenstein.\n"
-                + "Do not upload any data after this message.", this.toString()),
-                "Current projection not suitable",
-                JOptionPane.WARNING_MESSAGE
-        );
-        doAlertOnCoordinatesOufOfRange = false;
-    }
-
     /**
      * @param wgs  WGS84 lat/lon (ellipsoid GRS80) (in degree)
      * @return eastnorth projection in Swiss National Grid (ellipsoid Bessel)
      */
     public EastNorth latlon2eastNorth(LatLon wgs) {
-            if (!latlonInAcceptableRange(wgs)) {
-                if (doAlertOnCoordinatesOufOfRange) {
-                    alertCoordinatesOutOfRange();
-                }
-            }
-
             double phi = 3600d * wgs.lat();
             double lambda = 3600d * wgs.lon();
 
@@ -130,10 +88,6 @@ public class SwissGrid implements Projection {
         return new LatLon(phi,lmb);
     }
 
-    public double scaleFactor() {
-        return 1.0;
-    }
-
     @Override public String toString() {
         return tr("Swiss Grid (Switzerland)");
     }
@@ -151,8 +105,16 @@ public class SwissGrid implements Projection {
         return o instanceof SwissGrid;
     }
 
-    @Override
-    public int hashCode() {
-        return SwissGrid.class.hashCode();
+    public ProjectionBounds getWorldBounds()
+    {
+        Bounds b = getWorldBoundsLatLon();
+        return new ProjectionBounds(latlon2eastNorth(b.min), latlon2eastNorth(b.max));
+    }
+
+    public Bounds getWorldBoundsLatLon()
+    {
+        return new Bounds(
+        new LatLon(45.7, 5.7),
+        new LatLon(47.9, 10.6));
     }
 }

@@ -20,6 +20,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
@@ -161,25 +162,7 @@ public class BoundingBoxSelection implements DownloadSelection {
     }
 
     private void updateUrl(DownloadDialog gui) {
-        double lat = (gui.minlat + gui.maxlat)/2;
-        double lon = (gui.minlon + gui.maxlon)/2;
-        // convert to mercator (for calculation of zoom only)
-        double latMin = Math.log(Math.tan(Math.PI/4.0+gui.minlat/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double latMax = Math.log(Math.tan(Math.PI/4.0+gui.maxlat/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double size = Math.max(Math.abs(latMax-latMin), Math.abs(gui.maxlon-gui.minlon));
-        int zoom = 0;
-        while (zoom <= 20) {
-            if (size >= 180)
-                break;
-            size *= 2;
-            zoom++;
-        }
-        // Truncate lat and lon to something more sensible
-        int decimals = (int) Math.pow(10, (zoom / 3));
-        lat = Math.round(lat * decimals);
-        lat /= decimals;
-        lon = Math.round(lon * decimals);
-        lon /= decimals;
-        showUrl.setText("http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
+        showUrl.setText(OsmUrlToBounds.getURL(new Bounds(
+        new LatLon(gui.minlat, gui.minlon), new LatLon(gui.maxlat, gui.maxlon))));
     }
 }

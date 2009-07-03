@@ -54,18 +54,19 @@ public final class MirrorAction extends JosmAction {
             return;
         }
 
-        double minEast = 200.0;
-        double maxEast = -200.0;
+        double minEast = 20000000000.0;
+        double maxEast = -20000000000.0;
         for (Node n : nodes) {
-            minEast = Math.min(minEast, n.eastNorth.east());
-            maxEast = Math.max(maxEast, n.eastNorth.east());
+            double east = n.getEastNorth().east();
+            minEast = Math.min(minEast, east);
+            maxEast = Math.max(maxEast, east);
         }
         double middle = (minEast + maxEast) / 2;
 
         Collection<Command> cmds = new LinkedList<Command>();
 
         for (Node n : nodes)
-            cmds.add(new MoveCommand(n, 2 * (middle - n.eastNorth.east()), 0.0));
+            cmds.add(new MoveCommand(n, 2 * (middle - n.getEastNorth().east()), 0.0));
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Mirror"), cmds));
         Main.map.repaint();

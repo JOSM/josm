@@ -1273,7 +1273,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         getSettings(virtual);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
-        circum = Main.map.mapView.getScale()*100*Main.proj.scaleFactor()*40041455; /* circumference of the earth in meter */
+        circum = Main.map.mapView.getMapScale();
         styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction",true);

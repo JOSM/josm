@@ -206,7 +206,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             if (o instanceof OsmPrimitive)
                 ((OsmPrimitive) o).visit(box);
         }
-        if (box.max == null || box.min == null)
+        if (box.getBounds() == null)
             return;
         box.enlargeBoundingBox();
         Main.map.mapView.recalculateCenterScale(box);

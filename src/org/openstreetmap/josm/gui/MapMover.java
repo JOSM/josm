@@ -43,13 +43,13 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
                 EastNorth center = nc.getCenter();
                 EastNorth newcenter = nc.getEastNorth(nc.getWidth()/2+nc.getWidth()/5, nc.getHeight()/2+nc.getHeight()/5);
                 if (action.equals("left"))
-                    nc.zoomTo(new EastNorth(2*center.east()-newcenter.east(), center.north()), nc.getScale());
+                    nc.zoomTo(new EastNorth(2*center.east()-newcenter.east(), center.north()));
                 else if (action.equals("right"))
-                    nc.zoomTo(new EastNorth(newcenter.east(), center.north()), nc.getScale());
+                    nc.zoomTo(new EastNorth(newcenter.east(), center.north()));
                 else if (action.equals("up"))
-                    nc.zoomTo(new EastNorth(center.east(), 2*center.north()-newcenter.north()), nc.getScale());
+                    nc.zoomTo(new EastNorth(center.east(), 2*center.north()-newcenter.north()));
                 else if (action.equals("down"))
-                    nc.zoomTo(new EastNorth(center.east(), newcenter.north()), nc.getScale());
+                    nc.zoomTo(new EastNorth(center.east(), newcenter.north()));
             }
         }
     }
@@ -122,10 +122,9 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
                 startMovement(e);
             EastNorth center = nc.getCenter();
             EastNorth mouseCenter = nc.getEastNorth(e.getX(), e.getY());
-            EastNorth p = new EastNorth(
+            nc.zoomTo(new EastNorth(
                     mousePosMove.east() + center.east() - mouseCenter.east(),
-                    mousePosMove.north() + center.north() - mouseCenter.north());
-            nc.zoomTo(p, nc.getScale());
+                    mousePosMove.north() + center.north() - mouseCenter.north()));
         } else
             endMovement();
     }
@@ -181,14 +180,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      * @param e The wheel event.
      */
     public void mouseWheelMoved(MouseWheelEvent e) {
-        double newScale = nc.getScale() * Math.pow(0.8, - e.getWheelRotation());
-
-        // New center position so that point under the mouse pointer stays the same place as it was before zooming
-        // You will get the formula by simplifying this expression: newCenter = oldCenter + mouseCoordinatesInNewZoom - mouseCoordinatesInOldZoom
-        double newX = nc.center.east() - (e.getX() - nc.getWidth()/2.0) * (newScale - nc.scale);
-        double newY = nc.center.north() + (e.getY() - nc.getHeight()/2.0) * (newScale - nc.scale);
-
-        nc.zoomTo(new EastNorth(newX, newY), newScale);
+        nc.zoomToFactor(e.getX(), e.getY(), Math.pow(0.8, - e.getWheelRotation()));
     }
 
     /**

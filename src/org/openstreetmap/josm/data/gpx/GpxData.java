@@ -39,8 +39,6 @@ public class GpxData extends WithAttributes {
     public Collection<GpxRoute> routes = new LinkedList<GpxRoute>();
     public Collection<WayPoint> waypoints = new LinkedList<WayPoint>();
 
-    public Bounds bounds;
-
     public void mergeFrom(GpxData other) {
         if (storageFile == null && other.storageFile != null) {
             storageFile = other.storageFile;
@@ -81,8 +79,8 @@ public class GpxData extends WithAttributes {
     }
 
     // FIXME might perhaps use visitor pattern?
-    public void recalculateBounds() {
-        bounds = null;
+    public Bounds recalculateBounds() {
+        Bounds bounds = null;
         for (WayPoint wpt : waypoints) {
             if (bounds == null) {
                 bounds = new Bounds(wpt.latlon, wpt.latlon);
@@ -110,9 +108,7 @@ public class GpxData extends WithAttributes {
                 }
             }
         }
-        if (bounds == null) {
-            bounds = new Bounds();
-        }
+        return bounds;
     }
 
     /**

@@ -7,7 +7,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.Node;
 
 
 /**
@@ -17,12 +19,15 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
  */
 public final class Node extends OsmPrimitive {
 
-    public LatLon coor;
-    public volatile EastNorth eastNorth;
+    private LatLon coor;
+
+    private EastNorth eastNorth;
+    private Projection proj;
+
 
     public final void setCoor(LatLon coor) {
         this.coor = coor;
-        this.eastNorth = Main.proj.latlon2eastNorth(coor);
+        proj = null;
     }
 
     public final LatLon getCoor() {
@@ -30,26 +35,38 @@ public final class Node extends OsmPrimitive {
     }
 
     public final void setEastNorth(EastNorth eastNorth) {
-        this.eastNorth = eastNorth;
-        this.coor = Main.proj.eastNorth2latlon(eastNorth);
-    }
-
-    public final void setEastNorth(double east, double north) {
-        this.setEastNorth(new EastNorth(east, north));
+        proj = Main.proj;
+        eastNorth = eastNorth;
+        this.coor = proj.eastNorth2latlon(eastNorth);
     }
 
     public final EastNorth getEastNorth() {
+        if(proj != Main.proj)
+        {
+            proj = Main.proj;
+            eastNorth = proj.latlon2eastNorth(coor);
+        }
         return eastNorth;
     }
 
     private static CoordinateFormat mCord;
 
-    static {
+    static public CoordinateFormat getCoordinateFormat()
+    {
+        return mCord;
+    }
+
+    static public void setCoordinateFormat()
+    {
         try {
             mCord = LatLon.CoordinateFormat.valueOf(Main.pref.get("coordinates"));
         } catch (IllegalArgumentException iae) {
-            mCord =LatLon.CoordinateFormat.DECIMAL_DEGREES;
+            mCord = LatLon.CoordinateFormat.DECIMAL_DEGREES;
         }
+    }
+
+    static {
+        setCoordinateFormat();
     }
 
     /**
@@ -71,14 +88,17 @@ public final class Node extends OsmPrimitive {
         setCoor(latlon);
     }
 
+    public Node(EastNorth eastNorth) {
+        setEastNorth(eastNorth);
+    }
+
     @Override public void visit(Visitor visitor) {
         visitor.visit(this);
     }
 
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
-        coor = ((Node)osm).coor;
-        eastNorth = ((Node)osm).eastNorth;
+        setCoor(((Node)osm).coor);
     }
 
     @Override public String toString() {

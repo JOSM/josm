@@ -351,7 +351,6 @@ public class Preferences {
         put("propertiesdialog.visible", true);
         put("selectionlist.visible", true);
         put("commandstack.visible", true);
-        put("projection", Mercator.class.getName());
         if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
             put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
         } else {

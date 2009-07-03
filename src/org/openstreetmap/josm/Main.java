@@ -249,18 +249,31 @@ abstract public class Main {
             menu.redo.setEnabled(redoSize > 0);
         }
     };
+
+    static public void setProjection(String name)
+    {
+        Bounds b = (map != null && map.mapView != null) ? map.mapView.getRealBounds() : null;
+        Projection oldProj = Main.proj;
+        try {
+            Main.proj = (Projection)Class.forName(name).newInstance();
+        } catch (final Exception e) {
+            JOptionPane.showMessageDialog(null, tr("The projection {0} could not be activated. Using Mercator", name));
+            Main.proj = new Mercator();
+        }
+        if(!Main.proj.equals(oldProj))
+        {
+            if(b != null)
+                map.mapView.zoomTo(b);
+            /* TODO - remove layers with fixed projection */
+        }
+    }
+
     /**
      * Should be called before the main constructor to setup some parameter stuff
      * @param args The parsed argument list.
      */
     public static void preConstructorInit(Map<String, Collection<String>> args) {
-        try {
-            Main.proj = (Projection)Class.forName(Main.pref.get("projection")).newInstance();
-        } catch (final Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, tr("The projection could not be read from preferences. Using Mercator"));
-            Main.proj = new Mercator();
-        }
+        setProjection(Main.pref.get("projection", Mercator.class.getName()));
 
         try {
             try {

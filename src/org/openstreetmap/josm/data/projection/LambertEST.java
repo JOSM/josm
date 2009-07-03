@@ -8,6 +8,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 
 public class LambertEST implements Projection {
 
@@ -104,17 +106,21 @@ public class LambertEST implements Projection {
         return "lambertest";
     }
 
-    public double scaleFactor() {
-        return 1.0 / 360;
-    }
-
     @Override
     public boolean equals(Object o) {
         return o instanceof LambertEST;
     }
 
-    @Override
-    public int hashCode() {
-        return LambertEST.class.hashCode();
+    public ProjectionBounds getWorldBounds()
+    {
+        Bounds b = getWorldBoundsLatLon();
+        return new ProjectionBounds(latlon2eastNorth(b.min), latlon2eastNorth(b.max));
+    }
+
+    public Bounds getWorldBoundsLatLon()
+    {
+        return new Bounds(
+        new LatLon(-90.0, -180.0),
+        new LatLon(90.0, 180.0));
     }
 }

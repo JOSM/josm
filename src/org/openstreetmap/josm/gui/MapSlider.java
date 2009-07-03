@@ -10,6 +10,8 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.Main;
 
 class MapSlider extends JSlider implements PropertyChangeListener, ChangeListener, Helpful {
 
@@ -27,27 +29,36 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
     public void propertyChange(PropertyChangeEvent evt) {
         if (getModel().getValueIsAdjusting()) return;
 
-        double sizex = this.mv.scale * this.mv.getWidth();
-        double sizey = this.mv.scale * this.mv.getHeight();
-        for (int zoom = 0; zoom <= 150; zoom++, sizex *= 1.1, sizey *= 1.1) {
-            if (sizex > MapView.world.east() || sizey > MapView.world.north()) {
-                preventChange=true;
-                setValue(zoom);
-                preventChange=false;
+        ProjectionBounds world = Main.proj.getWorldBounds();
+        ProjectionBounds current = this.mv.getProjectionBounds();
+
+        double cur_e = current.max.east()-current.min.east();
+        double cur_n = current.max.north()-current.min.north();
+        double e = world.max.east()-world.min.east();
+        double n = world.max.north()-world.min.north();
+        int zoom = 0;
+
+        while(zoom <= 150) {
+            e /= 1.1;
+            n /= 1.1;
+            if(e < cur_e && n < cur_n)
                 break;
-            }
+            ++zoom;
         }
+        preventChange=true;
+        setValue(zoom);
+        preventChange=false;
     }
 
     public void stateChanged(ChangeEvent e) {
         if (preventChange) return;
-        EastNorth pos = MapView.world;
-        for (int zoom = 0; zoom < getValue(); zoom++)
-            pos = new EastNorth(pos.east()/1.1, pos.north()/1.1);
-        if (this.mv.getWidth() < this.mv.getHeight())
-            this.mv.zoomTo(this.mv.center, pos.east()/(this.mv.getWidth()-20));
-        else
-            this.mv.zoomTo(this.mv.center, pos.north()/(this.mv.getHeight()-20));
+
+        ProjectionBounds world = Main.proj.getWorldBounds();
+        double fact = Math.pow(1.1, getValue());
+        double es = world.max.east()-world.min.east();
+        double n = world.max.north()-world.min.north();
+
+        this.mv.zoomTo(new ProjectionBounds(this.mv.getCenter(), es/fact, n/fact));
     }
 
     public String helpTopic() {

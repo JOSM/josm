@@ -11,6 +11,8 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 
 public class Lambert implements Projection {
     /**
@@ -103,17 +105,6 @@ public class Lambert implements Projection {
                     currentZone = 3;
         } else {
             outOfLambertZones = true; // possible when MAX_LAT is used
-            if (p.lat() != 0 && Math.abs(p.lat()) != Projection.MAX_LAT
-                    && p.lon() != 0 && Math.abs(p.lon()) != Projection.MAX_LON
-                    && dontDisplayErrors == false) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("The projection \"{0}\" is designed for\n"
-                        + "latitudes between 46.1\u00b0 and 57\u00b0 only.\n"
-                        + "Use another projection system if you are not using\n"
-                        + "a French WMS server.\n"
-                        + "Do not upload any data after this message.", this.toString()));
-                dontDisplayErrors = true;
-            }
         }
         if (!outOfLambertZones) {
             if (layoutZone == -1) {
@@ -166,18 +157,9 @@ public class Lambert implements Projection {
         return "lambert";
     }
 
-    public double scaleFactor() {
-        return 1.0 / 360;
-    }
-
     @Override
     public boolean equals(Object o) {
         return o instanceof Lambert;
-    }
-
-    @Override
-    public int hashCode() {
-        return Lambert.class.hashCode();
     }
 
     /**
@@ -299,4 +281,16 @@ public class Lambert implements Projection {
         return new LatLon(lt, lg);
     }
 
+    public ProjectionBounds getWorldBounds()
+    {
+        Bounds b = getWorldBoundsLatLon();
+        return new ProjectionBounds(latlon2eastNorth(b.min), latlon2eastNorth(b.max));
+    }
+
+    public Bounds getWorldBoundsLatLon()
+    {
+        return new Bounds(
+        new LatLon(-90.0, -180.0),
+        new LatLon(90.0, 180.0));
+    }
 }

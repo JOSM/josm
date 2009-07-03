@@ -13,6 +13,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
@@ -36,6 +37,16 @@ public class RotateCommand extends Command {
     private EastNorth pivot;
 
     /**
+     * Small helper for holding the interesting part of the old data state of the
+     * objects.
+     */
+    public static class OldState {
+        LatLon latlon;
+        EastNorth eastNorth;
+        boolean modified;
+    }
+
+    /**
      * angle of rotation starting click to pivot
      */
     private double startAngle;
@@ -48,7 +59,7 @@ public class RotateCommand extends Command {
     /**
      * List of all old states of the objects.
      */
-    private Map<Node, MoveCommand.OldState> oldState = new HashMap<Node, MoveCommand.OldState>();
+    private Map<Node, OldState> oldState = new HashMap<Node, OldState>();
 
     /**
      * Creates a RotateCommand.
@@ -62,9 +73,9 @@ public class RotateCommand extends Command {
         pivot = new EastNorth(0,0);
 
         for (Node n : this.objects) {
-            MoveCommand.OldState os = new MoveCommand.OldState();
-            os.eastNorth = n.getEastNorth();
+            OldState os = new OldState();
             os.latlon = n.getCoor();
+            os.eastNorth = n.getEastNorth();
             os.modified = n.modified;
             oldState.put(n, os);
             pivot = pivot.add(os.eastNorth.east(), os.eastNorth.north());
@@ -101,7 +112,7 @@ public class RotateCommand extends Command {
             double y = oldEastNorth.north() - pivot.north();
             double nx =  sinPhi * x + cosPhi * y + pivot.east();
             double ny = -cosPhi * x + sinPhi * y + pivot.north();
-            n.setEastNorth(nx, ny);
+            n.setEastNorth(new EastNorth(nx, ny));
             if (setModified)
                 n.modified = true;
         }
@@ -114,8 +125,8 @@ public class RotateCommand extends Command {
 
     @Override public void undoCommand() {
         for (Node n : objects) {
-            MoveCommand.OldState os = oldState.get(n);
-            n.setEastNorth(os.eastNorth);
+            OldState os = oldState.get(n);
+            n.setCoor(os.latlon);
             n.modified = os.modified;
         }
     }

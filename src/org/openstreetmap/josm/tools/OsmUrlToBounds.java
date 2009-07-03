@@ -54,4 +54,34 @@ public class OsmUrlToBounds {
             return Double.parseDouble(map.get(key));
         return Double.parseDouble(map.get("m"+key));
     }
+
+    static public int getZoom(Bounds b)
+    {
+        // convert to mercator (for calculation of zoom only)
+        double latMin = Math.log(Math.tan(Math.PI/4.0+b.min.lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
+        double latMax = Math.log(Math.tan(Math.PI/4.0+b.max.lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
+        double size = Math.max(Math.abs(latMax-latMin), Math.abs(b.max.lon()-b.min.lon()));
+        int zoom = 0;
+        while (zoom <= 20) {
+            if (size >= 180)
+                break;
+            size *= 2;
+            zoom++;
+        }
+        return zoom;
+    }
+
+    static public String getURL(Bounds b)
+    {
+        return getURL(b.center(), getZoom(b));
+    }
+
+    static public String getURL(LatLon pos, int zoom)
+    {
+        // Truncate lat and lon to something more sensible
+        int decimals = (int) Math.pow(10, (zoom / 3));
+        double lat = (Math.round(pos.lat() * decimals))/decimals;
+        double lon = (Math.round(pos.lon() * decimals))/decimals;
+        return new String("http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
+    }
 }

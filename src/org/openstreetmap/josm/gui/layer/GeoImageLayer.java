@@ -535,7 +535,7 @@ public class GeoImageLayer extends Layer {
                 imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image)));
 
             if (centerToggle.getModel().isSelected())
-                Main.map.mapView.zoomTo(currentImageEntry.pos, Main.map.mapView.getScale());
+                Main.map.mapView.zoomTo(currentImageEntry.pos);
 
             dlg.setTitle(currentImageEntry.image +
                     " (" + currentImageEntry.coor.toDisplayString() + ")");
