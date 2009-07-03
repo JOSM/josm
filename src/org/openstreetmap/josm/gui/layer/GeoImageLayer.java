@@ -403,7 +403,7 @@ public class GeoImageLayer extends Layer {
                     ImageEntry e = data.get(i-1);
                     if (e.pos == null)
                         continue;
-                    Point p = Main.map.mapView.getPoint(e.pos.getEastNorth());
+                    Point p = Main.map.mapView.getPoint(e.pos);
                     Rectangle r = new Rectangle(p.x-ICON_SIZE/2, p.y-ICON_SIZE/2, ICON_SIZE, ICON_SIZE);
                     if (r.contains(ev.getPoint())) {
                         showImage(i-1);
@@ -535,7 +535,7 @@ public class GeoImageLayer extends Layer {
                 imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image)));
 
             if (centerToggle.getModel().isSelected())
-                Main.map.mapView.zoomTo(currentImageEntry.pos.getEastNorth());
+                Main.map.mapView.zoomTo(currentImageEntry.pos);
 
             dlg.setTitle(currentImageEntry.image +
                     " (" + currentImageEntry.pos.toDisplayString() + ")");
@@ -611,7 +611,7 @@ public class GeoImageLayer extends Layer {
                     continue;
                 }
 
-                Point p = mv.getPoint(e.pos.getEastNorth());
+                Point p = mv.getPoint(e.pos);
                 Rectangle r = new Rectangle(p.x-ICON_SIZE / 2, p.y-ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
                 if (r.contains(mousePosition)) {
                     clickedIndex = i;
@@ -623,7 +623,7 @@ public class GeoImageLayer extends Layer {
         for (int i = 0; i < data.size(); i++) {
             ImageEntry e = data.get(i);
             if (e.pos != null) {
-                Point p = mv.getPoint(e.pos.getEastNorth());
+                Point p = mv.getPoint(e.pos);
                 Rectangle r = new Rectangle(p.x-ICON_SIZE / 2, p.y-ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
                 g.drawImage(e.getIcon(), r.x, r.y, null);
                 Border b = null;

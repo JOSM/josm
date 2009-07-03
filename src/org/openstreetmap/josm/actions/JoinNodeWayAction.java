@@ -36,7 +36,7 @@ public class JoinNodeWayAction extends JosmAction {
         Node node = (Node) sel.iterator().next();
 
         List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
-            Main.map.mapView.getPoint(node.getEastNorth()));
+            Main.map.mapView.getPoint(node));
         HashMap<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
         for (WaySegment ws : wss) {
             List<Integer> is;

@@ -797,7 +797,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
             // fall through to default action.
             // (for semi-parallel lines, intersection might be miles away!)
-            if (Main.map.mapView.getPoint(n.getEastNorth()).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
+            if (Main.map.mapView.getPoint(n).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
                 n.setEastNorth(intersection);
                 return;
             }
@@ -837,7 +837,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         g2.setColor(selectedColor);
         g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         GeneralPath b = new GeneralPath();
-        Point p1=mv.getPoint(currentBaseNode.getEastNorth());
+        Point p1=mv.getPoint(currentBaseNode);
         Point p2=mv.getPoint(currentMouseEastNorth);
 
         double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;

@@ -649,8 +649,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             fromNode = fromWay.nodes.get(fromWay.nodes.size()-2);
         }
 
-        Point pFrom = nc.getPoint(fromNode.getEastNorth());
-        Point pVia = nc.getPoint(viaNode.getEastNorth());
+        Point pFrom = nc.getPoint(fromNode);
+        Point pVia = nc.getPoint(viaNode);
 
         //if(restrictionDebug) {
         /* find the "direct" node after the via node */
@@ -662,7 +662,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //        System.out.println("To way heading towards via");
         //        toNode = toWay.nodes.get(toWay.nodes.size()-2);
         //    }
-        //    Point pTo = nc.getPoint(toNode.eastNorth);
+        //    Point pTo = nc.getPoint(toNode);
 
         //    /* debug output of interesting nodes */
         //    System.out.println("From: " + fromNode);
@@ -886,7 +886,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         way = w;
                         for (Node n : w.nodes)
                         {
-                            p = nc.getPoint(n.getEastNorth());
+                            p = nc.getPoint(n);
                             poly.addPoint(p.x,p.y);
                         }
                     }
@@ -940,12 +940,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
                     for (Node n : wInner.nodes)
                     {
-                        Point pInner = nc.getPoint(n.getEastNorth());
+                        Point pInner = nc.getPoint(n);
                         polygon.addPoint(pInner.x,pInner.y);
                     }
                     if(!wInner.isClosed())
                     {
-                        Point pInner = nc.getPoint(wInner.nodes.get(0).getEastNorth());
+                        Point pInner = nc.getPoint(wInner.nodes.get(0));
                         polygon.addPoint(pInner.x,pInner.y);
                     }
                     PolyData o = null;
@@ -1064,7 +1064,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (Node n : w.nodes)
         {
-            Point p = nc.getPoint(n.getEastNorth());
+            Point p = nc.getPoint(n);
             polygon.addPoint(p.x,p.y);
         }
         return polygon;
@@ -1087,7 +1087,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     protected void drawNode(Node n, ImageIcon icon, boolean annotate, Boolean selected) {
-        Point p = nc.getPoint(n.getEastNorth());
+        Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
         //profilerVisibleNodes++;
@@ -1129,8 +1129,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if (col != currentColor || width != currentWidth || !Arrays.equals(dashed,currentDashed) || dashedColor != currentDashedColor) {
             displaySegments(col, width, dashed, dashedColor);
         }
-        Point p1 = nc.getPoint(n1.getEastNorth());
-        Point p2 = nc.getPoint(n2.getEastNorth());
+        Point p1 = nc.getPoint(n1);
+        Point p2 = nc.getPoint(n2);
 
         if (!isSegmentVisible(p1, p2)) {
             return;
@@ -1208,7 +1208,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      */
     public void drawNode(Node n, Color color, int size, int radius, boolean fill) {
         if (isZoomOk(null) && size > 1) {
-            Point p = nc.getPoint(n.getEastNorth());
+            Point p = nc.getPoint(n);
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
                     || (p.y > nc.getHeight()))
                 return;
@@ -1455,8 +1455,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * parents way
      */
     protected void drawOrderNumber(Node n1, Node n2, int orderNumber) {
-        Point p1 = nc.getPoint(n1.getEastNorth());
-        Point p2 = nc.getPoint(n2.getEastNorth());
+        Point p1 = nc.getPoint(n1);
+        Point p2 = nc.getPoint(n2);
         drawOrderNumber(p1, p2, orderNumber);
     }
 }

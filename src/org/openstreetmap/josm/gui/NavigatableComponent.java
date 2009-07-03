@@ -17,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -148,6 +149,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return new Point((int)x,(int)y);
     }
 
+    public Point getPoint(LatLon latlon) {
+        if(latlon == null)
+            return new Point();
+        else if(latlon instanceof CachedLatLon)
+            return getPoint(((CachedLatLon)latlon).getEastNorth());
+        else
+            return getPoint(getProjection().latlon2eastNorth(latlon));
+    }
+    public Point getPoint(Node n) {
+        return getPoint(n.getEastNorth());
+    }
+
     /**
      * Zoom to the given coordinate.
      * @param newCenter The center x-value (easting) to zoom to.
@@ -176,6 +189,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public void zoomTo(EastNorth newCenter) {
         zoomTo(newCenter, scale);
+    }
+
+    public void zoomTo(LatLon newCenter) {
+        if(newCenter instanceof CachedLatLon)
+            zoomTo(((CachedLatLon)newCenter).getEastNorth(), scale);
+        else
+            zoomTo(getProjection().latlon2eastNorth(newCenter), scale);
     }
 
     public void zoomToFactor(double x, double y, double factor) {
@@ -227,7 +247,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         for (Node n : getData().nodes) {
             if (n.deleted || n.incomplete)
                 continue;
-            Point sp = getPoint(n.getEastNorth());
+            Point sp = getPoint(n);
             double dist = p.distanceSq(sp);
             if (dist < minDistanceSq) {
                 minDistanceSq = dist;
@@ -262,8 +282,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     continue;
                 }
 
-                Point A = getPoint(lastN.getEastNorth());
-                Point B = getPoint(n.getEastNorth());
+                Point A = getPoint(lastN);
+                Point B = getPoint(n);
                 double c = A.distanceSq(B);
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
@@ -371,8 +391,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     lastN = n;
                     continue;
                 }
-                Point A = getPoint(lastN.getEastNorth());
-                Point B = getPoint(n.getEastNorth());
+                Point A = getPoint(lastN);
+                Point B = getPoint(n);
                 double c = A.distanceSq(B);
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
@@ -386,7 +406,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         for (Node n : getData().nodes) {
             if (!n.deleted && !n.incomplete
-                    && getPoint(n.getEastNorth()).distanceSq(p) < snapDistance) {
+                    && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }
         }
@@ -405,7 +425,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         Collection<Node> nearest = new HashSet<Node>();
         for (Node n : getData().nodes) {
             if (!n.deleted && !n.incomplete
-                    && getPoint(n.getEastNorth()).distanceSq(p) < snapDistance) {
+                    && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }
         }
