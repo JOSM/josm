@@ -52,7 +52,7 @@ public class ButtonMarker extends Marker {
         Point mousePosition = mv.getMousePosition();
 
         // mouse is inside the window
-        if (mousePosition != null && mousePressed) {
+        if (mousePosition != null && mousePressed && containsPoint(mousePosition)) {
             b = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
         } else {
             b = BorderFactory.createBevelBorder(BevelBorder.RAISED);
