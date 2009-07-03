@@ -261,7 +261,7 @@ public class GpxReader {
                     currentWayPoint.setTime();
                 } else if (qName.equals("cmt") || qName.equals("desc")) {
                     currentWayPoint.attr.put(qName, accumulator.toString());
-                    currentWayPoint.setGarminCommentTime(qName);
+                    currentWayPoint.setTime();
                 } else if (qName.equals("rtept")) {
                     currentState = states.pop();
                     currentRoute.routePoints.add(currentWayPoint);

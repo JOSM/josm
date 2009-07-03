@@ -42,7 +42,7 @@ public class PlayHeadMarker extends Marker {
     // private Icon audioTracerIcon = null;
     static private PlayHeadMarker playHead = null;
     private MapMode oldMode = null;
-    private EastNorth oldEastNorth;
+    private LatLon oldCoor;
     private boolean enabled;
     private boolean wasPlaying = false;
     private int dropTolerance; /* pixels */
@@ -74,7 +74,7 @@ public class PlayHeadMarker extends Marker {
                     /* when we get a click on the marker, we need to switch mode to avoid
                      * getting confused with other drag operations (like select) */
                     oldMode = Main.map.mapMode;
-                    oldEastNorth = eastNorth;
+                    oldCoor = getCoor();
                     PlayHeadDragMode playHeadDragMode = new PlayHeadDragMode(playHead);
                     Main.map.selectMapMode(playHeadDragMode);
                     playHeadDragMode.mousePressed(ev);
@@ -84,7 +84,7 @@ public class PlayHeadMarker extends Marker {
     }
 
     @Override public boolean containsPoint(Point p) {
-        Point screen = Main.map.mapView.getPoint(eastNorth);
+        Point screen = Main.map.mapView.getPoint(getEastNorth());
         Rectangle r = new Rectangle(screen.x, screen.y, symbol.getIconWidth(),
         symbol.getIconHeight());
         return r.contains(p);
@@ -105,14 +105,14 @@ public class PlayHeadMarker extends Marker {
     }
 
     /**
-     * reinstate the old map mode after swuitching temporarily to do a play head drag
+     * reinstate the old map mode after switching temporarily to do a play head drag
      */
     private void endDrag(boolean reset) {
         if (! wasPlaying || reset)
             try { AudioPlayer.pause(); }
             catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
         if (reset)
-            eastNorth = oldEastNorth;
+            setCoor(oldCoor);
         Main.map.selectMapMode(oldMode);
         Main.map.mapView.repaint();
         timer.start();
@@ -123,7 +123,7 @@ public class PlayHeadMarker extends Marker {
      * @param en the new position in map terms
      */
     public void drag(EastNorth en) {
-        eastNorth = en;
+        setEastNorth(en);
         Main.map.mapView.repaint();
     }
 
@@ -134,7 +134,6 @@ public class PlayHeadMarker extends Marker {
      * @param en the position to start looking from
      */
     public void reposition(EastNorth en) {
-        // eastNorth = en;
         WayPoint cw = null;
         AudioMarker recent = AudioMarker.recentlyPlayedMarker();
         if (recent != null && recent.parentLayer != null && recent.parentLayer.fromLayer != null) {
@@ -166,7 +165,7 @@ public class PlayHeadMarker extends Marker {
             JOptionPane.showMessageDialog(Main.parent, tr("You need to drag the play head near to the GPX track whose associated sound track you were playing (after the first marker)."));
             endDrag(true);
         } else {
-            eastNorth = cw.eastNorth;
+            setCoor(cw.getCoor());
             ca.play(cw.time - ca.time);
             endDrag(false);
         }
@@ -192,7 +191,7 @@ public class PlayHeadMarker extends Marker {
             double closestAudioMarkerDistanceSquared = 1.0E100;
             for (Marker m : recent.parentLayer.data) {
                 if (m instanceof AudioMarker) {
-                    double distanceSquared = m.eastNorth.distanceSq(en);
+                    double distanceSquared = m.getEastNorth().distanceSq(en);
                     if (distanceSquared < closestAudioMarkerDistanceSquared) {
                         ca = (AudioMarker) m;
                         closestAudioMarkerDistanceSquared = distanceSquared;
@@ -215,7 +214,7 @@ public class PlayHeadMarker extends Marker {
                 endDrag(true);
                 return;
             }
-            ca = recent.parentLayer.addAudioMarker(cw.time, cw.eastNorth);
+            ca = recent.parentLayer.addAudioMarker(cw.time, cw.getCoor());
         }
 
         /* Actually do the synchronization */
@@ -226,7 +225,7 @@ public class PlayHeadMarker extends Marker {
         }
         else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
             JOptionPane.showMessageDialog(Main.parent, tr("Audio synchronized at point {0}.", ca.text));
-            eastNorth = ca.eastNorth;
+            setCoor(ca.getCoor());
             endDrag(false);
         } else {
             JOptionPane.showMessageDialog(Main.parent,tr("Unable to synchronize in layer being played."));
@@ -236,7 +235,7 @@ public class PlayHeadMarker extends Marker {
 
     public void paint(Graphics g, MapView mv /*, boolean mousePressed */) {
         if (time < 0.0) return;
-        Point screen = mv.getPoint(eastNorth);
+        Point screen = mv.getPoint(getEastNorth());
         symbol.paintIcon(mv, g, screen.x, screen.y);
     }
 
@@ -296,10 +295,10 @@ public class PlayHeadMarker extends Marker {
 
         if (w1 == null)
             return;
-        eastNorth = w2 == null ?
-            w1.eastNorth :
-            w1.eastNorth.interpolate(w2.eastNorth,
-                    (audioTime - w1.time)/(w2.time - w1.time));
+        setEastNorth(w2 == null ?
+            w1.getEastNorth() :
+            w1.getEastNorth().interpolate(w2.getEastNorth(),
+                    (audioTime - w1.time)/(w2.time - w1.time)));
         time = audioTime;
         Main.map.mapView.repaint();
     }

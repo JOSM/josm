@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
@@ -236,7 +237,8 @@ public class GpxWriter extends XmlWriter {
             throw new RuntimeException("Bug detected. Please report this!");
         }
         if (pnt != null) {
-            openAtt(type, "lat=\"" + pnt.latlon.lat() + "\" lon=\"" + pnt.latlon.lon() + "\"");
+            LatLon c =pnt.getCoor();
+            openAtt(type, "lat=\"" + c.lat() + "\" lon=\"" + c.lon() + "\"");
             writeAttr(pnt.attr);
             closeln(type);
         }

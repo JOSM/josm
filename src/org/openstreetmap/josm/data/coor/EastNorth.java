@@ -31,6 +31,10 @@ public class EastNorth extends Coordinate {
             this.y + proportion * (en2.y - this.y));
     }
 
+    public EastNorth getCenter(EastNorth en2) {
+        return new EastNorth((this.x + en2.x)/2.0, (this.y + en2.y)/2.0);
+    }
+
     /**
      * Returns the heading, in radians, that you have to use to get from
      * this EastNorth to another. Heading is mapped into [0, 2pi)

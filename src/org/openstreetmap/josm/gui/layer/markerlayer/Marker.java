@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -58,14 +59,33 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author Frederik Ramm <frederik@remote.org>
  */
 public class Marker implements ActionListener {
-
-    public EastNorth eastNorth;
     public final String text;
     public final Icon symbol;
     public final MarkerLayer parentLayer;
-    public double time; /* avbsolute time of marker since epocj */
+    public double time; /* absolute time of marker since epoch */
     public double offset; /* time offset in seconds from the gpx point from which it was derived,
                              may be adjusted later to sync with other data, so not final */
+
+    private CachedLatLon coor;
+
+    public final void setCoor(LatLon coor) {
+        if(this.coor == null)
+            this.coor = new CachedLatLon(coor);
+        else
+            this.coor.setCoor(coor);
+    }
+
+    public final LatLon getCoor() {
+        return coor;
+    }
+
+    public final void setEastNorth(EastNorth eastNorth) {
+        coor.setEastNorth(eastNorth);
+    }
+
+    public final EastNorth getEastNorth() {
+        return coor.getEastNorth();
+    }
 
     /**
      * Plugins can add their Marker creation stuff at the bottom or top of this list
@@ -100,13 +120,13 @@ public class Marker implements ActionListener {
                 }
 
                 if (uri == null)
-                    return new Marker(wpt.latlon, name_desc, wpt.getString("symbol"), parentLayer, time, offset);
+                    return new Marker(wpt.getCoor(), name_desc, wpt.getString("symbol"), parentLayer, time, offset);
                 else if (uri.endsWith(".wav"))
-                    return AudioMarker.create(wpt.latlon, name_desc, uri, parentLayer, time, offset);
+                    return AudioMarker.create(wpt.getCoor(), name_desc, uri, parentLayer, time, offset);
                 else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
-                    return ImageMarker.create(wpt.latlon, uri, parentLayer, time, offset);
+                    return ImageMarker.create(wpt.getCoor(), uri, parentLayer, time, offset);
                 else
-                    return WebMarker.create(wpt.latlon, uri, parentLayer, time, offset);
+                    return WebMarker.create(wpt.getCoor(), uri, parentLayer, time, offset);
             }
 
             private boolean isWellFormedAddress(String link) {
@@ -121,7 +141,7 @@ public class Marker implements ActionListener {
     }
 
     public Marker(LatLon ll, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
-        eastNorth = Main.proj.latlon2eastNorth(ll);
+        setCoor(ll);
         this.text = text;
         this.offset = offset;
         this.time = time;
@@ -161,7 +181,7 @@ public class Marker implements ActionListener {
      * @param mousePressed true if the left mouse button is pressed
      */
     public void paint(Graphics g, MapView mv, boolean mousePressed, String show) {
-        Point screen = mv.getPoint(eastNorth);
+        Point screen = mv.getPoint(getEastNorth());
         if (symbol != null && show.equalsIgnoreCase("show")) {
             symbol.paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
         } else {
@@ -204,7 +224,7 @@ public class Marker implements ActionListener {
      */
 
     public AudioMarker audioMarkerFromMarker(String uri) {
-        AudioMarker audioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(this.eastNorth), this.text, uri, this.parentLayer, this.time, this.offset);
+        AudioMarker audioMarker = AudioMarker.create(getCoor(), this.text, uri, this.parentLayer, this.time, this.offset);
         return audioMarker;
     }
 }

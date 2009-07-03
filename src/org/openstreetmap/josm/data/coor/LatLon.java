@@ -142,6 +142,15 @@ public class LatLon extends Coordinate {
         return "lat=" + nf.format(lat()) + "°, lon=" + nf.format(lon()) + "°";
     }
 
+    public LatLon interpolate(LatLon ll2, double proportion) {
+        return new LatLon(this.x + proportion * (ll2.x - this.x),
+            this.y + proportion * (ll2.y - this.y));
+    }
+
+    public LatLon getCenter(LatLon ll2) {
+        return new LatLon((this.x + ll2.x)/2.0, (this.y + ll2.y)/2.0);
+    }
+
     @Override public String toString() {
         return "LatLon[lat="+lat()+",lon="+lon()+"]";
     }

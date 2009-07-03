@@ -83,17 +83,17 @@ public class GpxData extends WithAttributes {
         Bounds bounds = null;
         for (WayPoint wpt : waypoints) {
             if (bounds == null) {
-                bounds = new Bounds(wpt.latlon, wpt.latlon);
+                bounds = new Bounds(wpt.getCoor());
             } else {
-                bounds.extend(wpt.latlon);
+                bounds.extend(wpt.getCoor());
             }
         }
         for (GpxRoute rte : routes) {
             for (WayPoint wpt : rte.routePoints) {
                 if (bounds == null) {
-                    bounds = new Bounds(wpt.latlon, wpt.latlon);
+                    bounds = new Bounds(wpt.getCoor());
                 } else {
-                    bounds.extend(wpt.latlon);
+                    bounds.extend(wpt.getCoor());
                 }
             }
         }
@@ -101,9 +101,9 @@ public class GpxData extends WithAttributes {
             for (Collection<WayPoint> trkseg : trk.trackSegs) {
                 for (WayPoint wpt : trkseg) {
                     if (bounds == null) {
-                        bounds = new Bounds(wpt.latlon, wpt.latlon);
+                        bounds = new Bounds(wpt.getCoor());
                     } else {
-                        bounds.extend(wpt.latlon);
+                        bounds.extend(wpt.getCoor());
                     }
                 }
             }
@@ -122,7 +122,7 @@ public class GpxData extends WithAttributes {
             for (Collection<WayPoint> trkseg : trk.trackSegs) {
                 for (WayPoint tpt : trkseg) {
                     if(last != null){
-                        result += calcDistance(last.latlon, tpt.latlon);
+                        result += last.getCoor().greatCircleDistance(tpt.getCoor());
                     }
                     last = tpt;
                 }
@@ -131,25 +131,4 @@ public class GpxData extends WithAttributes {
         }
         return result;
     }
-
-    /**
-     * returns the distance in meters between two LatLons
-     */
-    public static double calcDistance(LatLon p1, LatLon p2){
-        double lat1, lon1, lat2, lon2;
-        double dlon, dlat;
-
-        lat1 = p1.lat() * Math.PI / 180.0;
-        lon1 = p1.lon() * Math.PI / 180.0;
-        lat2 = p2.lat() * Math.PI / 180.0;
-        lon2 = p2.lon() * Math.PI / 180.0;
-
-        dlon = lon2 - lon1;
-        dlat = lat2 - lat1;
-
-        double a = (Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2));
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return 6367000 * c;
-    }
-
 }

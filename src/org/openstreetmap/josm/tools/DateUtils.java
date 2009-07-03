@@ -18,6 +18,8 @@
 
 package org.openstreetmap.josm.tools;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -60,6 +62,7 @@ public final class DateUtils {
     public static synchronized Date fromString(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01:00}"
         if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
+                checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx:00")) {
             calendar.set(
@@ -77,6 +80,32 @@ public final class DateUtils {
             }
 
             return calendar.getTime();
+        }
+        else if(checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
+                checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
+                checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
+                checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx-xx:00")) {
+            calendar.set(
+                parsePart(str, 0, 4),
+                parsePart(str, 5, 2)-1,
+                parsePart(str, 8, 2),
+                parsePart(str, 11, 2),
+                parsePart(str, 14,2),
+                parsePart(str, 17, 2));
+            long millis = parsePart(str, 20, 3);
+            if (str.length() == 29)
+                millis += parsePart(str, 24, 2) * (str.charAt(23) == '+' ? -3600000 : 3600000);
+            calendar.setTimeInMillis(calendar.getTimeInMillis()+millis);
+
+            return calendar.getTime();
+        }
+        else
+        {
+            // example date format "18-AUG-08 13:33:03"
+            SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
+            Date d = f.parse(str, new ParsePosition(0));
+            if(d != null)
+                return d;
         }
 
         try {
@@ -96,8 +125,10 @@ public final class DateUtils {
     private static boolean checkLayout(String text, String pattern) {
         if (text.length() != pattern.length()) return false;
         for (int i=0; i<pattern.length(); i++) {
-            if (pattern.charAt(i) == 'x') continue;
-            if (pattern.charAt(i) != text.charAt(i)) return false;
+            char pc = pattern.charAt(i);
+            char tc = text.charAt(i);
+            if(pc == 'x' && tc >= '0' && tc <= '9') continue;
+            else if(pc == 'x' || pc != tc) return false;
         }
         return true;
     }

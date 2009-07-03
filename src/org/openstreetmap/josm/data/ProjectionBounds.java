@@ -24,6 +24,10 @@ public class ProjectionBounds {
         this.min = min;
         this.max = max;
     }
+    public ProjectionBounds(EastNorth p) {
+        this.min = p;
+        this.max = p;
+    }
     public ProjectionBounds(EastNorth center, double east, double north) {
         this.min = new EastNorth(center.east()-east/2.0, center.north()-north/2.0);
         this.max = new EastNorth(center.east()+east/2.0, center.north()+north/2.0);
@@ -31,12 +35,16 @@ public class ProjectionBounds {
     public void extend(EastNorth e)
     {
         if (e.east() < min.east() || e.north() < min.north())
-            min = e;
-        else if (e.east() > max.east() || e.north() > max.north())
-            max = e;
+            min = new EastNorth(Math.min(e.east(), min.east()), Math.min(e.north(), min.north()));
+        if (e.east() > max.east() || e.north() > max.north())
+            max = new EastNorth(Math.max(e.east(), max.east()), Math.max(e.north(), max.north()));
     }
     public EastNorth getCenter()
     {
-        return  new EastNorth(min.east()/2+max.east()/2, min.north()/2+max.north()/2);
+        return min.getCenter(max);
+    }
+
+    @Override public String toString() {
+        return "ProjectionBounds["+min.east()+","+min.north()+","+max.east()+","+max.north()+"]";
     }
 }

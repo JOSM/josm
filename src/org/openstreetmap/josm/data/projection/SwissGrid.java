@@ -100,11 +100,6 @@ public class SwissGrid implements Projection {
         return "swissgrid";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof SwissGrid;
-    }
-
     public ProjectionBounds getWorldBounds()
     {
         Bounds b = getWorldBoundsLatLon();

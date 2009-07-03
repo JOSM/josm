@@ -106,11 +106,6 @@ public class LambertEST implements Projection {
         return "lambertest";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof LambertEST;
-    }
-
     public ProjectionBounds getWorldBounds()
     {
         Bounds b = getWorldBoundsLatLon();

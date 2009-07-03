@@ -26,6 +26,11 @@ public class Bounds {
         this.max = max;
     }
 
+    public Bounds(LatLon b) {
+        this.min = b;
+        this.max = b;
+    }
+
     @Override public String toString() {
         return "Bounds["+min.lat()+","+min.lon()+","+max.lat()+","+max.lon()+"]";
     }
@@ -33,11 +38,9 @@ public class Bounds {
     /**
      * @return Center of the bounding box.
      */
-    public LatLon center() {
-        // FIXME: not sure whether this calculation is right; maybe there is some
-        // more complex calculation needed to get a center of a spherical
-        // dimension?
-        return new LatLon((min.lat()+max.lat())/2, (min.lon()+max.lon())/2);
+    public LatLon getCenter()
+    {
+        return min.getCenter(max);
     }
 
     /**

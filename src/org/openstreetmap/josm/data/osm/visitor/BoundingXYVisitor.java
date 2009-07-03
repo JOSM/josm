@@ -5,6 +5,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -41,20 +42,33 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void visit(Bounds b) {
         if(b != null)
         {
-            visit(Main.proj.latlon2eastNorth(b.min));
-            visit(Main.proj.latlon2eastNorth(b.max));
+            visit(b.min);
+            visit(b.max);
         }
     }
 
     public void visit(ProjectionBounds b) {
         if(b != null)
-            bounds = new ProjectionBounds(b.min, b.max);
+        {
+            visit(b.min);
+            visit(b.max);
+        }
+    }
+
+    public void visit(LatLon latlon) {
+        if(latlon != null)
+        {
+            if(latlon instanceof CachedLatLon)
+                visit(((CachedLatLon)latlon).getEastNorth());
+            else
+                visit(Main.proj.latlon2eastNorth(latlon));
+        }
     }
 
     public void visit(EastNorth eastNorth) {
         if (eastNorth != null) {
             if (bounds == null)
-                bounds = new ProjectionBounds(eastNorth, eastNorth);
+                bounds = new ProjectionBounds(eastNorth);
             else
                 bounds.extend(eastNorth);
         }
@@ -96,5 +110,9 @@ public class BoundingXYVisitor extends AbstractVisitor {
         bounds = new ProjectionBounds(
         Main.proj.latlon2eastNorth(new LatLon(minLatlon.lat() - enlargeDegree, minLatlon.lon() - enlargeDegree)),
         Main.proj.latlon2eastNorth(new LatLon(maxLatlon.lat() + enlargeDegree, maxLatlon.lon() + enlargeDegree)));
+    }
+
+    @Override public String toString() {
+        return "BoundingXYVisitor["+bounds+"]";
     }
 }

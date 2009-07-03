@@ -157,11 +157,6 @@ public class Lambert implements Projection {
         return "lambert";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Lambert;
-    }
-
     /**
      * Initializes from geographic coordinates. Note that reference ellipsoid
      * used by Lambert is the Clark ellipsoid.

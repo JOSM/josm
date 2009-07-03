@@ -62,7 +62,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
-import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -243,10 +243,8 @@ public class GeoImageLayer extends Layer {
 
         final File image;
         ImageLoader.Entry icon;
-
         Date time;
-        LatLon coor;
-        EastNorth pos;
+        CachedLatLon pos;
 
         public ImageEntry(File image) {
             this.image = image;
@@ -289,15 +287,16 @@ public class GeoImageLayer extends Layer {
             for (GpxTrack trk : gpxLayer.data.tracks) {
                 for (Collection<WayPoint> segment : trk.trackSegs) {
                     for (WayPoint p : segment) {
+                        LatLon c = p.getCoor();
                         if (!p.attr.containsKey("time"))
-                            throw new IOException(tr("No time for point {0} x {1}",p.latlon.lat(),p.latlon.lon()));
+                            throw new IOException(tr("No time for point {0} x {1}",c.lat(),c.lon()));
                         Date d = null;
                         try {
                             d = DateParser.parse((String) p.attr.get("time"));
                         } catch (ParseException e) {
-                            throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.attr.get("time"),p.latlon.lat(),p.latlon.lon()));
+                            throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.attr.get("time"),c.lat(),c.lon()));
                         }
-                        gps.add(new TimedPoint(d, p.eastNorth));
+                        gps.add(new TimedPoint(d, c));
                     }
                 }
             }
@@ -363,10 +362,11 @@ public class GeoImageLayer extends Layer {
 
     private static final class TimedPoint implements Comparable<TimedPoint> {
         Date time;
-        EastNorth pos;
-        public TimedPoint(Date time, EastNorth pos) {
+        CachedLatLon pos;
+
+        public TimedPoint(Date time, LatLon pos) {
             this.time = time;
-            this.pos = pos;
+            this.pos.setCoor(pos);
         }
         public int compareTo(TimedPoint point) {
             return time.compareTo(point.time);
@@ -403,7 +403,7 @@ public class GeoImageLayer extends Layer {
                     ImageEntry e = data.get(i-1);
                     if (e.pos == null)
                         continue;
-                    Point p = Main.map.mapView.getPoint(e.pos);
+                    Point p = Main.map.mapView.getPoint(e.pos.getEastNorth());
                     Rectangle r = new Rectangle(p.x-ICON_SIZE/2, p.y-ICON_SIZE/2, ICON_SIZE, ICON_SIZE);
                     if (r.contains(ev.getPoint())) {
                         showImage(i-1);
@@ -535,10 +535,10 @@ public class GeoImageLayer extends Layer {
                 imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image)));
 
             if (centerToggle.getModel().isSelected())
-                Main.map.mapView.zoomTo(currentImageEntry.pos);
+                Main.map.mapView.zoomTo(currentImageEntry.pos.getEastNorth());
 
             dlg.setTitle(currentImageEntry.image +
-                    " (" + currentImageEntry.coor.toDisplayString() + ")");
+                    " (" + currentImageEntry.pos.toDisplayString() + ")");
             dlg.setCursor(Cursor.getDefaultCursor());
         }
 
@@ -611,7 +611,7 @@ public class GeoImageLayer extends Layer {
                     continue;
                 }
 
-                Point p = mv.getPoint(e.pos);
+                Point p = mv.getPoint(e.pos.getEastNorth());
                 Rectangle r = new Rectangle(p.x-ICON_SIZE / 2, p.y-ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
                 if (r.contains(mousePosition)) {
                     clickedIndex = i;
@@ -623,7 +623,7 @@ public class GeoImageLayer extends Layer {
         for (int i = 0; i < data.size(); i++) {
             ImageEntry e = data.get(i);
             if (e.pos != null) {
-                Point p = mv.getPoint(e.pos);
+                Point p = mv.getPoint(e.pos.getEastNorth());
                 Rectangle r = new Rectangle(p.x-ICON_SIZE / 2, p.y-ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
                 g.drawImage(e.getIcon(), r.x, r.y, null);
                 Border b = null;
@@ -685,9 +685,7 @@ public class GeoImageLayer extends Layer {
             for (TimedPoint tp : gps) {
                 Date time = new Date(tp.time.getTime() - (delta+gpstimezone));
                 if (time.after(e.time) && lastTP != null) {
-                    double x = (lastTP.pos.east()+tp.pos.east())/2;
-                    double y = (lastTP.pos.north()+tp.pos.north())/2;
-                    e.pos = new EastNorth(x,y);
+                    e.pos.setCoor(lastTP.pos.getCenter(tp.pos));
                     break;
                 }
                 lastTP = tp;
@@ -695,7 +693,6 @@ public class GeoImageLayer extends Layer {
             if (e.pos == null) {
                 e.pos = gps.getLast().pos;
             }
-            e.coor = Main.proj.eastNorth2latlon(e.pos);
         }
     }
 

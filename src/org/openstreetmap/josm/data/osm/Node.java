@@ -5,12 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.data.osm.Node;
-
 
 /**
  * One node data, consisting of one world coordinate waypoint.
@@ -19,15 +19,13 @@ import org.openstreetmap.josm.data.osm.Node;
  */
 public final class Node extends OsmPrimitive {
 
-    private LatLon coor;
-
-    private EastNorth eastNorth;
-    private Projection proj;
-
+    private CachedLatLon coor;
 
     public final void setCoor(LatLon coor) {
-        this.coor = coor;
-        proj = null;
+        if(this.coor == null)
+            this.coor = new CachedLatLon(coor);
+        else
+            this.coor.setCoor(coor);
     }
 
     public final LatLon getCoor() {
@@ -35,18 +33,11 @@ public final class Node extends OsmPrimitive {
     }
 
     public final void setEastNorth(EastNorth eastNorth) {
-        proj = Main.proj;
-        eastNorth = eastNorth;
-        this.coor = proj.eastNorth2latlon(eastNorth);
+        coor.setEastNorth(eastNorth);
     }
 
     public final EastNorth getEastNorth() {
-        if(proj != Main.proj)
-        {
-            proj = Main.proj;
-            eastNorth = proj.latlon2eastNorth(coor);
-        }
-        return eastNorth;
+        return coor.getEastNorth();
     }
 
     private static CoordinateFormat mCord;

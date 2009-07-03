@@ -24,7 +24,7 @@ public class Epsg4326 implements Projection {
     }
 
     @Override public String toString() {
-        return tr("EPSG:4326");
+        return tr("WGS84 Geographisch");
     }
 
     public String toCode() {
@@ -33,10 +33,6 @@ public class Epsg4326 implements Projection {
 
     public String getCacheDirectoryName() {
         return "epsg4326";
-    }
-
-    @Override public boolean equals(Object o) {
-        return o instanceof Epsg4326;
     }
 
     public ProjectionBounds getWorldBounds()

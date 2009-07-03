@@ -46,10 +46,6 @@ public class Mercator implements Projection {
         return "mercator";
     }
 
-    @Override public boolean equals(Object o) {
-        return o instanceof Mercator;
-    }
-
     public ProjectionBounds getWorldBounds()
     {
         Bounds b = getWorldBoundsLatLon();

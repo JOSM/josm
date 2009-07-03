@@ -73,7 +73,7 @@ public class OsmUrlToBounds {
 
     static public String getURL(Bounds b)
     {
-        return getURL(b.center(), getZoom(b));
+        return getURL(b.getCenter(), getZoom(b));
     }
 
     static public String getURL(LatLon pos, int zoom)

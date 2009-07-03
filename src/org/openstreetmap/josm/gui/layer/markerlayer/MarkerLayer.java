@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
-import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -183,7 +183,7 @@ public class MarkerLayer extends Layer {
 
     @Override public void visitBoundingBox(BoundingXYVisitor v) {
         for (Marker mkr : data)
-            v.visit(mkr.eastNorth);
+            v.visit(mkr.getEastNorth());
     }
 
     @Override public Object getInfoComponent() {
@@ -241,7 +241,7 @@ public class MarkerLayer extends Layer {
                 PlayHeadMarker playHeadMarker = Main.map.mapView.playHeadMarker;
                 if (playHeadMarker == null)
                     return;
-                addAudioMarker(playHeadMarker.time, playHeadMarker.eastNorth);
+                addAudioMarker(playHeadMarker.time, playHeadMarker.getCoor());
                 Main.map.mapView.repaint();
             }
         });
@@ -295,7 +295,7 @@ public class MarkerLayer extends Layer {
         return true;
     }
 
-    public AudioMarker addAudioMarker(double time, EastNorth en) {
+    public AudioMarker addAudioMarker(double time, LatLon coor) {
         // find first audio marker to get absolute start time
         double offset = 0.0;
         AudioMarker am = null;
@@ -312,7 +312,7 @@ public class MarkerLayer extends Layer {
         }
 
         // make our new marker
-        AudioMarker newAudioMarker = AudioMarker.create(Main.proj.eastNorth2latlon(en),
+        AudioMarker newAudioMarker = AudioMarker.create(coor,
             AudioMarker.inventName(offset), AudioPlayer.url().toString(), this, time, offset);
 
         // insert it at the right place in a copy the collection

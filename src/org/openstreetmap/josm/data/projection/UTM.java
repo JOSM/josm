@@ -344,10 +344,6 @@ public class UTM implements Projection {
         return "epsg325833";
     }
 
-    @Override public boolean equals(Object o) {
-        return o instanceof UTM;
-    }
-
     public ProjectionBounds getWorldBounds()
     {
         Bounds b = getWorldBoundsLatLon();
