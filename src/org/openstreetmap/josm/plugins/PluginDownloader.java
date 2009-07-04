@@ -68,13 +68,13 @@ public class PluginDownloader {
             for (PluginInformation d : toUpdate) {
                 Main.pleaseWaitDlg.currentAction.setText(tr("Downloading Plugin {0}...", d.name));
                 File pluginFile = new File(pluginDir, d.name + ".jar.new");
-                if (download(d, pluginFile))
-                {
+                if(download(d, pluginFile))
                     count++;
+                else
+                {
+                    errors += d.name + "\n";
                     failed.add(d);
                 }
-                else
-                    errors += d.name + "\n";
             }
             PluginDownloader.moveUpdatedPlugins();
         }
@@ -150,8 +150,8 @@ public class PluginDownloader {
             t = ta.get();
             return t.failed;
         }
-        catch(java.lang.InterruptedException e) {}
-        catch(java.util.concurrent.ExecutionException e) {}
+        catch(java.lang.InterruptedException e) {e.printStackTrace();}
+        catch(java.util.concurrent.ExecutionException e) {e.printStackTrace();}
         return download;
     }
 
