@@ -366,7 +366,7 @@ public class GeoImageLayer extends Layer {
 
         public TimedPoint(Date time, LatLon pos) {
             this.time = time;
-            this.pos.setCoor(pos);
+            this.pos = new CachedLatLon(pos);
         }
         public int compareTo(TimedPoint point) {
             return time.compareTo(point.time);
