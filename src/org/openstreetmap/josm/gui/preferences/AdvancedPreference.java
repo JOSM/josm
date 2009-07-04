@@ -70,6 +70,16 @@ public class AdvancedPreference implements PreferenceSetting {
             @Override public boolean isCellEditable(int row, int column) {
                 return column != 0;
             }
+            @Override public void fireTableCellUpdated(int row, int column)
+            {
+                super.fireTableCellUpdated(row, column);
+                if(column == 1)
+                {
+                    data.put((String) model.getValueAt(row, 0),
+                    (String) model.getValueAt(row, 1));
+                }
+            }
+
         };
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer(){
             public Component getTableCellRendererComponent(JTable table, Object value,
