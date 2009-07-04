@@ -22,10 +22,13 @@ public final class Node extends OsmPrimitive {
     private CachedLatLon coor;
 
     public final void setCoor(LatLon coor) {
-        if(this.coor == null)
-            this.coor = new CachedLatLon(coor);
-        else
-            this.coor.setCoor(coor);
+        if(coor != null)
+        {
+            if(this.coor == null)
+                this.coor = new CachedLatLon(coor);
+            else
+                this.coor.setCoor(coor);
+        }
     }
 
     public final LatLon getCoor() {
