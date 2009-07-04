@@ -74,7 +74,7 @@ public class RotateCommand extends Command {
 
         for (Node n : this.objects) {
             OldState os = new OldState();
-            os.latlon = n.getCoor();
+            os.latlon = new LatLon(n.getCoor());
             os.eastNorth = n.getEastNorth();
             os.modified = n.modified;
             oldState.put(n, os);

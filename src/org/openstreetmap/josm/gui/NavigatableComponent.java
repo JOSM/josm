@@ -71,11 +71,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return new Long(id.getValue()).intValue();
     }
 
-    public double getMapScale() {
-        /* TODO: we assume a pixel is 0.025mm */
-        return getDist100Pixel()/(0.00025*100);
-    }
-
     public double getDist100Pixel()
     {
         LatLon ll1 = getLatLon(0,0);

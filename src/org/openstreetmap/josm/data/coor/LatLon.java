@@ -48,6 +48,10 @@ public class LatLon extends Coordinate {
         super(lon, lat);
     }
 
+    public LatLon(LatLon coor) {
+        super(coor.lon(), coor.lat());
+    }
+
     public double lat() {
         return y;
     }

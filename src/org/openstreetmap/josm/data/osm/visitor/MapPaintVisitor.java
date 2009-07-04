@@ -84,12 +84,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(e == null) /* the default for things that don't have a rule (show, if scale is smaller than 1500m) */
             return (circum < 1500);
 
-        /* formula to calculate a map scale: natural size / map size = scale
-           example: 876000mm (876m as displayed) / 22mm (roughly estimated screen size of legend bar) = 39818
-
-           so the exact "correcting value" below depends only on the screen size and resolution
-           XXX - do we need a Preference setting for this (if things vary widely)? */
-        return !(circum >= e.maxScale / 22 || circum < e.minScale / 22);
+        return !(circum >= e.maxScale || circum < e.minScale);
     }
 
     public ElemStyle getPrimitiveStyle(OsmPrimitive osm) {
@@ -1273,7 +1268,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         getSettings(virtual);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
-        circum = Main.map.mapView.getMapScale();
+        circum = Main.map.mapView.getDist100Pixel();
         styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction",true);

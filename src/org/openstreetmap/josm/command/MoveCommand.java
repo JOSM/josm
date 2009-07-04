@@ -68,7 +68,7 @@ public class MoveCommand extends Command {
         this.objects = AllNodesVisitor.getAllNodes(objects);
         for (Node n : this.objects) {
             OldState os = new OldState();
-            os.latlon = n.getCoor();
+            os.latlon = new LatLon(n.getCoor());
             os.modified = n.modified;
             oldState.add(os);
         }

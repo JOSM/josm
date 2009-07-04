@@ -24,9 +24,9 @@ public class CachedLatLon extends LatLon {
 
     public final void setEastNorth(EastNorth eastNorth) {
         proj = Main.proj;
-        eastNorth = eastNorth;
+        this.eastNorth = eastNorth;
         LatLon l = proj.eastNorth2latlon(eastNorth);
-        setLocation(l.lat(), l.lon());
+        setLocation(l.lon(), l.lat());
     }
 
     public final EastNorth getEastNorth() {
