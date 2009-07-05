@@ -685,7 +685,7 @@ public class GeoImageLayer extends Layer {
             for (TimedPoint tp : gps) {
                 Date time = new Date(tp.time.getTime() - (delta+gpstimezone));
                 if (time.after(e.time) && lastTP != null) {
-                    e.pos.setCoor(lastTP.pos.getCenter(tp.pos));
+                    e.pos = new CachedLatLon(lastTP.pos.getCenter(tp.pos));
                     break;
                 }
                 lastTP = tp;
