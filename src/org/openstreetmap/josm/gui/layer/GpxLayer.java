@@ -484,7 +484,7 @@ public class GpxLayer extends Layer {
                                         if (hdop < 0) {
                                             hdop = 0;
                                         }
-                                        int hdoplvl = Math.round(hdop * 25);
+                                        int hdoplvl = Math.round(hdop * Main.pref.getInteger("hdop.factor", 25));
                                         // High hdop is bad, but high values in colors are green.
                                         // Therefore inverse the logic
                                         int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
