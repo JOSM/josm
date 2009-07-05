@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -69,8 +68,7 @@ public class PluginSelection {
             PluginInformation local = localPlugins.get(proxy.info.name);
             PluginInformation description = availablePlugins.get(local.name);
 
-            if (description != null && (description.version == null || description.version.equals("")) ?
-            (local.version != null && local.version.equals("")) : !description.version.equals(local.version)) {
+            if (description.version != null && !description.version.equals(local.version)) {
                 toUpdate.add(description);
                 toUpdateStr.append(description.name+"\n");
             }
@@ -96,9 +94,11 @@ public class PluginSelection {
 
     public boolean finish() {
         Collection<PluginInformation> toDownload = new LinkedList<PluginInformation>();
+        Collection<String> installedPlugins = Main.pref.getCollection("plugins", null);
+
         String msg = "";
         for (Entry<String, Boolean> entry : pluginMap.entrySet()) {
-            if(entry.getValue())
+            if(entry.getValue() && !installedPlugins.contains(entry.getKey()))
             {
                 String name = entry.getKey();
                 PluginInformation ap = availablePlugins.get(name);
@@ -135,7 +135,7 @@ public class PluginSelection {
 
     /* return true when plugin list changed */
     public void drawPanel(JPanel pluginPanel) {
-        availablePlugins = getAvailablePlugins();
+        loadPlugins();
         Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
 
         if (pluginMap == null)
@@ -221,24 +221,8 @@ public class PluginSelection {
         pluginPanel.updateUI();
     }
 
-    /**
-     * Return information about a loaded plugin.
-     *
-     * Note that if you call this in your plugins bootstrap, you may get <code>null</code> if
-     * the plugin requested is not loaded yet.
-     *
-     * @return The PluginInformation to a specific plugin, but only if the plugin is loaded.
-     * If it is not loaded, <code>null</code> is returned.
-     */
-    private static PluginInformation getLoaded(String pluginName) {
-        for (PluginProxy p : PluginHandler.pluginList)
-            if (p.info.name.equals(pluginName))
-                return p.info;
-        return null;
-    }
-
-    private Map<String, PluginInformation> getAvailablePlugins() {
-        SortedMap<String, PluginInformation> availablePlugins = new TreeMap<String, PluginInformation>(new Comparator<String>(){
+    private void loadPlugins() {
+        availablePlugins = new TreeMap<String, PluginInformation>(new Comparator<String>(){
             public int compare(String o1, String o2) {
                 return o1.compareToIgnoreCase(o2);
             }
@@ -345,6 +329,5 @@ public class PluginSelection {
             if (!localPlugins.containsKey(proxy.info.name))
                 localPlugins.put(proxy.info.name, proxy.info);
         }
-        return availablePlugins;
     }
 }
