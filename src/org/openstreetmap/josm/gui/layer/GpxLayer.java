@@ -1092,8 +1092,8 @@ public class GpxLayer extends Layer {
             for (Collection<WayPoint> seg : track.trackSegs) {
                 WayPoint R = null;
                 for (WayPoint S : seg) {
+                    EastNorth c = R.getEastNorth();
                     if (R == null) {
-                        EastNorth c = R.getEastNorth();
                         R = S;
                         rx = c.east();
                         ry = c.north();
@@ -1106,7 +1106,6 @@ public class GpxLayer extends Layer {
                             bestTime = R.time;
                         }
                     } else {
-                        EastNorth c = S.getEastNorth();
                         sx = c.east();
                         sy = c.north();
                         double A = sy - ry;
