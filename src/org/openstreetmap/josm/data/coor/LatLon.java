@@ -147,12 +147,12 @@ public class LatLon extends Coordinate {
     }
 
     public LatLon interpolate(LatLon ll2, double proportion) {
-        return new LatLon(this.x + proportion * (ll2.x - this.x),
-            this.y + proportion * (ll2.y - this.y));
+        return new LatLon(this.lat() + proportion * (ll2.lat() - this.lat()),
+            this.lon() + proportion * (ll2.lon() - this.lon()));
     }
 
     public LatLon getCenter(LatLon ll2) {
-        return new LatLon((this.x + ll2.x)/2.0, (this.y + ll2.y)/2.0);
+        return new LatLon((this.lat() + ll2.lat())/2.0, (this.lon() + ll2.lon())/2.0);
     }
 
     @Override public String toString() {

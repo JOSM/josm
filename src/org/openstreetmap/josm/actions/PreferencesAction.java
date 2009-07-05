@@ -36,7 +36,7 @@ public class PreferencesAction extends JosmAction implements Runnable {
      * Launch the preferences dialog.
      */
     public void actionPerformed(ActionEvent e) {
-        new Thread(this).start();
+        run();
     }
 
     public void run() {
@@ -74,6 +74,7 @@ public class PreferencesAction extends JosmAction implements Runnable {
 
         dlg.setBounds(targetX, targetY, targetWidth, targetHeight);
 
+        dlg.setModal(true);
         dlg.setVisible(true);
         if (pane.getValue() instanceof Integer && (Integer)pane.getValue() == JOptionPane.OK_OPTION)
             prefDlg.ok();

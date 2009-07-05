@@ -8,13 +8,11 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -96,7 +94,7 @@ public class PluginSelection {
         drawPanel(pluginPanel);
     }
 
-    public Boolean finish() {
+    public boolean finish() {
         Collection<PluginInformation> toDownload = new LinkedList<PluginInformation>();
         String msg = "";
         for (Entry<String, Boolean> entry : pluginMap.entrySet()) {

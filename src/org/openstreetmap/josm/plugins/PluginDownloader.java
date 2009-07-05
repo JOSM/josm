@@ -10,26 +10,22 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.concurrent.Future;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.xml.sax.SAXException;
@@ -65,7 +61,10 @@ public class PluginDownloader {
             File pluginDir = Main.pref.getPluginsDirFile();
             if (!pluginDir.exists())
                 pluginDir.mkdirs();
+            Main.pleaseWaitDlg.progress.setMaximum(toUpdate.size());
+            int progressValue = 0;
             for (PluginInformation d : toUpdate) {
+                Main.pleaseWaitDlg.progress.setValue(progressValue++);
                 Main.pleaseWaitDlg.currentAction.setText(tr("Downloading Plugin {0}...", d.name));
                 File pluginFile = new File(pluginDir, d.name + ".jar.new");
                 if(download(d, pluginFile))
@@ -144,15 +143,12 @@ public class PluginDownloader {
     }
 
     public Collection<PluginInformation> download(Collection<PluginInformation> download) {
+        // Execute task in current thread instead of executing it in other thread and waiting for result
+        // Waiting for result is not a good idea because the waiting thread will probably be either EDT
+        // or worker thread. Blocking one of these threads will cause deadlock
         UpdateTask t = new UpdateTask(download, false);
-        try {
-            Future<UpdateTask> ta = Main.worker.submit(t, t);
-            t = ta.get();
-            return t.failed;
-        }
-        catch(java.lang.InterruptedException e) {e.printStackTrace();}
-        catch(java.util.concurrent.ExecutionException e) {e.printStackTrace();}
-        return download;
+        t.run();
+        return t.failed;
     }
 
     public static boolean moveUpdatedPlugins() {

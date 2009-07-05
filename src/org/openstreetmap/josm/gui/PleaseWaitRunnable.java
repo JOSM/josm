@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +36,27 @@ public abstract class PleaseWaitRunnable implements Runnable {
 
     private final String title;
 
+    private ActionListener cancelListener = new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+            if (!cancelled) {
+                cancelled = true;
+                cancel();
+            }
+        }
+    };
+
+    private WindowListener windowListener = new WindowAdapter(){
+        @Override public void windowClosing(WindowEvent e) {
+            if (!closeDialogCalled) {
+                if (!cancelled) {
+                    cancelled = true;
+                    cancel();
+                }
+                closeDialog();
+            }
+        }
+    };
+
     /**
      * Create the runnable object with a given message for the user.
      */
@@ -52,53 +74,24 @@ public abstract class PleaseWaitRunnable implements Runnable {
     public PleaseWaitRunnable(String title, boolean ignoreException) {
         this.title = title;
         this.ignoreException = ignoreException;
-        Main.pleaseWaitDlg.cancel.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (!cancelled) {
-                    cancelled = true;
-                    cancel();
-                }
-            }
-        });
-        Main.pleaseWaitDlg.addWindowListener(new WindowAdapter(){
-            @Override public void windowClosing(WindowEvent e) {
-                if (!closeDialogCalled) {
-                    if (!cancelled) {
-                        cancelled = true;
-                        cancel();
-                    }
-                    closeDialog();
-                }
-            }
-        });
     }
 
-    public final void run() {
+    private void prepareDialog() {
+        // reset dialog state
+        errorMessage = null;
+        closeDialogCalled = false;
+
+        Main.pleaseWaitDlg.setTitle(title);
+        Main.pleaseWaitDlg.cancel.setEnabled(true);
+        Main.pleaseWaitDlg.setCustomText("");
+        Main.pleaseWaitDlg.cancel.addActionListener(cancelListener);
+        Main.pleaseWaitDlg.addWindowListener(windowListener);
+        Main.pleaseWaitDlg.setVisible(true);
+    }
+
+    private void doRealRun() {
         try {
             try {
-                if (cancelled)
-                    return; // since realRun isn't executed, do not call to finish
-
-                // reset dialog state
-                Main.pleaseWaitDlg.setTitle(title);
-                Main.pleaseWaitDlg.cancel.setEnabled(true);
-                Main.pleaseWaitDlg.setCustomText("");
-                errorMessage = null;
-                closeDialogCalled = false;
-
-                // show the dialog
-                synchronized (this) {
-                    EventQueue.invokeLater(new Runnable() {
-                        public void run() {
-                            synchronized (PleaseWaitRunnable.this) {
-                                PleaseWaitRunnable.this.notifyAll();
-                            }
-                            Main.pleaseWaitDlg.setVisible(true);
-                        }
-                    });
-                    try {wait();} catch (InterruptedException e) {}
-                }
-
                 realRun();
             } catch (SAXException x) {
                 x.printStackTrace();
@@ -128,6 +121,27 @@ public abstract class PleaseWaitRunnable implements Runnable {
                     }
                 });
             }
+        }
+    }
+
+    public final void run() {
+        if (cancelled)
+            return; // since realRun isn't executed, do not call to finish
+
+        if (EventQueue.isDispatchThread()) {
+            new Thread(new Runnable() {
+                public void run() {
+                    doRealRun();
+                }
+            }).start();
+            prepareDialog();
+        } else {
+            EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    prepareDialog();
+                }
+            });
+            doRealRun();
         }
     }
 
@@ -164,6 +178,8 @@ public abstract class PleaseWaitRunnable implements Runnable {
                     } finally {
                         Main.pleaseWaitDlg.setVisible(false);
                         Main.pleaseWaitDlg.dispose();
+                        Main.pleaseWaitDlg.removeWindowListener(windowListener);
+                        Main.pleaseWaitDlg.cancel.removeActionListener(cancelListener);
                     }
                     if (errorMessage != null && !silent) {
                         JOptionPane.showMessageDialog(Main.parent, errorMessage);
