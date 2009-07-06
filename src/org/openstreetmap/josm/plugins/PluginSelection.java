@@ -94,7 +94,7 @@ public class PluginSelection {
 
     public boolean finish() {
         Collection<PluginInformation> toDownload = new LinkedList<PluginInformation>();
-        Collection<String> installedPlugins = Main.pref.getCollection("plugins", null);
+        Collection<String> installedPlugins = Main.pref.getCollection("plugins", Collections.<String>emptySet());
 
         String msg = "";
         for (Entry<String, Boolean> entry : pluginMap.entrySet()) {
