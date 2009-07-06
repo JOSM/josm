@@ -80,8 +80,10 @@ public class OsmUrlToBounds {
     {
         // Truncate lat and lon to something more sensible
         int decimals = (int) Math.pow(10, (zoom / 3));
-        double lat = (Math.round(pos.lat() * decimals))/decimals;
-        double lon = (Math.round(pos.lon() * decimals))/decimals;
+        double lat = (Math.round(pos.lat() * decimals));
+        lat /= decimals;
+        double lon = (Math.round(pos.lon() * decimals));
+        lon /= decimals;
         return new String("http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
     }
 }
