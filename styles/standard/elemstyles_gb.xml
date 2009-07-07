@@ -7,8 +7,8 @@
  A general help about the mappaint rule syntax can be found in the elemstyles.xml file
 -->
 
-<rules name="standard">
-
+<rules name="standard" author="Ulf Lamping" version="1.0" shortdescription="British map overlay"
+	description="Special rules to take differences in the british area into account (e.g. traffic signs).">
 	<rule>
 		<condition k="restriction" v="no_left_turn"/>
 		<icon annotate="true" src="vehicle/restriction/turn_restrictions/ireland/no_left_turn.png" priority="10000" />
