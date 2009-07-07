@@ -38,17 +38,17 @@ public class ElemStyles
                 IconElemStyle style;
                 if((style = icons.get("n" + key + "=" + val)) != null)
                 {
-                    if(ret == null || style.priority > ret.priority)
+                    if((ret == null || style.priority > ret.priority) && style.check(keys))
                         ret = style;
                 }
                 if((style = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
                 {
-                    if(ret == null || style.priority > ret.priority)
+                    if((ret == null || style.priority > ret.priority) && style.check(keys))
                         ret = style;
                 }
                 if((style = icons.get("x" + key)) != null)
                 {
-                    if(ret == null || style.priority > ret.priority)
+                    if((ret == null || style.priority > ret.priority) && style.check(keys))
                         ret = style;
                 }
             }
@@ -69,36 +69,42 @@ public class ElemStyles
                 LineElemStyle styleLine;
                 String idx = "n" + key + "=" + val;
                 if((styleArea = areas.get(idx)) != null && (retArea == null
-                || styleArea.priority > retArea.priority) && (!noclosed || !styleArea.closed))
+                || styleArea.priority > retArea.priority) && (!noclosed
+                || !styleArea.closed) && styleArea.check(keys))
                     retArea = styleArea;
-                if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+                if((styleLine = lines.get(idx)) != null && (retLine == null
+                || styleLine.priority > retLine.priority) && styleLine.check(keys))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null)
+                if((styleLine = modifiers.get(idx)) != null && styleLine.check(keys))
                     over.put(idx, styleLine);
                 idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
                 if((styleArea = areas.get(idx)) != null && (retArea == null
-                || styleArea.priority > retArea.priority) && (!noclosed || !styleArea.closed))
+                || styleArea.priority > retArea.priority) && (!noclosed
+                || !styleArea.closed) && styleArea.check(keys))
                     retArea = styleArea;
-                if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+                if((styleLine = lines.get(idx)) != null && (retLine == null
+                || styleLine.priority > retLine.priority) && styleLine.check(keys))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null)
+                if((styleLine = modifiers.get(idx)) != null && styleLine.check(keys))
                     over.put(idx, styleLine);
                 idx = "x" + key;
                 if((styleArea = areas.get(idx)) != null && (retArea == null
-                || styleArea.priority > retArea.priority) && (!noclosed || !styleArea.closed))
+                || styleArea.priority > retArea.priority) && (!noclosed
+                || !styleArea.closed) && styleArea.check(keys))
                     retArea = styleArea;
-                if((styleLine = lines.get(idx)) != null && (retLine == null || styleLine.priority > retLine.priority))
+                if((styleLine = lines.get(idx)) != null && (retLine == null
+                || styleLine.priority > retLine.priority) && styleLine.check(keys))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null)
+                if((styleLine = modifiers.get(idx)) != null && styleLine.check(keys))
                     over.put(idx, styleLine);
             }
             over.remove(linestring);
@@ -176,40 +182,30 @@ public class ElemStyles
         styleSet = new HashMap<String, StyleSet>();
     }
 
-    private String getKey(String k, String v, String b)
+    public void add(String name, Rule r, LineElemStyle style)
     {
-        if(v != null)
-            return "n" + k + "=" + v;
-        else if(b != null)
-            return "b" + k  + "=" + OsmUtils.getNamedOsmBoolean(b);
-        else
-            return "x" + k;
-    }
-
-    public void add(String name, String k, String v, String b, LineElemStyle style)
-    {
-        String key = getKey(k,v,b);
+        String key = r.getKey();
         style.code = key;
         getStyleSet(name, true).lines.put(key, style);
     }
 
-    public void addModifier(String name, String k, String v, String b, LineElemStyle style)
+    public void addModifier(String name, Rule r, LineElemStyle style)
     {
-        String key = getKey(k,v,b);
+        String key = r.getKey();
         style.code = key;
         getStyleSet(name, true).modifiers.put(key, style);
     }
 
-    public void add(String name, String k, String v, String b, AreaElemStyle style)
+    public void add(String name, Rule r, AreaElemStyle style)
     {
-        String key = getKey(k,v,b);
+        String key = r.getKey();
         style.code = key;
         getStyleSet(name, true).areas.put(key, style);
     }
 
-    public void add(String name, String k, String v, String b, IconElemStyle style)
+    public void add(String name, Rule r, IconElemStyle style)
     {
-        String key = getKey(k,v,b);
+        String key = r.getKey();
         style.code = key;
         getStyleSet(name, true).icons.put(key, style);
     }

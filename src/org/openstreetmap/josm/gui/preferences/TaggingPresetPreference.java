@@ -3,27 +3,17 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -40,91 +30,33 @@ public class TaggingPresetPreference implements PreferenceSetting {
     }
 
     public static Collection<TaggingPreset> taggingPresets;
-    private JList taggingPresetSources;
+    private StyleSources sources;
     private JCheckBox sortMenu;
     private JCheckBox enableDefault;
 
     public void addGui(final PreferenceDialog gui) {
-
-        taggingPresetSources = new JList(new DefaultListModel());
         sortMenu = new JCheckBox(tr("Sort presets menu"),
                 Main.pref.getBoolean("taggingpreset.sortmenu", false));
         enableDefault = new JCheckBox(tr("Enable built-in defaults"),
                 Main.pref.getBoolean("taggingpreset.enable-defaults", true));
 
-        Collection<String> sources = Main.pref.getCollection("taggingpreset.sources", null);
-        if(sources != null)
-            for(String s : sources)
-                ((DefaultListModel)taggingPresetSources.getModel()).addElement(s);
-
-        JButton addAnno = new JButton(tr("Add"));
-        addAnno.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                String source = JOptionPane.showInputDialog(Main.parent, tr("Tagging preset source"));
-                if (source != null)
-                    ((DefaultListModel)taggingPresetSources.getModel()).addElement(source);
-            }
-        });
-
-        JButton editAnno = new JButton(tr("Edit"));
-        editAnno.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (taggingPresetSources.getSelectedIndex() == -1)
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
-                else {
-                    String source = JOptionPane.showInputDialog(Main.parent, tr("Tagging preset source"), taggingPresetSources.getSelectedValue());
-                    if (source != null)
-                        ((DefaultListModel)taggingPresetSources.getModel()).setElementAt(source, taggingPresetSources.getSelectedIndex());
-                }
-            }
-        });
-
-        JButton deleteAnno = new JButton(tr("Delete"));
-        deleteAnno.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (taggingPresetSources.getSelectedIndex() == -1)
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
-                else {
-                    ((DefaultListModel)taggingPresetSources.getModel()).remove(taggingPresetSources.getSelectedIndex());
-                }
-            }
-        });
-        taggingPresetSources.setVisibleRowCount(3);
-
-        taggingPresetSources.setToolTipText(tr("The sources (URL or filename) of tagging preset definition files. See http://josm.openstreetmap.de/wiki/TaggingPresets for help."));
-        addAnno.setToolTipText(tr("Add a new tagging preset source to the list."));
-        deleteAnno.setToolTipText(tr("Delete the selected source from the list."));
-
-        JPanel tpPanel = new JPanel();
-        tpPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Tagging Presets")));
-        tpPanel.setLayout(new GridBagLayout());
-        tpPanel.add(sortMenu, GBC.eol().insets(5,5,5,0));
-        tpPanel.add(enableDefault, GBC.eol().insets(5,5,5,0));
-        tpPanel.add(new JLabel(tr("Tagging preset sources")), GBC.eol().insets(5,5,5,0));
-        tpPanel.add(new JScrollPane(taggingPresetSources), GBC.eol().insets(5,0,5,0).fill(GBC.BOTH));
-        JPanel buttonPanel = new JPanel(new GridBagLayout());
-        tpPanel.add(buttonPanel, GBC.eol().insets(5,0,5,5).fill(GBC.HORIZONTAL));
-        buttonPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-        buttonPanel.add(addAnno, GBC.std().insets(0,5,0,0));
-        buttonPanel.add(editAnno, GBC.std().insets(5,5,5,0));
-        buttonPanel.add(deleteAnno, GBC.std().insets(0,5,0,0));
-        gui.map.add(tpPanel, GBC.eol().fill(GBC.BOTH));
+        JPanel panel = new JPanel(new GridBagLayout());
+        JScrollPane scrollpane = new JScrollPane(panel);
+        panel.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
+        panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
+        panel.add(enableDefault, GBC.eol().insets(5,0,5,0));
+        sources = new StyleSources("taggingpreset.sources", "taggingpreset.icon.sources",
+        "http://josm.openstreetmap.de/presets", false, tr("Tagging Presets"));
+        panel.add(sources, GBC.eol().fill(GBC.BOTH));
+        gui.mapcontent.addTab(tr("Tagging Presets"), scrollpane);
     }
 
     public boolean ok() {
-        boolean restart;
-        Main.pref.put("taggingpreset.enable-defaults", enableDefault.getSelectedObjects() != null);
-        restart = Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
-        int num = taggingPresetSources.getModel().getSize();
-        if (num > 0)
-        {
-            ArrayList<String> l = new ArrayList<String>();
-            for (int i = 0; i < num; ++i)
-                l.add((String)taggingPresetSources.getModel().getElementAt(i));
-            if(Main.pref.putCollection("taggingpreset.sources", l))
-                restart = true;
-        }
-        else if(Main.pref.putCollection("taggingpreset.sources", null))
+        boolean restart = Main.pref.put("taggingpreset.enable-defaults",
+        enableDefault.getSelectedObjects() != null);
+        if(Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null))
+            restart = true;
+        if(sources.finish())
             restart = true;
         return restart;
     }

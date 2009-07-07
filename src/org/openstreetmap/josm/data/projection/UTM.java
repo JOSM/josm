@@ -91,6 +91,10 @@ public class UTM implements Projection {
     {
         return Math.toRadians(-183.0 + (zone * 6.0));
     }
+    private double UTMCentralMeridianDeg(int zone)
+    {
+        return -183.0 + (zone * 6.0);
+    }
 
     /*
     * FootpointLatitude
@@ -323,17 +327,22 @@ public class UTM implements Projection {
     }
 
     public EastNorth latlon2eastNorth(LatLon p) {
-        EastNorth a = MapLatLonToXY(Math.toRadians(p.lat()), Math.toRadians(p.lon()), UTMCentralMeridian(33));
+        EastNorth a = MapLatLonToXY(Math.toRadians(p.lat()), Math.toRadians(p.lon()), UTMCentralMeridian(getzone()));
         return new EastNorth(a.east() * UTMScaleFactor + 3500000.0, a.north() * UTMScaleFactor);
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
-        return MapXYToLatLon((p.east()-3500000.0)/UTMScaleFactor, p.north()/UTMScaleFactor, UTMCentralMeridian(33));
+        return MapXYToLatLon((p.east()-3500000.0)/UTMScaleFactor, p.north()/UTMScaleFactor, UTMCentralMeridian(getzone()));
+    }
+
+    @Override public String toString() {
+        return tr("UTM Zone {0}", getzone());
     }
 
     /* TODO - support all UTM's not only zone 33 */
-    @Override public String toString() {
-        return tr("UTM Zone {0}", 33);
+    public int getzone()
+    {
+      return 33;
     }
 
     public String toCode() {
@@ -353,7 +362,7 @@ public class UTM implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-        new LatLon(-90.0, 14.0),
-        new LatLon(90.0, 22.0));
+        new LatLon(-85.0, UTMCentralMeridianDeg(getzone())-5.0),
+        new LatLon(85.0, UTMCentralMeridianDeg(getzone())+5.0));
     }
 }

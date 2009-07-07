@@ -84,7 +84,8 @@ public class MirroredInputStream extends InputStream {
         if (!destDirFile.exists())
             destDirFile.mkdirs();
 
-        localPath = "mirror_" + new File(url.getPath()).getName();
+        String a = url.toString().replaceAll("[^A-Za-z0-9_.-]", "_");
+        localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
         BufferedOutputStream bos = null;
         BufferedInputStream bis = null;

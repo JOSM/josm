@@ -44,6 +44,7 @@ public class PreferenceDialog extends JTabbedPane {
     public final JPanel audio = createPreferenceTab("audio", I18n.tr("Audio Settings"), I18n.tr("Settings for the audio player and audio markers."));
 
     public final javax.swing.JTabbedPane displaycontent = new javax.swing.JTabbedPane();
+    public final javax.swing.JTabbedPane mapcontent = new javax.swing.JTabbedPane();
 
     /**
      * Construct a JPanel for the preference settings. Layout is GridBagLayout
@@ -117,6 +118,7 @@ public class PreferenceDialog extends JTabbedPane {
         }
 
         display.add(displaycontent, GBC.eol().fill(GBC.BOTH));
+        map.add(mapcontent, GBC.eol().fill(GBC.BOTH));
         for (Iterator<PreferenceSetting> it = settings.iterator(); it.hasNext();) {
             try {
                 it.next().addGui(this);
@@ -149,11 +151,11 @@ public class PreferenceDialog extends JTabbedPane {
         settingsFactory.add(new ColorPreference.Factory());
         settingsFactory.add(new LafPreference.Factory());
         settingsFactory.add(new LanguagePreference.Factory());
-        settingsFactory.add(new MapPaintPreference.Factory());
         settingsFactory.add(new ServerAccessPreference.Factory());
         settingsFactory.add(new FilePreferences.Factory());
         settingsFactory.add(new ProxyPreferences.Factory());
         settingsFactory.add(new ProjectionPreference.Factory());
+        settingsFactory.add(new MapPaintPreference.Factory());
         settingsFactory.add(new TaggingPresetPreference.Factory());
         settingsFactory.add(new PluginPreference.Factory());
         settingsFactory.add(Main.toolbar);

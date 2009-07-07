@@ -1,6 +1,8 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 
@@ -19,9 +21,8 @@ public class ElemStyleHandler extends DefaultHandler
     RuleElem rule = new RuleElem();
 
     class RuleElem {
-        String key;
-        String value;
-        String boolValue;
+        Rule rule = new Rule();
+        Collection<Rule> rules;
         long scaleMax;
         long scaleMin;
         LineElemStyle line = new LineElemStyle();
@@ -30,10 +31,11 @@ public class ElemStyleHandler extends DefaultHandler
         IconElemStyle icon = new IconElemStyle();
         public void init()
         {
-            key = value = boolValue = null;
+            rules = null;
             scaleMax = 1000000000;
             scaleMin = 0;
             line.init();
+            rule.init();
             linemod.init();
             area.init();
             icon.init();
@@ -70,7 +72,7 @@ public class ElemStyleHandler extends DefaultHandler
     }
 
     private void error(String message) {
-        System.out.println(styleName + " (" + rule.key + "=" + rule.value + "): " + message);
+        System.out.println(styleName + " (" + rule.rule.key + "=" + rule.rule.value + "): " + message);
     }
 
     private void startElementLine(String qName, Attributes atts, LineElemStyle line) {
@@ -147,17 +149,28 @@ public class ElemStyleHandler extends DefaultHandler
             else if (qName.equals("condition") && inRule)
             {
                 inCondition=true;
+                Rule r = rule.rule;
+                if(r.key != null)
+                {
+                    if(rule.rules == null)
+                        rule.rules = new LinkedList<Rule>();
+                    r = new Rule();
+                    r.init();
+                    rule.rules.add(r);
+                }
                 for (int count=0; count<atts.getLength(); count++)
                 {
                     if(atts.getQName(count).equals("k"))
-                        rule.key = atts.getValue(count);
+                        r.key = atts.getValue(count);
                     else if(atts.getQName(count).equals("v"))
-                        rule.value = atts.getValue(count);
+                        r.value = atts.getValue(count);
                     else if(atts.getQName(count).equals("b"))
-                        rule.boolValue = atts.getValue(count);
+                        r.boolValue = atts.getValue(count);
                     else
                         error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                 }
+                if(r.key == null)
+                    error("The condition has no key!");
             }
             else if (qName.equals("line"))
             {
@@ -215,17 +228,29 @@ public class ElemStyleHandler extends DefaultHandler
         if (inRule && qName.equals("rule"))
         {
             if(hadLine)
-                styles.add(styleName, rule.key, rule.value, rule.boolValue,
+            {
+                rule.line.rules = rule.rules;
+                styles.add(styleName, rule.rule,
                 new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
+            }
             if(hadLineMod)
-                styles.addModifier(styleName, rule.key, rule.value, rule.boolValue,
+            {
+                rule.linemod.rules = rule.rules;
+                styles.addModifier(styleName, rule.rule,
                 new LineElemStyle(rule.linemod, rule.scaleMax, rule.scaleMin));
+            }
             if(hadIcon)
-                styles.add(styleName, rule.key, rule.value, rule.boolValue,
+            {
+                rule.icon.rules = rule.rules;
+                styles.add(styleName, rule.rule,
                 new IconElemStyle(rule.icon, rule.scaleMax, rule.scaleMin));
+            }
             if(hadArea)
-                styles.add(styleName, rule.key, rule.value, rule.boolValue,
+            {
+                rule.area.rules = rule.rules;
+                styles.add(styleName, rule.rule,
                 new AreaElemStyle(rule.area, rule.scaleMax, rule.scaleMin));
+            }
             inRule = false;
             hadLine = hadLineMod = hadIcon = hadArea = false;
             rule.init();

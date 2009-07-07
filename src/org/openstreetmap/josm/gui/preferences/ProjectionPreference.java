@@ -7,8 +7,10 @@ import java.awt.Color;
 import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
@@ -49,7 +51,7 @@ public class ProjectionPreference implements PreferenceSetting {
         }
 
         JPanel projPanel = new JPanel();
-        projPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray), tr("Map Projection")));
+        projPanel.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         projPanel.setLayout(new GridBagLayout());
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
@@ -57,7 +59,9 @@ public class ProjectionPreference implements PreferenceSetting {
         projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(coordinatesCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        gui.map.add(projPanel, GBC.eol().insets(0,0,0,10).fill(GBC.HORIZONTAL));
+        projPanel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
+        JScrollPane scrollpane = new JScrollPane(projPanel);
+        gui.mapcontent.addTab(tr("Map Projection"), scrollpane);
     }
 
     public boolean ok() {

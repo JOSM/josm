@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
-    private static String iconDirs;
+    private static Collection<String> iconDirs;
 
     public static ElemStyles getStyles()
     {
@@ -26,7 +28,7 @@ public class MapPaintStyles {
     public static ImageIcon getIcon(String name, String styleName)
     {
         List<String> dirs = new LinkedList<String>();
-        for(String fileset : iconDirs.split(";"))
+        for(String fileset : iconDirs)
         {
             String[] a;
             if(fileset.indexOf("=") >= 0)
@@ -48,22 +50,28 @@ public class MapPaintStyles {
     }
 
     public static void readFromPreferences() {
-        String[] a = null;
-
-        /* don't prefix icon path, as it should be generic */
-        String internalicon = "resource://images/styles/standard/;resource://images/styles/";
-        String internalfile = "resource://styles/standard/elemstyles.xml";
-
-        iconDirs = Main.pref.get("mappaint.icon.sources");
+        iconDirs = Main.pref.getCollection("mappaint.icon.sources", Collections.<String>emptySet());
         if(Main.pref.getBoolean("mappaint.icon.enable-defaults", true))
-            iconDirs = iconDirs == null || iconDirs.length() == 0 ? internalicon : iconDirs + ";" + internalicon;
-
-        String file = Main.pref.get("mappaint.style.sources");
-        if(Main.pref.getBoolean("mappaint.style.enable-defaults", true))
-            file = (file == null || file.length() == 0) ? internalfile : internalfile + ";" + file;
-
-        for(String fileset : file.split(";"))
         {
+            LinkedList<String> f = new LinkedList<String>(iconDirs);
+            /* don't prefix icon path, as it should be generic */
+            f.add("resource://images/styles/standard/");
+            f.add("resource://images/styles/");
+            iconDirs = f;
+        }
+
+        Collection<String> files = Main.pref.getCollection("mappaint.style.sources", Collections.<String>emptySet());
+        if(Main.pref.getBoolean("mappaint.style.enable-defaults", true))
+        {
+            LinkedList<String> f = new LinkedList<String>();
+            f.add("resource://styles/standard/elemstyles.xml");
+            f.addAll(files);
+            files = f;
+        }
+
+        for(String fileset : files)
+        {
+            String[] a = null;
             try
             {
                 if(fileset.indexOf("=") >= 0)
@@ -80,6 +88,7 @@ public class MapPaintStyles {
             {
                 System.out.println("Mappaint-Style \"" + a[0] + "\" file \"" + a[1] + "\"");
                 System.out.println("Mappaint-Style problems: " + e);
+                e.printStackTrace();
             }
         }
         iconDirs = null;
