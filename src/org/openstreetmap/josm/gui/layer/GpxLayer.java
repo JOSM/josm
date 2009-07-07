@@ -1092,7 +1092,7 @@ public class GpxLayer extends Layer {
             for (Collection<WayPoint> seg : track.trackSegs) {
                 WayPoint R = null;
                 for (WayPoint S : seg) {
-                    EastNorth c = R.getEastNorth();
+                    EastNorth c = S.getEastNorth();
                     if (R == null) {
                         R = S;
                         rx = c.east();
