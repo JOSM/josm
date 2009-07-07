@@ -97,7 +97,7 @@ public class GettingStarted extends JPanel {
             // 1. Not yet written - but so isn't the interval variable, so it gets updated anyway
             // 2. Cannot be written (e.g. while developing). Obviously we don't want to update
             //    everytime because of something we can't read.
-            return (Main.pref.getInteger("cache.motd.html.version", myVersion) == myVersion)
+            return (Main.pref.getInteger("cache.motd.html.version", -999) == myVersion)
             && Main.pref.get("cache.motd.html.lang").equals(myLang);
         }
     }
