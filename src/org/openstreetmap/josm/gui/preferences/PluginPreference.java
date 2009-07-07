@@ -27,6 +27,12 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class PluginPreference implements PreferenceSetting {
 
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new PluginPreference();
+        }
+    }
+
     private JPanel plugin;
     private JPanel pluginPanel = new NoHorizontalScrollPanel(new GridBagLayout());
     private PreferenceDialog gui;
@@ -116,7 +122,7 @@ public class PluginPreference implements PreferenceSetting {
         return selection.finish();
     }
 
-    class NoHorizontalScrollPanel extends JPanel implements Scrollable {
+    private static class NoHorizontalScrollPanel extends JPanel implements Scrollable {
         public NoHorizontalScrollPanel(GridBagLayout gridBagLayout) {
             super(gridBagLayout);
         }

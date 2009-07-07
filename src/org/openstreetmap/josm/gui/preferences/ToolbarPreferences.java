@@ -53,48 +53,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class ToolbarPreferences implements PreferenceSetting {
-
-    private final class Move implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("<") && actionsTree.getSelectionCount() > 0) {
-
-                int leadItem = selected.getSize();
-                if (selectedList.getSelectedIndex() != -1) {
-                    int[] indices = selectedList.getSelectedIndices();
-                    leadItem = indices[indices.length - 1];
-                }
-                for (TreePath selectedAction : actionsTree.getSelectionPaths()) {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectedAction.getLastPathComponent();
-                    if (node.getUserObject() == null)
-                        selected.add(leadItem++, null);
-                    else if (node.getUserObject() == null || node.getUserObject() instanceof Action)
-                        selected.add(leadItem++, ((Action)node.getUserObject()).getValue("toolbar"));
-                }
-            } else if (e.getActionCommand().equals(">") && selectedList.getSelectedIndex() != -1) {
-                while (selectedList.getSelectedIndex() != -1) {
-                    selected.remove(selectedList.getSelectedIndex());
-                }
-            } else if (e.getActionCommand().equals("up")) {
-                int i = selectedList.getSelectedIndex();
-                Object o = selected.get(i);
-                if (i != 0) {
-                    selected.remove(i);
-                    selected.add(i-1, o);
-                    selectedList.setSelectedIndex(i-1);
-                }
-            } else if (e.getActionCommand().equals("down")) {
-                int i = selectedList.getSelectedIndex();
-                Object o = selected.get(i);
-                if (i != selected.size()-1) {
-                    selected.remove(i);
-                    selected.add(i+1, o);
-                    selectedList.setSelectedIndex(i+1);
-                }
-            }
-        }
-    }
-    private Move moveAction = new Move();
+public class ToolbarPreferences implements PreferenceSettingFactory {
 
     /**
      * Key: Registered name (property "toolbar" of action).
@@ -103,256 +62,366 @@ public class ToolbarPreferences implements PreferenceSetting {
     private Map<String, Action> actions = new HashMap<String, Action>();
     private Map<String, Action> regactions = new HashMap<String, Action>();
 
-    private DefaultListModel selected = new DefaultListModel();
-
     private DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode("Actions");
-    private DefaultTreeModel actionsTreeModel = new DefaultTreeModel(rootActionsNode);
-    private JTree actionsTree = new JTree(actionsTreeModel);
-    private JList selectedList = new JList(selected);
-
-    private String movingComponent;
 
     public JToolBar control = new JToolBar();
 
-    private JButton upButton;
-    private JButton downButton;
+    public PreferenceSetting createPreferenceSetting() {
+        return new Settings(rootActionsNode);
+    }
 
-    public ToolbarPreferences() {
-        control.setFloatable(false);
+    public static class Settings implements PreferenceSetting {
 
-        actionsTree.setCellRenderer(new DefaultTreeCellRenderer() {
-            @Override
-            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-                    boolean leaf, int row, boolean hasFocus) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-                JLabel comp = (JLabel) super.getTreeCellRendererComponent(
-                        tree, value, sel, expanded, leaf, row, hasFocus);
-                if (node.getUserObject() == null) {
-                    comp.setText(tr("Separator"));
-                    comp.setIcon(ImageProvider.get("preferences/separator"));
-                }
-                else if (node.getUserObject() instanceof Action) {
-                    Action action = (Action) node.getUserObject();
-                    comp.setText((String) action.getValue(Action.NAME));
-                    comp.setIcon((Icon) action.getValue(Action.SMALL_ICON));
-                }
-                return comp;
-            }
-        });
+        private final class Move implements ActionListener {
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("<") && actionsTree.getSelectionCount() > 0) {
 
-        ListCellRenderer renderer = new DefaultListCellRenderer(){
-            @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                String s;
-                Icon i;
-                if (value != null) {
-                    Action action = getAction((String)value);
-                    s = (String) action.getValue(Action.NAME);
-                    i = (Icon) action.getValue(Action.SMALL_ICON);
-                } else {
-                    i = ImageProvider.get("preferences/separator");
-                    s = tr("Separator");
-                }
-                JLabel l = (JLabel)super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
-                l.setIcon(i);
-                return l;
-            }
-        };
-        selectedList.setCellRenderer(renderer);
-        selectedList.addListSelectionListener(new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent e) {
-                boolean sel = selectedList.getSelectedIndex() != -1;
-                if (sel)
-                    actionsTree.clearSelection();
-                upButton.setEnabled(sel);
-                downButton.setEnabled(sel);
-            }
-        });
-
-        selectedList.setDragEnabled(true);
-        selectedList.setTransferHandler(new TransferHandler() {
-            @Override
-            protected Transferable createTransferable(JComponent c) {
-                return new ActionTransferable(((JList)c).getSelectedValues());
-            }
-
-            @Override
-            public int getSourceActions(JComponent c) {
-                return TransferHandler.MOVE;
-            }
-
-            @Override
-            public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-                for (DataFlavor f : transferFlavors) {
-                    if (ACTION_FLAVOR.equals(f)) {
-                        return true;
+                    int leadItem = selected.getSize();
+                    if (selectedList.getSelectedIndex() != -1) {
+                        int[] indices = selectedList.getSelectedIndices();
+                        leadItem = indices[indices.length - 1];
+                    }
+                    for (TreePath selectedAction : actionsTree.getSelectionPaths()) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectedAction.getLastPathComponent();
+                        if (node.getUserObject() == null)
+                            selected.add(leadItem++, null);
+                        else if (node.getUserObject() == null || node.getUserObject() instanceof Action)
+                            selected.add(leadItem++, ((Action)node.getUserObject()).getValue("toolbar"));
+                    }
+                } else if (e.getActionCommand().equals(">") && selectedList.getSelectedIndex() != -1) {
+                    while (selectedList.getSelectedIndex() != -1) {
+                        selected.remove(selectedList.getSelectedIndex());
+                    }
+                } else if (e.getActionCommand().equals("up")) {
+                    int i = selectedList.getSelectedIndex();
+                    Object o = selected.get(i);
+                    if (i != 0) {
+                        selected.remove(i);
+                        selected.add(i-1, o);
+                        selectedList.setSelectedIndex(i-1);
+                    }
+                } else if (e.getActionCommand().equals("down")) {
+                    int i = selectedList.getSelectedIndex();
+                    Object o = selected.get(i);
+                    if (i != selected.size()-1) {
+                        selected.remove(i);
+                        selected.add(i+1, o);
+                        selectedList.setSelectedIndex(i+1);
                     }
                 }
-                return false;
+            }
+        }
+
+        private static class ActionTransferable implements Transferable {
+
+            private DataFlavor[] flavors = new DataFlavor[] { ACTION_FLAVOR };
+
+            private Object[] actions;
+
+            public ActionTransferable(Action action) {
+                this.actions = new Action[] { action };
             }
 
-            @Override
-            public void exportAsDrag(JComponent comp, InputEvent e, int action) {
-                super.exportAsDrag(comp, e, action);
-                movingComponent = "list";
+            public ActionTransferable(Object[] actions) {
+                this.actions = actions;
             }
 
-            @Override
-            public boolean importData(JComponent comp, Transferable t) {
-                try {
-                    int dropIndex = selectedList.locationToIndex(selectedList.getMousePosition(true));
-                    Object[] draggedData = (Object[]) t.getTransferData(ACTION_FLAVOR);
+            public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                return actions;
+            }
 
-                    Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
-                    int dataLength = draggedData.length;
+            public DataFlavor[] getTransferDataFlavors() {
+                return flavors;
+            }
 
-                    if (leadItem != null)
-                        for (int i = 0; i < dataLength; i++)
-                            if (leadItem.equals(draggedData[i]))
-                                return false;
+            public boolean isDataFlavorSupported(DataFlavor flavor) {
+                return flavors[0] == flavor;
+            }
+        }
 
-                    int dragLeadIndex = -1;
-                    boolean localDrop = "list".equals(movingComponent);
+        private final Move moveAction = new Move();
 
-                    if (localDrop) {
-                        dragLeadIndex = selected.indexOf(draggedData[0]);
-                        for (int i = 0; i < dataLength; i++)
-                            selected.removeElement(draggedData[i]);
+        private final DefaultListModel selected = new DefaultListModel();
+        private final JList selectedList = new JList(selected);
+
+        private final DefaultTreeModel actionsTreeModel;
+        private final JTree actionsTree;
+
+        private JButton upButton;
+        private JButton downButton;
+
+        private String movingComponent;
+
+        public Settings(DefaultMutableTreeNode rootActionsNode) {
+            actionsTreeModel = new DefaultTreeModel(rootActionsNode);
+            actionsTree = new JTree(actionsTreeModel);
+        }
+
+        private JButton createButton(String name) {
+            JButton b = new JButton();
+            if (name.equals("up"))
+                b.setIcon(ImageProvider.get("dialogs", "up"));
+            else if (name.equals("down"))
+                b.setIcon(ImageProvider.get("dialogs", "down"));
+            else
+                b.setText(name);
+            b.addActionListener(moveAction);
+            b.setActionCommand(name);
+            return b;
+        }
+
+        public void addGui(PreferenceDialog gui) {
+            actionsTree.setCellRenderer(new DefaultTreeCellRenderer() {
+                @Override
+                public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                        boolean leaf, int row, boolean hasFocus) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                    JLabel comp = (JLabel) super.getTreeCellRendererComponent(
+                            tree, value, sel, expanded, leaf, row, hasFocus);
+                    if (node.getUserObject() == null) {
+                        comp.setText(tr("Separator"));
+                        comp.setIcon(ImageProvider.get("preferences/separator"));
                     }
-                    int[] indices = new int[dataLength];
+                    else if (node.getUserObject() instanceof Action) {
+                        Action action = (Action) node.getUserObject();
+                        comp.setText((String) action.getValue(Action.NAME));
+                        comp.setIcon((Icon) action.getValue(Action.SMALL_ICON));
+                    }
+                    return comp;
+                }
+            });
 
-                    if (localDrop) {
-                        int adjustedLeadIndex = selected.indexOf(leadItem);
-                        int insertionAdjustment = dragLeadIndex <= adjustedLeadIndex ? 1 : 0;
-                        for (int i = 0; i < dataLength; i++) {
-                            selected.insertElementAt(draggedData[i], adjustedLeadIndex + insertionAdjustment + i);
-                            indices[i] = adjustedLeadIndex + insertionAdjustment + i;
-                        }
+            ListCellRenderer renderer = new DefaultListCellRenderer(){
+                @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    String s;
+                    Icon i;
+                    if (value != null) {
+                        Action action = Main.toolbar.getAction((String)value);
+                        s = (String) action.getValue(Action.NAME);
+                        i = (Icon) action.getValue(Action.SMALL_ICON);
                     } else {
-                        for (int i = 0; i < dataLength; i++) {
-                            selected.add(dropIndex, draggedData[i]);
-                            indices[i] = dropIndex + i;
+                        i = ImageProvider.get("preferences/separator");
+                        s = tr("Separator");
+                    }
+                    JLabel l = (JLabel)super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
+                    l.setIcon(i);
+                    return l;
+                }
+            };
+            selectedList.setCellRenderer(renderer);
+            selectedList.addListSelectionListener(new ListSelectionListener(){
+                public void valueChanged(ListSelectionEvent e) {
+                    boolean sel = selectedList.getSelectedIndex() != -1;
+                    if (sel)
+                        actionsTree.clearSelection();
+                    upButton.setEnabled(sel);
+                    downButton.setEnabled(sel);
+                }
+            });
+
+            selectedList.setDragEnabled(true);
+            selectedList.setTransferHandler(new TransferHandler() {
+                @Override
+                protected Transferable createTransferable(JComponent c) {
+                    return new ActionTransferable(((JList)c).getSelectedValues());
+                }
+
+                @Override
+                public int getSourceActions(JComponent c) {
+                    return TransferHandler.MOVE;
+                }
+
+                @Override
+                public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+                    for (DataFlavor f : transferFlavors) {
+                        if (ACTION_FLAVOR.equals(f)) {
+                            return true;
                         }
                     }
-                    selectedList.clearSelection();
-                    selectedList.setSelectedIndices(indices);
-                    movingComponent = "";
-                    return true;
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    return false;
                 }
-                return false;
-            }
 
-            @Override
-            protected void exportDone(JComponent source, Transferable data, int action) {
-                if (movingComponent.equals("list")) {
+                @Override
+                public void exportAsDrag(JComponent comp, InputEvent e, int action) {
+                    super.exportAsDrag(comp, e, action);
+                    movingComponent = "list";
+                }
+
+                @Override
+                public boolean importData(JComponent comp, Transferable t) {
                     try {
-                        Object[] draggedData = (Object[]) data.getTransferData(ACTION_FLAVOR);
-                        boolean localDrop = selected.contains(draggedData[0]);
+                        int dropIndex = selectedList.locationToIndex(selectedList.getMousePosition(true));
+                        Object[] draggedData = (Object[]) t.getTransferData(ACTION_FLAVOR);
+
+                        Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
+                        int dataLength = draggedData.length;
+
+                        if (leadItem != null)
+                            for (int i = 0; i < dataLength; i++)
+                                if (leadItem.equals(draggedData[i]))
+                                    return false;
+
+                        int dragLeadIndex = -1;
+                        boolean localDrop = "list".equals(movingComponent);
+
                         if (localDrop) {
-                            int[] indices = selectedList.getSelectedIndices();
-                            Arrays.sort(indices);
-                            for (int i = indices.length - 1; i >= 0; i--) {
-                                selected.remove(indices[i]);
+                            dragLeadIndex = selected.indexOf(draggedData[0]);
+                            for (int i = 0; i < dataLength; i++)
+                                selected.removeElement(draggedData[i]);
+                        }
+                        int[] indices = new int[dataLength];
+
+                        if (localDrop) {
+                            int adjustedLeadIndex = selected.indexOf(leadItem);
+                            int insertionAdjustment = dragLeadIndex <= adjustedLeadIndex ? 1 : 0;
+                            for (int i = 0; i < dataLength; i++) {
+                                selected.insertElementAt(draggedData[i], adjustedLeadIndex + insertionAdjustment + i);
+                                indices[i] = adjustedLeadIndex + insertionAdjustment + i;
+                            }
+                        } else {
+                            for (int i = 0; i < dataLength; i++) {
+                                selected.add(dropIndex, draggedData[i]);
+                                indices[i] = dropIndex + i;
                             }
                         }
+                        selectedList.clearSelection();
+                        selectedList.setSelectedIndices(indices);
+                        movingComponent = "";
+                        return true;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    movingComponent = "";
+                    return false;
                 }
-            }
-        });
 
-        actionsTree.setTransferHandler(new TransferHandler() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public int getSourceActions( JComponent c ){
-                return TransferHandler.MOVE;
-            }
-
-            @Override
-            protected void exportDone(JComponent source, Transferable data, int action) {
-            }
-
-            @Override
-            protected Transferable createTransferable(JComponent c) {
-                TreePath[] paths = actionsTree.getSelectionPaths();
-                List<String> dragActions = new LinkedList<String>();
-                for (TreePath path : paths) {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                    Object obj = node.getUserObject();
-                    if (obj == null) {
-                        dragActions.add(null);
-                    }
-                    else if (obj instanceof Action) {
-                        dragActions.add((String) ((Action) obj).getValue("toolbar"));
+                @Override
+                protected void exportDone(JComponent source, Transferable data, int action) {
+                    if (movingComponent.equals("list")) {
+                        try {
+                            Object[] draggedData = (Object[]) data.getTransferData(ACTION_FLAVOR);
+                            boolean localDrop = selected.contains(draggedData[0]);
+                            if (localDrop) {
+                                int[] indices = selectedList.getSelectedIndices();
+                                Arrays.sort(indices);
+                                for (int i = indices.length - 1; i >= 0; i--) {
+                                    selected.remove(indices[i]);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        movingComponent = "";
                     }
                 }
-                return new ActionTransferable(dragActions.toArray());
+            });
+
+            actionsTree.setTransferHandler(new TransferHandler() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public int getSourceActions( JComponent c ){
+                    return TransferHandler.MOVE;
+                }
+
+                @Override
+                protected void exportDone(JComponent source, Transferable data, int action) {
+                }
+
+                @Override
+                protected Transferable createTransferable(JComponent c) {
+                    TreePath[] paths = actionsTree.getSelectionPaths();
+                    List<String> dragActions = new LinkedList<String>();
+                    for (TreePath path : paths) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        Object obj = node.getUserObject();
+                        if (obj == null) {
+                            dragActions.add(null);
+                        }
+                        else if (obj instanceof Action) {
+                            dragActions.add((String) ((Action) obj).getValue("toolbar"));
+                        }
+                    }
+                    return new ActionTransferable(dragActions.toArray());
+                }
+            });
+            actionsTree.setDragEnabled(true);
+
+            final JPanel left = new JPanel(new GridBagLayout());
+            left.add(new JLabel(tr("Toolbar")), GBC.eol());
+            left.add(new JScrollPane(selectedList), GBC.std().fill(GBC.BOTH));
+
+            final JPanel right = new JPanel(new GridBagLayout());
+            right.add(new JLabel(tr("Available")), GBC.eol());
+            right.add(new JScrollPane(actionsTree), GBC.eol().fill(GBC.BOTH));
+
+            final JPanel buttons = new JPanel(new GridLayout(6,1));
+            buttons.add(upButton = createButton("up"));
+            buttons.add(createButton("<"));
+            buttons.add(createButton(">"));
+            buttons.add(downButton = createButton("down"));
+            upButton.setEnabled(false);
+            downButton.setEnabled(false);
+
+            final JPanel p = new JPanel();
+            p.setLayout(new LayoutManager(){
+                public void addLayoutComponent(String name, Component comp) {}
+                public void removeLayoutComponent(Component comp) {}
+                public Dimension minimumLayoutSize(Container parent) {
+                    Dimension l = left.getMinimumSize();
+                    Dimension r = right.getMinimumSize();
+                    Dimension b = buttons.getMinimumSize();
+                    return new Dimension(l.width+b.width+10+r.width,l.height+b.height+10+r.height);
+                }
+                public Dimension preferredLayoutSize(Container parent) {
+                    Dimension l = new Dimension(200, 200); //left.getPreferredSize();
+                    Dimension r = new Dimension(200, 200); //right.getPreferredSize();
+                    return new Dimension(l.width+r.width+10+buttons.getPreferredSize().width,Math.max(l.height, r.height));
+                }
+                public void layoutContainer(Container parent) {
+                    Dimension d = p.getSize();
+                    Dimension b = buttons.getPreferredSize();
+                    int width = (d.width-10-b.width)/2;
+                    left.setBounds(new Rectangle(0,0,width,d.height));
+                    right.setBounds(new Rectangle(width+10+b.width,0,width,d.height));
+                    buttons.setBounds(new Rectangle(width+5, d.height/2-b.height/2, b.width, b.height));
+                }
+            });
+            p.add(left);
+            p.add(buttons);
+            p.add(right);
+
+            JPanel panel = gui.createPreferenceTab("toolbar", tr("Toolbar customization"),
+                    tr("Customize the elements on the toolbar."), false);
+            panel.add(p, GBC.eol().fill(GBC.BOTH));
+
+            selected.removeAllElements();
+            for (String s : getToolString()) {
+                if (s.equals("|"))
+                    selected.addElement(null);
+                else if (Main.toolbar.getAction(s) != null)
+                    selected.addElement(s);
             }
-        });
-        actionsTree.setDragEnabled(true);
-    }
-
-    public void addGui(PreferenceDialog gui) {
-        final JPanel left = new JPanel(new GridBagLayout());
-        left.add(new JLabel(tr("Toolbar")), GBC.eol());
-        left.add(new JScrollPane(selectedList), GBC.std().fill(GBC.BOTH));
-
-        final JPanel right = new JPanel(new GridBagLayout());
-        right.add(new JLabel(tr("Available")), GBC.eol());
-        right.add(new JScrollPane(actionsTree), GBC.eol().fill(GBC.BOTH));
-
-        final JPanel buttons = new JPanel(new GridLayout(6,1));
-        buttons.add(upButton = createButton("up"));
-        buttons.add(createButton("<"));
-        buttons.add(createButton(">"));
-        buttons.add(downButton = createButton("down"));
-        upButton.setEnabled(false);
-        downButton.setEnabled(false);
-
-        final JPanel p = new JPanel();
-        p.setLayout(new LayoutManager(){
-            public void addLayoutComponent(String name, Component comp) {}
-            public void removeLayoutComponent(Component comp) {}
-            public Dimension minimumLayoutSize(Container parent) {
-                Dimension l = left.getMinimumSize();
-                Dimension r = right.getMinimumSize();
-                Dimension b = buttons.getMinimumSize();
-                return new Dimension(l.width+b.width+10+r.width,l.height+b.height+10+r.height);
-            }
-            public Dimension preferredLayoutSize(Container parent) {
-                Dimension l = new Dimension(200, 200); //left.getPreferredSize();
-                Dimension r = new Dimension(200, 200); //right.getPreferredSize();
-                return new Dimension(l.width+r.width+10+buttons.getPreferredSize().width,Math.max(l.height, r.height));
-            }
-            public void layoutContainer(Container parent) {
-                Dimension d = p.getSize();
-                Dimension b = buttons.getPreferredSize();
-                int width = (d.width-10-b.width)/2;
-                left.setBounds(new Rectangle(0,0,width,d.height));
-                right.setBounds(new Rectangle(width+10+b.width,0,width,d.height));
-                buttons.setBounds(new Rectangle(width+5, d.height/2-b.height/2, b.width, b.height));
-            }
-        });
-        p.add(left);
-        p.add(buttons);
-        p.add(right);
-
-        JPanel panel = gui.createPreferenceTab("toolbar", tr("Toolbar customization"),
-                tr("Customize the elements on the toolbar."), false);
-        panel.add(p, GBC.eol().fill(GBC.BOTH));
-
-        selected.removeAllElements();
-        for (String s : getToolString()) {
-            if (s.equals("|"))
-                selected.addElement(null);
-            else if (getAction(s) != null)
-                selected.addElement(s);
         }
+
+        public boolean ok() {
+            Collection<String> t = new LinkedList<String>();
+            for (int i = 0; i < selected.size(); ++i) {
+                if (selected.get(i) == null)
+                    t.add("|");
+                else
+                    t.add((String)((Main.toolbar.getAction((String)selected.get(i))).getValue("toolbar")));
+            }
+            Main.pref.putCollection("toolbar", t);
+            Main.toolbar.refreshToolbarControl();
+            return false;
+        }
+
     }
+
+    public ToolbarPreferences() {
+        control.setFloatable(false);
+    }
+
 
     private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
         Object userObject = null;
@@ -395,42 +464,13 @@ public class ToolbarPreferences implements PreferenceSetting {
                 rootActionsNode.add(new DefaultMutableTreeNode(a.getValue()));
         }
         rootActionsNode.add(new DefaultMutableTreeNode(null));
-        actionsTree.updateUI();
-        actionsTree.setRootVisible(false);
-        actionsTree.expandPath(new TreePath(rootActionsNode));
     }
 
     private static final String[] deftoolbar = {"open", "save", "exportgpx", "|",
     "download", "upload", "|", "undo", "redo", "|", "preference"};
 
-    private Collection<String> getToolString() {
+    private static Collection<String> getToolString() {
         return Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
-    }
-
-    private JButton createButton(String name) {
-        JButton b = new JButton();
-        if (name.equals("up"))
-            b.setIcon(ImageProvider.get("dialogs", "up"));
-        else if (name.equals("down"))
-            b.setIcon(ImageProvider.get("dialogs", "down"));
-        else
-            b.setText(name);
-        b.addActionListener(moveAction);
-        b.setActionCommand(name);
-        return b;
-    }
-
-    public boolean ok() {
-        Collection<String> t = new LinkedList<String>();
-        for (int i = 0; i < selected.size(); ++i) {
-            if (selected.get(i) == null)
-                t.add("|");
-            else
-                t.add((String)((getAction((String)selected.get(i))).getValue("toolbar")));
-        }
-        Main.pref.putCollection("toolbar", t);
-        refreshToolbarControl();
-        return false;
     }
 
     /**
@@ -462,30 +502,4 @@ public class ToolbarPreferences implements PreferenceSetting {
     private static DataFlavor ACTION_FLAVOR = new DataFlavor(
             AbstractAction.class, "ActionItem");
 
-    private class ActionTransferable implements Transferable {
-
-        private DataFlavor[] flavors = new DataFlavor[] { ACTION_FLAVOR };
-
-        private Object[] actions;
-
-        public ActionTransferable(Action action) {
-            this.actions = new Action[] { action };
-        }
-
-        public ActionTransferable(Object[] actions) {
-            this.actions = actions;
-        }
-
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-            return actions;
-        }
-
-        public DataFlavor[] getTransferDataFlavors() {
-            return flavors;
-        }
-
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return flavors[0] == flavor;
-        }
-    }
 }

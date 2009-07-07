@@ -19,6 +19,13 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 
 public class LanguagePreference implements PreferenceSetting {
+
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new LanguagePreference();
+        }
+    }
+
     /**
      * ComboBox with all available Translations
      */
@@ -53,12 +60,8 @@ public class LanguagePreference implements PreferenceSetting {
             }
         });
 
-        JPanel panel = null;
-        for(PreferenceSetting s : PreferenceDialog.settings)
-        {
-            if(s instanceof LafPreference)
-                panel = ((LafPreference)s).panel;
-        }
+        LafPreference lafPreference = gui.getSetting(LafPreference.class);
+        JPanel panel = lafPreference.panel;
         panel.add(new JLabel(tr("Language")), GBC.std().insets(20, 0, 0, 0));
         panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));

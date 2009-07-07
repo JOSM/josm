@@ -23,6 +23,13 @@ import org.openstreetmap.josm.tools.GBC;
  */
 
 public class AudioPreference implements PreferenceSetting {
+
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new AudioPreference();
+        }
+    }
+
     private JCheckBox audioMenuVisible = new JCheckBox(tr("Display the Audio menu."));
     private JCheckBox markerButtonLabels = new JCheckBox(tr("Label audio (and image and web) markers."));
     private JCheckBox markerAudioTraceVisible = new JCheckBox(tr("Display live audio trace."));

@@ -33,6 +33,12 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class TaggingPresetPreference implements PreferenceSetting {
 
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new TaggingPresetPreference();
+        }
+    }
+
     public static Collection<TaggingPreset> taggingPresets;
     private JList taggingPresetSources;
     private JCheckBox sortMenu;

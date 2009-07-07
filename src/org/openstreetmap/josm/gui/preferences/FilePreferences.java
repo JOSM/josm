@@ -18,6 +18,12 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class FilePreferences implements PreferenceSetting {
 
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new FilePreferences();
+        }
+    }
+
     private JCheckBox keepBackup = new JCheckBox(tr("Keep backup files"));
 
     public void addGui(PreferenceDialog gui) {

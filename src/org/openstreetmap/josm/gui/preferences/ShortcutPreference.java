@@ -3,16 +3,21 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Collection;
+
 import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
 
-import java.util.Collection;
-
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.gui.preferences.prefJPanel;
 
 public class ShortcutPreference implements PreferenceSetting {
+
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new ShortcutPreference();
+        }
+    }
 
     public void addGui(PreferenceDialog gui) {
         // icon source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
@@ -34,7 +39,7 @@ public class ShortcutPreference implements PreferenceSetting {
     }
 
     // Maybe move this to prefPanel? There's no need for it to be here.
-    private class scListModel extends AbstractTableModel {
+    private static class scListModel extends AbstractTableModel {
 //      private String[] columnNames = new String[]{tr("Action"), tr("Shortcut"), tr("Group"), tr("ID")};
         private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
         private Collection<Shortcut> data;

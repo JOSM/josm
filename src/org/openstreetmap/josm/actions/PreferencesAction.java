@@ -78,5 +78,6 @@ public class PreferencesAction extends JosmAction implements Runnable {
         dlg.setVisible(true);
         if (pane.getValue() instanceof Integer && (Integer)pane.getValue() == JOptionPane.OK_OPTION)
             prefDlg.ok();
+        dlg.dispose();
     }
 }

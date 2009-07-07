@@ -12,13 +12,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements PreferenceSetting {
+
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new ProjectionPreference();
+        }
+    }
 
     /**
      * Combobox with all projections available

@@ -19,6 +19,12 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class ProxyPreferences implements PreferenceSetting {
 
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new ProxyPreferences();
+        }
+    }
+
     public static final String PROXY_ENABLE = "proxy.enable";
     public static final String PROXY_HOST = "proxy.host";
     public static final String PROXY_PORT = "proxy.port";

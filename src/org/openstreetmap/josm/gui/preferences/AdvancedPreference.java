@@ -33,6 +33,12 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class AdvancedPreference implements PreferenceSetting {
 
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new AdvancedPreference();
+        }
+    }
+
     private Map<String,String> orig;
     private Map<String,String> defaults;
     private DefaultTableModel model;

@@ -6,9 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.ScrollPane;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -32,7 +34,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class PreferenceDialog extends JTabbedPane {
 
-    public final static Collection<PreferenceSetting> settings = new LinkedList<PreferenceSetting>();
+    private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
+    private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
 
     // some common tabs
     public final JPanel display = createPreferenceTab("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."));
@@ -40,7 +43,7 @@ public class PreferenceDialog extends JTabbedPane {
     public final JPanel map = createPreferenceTab("map", I18n.tr("Map Settings"), I18n.tr("Settings for the map projection and data interpretation."));
     public final JPanel audio = createPreferenceTab("audio", I18n.tr("Audio Settings"), I18n.tr("Settings for the audio player and audio markers."));
 
-  public final javax.swing.JTabbedPane displaycontent = new javax.swing.JTabbedPane();
+    public final javax.swing.JTabbedPane displaycontent = new javax.swing.JTabbedPane();
 
     /**
      * Construct a JPanel for the preference settings. Layout is GridBagLayout
@@ -104,6 +107,15 @@ public class PreferenceDialog extends JTabbedPane {
      */
     public PreferenceDialog() {
         super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
+
+        for (PreferenceSettingFactory factory:settingsFactory) {
+
+            PreferenceSetting setting = factory.createPreferenceSetting();
+            if (setting != null) {
+                settings.add(factory.createPreferenceSetting());
+            }
+        }
+
         display.add(displaycontent, GBC.eol().fill(GBC.BOTH));
         for (Iterator<PreferenceSetting> it = settings.iterator(); it.hasNext();) {
             try {
@@ -117,26 +129,40 @@ public class PreferenceDialog extends JTabbedPane {
         }
     }
 
+    public List<PreferenceSetting> getSettings() {
+        return settings;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T>  T getSetting(Class<? extends T> clazz) {
+        for (PreferenceSetting setting:settings) {
+            if (clazz.isAssignableFrom(setting.getClass())) {
+                return (T)setting;
+            }
+        }
+        return null;
+    }
+
     static {
         // order is important!
-        settings.add(new DrawingPreference());
-        settings.add(new ColorPreference());
-        settings.add(new LafPreference());
-        settings.add(new LanguagePreference());
-        settings.add(new MapPaintPreference());
-        settings.add(new ServerAccessPreference());
-        settings.add(new FilePreferences());
-        settings.add(new ProxyPreferences());
-        settings.add(new ProjectionPreference());
-        settings.add(new TaggingPresetPreference());
-        settings.add(new PluginPreference());
-        settings.add(Main.toolbar);
-        settings.add(new AudioPreference());
-        settings.add(new ShortcutPreference());
+        settingsFactory.add(new DrawingPreference.Factory());
+        settingsFactory.add(new ColorPreference.Factory());
+        settingsFactory.add(new LafPreference.Factory());
+        settingsFactory.add(new LanguagePreference.Factory());
+        settingsFactory.add(new MapPaintPreference.Factory());
+        settingsFactory.add(new ServerAccessPreference.Factory());
+        settingsFactory.add(new FilePreferences.Factory());
+        settingsFactory.add(new ProxyPreferences.Factory());
+        settingsFactory.add(new ProjectionPreference.Factory());
+        settingsFactory.add(new TaggingPresetPreference.Factory());
+        settingsFactory.add(new PluginPreference.Factory());
+        settingsFactory.add(Main.toolbar);
+        settingsFactory.add(new AudioPreference.Factory());
+        settingsFactory.add(new ShortcutPreference.Factory());
 
-        PluginHandler.getPreferenceSetting(settings);
+        PluginHandler.getPreferenceSetting(settingsFactory);
 
         // always the last: advanced tab
-        settings.add(new AdvancedPreference());
+        settingsFactory.add(new AdvancedPreference.Factory());
     }
 }

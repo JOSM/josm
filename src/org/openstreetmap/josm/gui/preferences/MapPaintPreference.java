@@ -5,6 +5,12 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 
 public class MapPaintPreference implements PreferenceSetting {
 
+    public static class Factory implements PreferenceSettingFactory {
+        public PreferenceSetting createPreferenceSetting() {
+            return new MapPaintPreference();
+        }
+    }
+
     public void addGui(final PreferenceDialog gui) {
         // this is intended for a future configuration panel for mappaint!
     }

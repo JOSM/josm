@@ -85,11 +85,11 @@ public class prefJPanel extends javax.swing.JPanel {
             for (int i = 0; i < 65534; i++) {
                 String s = KeyEvent.getKeyText(i);
                 if (s != null && s.length() > 0 && !s.contains("Unknown")) {
-                    list.put(new Integer(i), s);
+                    list.put(Integer.valueOf(i), s);
                     //System.out.println(i+": "+s);
                 }
             }
-            list.put(new Integer(-1), "");
+            list.put(Integer.valueOf(-1), "");
             return list;
         }
 

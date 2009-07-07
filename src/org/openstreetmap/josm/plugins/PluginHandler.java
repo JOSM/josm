@@ -8,14 +8,14 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -30,10 +30,10 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -175,12 +175,10 @@ public class PluginHandler {
         for (PluginProxy p : pluginList)
             p.addDownloadSelection(downloadSelections);
     }
-    public static void getPreferenceSetting(Collection<PreferenceSetting> settings)
+    public static void getPreferenceSetting(Collection<PreferenceSettingFactory> settings)
     {
         for (PluginProxy plugin : pluginList) {
-            PreferenceSetting p = plugin.getPreferenceSetting();
-            if (p != null)
-                settings.add(p);
+            settings.add(new PluginPreferenceFactory(plugin));
         }
     }
 
