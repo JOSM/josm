@@ -17,6 +17,12 @@ public class CachedLatLon extends LatLon {
         proj = null;
     }
 
+    public CachedLatLon(EastNorth eastNorth) {
+        super(Main.proj.eastNorth2latlon(eastNorth));
+        proj = Main.proj;
+        this.eastNorth = eastNorth;
+    }
+
     public final void setCoor(LatLon coor) {
         setLocation(coor.lon(), coor.lat());
         proj = null;

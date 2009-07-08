@@ -94,7 +94,7 @@ public class StyleSources extends JPanel {
         }
     }
 
-    public StyleSources(String pref, String iconpref, String url, boolean named, final String name)
+    public StyleSources(String pref, String iconpref, final String url, boolean named, final String name)
     {
         sourcesList = new JList(new DefaultListModel());
         sourcesDefaults = new JList(new DefaultListModel());
@@ -202,6 +202,21 @@ public class StyleSources extends JPanel {
             }
         });
 
+        JButton update = new JButton(tr("Update"));
+        update.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                MirroredInputStream.cleanup(url);
+                getDefaults(url);
+                int num = sourcesList.getModel().getSize();
+                if (num > 0)
+                {
+                    ArrayList<String> l = new ArrayList<String>();
+                    for (int i = 0; i < num; ++i)
+                        MirroredInputStream.cleanup((String)sourcesList.getModel().getElementAt(i));
+                }
+            }
+        });
+
         sourcesList.setToolTipText(tr("The XML source (URL or filename) for {0} definition files.", name));
         add.setToolTipText(tr("Add a new XML source to the list."));
         delete.setToolTipText(tr("Delete the selected source from the list."));
@@ -218,7 +233,8 @@ public class StyleSources extends JPanel {
         buttonPanel.add(add, GBC.std().insets(0,5,0,0));
         buttonPanel.add(edit, GBC.std().insets(5,5,5,0));
         buttonPanel.add(delete, GBC.std().insets(0,5,5,0));
-        buttonPanel.add(copy, GBC.std().insets(0,5,0,0));
+        buttonPanel.add(copy, GBC.std().insets(0,5,5,0));
+        buttonPanel.add(update, GBC.std().insets(0,5,0,0));
         if(iconsList != null)
         {
             add(new JLabel(tr("Icon paths")), GBC.eol().insets(5,-5,5,0));
@@ -264,6 +280,7 @@ public class StyleSources extends JPanel {
 
     public void getDefaults(String name)
     {
+        ((DefaultListModel)sourcesDefaults.getModel()).removeAllElements();
         String lang = Main.getLanguageCode()+"_";
         try
         {

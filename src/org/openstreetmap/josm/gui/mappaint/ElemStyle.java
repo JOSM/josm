@@ -18,7 +18,17 @@ abstract public class ElemStyle
 
     public Boolean equals(ElemStyle s)
     {
-        return s != null && s.code.equals(code);
+        return s != null && s.getCode().equals(getCode());
+    }
+    public String getCode()
+    {
+        if(code == null && rules != null)
+        {
+            code = "";
+            for(Rule r: rules)
+                code += r.toCode();
+        }
+        return code;
     }
     public boolean check(Map<String, String> keys)
     {

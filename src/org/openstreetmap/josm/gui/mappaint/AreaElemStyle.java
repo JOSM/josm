@@ -13,6 +13,7 @@ public class AreaElemStyle extends ElemStyle
         this.priority = a.priority;
         this.maxScale = maxScale;
         this.minScale = minScale;
+        this.rules = a.rules;
     }
 
     public AreaElemStyle(AreaElemStyle a, LineElemStyle l)
@@ -22,6 +23,7 @@ public class AreaElemStyle extends ElemStyle
         this.priority = a.priority;
         this.maxScale = a.maxScale;
         this.minScale = a.minScale;
+        this.rules = a.rules;
         this.line = l;
         this.code = a.code;
     }

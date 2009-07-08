@@ -36,11 +36,17 @@ public final class Node extends OsmPrimitive {
     }
 
     public final void setEastNorth(EastNorth eastNorth) {
-        coor.setEastNorth(eastNorth);
+        if(eastNorth != null)
+        {
+            if(coor != null)
+                coor.setEastNorth(eastNorth);
+            else
+                coor = new CachedLatLon(eastNorth);
+        }
     }
 
     public final EastNorth getEastNorth() {
-        return coor.getEastNorth();
+        return coor != null ? coor.getEastNorth() : null;
     }
 
     private static CoordinateFormat mCord;

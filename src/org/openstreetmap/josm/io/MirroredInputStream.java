@@ -63,6 +63,30 @@ public class MirroredInputStream extends InputStream {
        return file;
     }
 
+    static public void cleanup(String name)
+    {
+      cleanup(name, null);
+    }
+    static public void cleanup(String name, String destDir)
+    {
+        URL url;
+        try {
+            url = new URL(name);
+            if (!url.getProtocol().equals("file"))
+            {
+                String localPath = Main.pref.get("mirror." + url);
+                if (localPath != null && localPath.length() > 0)
+                {
+                    String[] lp = localPath.split(";");
+                    File lfile = new File(lp[1]);
+                    if(lfile.exists())
+                        lfile.delete();
+                }
+                Main.pref.put("mirror." + url, null);
+            }
+        } catch (java.net.MalformedURLException e) {}
+    }
+
     private File checkLocal(URL url, String destDir, long maxTime) {
         String localPath = Main.pref.get("mirror." + url);
         File file = null;

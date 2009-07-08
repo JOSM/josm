@@ -29,6 +29,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         this.priority = s.priority;
         this.maxScale = maxScale;
         this.minScale = minScale;
+        this.rules = s.rules;
     }
 
     public LineElemStyle(LineElemStyle s, Collection<LineElemStyle> overlays) {
@@ -43,6 +44,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         this.priority = s.priority;
         this.maxScale = s.maxScale;
         this.minScale = s.minScale;
+        this.rules = s.rules;
 
         this.overlays = overlays;
         this.code = s.code;

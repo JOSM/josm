@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,12 +21,20 @@ public class ElemStyles
         private HashMap<String, LineElemStyle> lines;
         private HashMap<String, AreaElemStyle> areas;
         private HashMap<String, LineElemStyle> modifiers;
+        private LinkedList<IconElemStyle> iconsList;
+        private LinkedList<LineElemStyle> linesList;
+        private LinkedList<AreaElemStyle> areasList;
+        private LinkedList<LineElemStyle> modifiersList;
         public StyleSet()
         {
             icons = new HashMap<String, IconElemStyle>();
             lines = new HashMap<String, LineElemStyle>();
             modifiers = new HashMap<String, LineElemStyle>();
             areas = new HashMap<String, AreaElemStyle>();
+            iconsList = new LinkedList<IconElemStyle>();
+            linesList = new LinkedList<LineElemStyle>();
+            modifiersList = new LinkedList<LineElemStyle>();
+            areasList = new LinkedList<AreaElemStyle>();
         }
         private IconElemStyle getNode(Map<String, String> keys)
         {
@@ -38,19 +47,24 @@ public class ElemStyles
                 IconElemStyle style;
                 if((style = icons.get("n" + key + "=" + val)) != null)
                 {
-                    if((ret == null || style.priority > ret.priority) && style.check(keys))
+                    if(ret == null || style.priority > ret.priority)
                         ret = style;
                 }
                 if((style = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
                 {
-                    if((ret == null || style.priority > ret.priority) && style.check(keys))
+                    if(ret == null || style.priority > ret.priority)
                         ret = style;
                 }
                 if((style = icons.get("x" + key)) != null)
                 {
-                    if((ret == null || style.priority > ret.priority) && style.check(keys))
+                    if(ret == null || style.priority > ret.priority)
                         ret = style;
                 }
+            }
+            for(IconElemStyle s : iconsList)
+            {
+                if((ret == null || s.priority > ret.priority) && s.check(keys))
+                    ret = s;
             }
             return ret;
         }
@@ -70,42 +84,59 @@ public class ElemStyles
                 String idx = "n" + key + "=" + val;
                 if((styleArea = areas.get(idx)) != null && (retArea == null
                 || styleArea.priority > retArea.priority) && (!noclosed
-                || !styleArea.closed) && styleArea.check(keys))
+                || !styleArea.closed))
                     retArea = styleArea;
                 if((styleLine = lines.get(idx)) != null && (retLine == null
-                || styleLine.priority > retLine.priority) && styleLine.check(keys))
+                || styleLine.priority > retLine.priority))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null && styleLine.check(keys))
+                if((styleLine = modifiers.get(idx)) != null)
                     over.put(idx, styleLine);
                 idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
                 if((styleArea = areas.get(idx)) != null && (retArea == null
                 || styleArea.priority > retArea.priority) && (!noclosed
-                || !styleArea.closed) && styleArea.check(keys))
+                || !styleArea.closed))
                     retArea = styleArea;
                 if((styleLine = lines.get(idx)) != null && (retLine == null
-                || styleLine.priority > retLine.priority) && styleLine.check(keys))
+                || styleLine.priority > retLine.priority))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null && styleLine.check(keys))
+                if((styleLine = modifiers.get(idx)) != null)
                     over.put(idx, styleLine);
                 idx = "x" + key;
                 if((styleArea = areas.get(idx)) != null && (retArea == null
                 || styleArea.priority > retArea.priority) && (!noclosed
-                || !styleArea.closed) && styleArea.check(keys))
+                || !styleArea.closed))
                     retArea = styleArea;
                 if((styleLine = lines.get(idx)) != null && (retLine == null
-                || styleLine.priority > retLine.priority) && styleLine.check(keys))
+                || styleLine.priority > retLine.priority))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null && styleLine.check(keys))
+                if((styleLine = modifiers.get(idx)) != null)
                     over.put(idx, styleLine);
+            }
+            for(AreaElemStyle s : areasList)
+            {
+                if((retArea == null || s.priority > retArea.priority)
+                && (!noclosed || !s.closed) && s.check(keys))
+                    retArea = s;
+            }
+            for(LineElemStyle s : linesList)
+            {
+                if((retLine == null || s.priority > retLine.priority)
+                && s.check(keys))
+                    retLine = s;
+            }
+            for(LineElemStyle s : modifiersList)
+            {
+                if(s.check(keys))
+                    over.put(s.getCode(), s);
             }
             over.remove(linestring);
             if(over.size() != 0 && retLine != null)
@@ -166,6 +197,11 @@ public class ElemStyles
                     if(s != null && !(s.closed && noclosed))
                         return true;
                 }
+                for(AreaElemStyle s : areasList)
+                {
+                    if(!(s.closed && noclosed) && s.check(o.keys))
+                        return true;
+                }
             }
             return false;
         }
@@ -182,32 +218,64 @@ public class ElemStyles
         styleSet = new HashMap<String, StyleSet>();
     }
 
-    public void add(String name, Rule r, LineElemStyle style)
+    public void add(String name, Rule r, Collection<Rule> rules, LineElemStyle style)
     {
-        String key = r.getKey();
-        style.code = key;
-        getStyleSet(name, true).lines.put(key, style);
+        if(rules != null)
+        {
+            style.rules = rules;
+            getStyleSet(name, true).linesList.add(style);
+        }
+        else
+        {
+            String key = r.getKey();
+            style.code = key;
+            getStyleSet(name, true).lines.put(key, style);
+        }
     }
 
-    public void addModifier(String name, Rule r, LineElemStyle style)
+    public void addModifier(String name, Rule r, Collection<Rule> rules, LineElemStyle style)
     {
-        String key = r.getKey();
-        style.code = key;
-        getStyleSet(name, true).modifiers.put(key, style);
+        if(rules != null)
+        {
+            style.rules = rules;
+            getStyleSet(name, true).modifiersList.add(style);
+        }
+        else
+        {
+            String key = r.getKey();
+            style.code = key;
+            getStyleSet(name, true).modifiers.put(key, style);
+        }
     }
 
-    public void add(String name, Rule r, AreaElemStyle style)
+    public void add(String name, Rule r, Collection<Rule> rules, AreaElemStyle style)
     {
-        String key = r.getKey();
-        style.code = key;
-        getStyleSet(name, true).areas.put(key, style);
+        if(rules != null)
+        {
+            style.rules = rules;
+            getStyleSet(name, true).areasList.add(style);
+        }
+        else
+        {
+            String key = r.getKey();
+            style.code = key;
+            getStyleSet(name, true).areas.put(key, style);
+        }
     }
 
-    public void add(String name, Rule r, IconElemStyle style)
+    public void add(String name, Rule r, Collection<Rule> rules, IconElemStyle style)
     {
-        String key = r.getKey();
-        style.code = key;
-        getStyleSet(name, true).icons.put(key, style);
+        if(rules != null)
+        {
+            style.rules = rules;
+            getStyleSet(name, true).iconsList.add(style);
+        }
+        else
+        {
+            String key = r.getKey();
+            style.code = key;
+            getStyleSet(name, true).icons.put(key, style);
+        }
     }
 
     private StyleSet getStyleSet(String name, boolean create)

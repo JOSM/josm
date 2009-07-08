@@ -154,8 +154,8 @@ public class ElemStyleHandler extends DefaultHandler
                 {
                     if(rule.rules == null)
                         rule.rules = new LinkedList<Rule>();
+                    rule.rules.add(new Rule(rule.rule));
                     r = new Rule();
-                    r.init();
                     rule.rules.add(r);
                 }
                 for (int count=0; count<atts.getLength(); count++)
@@ -229,26 +229,22 @@ public class ElemStyleHandler extends DefaultHandler
         {
             if(hadLine)
             {
-                rule.line.rules = rule.rules;
-                styles.add(styleName, rule.rule,
+                styles.add(styleName, rule.rule, rule.rules,
                 new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
             }
             if(hadLineMod)
             {
-                rule.linemod.rules = rule.rules;
-                styles.addModifier(styleName, rule.rule,
+                styles.addModifier(styleName, rule.rule, rule.rules,
                 new LineElemStyle(rule.linemod, rule.scaleMax, rule.scaleMin));
             }
             if(hadIcon)
             {
-                rule.icon.rules = rule.rules;
-                styles.add(styleName, rule.rule,
+                styles.add(styleName, rule.rule, rule.rules,
                 new IconElemStyle(rule.icon, rule.scaleMax, rule.scaleMin));
             }
             if(hadArea)
             {
-                rule.area.rules = rule.rules;
-                styles.add(styleName, rule.rule,
+                styles.add(styleName, rule.rule, rule.rules,
                 new AreaElemStyle(rule.area, rule.scaleMax, rule.scaleMin));
             }
             inRule = false;
