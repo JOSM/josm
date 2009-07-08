@@ -64,7 +64,7 @@ public class ImageProvider {
         ImageIcon icon = getIfAvailable(subdir, name);
         if (icon == null) {
             String ext = name.indexOf('.') != -1 ? "" : ".png";
-            throw new NullPointerException("/images/"+subdir+name+ext+" not found");
+            throw new NullPointerException("/images/"+subdir+"/"+name+ext+" not found");
         }
         return icon;
     }

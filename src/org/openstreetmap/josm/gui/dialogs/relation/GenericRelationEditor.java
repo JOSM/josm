@@ -49,6 +49,37 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
+enum WayConnectionType
+{
+    none,
+    head_to_head,
+    tail_to_tail,
+    head_to_tail,
+    tail_to_head;
+    @Override
+    public String toString()
+    {
+        String  result = "";
+        switch(this)
+        {
+        case head_to_head:
+            result = "-><-";
+            break;
+        case head_to_tail:
+            result = "->->";
+            break;
+        case tail_to_head:
+            result = "<-<-";
+            break;
+        case tail_to_tail:
+            result = "<-->";
+            break;
+        }
+
+        return result;
+    }
+}
+
 /**
  * This dialog is for editing relations.
  *
@@ -235,7 +266,7 @@ public class GenericRelationEditor extends RelationEditor {
      * @return JPanel with basic buttons
      */
     private JPanel setupBasicButtons() {
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 3));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 4));
 
         buttonPanel.add(createButton(marktr("Move Up"), "moveup", tr("Move the currently selected members up"), KeyEvent.VK_N, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -254,6 +285,13 @@ public class GenericRelationEditor extends RelationEditor {
                 tr("Remove all currently selected objects from relation"), KeyEvent.VK_S, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteSelected();
+            }
+        }));
+
+        buttonPanel.add(createButton(marktr("Sort"), "sort",
+                tr("Sort the selected relation members or the whole list"), KeyEvent.VK_O, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sort();
             }
         }));
 
@@ -287,6 +325,204 @@ public class GenericRelationEditor extends RelationEditor {
 
         return buttonPanel;
     }
+
+    private class NodeCompare implements java.util.Comparator<Node>
+    {
+        public int compare(Node a, Node b)
+        {
+            int result = 0;
+
+            if ((a.id == 0) && (b.id == 0))
+            {
+                if (a.getCoor().lat() == b.getCoor().lat())
+                {
+                    result = Double.compare(a.getCoor().lon(), b.getCoor().lon());
+                }
+                else
+                {
+                    result = Double.compare(a.getCoor().lat(), b.getCoor().lat());
+                }
+            }
+            else
+            {
+                result = a.compareTo(b);
+            }
+
+            return result;
+        }
+    }
+
+    private void sort() {
+        java.util.TreeMap<Node, java.util.TreeSet<Integer>>   points =
+            new java.util.TreeMap<Node, java.util.TreeSet<Integer>>(new NodeCompare());
+        java.util.TreeMap<Node, Integer>   nodes =
+            new java.util.TreeMap<Node, Integer>(new NodeCompare());
+        int                                i;
+        boolean                            lastWayStartUsed = true;
+
+        // TODO: sort only selected rows
+
+        for (i = 1; i < clone.members.size(); ++i)
+        {
+            RelationMember  m = clone.members.get(i);
+            if (m.member.incomplete)
+            {
+                // TODO: emit some message that sorting failed
+                return;
+            }
+            try
+            {
+                Way w = (Way)m.member;
+                if (!points.containsKey(w.firstNode()))
+                {
+                    points.put(w.firstNode(), new java.util.TreeSet<Integer>());
+                }
+                points.get(w.firstNode()).add(Integer.valueOf(i));
+
+                if (!points.containsKey(w.lastNode()))
+                {
+                    points.put(w.lastNode(), new java.util.TreeSet<Integer>());
+                }
+                points.get(w.lastNode()).add(Integer.valueOf(i));
+            }
+            catch(ClassCastException e1)
+            {
+                try
+                {
+                    Node        n = (Node)m.member;
+                    nodes.put(n, Integer.valueOf(i));
+                }
+                catch(ClassCastException e2)
+                {
+                    System.err.println("relation member sort: member " + i + " is not a way or node");
+                    return;
+                }
+            }
+        }
+
+        for (i = 0; i < clone.members.size(); ++i)
+        {
+            RelationMember  m = clone.members.get(i);
+            Integer         m2 = null;
+            Node            searchNode = null;
+            try
+            {
+                Way             w = (Way)m.member;
+
+                if (lastWayStartUsed || ((i == 0) && !m.role.equals("backward")))
+                {
+                    // try end node
+                    searchNode = w.lastNode();
+                }
+                else /* if ((m2 == null) && (!lastWayStartUsed || (i == 0))) */
+                {
+                    searchNode = w.firstNode();
+                }
+            }
+            catch(ClassCastException e1)
+            {
+                try
+                {
+                    Node n = (Node)m.member;
+                    searchNode = n;
+                }
+                catch(ClassCastException e2)
+                {
+                    // impossible
+                }
+            }
+
+            try {
+                m2 = nodes.get(searchNode);
+                if (m2 == null)
+                {
+                    m2 = points.get(searchNode).first();
+                    if (m.member == clone.members.get(m2).member)
+                    {
+                        m2 = points.get(searchNode).last();
+                    }
+                }
+            } catch(NullPointerException f) {}
+            catch(java.util.NoSuchElementException e) {}
+
+            if (m2 == null)
+            {
+                // TODO: emit some message that sorting failed
+                System.err.println("relation member sort: could not find linked way or node for member " + i);
+                System.err.println("last way start used = " + lastWayStartUsed);
+                break;
+            }
+
+            if (m2 != null)
+            {
+                try
+                {
+                    Way next = (Way)clone.members.get(m2).member;
+                    lastWayStartUsed = searchNode.equals(next.firstNode());
+                }
+                catch(ClassCastException e)
+                {
+                }
+            }
+
+            if ((m2 < clone.members.size()) && ((i+1) < clone.members.size()))
+            {
+                RelationMember  a = clone.members.get(i+1);
+                RelationMember  b = clone.members.get(m2);
+
+                if (m2 != (i+1))
+                {
+                    System.err.println("swapping " + (i+1) + " and " + m2);
+                    clone.members.set(i+1, b);
+                    clone.members.set(m2, a);
+
+                    try
+                    {
+                        if (!points.get(((Way)b.member).firstNode()).remove(m2))
+                        {
+                            System.err.println("relation member sort: could not remove start mapping for " + m2);
+                        }
+                        if (!points.get(((Way)b.member).lastNode()).remove(m2))
+                        {
+                            System.err.println("relation member sort: could not remove end mapping for " + m2);
+                        }
+                    }
+                    catch(ClassCastException e1)
+                    {
+                        nodes.remove(b.member);
+                    }
+
+                    try
+                    {
+                        points.get(((Way)a.member).firstNode()).add(m2);
+                        points.get(((Way)a.member).lastNode()).add(m2);
+                    }
+                    catch(ClassCastException e1)
+                    {
+                        nodes.put((Node)a.member, m2);
+                    }
+                }
+                try
+                {
+                    if (!points.get(((Way)a.member).firstNode()).remove(i+1))
+                    {
+                        System.err.println("relation member sort: could not remove start mapping for " + (i+1));
+                    }
+                    if (!points.get(((Way)a.member).lastNode()).remove(i+1))
+                    {
+                        System.err.println("relation member sort: could not remove end mapping for " + (i+1));
+                    }
+                }
+                catch(ClassCastException e1)
+                {
+                    nodes.remove(a.member);
+                }
+            }
+        }
+
+        refreshTables();
+    }
+
 
     /**
      * This function saves the user's changes. Must be invoked manually.
@@ -323,6 +559,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     private void refreshTables() {
         // re-load property data
+        int numLinked = 0;
 
         propertyData.setRowCount(0);
         for (Entry<String, String> e : clone.entrySet()) {
@@ -339,11 +576,11 @@ public class GenericRelationEditor extends RelationEditor {
             // relation member is "linked" with the next, i.e. whether
             // (if both are ways) these ways are connected. It should
             // really produce a much more beautiful output (with a linkage
-            // symbol somehow places betweeen the two member lines!), and
+            // symbol somehow places between the two member lines!), and
             // it should cache results, so... FIXME ;-)
 
             RelationMember em = clone.members.get(i);
-            boolean linked = false;
+            WayConnectionType link = WayConnectionType.none;
             RelationMember m = em;
             RelationMember way1 = null;
             RelationMember way2 = null;
@@ -364,10 +601,10 @@ public class GenericRelationEditor extends RelationEditor {
                 }
             }
             if (way1 != null) {
-                int next = i+1;
-                while (next <= clone.members.size()) {
-                    m = clone.members.get(next == clone.members.size() ? 0 : next);
-                    next++;
+                int next = (i+1) % clone.members.size();
+                while (next != i) {
+                    m = clone.members.get(next);
+                    next = (next + 1) % clone.members.size();
                     depth = 0;
                     while (m != null && depth < 10) {
                         if (m.member instanceof Way) {
@@ -405,23 +642,25 @@ public class GenericRelationEditor extends RelationEditor {
                 }
 
                 if (way1first != null && way2first != null && way1first.equals(way2first)) {
-                    linked = true;
+                    link = WayConnectionType.tail_to_tail;
                 } else if (way1first != null && way2last != null && way1first.equals(way2last)) {
-                    linked = true;
+                    link = WayConnectionType.tail_to_head;
                 } else if (way1last != null && way2first != null && way1last.equals(way2first)) {
-                    linked = true;
+                    link = WayConnectionType.head_to_tail;
                 } else if (way1last != null && way2last != null && way1last.equals(way2last)) {
-                    linked = true;
+                    link = WayConnectionType.head_to_head;
                 }
 
                 // end of section to determine linkedness.
+                if (link != WayConnectionType.none)
+                {
+                    ++numLinked;
+                }
 
-                memberData.addRow(new Object[]{em.role, em.member, linked ? tr("yes") : tr("no")});
-            } else {
-                memberData.addRow(new Object[]{em.role, em.member, ""});
             }
+            memberData.addRow(new Object[]{em.role, em.member, link});
         }
-        status.setText(tr("Members: {0}", clone.members.size()));
+        status.setText(tr("Members: {0} (linked: {1})", clone.members.size(), numLinked));
     }
 
     private SideButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {
