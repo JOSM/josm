@@ -1,4 +1,7 @@
 <project name="josm" default="dist" basedir=".">
+	<property name="test.dir" value="test" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build"/>
 
 	<!-- Java classpath addition (all jar files to compile tests with this) -->
 	<path id="classpath">
@@ -8,7 +11,7 @@
 	</path>
 
 	<target name="dist" depends="compile">
-		
+
 		<exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
 			<env key="LANG" value="C"/>
 			<arg value="info"/>
@@ -38,8 +41,8 @@
 			<zipfileset dir="presets" prefix="presets" />
 			<zipfileset dir="images" prefix="images" />
 			<zipfileset src="lib/josm-translation.jar" />
-			
-			<!-- All jar files necessary to run only JOSM (no tests) -->			
+
+			<!-- All jar files necessary to run only JOSM (no tests) -->
 			<zipfileset src="lib/gettext-commons-0.9.6.jar" />
 			<zipfileset src="lib/metadata-extractor-2.3.1-nosun.jar" />
 		</jar>
@@ -76,5 +79,45 @@
 		<delete dir="dist" />
 	</target>
 
+	<path id="test.classpath">
+		<fileset dir="${test.dir}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="test-init">
+		<mkdir dir="${test.dir}/${build.dir}" />
+		<mkdir dir="${test.dir}/report" />
+	</target>
+
+	<target name="test-clean">
+		<delete dir="${test.dir}/${build.dir}"/>
+		<delete dir="${test.dir}/report"/>
+	</target>
+
+	<target name="test-compile" depends="test-init">
+		<javac srcdir="${src.dir}:${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
+				target="1.5" source="1.5" debug="on" encoding="UTF-8">
+			<compilerarg value="-Xlint:deprecation"/>
+		</javac>
+	</target>
+
+    <target name="test" depends="test-compile">
+        <junit printsummary="yes">
+        	<sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
+            <classpath>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/${build.dir}"/>
+            	<pathelement path="${test.dir}/config"/>
+            </classpath>
+            <formatter type="plain"/>
+            <batchtest fork="no" todir="${test.dir}/report">
+                <fileset dir="${test.dir}/unit" includes="**/*.java"/>
+            </batchtest>
+        </junit>
+    </target>
 
 </project>
