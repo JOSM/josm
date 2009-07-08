@@ -32,6 +32,7 @@ public class SequenceCommand extends Command {
      * @param sequenz The sequence that should be executed.
      */
     public SequenceCommand(String name, Collection<Command> sequenz) {
+        super();
         this.name = name;
         this.sequence = new Command[sequenz.size()];
         this.sequence = sequenz.toArray(this.sequence);
@@ -44,13 +45,13 @@ public class SequenceCommand extends Command {
         this(name, Arrays.asList(sequenz));
     }
 
-    public int executed_commands = 0;
     @Override public boolean executeCommand() {
         for (int i=0; i < sequence.length; i++) {
             Command c = sequence[i];
             boolean result = c.executeCommand();
-            if (!result)
+            if (!result) {
                 Main.debug("SequenceCommand, executing command[" + i + "] " +  c + " result: " + result);
+            }
             if (!result && !continueOnError) {
                 this.undoCommands(i-1);
                 return false;
@@ -71,8 +72,9 @@ public class SequenceCommand extends Command {
         // error.  We already undid the sub-commands.
         if (!sequence_complete)
             return;
-        for (int i = start; i >= 0; --i)
+        for (int i = start; i >= 0; --i) {
             sequence[i].undoCommand();
+        }
     }
 
     @Override public void undoCommand() {
@@ -80,14 +82,16 @@ public class SequenceCommand extends Command {
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
-        for (Command c : sequence)
+        for (Command c : sequence) {
             c.fillModifiedData(modified, deleted, added);
+        }
     }
 
     @Override public MutableTreeNode description() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(tr("Sequence")+": "+name);
-        for (Command c : sequence)
+        for (Command c : sequence) {
             root.add(c.description());
+        }
         return root;
     }
 }

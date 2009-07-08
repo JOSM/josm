@@ -63,6 +63,6 @@ public class RemoveRelationMemberCommand extends Command {
     @Override public MutableTreeNode description() {
         NameVisitor v = new NameVisitor();
         relation.visit(v);
-        return new DefaultMutableTreeNode(new JLabel(tr("RemoveRelationMember")+" "+tr(v.className)+" "+v.name, v.icon, JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(tr("RemoveRelationMember {0} {1}", tr(v.className), v.name), v.icon, JLabel.HORIZONTAL));
     }
 }

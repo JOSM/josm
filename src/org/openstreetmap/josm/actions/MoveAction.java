@@ -45,17 +45,16 @@ public class MoveAction extends JosmAction {
             directiontext = tr("right");
             sc = Shortcut.registerShortcut("core:moveright", tr("Move objects {0}", directiontext), KeyEvent.VK_RIGHT, Shortcut.GROUPS_ALT1+Shortcut.GROUP_DIRECT);
         }
-        if (text) {
+        if (text)
             return directiontext;
-        } else {
+        else
             return sc;
-        }
     }
 
     public MoveAction(Direction dir) {
         super(tr("Move {0}", calltosupermustbefirststatementinconstructor(dir, true)), null,
-              tr("Moves Objects {0}", calltosupermustbefirststatementinconstructor(dir, true)),
-              (Shortcut)calltosupermustbefirststatementinconstructor(dir, false), true);
+                tr("Moves Objects {0}", calltosupermustbefirststatementinconstructor(dir, true)),
+                (Shortcut)calltosupermustbefirststatementinconstructor(dir, false), true);
         myDirection = dir;
     }
 
@@ -91,11 +90,12 @@ public class MoveAction extends JosmAction {
         Command c = !Main.main.undoRedo.commands.isEmpty()
         ? Main.main.undoRedo.commands.getLast() : null;
 
-        if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).objects))
+        if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getMovedNodes())) {
             ((MoveCommand)c).moveAgain(distx, disty);
-        else
+        } else {
             Main.main.undoRedo.add(
                     c = new MoveCommand(selection, distx, disty));
+        }
 
         for (Node n : affectedNodes) {
             if (n.getCoor().isOutSideWorld()) {

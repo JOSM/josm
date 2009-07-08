@@ -366,10 +366,8 @@ public class GenericRelationEditor extends RelationEditor {
         {
             RelationMember  m = clone.members.get(i);
             if (m.member.incomplete)
-            {
                 // TODO: emit some message that sorting failed
                 return;
-            }
             try
             {
                 Way w = (Way)m.member;
@@ -764,20 +762,20 @@ public class GenericRelationEditor extends RelationEditor {
             try {
                 DataSet dataSet = reader.parseOsm();
                 if (dataSet != null) {
-                    final MergeVisitor visitor = new MergeVisitor(Main.main
-                            .editLayer().data, dataSet);
+                    final MergeVisitor visitor = new MergeVisitor(Main.main.map.mapView.getEditLayer()
+                            .data, dataSet);
                     visitor.merge();
 
                     // copy the merged layer's data source info
                     for (DataSource src : dataSet.dataSources) {
-                        Main.main.editLayer().data.dataSources.add(src);
+                        Main.main.map.mapView.getEditLayer().data.dataSources.add(src);
                     }
-                    Main.main.editLayer().fireDataChange();
+                    Main.main.map.mapView.getEditLayer().fireDataChange();
 
                     if (visitor.getConflicts().isEmpty())
                         return;
                     final ConflictDialog dlg = Main.map.conflictDialog;
-                    dlg.add(visitor.getConflicts());
+                    dlg.getConflicts().add(visitor.getConflicts());
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("There were conflicts during import."));
                     if (!dlg.isVisible()) {

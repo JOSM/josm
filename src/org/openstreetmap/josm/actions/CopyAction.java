@@ -47,7 +47,7 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
         if(noSelection()) return;
 
         Main.pasteBuffer = copyData();
-        Main.pasteSource = Main.main.editLayer();
+        Main.pasteSource = Main.main.createOrGetEditLayer();
         Main.main.menu.paste.setEnabled(true); /* now we have a paste buffer we can make paste available */
 
         for(JosmAction a : listeners) {

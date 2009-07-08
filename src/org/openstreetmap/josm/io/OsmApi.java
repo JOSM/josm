@@ -329,6 +329,8 @@ public class OsmApi extends OsmConnection {
         try {
             String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
             DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
+        } catch(OsmTransferException e) {
+            throw e;
         } catch(Exception e) {
             throw new OsmTransferException(e);
         } finally {
@@ -442,7 +444,7 @@ public class OsmApi extends OsmConnection {
                 activeConnection.disconnect();
 
                 if (retCode != 200)
-                    throw new OsmApiException(retCode,errorHeader,responseBody.toString());
+                    throw new OsmApiException(retCode,errorHeader.trim(),responseBody.toString().trim());
 
                 return responseBody.toString();
             } catch (UnknownHostException e) {

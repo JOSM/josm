@@ -9,28 +9,23 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Represents a the resolution of a conflict between the coordinates of two {@see Node}s
  *
  */
-public class DeletedStateConflictResolveCommand extends Command {
+public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
 
-    /** my primitive (in the local dataset). merge decisions are applied to this
-     *  node
-     */
-    private final OsmPrimitive my;
-    /** their primitive (in the server dataset) */
-    private final OsmPrimitive their;
+    /** the conflict to resolve */
+    private Conflict<OsmPrimitive> conflict;
 
     /** the merge decision */
     private final MergeDecisionType decision;
-
-
 
     /**
      * constructor
@@ -40,8 +35,7 @@ public class DeletedStateConflictResolveCommand extends Command {
      * @param decision the merge decision
      */
     public DeletedStateConflictResolveCommand(OsmPrimitive my, OsmPrimitive their, MergeDecisionType decision) {
-        this.my = my;
-        this.their = their;
+        this.conflict = new Conflict<OsmPrimitive>(my, their);
         this.decision = decision;
     }
 
@@ -50,7 +44,7 @@ public class DeletedStateConflictResolveCommand extends Command {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve conflicts in deleted state in {0}",my.id),
+                        tr("Resolve conflicts in deleted state in {0}",conflict.getMy().id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
@@ -64,43 +58,33 @@ public class DeletedStateConflictResolveCommand extends Command {
         //
         super.executeCommand();
 
+        OsmDataLayer layer = getLayer();
+
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
-            if (my.deleted) {
+            if (conflict.getMy().deleted) {
                 // because my was involved in a conflict it my still be referred
                 // to from a way or a relation. Fix this now.
                 //
-                Main.main.editLayer().data.unlinkReferencesToPrimitive(my);
+                layer.data.unlinkReferencesToPrimitive(conflict.getMy());
             }
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
-            if (their.deleted) {
-                Main.main.editLayer().data.unlinkReferencesToPrimitive(my);
-                my.delete(true);
+            if (conflict.getTheir().deleted) {
+                layer.data.unlinkReferencesToPrimitive(conflict.getMy());
+                conflict.getMy().delete(true);
             } else {
-                my.deleted = their.deleted;
+                conflict.getMy().deleted = conflict.getTheir().deleted;
             }
         } else
             // should not happen
             throw new IllegalStateException(tr("cannot resolve undecided conflict"));
 
+        rememberConflict(conflict);
         return true;
     }
 
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
-        modified.add(my);
-    }
-
-    @Override
-    public void undoCommand() {
-        // restore former state of modified primitives
-        //
-        super.undoCommand();
-
-        // restore a conflict if necessary
-        //
-        if (!Main.map.conflictDialog.conflicts.containsKey(my)) {
-            Main.map.conflictDialog.addConflict(my, their);
-        }
+        modified.add(conflict.getMy());
     }
 }

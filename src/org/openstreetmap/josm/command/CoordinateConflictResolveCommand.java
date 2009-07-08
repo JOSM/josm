@@ -9,11 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -21,14 +19,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Represents a the resolution of a conflict between the coordinates of two {@see Node}s
  *
  */
-public class CoordinateConflictResolveCommand extends Command {
+public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
 
-    /** my node (in the local dataset). merge decisions are applied to this
-     *  node
-     */
-    private final Node my;
-    /** their node (in the server dataset) */
-    private final Node their;
+    /** the conflict to resolve */
+    private Conflict<Node> conflict;
 
     /** the merge decision */
     private final MergeDecisionType decision;
@@ -41,8 +35,7 @@ public class CoordinateConflictResolveCommand extends Command {
      * @param decision the merge decision
      */
     public CoordinateConflictResolveCommand(Node my, Node their, MergeDecisionType decision) {
-        this.my = my;
-        this.their = their;
+        this.conflict = new Conflict<Node>(my,their);
         this.decision = decision;
     }
 
@@ -51,7 +44,7 @@ public class CoordinateConflictResolveCommand extends Command {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve conflicts in coordinates in {0}",my.id),
+                        tr("Resolve conflicts in coordinates in {0}",conflict.getMy().id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
@@ -68,10 +61,16 @@ public class CoordinateConflictResolveCommand extends Command {
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
             // do nothing
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
+            Node my = conflict.getMy();
+            Node their = conflict.getTheir();
             my.setCoor(their.getCoor());
         } else
             // should not happen
             throw new IllegalStateException(tr("cannot resolve undecided conflict"));
+
+        // remember the layer this command was applied to
+        //
+        rememberConflict(conflict);
 
         return true;
     }
@@ -79,19 +78,6 @@ public class CoordinateConflictResolveCommand extends Command {
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
-        modified.add(my);
-    }
-
-    @Override
-    public void undoCommand() {
-        // restore former state of modified primitives
-        //
-        super.undoCommand();
-
-        // restore a conflict if necessary
-        //
-        if (!Main.map.conflictDialog.conflicts.containsKey(my)) {
-            Main.map.conflictDialog.addConflict(my, their);
-        }
+        modified.add(conflict.getMy());
     }
 }

@@ -10,25 +10,31 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.DefaultListModel;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.data.conflict.IConflictListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -39,144 +45,118 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public final class ConflictDialog extends ToggleDialog {
+/**
+ * This dialog displays the {@see ConflictCollection} of the active {@see OsmDataLayer} in a toggle
+ * dialog on the right of the main frame.
+ * 
+ */
+public final class ConflictDialog extends ToggleDialog implements LayerChangeListener, IConflictListener, SelectionChangedListener{
 
-    public final Map<OsmPrimitive, OsmPrimitive> conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
-    private final DefaultListModel model = new DefaultListModel();
-    private final JList displaylist = new JList(model);
+    static public Color getColor() {
+        return Main.pref.getColor(marktr("conflict"), Color.gray);
+    }
 
-    private final SideButton sbSelect = new SideButton(marktr("Select"), "select", "Conflict",
-            tr("Set the selected elements on the map to the selected items in the list above."), new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-            Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
-            for (Object o : displaylist.getSelectedValues()) {
-                sel.add((OsmPrimitive)o);
-            }
-            Main.ds.setSelected(sel);
-        }
-    });
-    private final SideButton sbResolve = new SideButton(marktr("Resolve"), "conflict", "Conflict",
-            tr("Open a merge dialog of all selected items in the list above."), new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-            resolve();
-        }
-    });
+    /** the  collection of conflicts displayed by this conflict dialog*/
+    private ConflictCollection conflicts;
 
-    public ConflictDialog() {
-        super(tr("Conflict"), "conflict", tr("Merging conflicts."),
-                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
-        displaylist.setCellRenderer(new OsmPrimitivRenderer());
-        displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        displaylist.addMouseListener(new MouseAdapter(){
+    /** the model for the list of conflicts */
+    private ConflictListModel model;
+    /** the list widget for the list of conflicts */
+    private JList lstConflicts;
+
+    private ResolveAction actResolve;
+    private SelectAction actSelect;
+
+    private OsmDataLayer layer = null;
+
+
+    /**
+     * builds the GUI
+     */
+    protected void build() {
+        model = new ConflictListModel();
+
+        lstConflicts = new JList(model);
+        lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
+        lstConflicts.addMouseListener(new MouseAdapter(){
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() >= 2) {
                     resolve();
                 }
             }
         });
-        add(new JScrollPane(displaylist), BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel(new GridLayout(1,2));
-        buttonPanel.add(sbResolve);
-        buttonPanel.add(sbSelect);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        DataSet.selListeners.add(new SelectionChangedListener(){
-            public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-                displaylist.clearSelection();
-                for (OsmPrimitive osm : newSelection) {
-                    if (conflicts.containsKey(osm)) {
-                        int pos = model.indexOf(osm);
-                        displaylist.addSelectionInterval(pos, pos);
-                    }
-                }
-            }
-        });
-        displaylist.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+        lstConflicts.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent e) {
                 Main.map.mapView.repaint();
             }
         });
 
-        rebuildList();
+        add(new JScrollPane(lstConflicts), BorderLayout.CENTER);
+
+        JButton btnResolve = new JButton(actResolve = new ResolveAction());
+        lstConflicts.getSelectionModel().addListSelectionListener(actResolve);
+
+        JButton btnSelect = new JButton(actSelect = new SelectAction());
+        lstConflicts.getSelectionModel().addListSelectionListener(actSelect);
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+        buttonPanel.add(btnResolve);
+        buttonPanel.add(btnSelect);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * constructor
+     */
+    public ConflictDialog() {
+        super(tr("Conflict"), "conflict", tr("Merging conflicts."),
+                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
+
+        build();
+        DataSet.selListeners.add(this);
+        Layer.listeners.add(this);
+        refreshView();
+    }
+
+    /**
+     * Launches a conflict resolution dialog for the first selected conflict
+     * 
+     */
     private final void resolve() {
-        if(model.size() == 1) {
-            displaylist.setSelectedIndex(0);
+        if (conflicts == null) return;
+        if (conflicts.size() == 1) {
+            lstConflicts.setSelectedIndex(0);
         }
 
-        if (displaylist.getSelectedIndex() == -1)
+        if (lstConflicts.getSelectedIndex() == -1)
             return;
 
-        int [] selectedRows = displaylist.getSelectedIndices();
+        int [] selectedRows = lstConflicts.getSelectedIndices();
         if (selectedRows == null || selectedRows.length == 0)
             return;
         int row = selectedRows[0];
-        OsmPrimitive my = (OsmPrimitive)model.get(row);
-        OsmPrimitive their = conflicts.get(my);
+        Conflict c = conflicts.get(row);
+        OsmPrimitive my = c.getMy();
+        OsmPrimitive their = c.getTheir();
         ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
         dialog.getConflictResolver().populate(my, their);
         dialog.setVisible(true);
         Main.map.mapView.repaint();
     }
 
-    public final void rebuildList() {
-        model.removeAllElements();
-        for (OsmPrimitive osm : this.conflicts.keySet()) {
-            model.addElement(osm);
-        }
-
-        if(model.size() != 0) {
-            setTitle(tr("Conflicts: {0}", model.size()), true);
-        } else {
-            setTitle(tr("Conflicts"), false);
-        }
-
-        sbSelect.setEnabled(model.size() > 0);
-        sbResolve.setEnabled(model.size() > 0);
-    }
-
-    public final void add(Map<OsmPrimitive, OsmPrimitive> conflicts) {
-        this.conflicts.putAll(conflicts);
-        rebuildList();
-    }
-
 
     /**
-     * removes a conflict registered for {@see OsmPrimitive} <code>my</code>
-     *
-     * @param my the {@see OsmPrimitive} for which a conflict is registered
-     *   with this dialog
+     * refreshes the view of this dialog
      */
-    public void removeConflictForPrimitive(OsmPrimitive my) {
-        if (! conflicts.keySet().contains(my))
-            return;
-        conflicts.remove(my);
-        rebuildList();
-        repaint();
-    }
-
-    /**
-     * registers a conflict with this dialog. The conflict is represented
-     * by a pair of {@see OsmPrimitive} with differences in their tag sets,
-     * their node lists (for {@see Way}s) or their member lists (for {@see Relation}s)
-     *
-     * @param my  my version of the {@see OsmPrimitive}
-     * @param their their version of the {@see OsmPrimitive}
-     */
-    public void addConflict(OsmPrimitive my, OsmPrimitive their) {
-        conflicts.put(my, their);
-        rebuildList();
-        repaint();
-    }
-
-    static public Color getColor()
-    {
-        return Main.pref.getColor(marktr("conflict"), Color.gray);
+    public final void refreshView() {
+        model.fireContentChanged();
     }
 
     /**
@@ -214,11 +194,172 @@ public final class ConflictDialog extends ToggleDialog {
                 }
             }
         };
-        for (Object o : displaylist.getSelectedValues()) {
-            if (conflicts.get(o) == null) {
+        for (Object o : lstConflicts.getSelectedValues()) {
+            if (!conflicts.hasConflictForMy((OsmPrimitive)o)) {
                 continue;
             }
-            conflicts.get(o).visit(conflictPainter);
+            conflicts.getConflictForMy((OsmPrimitive)o).getTheir().visit(conflictPainter);
+        }
+    }
+
+
+    /**
+     * replies the conflict collection currently held by this dialog; may be null
+     * 
+     * @return the conflict collection currently held by this dialog; may be null
+     */
+    public ConflictCollection getConflicts() {
+        return conflicts;
+    }
+
+    /**
+     * invoked if the active {@see Layer} changes
+     */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        if (oldLayer instanceof OsmDataLayer) {
+            this.layer = (OsmDataLayer)oldLayer;
+            this.layer.getConflicts().removeConflictListener(this);
+        }
+        this.layer = null;
+        if (newLayer instanceof OsmDataLayer) {
+            this.layer = (OsmDataLayer)newLayer;
+            layer.getConflicts().addConflictListener(this);
+            this.conflicts = layer.getConflicts();
+        }
+        refreshView();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        // ignore
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        if (this.layer == oldLayer) {
+            this.layer = null;
+            refreshView();
+        }
+    }
+
+    public void onConflictsAdded(ConflictCollection conflicts) {
+        refreshView();
+    }
+
+    public void onConflictsRemoved(ConflictCollection conflicts) {
+        refreshView();
+    }
+
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        lstConflicts.clearSelection();
+        for (OsmPrimitive osm : newSelection) {
+            if (conflicts.hasConflictForMy(osm)) {
+                int pos = model.indexOf(osm);
+                if (pos >= 0) {
+                    lstConflicts.addSelectionInterval(pos, pos);
+                }
+            }
+        }
+    }
+
+    /**
+     * The {@see ListModel} for conflicts
+     *
+     */
+    class ConflictListModel implements ListModel {
+
+        private CopyOnWriteArrayList<ListDataListener> listeners;
+
+        public ConflictListModel() {
+            listeners = new CopyOnWriteArrayList<ListDataListener>();
+        }
+
+        public void addListDataListener(ListDataListener l) {
+            if (l != null && ! listeners.contains(l)) {
+                listeners.add(l);
+            }
+        }
+
+        public void removeListDataListener(ListDataListener l) {
+            listeners.remove(l);
+        }
+
+        protected void fireContentChanged() {
+            ListDataEvent evt = new ListDataEvent(
+                    this,
+                    ListDataEvent.CONTENTS_CHANGED,
+                    0,
+                    getSize()
+            );
+            Iterator<ListDataListener> it = listeners.iterator();
+            while(it.hasNext()) {
+                it.next().contentsChanged(evt);
+            }
+        }
+
+        public Object getElementAt(int index) {
+            if (index < 0) return null;
+            if (index >= getSize()) return null;
+            return conflicts.get(index).getMy();
+        }
+
+        public int getSize() {
+            if (conflicts == null) return 0;
+            return conflicts.size();
+        }
+
+        public int indexOf(OsmPrimitive my) {
+            if (conflicts == null) return -1;
+            for (int i=0; i < conflicts.size();i++) {
+                if (conflicts.get(i).isMatchingMy(my))
+                    return i;
+            }
+            return -1;
+        }
+
+        public OsmPrimitive get(int idx) {
+            if (conflicts == null) return null;
+            return conflicts.get(idx).getMy();
+        }
+    }
+
+    class ResolveAction extends AbstractAction implements ListSelectionListener {
+        public ResolveAction() {
+            putValue(NAME, tr("Resolve"));
+            putValue(SHORT_DESCRIPTION,  tr("Open a merge dialog of all selected items in the list above."));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "conflict"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            resolve();
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            ListSelectionModel model = (ListSelectionModel)e.getSource();
+            boolean enabled = model.getMinSelectionIndex() >= 0
+            && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
+            setEnabled(enabled);
+        }
+    }
+
+    class SelectAction extends AbstractAction implements ListSelectionListener {
+        public SelectAction() {
+            putValue(NAME, tr("Select"));
+            putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
+            for (Object o : lstConflicts.getSelectedValues()) {
+                sel.add((OsmPrimitive)o);
+            }
+            Main.ds.setSelected(sel);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            ListSelectionModel model = (ListSelectionModel)e.getSource();
+            boolean enabled = model.getMinSelectionIndex() >= 0
+            && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
+            setEnabled(enabled);
         }
     }
 }

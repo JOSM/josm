@@ -12,8 +12,6 @@ import javax.swing.tree.MutableTreeNode;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
-
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 
 /**
@@ -35,6 +33,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
     private Boolean oldModified;
 
     public ChangeRelationMemberRoleCommand(Relation relation, int position, String newRole) {
+        super();
         this.relation = relation;
         this.position = position;
         this.newRole = newRole;
@@ -66,6 +65,6 @@ public class ChangeRelationMemberRoleCommand extends Command {
     @Override public MutableTreeNode description() {
         NameVisitor v = new NameVisitor();
         relation.visit(v);
-        return new DefaultMutableTreeNode(new JLabel(tr("ChangeRelationMemberRole")+" "+tr(v.className)+" "+v.name, v.icon, JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(tr("ChangeRelationMemberRole {0} {1}", tr(v.className), v.name), v.icon, JLabel.HORIZONTAL));
     }
 }

@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -30,7 +31,8 @@ public class MergeVisitor extends AbstractVisitor {
      * Map from primitives in the database to visited primitives. (Attention: The other way
      * round than merged)
      */
-    private Map<OsmPrimitive, OsmPrimitive> conflicts;
+    private ConflictCollection conflicts;
+
 
     private final DataSet myDataSet;
     private final DataSet theirDataSet;
@@ -67,7 +69,7 @@ public class MergeVisitor extends AbstractVisitor {
         for (Relation r : myDataSet.relations) if (r.id != 0) {
             relshash.put(r.id, r);
         }
-        conflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
+        conflicts = new ConflictCollection();
         merged = new HashMap<OsmPrimitive, OsmPrimitive>();
     }
 
@@ -112,7 +114,7 @@ public class MergeVisitor extends AbstractVisitor {
                     if (my.deleted != other.deleted) {
                         // differences in deleted state have to be merged manually
                         //
-                        conflicts.put(my, other);
+                        conflicts.add(my, other);
                     } else {
                         // copy the technical attributes from other
                         // version
@@ -157,7 +159,7 @@ public class MergeVisitor extends AbstractVisitor {
         for (Relation r : myDataSet.relations) {
             fixRelation(r);
         }
-        for (OsmPrimitive osm : conflicts.values())
+        for (OsmPrimitive osm : conflicts.getMyConflictParties())
             if (osm instanceof Way) {
                 fixWay((Way)osm);
             } else if (osm instanceof Relation) {
@@ -234,7 +236,7 @@ public class MergeVisitor extends AbstractVisitor {
                     // wants to purge my from the local dataset. He can't keep it unchanged
                     // because it was deleted on the server.
                     //
-                    conflicts.put(my,other);
+                    conflicts.add(my,other);
                 } else if (my.incomplete) {
                     // my is incomplete, other completes it
                     // => merge other onto my
@@ -249,7 +251,7 @@ public class MergeVisitor extends AbstractVisitor {
                 } else if (my.deleted != other.deleted) {
                     // differences in deleted state have to be resolved manually
                     //
-                    conflicts.put(my,other);
+                    conflicts.add(my,other);
                 } else if (! my.modified && other.modified) {
                     // my not modified. We can assume that other is the most recent version.
                     // clone it onto my. But check first, whether other is deleted. if so,
@@ -277,7 +279,7 @@ public class MergeVisitor extends AbstractVisitor {
                     // my is modified and is not semantically equal with other. Can't automatically
                     // resolve the differences
                     // =>  create a conflict
-                    conflicts.put(my,other);
+                    conflicts.add(my,other);
                 } else {
                     // clone from other, but keep the modified flag. Clone will mainly copy
                     // technical attributes like timestamp or user information. Semantic
@@ -325,7 +327,7 @@ public class MergeVisitor extends AbstractVisitor {
      * 
      * @return the map of conflicts
      */
-    public Map<OsmPrimitive, OsmPrimitive> getConflicts() {
+    public ConflictCollection getConflicts() {
         return conflicts;
     }
 }

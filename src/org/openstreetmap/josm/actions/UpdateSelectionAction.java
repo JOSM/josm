@@ -34,7 +34,7 @@ public class UpdateSelectionAction extends JosmAction {
      */
     protected void handlePrimitiveGoneException(long id) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        reader.append(Main.main.editLayer().data,id);
+        reader.append(Main.main.createOrGetEditLayer().data,id);
         DataSet ds = null;
         try {
             ds = reader.parseOsm();
@@ -42,7 +42,7 @@ public class UpdateSelectionAction extends JosmAction {
             handleUpdateException(e);
             return;
         }
-        Main.main.editLayer().mergeFrom(ds);
+        Main.main.createOrGetEditLayer().mergeFrom(ds);
     }
 
     /**
@@ -89,11 +89,11 @@ public class UpdateSelectionAction extends JosmAction {
             handleUpdateException(e);
             return;
         }
-        Main.main.editLayer().mergeFrom(ds);
+        Main.main.createOrGetEditLayer().mergeFrom(ds);
     }
 
     public void updatePrimitive(long id) {
-        OsmPrimitive primitive = Main.main.editLayer().data.getPrimitiveById(id);
+        OsmPrimitive primitive = Main.main.createOrGetEditLayer().data.getPrimitiveById(id);
         Set<OsmPrimitive> s = new HashSet<OsmPrimitive>();
         s.add(primitive);
         updatePrimitives(s);

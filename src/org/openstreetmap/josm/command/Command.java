@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -24,111 +23,117 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * Classes implementing Command modify a dataset in a specific way. A command is
  * one atomic action on a specific dataset, such as move or delete.
  *
- * Remember that the command must be executable and undoable, even if the
- * Main.ds has changed, so the command must save the dataset it operates on
- * if necessary.
- *
+ * The command remembers the {@see OsmDataLayer} it is operating on.
+ * 
  * @author imi
  */
 abstract public class Command {
 
-   private static final class CloneVisitor extends AbstractVisitor {
-      public Map<OsmPrimitive, OsmPrimitive> orig = new HashMap<OsmPrimitive, OsmPrimitive>();
+    private static final class CloneVisitor extends AbstractVisitor {
+        public Map<OsmPrimitive, OsmPrimitive> orig = new HashMap<OsmPrimitive, OsmPrimitive>();
 
-      public void visit(Node n) {
-         orig.put(n, new Node(n));
-      }
-      public void visit(Way w) {
-         orig.put(w, new Way(w));
-      }
-      public void visit(Relation e) {
-         orig.put(e, new Relation(e));
-      }
-   }
+        public void visit(Node n) {
+            orig.put(n, new Node(n));
+        }
+        public void visit(Way w) {
+            orig.put(w, new Way(w));
+        }
+        public void visit(Relation e) {
+            orig.put(e, new Relation(e));
+        }
+    }
 
-   private CloneVisitor orig;
+    /** the map of OsmPrimitives in the original state to OsmPrimitives in cloned state */
+    private Map<OsmPrimitive, OsmPrimitive> cloneMap = new HashMap<OsmPrimitive, OsmPrimitive>();
 
-   protected DataSet ds;
+    /** the layer which this command is applied to */
+    private OsmDataLayer layer;
 
-   public Command() {
-      this.ds = Main.main.editLayer().data;
-   }
-   /**
-    * Executes the command on the dataset. This implementation will remember all
-    * primitives returned by fillModifiedData for restoring them on undo.
-    */
-   public boolean did_execute = false;
-   public boolean executeCommand() {
-      did_execute = true;
-      orig = new CloneVisitor();
-      Collection<OsmPrimitive> all = new HashSet<OsmPrimitive>();
-      fillModifiedData(all, all, all);
-      for (OsmPrimitive osm : all)
-         osm.visit(orig);
-      return true;
-   }
+    public Command() {
+        this.layer = Main.main.map.mapView.getEditLayer();
+    }
+    /**
+     * Executes the command on the dataset. This implementation will remember all
+     * primitives returned by fillModifiedData for restoring them on undo.
+     */
+    public boolean executeCommand() {
+        CloneVisitor visitor = new CloneVisitor();
+        Collection<OsmPrimitive> all = new HashSet<OsmPrimitive>();
+        fillModifiedData(all, all, all);
+        for (OsmPrimitive osm : all) {
+            osm.visit(visitor);
+        }
+        cloneMap = visitor.orig;
+        return true;
+    }
 
-   /**
-    * Undoes the command.
-    * It can be assumed that all objects are in the same state they were before.
-    * It can also be assumed that executeCommand was called exactly once before.
-    *
-    * This implementation undoes all objects stored by a former call to executeCommand.
-    */
-   public void undoCommand() {
-      for (Entry<OsmPrimitive, OsmPrimitive> e : orig.orig.entrySet())
-         e.getKey().cloneFrom(e.getValue());
-   }
+    /**
+     * Undoes the command.
+     * It can be assumed that all objects are in the same state they were before.
+     * It can also be assumed that executeCommand was called exactly once before.
+     *
+     * This implementation undoes all objects stored by a former call to executeCommand.
+     */
+    public void undoCommand() {
+        for (Entry<OsmPrimitive, OsmPrimitive> e : cloneMap.entrySet()) {
+            e.getKey().cloneFrom(e.getValue());
+        }
+    }
 
-   /**
-    * Called when a layer has been removed to have the command remove itself from
-    * any buffer if it is not longer applicable to the dataset (e.g. it was part of
-    * the removed layer)
-    */
-   public boolean invalidBecauselayerRemoved(Layer oldLayer) {
-      if (!(oldLayer instanceof OsmDataLayer))
-         return false;
-      HashSet<OsmPrimitive> modified = new HashSet<OsmPrimitive>();
-      fillModifiedData(modified, modified, modified);
-      if (modified.isEmpty())
-         return false;
-
-      HashSet<OsmPrimitive> all = new HashSet<OsmPrimitive>(((OsmDataLayer)oldLayer).data.allPrimitives());
-      for (OsmPrimitive osm : all)
-         if (all.contains(osm))
-                 return true;
-
-      return false;
-   }
+    /**
+     * Called when a layer has been removed to have the command remove itself from
+     * any buffer if it is not longer applicable to the dataset (e.g. it was part of
+     * the removed layer)
+     * 
+     * @param oldLayer the old layer
+     * @return true if this command
+     */
+    public boolean invalidBecauselayerRemoved(Layer oldLayer) {
+        if (!(oldLayer instanceof OsmDataLayer))
+            return false;
+        return layer == oldLayer;
+    }
 
     /**
      * Lets other commands access the original version
      * of the object. Usually for undoing.
      */
     public OsmPrimitive getOrig(OsmPrimitive osm) {
-        OsmPrimitive o = orig.orig.get(osm);
+        OsmPrimitive o = cloneMap.get(osm);
         if (o != null)
-             return o;
+            return o;
         Main.debug("unable to find osm with id: " + osm.id + " hashCode: " + osm.hashCode());
-        for (OsmPrimitive t : orig.orig.keySet()) {
-             OsmPrimitive to = orig.orig.get(t);
-             Main.debug("now: " + t.id + " hashCode: " + t.hashCode());
-             Main.debug("orig: " + to.id + " hashCode: " + to.hashCode());
+        for (OsmPrimitive t : cloneMap.keySet()) {
+            OsmPrimitive to = cloneMap.get(t);
+            Main.debug("now: " + t.id + " hashCode: " + t.hashCode());
+            Main.debug("orig: " + to.id + " hashCode: " + to.hashCode());
         }
         return o;
     }
 
-   /**
-    * Fill in the changed data this command operates on.
-    * Add to the lists, don't clear them.
-    *
-    * @param modified The modified primitives
-    * @param deleted The deleted primitives
-    * @param added The added primitives
-    */
-   abstract public void fillModifiedData(Collection<OsmPrimitive> modified,
-         Collection<OsmPrimitive> deleted,
-         Collection<OsmPrimitive> added);
+    /**
+     * Replies the layer this command is (or was) applied to.
+     * 
+     * @return
+     */
+    protected  OsmDataLayer getLayer() {
+        return layer;
+    }
 
-   abstract public MutableTreeNode description();
+    /**
+     * Fill in the changed data this command operates on.
+     * Add to the lists, don't clear them.
+     *
+     * @param modified The modified primitives
+     * @param deleted The deleted primitives
+     * @param added The added primitives
+     */
+    abstract public void fillModifiedData(Collection<OsmPrimitive> modified,
+            Collection<OsmPrimitive> deleted,
+            Collection<OsmPrimitive> added);
+
+    abstract public MutableTreeNode description();
+
+
+
 }

@@ -68,7 +68,7 @@ public final class PasteAction extends JosmAction {
         for (Node n : pasteBuffer.nodes) {
             Node nnew = new Node(n);
             nnew.id = 0;
-            if (Main.main.editLayer() == source) {
+            if (Main.main.createOrGetEditLayer() == source) {
                 nnew.setEastNorth(nnew.getEastNorth().add(offsetEast, offsetNorth));
             }
             map.put(n, nnew);

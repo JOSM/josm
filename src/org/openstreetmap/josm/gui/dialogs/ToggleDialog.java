@@ -52,14 +52,15 @@ public class ToggleDialog extends JPanel implements Helpful {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (e != null && !(e.getSource() instanceof AbstractButton))
+            if (e != null && !(e.getSource() instanceof AbstractButton)) {
                 button.setSelected(!button.isSelected());
+            }
             Boolean selected = button.isSelected();
             setVisible(selected);
             Main.pref.put(prefname+".visible", selected);
-            if(!selected && winadapter != null)
+            if(!selected && winadapter != null) {
                 winadapter.windowClosing(null);
-            else if (!Main.pref.getBoolean(action.prefname+".docked", true)) {
+            } else if (!Main.pref.getBoolean(action.prefname+".docked", true)) {
                 EventQueue.invokeLater(new Runnable(){
                     public void run() {
                         stickyActionListener.actionPerformed(null);
@@ -173,11 +174,13 @@ public class ToggleDialog extends JPanel implements Helpful {
                         // doLayout() - workaround
                         setVisible(false);
                         parent.add(ToggleDialog.this);
-                        if(Main.pref.getBoolean(action.prefname+".visible"))
+                        if(Main.pref.getBoolean(action.prefname+".visible")) {
                             setVisible(true);
+                        }
                         titleBar.setVisible(true);
-                        if(e != null)
+                        if(e != null) {
                             Main.pref.put(action.prefname+".docked", true);
+                        }
                     }
                 }));
                 f.addComponentListener(new ComponentAdapter(){
@@ -189,8 +192,9 @@ public class ToggleDialog extends JPanel implements Helpful {
                 if (bounds != null) {
                     String[] b = bounds.split(",");
                     f.setBounds(Integer.parseInt(b[0]),Integer.parseInt(b[1]),Integer.parseInt(b[2]),Integer.parseInt(b[3]));
-                } else
+                } else {
                     f.pack();
+                }
                 Main.pref.put(action.prefname+".docked", false);
                 f.setVisible(true);
                 titleBar.setVisible(false);
@@ -240,8 +244,9 @@ public class ToggleDialog extends JPanel implements Helpful {
 
     public void close()
     {
-        if(winadapter != null)
+        if(winadapter != null) {
             winadapter.windowClosing(null);
+        }
     }
 
     public void setTitle(String title, boolean active) {

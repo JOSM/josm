@@ -63,7 +63,7 @@ public class GpxExportAction extends DiskAccessAction {
         if (file == null)
             return;
 
-        exportGpx(file, this.layer == null ? Main.main.editLayer() : this.layer);
+        exportGpx(file, this.layer == null ? Main.main.createOrGetEditLayer() : this.layer);
     }
 
     public static void exportGpx(File file, Layer layer) {

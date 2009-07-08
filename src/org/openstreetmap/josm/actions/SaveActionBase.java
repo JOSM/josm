@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.tools.bzip2.CBZip2OutputStream;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -48,10 +49,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public Boolean doSave() {
         Layer layer = this.layer;
         if (layer == null && Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
-                || Main.map.mapView.getActiveLayer() instanceof GpxLayer))
+                || Main.map.mapView.getActiveLayer() instanceof GpxLayer)) {
             layer = Main.map.mapView.getActiveLayer();
-        if (layer == null)
-            layer = Main.main.editLayer();
+        }
+        if (layer == null) {
+            layer = Main.main.createOrGetEditLayer();
+        }
 
         if (!checkSaveConditions(layer))
             return false;
@@ -86,20 +89,21 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return false;
         }
 
-        if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer) && 1 != new ExtendedDialog(Main.parent, tr("Empty document"), tr("The document contains no data."), new String[] {tr("Save anyway"), tr("Cancel")}, new String[] {"save.png", "cancel.png"}).getValue()) {
+        if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer) && 1 != new ExtendedDialog(Main.parent, tr("Empty document"), tr("The document contains no data."), new String[] {tr("Save anyway"), tr("Cancel")}, new String[] {"save.png", "cancel.png"}).getValue())
             return false;
-        }
-        if (layer instanceof GpxLayer && ((GpxLayer)layer).data == null) {
+        if (layer instanceof GpxLayer && ((GpxLayer)layer).data == null)
             return false;
-        }
-        if (!Main.map.conflictDialog.conflicts.isEmpty()) {
-            int answer = new ExtendedDialog(Main.parent,
-                tr("Conflicts"),
-                tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"),
-                new String[] {tr("Reject Conflicts and Save"), tr("Cancel")},
-                new String[] {"save.png", "cancel.png"}).getValue();
+        if (layer instanceof OsmDataLayer)  {
+            ConflictCollection conflicts = ((OsmDataLayer)layer).getConflicts();
+            if (conflicts != null && !conflicts.isEmpty()) {
+                int answer = new ExtendedDialog(Main.parent,
+                        tr("Conflicts"),
+                        tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"),
+                        new String[] {tr("Reject Conflicts and Save"), tr("Cancel")},
+                        new String[] {"save.png", "cancel.png"}).getValue();
 
-            if (answer != 1) return false;
+                if (answer != 1) return false;
+            }
         }
         return true;
     }
@@ -147,9 +151,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
             OsmImporter osmImExporter = new OsmImporter();
             OsmGzipImporter osmGzipImporter = new OsmGzipImporter();
             OsmBzip2Importer osmBzip2Importer = new OsmBzip2Importer();
-            if (gpxImExporter.acceptFile(file))
+            if (gpxImExporter.acceptFile(file)) {
                 GpxExportAction.exportGpx(file, layer);
-            else if (osmImExporter.acceptFile(file)
+            } else if (osmImExporter.acceptFile(file)
                     || osmGzipImporter.acceptFile(file)
                     || osmBzip2Importer.acceptFile(file))
             {
@@ -179,8 +183,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 w.footer();
                 w.close();
                 // FIXME - how to close?
-                if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null))
+                if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null)) {
                     tmpFile.delete();
+                }
             } else {
                 JOptionPane.showMessageDialog(Main.parent, tr("Unknown file extension."));
                 return;

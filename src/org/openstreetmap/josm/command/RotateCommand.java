@@ -29,7 +29,7 @@ public class RotateCommand extends Command {
     /**
      * The objects to rotate.
      */
-    public Collection<Node> objects = new LinkedList<Node>();
+    private Collection<Node> nodes = new LinkedList<Node>();
 
     /**
      * pivot point
@@ -69,10 +69,10 @@ public class RotateCommand extends Command {
      */
     public RotateCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
 
-        this.objects = AllNodesVisitor.getAllNodes(objects);
+        this.nodes = AllNodesVisitor.getAllNodes(objects);
         pivot = new EastNorth(0,0);
 
-        for (Node n : this.objects) {
+        for (Node n : this.nodes) {
             OldState os = new OldState();
             os.latlon = new LatLon(n.getCoor());
             os.eastNorth = n.getEastNorth();
@@ -80,7 +80,7 @@ public class RotateCommand extends Command {
             oldState.put(n, os);
             pivot = pivot.add(os.eastNorth.east(), os.eastNorth.north());
         }
-        pivot = new EastNorth(pivot.east()/this.objects.size(), pivot.north()/this.objects.size());
+        pivot = new EastNorth(pivot.east()/this.nodes.size(), pivot.north()/this.nodes.size());
 
         rotationAngle = Math.PI/2;
         rotateAgain(start, end);
@@ -104,7 +104,7 @@ public class RotateCommand extends Command {
      * @param setModified - true if rotated nodes should be flagged "modified"
      */
     private void rotateNodes(boolean setModified) {
-        for (Node n : objects) {
+        for (Node n : nodes) {
             double cosPhi = Math.cos(rotationAngle);
             double sinPhi = Math.sin(rotationAngle);
             EastNorth oldEastNorth = oldState.get(n).eastNorth;
@@ -113,8 +113,9 @@ public class RotateCommand extends Command {
             double nx =  sinPhi * x + cosPhi * y + pivot.east();
             double ny = -cosPhi * x + sinPhi * y + pivot.north();
             n.setEastNorth(new EastNorth(nx, ny));
-            if (setModified)
+            if (setModified) {
                 n.modified = true;
+            }
         }
     }
 
@@ -124,7 +125,7 @@ public class RotateCommand extends Command {
     }
 
     @Override public void undoCommand() {
-        for (Node n : objects) {
+        for (Node n : nodes) {
             OldState os = oldState.get(n);
             n.setCoor(os.latlon);
             n.modified = os.modified;
@@ -132,11 +133,16 @@ public class RotateCommand extends Command {
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
-        for (OsmPrimitive osm : objects)
+        for (OsmPrimitive osm : nodes) {
             modified.add(osm);
+        }
     }
 
     @Override public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(new JLabel(tr("Rotate")+" "+objects.size()+" "+trn("node","nodes",objects.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(tr("Rotate {0} {1}",nodes.size(),trn("node","nodes",nodes.size())), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+    }
+
+    public Collection<Node> getRotatedNodes() {
+        return nodes;
     }
 }

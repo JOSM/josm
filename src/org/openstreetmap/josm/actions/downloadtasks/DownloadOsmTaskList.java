@@ -41,7 +41,7 @@ public class DownloadOsmTaskList implements Runnable {
      */
     public void download(boolean newLayer, List<Rectangle2D> rects) {
         if(newLayer) {
-            Layer l = new OsmDataLayer(new DataSet(), tr("Data Layer"), null);
+            Layer l = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
             Main.main.addLayer(l);
             Main.map.mapView.setActiveLayer(l);
         }
@@ -97,7 +97,7 @@ public class DownloadOsmTaskList implements Runnable {
             return;
         }
 
-        Set<Long> myPrimitiveIds = Main.main.editLayer().data.getPrimitiveIds();
+        Set<Long> myPrimitiveIds = Main.main.createOrGetEditLayer().data.getPrimitiveIds();
         Set<Long> downloadedIds = getDownloadedIds();
         myPrimitiveIds.removeAll(downloadedIds);
         myPrimitiveIds.remove(new Long(0));
@@ -107,7 +107,7 @@ public class DownloadOsmTaskList implements Runnable {
     }
 
     protected void checkPotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
-        DataSet ds =  Main.main.editLayer().data;
+        DataSet ds =  Main.main.createOrGetEditLayer().data;
         ArrayList<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
         for (Long id : potentiallyDeleted) {
             OsmPrimitive primitive = ds.getPrimitiveById(id);

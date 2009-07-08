@@ -47,6 +47,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialog;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -232,7 +233,16 @@ public class HistoryDialog extends ToggleDialog {
             return;
         if (task.getLastException() != null) {
             task.getLastException().printStackTrace();
-            String msg = task.getLastException().getMessage();
+            String msg = null;
+            if (task.getLastException() instanceof OsmApiException) {
+                msg = ((OsmApiException)task.getLastException()).getErrorBody();
+                if (msg == null) {
+                    msg = ((OsmApiException)task.getLastException()).getErrorHeader();
+                }
+            }
+            if (msg == null) {
+                msg = task.getLastException().getMessage();
+            }
             if (msg == null) {
                 msg = task.getLastException().toString();
             }
@@ -451,7 +461,7 @@ public class HistoryDialog extends ToggleDialog {
                 }
             } catch(OsmTransferException e) {
                 lastException = e;
-                throw e;
+                return;
             } finally {
                 setInterminateEnabled(false);
             }

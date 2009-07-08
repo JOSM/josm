@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -31,7 +30,7 @@ public class MoveCommand extends Command {
     /**
      * The objects that should be moved.
      */
-    public Collection<Node> objects = new LinkedList<Node>();
+    private Collection<Node> nodes = new LinkedList<Node>();
     /**
      * x difference movement. Coordinates are in northern/eastern
      */
@@ -63,10 +62,11 @@ public class MoveCommand extends Command {
      * Create a MoveCommand and assign the initial object set and movement vector.
      */
     public MoveCommand(Collection<OsmPrimitive> objects, double x, double y) {
+        super();
         this.x = x;
         this.y = y;
-        this.objects = AllNodesVisitor.getAllNodes(objects);
-        for (Node n : this.objects) {
+        this.nodes = AllNodesVisitor.getAllNodes(objects);
+        for (Node n : this.nodes) {
             OldState os = new OldState();
             os.latlon = new LatLon(n.getCoor());
             os.modified = n.modified;
@@ -83,7 +83,7 @@ public class MoveCommand extends Command {
      * the original position the objects had before first moving.
      */
     public void moveAgain(double x, double y) {
-        for (Node n : objects) {
+        for (Node n : nodes) {
             n.setEastNorth(n.getEastNorth().add(x, y));
         }
         this.x += x;
@@ -91,7 +91,7 @@ public class MoveCommand extends Command {
     }
 
     @Override public boolean executeCommand() {
-        for (Node n : objects) {
+        for (Node n : nodes) {
             n.setEastNorth(n.getEastNorth().add(x, y));
             n.modified = true;
         }
@@ -100,7 +100,7 @@ public class MoveCommand extends Command {
 
     @Override public void undoCommand() {
         Iterator<OldState> it = oldState.iterator();
-        for (Node n : objects) {
+        for (Node n : nodes) {
             OldState os = it.next();
             n.setCoor(os.latlon);
             n.modified = os.modified;
@@ -108,11 +108,16 @@ public class MoveCommand extends Command {
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
-        for (OsmPrimitive osm : objects)
+        for (OsmPrimitive osm : nodes) {
             modified.add(osm);
+        }
     }
 
     @Override public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(new JLabel(tr("Move")+" "+objects.size()+" "+trn("node","nodes",objects.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(tr("Move")+" "+nodes.size()+" "+trn("node","nodes",nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+    }
+
+    public Collection<Node> getMovedNodes() {
+        return nodes;
     }
 }

@@ -38,7 +38,6 @@ public class DownloadOsmTask implements DownloadTask {
         private OsmServerReader reader;
         private DataSet dataSet;
         private boolean newLayer;
-        private int num = 1;
         private String msg = "";
 
         public Task(boolean newLayer, OsmServerReader reader, boolean silent,
@@ -68,11 +67,11 @@ public class DownloadOsmTask implements DownloadTask {
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
             }
             rememberDownloadedData(dataSet);
-            OsmDataLayer layer = new OsmDataLayer(dataSet, tr("Data Layer {0}", num), null);
+            OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
             if (newLayer) {
                 Main.main.addLayer(layer);
             } else {
-                Main.main.editLayer().mergeFrom(layer);
+                Main.main.createOrGetEditLayer().mergeFrom(layer);
             }
 
             Main.pleaseWaitDlg.setCustomText("");

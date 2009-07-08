@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.swing.JOptionPane;
 
@@ -69,20 +70,28 @@ public class AutoScaleAction extends JosmAction {
     private BoundingXYVisitor getBoundingBox() {
         BoundingXYVisitor v = new BoundingXYVisitor();
         if (mode.equals("data")) {
-            for (Layer l : Main.map.mapView.getAllLayers())
+            for (Layer l : Main.map.mapView.getAllLayers()) {
                 l.visitBoundingBox(v);
-        } else if (mode.equals("layer"))
+            }
+        } else if (mode.equals("layer")) {
             Main.map.mapView.getActiveLayer().visitBoundingBox(v);
-        else if (mode.equals("selection") || mode.equals("conflict")) {
-            Collection<OsmPrimitive> sel = mode.equals("selection") ? Main.ds.getSelected()
-                    : Main.map.conflictDialog.conflicts.keySet();
+        } else if (mode.equals("selection") || mode.equals("conflict")) {
+            Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+            if (mode.equals("selection")) {
+                sel = Main.ds.getSelected();
+            } else if (mode.equals("conflict")) {
+                if (Main.map.conflictDialog.getConflicts() != null) {
+                    sel = Main.map.conflictDialog.getConflicts().getMyConflictParties();
+                }
+            }
             if (sel.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
                         mode.equals("selection") ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"));
                 return null;
             }
-            for (OsmPrimitive osm : sel)
+            for (OsmPrimitive osm : sel) {
                 osm.visit(v);
+            }
             // increase bbox by 0.001 degrees on each side. this is required
             // especially if the bbox contains one single node, but helpful
             // in most other cases as well.

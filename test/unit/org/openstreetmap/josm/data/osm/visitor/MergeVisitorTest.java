@@ -721,8 +721,8 @@ public class MergeVisitorTest {
 
         Way merged = (Way)my.getPrimitiveById(3);
         assertEquals(1,visitor.getConflicts().size());
-        assertEquals(true, visitor.getConflicts().keySet().contains(myWay));
-        assertEquals(true, visitor.getConflicts().values().contains(theirWay));
+        assertEquals(true, visitor.getConflicts().hasConflictForMy(myWay));
+        assertEquals(true, visitor.getConflicts().hasConflictForTheir(theirWay));
         assertEquals(myWay,merged);
     }
 

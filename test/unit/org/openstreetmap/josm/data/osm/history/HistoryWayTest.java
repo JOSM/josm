@@ -101,8 +101,8 @@ public class HistoryWayTest {
         }
 
         assertEquals(2, ids.size());
-        assertEquals(1, ids.get(0));
-        assertEquals(2, ids.get(1));
+        assertEquals(1, (long) ids.get(0));
+        assertEquals(2, (long) ids.get(1));
     }
 
 }

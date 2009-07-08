@@ -24,6 +24,7 @@ public class ChangeCommand extends Command {
     private final OsmPrimitive newOsm;
 
     public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
+        super();
         this.osm = osm;
         this.newOsm = newOsm;
     }
@@ -42,6 +43,6 @@ public class ChangeCommand extends Command {
     @Override public MutableTreeNode description() {
         NameVisitor v = new NameVisitor();
         osm.visit(v);
-        return new DefaultMutableTreeNode(new JLabel(tr("Change")+" "+tr(v.className)+" "+v.name, v.icon, JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(tr("Change {0} {1}", tr(v.className), v.name), v.icon, JLabel.HORIZONTAL));
     }
 }

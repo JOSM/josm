@@ -239,7 +239,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * redraw to (possibly) get rid of helper line if selection changes.
      */
     public void eventDispatched(AWTEvent event) {
-        if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isDrawableLayer())
+        if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isActiveLayerDrawable())
             return;
         updateKeyModifiers((InputEvent) event);
         computeHelperLine();
@@ -250,7 +250,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * redraw to (possibly) get rid of helper line if selection changes.
      */
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if(!Main.map.mapView.isDrawableLayer())
+        if(!Main.map.mapView.isActiveLayerDrawable())
             return;
         computeHelperLine();
         addHighlighting();
@@ -287,7 +287,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     @Override public void mouseClicked(MouseEvent e) {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
-        if(!Main.map.mapView.isDrawableLayer())
+        if(!Main.map.mapView.isActiveLayerDrawable())
             return;
 
         if(e.getClickCount() > 1 && mousePos != null && mousePos.equals(oldMousePos)) {
@@ -575,7 +575,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     @Override public void mouseMoved(MouseEvent e) {
-        if(!Main.map.mapView.isDrawableLayer())
+        if(!Main.map.mapView.isActiveLayerDrawable())
             return;
 
         // we copy ctrl/alt/shift from the event just in case our global
@@ -704,7 +704,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * Repaint on mouse exit so that the helper line goes away.
      */
     @Override public void mouseExited(MouseEvent e) {
-        if(!Main.map.mapView.isDrawableLayer())
+        if(!Main.map.mapView.isActiveLayerDrawable())
             return;
         mousePos = e.getPoint();
         Main.map.mapView.repaint();

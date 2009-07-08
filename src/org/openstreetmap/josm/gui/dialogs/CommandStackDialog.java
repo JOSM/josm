@@ -28,7 +28,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
     public CommandStackDialog(final MapFrame mapFrame) {
         super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
-        Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}", tr("Command Stack")), KeyEvent.VK_O, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 100);
+                Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}", tr("Command Stack")), KeyEvent.VK_O, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 100);
         Main.main.undoRedo.listenerCommands.add(this);
 
         tree.setRootVisible(false);
@@ -51,10 +51,11 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     }
 
     @Override public void setVisible(boolean v) {
-        if (v)
+        if (v) {
             buildList();
-        else if (tree != null)
+        } else if (tree != null) {
             treeModel.setRoot(new DefaultMutableTreeNode());
+        }
         super.setVisible(v);
     }
 
@@ -64,12 +65,13 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         } else {
             setTitle(tr("Command Stack"), false);
         }
-        if (Main.map == null || Main.map.mapView == null || Main.map.mapView.editLayer == null)
+        if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null)
             return;
         Collection<Command> commands = Main.main.undoRedo.commands;
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        for (Command c : commands)
+        for (Command c : commands) {
             root.add(c.description());
+        }
         treeModel.setRoot(root);
         tree.scrollRowToVisible(treeModel.getChildCount(root)-1);
     }

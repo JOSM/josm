@@ -41,15 +41,16 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class DeleteCommand extends Command {
 
     /**
-     * The primitive that get deleted.
+     * The primitives that get deleted.
      */
-    private final Collection<? extends OsmPrimitive> data;
+    private final Collection<? extends OsmPrimitive> toDelete;
 
     /**
      * Constructor for a collection of data
      */
     public DeleteCommand(Collection<? extends OsmPrimitive> data) {
-        this.data = data;
+        super();
+        this.toDelete = data;
     }
 
     /**
@@ -57,12 +58,12 @@ public class DeleteCommand extends Command {
      * objects.
      */
     public DeleteCommand(OsmPrimitive data) {
-        this.data = Collections.singleton(data);
+        this.toDelete = Collections.singleton(data);
     }
 
     @Override public boolean executeCommand() {
         super.executeCommand();
-        for (OsmPrimitive osm : data) {
+        for (OsmPrimitive osm : toDelete) {
             osm.delete(true);
         }
         return true;
@@ -70,21 +71,21 @@ public class DeleteCommand extends Command {
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
-        deleted.addAll(data);
+        deleted.addAll(toDelete);
     }
 
     @Override public MutableTreeNode description() {
         NameVisitor v = new NameVisitor();
 
-        if (data.size() == 1) {
-            data.iterator().next().visit(v);
+        if (toDelete.size() == 1) {
+            toDelete.iterator().next().visit(v);
             return new DefaultMutableTreeNode(new JLabel(tr("Delete {1} {0}", v.name, tr(v.className)), v.icon,
                     JLabel.HORIZONTAL));
         }
 
         String cname = null;
         String cnamem = null;
-        for (OsmPrimitive osm : data) {
+        for (OsmPrimitive osm : toDelete) {
             osm.visit(v);
             if (cname == null) {
                 cname = v.className;
@@ -94,9 +95,9 @@ public class DeleteCommand extends Command {
                 cnamem = trn("object", "objects", 2);
             }
         }
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(tr("Delete {0} {1}", data.size(), trn(
-                cname, cnamem, data.size())), ImageProvider.get("data", cname), JLabel.HORIZONTAL));
-        for (OsmPrimitive osm : data) {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(tr("Delete {0} {1}", toDelete.size(), trn(
+                cname, cnamem, toDelete.size())), ImageProvider.get("data", cname), JLabel.HORIZONTAL));
+        for (OsmPrimitive osm : toDelete) {
             osm.visit(v);
             root.add(new DefaultMutableTreeNode(v.toLabel()));
         }
@@ -275,15 +276,7 @@ public class DeleteCommand extends Command {
             Relation cur = (Relation) iterator.next();
             Relation rel = new Relation(cur);
             for (OsmPrimitive osm : relationsToBeChanged.get(cur)) {
-                for (RelationMember rm : rel.members) {
-                    if (rm.member == osm) {
-                        RelationMember mem = new RelationMember();
-                        mem.role = rm.role;
-                        mem.member = rm.member;
-                        rel.members.remove(mem);
-                        break;
-                    }
-                }
+                rel.removeMembersFor(osm);
             }
             cmds.add(new ChangeCommand(cur, rel));
         }

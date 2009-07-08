@@ -18,7 +18,6 @@ import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -41,6 +40,8 @@ import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
+import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -59,7 +60,6 @@ import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -73,6 +73,19 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class OsmDataLayer extends Layer {
+
+    /** the global counter for created data layers */
+    static private int dataLayerCounter = 0;
+
+    /**
+     * Replies a new unique name for a data layer
+     * 
+     * @return a new unique name for a data layer
+     */
+    static public String createNewName() {
+        dataLayerCounter++;
+        return tr("Data Layer {0}", dataLayerCounter);
+    }
 
     public final static class DataCountVisitor extends AbstractVisitor {
         public final int[] normal = new int[3];
@@ -113,6 +126,11 @@ public class OsmDataLayer extends Layer {
      * The data behind this layer.
      */
     public final DataSet data;
+
+    /**
+     * the collection of conflicts detected in this layer
+     */
+    private ConflictCollection conflicts;
 
     /**
      * Whether the data of this layer was modified during the session.
@@ -158,6 +176,7 @@ public class OsmDataLayer extends Layer {
         super(name);
         this.data = data;
         this.setAssociatedFile(associatedFile);
+        conflicts = new ConflictCollection();
     }
 
     /**
@@ -176,7 +195,7 @@ public class OsmDataLayer extends Layer {
     @Override public void paint(final Graphics g, final MapView mv) {
         boolean active = Main.map.mapView.getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
-        boolean virtual = !inactive && Main.map.mapView.useVirtualNodes();
+        boolean virtual = !inactive && Main.map.mapView.isVirtualNodesEnabled();
 
         // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
@@ -270,13 +289,15 @@ public class OsmDataLayer extends Layer {
         // repaint to make sure new data is displayed properly.
         Main.map.mapView.repaint();
 
-        if (visitor.getConflicts().isEmpty())
-            return;
-        final ConflictDialog dlg = Main.map.conflictDialog;
-        dlg.add(visitor.getConflicts());
-        JOptionPane.showMessageDialog(Main.parent,tr("There were {0} conflicts during import.", visitor.getConflicts().size()));
-        if (!dlg.isVisible()) {
-            dlg.action.actionPerformed(new ActionEvent(this, 0, ""));
+        int numNewConflicts = 0;
+        for (Conflict c : visitor.getConflicts()) {
+            if (!conflicts.hasConflict(c)) {
+                numNewConflicts++;
+                conflicts.add(c);
+            }
+        }
+        if (numNewConflicts > 0) {
+            JOptionPane.showMessageDialog(Main.parent,tr("There were {0} conflicts during import.", numNewConflicts));
         }
     }
 
@@ -508,5 +529,14 @@ public class OsmDataLayer extends Layer {
             }
         }
         return layer_bounds_point;
+    }
+
+    /**
+     * replies the set of conflicts currently managed in this layer
+     * 
+     * @return the set of conflicts currently managed in this layer
+     */
+    public ConflictCollection getConflicts() {
+        return conflicts;
     }
 }

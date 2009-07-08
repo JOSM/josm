@@ -5,21 +5,22 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -33,8 +34,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * which would result in an non resolvable conflict.
  * 
  */
-public class PurgePrimitivesCommand extends Command{
+public class PurgePrimitivesCommand extends ConflictResolveCommand{
 
+    static private final Logger logger = Logger.getLogger(PurgePrimitivesCommand.class.getName());
 
     /**
      * Represents a pair of {@see OsmPrimitive} where the parent referrs to
@@ -143,7 +145,6 @@ public class PurgePrimitivesCommand extends Command{
      */
     private ArrayList<OsmParentChildPair> pairs;
 
-    private Map<OsmPrimitive, OsmPrimitive> resolvedConflicts;
 
     /**
      * constructor
@@ -153,7 +154,6 @@ public class PurgePrimitivesCommand extends Command{
         this.primitive = primitive;
         purgedPrimitives = new ArrayList<OsmPrimitive>();
         pairs = new ArrayList<OsmParentChildPair>();
-        resolvedConflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
     }
 
     @Override
@@ -218,16 +218,17 @@ public class PurgePrimitivesCommand extends Command{
             OsmPrimitive toPurge = hive.get(0);
             purge(toPurge, Main.ds, hive);
             if (toPurge instanceof Node) {
-                Main.ds.nodes.remove(toPurge);
+                getLayer().data.nodes.remove(toPurge);
             } else if (primitive instanceof Way) {
-                Main.ds.ways.remove(toPurge);
+                getLayer().data.ways.remove(toPurge);
             } else if (primitive instanceof Relation) {
-                Main.ds.relations.remove(toPurge);
+                getLayer().data.relations.remove(toPurge);
             }
             purgedPrimitives.add(toPurge);
-            if (Main.map.conflictDialog.conflicts.containsKey(toPurge)) {
-                resolvedConflicts.put(toPurge, Main.map.conflictDialog.conflicts.get(toPurge));
-                Main.map.conflictDialog.removeConflictForPrimitive(toPurge);
+            ConflictCollection conflicts = getLayer().getConflicts();
+            if (conflicts.hasConflictForMy(toPurge)) {
+                rememberConflict(conflicts.getConflictForMy(toPurge));
+                conflicts.remove(toPurge);
             }
         }
         return super.executeCommand();
@@ -245,19 +246,21 @@ public class PurgePrimitivesCommand extends Command{
 
     @Override
     public void undoCommand() {
+        if (! Main.map.mapView.hasLayer(getLayer())) {
+            logger.warning(tr("Can't undo command ''{0}'' because layer ''{1}'' is not present anymore",
+                    this.toString(),
+                    getLayer().toString()
+            ));
+            return;
+        }
+        Main.map.mapView.setActiveLayer(getLayer());
 
         // restore purged primitives
         //
         for (OsmPrimitive purged : purgedPrimitives) {
-            Main.ds.addPrimitive(purged);
+            getLayer().data.addPrimitive(purged);
         }
-
-        // restore conflicts
-        //
-        for (OsmPrimitive primitive : resolvedConflicts.keySet()) {
-            Main.map.conflictDialog.addConflict(primitive, resolvedConflicts.get(primitive));
-        }
-
+        reconstituteConflicts();
         // will restore the former references to the purged nodes
         //
         super.undoCommand();

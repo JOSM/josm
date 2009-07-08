@@ -149,9 +149,9 @@ abstract public class Main {
         Main.map = map;
         panel.setVisible(false);
         panel.removeAll();
-        if (map != null)
+        if (map != null) {
             map.fillPanel(panel);
-        else {
+        } else {
             old.destroy();
             panel.add(gettingStarted, BorderLayout.CENTER);
         }
@@ -168,10 +168,12 @@ abstract public class Main {
     public final void removeLayer(final Layer layer) {
         if (map != null) {
             map.mapView.removeLayer(layer);
-            if (layer instanceof OsmDataLayer)
+            if (layer instanceof OsmDataLayer) {
                 ds = new DataSet();
-            if (map.mapView.getAllLayers().isEmpty())
+            }
+            if (map.mapView.getAllLayers().isEmpty()) {
                 setMapFrame(null);
+            }
         }
     }
 
@@ -181,12 +183,14 @@ abstract public class Main {
 
     public Main(SplashScreen splash) {
         main = this;
-//        platform = determinePlatformHook();
+        //        platform = determinePlatformHook();
         platform.startupHook();
         contentPane.add(panel, BorderLayout.CENTER);
         panel.add(gettingStarted, BorderLayout.CENTER);
 
-        if(splash != null) splash.setStatus(tr("Creating main GUI"));
+        if(splash != null) {
+            splash.setStatus(tr("Creating main GUI"));
+        }
         menu = new MainMenu();
 
         undoRedo.listenerCommands.add(redoUndoListener);
@@ -196,7 +200,7 @@ abstract public class Main {
 
         contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
         .put(Shortcut.registerShortcut("system:help", tr("Help"),
-        KeyEvent.VK_F1, Shortcut.GROUP_DIRECT).getKeyStroke(), "Help");
+                KeyEvent.VK_F1, Shortcut.GROUP_DIRECT).getKeyStroke(), "Help");
         contentPane.getActionMap().put("Help", menu.help);
 
         TaggingPresetPreference.initialize();
@@ -222,12 +226,29 @@ abstract public class Main {
         map.mapView.addLayer(layer);
     }
     /**
-     * @return The edit osm layer. If none exists, it will be created.
+     * Replies the current edit layer. Creates one if no {@see OsmDataLayer}
+     * exists. Replies null, if the currently active layer isn't an instance
+     * of {@see OsmDataLayer}.
+     * 
+     * @return the current edit layer
      */
-    public final OsmDataLayer editLayer() {
-        if (map == null || map.mapView.editLayer == null)
+    public final OsmDataLayer createOrGetEditLayer() {
+        if (map == null || map.mapView.getEditLayer() == null) {
             menu.newAction.actionPerformed(null);
-        return map.mapView.editLayer;
+        }
+        return map.mapView.getEditLayer();
+    }
+
+    /**
+     * Replies true if this map view has an edit layer
+     * 
+     * @return true if this map view has an edit layer
+     */
+    public boolean hasEditLayer() {
+        if (map == null) return false;
+        if (map.mapView == null) return false;
+        if (map.mapView.getEditLayer() == null) return false;
+        return true;
     }
 
     /**
@@ -262,9 +283,10 @@ abstract public class Main {
         }
         if(!Main.proj.equals(oldProj))
         {
-            if(b != null)
+            if(b != null) {
                 map.mapView.zoomTo(b);
-            /* TODO - remove layers with fixed projection */
+                /* TODO - remove layers with fixed projection */
+            }
         }
     }
 
@@ -278,8 +300,9 @@ abstract public class Main {
         try {
             try {
                 String laf = Main.pref.get("laf");
-                if(laf != null && laf.length() > 0)
+                if(laf != null && laf.length() > 0) {
                     UIManager.setLookAndFeel(laf);
+                }
             }
             catch (final javax.swing.UnsupportedLookAndFeelException e) {
                 System.out.println("Look and Feel not supported: " + Main.pref.get("laf"));
@@ -309,10 +332,12 @@ abstract public class Main {
                 if (m.group(3) != null) {
                     x = Integer.valueOf(m.group(5));
                     y = Integer.valueOf(m.group(7));
-                    if (m.group(4).equals("-"))
+                    if (m.group(4).equals("-")) {
                         x = screenDimension.width - x - w;
-                    if (m.group(6).equals("-"))
+                    }
+                    if (m.group(6).equals("-")) {
                         y = screenDimension.height - y - h;
+                    }
                 }
                 bounds = new Rectangle(x,y,w,h);
                 if(!Main.pref.get("gui.geometry").equals(geometry)) {
@@ -323,26 +348,33 @@ abstract public class Main {
                 System.out.println("Ignoring malformed geometry: "+geometry);
             }
         }
-        if (bounds == null)
+        if (bounds == null) {
             bounds = !args.containsKey("no-maximize") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
+        }
 
-            // preinitialize a wait dialog for all early downloads (e.g. via command line)
-            pleaseWaitDlg = new PleaseWaitDialog(null);
+        // preinitialize a wait dialog for all early downloads (e.g. via command line)
+        pleaseWaitDlg = new PleaseWaitDialog(null);
     }
 
     public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
         // initialize the pleaseWaitDialog with the application as parent to handle focus stuff
         pleaseWaitDlg = new PleaseWaitDialog(parent);
 
-        if (args.containsKey("download"))
-            for (String s : args.get("download"))
+        if (args.containsKey("download")) {
+            for (String s : args.get("download")) {
                 downloadFromParamString(false, s);
-        if (args.containsKey("downloadgps"))
-            for (String s : args.get("downloadgps"))
+            }
+        }
+        if (args.containsKey("downloadgps")) {
+            for (String s : args.get("downloadgps")) {
                 downloadFromParamString(true, s);
-        if (args.containsKey("selection"))
-            for (String s : args.get("selection"))
+            }
+        }
+        if (args.containsKey("selection")) {
+            for (String s : args.get("selection")) {
                 SearchAction.search(s, SearchAction.SearchMode.add, false, false);
+            }
+        }
     }
 
     public static boolean breakBecauseUnsavedChanges() {
@@ -359,26 +391,27 @@ abstract public class Main {
             }
             if (modified) {
                 final String msg = uploadedModified ? "\n"
-                +tr("Hint: Some changes came from uploading new data to the server.") : "";
-                int result = new ExtendedDialog(parent, tr("Unsaved Changes"),
-                new javax.swing.JLabel(tr("There are unsaved changes. Discard the changes and continue?")+msg),
-                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")},
-                new String[] {"save.png", "exit.png", "cancel.png"}).getValue();
+                        +tr("Hint: Some changes came from uploading new data to the server.") : "";
+                        int result = new ExtendedDialog(parent, tr("Unsaved Changes"),
+                                new javax.swing.JLabel(tr("There are unsaved changes. Discard the changes and continue?")+msg),
+                                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")},
+                                new String[] {"save.png", "exit.png", "cancel.png"}).getValue();
 
-                // Save before exiting
-                if(result == 1) {
-                    Boolean savefailed = false;
-                    for (final Layer l : map.mapView.getAllLayers()) {
-                        if (l instanceof OsmDataLayer && ((OsmDataLayer)l).isModified()) {
-                            SaveAction save = new SaveAction(l);
-                            if(!save.doSave())
-                                savefailed = true;
+                        // Save before exiting
+                        if(result == 1) {
+                            Boolean savefailed = false;
+                            for (final Layer l : map.mapView.getAllLayers()) {
+                                if (l instanceof OsmDataLayer && ((OsmDataLayer)l).isModified()) {
+                                    SaveAction save = new SaveAction(l);
+                                    if(!save.doSave()) {
+                                        savefailed = true;
+                                    }
+                                }
+                            }
+                            return savefailed;
                         }
-                    }
-                    return savefailed;
-                }
-                else if(result != 2) // Cancel exiting unless the 2nd button was clicked
-                    return true;
+                        else if(result != 2) // Cancel exiting unless the 2nd button was clicked
+                            return true;
             }
         }
         return false;
@@ -387,9 +420,9 @@ abstract public class Main {
     private static void downloadFromParamString(final boolean rawGps, String s) {
         if (s.startsWith("http:")) {
             final Bounds b = OsmUrlToBounds.parse(s);
-            if (b == null)
+            if (b == null) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed URL: \"{0}\"", s));
-            else {
+            } else {
                 //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
                 DownloadTask osmTask = new DownloadOsmTask();
                 osmTask.download(main.menu.download, b.min.lat(), b.min.lon(), b.max.lat(), b.max.lon());
@@ -427,8 +460,8 @@ abstract public class Main {
         } else if (os.toLowerCase().startsWith("windows")) {
             platform = new PlatformHookWindows();
         } else if (os.equals("Linux") || os.equals("Solaris") ||
-            os.equals("SunOS") || os.equals("AIX") ||
-            os.equals("FreeBSD") || os.equals("NetBSD") || os.equals("OpenBSD")) {
+                os.equals("SunOS") || os.equals("AIX") ||
+                os.equals("FreeBSD") || os.equals("NetBSD") || os.equals("OpenBSD")) {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("mac os x")) {
             platform = new PlatformHookOsx();
@@ -467,14 +500,18 @@ abstract public class Main {
                 int height = (int)bounds.getHeight();
                 int x = (int)bounds.getX();
                 int y = (int)bounds.getY();
-                if (width > screenDimension.width)
+                if (width > screenDimension.width) {
                     width = screenDimension.width;
-                if (height > screenDimension.height)
+                }
+                if (height > screenDimension.height) {
                     width = screenDimension.height;
-                if (x < 0)
+                }
+                if (x < 0) {
                     x = 0;
-                if (y < 0)
+                }
+                if (y < 0) {
                     y = 0;
+                }
                 newGeometry = width + "x" + height + "+" + x + "+" + y;
             }
         }

@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -158,7 +159,8 @@ public class UploadAction extends JosmAction {
             return;
         }
 
-        if (!Main.map.conflictDialog.conflicts.isEmpty()) {
+        ConflictCollection conflicts = Main.main.createOrGetEditLayer().getConflicts();
+        if (conflicts !=null && !conflicts.isEmpty()) {
             JOptionPane.showMessageDialog(Main.parent,tr("There are unresolved conflicts. You have to resolve these first."));
             Main.map.conflictDialog.action.button.setSelected(true);
             Main.map.conflictDialog.action.actionPerformed(null);
@@ -211,7 +213,7 @@ public class UploadAction extends JosmAction {
             @Override protected void realRun() throws SAXException, IOException {
                 try {
                     server.uploadOsm(Main.ds.version, all);
-                    Main.main.editLayer().cleanData(server.processed, !add.isEmpty());
+                    Main.main.createOrGetEditLayer().cleanData(server.processed, !add.isEmpty());
                 } catch (Exception sxe) {
                     if (uploadCancelled) {
                         System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());

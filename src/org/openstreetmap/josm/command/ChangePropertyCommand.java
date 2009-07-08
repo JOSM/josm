@@ -39,13 +39,15 @@ public class ChangePropertyCommand extends Command {
     private final String value;
 
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, String key, String value) {
+        super();
         this.objects = new LinkedList<OsmPrimitive>();
         this.key = key;
         this.value = value;
         if (value == null) {
             for (OsmPrimitive osm : objects) {
-                if(osm.get(key) != null)
+                if(osm.get(key) != null) {
                     this.objects.add(osm);
+                }
             }
         } else {
             for (OsmPrimitive osm : objects) {
@@ -63,8 +65,9 @@ public class ChangePropertyCommand extends Command {
         this.value = value;
         String val = object.get(key);
         if ((value == null && val != null)
-        || (value != null && (val == null || !value.equals(val))))
+                || (value != null && (val == null || !value.equals(val)))) {
             this.objects.add(object);
+        }
     }
 
     @Override public boolean executeCommand() {
@@ -94,13 +97,13 @@ public class ChangePropertyCommand extends Command {
             objects.iterator().next().visit(v);
             text = value == null
             ? tr("Remove \"{0}\" for {1} ''{2}''", key, tr(v.className), v.name)
-            : tr("Set {0}={1} for {2} ''{3}''",key,value, tr(v.className), v.name);
+                    : tr("Set {0}={1} for {2} ''{3}''",key,value, tr(v.className), v.name);
         }
         else
         {
             text = value == null
             ? tr("Remove \"{0}\" for {1} {2}", key, objects.size(), trn("object","objects",objects.size()))
-            : tr("Set {0}={1} for {2} {3}",key,value, objects.size(), trn("object","objects",objects.size()));
+                    : tr("Set {0}={1} for {2} {3}",key,value, objects.size(), trn("object","objects",objects.size()));
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL));
         if (objects.size() == 1)

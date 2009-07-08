@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -14,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -22,6 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class RelationMemberConflictResolverCommand extends Command {
+    private static final Logger logger = Logger.getLogger(RelationMemberConflictResolverCommand.class.getName());
 
     /** my relation */
     private final Relation my;
@@ -31,6 +34,9 @@ public class RelationMemberConflictResolverCommand extends Command {
      *  command is executed
      */
     private final List<RelationMember> mergedMembers;
+
+    /** the layer this conflict is resolved in */
+    private OsmDataLayer layer;
 
     /**
      * 
@@ -70,6 +76,9 @@ public class RelationMemberConflictResolverCommand extends Command {
             RelationMember n = mergedMembers.get(i);
             my.members.add(n);
         }
+
+        // remember the layer
+        layer = Main.main.map.mapView.getEditLayer();
         return true;
     }
 
@@ -81,14 +90,25 @@ public class RelationMemberConflictResolverCommand extends Command {
 
     @Override
     public void undoCommand() {
+        if (! Main.map.mapView.hasLayer(layer)) {
+            logger.warning(tr("Can't undo command ''{0}'' because layer ''{1}'' is not present anymore",
+                    this.toString(),
+                    layer.toString()
+            ));
+            return;
+        }
+
+        Main.map.mapView.setActiveLayer(layer);
+        OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
+
         // restore the former state
         //
         super.undoCommand();
 
         // restore a conflict if necessary
         //
-        if (!Main.map.conflictDialog.conflicts.containsKey(my)) {
-            Main.map.conflictDialog.conflicts.put(my,their);
+        if (!editLayer.getConflicts().hasConflictForMy(my)) {
+            editLayer.getConflicts().add(my,their);
         }
     }
 }

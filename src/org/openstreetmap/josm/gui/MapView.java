@@ -8,15 +8,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedList;
 
 import javax.swing.AbstractButton;
@@ -26,18 +26,14 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.MoveAction;
-import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -60,6 +56,7 @@ import org.openstreetmap.josm.tools.AudioPlayer;
  */
 public class MapView extends NavigatableComponent {
 
+
     /**
      * A list of all layers currently loaded.
      */
@@ -68,10 +65,7 @@ public class MapView extends NavigatableComponent {
      * The play head marker: there is only one of these so it isn't in any specific layer
      */
     public PlayHeadMarker playHeadMarker = null;
-    /**
-     * Direct link to the edit layer (if any) in the layers list.
-     */
-    public OsmDataLayer editLayer;
+
     /**
      * The layer from the layers list that is currently active.
      */
@@ -99,8 +93,9 @@ public class MapView extends NavigatableComponent {
                 add(scaler);
                 scaler.setLocation(10,30);
 
-                if (!zoomToEditLayerBoundingBox())
+                if (!zoomToEditLayerBoundingBox()) {
                     new AutoScaleAction("data").actionPerformed(null);
+                }
 
                 new MapMover(MapView.this, Main.contentPane);
                 JosmAction mv;
@@ -151,50 +146,62 @@ public class MapView extends NavigatableComponent {
      */
     public void addLayer(Layer layer) {
         if (layer instanceof OsmDataLayer) {
-            editLayer = (OsmDataLayer)layer;
+            OsmDataLayer editLayer = (OsmDataLayer)layer;
             Main.ds = editLayer.data;
             editLayer.listenerModified.add(new ModifiedChangedListener(){
                 public void modifiedChanged(boolean value, OsmDataLayer source) {
                     JOptionPane.getFrameForComponent(Main.parent).setTitle((value?"*":"")
-                    +tr("Java OpenStreetMap Editor"));
+                            +tr("Java OpenStreetMap Editor"));
                 }
             });
         }
-        if (layer instanceof MarkerLayer && playHeadMarker == null)
+        if (layer instanceof MarkerLayer && playHeadMarker == null) {
             playHeadMarker = PlayHeadMarker.create();
+        }
         int pos = layers.size();
-        while(pos > 0 && layers.get(pos-1).background)
+        while(pos > 0 && layers.get(pos-1).background) {
             --pos;
+        }
         layers.add(pos, layer);
 
-        for (Layer.LayerChangeListener l : Layer.listeners)
+        for (Layer.LayerChangeListener l : Layer.listeners) {
             l.layerAdded(layer);
+        }
         if (layer instanceof OsmDataLayer || activeLayer == null) {
             // autoselect the new layer
             Layer old = activeLayer;
             setActiveLayer(layer);
-            for (Layer.LayerChangeListener l : Layer.listeners)
+            for (Layer.LayerChangeListener l : Layer.listeners) {
                 l.activeLayerChange(old, layer);
+            }
         }
         AudioPlayer.reset();
         repaint();
     }
 
     @Override
-    protected DataSet getData()
-    {
+    protected DataSet getData() {
         if(activeLayer != null && activeLayer instanceof OsmDataLayer)
             return ((OsmDataLayer)activeLayer).data;
         return new DataSet();
     }
 
-    public Boolean isDrawableLayer()
-    {
+    /**
+     * Replies true if the active layer is drawable.
+     * 
+     * @return true if the active layer is drawable, false otherwise
+     */
+    public boolean isActiveLayerDrawable() {
         return activeLayer != null && activeLayer instanceof OsmDataLayer;
     }
 
-    public Boolean isVisibleDrawableLayer() {
-        return isDrawableLayer() && activeLayer.visible;
+    /**
+     * Replies true if the active layer is visible.
+     * 
+     * @return true if the active layer is visible, false otherwise
+     */
+    public boolean isActiveLayerVisible() {
+        return isActiveLayerDrawable() && activeLayer.visible;
     }
 
     /**
@@ -203,29 +210,28 @@ public class MapView extends NavigatableComponent {
      */
     public void removeLayer(Layer layer) {
         if (layers.remove(layer)) {
-            for (Layer.LayerChangeListener l : Layer.listeners)
+            for (Layer.LayerChangeListener l : Layer.listeners) {
                 l.layerRemoved(layer);
+            }
         }
-        if (layer == editLayer) {
-            editLayer = null;
-            Main.ds.setSelected();
+        if (layer == activeLayer) {
+            if (layer instanceof OsmDataLayer) {
+                Main.ds.setSelected();
+            }
         }
         layer.destroy();
         AudioPlayer.reset();
     }
 
-    private Boolean virtualnodes = false;
-    public void enableVirtualNodes(Boolean state)
-    {
-        if(virtualnodes != state)
-        {
-            virtualnodes = state;
+    private boolean virtualNodesEnabled = false;
+    public void setVirtualNodesEnabled(boolean enabled) {
+        if(virtualNodesEnabled != enabled) {
+            virtualNodesEnabled = enabled;
             repaint();
         }
     }
-    public Boolean useVirtualNodes()
-    {
-        return virtualnodes;
+    public boolean isVirtualNodesEnabled() {
+        return virtualNodesEnabled;
     }
 
     /**
@@ -240,10 +246,11 @@ public class MapView extends NavigatableComponent {
         if (pos == curLayerPos)
             return; // already in place.
         layers.remove(curLayerPos);
-        if (pos >= layers.size())
+        if (pos >= layers.size()) {
             layers.add(layer);
-        else
+        } else {
             layers.add(pos, layer);
+        }
         AudioPlayer.reset();
     }
 
@@ -265,9 +272,10 @@ public class MapView extends NavigatableComponent {
         // re-create offscreen-buffer if we've been resized, otherwise
         // just re-use it.
         if (null == offscreenBuffer || offscreenBuffer.getWidth() != getWidth()
-                || offscreenBuffer.getHeight() != getHeight())
+                || offscreenBuffer.getHeight() != getHeight()) {
             offscreenBuffer = new BufferedImage(getWidth(), getHeight(),
                     BufferedImage.TYPE_INT_ARGB);
+        }
 
         Graphics2D tempG = offscreenBuffer.createGraphics();
         tempG.setColor(Main.pref.getColor("background", Color.BLACK));
@@ -275,8 +283,9 @@ public class MapView extends NavigatableComponent {
 
         for (int i = layers.size()-1; i >= 0; --i) {
             Layer l = layers.get(i);
-            if (l.visible/* && l != getActiveLayer()*/)
+            if (l.visible/* && l != getActiveLayer()*/) {
                 l.paint(tempG, this);
+            }
         }
 
         /*if (getActiveLayer() != null && getActiveLayer().visible)
@@ -295,11 +304,13 @@ public class MapView extends NavigatableComponent {
         int y1 = Math.min(min.y, max.y);
         int x2 = Math.max(min.x, max.x);
         int y2 = Math.max(min.y, max.y);
-        if (x1 > 0 || y1 > 0 || x2 < getWidth() || y2 < getHeight())
+        if (x1 > 0 || y1 > 0 || x2 < getWidth() || y2 < getHeight()) {
             tempG.drawRect(x1, y1, x2-x1+1, y2-y1+1);
+        }
 
-        if (playHeadMarker != null)
+        if (playHeadMarker != null) {
             playHeadMarker.paint(tempG, this);
+        }
 
         g.drawImage(offscreenBuffer, 0, 0, null);
         super.paint(g);
@@ -309,41 +320,49 @@ public class MapView extends NavigatableComponent {
      * Set the new dimension to the view.
      */
     public void recalculateCenterScale(BoundingXYVisitor box) {
-        if(box == null)
+        if(box == null) {
             box = new BoundingXYVisitor();
-        if(box.getBounds() == null)
+        }
+        if(box.getBounds() == null) {
             box.visit(getProjection().getWorldBounds());
-        if(!box.hasExtend())
-             box.enlargeBoundingBox();
+        }
+        if(!box.hasExtend()) {
+            box.enlargeBoundingBox();
+        }
 
         zoomTo(box.getBounds());
     }
 
     /**
-     * @return An unmodificable list of all layers
+     * @return An unmodifiable collection of all layers
      */
     public Collection<Layer> getAllLayers() {
         return Collections.unmodifiableCollection(layers);
     }
 
     /**
-     * Set the active selection to the given value and raise an layerchange event.
+     * Sets the active layer to <code>layer</code>. If <code>layer</code> is an instance
+     * of {@see OsmDataLayer} also sets {@see #editLayer} to <code>layer</code>.
+     * 
+     * @param layer the layer to be activate; must be one of the layers in the list of layers
+     * @exception IllegalArgumentException thrown if layer is not in the lis of layers
      */
     public void setActiveLayer(Layer layer) {
         if (!layers.contains(layer))
-            throw new IllegalArgumentException("Layer must be in layerlist");
+            throw new IllegalArgumentException(tr("Layer {0} must be in list of layers", layer.toString()));
         if (layer instanceof OsmDataLayer) {
-            editLayer = (OsmDataLayer)layer;
+            OsmDataLayer editLayer = (OsmDataLayer)layer;
             Main.ds = editLayer.data;
-        }
-        else
+        } else {
             Main.ds.setSelected();
+        }
         DataSet.fireSelectionChanged(Main.ds.getSelected());
         Layer old = activeLayer;
         activeLayer = layer;
         if (old != layer) {
-            for (Layer.LayerChangeListener l : Layer.listeners)
+            for (Layer.LayerChangeListener l : Layer.listeners) {
                 l.activeLayerChange(old, layer);
+            }
         }
 
         /* This only makes the buttons look disabled. Disabling the actions as well requires
@@ -359,10 +378,33 @@ public class MapView extends NavigatableComponent {
     }
 
     /**
-     * @return The current active layer
+     * Replies the currently active layer
+     * 
+     * @return the currently active layer (may be null)
      */
     public Layer getActiveLayer() {
         return activeLayer;
+    }
+
+    /**
+     * Replies the current edit layer, if any
+     * 
+     * @return the current edit layer. May be null.
+     */
+    public OsmDataLayer getEditLayer() {
+        if (activeLayer instanceof OsmDataLayer)
+            return (OsmDataLayer)activeLayer;
+        return null;
+    }
+
+    /**
+     * replies true if the list of layers managed by this map view contain layer
+     * 
+     * @param layer the layer
+     * @return true if the list of layers managed by this map view contain layer
+     */
+    public boolean hasLayer(Layer layer) {
+        return layers.contains(layer);
     }
 
     /**
@@ -376,7 +418,7 @@ public class MapView extends NavigatableComponent {
     public boolean zoomToEditLayerBoundingBox() {
         // workaround for #1461 (zoom to download bounding box instead of all data)
         // In case we already have an existing data layer ...
-        Collection<DataSource> dataSources = Main.main.editLayer().data.dataSources;
+        Collection<DataSource> dataSources = Main.main.createOrGetEditLayer().data.dataSources;
         // ... with bounding box[es] of data loaded from OSM or a file...
         BoundingXYVisitor bbox = new BoundingXYVisitor();
         for (DataSource ds : dataSources) {

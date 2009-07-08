@@ -5,8 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -14,23 +13,23 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a command for undeleting a node which was deleted on the server.
+ * Represents a command for undeleting an {@see OsmPrimitive} which was deleted on the server.
  * The command remembers the former node id and sets the node id to 0. This turns
  * the node into a new node which can be uploaded to the server.
  *
  */
-public class UndeletePrimitivesCommand extends Command {
+public class UndeletePrimitivesCommand extends ConflictResolveCommand {
+    static private final Logger logger = Logger.getLogger(UndeletePrimitivesCommand.class.getName());
 
     /** the node to undelete */
     private ArrayList<OsmPrimitive> toUndelete;
-    private Map<OsmPrimitive,OsmPrimitive> resolvedConflicts;
 
     protected UndeletePrimitivesCommand() {
         toUndelete = new ArrayList<OsmPrimitive>();
-        resolvedConflicts = new HashMap<OsmPrimitive, OsmPrimitive>();
     }
     /**
      * constructor
@@ -76,10 +75,11 @@ public class UndeletePrimitivesCommand extends Command {
     @Override
     public boolean executeCommand() {
         super.executeCommand();
+
         for(OsmPrimitive primitive: toUndelete) {
-            if (Main.map.conflictDialog.conflicts.containsKey(primitive)) {
-                resolvedConflicts.put(primitive, Main.map.conflictDialog.conflicts.get(primitive));
-                Main.map.conflictDialog.removeConflictForPrimitive(primitive);
+            if(getLayer().getConflicts().hasConflictForMy(primitive)) {
+                rememberConflict(getLayer().getConflicts().getConflictForMy(primitive));
+                getLayer().getConflicts().remove(primitive);
             }
             primitive.id = 0;
         }
@@ -90,15 +90,5 @@ public class UndeletePrimitivesCommand extends Command {
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
         modified.addAll(toUndelete);
-    }
-    @Override
-    public void undoCommand() {
-        super.undoCommand();
-
-        for (OsmPrimitive my: resolvedConflicts.keySet()) {
-            if (!Main.map.conflictDialog.conflicts.containsKey(my)) {
-                Main.map.conflictDialog.addConflict(my, resolvedConflicts.get(my));
-            }
-        }
     }
 }

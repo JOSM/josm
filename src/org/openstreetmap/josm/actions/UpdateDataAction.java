@@ -31,7 +31,7 @@ public class UpdateDataAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         int bboxCount = 0;
         List<Area> areas = new ArrayList<Area>();
-        for(DataSource ds : Main.main.editLayer().data.dataSources) {
+        for(DataSource ds : Main.main.createOrGetEditLayer().data.dataSources) {
             areas.add(new Area(ds.bounds.asRect()));
         }
 

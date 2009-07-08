@@ -56,7 +56,7 @@ public class MultiFetchServerObjectReaderTest {
         //
         for (int i=0; i< numNodes; i++) {
             Node n = new Node(0);
-            n.coor = new LatLon(-36.6,47.6); // somewhere in the atlantic
+            n.setCoor(new LatLon(-36.6,47.6));
             n.put("name", "node-"+i);
             n.incomplete = false;
             ds.addPrimitive(n);
