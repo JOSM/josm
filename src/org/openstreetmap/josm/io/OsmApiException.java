@@ -64,9 +64,12 @@ public class OsmApiException extends OsmTransferException {
             .append(">");
         }
         if (errorBody != null) {
-            sb.append(",Error Body=<")
-            .append(errorBody)
-            .append(">");
+            errorBody = errorBody.replaceAll("^[ \n\t\r]+", "").replaceAll("[ \n\t\r]+$", "");
+            if(!errorBody.equals(errorHeader)) {
+                sb.append(", Error Body=<")
+                .append(errorBody)
+                .append(">");
+            }
         }
         return sb.toString();
     }
