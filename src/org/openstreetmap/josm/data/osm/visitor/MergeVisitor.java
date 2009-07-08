@@ -167,14 +167,19 @@ public class MergeVisitor extends AbstractVisitor {
             }
     }
 
+
     private void fixWay(Way w) {
         boolean replacedSomething = false;
         LinkedList<Node> newNodes = new LinkedList<Node>();
-        for (Node n : w.nodes) {
-            Node otherN = (Node) merged.get(n);
-            newNodes.add(otherN == null ? n : otherN);
-            if (otherN != null) {
-                replacedSomething = true;
+        for (Node myNode : w.nodes) {
+            Node mergedNode = (Node) merged.get(myNode);
+            if (mergedNode != null) {
+                if (!mergedNode.deleted) {
+                    newNodes.add(mergedNode);
+                }
+                replacedSomething =  true;
+            } else {
+                newNodes.add(myNode);
             }
         }
         if (replacedSomething) {
@@ -186,14 +191,16 @@ public class MergeVisitor extends AbstractVisitor {
     private void fixRelation(Relation r) {
         boolean replacedSomething = false;
         LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
-        for (RelationMember m : r.members) {
-            OsmPrimitive otherP = merged.get(m.member);
-            if (otherP == null) {
-                newMembers.add(m);
+        for (RelationMember myMember : r.members) {
+            OsmPrimitive mergedMember = merged.get(myMember.member);
+            if (mergedMember == null) {
+                newMembers.add(myMember);
             } else {
-                RelationMember mnew = new RelationMember(m);
-                mnew.member = otherP;
-                newMembers.add(mnew);
+                if (! mergedMember.deleted) {
+                    RelationMember newMember = new RelationMember(myMember);
+                    newMember.member = mergedMember;
+                    newMembers.add(newMember);
+                }
                 replacedSomething = true;
             }
         }

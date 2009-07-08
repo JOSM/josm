@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Calendar;
@@ -20,6 +21,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
@@ -854,4 +857,130 @@ public class MergeVisitorTest {
         assertEquals("1111", myWay.user.uid);
         assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
     }
+
+
+    /**
+     * My dataset includes a deleted node.
+     * Their dataset includes a way with three nodes, the first one being my node.
+     * 
+     * => the merged way should include two nodes only. the deleted node should still be
+     * in the data set
+     *
+     */
+    @Test
+    public void wayComplex_mergingADeletedNode() {
+
+        DataSet my = new DataSet();
+        my.version = "0.6";
+
+        Node n1 = new Node(new LatLon(0,0));
+        n1.id = 1;
+        n1.version = 1;
+        n1.delete(true);
+        my.addPrimitive(n1);
+
+        DataSet their = new DataSet();
+        their.version = "0.6";
+
+        Node n3 = new Node(new LatLon(0,0));
+        n3.id = 1;
+        n3.version = 1;
+        their.addPrimitive(n3);
+
+        Node n4 = new Node(new LatLon(1,1));
+        n4.id = 2;
+        n4.version = 1;
+        their.addPrimitive(n4);
+
+        Node n5 = new Node(new LatLon(2,2));
+        n5.id = 3;
+        n5.version = 1;
+        their.addPrimitive(n5);
+
+
+        Way theirWay = new Way();
+        theirWay.id = 4;
+        theirWay.version = 1;
+        theirWay.nodes.add(n3);
+        theirWay.nodes.add(n4);
+        theirWay.nodes.add(n5);
+        theirWay.user = User.get("their");
+        theirWay.user.uid = "1111";
+        theirWay.setTimestamp(new Date());
+        their.addPrimitive(theirWay);
+
+        MergeVisitor visitor = new MergeVisitor(my,their);
+        visitor.merge();
+
+        assertEquals(0,visitor.getConflicts().size());
+
+        Way myWay = (Way)my.getPrimitiveById(4);
+        assertEquals(2, myWay.nodes.size());
+
+        Node n = (Node)my.getPrimitiveById(1);
+        assertTrue(n != null);
+    }
+
+    /**
+     * My dataset includes a deleted node.
+     * Their dataset includes a relation with thre nodes, the first one being my node.
+     * 
+     * => the merged relation should include two nodes only. the deleted node should still be
+     * in the data set
+     *
+     */
+    @Test
+    public void relationComplex_mergingADeletedNode() {
+
+        DataSet my = new DataSet();
+        my.version = "0.6";
+
+        Node n1 = new Node(new LatLon(0,0));
+        n1.id = 1;
+        n1.version = 1;
+        n1.delete(true);
+        my.addPrimitive(n1);
+
+        DataSet their = new DataSet();
+        their.version = "0.6";
+
+        Node n3 = new Node(new LatLon(0,0));
+        n3.id = 1;
+        n3.version = 1;
+        their.addPrimitive(n3);
+
+        Node n4 = new Node(new LatLon(1,1));
+        n4.id = 2;
+        n4.version = 1;
+        their.addPrimitive(n4);
+
+        Node n5 = new Node(new LatLon(2,2));
+        n5.id = 3;
+        n5.version = 1;
+        their.addPrimitive(n5);
+
+
+        Relation theirRelation = new Relation();
+        theirRelation.id = 4;
+        theirRelation.version = 1;
+        theirRelation.members.add(new RelationMember("", n3));
+        theirRelation.members.add(new RelationMember("", n4));
+        theirRelation.members.add(new RelationMember("", n5));
+        their.addPrimitive(theirRelation);
+
+        MergeVisitor visitor = new MergeVisitor(my,their);
+        visitor.merge();
+
+        assertEquals(0,visitor.getConflicts().size());
+
+        Relation r = (Relation)my.getPrimitiveById(4);
+        assertEquals(2, r.members.size());
+
+        Node n = (Node)my.getPrimitiveById(1);
+        assertTrue(n != null);
+    }
+
+
+
+
 }
