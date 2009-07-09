@@ -3,8 +3,10 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,11 +14,14 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.PurgePrimitivesCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.xml.sax.SAXException;
 
 /**
  * This action synchronizes a set of primitives with their state on the server.
@@ -24,8 +29,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class UpdateSelectionAction extends JosmAction {
-
-    static public int DEFAULT_MAX_SIZE_UPDATE_SELECTION = 50;
 
     /**
      * handle an exception thrown because a primitive was deleted on the server
@@ -42,7 +45,7 @@ public class UpdateSelectionAction extends JosmAction {
             handleUpdateException(e);
             return;
         }
-        Main.main.createOrGetEditLayer().mergeFrom(ds);
+        Main.map.mapView.getEditLayer().mergeFrom(ds);
     }
 
     /**
@@ -62,8 +65,10 @@ public class UpdateSelectionAction extends JosmAction {
     }
 
     /**
+     * handles an exception case: primitive with id <code>id</code> is not in the current
+     * data set
      * 
-     * @param id
+     * @param id the primitive id
      */
     protected void handleMissingPrimitive(long id) {
         JOptionPane.showMessageDialog(
@@ -75,30 +80,107 @@ public class UpdateSelectionAction extends JosmAction {
     }
 
     /**
+     * Updates the data for for the {@see OsmPrimitive}s in <code>selection</code>
+     * with the data currently kept on the server.
      * 
-     * 
+     * @param selection a collection of {@see OsmPrimitive}s to update
      * 
      */
-    public void updatePrimitives(Collection<OsmPrimitive> selection) {
-        MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        reader.append(selection);
-        DataSet ds = null;
-        try {
-            ds = reader.parseOsm();
-        } catch(Exception e) {
-            handleUpdateException(e);
-            return;
+    public void updatePrimitives(final Collection<OsmPrimitive> selection) {
+
+        /**
+         * The asynchronous task for updating the data using multi fetch.
+         *
+         */
+        class UpdatePrimitiveTask extends PleaseWaitRunnable {
+            private DataSet ds;
+            private boolean cancelled;
+            Exception lastException;
+
+            protected void setIndeterminateEnabled(final boolean enabled) {
+                EventQueue.invokeLater(
+                        new Runnable() {
+                            public void run() {
+                                Main.pleaseWaitDlg.setIndeterminate(enabled);
+                            }
+                        }
+                );
+            }
+
+            public UpdatePrimitiveTask() {
+                super("Update primitives", false /* don't ignore exception*/);
+                cancelled = false;
+            }
+
+            protected void showLastException() {
+                String msg = lastException.getMessage();
+                if (msg == null) {
+                    msg = lastException.toString();
+                }
+                JOptionPane.showMessageDialog(
+                        Main.map,
+                        msg,
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+
+            @Override
+            protected void cancel() {
+                cancelled = true;
+                OsmApi.getOsmApi().cancel();
+            }
+
+            @Override
+            protected void finish() {
+                if (cancelled)
+                    return;
+                if (lastException != null) {
+                    showLastException();
+                    return;
+                }
+                if (ds != null) {
+                    Main.map.mapView.getEditLayer().mergeFrom(ds);
+                }
+            }
+
+            @Override
+            protected void realRun() throws SAXException, IOException, OsmTransferException {
+                setIndeterminateEnabled(true);
+                try {
+                    MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
+                    reader.append(selection);
+                    ds = reader.parseOsm();
+                } catch(Exception e) {
+                    if (cancelled)
+                        return;
+                    lastException = e;
+                } finally {
+                    setIndeterminateEnabled(false);
+                }
+            }
         }
-        Main.main.createOrGetEditLayer().mergeFrom(ds);
+
+        Main.worker.submit(new UpdatePrimitiveTask());
     }
 
+    /**
+     * Updates the data for for the {@see OsmPrimitive}s with id <code>id</code>
+     * with the data currently kept on the server.
+     * 
+     * @param id  the id of a primitive in the {@see DataSet} of the current edit layser
+     * 
+     */
     public void updatePrimitive(long id) {
-        OsmPrimitive primitive = Main.main.createOrGetEditLayer().data.getPrimitiveById(id);
+        OsmPrimitive primitive = Main.map.mapView.getEditLayer().data.getPrimitiveById(id);
         Set<OsmPrimitive> s = new HashSet<OsmPrimitive>();
         s.add(primitive);
         updatePrimitives(s);
     }
 
+    /**
+     * constructor
+     */
     public UpdateSelectionAction() {
         super(tr("Update Selection"),
                 "updateselection",
@@ -110,7 +192,9 @@ public class UpdateSelectionAction extends JosmAction {
                         true);
     }
 
-
+    /**
+     * action handler
+     */
     public void actionPerformed(ActionEvent e) {
         Collection<OsmPrimitive> selection = Main.ds.getSelected();
         if (selection.size() == 0) {

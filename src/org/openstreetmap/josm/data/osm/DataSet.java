@@ -312,6 +312,32 @@ public class DataSet implements Cloneable {
         return ret;
     }
 
+    /**
+     * Replies the set of ids of all complete primitivies (i.e. those with
+     * ! primitive.incomplete)
+     * 
+     * @return the set of ids of all complete primitivies
+     */
+    public Set<Long> getCompletePrimitiveIds() {
+        HashSet<Long> ret = new HashSet<Long>();
+        for (OsmPrimitive primitive : nodes) {
+            if (!primitive.incomplete) {
+                ret.add(primitive.id);
+            }
+        }
+        for (OsmPrimitive primitive : ways) {
+            if (! primitive.incomplete) {
+                ret.add(primitive.id);
+            }
+        }
+        for (OsmPrimitive primitive : relations) {
+            if (! primitive.incomplete) {
+                ret.add(primitive.id);
+            }
+        }
+        return ret;
+    }
+
     protected void deleteWay(Way way) {
         way.nodes.clear();
         way.delete(true);

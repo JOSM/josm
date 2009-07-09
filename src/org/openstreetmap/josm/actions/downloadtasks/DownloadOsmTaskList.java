@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -97,34 +96,47 @@ public class DownloadOsmTaskList implements Runnable {
             return;
         }
 
-        Set<Long> myPrimitiveIds = Main.main.createOrGetEditLayer().data.getPrimitiveIds();
+        Set<Long> myPrimitiveIds = Main.map.mapView.getEditLayer().data.getCompletePrimitiveIds();
         Set<Long> downloadedIds = getDownloadedIds();
         myPrimitiveIds.removeAll(downloadedIds);
-        myPrimitiveIds.remove(new Long(0));
+        myPrimitiveIds.remove(new Long(0)); // ignore new primitives
         if (! myPrimitiveIds.isEmpty()) {
             handlePotentiallyDeletedPrimitives(myPrimitiveIds);
         }
     }
 
-    protected void checkPotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
-        DataSet ds =  Main.main.createOrGetEditLayer().data;
-        ArrayList<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
+    /**
+     * Updates the local state of a set of primitives (given by a set of primitive
+     * ids) with the state currently held on the server.
+     * 
+     * @param potentiallyDeleted a set of ids to check update from the server
+     */
+    protected void updatePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
+        DataSet ds =  Main.map.mapView.getEditLayer().data;
+        final ArrayList<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
         for (Long id : potentiallyDeleted) {
             OsmPrimitive primitive = ds.getPrimitiveById(id);
             if (primitive != null) {
                 toSelect.add(primitive);
             }
         }
-        ds.setSelected(toSelect);
         EventQueue.invokeLater(
                 new Runnable() {
                     public void run() {
-                        new UpdateSelectionAction().actionPerformed(new ActionEvent(this, 0, ""));
+                        new UpdateSelectionAction().updatePrimitives(toSelect);
                     }
                 }
         );
     }
 
+    /**
+     * Processes a set of primitives (given by a set of their ids) which might be
+     * deleted on the server. First prompts the user whether he wants to check
+     * the current state on the server. If yes, retrieves the current state on the server
+     * and checks whether the primitives are indeed deleted on the server.
+     * 
+     * @param potentiallyDeleted a set of primitives (given by their ids)
+     */
     protected void handlePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
         String [] options = {
                 "Check on the server",
@@ -157,15 +169,33 @@ public class DownloadOsmTaskList implements Runnable {
         switch(ret) {
         case JOptionPane.CLOSED_OPTION: return;
         case JOptionPane.NO_OPTION: return;
-        case JOptionPane.YES_OPTION: checkPotentiallyDeletedPrimitives(potentiallyDeleted); break;
+        case JOptionPane.YES_OPTION: updatePotentiallyDeletedPrimitives(potentiallyDeleted); break;
         }
     }
 
+    /**
+     * replies true, if the primitive with id <code>id</code> was downloaded into the
+     * dataset <code>ds</code>
+     * 
+     * @param id the id
+     * @param ds the dataset
+     * @return true, if the primitive with id <code>id</code> was downloaded into the
+     * dataset <code>ds</code>; false otherwise
+     */
     protected boolean wasDownloaded(long id, DataSet ds) {
         OsmPrimitive primitive = ds.getPrimitiveById(id);
         return primitive != null;
     }
 
+    /**
+     * replies true, if the primitive with id <code>id</code> was downloaded into the
+     * dataset of one of the download tasks
+     * 
+     * @param id the id
+     * @return true, if the primitive with id <code>id</code> was downloaded into the
+     * dataset of one of the download tasks
+     * 
+     */
     public boolean wasDownloaded(long id) {
         for (DownloadTask task : osmTasks) {
             if(task instanceof DownloadOsmTask) {
@@ -176,6 +206,11 @@ public class DownloadOsmTaskList implements Runnable {
         return false;
     }
 
+    /**
+     * Replies the set of primitive ids which have been downloaded by this task list
+     * 
+     * @return the set of primitive ids which have been downloaded by this task list
+     */
     public Set<Long> getDownloadedIds() {
         HashSet<Long> ret = new HashSet<Long>();
         for (DownloadTask task : osmTasks) {
