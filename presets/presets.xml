@@ -41,6 +41,14 @@ check: checkbox
   default: ticked on/off
   delete_if_empty: true/false
 
+For external files the <annotations> should have following elements:
+- author           the author of the preset
+- version          a version number of some sort (e.g. creation date)
+- description      what is your preset meant to be
+- shortdescription very short description
+- link             a link to a helpful website (optional)
+- The fields description, shortdescription and link may also be localized (e.g. de.link)
+
 See also http://josm.openstreetmap.de/wiki/TaggingPresets.
 -->
 <annotations>

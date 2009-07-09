@@ -47,6 +47,17 @@ be appended by a hex value of the alpha channel (thus havin 8 hex digits instead
 
 If a key/value pair matches more than one rule, the "rule that wins" is unpredicted
 in case they have same priority! Using priority settings helps to solve conflicts.
+
+For external files the <rules> should have following elements:
+- author           the author of the style
+- version          a version number of some sort (e.g. creation date)
+- description      what is your style meant to be
+- shortdescription very short description
+- link             a link to a helpful website (optional)
+- The fields description, shortdescription and link may also be localized (e.g. de.link)
+- name             is the name of the style
+                   - when the style replaces the whole rendering choose a new name
+                   - when the style is additional choose "standard" or don't use name tag
 -->
 
 <rules name="standard">
