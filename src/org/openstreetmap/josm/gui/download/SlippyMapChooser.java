@@ -258,7 +258,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
     }
 
     public void toggleMapSource(int mapSource) {
-        this.tileCache = new MemoryTileCache();
+        this.tileController.setTileCache(new MemoryTileCache());
         if (mapSource == SourceButton.MAPNIK) {
             this.setTileSource(sources[0]);
             Main.pref.put("slippy_map_chooser.mapstyle", "mapnik");

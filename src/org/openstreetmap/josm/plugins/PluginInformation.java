@@ -20,6 +20,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Encapsulate general information about a plugin. This information is available
@@ -89,7 +90,7 @@ public class PluginInformation {
 
     private void scanManifest(Manifest manifest)
     {
-        String lang = Main.getLanguageCode()+"_";
+        String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");
         String s = attr.getValue(lang+"Plugin-Link");

@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CacheCustomContent;
+import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
 import org.openstreetmap.josm.actions.AboutAction;
@@ -60,7 +61,7 @@ public class GettingStarted extends JPanel {
         }
 
         final private int myVersion = AboutAction.getVersionNumber();
-        final private String myLang = Main.getLanguageCodeU();
+        final private String myLang = LanguageInfo.getLanguageCodeWiki();
 
         /**
          * This function gets executed whenever the cached files need updating

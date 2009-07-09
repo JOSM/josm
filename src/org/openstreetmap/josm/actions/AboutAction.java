@@ -30,6 +30,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -90,7 +91,7 @@ public class AboutAction extends JosmAction {
 
     static public void setUserAgent() {
         Properties sysProp = System.getProperties();
-        sysProp.put("http.agent", "JOSM/1.5 ("+(version.equals(tr("UNKNOWN"))?"UNKNOWN":version)+" "+Main.getLanguageCode()+")");
+        sysProp.put("http.agent", "JOSM/1.5 ("+(version.equals(tr("UNKNOWN"))?"UNKNOWN":version)+" "+LanguageInfo.getLanguageCode()+")");
         System.setProperties(sysProp);
     }
 

@@ -31,6 +31,7 @@ import javax.swing.ListCellRenderer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class StyleSources extends JPanel {
     private JList sourcesList;
@@ -281,7 +282,7 @@ public class StyleSources extends JPanel {
     public void getDefaults(String name)
     {
         ((DefaultListModel)sourcesDefaults.getModel()).removeAllElements();
-        String lang = Main.getLanguageCode()+"_";
+        String lang = LanguageInfo.getLanguageCodeManifest();
         try
         {
             MirroredInputStream stream = new MirroredInputStream(name);

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Read a trac-wiki page.
@@ -42,7 +43,7 @@ public class WikiReader {
     }
 
     public String readLang(String text) {
-        String languageCode = Main.getLanguageCodeU();
+        String languageCode = LanguageInfo.getLanguageCodeWiki();
         String url = baseurl + "/wiki/"+languageCode+text;
         String res = "";
         try {

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class MapPaintVisitor extends SimplePaintVisitor {
     protected boolean useRealWidth;
@@ -1275,7 +1276,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic",false);
         orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
-        String[] names = {"name:"+Main.getLanguageCode(), "name", "int_name", "ref", "operator", "brand","addr:housenumber"};
+        String[] names = {"name:"+LanguageInfo.getLanguageCode(), "name", "int_name", "ref", "operator", "brand","addr:housenumber"};
         regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
         minEN = nc.getEastNorth(0,nc.getHeight()-1);
         maxEN = nc.getEastNorth(nc.getWidth()-1,0);

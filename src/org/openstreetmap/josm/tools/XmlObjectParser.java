@@ -20,7 +20,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * An helper class that reads from a XML stream into specific objects.
@@ -29,7 +29,7 @@ import org.openstreetmap.josm.Main;
  */
 public class XmlObjectParser implements Iterable<Object> {
 
-    public static final String lang = Main.getLanguageCode()+".";
+    public static final String lang = LanguageInfo.getLanguageCodeXML();
     public static class Uniform<T> implements Iterable<T>{
         private Iterator<Object> iterator;
         /**

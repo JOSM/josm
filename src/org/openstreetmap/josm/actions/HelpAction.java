@@ -31,6 +31,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
 
@@ -45,7 +46,7 @@ public class HelpAction extends AbstractAction {
         String helpTopic();
     }
 
-    private String languageCode = Main.getLanguageCodeU();
+    private String languageCode = LanguageInfo.getLanguageCodeWiki();
     private JFrame helpBrowser = new JFrame(tr("JOSM Online Help"));
     private String baseurl = Main.pref.get("help.baseurl", "http://josm.openstreetmap.de");
     private String pathbase = Main.pref.get("help.pathbase", "/wiki/");
