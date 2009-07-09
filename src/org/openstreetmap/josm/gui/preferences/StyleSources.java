@@ -282,7 +282,7 @@ public class StyleSources extends JPanel {
     public void getDefaults(String name)
     {
         ((DefaultListModel)sourcesDefaults.getModel()).removeAllElements();
-        String lang = LanguageInfo.getLanguageCodeManifest();
+        String lang = LanguageInfo.getLanguageCodeXML();
         try
         {
             MirroredInputStream stream = new MirroredInputStream(name);
