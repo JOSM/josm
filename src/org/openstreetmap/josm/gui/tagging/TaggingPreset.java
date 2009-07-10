@@ -66,7 +66,7 @@ public class TaggingPreset extends AbstractAction {
 
     public static abstract class Item {
         public boolean focus = false;
-        abstract void addToPanel(JPanel p, Collection<OsmPrimitive> sel);
+        abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
         abstract void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds);
         boolean requestFocusInWindow() {return false;}
     }
@@ -132,7 +132,7 @@ public class TaggingPreset extends AbstractAction {
 
         private JComponent value;
 
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineTextUsage(sel, key);
@@ -161,6 +161,7 @@ public class TaggingPreset extends AbstractAction {
                 locale_text = tr(text);
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
+            return true;
         }
 
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
@@ -192,7 +193,7 @@ public class TaggingPreset extends AbstractAction {
         private QuadStateCheckBox.State initialState;
         private boolean def;
 
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineBooleanUsage(sel, key);
@@ -237,6 +238,7 @@ public class TaggingPreset extends AbstractAction {
                         QuadStateCheckBox.State.UNSET });
             }
             p.add(check, GBC.eol().fill(GBC.HORIZONTAL));
+            return true;
         }
 
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
@@ -270,7 +272,7 @@ public class TaggingPreset extends AbstractAction {
         private Usage usage;
         private String originalValue;
 
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
             // find out if our key is already used in the selection.
             usage = determineTextUsage(sel, key);
@@ -331,6 +333,7 @@ public class TaggingPreset extends AbstractAction {
                 locale_text = tr(text);
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
+            return true;
         }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
             Object obj = combo.getSelectedItem();
@@ -365,10 +368,11 @@ public class TaggingPreset extends AbstractAction {
         public String text;
         public String locale_text;
 
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null)
                 locale_text = tr(text);
             p.add(new JLabel(locale_text), GBC.eol());
+            return false;
         }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
@@ -379,7 +383,7 @@ public class TaggingPreset extends AbstractAction {
         public String locale_text;
         public String locale_href;
 
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null)
                 locale_text = text == null ? tr("More information about this feature") : tr(text);
             String url = locale_href;
@@ -389,23 +393,26 @@ public class TaggingPreset extends AbstractAction {
             if (url != null) {
                 p.add(new UrlLabel(url, locale_text), GBC.eol().anchor(GBC.WEST));
             }
+            return false;
         }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
 
     public static class Optional extends Item {
         // TODO: Draw a box around optional stuff
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             p.add(new JLabel(" "), GBC.eol()); // space
             p.add(new JLabel(tr("Optional Attributes:")), GBC.eol());
             p.add(new JLabel(" "), GBC.eol()); // space
+            return false;
         }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
 
     public static class Space extends Item {
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             p.add(new JLabel(" "), GBC.eol()); // space
+            return false;
         }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
@@ -414,7 +421,7 @@ public class TaggingPreset extends AbstractAction {
         public String key;
         public String value;
 
-        @Override public void addToPanel(JPanel p, Collection<OsmPrimitive> sel) { }
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) { return false; }
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
             cmds.add(new ChangePropertyCommand(sel, key, value != null && !value.equals("") ? value : null));
         }
@@ -569,10 +576,18 @@ public class TaggingPreset extends AbstractAction {
         return allPresets;
     }
 
-    public JPanel createPanel(Collection<OsmPrimitive> selected) {
+    private class PresetPanel extends JPanel {
+        boolean hasElements = false;
+        PresetPanel()
+        {
+            super(new GridBagLayout());
+        }
+    }
+
+    public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
         if (data == null)
             return null;
-        JPanel p = new JPanel(new GridBagLayout());
+        PresetPanel p = new PresetPanel();
         LinkedList<Item> l = new LinkedList<Item>();
         if(types != null)
         {
@@ -591,7 +606,10 @@ public class TaggingPreset extends AbstractAction {
             if(i instanceof Link)
                 l.add(i);
             else
-                i.addToPanel(p, selected);
+            {
+                if(i.addToPanel(p, selected))
+                    p.hasElements = true;
+            }
         }
         for(Item link : l)
             link.addToPanel(p, selected);
@@ -600,12 +618,12 @@ public class TaggingPreset extends AbstractAction {
 
     public void actionPerformed(ActionEvent e) {
         Collection<OsmPrimitive> sel = createSelection(Main.ds.getSelected());
-        JPanel p = createPanel(sel);
+        PresetPanel p = createPanel(sel);
         if (p == null)
             return;
 
         int answer = 1;
-        if (p.getComponentCount() != 0) {
+        if (p.getComponentCount() != 0 && (sel.size() == 0 || p.hasElements)) {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
             if(sel.size() == 0) {
                 if(originalSelectionEmpty)
