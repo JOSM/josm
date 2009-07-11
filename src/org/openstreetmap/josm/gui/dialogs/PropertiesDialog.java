@@ -201,6 +201,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
+        dlg.setAlwaysOnTop(true);
+        dlg.toFront();
 
         values.getEditor().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -342,7 +344,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 keys.getEditor().selectAll();
             }
         };
-        pane.createDialog(Main.parent, tr("Change values?")).setVisible(true);
+        JDialog dialog = pane.createDialog(Main.parent, tr("Change values?"));
+        dialog.setAlwaysOnTop(true);
+        dialog.toFront();
+        dialog.setVisible(true);
+
         if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
             return;
         String key = keys.getEditor().getItem().toString().trim();
