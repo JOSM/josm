@@ -64,8 +64,8 @@ public class PluginSelection {
 
         Set<PluginInformation> toUpdate = new HashSet<PluginInformation>();
         StringBuilder toUpdateStr = new StringBuilder();
-        for (PluginProxy proxy : PluginHandler.pluginList) {
-            PluginInformation local = localPlugins.get(proxy.info.name);
+        for (String pluginName : Main.pref.getCollection("plugins", Collections.<String>emptySet())) {
+            PluginInformation local = localPlugins.get(pluginName);
             PluginInformation description = availablePlugins.get(local.name);
 
             if (description.version != null && !description.version.equals(local.version)) {
