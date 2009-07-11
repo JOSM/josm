@@ -167,6 +167,8 @@ public class PluginSelection {
             String remoteversion = plugin.version;
             if ((remoteversion == null) || remoteversion.equals(""))
                 remoteversion = tr("unknown");
+            else if(plugin.oldmode)
+                remoteversion += "*";
 
             String localversion = "";
             PluginInformation p = localPlugins.get(plugin.name);
@@ -283,8 +285,7 @@ public class PluginSelection {
                                         {
                                             PluginInformation info = new PluginInformation(
                                             new ByteArrayInputStream(manifest.getBytes("utf-8")),
-                                            name.substring(0,name.length()-4));
-                                            info.downloadlink = url;
+                                            name.substring(0,name.length()-4), url);
                                             if(!availablePlugins.containsKey(info.name))
                                                 availablePlugins.put(info.name, info);
                                         }
@@ -304,8 +305,7 @@ public class PluginSelection {
                             {
                                 PluginInformation info = new PluginInformation(
                                 new ByteArrayInputStream(manifest.getBytes("utf-8")),
-                                name.substring(0,name.length()-4));
-                                info.downloadlink = url;
+                                name.substring(0,name.length()-4), url);
                                 if(!availablePlugins.containsKey(info.name))
                                     availablePlugins.put(info.name, info);
                             }

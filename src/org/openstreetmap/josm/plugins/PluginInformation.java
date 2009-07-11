@@ -14,12 +14,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
@@ -33,6 +35,7 @@ public class PluginInformation {
     public String name = null;
     public int mainversion = 0;
     public String className = null;
+    public boolean oldmode = false;
     public String requires = null;
     public String link = null;
     public String description = null;
@@ -69,7 +72,7 @@ public class PluginInformation {
             Manifest manifest = jar.getManifest();
             if (manifest == null)
                 throw new IOException(file+" contains no manifest.");
-            scanManifest(manifest);
+            scanManifest(manifest, false);
             libraries.add(0, fileToURL(file));
             jar.close();
         } catch (IOException e) {
@@ -77,18 +80,20 @@ public class PluginInformation {
         }
     }
 
-    public PluginInformation(InputStream manifestStream, String name) {
+    public PluginInformation(InputStream manifestStream, String name, String url) {
         this.name = name;
         try {
             Manifest manifest = new Manifest();
             manifest.read(manifestStream);
-            scanManifest(manifest);
+            if(url != null)
+                downloadlink = url;
+            scanManifest(manifest, url != null);
         } catch (IOException e) {
             throw new PluginException(null, name, e);
         }
     }
 
-    private void scanManifest(Manifest manifest)
+    private void scanManifest(Manifest manifest, boolean oldcheck)
     {
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
@@ -113,6 +118,33 @@ public class PluginInformation {
         try { mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion")); }
         catch(NumberFormatException e) {}
         author = attr.getValue("Author");
+        if(oldcheck && mainversion > AboutAction.getVersionNumber())
+        {
+            int myv = AboutAction.getVersionNumber();
+            for(Map.Entry entry : attr.entrySet())
+            {
+                try {
+                    String key = ((Attributes.Name)entry.getKey()).toString();
+                    if(key.endsWith("_Plugin-Url"))
+                    {
+                        int mv = Integer.parseInt(key.substring(0,key.length()-11));
+                        if(mv <= myv && (mv > mainversion || mainversion > myv))
+                        {
+                            String v = (String)entry.getValue();
+                            int i = v.indexOf(";");
+                            if(i > 0)
+                            {
+                                downloadlink = v.substring(i+1);
+                                mainversion = mv;
+                                version = v.substring(0,i);
+                                oldmode = true;
+                            }
+                        }
+                    }
+                }
+                catch(Exception e) { e.printStackTrace(); }
+            }
+        }
 
         String classPath = attr.getValue(Attributes.Name.CLASS_PATH);
         if (classPath != null) {
@@ -212,7 +244,7 @@ public class PluginInformation {
         name = name.replaceAll("[-. ]", "");
         InputStream manifestStream = PluginInformation.class.getResourceAsStream("/org/openstreetmap/josm/plugins/"+name+"/MANIFEST.MF");
         if (manifestStream != null)
-            return new PluginInformation(manifestStream, pluginName);
+            return new PluginInformation(manifestStream, pluginName, null);
 
         Collection<String> locations = getPluginLocations();
 
