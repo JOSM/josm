@@ -65,6 +65,6 @@ public class ChangeRelationMemberRoleCommand extends Command {
     @Override public MutableTreeNode description() {
         NameVisitor v = new NameVisitor();
         relation.visit(v);
-        return new DefaultMutableTreeNode(new JLabel(tr("ChangeRelationMemberRole {0} {1}", tr(v.className), v.name), v.icon, JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(tr("Change relation member role for {0} {1}", tr(v.className), v.name), v.icon, JLabel.HORIZONTAL));
     }
 }
