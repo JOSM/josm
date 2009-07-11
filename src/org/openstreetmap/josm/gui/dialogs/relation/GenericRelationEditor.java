@@ -4,6 +4,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -45,10 +47,12 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
@@ -160,13 +164,6 @@ public class GenericRelationEditor extends RelationEditor {
                                 tagTable.requestFocusInCell(0, 0);
                             }
                         });
-                    }
-                    @Override public void windowGainedFocus(WindowEvent e) {
-                        requestFocusInTopLeftCell();
-                    }
-                    @Override
-                    public void windowActivated(WindowEvent e) {
-                        requestFocusInTopLeftCell();
                     }
                     @Override
                     public void windowDeiconified(WindowEvent e) {
@@ -546,7 +543,7 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorModel.applyToPrimitive(getClone());
             Main.main.undoRedo.add(new AddCommand(getClone()));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
-        } else if (getRelation().hasEqualSemanticAttributes(getClone())) {
+        } else if (! getRelation().hasEqualSemanticAttributes(getClone())) {
             tagEditorModel.applyToPrimitive(getClone());
             Main.main.undoRedo.add(new ChangeCommand(getRelation(), getClone()));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
@@ -757,7 +754,104 @@ public class GenericRelationEditor extends RelationEditor {
         lsm.setValueIsAdjusting(false);
     }
 
+
+    /**
+     * Asynchronously download the members of the currently edited relation
+     *
+     */
     private void downloadRelationMembers() {
+
+        class DownloadTask extends PleaseWaitRunnable {
+            private boolean cancelled;
+            private Exception lastException;
+
+            protected void setIndeterminateEnabled(final boolean enabled) {
+                EventQueue.invokeLater(
+                        new Runnable() {
+                            public void run() {
+                                Main.pleaseWaitDlg.setIndeterminate(enabled);
+                            }
+                        }
+                );
+            }
+
+            public DownloadTask() {
+                super(tr("Download relation members"), false /* don't ignore exception */);
+            }
+            @Override
+            protected void cancel() {
+                cancelled = true;
+                OsmApi.getOsmApi().cancel();
+            }
+
+            protected void showLastException() {
+                String msg = lastException.getMessage();
+                if (msg == null) {
+                    msg = lastException.toString();
+                }
+                JOptionPane.showMessageDialog(
+                        null,
+                        msg,
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+
+            @Override
+            protected void finish() {
+                refreshTables();
+                if (cancelled) return;
+                if (lastException == null) return;
+                showLastException();
+            }
+
+            @Override
+            protected void realRun() throws SAXException, IOException, OsmTransferException {
+                try {
+                    Main.pleaseWaitDlg.setAlwaysOnTop(true);
+                    Main.pleaseWaitDlg.toFront();
+                    setIndeterminateEnabled(true);
+                    OsmServerObjectReader reader = new OsmServerObjectReader(getClone().id, OsmPrimitiveType.RELATION, true);
+                    DataSet dataSet = reader.parseOsm();
+                    if (dataSet != null) {
+                        final MergeVisitor visitor = new MergeVisitor(Main.main.map.mapView.getEditLayer()
+                                .data, dataSet);
+                        visitor.merge();
+
+                        // copy the merged layer's data source info
+                        for (DataSource src : dataSet.dataSources) {
+                            Main.map.mapView.getEditLayer().data.dataSources.add(src);
+                        }
+                        Main.map.mapView.getEditLayer().fireDataChange();
+
+                        if (visitor.getConflicts().isEmpty())
+                            return;
+                        final ConflictDialog dlg = Main.map.conflictDialog;
+                        dlg.getConflicts().add(visitor.getConflicts());
+                        JOptionPane op = new JOptionPane(
+                                tr("There were {0} conflicts during import.",
+                                        visitor.getConflicts().size()),
+                                        JOptionPane.WARNING_MESSAGE
+                        );
+                        JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflicts in data"));
+                        dialog.setAlwaysOnTop(true); //<-- this line
+                        dialog.setModal(true);
+                        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                        dialog.setVisible(true);
+                    }
+                } catch(Exception e) {
+                    if (cancelled) {
+                        System.out.println(tr("Warning: ignoring exception because task is cancelled. Exception: {0}", e.toString()));
+                        return;
+                    }
+                    lastException = e;
+                } finally {
+                    Main.pleaseWaitDlg.setAlwaysOnTop(false);
+                    setIndeterminateEnabled(false);
+                }
+            }
+        }
+
         boolean download = false;
         for (RelationMember member : getClone().members) {
             if (member.member.incomplete) {
@@ -765,47 +859,7 @@ public class GenericRelationEditor extends RelationEditor {
                 break;
             }
         }
-        if (download) {
-            OsmServerObjectReader reader = new OsmServerObjectReader(getClone().id, OsmPrimitiveType.RELATION, true);
-            try {
-                DataSet dataSet = reader.parseOsm();
-                if (dataSet != null) {
-                    final MergeVisitor visitor = new MergeVisitor(Main.main.map.mapView.getEditLayer()
-                            .data, dataSet);
-                    visitor.merge();
-
-                    // copy the merged layer's data source info
-                    for (DataSource src : dataSet.dataSources) {
-                        Main.main.map.mapView.getEditLayer().data.dataSources.add(src);
-                    }
-                    Main.main.map.mapView.getEditLayer().fireDataChange();
-
-                    if (visitor.getConflicts().isEmpty())
-                        return;
-                    final ConflictDialog dlg = Main.map.conflictDialog;
-                    dlg.getConflicts().add(visitor.getConflicts());
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("There were conflicts during import."));
-                    if (!dlg.isVisible()) {
-                        dlg.action
-                        .actionPerformed(new ActionEvent(this, 0, ""));
-                    }
-                }
-            } catch(OsmTransferException e) {
-                e.printStackTrace();
-                if (e.getCause() != null) {
-                    if (e.getCause() instanceof SAXException) {
-                        JOptionPane.showMessageDialog(this,tr("Error parsing server response.")+": "+e.getCause().getMessage(),
-                                tr("Error"), JOptionPane.ERROR_MESSAGE);
-                    } else if(e.getCause() instanceof IOException) {
-                        JOptionPane.showMessageDialog(this,tr("Cannot connect to server.")+": "+e.getCause().getMessage(),
-                                tr("Error"), JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this,tr("Error when communicating with server.")+": "+e.getMessage(),
-                            tr("Error"), JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
+        if (! download) return;
+        Main.worker.submit(new DownloadTask());
     }
 }

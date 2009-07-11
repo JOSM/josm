@@ -216,7 +216,7 @@ public class MapView extends NavigatableComponent {
         }
         if (layer == activeLayer) {
             if (layer instanceof OsmDataLayer) {
-                Main.ds.setSelected();
+                Main.ds = null;
             }
         }
         layer.destroy();

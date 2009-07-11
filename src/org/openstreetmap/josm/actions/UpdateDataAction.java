@@ -59,8 +59,12 @@ public class UpdateDataAction extends JosmAction {
         }
 
         if(bboxCount == 0) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    tr("No data to update found. Have you already opened or downloaded a data layer?"));
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("No data to update found. Have you already opened or downloaded a data layer?"),
+                    tr("No data"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
 
