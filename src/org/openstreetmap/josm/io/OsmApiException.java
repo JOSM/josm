@@ -1,5 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class OsmApiException extends OsmTransferException {
 
@@ -64,12 +65,32 @@ public class OsmApiException extends OsmTransferException {
             .append(">");
         }
         if (errorBody != null) {
-            errorBody = errorBody.replaceAll("^[ \n\t\r]+", "").replaceAll("[ \n\t\r]+$", "");
+            errorBody = errorBody.trim();
             if(!errorBody.equals(errorHeader)) {
                 sb.append(", Error Body=<")
                 .append(errorBody)
                 .append(">");
             }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Replies a message suitable to be displayed in a message dialog
+     * 
+     * @return a message which is suitable to be displayed in a message dialog
+     */
+    public String getDisplayMessage() {
+        StringBuilder sb = new StringBuilder();
+        if (errorHeader != null) {
+            sb.append(tr(errorHeader));
+            sb.append(tr("(Code={0})", responseCode));
+        } else if (errorBody != null) {
+            errorBody = errorBody.trim();
+            sb.append(tr(errorBody));
+            sb.append(tr("(Code={0})", responseCode));
+        } else {
+            sb.append(tr("The server replied an error with code {0}", responseCode));
         }
         return sb.toString();
     }
