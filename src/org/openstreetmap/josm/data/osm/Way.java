@@ -100,11 +100,6 @@ public final class Way extends OsmPrimitive {
         return "{Way id="+id+" version="+version+" nodes="+Arrays.toString(nodes.toArray())+"}";
     }
 
-    @Deprecated
-    @Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-        return osm instanceof Way ? super.realEqual(osm, semanticOnly) && nodes.equals(((Way)osm).nodes) : false;
-    }
-
     @Override
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (other == null || ! (other instanceof Way) )

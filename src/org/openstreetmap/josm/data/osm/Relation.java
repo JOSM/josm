@@ -69,11 +69,6 @@ public final class Relation extends OsmPrimitive {
         return "{Relation id="+id+" version="+version+"}";
     }
 
-    @Deprecated
-    @Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-        return osm instanceof Relation ? super.realEqual(osm, semanticOnly) && members.equals(((Relation)osm).members) : false;
-    }
-
     @Override
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (other == null || ! (other instanceof Relation) )

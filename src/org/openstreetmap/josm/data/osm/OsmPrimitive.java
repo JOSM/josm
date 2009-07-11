@@ -286,30 +286,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     * Perform an equality compare for all non-volatile fields not only for the id
-     * but for the whole object (for conflict resolving)
-     * @param semanticOnly if <code>true</code>, modified flag and timestamp are not compared
-     * 
-     * @deprecated
-     * @see #hasEqualSemanticAttributes(OsmPrimitive)
-     * @see #hasEqualTechnicalAttributes(OsmPrimitive)
-     */
-    @Deprecated
-    public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-        return id == osm.id
-        && incomplete == osm.incomplete
-        && deleted == osm.deleted
-        && (semanticOnly || (
-                modified == osm.modified
-                && timestamp == osm.timestamp
-                && version == osm.version
-                && visible == osm.visible
-                && (user == null ? osm.user==null : user==osm.user))
-        )
-        && (keys == null ? osm.keys==null : keys.equals(osm.keys));
-    }
-
-    /**
      * Replies true if this primitive and other are equal with respect to their
      * semantic attributes.
      * <ol>

@@ -15,14 +15,29 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 
 public abstract class RelationEditor extends ExtendedDialog {
 
+    /** keeps track of open relation editors */
+    static private RelationDialogManager relationDialogManager;
+
+    /**
+     * Replies the singleton {@see RelationDialogManager}
+     * 
+     * @return the singleton {@see RelationDialogManager}
+     */
+    static public RelationDialogManager getRelationDialogManager() {
+        if (relationDialogManager == null) {
+            relationDialogManager = new RelationDialogManager();
+        }
+        return relationDialogManager;
+    }
+
     public static ArrayList<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
 
     /**
      * The relation that this editor is working on, and the clone made for
      * editing.
      */
-    protected Relation relation;
-    protected Relation clone;
+    private Relation relation;
+    private Relation clone;
 
     /**
      * This is a factory method that creates an appropriate RelationEditor
@@ -56,7 +71,13 @@ public abstract class RelationEditor extends ExtendedDialog {
                 // plod on
             }
         }
-        return new GenericRelationEditor(r, selectedMembers);
+        if (getRelationDialogManager().isOpenInEditor(r))
+            return getRelationDialogManager().getEditorForRelation(r);
+        else {
+            RelationEditor editor = new GenericRelationEditor(r, selectedMembers);
+            getRelationDialogManager().register(r, editor);
+            return editor;
+        }
     }
 
     protected RelationEditor(Relation relation, Collection<RelationMember> selectedMembers)
@@ -82,5 +103,13 @@ public abstract class RelationEditor extends ExtendedDialog {
             // edit an existing relation
             this.clone = new Relation(relation);
         }
+    }
+
+    protected Relation getRelation() {
+        return relation;
+    }
+
+    protected Relation getClone() {
+        return clone;
     }
 }

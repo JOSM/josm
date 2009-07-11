@@ -8,12 +8,15 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map.Entry;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -43,6 +47,8 @@ import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
+import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
@@ -93,19 +99,10 @@ enum WayConnectionType
  */
 public class GenericRelationEditor extends RelationEditor {
 
-    private JLabel status;
+    // We need this twice, so cache result
+    protected final static String applyChangesText = tr("Apply Changes");
 
-    /**
-     * The property data.
-     */
-    private final DefaultTableModel propertyData = new DefaultTableModel() {
-        @Override public boolean isCellEditable(int row, int column) {
-            return true;
-        }
-        @Override public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
-        }
-    };
+    private JLabel status;
 
     /**
      * The membership data.
@@ -122,11 +119,14 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * The properties and membership lists.
      */
-    private final JTable propertyTable = new JTable(propertyData);
     private final JTable memberTable = new JTable(memberData);
 
-    // We need this twice, so cache result
-    protected final static String applyChangesText = tr("Apply Changes");
+    /** the tag table and its model */
+    private TagEditorModel tagEditorModel;
+    private TagTable tagTable;
+    private AutoCompletionCache acCache;
+    private AutoCompletionList acList;
+
 
     /**
      * Creates a new relation editor for the given relation. The relation
@@ -140,8 +140,44 @@ public class GenericRelationEditor extends RelationEditor {
     {
         // Initalizes ExtendedDialog
         super(relation, selectedMembers);
+        acCache = AutoCompletionCache.getCacheForLayer(Main.map.mapView.getEditLayer());
+        acList = new AutoCompletionList();
 
         JPanel bothTables = setupBasicLayout(selectedMembers);
+        if (relation != null) {
+            this.tagEditorModel.initFromPrimitive(relation);
+        } else {
+            tagEditorModel.clear();
+        }
+        tagEditorModel.ensureOneTag();
+        addWindowListener(
+                new WindowAdapter() {
+                    protected void requestFocusInTopLeftCell() {
+                        SwingUtilities.invokeLater(new Runnable(){
+                            public void run()
+                            {
+                                tagEditorModel.ensureOneTag();
+                                tagTable.requestFocusInCell(0, 0);
+                            }
+                        });
+                    }
+                    @Override public void windowGainedFocus(WindowEvent e) {
+                        requestFocusInTopLeftCell();
+                    }
+                    @Override
+                    public void windowActivated(WindowEvent e) {
+                        requestFocusInTopLeftCell();
+                    }
+                    @Override
+                    public void windowDeiconified(WindowEvent e) {
+                        requestFocusInTopLeftCell();
+                    }
+                    @Override
+                    public void windowOpened(WindowEvent e) {
+                        requestFocusInTopLeftCell();
+                    }
+                }
+        );
 
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.add(bothTables, tr("Basic"));
@@ -164,29 +200,18 @@ public class GenericRelationEditor extends RelationEditor {
      * @return a JPanel with the described layout
      */
     private JPanel setupBasicLayout(Collection<RelationMember> selectedMembers) {
-        // setting up the properties table
-        propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
-        propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        propertyData.addTableModelListener(new TableModelListener() {
-            public void tableChanged(TableModelEvent tme) {
-                if (tme.getType() == TableModelEvent.UPDATE) {
-                    int row = tme.getFirstRow();
+        // setting up the tag table
+        //
+        tagEditorModel = new TagEditorModel();
+        tagTable = new TagTable(tagEditorModel);
+        acCache.initFromJOSMDataset();
+        TagCellEditor editor = ((TagCellEditor)tagTable.getColumnModel().getColumn(0).getCellEditor());
+        editor.setAutoCompletionCache(acCache);
+        editor.setAutoCompletionList(acList);
+        editor = ((TagCellEditor)tagTable.getColumnModel().getColumn(1).getCellEditor());
+        editor.setAutoCompletionCache(acCache);
+        editor.setAutoCompletionList(acList);
 
-                    if (!(tme.getColumn() == 0 && row == propertyData.getRowCount() -1)) {
-                        clone.entrySet().clear();
-                        for (int i = 0; i < propertyData.getRowCount(); i++) {
-                            String key = propertyData.getValueAt(i, 0).toString();
-                            String value = propertyData.getValueAt(i, 1).toString();
-                            if (key.length() > 0 && value.length() > 0) {
-                                clone.put(key, value);
-                            }
-                        }
-                        refreshTables();
-                    }
-                }
-            }
-        });
-        propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         // setting up the member table
 
@@ -197,7 +222,7 @@ public class GenericRelationEditor extends RelationEditor {
             public void tableChanged(TableModelEvent tme) {
                 if (tme.getType() == TableModelEvent.UPDATE && tme.getColumn() == 0) {
                     int row = tme.getFirstRow();
-                    clone.members.get(row).role = memberData.getValueAt(row, 0).toString();
+                    getClone().members.get(row).role = memberData.getValueAt(row, 0).toString();
                 }
             }
         });
@@ -229,8 +254,23 @@ public class GenericRelationEditor extends RelationEditor {
         // combine both tables and wrap them in a scrollPane
         JPanel bothTables = new JPanel();
         bothTables.setLayout(new GridBagLayout());
-        bothTables.add(new JLabel(tr("Tags (empty value deletes tag)")), GBC.eol().fill(GBC.HORIZONTAL));
-        bothTables.add(new JScrollPane(propertyTable), GBC.eop().fill(GBC.BOTH));
+        bothTables.add(new JLabel(tr("Tags")), GBC.eol().fill(GBC.HORIZONTAL));
+        final JScrollPane scrollPane = new JScrollPane(tagTable);
+
+        // this adapters ensures that the width of the tag table columns is adjusted
+        // to the width of the scroll pane viewport. Also tried to overwrite
+        // getPreferredViewportSize() in JTable, but did not work.
+        //
+        scrollPane.addComponentListener(
+                new ComponentAdapter() {
+                    @Override public void componentResized(ComponentEvent e) {
+                        super.componentResized(e);
+                        Dimension d = scrollPane.getViewport().getExtentSize();
+                        tagTable.adjustColumnWidth(d.width);
+                    }
+                }
+        );
+        bothTables.add(scrollPane, GBC.eop().fill(GBC.BOTH));
         bothTables.add(status = new JLabel(tr("Members")), GBC.eol().fill(GBC.HORIZONTAL));
         // this is not exactly pretty but the four buttons simply don't fit in one line.
         // we should have smaller buttons for situations like this.
@@ -309,7 +349,7 @@ public class GenericRelationEditor extends RelationEditor {
                 for (int row : rows) {
                     mem.role = memberTable.getValueAt(row, 0).toString();
                     mem.member = (OsmPrimitive) memberTable.getValueAt(row, 1);
-                    clone.members.remove(mem);
+                    getClone().members.remove(mem);
                 }
                 refreshTables();
             }
@@ -336,9 +376,9 @@ public class GenericRelationEditor extends RelationEditor {
 
         // TODO: sort only selected rows
 
-        for (i = 1; i < clone.members.size(); ++i)
+        for (i = 1; i < getClone().members.size(); ++i)
         {
-            RelationMember  m = clone.members.get(i);
+            RelationMember  m = getClone().members.get(i);
             if (m.member.incomplete)
                 // TODO: emit some message that sorting failed
                 return;
@@ -372,9 +412,9 @@ public class GenericRelationEditor extends RelationEditor {
             }
         }
 
-        for (i = 0; i < clone.members.size(); ++i)
+        for (i = 0; i < getClone().members.size(); ++i)
         {
-            RelationMember  m = clone.members.get(i);
+            RelationMember  m = getClone().members.get(i);
             Integer         m2 = null;
             Node            searchNode = null;
             try
@@ -409,7 +449,7 @@ public class GenericRelationEditor extends RelationEditor {
                 if (m2 == null)
                 {
                     m2 = points.get(searchNode).first();
-                    if (m.member == clone.members.get(m2).member)
+                    if (m.member == getClone().members.get(m2).member)
                     {
                         m2 = points.get(searchNode).last();
                     }
@@ -417,7 +457,7 @@ public class GenericRelationEditor extends RelationEditor {
             } catch(NullPointerException f) {}
             catch(java.util.NoSuchElementException e) {}
 
-            if ((m2 == null) && ((i+1) < clone.members.size()))
+            if ((m2 == null) && ((i+1) < getClone().members.size()))
             {
                 // TODO: emit some message that sorting failed
                 System.err.println("relation member sort: could not find linked way or node for member " + i);
@@ -428,22 +468,22 @@ public class GenericRelationEditor extends RelationEditor {
             {
                 try
                 {
-                    Way next = (Way)clone.members.get(m2).member;
+                    Way next = (Way)getClone().members.get(m2).member;
                     lastWayStartUsed = searchNode.equals(next.firstNode());
                 }
                 catch(ClassCastException e)
                 {
                 }
 
-                if ((m2 < clone.members.size()) && ((i+1) < clone.members.size()))
+                if ((m2 < getClone().members.size()) && ((i+1) < getClone().members.size()))
                 {
-                    RelationMember  a = clone.members.get(i+1);
-                    RelationMember  b = clone.members.get(m2);
+                    RelationMember  a = getClone().members.get(i+1);
+                    RelationMember  b = getClone().members.get(m2);
 
                     if (m2 != (i+1))
                     {
-                        clone.members.set(i+1, b);
-                        clone.members.set(m2, a);
+                        getClone().members.set(i+1, b);
+                        getClone().members.set(m2, a);
 
                         try
                         {
@@ -498,15 +538,17 @@ public class GenericRelationEditor extends RelationEditor {
      * This function saves the user's changes. Must be invoked manually.
      */
     private void applyChanges() {
-        if (GenericRelationEditor.this.relation == null) {
+        if (getRelation()== null) {
             // If the user wanted to create a new relation, but hasn't added any members or
             // tags, don't add an empty relation
-            if(clone.members.size() == 0 && !clone.isTagged())
+            if(getClone().members.size() == 0 && tagEditorModel.getKeys().isEmpty())
                 return;
-            Main.main.undoRedo.add(new AddCommand(clone));
+            tagEditorModel.applyToPrimitive(getClone());
+            Main.main.undoRedo.add(new AddCommand(getClone()));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
-        } else if (!GenericRelationEditor.this.relation.realEqual(clone, true)) {
-            Main.main.undoRedo.add(new ChangeCommand(GenericRelationEditor.this.relation, clone));
+        } else if (getRelation().hasEqualSemanticAttributes(getClone())) {
+            tagEditorModel.applyToPrimitive(getClone());
+            Main.main.undoRedo.add(new ChangeCommand(getRelation(), getClone()));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
         }
     }
@@ -531,16 +573,10 @@ public class GenericRelationEditor extends RelationEditor {
         // re-load property data
         int numLinked = 0;
 
-        propertyData.setRowCount(0);
-        for (Entry<String, String> e : clone.entrySet()) {
-            propertyData.addRow(new Object[]{e.getKey(), e.getValue()});
-        }
-        propertyData.addRow(new Object[]{"", ""});
-
         // re-load membership data
 
         memberData.setRowCount(0);
-        for (int i=0; i<clone.members.size(); i++) {
+        for (int i=0; i<getClone().members.size(); i++) {
 
             // this whole section is aimed at finding out whether the
             // relation member is "linked" with the next, i.e. whether
@@ -549,7 +585,7 @@ public class GenericRelationEditor extends RelationEditor {
             // symbol somehow places between the two member lines!), and
             // it should cache results, so... FIXME ;-)
 
-            RelationMember em = clone.members.get(i);
+            RelationMember em = getClone().members.get(i);
             WayConnectionType link = WayConnectionType.none;
             RelationMember m = em;
             RelationMember way1 = null;
@@ -561,7 +597,7 @@ public class GenericRelationEditor extends RelationEditor {
                     way1 = m;
                     break;
                 } else if (m.member instanceof Relation) {
-                    if (m.member == this.relation) {
+                    if (m.member == this.getRelation()) {
                         break;
                     }
                     m = ((Relation)m.member).lastMember();
@@ -571,17 +607,17 @@ public class GenericRelationEditor extends RelationEditor {
                 }
             }
             if (way1 != null) {
-                int next = (i+1) % clone.members.size();
+                int next = (i+1) % getClone().members.size();
                 while (next != i) {
-                    m = clone.members.get(next);
-                    next = (next + 1) % clone.members.size();
+                    m = getClone().members.get(next);
+                    next = (next + 1) % getClone().members.size();
                     depth = 0;
                     while (m != null && depth < 10) {
                         if (m.member instanceof Way) {
                             way2 = m;
                             break;
                         } else if (m.member instanceof Relation) {
-                            if (m.member == this.relation) {
+                            if (m.member == this.getRelation()) {
                                 break;
                             }
                             m = ((Relation)(m.member)).firstMember();
@@ -630,7 +666,7 @@ public class GenericRelationEditor extends RelationEditor {
             }
             memberData.addRow(new Object[]{em.role, em.member, link});
         }
-        status.setText(tr("Members: {0} (linked: {1})", clone.members.size(), numLinked));
+        status.setText(tr("Members: {0} (linked: {1})", getClone().members.size(), numLinked));
     }
 
     private SideButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {
@@ -656,9 +692,9 @@ public class GenericRelationEditor extends RelationEditor {
             // add the element before the first selected member.
             int[] rows = memberTable.getSelectedRows();
             if (rows.length > 0) {
-                clone.members.add(rows[0], em);
+                getClone().members.add(rows[0], em);
             } else {
-                clone.members.add(em);
+                getClone().members.add(em);
             }
         }
         refreshTables();
@@ -666,14 +702,14 @@ public class GenericRelationEditor extends RelationEditor {
 
     private void deleteSelected() {
         for (OsmPrimitive p : Main.ds.getSelected()) {
-            Relation c = new Relation(clone);
+            Relation c = new Relation(getClone());
             for (RelationMember rm : c.members) {
                 if (rm.member == p)
                 {
                     RelationMember mem = new RelationMember();
                     mem.role = rm.role;
                     mem.member = rm.member;
-                    clone.members.remove(mem);
+                    getClone().members.remove(mem);
                 }
             }
         }
@@ -686,21 +722,21 @@ public class GenericRelationEditor extends RelationEditor {
 
         // check if user attempted to move anything beyond the boundary of the list
         if (rows[0] + direction < 0) return;
-        if (rows[rows.length-1] + direction >= clone.members.size()) return;
+        if (rows[rows.length-1] + direction >= getClone().members.size()) return;
 
-        RelationMember m[] = new RelationMember[clone.members.size()];
+        RelationMember m[] = new RelationMember[getClone().members.size()];
 
         // first move all selected rows from the member list into a new array,
         // displaced by the move amount
         for (Integer i: rows) {
-            m[i+direction] = clone.members.get(i);
-            clone.members.set(i, null);
+            m[i+direction] = getClone().members.get(i);
+            getClone().members.set(i, null);
         }
 
         // now fill the empty spots in the destination array with the remaining
         // elements.
         int i = 0;
-        for (RelationMember rm : clone.members) {
+        for (RelationMember rm : getClone().members) {
             if (rm != null) {
                 while (m[i] != null) {
                     i++;
@@ -710,8 +746,8 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         // and write the array back into the member list.
-        clone.members.clear();
-        clone.members.addAll(Arrays.asList(m));
+        getClone().members.clear();
+        getClone().members.addAll(Arrays.asList(m));
         refreshTables();
         ListSelectionModel lsm = memberTable.getSelectionModel();
         lsm.setValueIsAdjusting(true);
@@ -723,14 +759,14 @@ public class GenericRelationEditor extends RelationEditor {
 
     private void downloadRelationMembers() {
         boolean download = false;
-        for (RelationMember member : clone.members) {
+        for (RelationMember member : getClone().members) {
             if (member.member.incomplete) {
                 download = true;
                 break;
             }
         }
         if (download) {
-            OsmServerObjectReader reader = new OsmServerObjectReader(clone.id, OsmPrimitiveType.RELATION, true);
+            OsmServerObjectReader reader = new OsmServerObjectReader(getClone().id, OsmPrimitiveType.RELATION, true);
             try {
                 DataSet dataSet = reader.parseOsm();
                 if (dataSet != null) {

@@ -43,8 +43,9 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
         public String apply(String text) {
             Matcher m = startPattern.matcher(text);
-            if (!m.lookingAt())
+            if (!m.lookingAt()) {
                 m = endPattern.matcher(text);
+            }
 
             if (m.lookingAt()) {
                 String leftRight = m.group(1).toLowerCase();
@@ -61,16 +62,16 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     }
 
     private static PrefixSuffixSwitcher[] prefixSuffixSwitchers =
-            new PrefixSuffixSwitcher[] {
-                new PrefixSuffixSwitcher("left", "right"),
-                new PrefixSuffixSwitcher("forward", "backward"),
-                new PrefixSuffixSwitcher("forwards", "backwards")
-            };
+        new PrefixSuffixSwitcher[] {
+        new PrefixSuffixSwitcher("left", "right"),
+        new PrefixSuffixSwitcher("forward", "backward"),
+        new PrefixSuffixSwitcher("forwards", "backwards")
+    };
 
     @Override
     public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
-                new HashMap<OsmPrimitive, List<TagCorrection>>();
+            new HashMap<OsmPrimitive, List<TagCorrection>>();
 
         ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
         primitives.add(way);
@@ -85,9 +86,9 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 String newValue = value;
 
                 if (key.equals("oneway")) {
-                    if (value.equals("-1"))
+                    if (value.equals("-1")) {
                         newValue = OsmUtils.trueval;
-                    else {
+                    } else {
                         Boolean boolValue = OsmUtils.getOsmBoolean(value);
                         if (boolValue != null && boolValue.booleanValue()) {
                             newValue = "-1";
@@ -96,25 +97,27 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 } else {
                     for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
                         newKey = prefixSuffixSwitcher.apply(key);
-                        if (!key.equals(newKey))
+                        if (!key.equals(newKey)) {
                             break;
+                        }
                     }
                 }
 
-                if (!key.equals(newKey) || !value.equals(newValue))
+                if (!key.equals(newKey) || !value.equals(newValue)) {
                     tagCorrectionsMap.get(primitive).add(
                             new TagCorrection(key, value, newKey, newValue));
+                }
             }
         }
 
         Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap =
-                new HashMap<OsmPrimitive, List<RoleCorrection>>();
+            new HashMap<OsmPrimitive, List<RoleCorrection>>();
         roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
 
         for (Relation relation : Main.ds.relations) {
             int position = 0;
             for (RelationMember member : relation.members) {
-                if (!member.member.realEqual(oldway, true)
+                if (!member.member.hasEqualSemanticAttributes(oldway)
                         || member.role.length() == 0) {
                     position++;
                     continue;
@@ -130,9 +133,10 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                     }
                 }
 
-                if (found)
+                if (found) {
                     roleCorrectionMap.get(way).add(
                             new RoleCorrection(relation, position, member, newRole));
+                }
 
                 position++;
             }

@@ -106,24 +106,6 @@ public final class Node extends OsmPrimitive {
         return "{Node id="+id+",version="+version+",lat="+coor.lat()+",lon="+coor.lon()+"}";
     }
 
-    /**
-     * @deprecated
-     * @see #hasEqualSemanticAttributes(OsmPrimitive)
-     * @see #hasEqualTechnicalAttributes(OsmPrimitive)
-     */
-    @Deprecated
-    @Override public boolean realEqual(OsmPrimitive osm, boolean semanticOnly) {
-        if (osm instanceof Node) {
-            if (super.realEqual(osm, semanticOnly)) {
-                if ((coor == null) && ((Node)osm).coor == null)
-                    return true;
-                if (coor != null)
-                    return coor.equals(((Node)osm).coor);
-            }
-        }
-        return false;
-    }
-
     @Override
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (other == null || ! (other instanceof Node) )
