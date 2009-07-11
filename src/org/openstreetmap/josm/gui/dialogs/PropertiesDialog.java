@@ -104,20 +104,23 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         @Override public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() < 2)
             {
-                if (e.getSource() == propertyTable)
+                if (e.getSource() == propertyTable) {
                     membershipTable.clearSelection();
-                else if (e.getSource() == membershipTable)
+                } else if (e.getSource() == membershipTable) {
                     propertyTable.clearSelection();
+                }
             }
             else if (e.getSource() == propertyTable)
             {
                 int row = propertyTable.rowAtPoint(e.getPoint());
-                if (row > -1)
+                if (row > -1) {
                     propertyEdit(row);
+                }
             } else if (e.getSource() == membershipTable) {
                 int row = membershipTable.rowAtPoint(e.getPoint());
-                if (row > -1)
+                if (row > -1) {
                     membershipEdit(row);
+                }
             }
             else
             {
@@ -139,8 +142,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         objKey=key;
 
         String msg = "<html>"+trn("This will change up to {0} object.",
-        "This will change up to {0} objects.", sel.size(), sel.size())
-        +"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
+                "This will change up to {0} objects.", sel.size(), sel.size())
+                +"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JLabel(msg), BorderLayout.NORTH);
@@ -162,19 +165,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         final AutoCompleteComboBox values = new AutoCompleteComboBox();
         values.setRenderer(new DefaultListCellRenderer() {
             @Override public Component getListCellRendererComponent(JList list,
-            Object value, int index, boolean isSelected,  boolean cellHasFocus){
+                    Object value, int index, boolean isSelected,  boolean cellHasFocus){
                 Component c = super.getListCellRendererComponent(list, value,
-                index, isSelected, cellHasFocus);
+                        index, isSelected, cellHasFocus);
                 if (c instanceof JLabel) {
                     String str = null;
-                        str=(String) value;
-                        if (valueCount.containsKey(objKey)){
-                            Map<String, Integer> m=valueCount.get(objKey);
-                            if (m.containsKey(str)) {
-                                str+="("+m.get(str)+")";
-                                c.setFont(c.getFont().deriveFont(Font.ITALIC+Font.BOLD));
-                            }
+                    str=(String) value;
+                    if (valueCount.containsKey(objKey)){
+                        Map<String, Integer> m=valueCount.get(objKey);
+                        if (m.containsKey(str)) {
+                            str+="("+m.get(str)+")";
+                            c.setFont(c.getFont().deriveFont(Font.ITALIC+Font.BOLD));
                         }
+                    }
                     ((JLabel)c).setText(str);
                 }
                 return c;
@@ -219,17 +222,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         String value = values.getEditor().getItem().toString().trim();
         // is not Java 1.5
         //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
-        if (value.equals(""))
+        if (value.equals("")) {
             value = null; // delete the key
+        }
         String newkey = keys.getEditor().getItem().toString().trim();
         //newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
         if (newkey.equals("")) {
             newkey = key;
             value = null; // delete the key instead
         }
-        if (key.equals(newkey) || value == null)
+        if (key.equals(newkey) || value == null) {
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
-        else {
+        } else {
             Collection<Command> commands=new Vector<Command>();
             commands.add(new ChangePropertyCommand(sel, key, null));
             if (value.equals(tr("<different>"))) {
@@ -257,9 +261,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 commands.add(new ChangePropertyCommand(sel, newkey, value));
             }
             Main.main.undoRedo.add(new SequenceCommand(
-            trn("Change properties of up to {0} object",
-            "Change properties of up to {0} objects", sel.size(), sel.size()),
-            commands));
+                    trn("Change properties of up to {0} object",
+                            "Change properties of up to {0} objects", sel.size(), sel.size()),
+                            commands));
         }
 
         DataSet.fireSelectionChanged(sel);
@@ -282,7 +286,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param values
      */
     private void updateListData(String key, final TreeMap<String, TreeSet<String>> allData,
-    final AutoCompleteComboBox values) {
+            final AutoCompleteComboBox values) {
         Collection<String> newItems;
         if (allData.containsKey(key)) {
             newItems = allData.get(key);
@@ -299,7 +303,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param row
      */
     void membershipEdit(int row) {
-        RelationEditor.getEditor((Relation)membershipData.getValueAt(row, 0),
+        Relation relation = (Relation)membershipData.getValueAt(row, 0);
+        Main.main.map.relationListDialog.selectRelation(relation);
+        RelationEditor.getEditor(relation,
                 (Collection<RelationMember>) membershipData.getValueAt(row, 1) ).setVisible(true);
     }
 
@@ -313,8 +319,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         JPanel p = new JPanel(new BorderLayout());
         p.add(new JLabel("<html>"+trn("This will change up to {0} object.",
-        "This will change up to {0} objects.", sel.size(),sel.size())
-        +"<br><br>"+tr("Please select a key")), BorderLayout.NORTH);
+                "This will change up to {0} objects.", sel.size(),sel.size())
+                +"<br><br>"+tr("Please select a key")), BorderLayout.NORTH);
         final TreeMap<String, TreeSet<String>> allData = createAutoCompletionInfo(false);
         final AutoCompleteComboBox keys = new AutoCompleteComboBox();
         keys.setPossibleItems(allData.keySet());
@@ -355,10 +361,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param values
      */
     private void addFocusAdapter(final int row, final TreeMap<String, TreeSet<String>> allData,
-    final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
+            final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
         // get the combo box' editor component
         JTextComponent editor = (JTextComponent)values.getEditor()
-                .getEditorComponent();
+        .getEditorComponent();
         // Refresh the values model when focus is gained
         editor.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
@@ -376,9 +382,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
             for (String key : osm.keySet()) {
                 TreeSet<String> values = null;
-                if (allData.containsKey(key))
+                if (allData.containsKey(key)) {
                     values = allData.get(key);
-                else {
+                } else {
                     values = new TreeSet<String>();
                     allData.put(key, values);
                 }
@@ -386,8 +392,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
         if (!edit) {
-            for (int i = 0; i < propertyData.getRowCount(); ++i)
+            for (int i = 0; i < propertyData.getRowCount(); ++i) {
                 allData.remove(propertyData.getValueAt(i, 0));
+            }
         }
         return allData;
     }
@@ -448,15 +455,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final JPanel presets = new JPanel(new GridBagLayout());
 
     private final JLabel selectSth = new JLabel("<html><p>"
-    + tr("Please select the objects you want to change properties for.") + "</p></html>");
+            + tr("Please select the objects you want to change properties for.") + "</p></html>");
 
     /**
      * Create a new PropertiesDialog
      */
     public PropertiesDialog(MapFrame mapFrame) {
         super(tr("Properties/Memberships"), "propertiesdialog", tr("Properties for selected objects."),
-        Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
-        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+                Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Properties/Memberships")), KeyEvent.VK_P,
+                        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         // setting up the properties table
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
@@ -464,14 +471,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         propertyTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
-            boolean isSelected, boolean hasFocus, int row, int column) {
+                    boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
                     String str = null;
                     switch (column) {
                     case 0:
                         str = (String) value;
-                    break;
+                        break;
                     case 1:
                         Map<String, Integer> v = (Map<String,Integer>) value;
                         if (v.size()!=1) {
@@ -480,7 +487,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         } else {
                             str=v.entrySet().iterator().next().getKey();
                         }
-                    break;
+                        break;
                     }
                     ((JLabel)c).setText(str);
                 }
@@ -495,7 +502,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         membershipTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
-            boolean isSelected, boolean hasFocus, int row, int column) {
+                    boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
                     nameVisitor.visit((Relation)value);
@@ -507,7 +514,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         membershipTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
-            boolean isSelected, boolean hasFocus, int row, int column) {
+                    boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
                     Collection<RelationMember> col = (Collection<RelationMember>) value;
@@ -553,22 +560,22 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         ActionListener buttonAction = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 int row = membershipTable.getSelectedRow();
-                if (e.getActionCommand().equals("Add"))
+                if (e.getActionCommand().equals("Add")) {
                     add();
-                else if(row >= 0)
+                } else if(row >= 0)
                 {
-                    if (e.getActionCommand().equals("Edit"))
+                    if (e.getActionCommand().equals("Edit")) {
                         membershipEdit(row);
-                    else if (e.getActionCommand().equals("Delete")) {
+                    } else if (e.getActionCommand().equals("Delete")) {
                         Relation cur = (Relation)membershipData.getValueAt(row, 0);
                         NameVisitor n = new NameVisitor();
                         cur.visit(n);
 
                         int result = new ExtendedDialog(Main.parent,
-                            tr("Change relation"),
-                            tr("Really delete selection from relation {0}?", n.name),
-                            new String[] {tr("Delete from relation"), tr("Cancel")},
-                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+                                tr("Change relation"),
+                                tr("Really delete selection from relation {0}?", n.name),
+                                new String[] {tr("Delete from relation"), tr("Cancel")},
+                                new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 
                         if(result == 1)
                         {
@@ -598,28 +605,29 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     int sel = propertyTable.getSelectedRow();
                     // Although we might edit/delete the wrong tag here, chances are still better
                     // than just displaying an error message (which always "fails").
-                    if (e.getActionCommand().equals("Edit"))
+                    if (e.getActionCommand().equals("Edit")) {
                         propertyEdit(sel >= 0 ? sel : 0);
-                    else if (e.getActionCommand().equals("Delete"))
+                    } else if (e.getActionCommand().equals("Delete")) {
                         delete(sel >= 0 ? sel : 0);
+                    }
                 }
             }
         };
 
         Shortcut s = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
-        Shortcut.GROUP_MNEMONIC);
+                Shortcut.GROUP_MNEMONIC);
         this.btnAdd = new SideButton(marktr("Add"),"add","Properties",
                 tr("Add a new key/value pair to all objects"), s, buttonAction);
         buttonPanel.add(this.btnAdd);
 
         s = Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_I,
-        Shortcut.GROUP_MNEMONIC);
+                Shortcut.GROUP_MNEMONIC);
         this.btnEdit = new SideButton(marktr("Edit"),"edit","Properties",
                 tr("Edit the value of the selected key for all objects"), s, buttonAction);
         buttonPanel.add(this.btnEdit);
 
         s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_Q,
-        Shortcut.GROUP_MNEMONIC);
+                Shortcut.GROUP_MNEMONIC);
         this.btnDel = new SideButton(marktr("Delete"),"delete","Properties",
                 tr("Delete the selected key in all objects"), s, buttonAction);
         buttonPanel.add(this.btnDel);
@@ -630,8 +638,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     @Override public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b)
+        if (b) {
             selectionChanged(Main.ds.getSelected());
+        }
     }
 
     private void checkPresets(int nodes, int ways, int relations, int closedways)
@@ -676,28 +685,32 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         for(TaggingPreset t : TaggingPresetPreference.taggingPresets) {
             if(t.types == null || !((relations > 0 && !t.types.contains("relation")) &&
-            (nodes > 0 && !t.types.contains("node")) &&
-            (ways+closedways > 0 && !t.types.contains("way")) &&
-            (closedways > 0 && !t.types.contains("closedway"))))
+                    (nodes > 0 && !t.types.contains("node")) &&
+                    (ways+closedways > 0 && !t.types.contains("way")) &&
+                    (closedways > 0 && !t.types.contains("closedway"))))
             {
                 int found = 0;
                 for(TaggingPreset.Item i : t.data) {
-                    if(!(i instanceof TaggingPreset.Key))
+                    if(!(i instanceof TaggingPreset.Key)) {
                         continue;
+                    }
                     String val = ((TaggingPreset.Key)i).value;
                     String key = ((TaggingPreset.Key)i).key;
                     // we subtract 100 if not found and add 1 if found
                     found -= 100;
-                    if(!valueCount.containsKey(key))
+                    if(!valueCount.containsKey(key)) {
                         continue;
+                    }
 
                     Map<String, Integer> v = valueCount.get(key);
-                    if(v.size() == 1 && v.containsKey(val) && v.get(val) == total)
+                    if(v.size() == 1 && v.containsKey(val) && v.get(val) == total) {
                         found += 101;
+                    }
                 }
 
-                if(found <= 0)
+                if(found <= 0) {
                     continue;
+                }
 
                 JLabel lbl = new JLabel(t.getName());
                 lbl.addMouseListener(new PresetLabelML(lbl, t));
@@ -712,8 +725,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             Dimension size = new Dimension(presets.getWidth(), height);
             presets.setMaximumSize(size);
             presets.setMinimumSize(size);
-        } else
+        } else {
             presets.setVisible(false);
+        }
     }
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
@@ -721,8 +735,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return;
         if (propertyTable == null)
             return; // selection changed may be received in base class constructor before init
-        if (propertyTable.getCellEditor() != null)
+        if (propertyTable.getCellEditor() != null) {
             propertyTable.getCellEditor().cancelCellEditing();
+        }
 
         // re-load property data
         propertyData.setRowCount(0);
@@ -734,10 +749,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Map<String, Integer> keyCount = new HashMap<String, Integer>();
         valueCount.clear();
         for (OsmPrimitive osm : newSelection) {
-            if(osm instanceof Node) ++nodes;
-            else if(osm instanceof Relation) ++relations;
-            else if(((Way)osm).isClosed()) ++closedways;
-            else ++ways;
+            if(osm instanceof Node) {
+                ++nodes;
+            } else if(osm instanceof Relation) {
+                ++relations;
+            } else if(((Way)osm).isClosed()) {
+                ++closedways;
+            } else {
+                ++ways;
+            }
             for (Entry<String, String> e : osm.entrySet()) {
                 keyCount.put(e.getKey(), keyCount.containsKey(e.getKey()) ? keyCount.get(e.getKey())+1 : 1);
                 if (valueCount.containsKey(e.getKey())) {
@@ -801,12 +821,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.setVisible(hasSelection);
         propertyTable.getTableHeader().setVisible(hasSelection);
         selectSth.setVisible(!hasSelection);
-        if(hasTags) propertyTable.changeSelection(0, 0, false, false);
-        else if(hasMemberships) membershipTable.changeSelection(0, 0, false, false);
+        if(hasTags) {
+            propertyTable.changeSelection(0, 0, false, false);
+        } else if(hasMemberships) {
+            membershipTable.changeSelection(0, 0, false, false);
+        }
 
         if(propertyData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
             setTitle(tr("Properties: {0} / Memberships: {1}",
-                propertyData.getRowCount(), membershipData.getRowCount()), true);
+                    propertyData.getRowCount(), membershipData.getRowCount()), true);
         } else {
             setTitle(tr("Properties / Memberships"), false);
         }

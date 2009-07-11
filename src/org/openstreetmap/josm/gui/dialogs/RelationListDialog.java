@@ -75,13 +75,14 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     public RelationListDialog() {
         super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
-        Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R, Shortcut.GROUP_LAYER), 150);
+                Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R, Shortcut.GROUP_LAYER), 150);
         displaylist.setCellRenderer(new OsmPrimitivRenderer());
         displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         displaylist.addMouseListener(new MouseAdapter(){
             @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1)
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                     Main.ds.setSelected((Relation)displaylist.getSelectedValue());
+                }
             }
         });
 
@@ -104,23 +105,26 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         displaylist.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-               sbEdit.setEnabled(getSelected() != null);
-               sbDel.setEnabled(getSelected() != null);
+                sbEdit.setEnabled(getSelected() != null);
+                sbDel.setEnabled(getSelected() != null);
             }
         });
     }
 
     @Override public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b) updateList();
+        if (b) {
+            updateList();
+        }
     }
 
     public void updateList() {
         list.setSize(Main.ds.relations.size());
         int i = 0;
         for (OsmPrimitive e : DataSet.sort(Main.ds.relations)) {
-            if (!e.deleted && !e.incomplete)
+            if (!e.deleted && !e.incomplete) {
                 list.setElementAt(e, i++);
+            }
         }
         list.setSize(i);
 
@@ -136,7 +140,9 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     public void activeLayerChange(Layer a, Layer b) {
         if ((a == null || a instanceof OsmDataLayer) && b instanceof OsmDataLayer) {
-            if (a != null) ((OsmDataLayer)a).listenerDataChanged.remove(this);
+            if (a != null) {
+                ((OsmDataLayer)a).listenerDataChanged.remove(this);
+            }
             ((OsmDataLayer)b).listenerDataChanged.add(this);
             updateList();
             repaint();
@@ -189,8 +195,28 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * @return The selected relation in the list
      */
     private Relation getSelected() {
-        if(list.size() == 1)
+        if(list.size() == 1) {
             displaylist.setSelectedIndex(0);
+        }
         return (Relation) displaylist.getSelectedValue();
+    }
+
+    /**
+     * Selects the relation <code>relation</code> in the list of relations.
+     * 
+     * @param relation  the relation
+     */
+    public void selectRelation(Relation relation) {
+        if (relation == null) return;
+        int i = -1;
+        for (i=0; i < list.getSize(); i++) {
+            Relation r = (Relation)list.get(i);
+            if (r == relation) {
+                break;
+            }
+        }
+        if (i >= 0 && i < list.getSize()) {
+            displaylist.setSelectedIndex(i);
+        }
     }
 }
