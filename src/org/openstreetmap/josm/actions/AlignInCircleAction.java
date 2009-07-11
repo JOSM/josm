@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -34,65 +36,11 @@ public final class AlignInCircleAction extends JosmAction {
                         KeyEvent.VK_O, Shortcut.GROUP_EDIT), true);
     }
 
-    public double determinant(double[][] mat) {
-        double result = 0;
-
-        if (mat.length == 1) {
-            result = mat[0][0];
-            return result;
-        }
-
-        if (mat.length == 2) {
-            result = mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
-            return result;
-        }
-
-        for (int i = 0; i < mat[0].length; i++) {
-            double temp[][] = new double[mat.length - 1][mat[0].length - 1];
-            for (int j = 1; j < mat.length; j++) {
-                for (int k = 0; k < mat[0].length; k++) {
-                    if (k < i) {
-                        temp[j - 1][k] = mat[j][k];
-                    } else if (k > i) {
-                        temp[j - 1][k - 1] = mat[j][k];
-                    }
-                }
-            }
-            result += mat[0][i] * Math.pow(-1, i) * determinant(temp);
-        }
-        return result;
-    }
-
     public double distance(EastNorth n, EastNorth m) {
         double easd, nord;
         easd = n.east() - m.east();
         nord = n.north() - m.north();
         return Math.sqrt(easd * easd + nord * nord);
-    }
-
-    public EastNorth circumcenter(EastNorth i, EastNorth j, EastNorth k) {
-        // move to 0,0, to eliminate numeric errors
-        double ie = i.east() - i.east();
-        double in = i.north() - i.north();
-        double je = j.east() - i.east();
-        double jn = j.north() - i.north();
-        double ke = k.east() - i.east();
-        double kn = k.north() - i.north();
-        double[][] ma = { { ie, in, 1 }, { je, jn, 1 }, { ke, kn, 1 } };
-        double[][] mbx = { { (ie * ie + in * in), in, 1 }, { (je * je + jn * jn), jn, 1 },
-                { (ke * ke + kn * kn), kn, 1 } };
-        double[][] mby = { { ie * ie + in * in, ie, 1 }, { je * je + jn * jn, je, 1 }, { ke * ke + kn * kn, ke, 1 } };
-        double a = determinant(ma);
-        double bx = determinant(mbx);
-        double by = determinant(mby);
-        EastNorth result = new EastNorth(bx / (2 * a) + i.east(), -by / (2 * a) + i.north());
-
-        Node n = new Node(Main.proj.eastNorth2latlon(result));
-        if (n.getCoor().isOutSideWorld()) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Some of the nodes are (almost) in the line"));
-            return null;
-        }
-        return result;
     }
 
     public class PolarCoor {
@@ -138,10 +86,11 @@ public final class AlignInCircleAction extends JosmAction {
         boolean regular = false;
 
         for (OsmPrimitive osm : sel) {
-            if (osm instanceof Node)
+            if (osm instanceof Node) {
                 nodes.add((Node) osm);
-            else if (osm instanceof Way)
+            } else if (osm instanceof Way) {
                 ways.add((Way) osm);
+            }
         }
 
         // special case if no single nodes are selected and exactly one way is:
@@ -163,15 +112,17 @@ public final class AlignInCircleAction extends JosmAction {
                 } else {
 
                     center = ((Node) nodes.toArray()[way.nodes.contains(nodes.toArray()[0]) ? 1 : 0]).getEastNorth();
-                    if (nodes.size() == 2)
+                    if (nodes.size() == 2) {
                         radius = distance(((Node) nodes.toArray()[0]).getEastNorth(), ((Node) nodes.toArray()[1]).getEastNorth());
+                    }
                 }
                 nodes = new LinkedList<Node>();
             }
 
             for (Node n : way.nodes) {
-                if (!nodes.contains(n))
+                if (!nodes.contains(n)) {
                     nodes.add(n);
+                }
             }
         }
 
@@ -180,31 +131,40 @@ public final class AlignInCircleAction extends JosmAction {
             return;
         }
 
-        // Get average position of circumcircles of the triangles of all triplets of neighbour nodes
         if (center == null) {
-
             // Compute the centroid of nodes
 
-            // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
-            double area = 0;
-            double north = 0;
-            double east = 0;
+            BigDecimal area = new BigDecimal("0");
+            BigDecimal north = new BigDecimal("0");
+            BigDecimal east = new BigDecimal("0");
 
-            // Integrate the area, east and north centroid, we'll compute the final value based on the result of integration
-            for (int i=0; i<nodes.size(); i++) {
+            // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
+            for (int i = 0; i < nodes.size(); i++) {
                 EastNorth n0 = ((Node) nodes.toArray()[i]).getEastNorth();
                 EastNorth n1 = ((Node) nodes.toArray()[(i+1) % nodes.size()]).getEastNorth();
 
-                area  += n0.east()*n1.north()-n1.east()*n0.north();
-                east  += (n0.east() +n1.east()) *(n0.east()*n1.north()-n1.east()*n0.north());
-                north += (n0.north()+n1.north())*(n0.east()*n1.north()-n1.east()*n0.north());
-            }
-            area  /= 2;
-            north /= 6*area;
-            east  /= 6*area;
-            center = new EastNorth(east, north);
-        }
+                BigDecimal x0 = new BigDecimal(n0.east());
+                BigDecimal y0 = new BigDecimal(n0.north());
+                BigDecimal x1 = new BigDecimal(n1.east());
+                BigDecimal y1 = new BigDecimal(n1.north());
 
+                BigDecimal k = x0.multiply(y1, MathContext.DECIMAL128).subtract(y0.multiply(x1, MathContext.DECIMAL128));
+
+                area = area.add(k, MathContext.DECIMAL128);
+                east = east.add(k.multiply(x0.add(x1, MathContext.DECIMAL128), MathContext.DECIMAL128));
+                north = north.add(k.multiply(y0.add(y1, MathContext.DECIMAL128), MathContext.DECIMAL128));
+
+            }
+
+            BigDecimal d = new BigDecimal("2");
+            area  = area.divide(d, MathContext.DECIMAL128);
+            d = new BigDecimal("6");
+            north = north.divide(d.multiply(area, MathContext.DECIMAL128), MathContext.DECIMAL128);
+            east = east.divide(d.multiply(area, MathContext.DECIMAL128), MathContext.DECIMAL128);
+
+            center = new EastNorth(east.doubleValue(), north.doubleValue());
+
+        }
         // Node "center" now is central to all selected nodes.
 
         // Now calculate the average distance to each node from the
@@ -225,8 +185,9 @@ public final class AlignInCircleAction extends JosmAction {
             double angle = Math.PI * 2 / nodes.size();
             pc = new PolarCoor(((Node) nodes.toArray()[0]).getEastNorth(), center, 0);
 
-            if (pc.angle > (new PolarCoor(((Node) nodes.toArray()[1]).getEastNorth(), center, 0).angle))
+            if (pc.angle > (new PolarCoor(((Node) nodes.toArray()[1]).getEastNorth(), center, 0).angle)) {
                 angle *= -1;
+            }
 
             pc.radius = radius;
             for (Node n : nodes) {
