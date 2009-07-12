@@ -145,11 +145,6 @@ public class GenericRelationEditor extends RelationEditor {
     {
         // Initalizes ExtendedDialog
         super(layer, relation, selectedMembers);
-        System.out.println("-- After super  constructor");
-        for (OsmPrimitive primitive : getLayer().data.allNonDeletedPrimitives()) {
-            System.out.println(OsmPrimitiveType.from(primitive) + " " + primitive.id + " incomplete=" + primitive.incomplete);
-        }
-        System.out.println("-------------");
         acCache = AutoCompletionCache.getCacheForLayer(Main.map.mapView.getEditLayer());
         acList = new AutoCompletionList();
 
@@ -845,15 +840,8 @@ public class GenericRelationEditor extends RelationEditor {
                     OsmServerObjectReader reader = new OsmServerObjectReader(getClone().id, OsmPrimitiveType.RELATION, true);
                     DataSet dataSet = reader.parseOsm();
                     if (dataSet != null) {
-                        for (OsmPrimitive primitive : getLayer().data.allNonDeletedPrimitives()) {
-                            System.out.println(OsmPrimitiveType.from(primitive) + " " + primitive.id + " incomplete=" + primitive.incomplete);
-                        }
-                        System.out.println("-------------");
                         final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
                         visitor.merge();
-                        for (OsmPrimitive primitive : getLayer().data.allNonDeletedPrimitives()) {
-                            System.out.println(OsmPrimitiveType.from(primitive) + " " + primitive.id + " incomplete=" + primitive.incomplete);
-                        }
 
                         // copy the merged layer's data source info
                         for (DataSource src : dataSet.dataSources) {

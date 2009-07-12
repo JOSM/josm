@@ -101,12 +101,6 @@ public abstract class RelationEditor extends ExtendedDialog {
                         new String[] { tr("Apply Changes"), tr("Cancel")},
                         false
         );
-        System.out.println("-- in super  constructor");
-        for (OsmPrimitive primitive : layer.data.allNonDeletedPrimitives()) {
-            System.out.println(OsmPrimitiveType.from(primitive) + " " + primitive.id + " incomplete=" + primitive.incomplete);
-        }
-        System.out.println("-------------");
-
 
         this.relation = relation;
         this.layer = layer;
