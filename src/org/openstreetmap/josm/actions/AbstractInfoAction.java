@@ -37,6 +37,10 @@ public abstract class AbstractInfoAction extends JosmAction {
         if (ret.equals(baseUrl)) {
             System.out.println(tr("WARNING: unexpected format of API base URL. Redirection to history page for OSM primitive will probably fail. API base URL is: ''{0}''",baseUrl));
         }
+        if (ret.startsWith("http://api.openstreetmap.org/")) {
+            ret = ret.substring("http://api.openstreetmap.org/".length());
+            ret = "http://www.openstreetmap.org/" + ret;
+        }
         return ret;
     }
 
