@@ -39,6 +39,16 @@ public class TagFieldEditor extends JTextField  {
                 super.insertString(offs, str, a);
                 return;
             }
+
+            // if the current offset isn't at the end of the document we don't autocomplete.
+            // If a highlighted autocompleted suffix was present and we get here Swing has
+            // already removed it from the document. getLength() therefore doesn't include the
+            // autocompleted suffix.
+            //
+            if (offs < getLength()) {
+                super.insertString(offs, str, a);
+                return;
+            }
             String currentText = getText(0, getLength());
             String prefix = currentText.substring(0, offs);
             autoCompletionList.applyFilter(prefix+str);
@@ -61,6 +71,7 @@ public class TagFieldEditor extends JTextField  {
                 remove(0,getLength());
                 super.insertString(0,newText,a);
                 setCaretPosition(getLength());
+
             }
         }
     }
