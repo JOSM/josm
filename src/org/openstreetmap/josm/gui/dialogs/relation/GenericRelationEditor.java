@@ -543,7 +543,7 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorModel.applyToPrimitive(getClone());
             Main.main.undoRedo.add(new AddCommand(getClone()));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
-        } else if (! getRelation().hasEqualSemanticAttributes(getClone())) {
+        } else if (! getRelation().hasEqualSemanticAttributes(getClone()) || tagEditorModel.isDirty()) {
             tagEditorModel.applyToPrimitive(getClone());
             Main.main.undoRedo.add(new ChangeCommand(getRelation(), getClone()));
             DataSet.fireSelectionChanged(Main.ds.getSelected());

@@ -456,4 +456,13 @@ public class TagEditorModel extends AbstractTableModel {
             setDirty(true);
         }
     }
+
+    /**
+     * replies true, if this model has been updated
+     * 
+     * @return true, if this model has been updated
+     */
+    public boolean isDirty() {
+        return dirty;
+    }
 }
