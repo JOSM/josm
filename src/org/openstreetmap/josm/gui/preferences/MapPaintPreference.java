@@ -36,10 +36,16 @@ public class MapPaintPreference implements PreferenceSetting {
 
         styleCombo.addItem("standard");
 
+        sources = new StyleSources("mappaint.style.sources", "mappaint.icon.sources",
+        "http://josm.openstreetmap.de/styles", false, tr("Map Paint Styles"));
+
         String style = Main.pref.get("mappaint.style", "standard");
+        if(!style.equals("standard"))
+            styleCombo.addItem(style);
+
         styleCombo.setEditable(true);
         for (int i = 0; i < styleCombo.getItemCount(); ++i) {
-            if (styleCombo.getItemAt(i).getClass().getName().equals(style)) {
+            if (((String)styleCombo.getItemAt(i)).equals(style)) {
                 styleCombo.setSelectedIndex(i);
                 break;
             }
@@ -55,8 +61,6 @@ public class MapPaintPreference implements PreferenceSetting {
         panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(styleCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,0,5,0));
 
-        sources = new StyleSources("mappaint.style.sources", "mappaint.icon.sources",
-        "http://josm.openstreetmap.de/styles", false, tr("Map Paint Styles"));
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         gui.mapcontent.addTab(tr("Map Paint Styles"), scrollpane);
     }
