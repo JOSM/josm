@@ -579,13 +579,6 @@ public class GenericRelationEditor extends RelationEditor {
             }
             OsmPrimitive primitive = ds.getPrimitiveById(member.member.id);
             if (primitive != null) {
-                StringBuffer sb = new StringBuffer();
-                sb.append("updating primitive:")
-                .append("type=" + OsmPrimitiveType.from(primitive))
-                .append(", id=" + primitive.id)
-                .append(", was incomplete=" + member.member.incomplete)
-                .append(", is incomplete=" + primitive.incomplete);
-                System.out.println(sb.toString());
                 member.member = primitive;
             }
         }
