@@ -47,7 +47,7 @@ public class OsmServerObjectReader extends OsmServerReader {
             if (in == null)
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
-            final OsmReader osm = OsmReader.parseDataSetOsm(in, null, Main.pleaseWaitDlg);
+            final OsmReader osm = OsmReader.parseDataSetOsm(in,Main.pleaseWaitDlg);
             final DataSet data = osm.getDs();
 
             if (osm.getParseNotes().length() != 0) {

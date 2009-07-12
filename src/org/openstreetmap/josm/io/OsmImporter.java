@@ -45,7 +45,7 @@ public class OsmImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, File associatedFile) throws SAXException, IOException {
-        OsmReader osm = OsmReader.parseDataSetOsm(in, null, Main.pleaseWaitDlg);
+        OsmReader osm = OsmReader.parseDataSetOsm(in,Main.pleaseWaitDlg);
         DataSet dataSet = osm.getDs();
         OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
         Main.main.addLayer(layer);
@@ -54,8 +54,9 @@ public class OsmImporter extends FileImporter {
             /* display at most five lines */
             String notes = osm.getParseNotes();
             int j = 0;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++) {
                 j = notes.indexOf('\n', j + 1);
+            }
             j = j >= 0 ? j : notes.length();
             JOptionPane.showMessageDialog(Main.parent, notes.substring(0, j));
         }

@@ -122,4 +122,14 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     public File getAssociatedFile() { return associatedFile; }
     public void setAssociatedFile(File file) { associatedFile = file; }
+
+
+    /**
+     * Replies the name of the layer
+     * 
+     * @return the name of the layer
+     */
+    public String getName() {
+        return name;
+    }
 }

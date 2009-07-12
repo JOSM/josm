@@ -100,7 +100,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
             if (in == null)
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
-            final DataSet data = OsmReader.parseDataSet(in, null, Main.pleaseWaitDlg);
+            final DataSet data = OsmReader.parseDataSet(in,Main.pleaseWaitDlg);
             in.close();
             activeConnection = null;
             return data;

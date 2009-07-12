@@ -58,7 +58,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             Relation toEdit = getSelected();
             if (toEdit == null)
                 return;
-            RelationEditor.getEditor(toEdit, null).setVisible(true);
+            RelationEditor.getEditor(Main.map.mapView.getEditLayer(),toEdit, null).setVisible(true);
         }
     });
 
@@ -93,7 +93,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         buttonPanel.add(new SideButton(marktr("New"), "addrelation", "Selection", tr("Create a new relation"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // call relation editor with null argument to create new relation
-                RelationEditor.getEditor(null, null).setVisible(true);
+                RelationEditor.getEditor(Main.map.mapView.getEditLayer(),null, null).setVisible(true);
             }
         }), GBC.std());
 

@@ -307,7 +307,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     void membershipEdit(int row) {
         Relation relation = (Relation)membershipData.getValueAt(row, 0);
         Main.main.map.relationListDialog.selectRelation(relation);
-        RelationEditor.getEditor(relation,
+        RelationEditor.getEditor(
+                Main.map.mapView.getEditLayer(),
+                relation,
                 (Collection<RelationMember>) membershipData.getValueAt(row, 1) ).setVisible(true);
     }
 

@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -140,10 +141,15 @@ public class GenericRelationEditor extends RelationEditor {
      *
      * @param relation relation to edit, or null to create a new one.
      */
-    public GenericRelationEditor(Relation relation, Collection<RelationMember> selectedMembers )
+    public GenericRelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers )
     {
         // Initalizes ExtendedDialog
-        super(relation, selectedMembers);
+        super(layer, relation, selectedMembers);
+        System.out.println("-- After super  constructor");
+        for (OsmPrimitive primitive : getLayer().data.allNonDeletedPrimitives()) {
+            System.out.println(OsmPrimitiveType.from(primitive) + " " + primitive.id + " incomplete=" + primitive.incomplete);
+        }
+        System.out.println("-------------");
         acCache = AutoCompletionCache.getCacheForLayer(Main.map.mapView.getEditLayer());
         acList = new AutoCompletionList();
 
@@ -526,7 +532,6 @@ public class GenericRelationEditor extends RelationEditor {
                 }
             }
         }
-
         refreshTables();
     }
 
@@ -564,6 +569,31 @@ public class GenericRelationEditor extends RelationEditor {
     protected Dimension findMaxDialogSize() {
         // FIXME: Make it remember dialog size
         return new Dimension(600, 500);
+    }
+
+    /**
+     * Updates the references from members of the cloned relation (see {@see #getClone())
+     * after an update from the server.
+     *
+     */
+    protected void updateMemberReferencesInClone() {
+        DataSet ds = getLayer().data;
+        for (RelationMember member : getClone().members) {
+            if (member.member.id == 0) {
+                continue;
+            }
+            OsmPrimitive primitive = ds.getPrimitiveById(member.member.id);
+            if (primitive != null) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("updating primitive:")
+                .append("type=" + OsmPrimitiveType.from(primitive))
+                .append(", id=" + primitive.id)
+                .append(", was incomplete=" + member.member.incomplete)
+                .append(", is incomplete=" + primitive.incomplete);
+                System.out.println(sb.toString());
+                member.member = primitive;
+            }
+        }
     }
 
     private void refreshTables() {
@@ -799,8 +829,9 @@ public class GenericRelationEditor extends RelationEditor {
 
             @Override
             protected void finish() {
-                refreshTables();
                 if (cancelled) return;
+                updateMemberReferencesInClone();
+                refreshTables();
                 if (lastException == null) return;
                 showLastException();
             }
@@ -814,27 +845,32 @@ public class GenericRelationEditor extends RelationEditor {
                     OsmServerObjectReader reader = new OsmServerObjectReader(getClone().id, OsmPrimitiveType.RELATION, true);
                     DataSet dataSet = reader.parseOsm();
                     if (dataSet != null) {
-                        final MergeVisitor visitor = new MergeVisitor(Main.main.map.mapView.getEditLayer()
-                                .data, dataSet);
+                        for (OsmPrimitive primitive : getLayer().data.allNonDeletedPrimitives()) {
+                            System.out.println(OsmPrimitiveType.from(primitive) + " " + primitive.id + " incomplete=" + primitive.incomplete);
+                        }
+                        System.out.println("-------------");
+                        final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
                         visitor.merge();
+                        for (OsmPrimitive primitive : getLayer().data.allNonDeletedPrimitives()) {
+                            System.out.println(OsmPrimitiveType.from(primitive) + " " + primitive.id + " incomplete=" + primitive.incomplete);
+                        }
 
                         // copy the merged layer's data source info
                         for (DataSource src : dataSet.dataSources) {
-                            Main.map.mapView.getEditLayer().data.dataSources.add(src);
+                            getLayer().data.dataSources.add(src);
                         }
-                        Main.map.mapView.getEditLayer().fireDataChange();
+                        getLayer().fireDataChange();
 
                         if (visitor.getConflicts().isEmpty())
                             return;
-                        final ConflictDialog dlg = Main.map.conflictDialog;
-                        dlg.getConflicts().add(visitor.getConflicts());
+                        getLayer().getConflicts().add(visitor.getConflicts());
                         JOptionPane op = new JOptionPane(
                                 tr("There were {0} conflicts during import.",
                                         visitor.getConflicts().size()),
                                         JOptionPane.WARNING_MESSAGE
                         );
                         JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflicts in data"));
-                        dialog.setAlwaysOnTop(true); //<-- this line
+                        dialog.setAlwaysOnTop(true);
                         dialog.setModal(true);
                         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                         dialog.setVisible(true);

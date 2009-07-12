@@ -318,7 +318,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (in == null) return;
         Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
         try {
-            final OsmReader osm = OsmReader.parseDataSetOsm(in, outputDataSet, Main.pleaseWaitDlg);
+            final OsmReader osm = OsmReader.parseDataSetOsm(in, Main.pleaseWaitDlg);
             skippedWayIds.addAll(osm.getSkippedWayIds());
             merge(osm.getDs());
         } catch(IOException e) {
@@ -344,7 +344,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             return;
         Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
         try {
-            final OsmReader osm = OsmReader.parseDataSetOsm(in, null, Main.pleaseWaitDlg);
+            final OsmReader osm = OsmReader.parseDataSetOsm(in,Main.pleaseWaitDlg);
             skippedWayIds.addAll(osm.getSkippedWayIds());
             merge(osm.getDs());
         } catch(IOException e) {

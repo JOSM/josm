@@ -51,12 +51,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class OsmReader {
 
     /**
-     * This is used as (readonly) source for finding missing references when not transferred in the
-     * file.
-     */
-    private DataSet references;
-
-    /**
      * The dataset to add parsed objects to.
      */
     private DataSet ds = new DataSet();
@@ -87,6 +81,15 @@ public class OsmReader {
      */
     private Map<Long, Node> nodes = new HashMap<Long, Node>();
 
+
+    /**
+     * constructor (for private use only)
+     * 
+     * @see #parseDataSet(InputStream, DataSet, PleaseWaitDialog)
+     * @see #parseDataSetOsm(InputStream, DataSet, PleaseWaitDialog)
+     */
+    private OsmReader() {
+    }
 
     private static class OsmPrimitiveData {
         public long id = 0;
@@ -341,13 +344,6 @@ public class OsmReader {
         Node n = nodes.get(id);
         if (n != null)
             return n;
-        for (Node node : references.nodes)
-            if (node.id == id)
-                return node;
-        // TODO: This has to be changed to support multiple layers.
-        for (Node node : Main.ds.nodes)
-            if (node.id == id)
-                return new Node(node);
         return null;
     }
 
@@ -381,30 +377,29 @@ public class OsmReader {
 
     /**
      * Return the Way object with the given id, or null if it doesn't
-     * exist yet. This method only looks at ways stored in the data set.
+     * exist yet. This method only looks at ways stored in the already parsed
+     * ways.
      *
      * @param id
      * @return way object or null
      */
     private Way findWay(long id) {
-        for (Way wy : Main.ds.ways)
-            if (wy.id == id)
-                return wy;
+        for (Way way : ds.ways)
+            if (way.id == id)
+                return way;
         return null;
     }
 
     /**
      * Return the Relation object with the given id, or null if it doesn't
-     * exist yet. This method only looks at relations stored in the data set.
+     * exist yet. This method only looks at relations in the already parsed
+     * relations.
      *
      * @param id
      * @return relation object or null
      */
     private Relation findRelation(long id) {
         for (Relation e : ds.relations)
-            if (e.id == id)
-                return e;
-        for (Relation e : Main.ds.relations)
             if (e.id == id)
                 return e;
         return null;
@@ -475,13 +470,12 @@ public class OsmReader {
      *      the Reference is not found here, Main.ds is searched and a copy of the
      *  element found there is returned.
      */
-    public static DataSet parseDataSet(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
-        return parseDataSetOsm(source, ref, pleaseWaitDlg).ds;
+    public static DataSet parseDataSet(InputStream source, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
+        return parseDataSetOsm(source, pleaseWaitDlg).ds;
     }
 
-    public static OsmReader parseDataSetOsm(InputStream source, DataSet ref, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
+    public static OsmReader parseDataSetOsm(InputStream source,PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
         OsmReader osm = new OsmReader();
-        osm.references = ref == null ? new DataSet() : ref;
 
         // phase 1: Parse nodes and read in raw ways
         InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
