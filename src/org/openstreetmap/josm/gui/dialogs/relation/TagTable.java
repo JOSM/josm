@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTException;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -427,13 +428,14 @@ public class TagTable extends JTable  {
         Rectangle r = getCellRect(row,col, false);
         Point p = new Point(r.x + r.width/2, r.y + r.height/2);
         SwingUtilities.convertPointToScreen(p, this);
-        // logger.info("simulating mouse click event at point " + p.toString());
+        Point before = MouseInfo.getPointerInfo().getLocation();
 
         try {
             Robot robot = new Robot();
             robot.mouseMove(p.x,p.y);
             robot.mousePress(InputEvent.BUTTON1_MASK);
             robot.mouseRelease(InputEvent.BUTTON1_MASK);
+            robot.mouseMove(before.x, before.y);
         } catch(AWTException e) {
             logger.log(Level.SEVERE, "failed to simulate mouse click event at (" + r.x + "," + r.y + "). Exception: " + e.toString());
             return;
