@@ -126,6 +126,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     public void updateList() {
+        Relation selected = getSelected();
         list.setSize(Main.ds.relations.size());
         int i = 0;
         for (OsmPrimitive e : DataSet.sort(Main.ds.relations)) {
@@ -140,6 +141,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         } else {
             setTitle(tr("Relations"), false);
         }
+        selectRelation(selected);
     }
 
     public void activeLayerChange(Layer a, Layer b) {
@@ -213,7 +215,11 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * @param relation  the relation
      */
     public void selectRelation(Relation relation) {
-        if (relation == null) return;
+        if (relation == null)
+        {
+            displaylist.clearSelection();
+            return;
+        }
         int i = -1;
         for (i=0; i < list.getSize(); i++) {
             Relation r = (Relation)list.get(i);
@@ -223,6 +229,11 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
         if (i >= 0 && i < list.getSize()) {
             displaylist.setSelectedIndex(i);
+            displaylist.ensureIndexIsVisible(i);
+        }
+        else
+        {
+            displaylist.clearSelection();
         }
     }
 
