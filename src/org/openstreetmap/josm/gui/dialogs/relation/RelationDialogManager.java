@@ -80,7 +80,6 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
      * constructor
      */
     public RelationDialogManager(){
-        System.out.println("RelationDialogManager: creating");
         openDialogs = new HashMap<DialogContext, RelationEditor>();
     }
 
