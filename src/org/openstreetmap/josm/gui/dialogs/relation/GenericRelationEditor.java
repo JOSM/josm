@@ -49,7 +49,6 @@ import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -535,6 +534,7 @@ public class GenericRelationEditor extends RelationEditor {
      * This function saves the user's changes. Must be invoked manually.
      */
     private void applyChanges() {
+        System.out.println("applying changes ...");
         if (getRelation()== null) {
             // If the user wanted to create a new relation, but hasn't added any members or
             // tags, don't add an empty relation
@@ -878,5 +878,13 @@ public class GenericRelationEditor extends RelationEditor {
         }
         if (! download) return;
         Main.worker.submit(new DownloadTask());
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (!visible) {
+            dispose();
+        }
     }
 }
