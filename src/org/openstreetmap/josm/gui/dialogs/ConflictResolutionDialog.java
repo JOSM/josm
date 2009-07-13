@@ -109,14 +109,14 @@ public class ConflictResolutionDialog extends JDialog {
      */
     protected JPanel buildButtonRow() {
         JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JButton btn = new JButton(new CancelAction());
-        btn.setName("button.cancel");
+        JButton btn = new JButton(new ApplyResolutionAction());
+        btn.setName("button.apply");
         pnl.add(btn);
 
-        btn = new JButton(new ApplyResolutionAction());
-        btn.setName("button.apply");
+        btn = new JButton(new CancelAction());
+        btn.setName("button.cancel");
         pnl.add(btn);
 
         pnl.setBorder(BorderFactory.createLoweredBevelBorder());
