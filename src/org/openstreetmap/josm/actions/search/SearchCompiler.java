@@ -209,7 +209,11 @@ public class SearchCompiler {
                 keyPattern = null;
             }
             if (regexp && value.length() > 0 && !value.equals("*")) {
-                valuePattern = Pattern.compile(value);
+                try {
+                    valuePattern = Pattern.compile(value);
+                } catch (PatternSyntaxException e) {
+                    throw new ParseError(tr("Pattern Syntax Error: Pattern {0} in {1} is illegal!", e.getPattern(), value));
+                }
             } else {
                 valuePattern = null;
             }
