@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -364,168 +366,215 @@ public class GenericRelationEditor extends RelationEditor {
     }
 
     private void sort() {
-        java.util.HashMap<Node, java.util.TreeSet<Integer>>   points =
-            new java.util.HashMap<Node, java.util.TreeSet<Integer>>();
-        java.util.HashMap<Node, Integer>   nodes =
-            new java.util.HashMap<Node, Integer>();
-        int                                i;
-        boolean                            lastWayStartUsed = true;
+        RelationNodeMap                    map = new RelationNodeMap(getClone());
+        Vector<LinkedList<Integer>>        segments;
+        LinkedList<Integer>                segment;
+        Node                               startSearchNode;
+        Node                               endSearchNode;
+        boolean                            something_done;
 
-        // TODO: sort only selected rows
+        /*
+         * sort any 2 or more connected elements together
+         * may be slow with many unconnected members
+         * TODO: cleanup again, too much code in 1 method
+         */
 
-        for (i = 1; i < getClone().members.size(); ++i)
+        segments = new Vector<LinkedList<Integer>>();
+        // add first member of relation, not strictly necessary
+        if (map.remove(0, getClone().members.get(0)))
         {
-            RelationMember  m = getClone().members.get(i);
-            if (m.member.incomplete)
-                // TODO: emit some message that sorting failed
-                return;
-            try
-            {
-                Way w = (Way)m.member;
-                if (!points.containsKey(w.firstNode()))
-                {
-                    points.put(w.firstNode(), new java.util.TreeSet<Integer>());
-                }
-                points.get(w.firstNode()).add(Integer.valueOf(i));
-
-                if (!points.containsKey(w.lastNode()))
-                {
-                    points.put(w.lastNode(), new java.util.TreeSet<Integer>());
-                }
-                points.get(w.lastNode()).add(Integer.valueOf(i));
-            }
-            catch(ClassCastException e1)
-            {
-                try
-                {
-                    Node        n = (Node)m.member;
-                    nodes.put(n, Integer.valueOf(i));
-                }
-                catch(ClassCastException e2)
-                {
-                    System.err.println("relation member sort: member " + i + " is not a way or node");
-                    return;
-                }
-            }
+            segment = new LinkedList<Integer>();
+            segment.add(Integer.valueOf(0));
+            segments.add(segment);
         }
-
-        for (i = 0; i < getClone().members.size(); ++i)
+        while (!map.isEmpty())
         {
-            RelationMember  m = getClone().members.get(i);
-            Integer         m2 = null;
-            Node            searchNode = null;
-            try
+            segment = segments.lastElement();
+
+            do
             {
-                Way             w = (Way)m.member;
-
-                if (lastWayStartUsed || ((i == 0) && !m.role.equals("backward")))
+                something_done = false;
+                startSearchNode = null;
+                endSearchNode = null;
+                if (segment.size() == 1)
                 {
-                    // try end node
-                    searchNode = w.lastNode();
-                }
-                else /* if ((m2 == null) && (!lastWayStartUsed || (i == 0))) */
-                {
-                    searchNode = w.firstNode();
-                }
-            }
-            catch(ClassCastException e1)
-            {
-                try
-                {
-                    Node n = (Node)m.member;
-                    searchNode = n;
-                }
-                catch(ClassCastException e2)
-                {
-                    // impossible
-                }
-            }
-
-            try {
-                m2 = nodes.get(searchNode);
-                if (m2 == null)
-                {
-                    m2 = points.get(searchNode).first();
-                    if (m.member == getClone().members.get(m2).member)
-                    {
-                        m2 = points.get(searchNode).last();
-                    }
-                }
-            } catch(NullPointerException f) {}
-            catch(java.util.NoSuchElementException e) {}
-
-            if ((m2 == null) && ((i+1) < getClone().members.size()))
-            {
-                // TODO: emit some message that sorting failed
-                System.err.println("relation member sort: could not find linked way or node for member " + i);
-                break;
-            }
-
-            if (m2 != null)
-            {
-                try
-                {
-                    Way next = (Way)getClone().members.get(m2).member;
-                    lastWayStartUsed = searchNode.equals(next.firstNode());
-                }
-                catch(ClassCastException e)
-                {
-                }
-
-                if ((m2 < getClone().members.size()) && ((i+1) < getClone().members.size()))
-                {
-                    RelationMember  a = getClone().members.get(i+1);
-                    RelationMember  b = getClone().members.get(m2);
-
-                    if (m2 != (i+1))
-                    {
-                        getClone().members.set(i+1, b);
-                        getClone().members.set(m2, a);
-
-                        try
-                        {
-                            if (!points.get(((Way)b.member).firstNode()).remove(m2))
-                            {
-                                System.err.println("relation member sort: could not remove start mapping for " + m2);
-                            }
-                            if (!points.get(((Way)b.member).lastNode()).remove(m2))
-                            {
-                                System.err.println("relation member sort: could not remove end mapping for " + m2);
-                            }
-                        }
-                        catch(ClassCastException e1)
-                        {
-                            nodes.remove(b.member);
-                        }
-
-                        try
-                        {
-                            points.get(((Way)a.member).firstNode()).add(m2);
-                            points.get(((Way)a.member).lastNode()).add(m2);
-                        }
-                        catch(ClassCastException e1)
-                        {
-                            nodes.put((Node)a.member, m2);
-                        }
-                    }
+                    RelationMember  m = getClone().members.get(segment.getFirst());
                     try
                     {
-                        if (!points.get(((Way)a.member).firstNode()).remove(i+1))
+                        Way             w = (Way)m.member;
+                        endSearchNode = w.lastNode();
+                        startSearchNode = w.firstNode();
+                    }
+                    catch(ClassCastException e1)
+                    {
+                        try
                         {
-                            System.err.println("relation member sort: could not remove start mapping for " + (i+1));
+                            Node n = (Node)m.member;
+                            endSearchNode = n;
                         }
-                        if (!points.get(((Way)a.member).lastNode()).remove(i+1))
+                        catch(ClassCastException e2)
                         {
-                            System.err.println("relation member sort: could not remove end mapping for " + (i+1));
+                            // impossible
+                        }
+                    }
+                }
+                else
+                {
+                    // add unused node of first element and unused node of last element
+                    // start with the first element
+                    RelationMember element = getClone().members.get(segment.getFirst());
+                    RelationMember other_element = getClone().members.get(segment.get(1));
+
+                    try
+                    {
+                        Way w = (Way)element.member;
+                        try
+                        {
+                            Way x = (Way)other_element.member;
+                            if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode()))
+                            {
+                                startSearchNode = w.lastNode();
+                            }
+                            else
+                            {
+                                startSearchNode = w.firstNode();
+                            }
+                        }
+                        catch(ClassCastException e3)
+                        {
+                            try
+                            {
+                                Node m = (Node)other_element.member;
+                                if (w.firstNode() == m)
+                                {
+                                    startSearchNode = w.lastNode();
+                                }
+                                else
+                                {
+                                    startSearchNode = w.firstNode();
+                                }
+                            }
+                            catch(ClassCastException e4)
+                            {
+                                // impossible
+                            }
                         }
                     }
                     catch(ClassCastException e1)
                     {
-                        nodes.remove(a.member);
+                        try
+                        {
+                            Node n = (Node)element.member;
+                            startSearchNode = n;
+                        }
+                        catch(ClassCastException e2)
+                        {
+                            // impossible
+                        }
+                    }
+                    // now the same for the last element
+                    element = getClone().members.get(segment.getLast());
+                    other_element = getClone().members.get(segment.get(segment.size() - 2));
+
+                    try
+                    {
+                        Way w = (Way)element.member;
+                        try
+                        {
+                            Way x = (Way)other_element.member;
+                            if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode()))
+                            {
+                                endSearchNode = w.lastNode();
+                            }
+                            else
+                            {
+                                endSearchNode = w.firstNode();
+                            }
+                        }
+                        catch(ClassCastException e3)
+                        {
+                            try
+                            {
+                                Node m = (Node)other_element.member;
+                                if (w.firstNode() == m)
+                                {
+                                    endSearchNode = w.lastNode();
+                                }
+                                else
+                                {
+                                    endSearchNode = w.firstNode();
+                                }
+                            }
+                            catch(ClassCastException e4)
+                            {
+                                // impossible
+                            }
+                        }
+                    }
+                    catch(ClassCastException e1)
+                    {
+                        try
+                        {
+                            Node n = (Node)element.member;
+                            endSearchNode = n;
+                        }
+                        catch(ClassCastException e2)
+                        {
+                            // impossible
+                        }
                     }
                 }
+
+                // let's see if we can find connected elements for endSearchNode and startSearchNode
+                if (startSearchNode != null)
+                {
+                    Integer m2 = map.find(startSearchNode, segment.getFirst());
+                    if (m2 != null)
+                    {
+                        segment.add(0, m2);
+                        map.remove(m2, getClone().members.get(m2));
+                        something_done = true;
+                    }
+                }
+                if (endSearchNode != null)
+                {
+                    Integer m2 = map.find(endSearchNode, segment.getLast());
+                    if (m2 != null)
+                    {
+                        segment.add(segment.size(), m2);
+                        map.remove(m2, getClone().members.get(m2));
+                        something_done = true;
+                    }
+                }
+            } while (something_done);
+
+            Integer next = map.pop();
+            if (next == null)
+            {
+                break;
+            }
+
+            segment = new LinkedList<Integer>();
+            segment.add(next);
+            segments.add(segment);
+        }
+        // append map.remaining() to segments list (as a single segment)
+        segment = new LinkedList<Integer>();
+        segment.addAll(map.getRemaining());
+        segments.add(segment);
+
+        // now we need to actually re-order the relation members
+        ArrayList<RelationMember>  newmembers = new ArrayList<RelationMember>();
+        for (LinkedList<Integer> segment2 : segments)
+        {
+            for (Integer p : segment2)
+            {
+                newmembers.add(getClone().members.get(p));
             }
         }
+        getClone().members.clear();
+        getClone().members.addAll(newmembers);
+
         refreshTables();
     }
 
@@ -650,6 +699,7 @@ public class GenericRelationEditor extends RelationEditor {
                 Node way1last = ((Way)(way1.member)).lastNode();
                 Node way2first = ((Way)(way2.member)).firstNode();
                 Node way2last = ((Way)(way2.member)).lastNode();
+                /*
                 if (way1.role.equals("forward")) {
                     way1first = null;
                 } else if (way1.role.equals("backward")) {
@@ -660,7 +710,7 @@ public class GenericRelationEditor extends RelationEditor {
                 } else if (way2.role.equals("backward")) {
                     way2first = null;
                 }
-
+                 */
                 if (way1first != null && way2first != null && way1first.equals(way2first)) {
                     link = WayConnectionType.tail_to_tail;
                 } else if (way1first != null && way2last != null && way1first.equals(way2last)) {
