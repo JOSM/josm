@@ -14,7 +14,6 @@ import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -85,7 +84,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         // create the panel with buttons
         //
-        JPanel buttonPanel = new JPanel(new GridLayout(1,4));
+        JPanel buttonPanel = new JPanel(new GridLayout(1,3));
         buttonPanel.add(new SideButton(marktr("New"), "addrelation", "Selection", tr("Create a new relation"), new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // call relation editor with null argument to create new relation
@@ -104,13 +103,13 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                 }
             }
         });
-        buttonPanel.add(new JButton(editAction), GBC.std());
+        buttonPanel.add(new SideButton(editAction), GBC.std());
 
         // the delete action
         //
         deleteAction = new DeleteAction();
         displaylist.addListSelectionListener(deleteAction);
-        buttonPanel.add(new JButton(deleteAction), GBC.eol());
+        buttonPanel.add(new SideButton(deleteAction), GBC.eol());
         add(buttonPanel, BorderLayout.SOUTH);
 
         // register as layer listener

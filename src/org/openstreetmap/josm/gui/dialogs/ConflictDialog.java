@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -45,6 +44,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -100,10 +100,10 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
 
         add(new JScrollPane(lstConflicts), BorderLayout.CENTER);
 
-        JButton btnResolve = new JButton(actResolve = new ResolveAction());
+        SideButton btnResolve = new SideButton(actResolve = new ResolveAction());
         lstConflicts.getSelectionModel().addListSelectionListener(actResolve);
 
-        JButton btnSelect = new JButton(actSelect = new SelectAction());
+        SideButton btnSelect = new SideButton(actSelect = new SelectAction());
         lstConflicts.getSelectionModel().addListSelectionListener(actSelect);
 
         JPanel buttonPanel = new JPanel(new GridLayout(1,2));

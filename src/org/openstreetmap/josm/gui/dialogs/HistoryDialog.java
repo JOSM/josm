@@ -20,7 +20,6 @@ import java.util.Iterator;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,6 +44,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialog;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
@@ -124,11 +124,11 @@ public class HistoryDialog extends ToggleDialog {
     protected JPanel buildButtonRow() {
         JPanel buttons = new JPanel(new GridLayout(1,2));
 
-        JButton btn = new JButton(reloadAction = new ReloadAction());
+        SideButton btn = new SideButton(reloadAction = new ReloadAction());
         btn.setName("btn.reload");
         buttons.add(btn);
 
-        btn = new JButton(showHistoryAction = new ShowHistoryAction());
+        btn = new SideButton(showHistoryAction = new ShowHistoryAction());
         btn.setName("btn.showhistory");
         buttons.add(btn);
 
