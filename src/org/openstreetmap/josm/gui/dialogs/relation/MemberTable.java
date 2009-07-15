@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -11,7 +12,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 
-public class MemberTable extends JTable {
+public class MemberTable extends JTable implements IMemberModelListener {
 
     /**
      * constructor
@@ -21,6 +22,7 @@ public class MemberTable extends JTable {
      */
     public MemberTable(MemberTableModel model) {
         super(model, new MemberTableColumnModel(), model.getSelectionModel());
+        model.addMemberModelListener(this);
         init();
     }
 
@@ -64,6 +66,12 @@ public class MemberTable extends JTable {
             tcm.getColumn(2).setMaxWidth(width);
 
         }
+    }
+
+    public void makeMemberVisible(int index) {
+        scrollRectToVisible(
+                getCellRect(index, 0, true)
+        );
     }
 
     /**
@@ -125,4 +133,6 @@ public class MemberTable extends JTable {
             changeSelection(row, col, false, false);
         }
     }
+
+
 }

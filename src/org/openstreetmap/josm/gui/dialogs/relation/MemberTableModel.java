@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
@@ -22,6 +23,7 @@ public class MemberTableModel extends AbstractTableModel{
     private ArrayList<RelationMember> members;
     private ArrayList<String> memberLinkingInfo;
     private DefaultListSelectionModel listSelectionModel;
+    private CopyOnWriteArrayList<IMemberModelListener> listeners;
 
     /**
      * constructor
@@ -29,6 +31,31 @@ public class MemberTableModel extends AbstractTableModel{
     public MemberTableModel(){
         members = new ArrayList<RelationMember>();
         memberLinkingInfo = new ArrayList<String>();
+        listeners = new CopyOnWriteArrayList<IMemberModelListener>();
+    }
+
+    public void addMemberModelListener(IMemberModelListener listener) {
+        synchronized(listeners) {
+            if (listener != null && ! listeners.contains(listener)) {
+                listeners.add(listener);
+            }
+        }
+    }
+
+    public void removeMemberModelListener(IMemberModelListener listener) {
+        synchronized(listeners) {
+            if (listener != null && listeners.contains(listener)) {
+                listeners.remove(listener);
+            }
+        }
+    }
+
+    protected void fireMakeMemberVisible(int index) {
+        synchronized(listeners) {
+            for (IMemberModelListener listener: listeners) {
+                listener.makeMemberVisible(index);
+            }
+        }
     }
 
     public void populate(Relation relation) {
@@ -90,6 +117,7 @@ public class MemberTableModel extends AbstractTableModel{
             row--;
             listSelectionModel.addSelectionInterval(row, row);
         }
+        fireMakeMemberVisible(selectedRows[0] -1);
     }
 
     public void moveDown(int[] selectedRows) {
@@ -109,6 +137,7 @@ public class MemberTableModel extends AbstractTableModel{
             row++;
             listSelectionModel.addSelectionInterval(row, row);
         }
+        fireMakeMemberVisible(selectedRows[0] + 1);
     }
 
     public void remove(int[] selectedRows) {
@@ -184,7 +213,7 @@ public class MemberTableModel extends AbstractTableModel{
             }
         }
         if (min < Integer.MAX_VALUE) {
-            //FIXME: scroll to min
+            fireMakeMemberVisible(min);
         }
     }
 
@@ -232,6 +261,7 @@ public class MemberTableModel extends AbstractTableModel{
         for (int i=0; i<primitives.size();i++) {
             getSelectionModel().addSelectionInterval(i,i);
         }
+        fireMakeMemberVisible(0);
     }
 
     public void addMembersAtEnd(List<? extends OsmPrimitive> primitives) {
@@ -246,6 +276,7 @@ public class MemberTableModel extends AbstractTableModel{
         for (int i=0; i<primitives.size();i++) {
             getSelectionModel().addSelectionInterval(members.size()-1-i,members.size()-1-i);
         }
+        fireMakeMemberVisible(members.size() -1);
     }
 
     public void addMembersBeforeIdx(List<? extends OsmPrimitive> primitives, int idx) {
@@ -260,6 +291,7 @@ public class MemberTableModel extends AbstractTableModel{
         for (int i=0; i<primitives.size();i++) {
             getSelectionModel().addSelectionInterval(idx+i,idx+i);
         }
+        fireMakeMemberVisible(idx);
     }
 
     public void addMembersAfterIdx(List<? extends OsmPrimitive> primitives, int idx) {
@@ -275,5 +307,6 @@ public class MemberTableModel extends AbstractTableModel{
         for (int i=0; i<primitives.size();i++) {
             getSelectionModel().addSelectionInterval(idx+1 + i,idx+1 +i);
         }
+        fireMakeMemberVisible(idx+1);
     }
 }
