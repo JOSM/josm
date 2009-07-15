@@ -137,7 +137,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *      to the own top/left.
      */
     public Point getPoint(EastNorth p) {
-        if(null == p)
+        if (null == p)
             return new Point();
         double x = (p.east()-center.east())/scale + getWidth()/2;
         double y = (center.north()-p.north())/scale + getHeight()/2;
@@ -145,9 +145,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public Point getPoint(LatLon latlon) {
-        if(latlon == null)
+        if (latlon == null)
             return new Point();
-        else if(latlon instanceof CachedLatLon)
+        else if (latlon instanceof CachedLatLon)
             return getPoint(((CachedLatLon)latlon).getEastNorth());
         else
             return getPoint(getProjection().latlon2eastNorth(latlon));
@@ -164,15 +164,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private void zoomTo(EastNorth newCenter, double newScale) {
 /* TODO: check that newCenter is really inside visible world and that scale is correct, don't allow zooming out to much */
         boolean rep = false;
-        if(!newCenter.equals(center))
-        {
+        if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
             center = newCenter;
             rep = true;
             firePropertyChange("center", oldCenter, newCenter);
         }
-        if(scale != newScale)
-        {
+        if (scale != newScale) {
             double oldScale = scale;
             scale = newScale;
             rep = true;
@@ -187,7 +185,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public void zoomTo(LatLon newCenter) {
-        if(newCenter instanceof CachedLatLon)
+        if (newCenter instanceof CachedLatLon)
             zoomTo(((CachedLatLon)newCenter).getEastNorth(), scale);
         else
             zoomTo(getProjection().latlon2eastNorth(newCenter), scale);

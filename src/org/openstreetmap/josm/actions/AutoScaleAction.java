@@ -60,7 +60,7 @@ public class AutoScaleAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (Main.map != null) {
             BoundingXYVisitor bbox = getBoundingBox();
-            if (bbox != null) {
+            if (bbox != null && bbox.getBounds() != null) {
                 Main.map.mapView.recalculateCenterScale(bbox);
             }
         }

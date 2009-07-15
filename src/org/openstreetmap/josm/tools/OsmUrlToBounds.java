@@ -7,6 +7,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 public class OsmUrlToBounds {
+    
     public static Bounds parse(String url) {
         int i = url.indexOf('?');
         if (i == -1)
@@ -55,8 +56,7 @@ public class OsmUrlToBounds {
         return Double.parseDouble(map.get("m"+key));
     }
 
-    static public int getZoom(Bounds b)
-    {
+    static public int getZoom(Bounds b) {
         // convert to mercator (for calculation of zoom only)
         double latMin = Math.log(Math.tan(Math.PI/4.0+b.min.lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
         double latMax = Math.log(Math.tan(Math.PI/4.0+b.max.lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
@@ -71,13 +71,11 @@ public class OsmUrlToBounds {
         return zoom;
     }
 
-    static public String getURL(Bounds b)
-    {
+    static public String getURL(Bounds b) {
         return getURL(b.getCenter(), getZoom(b));
     }
 
-    static public String getURL(LatLon pos, int zoom)
-    {
+    static public String getURL(LatLon pos, int zoom) {
         // Truncate lat and lon to something more sensible
         int decimals = (int) Math.pow(10, (zoom / 3));
         double lat = (Math.round(pos.lat() * decimals));

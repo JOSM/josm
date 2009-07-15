@@ -320,13 +320,13 @@ public class MapView extends NavigatableComponent {
      * Set the new dimension to the view.
      */
     public void recalculateCenterScale(BoundingXYVisitor box) {
-        if(box == null) {
+        if (box == null) {
             box = new BoundingXYVisitor();
         }
-        if(box.getBounds() == null) {
+        if (box.getBounds() == null) {
             box.visit(getProjection().getWorldBounds());
         }
-        if(!box.hasExtend()) {
+        if (!box.hasExtend()) {
             box.enlargeBoundingBox();
         }
 
