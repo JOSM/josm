@@ -257,7 +257,7 @@ public class MultiFetchServerObjectReaderTest {
             assertEquals(n2.get("name"),n2.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
-        assertTrue(reader.getSkippedWays().isEmpty());
+        //assertTrue(reader.getSkippedWays().isEmpty());
     }
 
     @Test
@@ -278,7 +278,7 @@ public class MultiFetchServerObjectReaderTest {
             assertEquals(w2.get("name"),w1.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
-        assertTrue(reader.getSkippedWays().isEmpty());
+        //assertTrue(reader.getSkippedWays().isEmpty());
 
     }
 
@@ -300,7 +300,7 @@ public class MultiFetchServerObjectReaderTest {
             assertEquals(r2.get("name"),r2.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
-        assertTrue(reader.getSkippedWays().isEmpty());
+        //assertTrue(reader.getSkippedWays().isEmpty());
 
     }
 
@@ -321,7 +321,7 @@ public class MultiFetchServerObjectReaderTest {
             assertEquals(n2.get("name"),n2.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
-        assertTrue(reader.getSkippedWays().isEmpty());
+        //assertTrue(reader.getSkippedWays().isEmpty());
 
 
     }
@@ -347,6 +347,6 @@ public class MultiFetchServerObjectReaderTest {
         assertFalse(reader.getMissingPrimitives().isEmpty());
         assertEquals(1, reader.getMissingPrimitives().size());
         assertEquals(9999999, reader.getMissingPrimitives().iterator().next());
-        assertTrue(reader.getSkippedWays().isEmpty());
+        //assertTrue(reader.getSkippedWays().isEmpty());
     }
 }
