@@ -36,10 +36,12 @@ public abstract class RelationEditor extends ExtendedDialog {
     public static ArrayList<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
 
     /**
-     * The relation that this editor is working on, and the clone made for
-     * editing.
+     * The relation that this editor is working on.
      */
     private Relation relation;
+
+    /** The version of the relation when editing is started. */
+    private Relation relationSnapshot;
 
     /** the data layer the relation belongs to */
     private OsmDataLayer layer;
@@ -99,6 +101,7 @@ public abstract class RelationEditor extends ExtendedDialog {
                         false
         );
 
+        this.relationSnapshot = new Relation(relation);
         this.relation = relation;
         this.layer = layer;
     }
@@ -109,5 +112,21 @@ public abstract class RelationEditor extends ExtendedDialog {
 
     protected OsmDataLayer getLayer() {
         return layer;
+    }
+
+    protected Relation getRelationSnapshot() {
+        return relationSnapshot;
+    }
+
+    /**
+     * Replies true if the currently edited relation has been changed elsewhere.
+     * 
+     * In this case a relation editor can't apply updates to the relation directly. Rather,
+     * it has to create a conflict.
+     * 
+     * @return true if the currently edited relation has been changed elsewhere.
+     */
+    protected boolean isDirtyRelation() {
+        return ! relation.hasEqualSemanticAttributes(relationSnapshot);
     }
 }

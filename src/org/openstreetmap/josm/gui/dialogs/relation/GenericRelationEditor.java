@@ -44,6 +44,7 @@ import javax.swing.event.TableModelListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -533,7 +534,7 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * This function saves the user's changes. Must be invoked manually.
      */
-    private void applyChanges() {
+    protected void applyChanges() {
         if (getRelation()== null) {
             // If the user wanted to create a new relation, but hasn't added any members or
             // tags, don't add an empty relation
@@ -545,11 +546,30 @@ public class GenericRelationEditor extends RelationEditor {
             Main.main.undoRedo.add(new AddCommand(clone));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
         } else if (! memberTableModel.hasSameMembersAs(getRelation()) || tagEditorModel.isDirty()) {
-            Relation clone = new Relation(getRelation());
-            tagEditorModel.applyToPrimitive(clone);
-            memberTableModel.applyToRelation(clone);
-            Main.main.undoRedo.add(new ChangeCommand(getRelation(), clone));
-            DataSet.fireSelectionChanged(Main.ds.getSelected());
+            Relation editedRelation = new Relation(getRelation());
+            tagEditorModel.applyToPrimitive(editedRelation);
+            memberTableModel.applyToRelation(editedRelation);
+            if (isDirtyRelation()) {
+                Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
+                getLayer().getConflicts().add(conflict);
+                JOptionPane op = new JOptionPane(
+                        tr("<html>The relation has changed outside of the editor.<br>"
+                                + "Your edit can't be applied directly, a conflict has been created instead.</html>"
+                        ),
+                        JOptionPane.WARNING_MESSAGE
+                );
+                JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflict created"));
+                dialog.setAlwaysOnTop(true);
+                dialog.setModal(true);
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setVisible(true);
+            } else {
+                Relation clone = new Relation(getRelation());
+                tagEditorModel.applyToPrimitive(clone);
+                memberTableModel.applyToRelation(clone);
+                Main.main.undoRedo.add(new ChangeCommand(getRelation(), clone));
+                DataSet.fireSelectionChanged(Main.ds.getSelected());
+            }
         }
     }
 
