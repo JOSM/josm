@@ -309,4 +309,20 @@ public class MemberTableModel extends AbstractTableModel{
         }
         fireMakeMemberVisible(idx+1);
     }
+
+    /**
+     * Replies the number of members which refer to a particular primitive
+     * 
+     * @param primitive the primitive
+     * @return the number of members which refer to a particular primitive
+     */
+    public int getNumMembersWithPrimitive(OsmPrimitive primitive) {
+        int count  = 0;
+        for (RelationMember member : members) {
+            if (member.member.equals(primitive)) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

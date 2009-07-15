@@ -3,21 +3,17 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -26,21 +22,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * 
  */
 public  class MemberTableCellRenderer extends JLabel implements TableCellRenderer {
-    private final static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
 
     public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
-    public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
-    public final static Color BGCOLOR_SAME_POSITION_IN_OPPOSITE = new Color(217,255,217);
+    public final static Color BGCOLOR_DOUBLE_ENTRY = new Color(255,234,213);
 
-    public final static Color BGCOLOR_PARTICIPAING_IN_COMPARISON = Color.BLACK;
-    public final static Color FGCOLOR_PARTICIPAING_IN_COMPARISON = Color.WHITE;
-
-    public final static Color BGCOLOR_FROZEN = new Color(234,234,234);
 
     private HashMap<OsmPrimitiveType, ImageIcon>  icons;
-    private  Border rowNumberBorder = null;
 
     /**
      * Load the image icon for an OSM primitive of type node
@@ -106,11 +95,12 @@ public  class MemberTableCellRenderer extends JLabel implements TableCellRendere
         setToolTipText(null);
     }
 
-
-    protected void renderBackground( boolean isSelected) {
+    protected void renderBackground( MemberTableModel model, OsmPrimitive primitive, boolean isSelected) {
         Color bgc = Color.WHITE;
         if (isSelected) {
             bgc = BGCOLOR_SELECTED;
+        } else if (primitive != null && model.getNumMembersWithPrimitive(primitive) > 1) {
+            bgc = BGCOLOR_DOUBLE_ENTRY;
         }
         setBackground(bgc);
     }
@@ -132,19 +122,22 @@ public  class MemberTableCellRenderer extends JLabel implements TableCellRendere
             int row, int column) {
 
         reset();
-        renderBackground(isSelected);
+
         renderForeground(isSelected);
         switch(column) {
         case 0:
             String role = (String)value;
+            renderBackground(getModel(table), null, isSelected);
             setText(role);
             break;
         case 1:
             OsmPrimitive primitive = (OsmPrimitive)value;
+            renderBackground(getModel(table), primitive, isSelected);
             renderPrimitive(primitive);
             break;
         case 2:
             setText("");
+            renderBackground(getModel(table), null, isSelected);
             break;
         default:
             // should not happen
