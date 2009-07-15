@@ -325,4 +325,21 @@ public class MemberTableModel extends AbstractTableModel{
         }
         return count;
     }
+
+    /**
+     * updates the role of the members given by the indices in <code>idx</code>
+     * 
+     * @param idx the array of indices
+     * @param role the new role
+     */
+    public void updateRole(int [] idx, String role) {
+        if (idx == null || idx.length == 0) return;
+        for (int row: idx) {
+            members.get(row).role = role;
+        }
+        fireTableDataChanged();
+        for (int row: idx) {
+            getSelectionModel().addSelectionInterval(row, row);
+        }
+    }
 }

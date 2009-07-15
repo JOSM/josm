@@ -12,6 +12,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +31,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -86,6 +91,8 @@ public class GenericRelationEditor extends RelationEditor {
 
     /** the model for the selection table */
     private SelectionTableModel selectionTableModel;
+
+    private JTextField tfRole;
 
     /**
      * Creates a new relation editor for the given relation. The relation
@@ -505,6 +512,21 @@ public class GenericRelationEditor extends RelationEditor {
     protected JPanel buildButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.add(new SideButton(new DownlaodAction()));
+        buttonPanel.add(new JLabel(tr("Role:")));
+        tfRole = new JTextField(10);
+        tfRole.addFocusListener(
+                new FocusAdapter() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        tfRole.selectAll();
+                    }
+                }
+        );
+        buttonPanel.add(tfRole);
+        SetRoleAction setRoleAction = new SetRoleAction();
+        memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
+        buttonPanel.add(new SideButton(setRoleAction));
+        tfRole.getDocument().addDocumentListener(setRoleAction);
         return buttonPanel;
     }
 
@@ -861,6 +883,40 @@ public class GenericRelationEditor extends RelationEditor {
         }
         public void actionPerformed(ActionEvent e) {
             downloadRelationMembers();
+        }
+    }
+
+    class SetRoleAction extends AbstractAction implements ListSelectionListener, DocumentListener{
+        public SetRoleAction() {
+            putValue(SHORT_DESCRIPTION,   tr("Sets a role for the selected members"));
+            // FIXME: find better icon
+            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            putValue(NAME, tr("Apply Role"));
+            refreshEnabled();
+        }
+
+        protected void refreshEnabled() {
+            setEnabled(memberTable.getSelectedRowCount() > 0 && !tfRole.getText().equals(""));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.updateRole(memberTable.getSelectedRows(), tfRole.getText());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            refreshEnabled();
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+            refreshEnabled();
+        }
+
+        public void insertUpdate(DocumentEvent e) {
+            refreshEnabled();
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            refreshEnabled();
         }
     }
 
