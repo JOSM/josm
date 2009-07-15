@@ -236,7 +236,7 @@ public class MultiFetchServerObjectReaderTest {
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
         FileInputStream fis = new FileInputStream(f);
-        ds = OsmReader.parseDataSet(fis, ds, Main.pleaseWaitDlg);
+        ds = OsmReader.parseDataSet(fis, Main.pleaseWaitDlg);
         fis.close();
     }
 

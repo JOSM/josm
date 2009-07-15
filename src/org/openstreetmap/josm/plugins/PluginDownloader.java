@@ -37,11 +37,9 @@ public class PluginDownloader {
         public final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
         private String errors = "";
         private int count = 0;
-        private boolean update;
 
         private UpdateTask(Collection<PluginInformation> toUpdate, boolean up) {
             super(up ? tr("Update Plugins") : tr("Download Plugins"));
-            update = up;
             this.toUpdate = toUpdate;
         }
 
