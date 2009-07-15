@@ -143,7 +143,7 @@ public class LatLon extends Coordinate {
     public String toDisplayString() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(5);
-        return "lat=" + nf.format(lat()) + "°, lon=" + nf.format(lon()) + "°";
+        return "lat=" + nf.format(lat()) + "\u00B0, lon=" + nf.format(lon()) + "\u00B0";
     }
 
     public LatLon interpolate(LatLon ll2, double proportion) {
