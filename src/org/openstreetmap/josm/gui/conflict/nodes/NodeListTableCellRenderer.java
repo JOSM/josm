@@ -52,35 +52,6 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
     }
 
     /**
-     * creates the display name for a node. The name is derived from the nodes id,
-     * its name (i.e. the value of the tag with key name) and its coordinates.
-     * 
-     * @param node  the node
-     * @return the display name
-     */
-    protected String getDisplayName(Node node) {
-        StringBuilder sb = new StringBuilder();
-        if (node.get("name") != null) {
-            sb.append(node.get("name"));
-            sb.append("/");
-            sb.append(node.id);
-        } else {
-            sb.append(node.id);
-        }
-        sb.append(" (");
-
-        if (node.getCoor() != null) {
-            sb.append(COORD_FORMATTER.format(node.getCoor().lat()));
-            sb.append(",");
-            sb.append(COORD_FORMATTER.format(node.getCoor().lon()));
-        } else {
-            sb.append("?,?");
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    /**
      * build the tool tip text for an {@see OsmPrimitive}. It consist of the formatted
      * key/value pairs for this primitive.
      * 
@@ -158,7 +129,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
                 setBackground(BGCOLOR_NOT_IN_OPPOSITE);
             }
         }
-        setText(getDisplayName(node));
+        setText(node.getName());
         setToolTipText(buildToolTipText(node));
     }
 

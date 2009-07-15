@@ -17,7 +17,6 @@ public class SideButton extends JButton {
     {
         super(action);
         doStyle();
-        setText(null);
     }
 
     public SideButton(Action action, String imagename)
@@ -45,8 +44,9 @@ public class SideButton extends JButton {
         if(shortcut != null)
         {
             shortcut.setMnemonic(this);
-            if(tooltip != null)
+            if(tooltip != null) {
                 tooltip = Main.platform.makeTooltip(tooltip, shortcut);
+            }
         }
         setup(name, property, tooltip, actionListener);
     }

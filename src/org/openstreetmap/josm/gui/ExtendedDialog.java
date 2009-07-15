@@ -94,10 +94,13 @@ public class ExtendedDialog extends JDialog {
             };
 
             button = new JButton(action);
-            if(buttonIcons != null && buttonIcons[i] != null)
+            if(buttonIcons != null && buttonIcons[i] != null) {
                 button.setIcon(ImageProvider.get(buttonIcons[i]));
+            }
 
-            if(i == 0) rootPane.setDefaultButton(button);
+            if(i == 0) {
+                rootPane.setDefaultButton(button);
+            }
             buttonsPanel.add(button, GBC.std().insets(2,2,2,2));
             buttons.add(button);
         }
@@ -119,12 +122,17 @@ public class ExtendedDialog extends JDialog {
         boolean limitedInWidth = d.width > x.width;
         boolean limitedInHeight = d.height > x.height;
 
-        if(x.width  > 0 && d.width  > x.width)  d.width  = x.width;
-        if(x.height > 0 && d.height > x.height) d.height = x.height;
+        if(x.width  > 0 && d.width  > x.width) {
+            d.width  = x.width;
+        }
+        if(x.height > 0 && d.height > x.height) {
+            d.height = x.height;
+        }
 
         // We have a vertical scrollbar and enough space to prevent a horizontal one
-        if(!limitedInWidth && limitedInHeight)
+        if(!limitedInWidth && limitedInHeight) {
             d.width += new JScrollBar().getPreferredSize().width;
+        }
 
         setSize(d);
         setLocationRelativeTo(parent);
@@ -160,10 +168,11 @@ public class ExtendedDialog extends JDialog {
     protected Dimension findMaxDialogSize() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension x = new Dimension(Math.round(screenSize.width*2/3),
-                                    Math.round(screenSize.height*2/3));
+                Math.round(screenSize.height*2/3));
         try {
-            if(parent != null)
+            if(parent != null) {
                 x = JOptionPane.getFrameForComponent(parent).getSize();
+            }
         } catch(NullPointerException e) { }
         return x;
     }
@@ -183,7 +192,7 @@ public class ExtendedDialog extends JDialog {
         };
 
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
+        .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
         rootPane.getActionMap().put("ESCAPE", actionListener);
     }
 }

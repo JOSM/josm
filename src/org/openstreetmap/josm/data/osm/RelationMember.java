@@ -31,13 +31,38 @@ public class RelationMember {
         member = other.member;
     }
 
-    @Override public boolean equals(Object other) {
-        if (other == null || !(other instanceof RelationMember)) return false;
-        RelationMember otherMember = (RelationMember) other;
-        return otherMember.role.equals(role) && otherMember.member.equals(member);
-    }
-
     @Override public String toString() {
         return '"' + role + "\"=" + member;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((member == null) ? 0 : member.hashCode());
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RelationMember other = (RelationMember) obj;
+        if (member == null) {
+            if (other.member != null)
+                return false;
+        } else if (!member.equals(other.member))
+            return false;
+        if (role == null) {
+            if (other.role != null)
+                return false;
+        } else if (!role.equals(other.role))
+            return false;
+        return true;
     }
 }

@@ -100,39 +100,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     }
 
     /**
-     * creates the display name for a node. The name is derived from the nodes id,
-     * its name (i.e. the value of the tag with key name) and its coordinates.
-     * 
-     * @param node  the node
-     * @return the display name
-     */
-    protected String getDisplayName(RelationMember member) {
-        StringBuilder sb = new StringBuilder();
-        OsmPrimitive primitive = member.member;
-        if (primitive.get("name") != null) {
-            sb.append(primitive.get("name"));
-            sb.append("/");
-            sb.append(primitive.id);
-        } else {
-            sb.append(primitive.id);
-        }
-
-        if (primitive instanceof Node) {
-            Node n = (Node)primitive;
-            sb.append(" (");
-            if (n.getCoor() != null) {
-                sb.append(COORD_FORMATTER.format(n.getCoor().lat()));
-                sb.append(",");
-                sb.append(COORD_FORMATTER.format(n.getCoor().lon()));
-            } else {
-                sb.append("?,?");
-            }
-            sb.append(")");
-        }
-        return sb.toString();
-    }
-
-    /**
      * reset the renderer
      */
     protected void reset() {
@@ -190,7 +157,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     }
 
     protected void renderPrimitive(RelationMember member) {
-        String displayName = getDisplayName(member);
+        String displayName = member.member.getName();
         setText(displayName);
         setToolTipText(buildToolTipText(member.member));
         if (member.member instanceof Node) {

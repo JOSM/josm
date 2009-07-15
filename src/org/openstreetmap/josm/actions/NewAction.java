@@ -15,10 +15,10 @@ public class NewAction extends JosmAction {
 
     public NewAction() {
         super(tr("New"), "new", tr("Create a new map."),
-        Shortcut.registerShortcut("system:new", tr("File: {0}", tr("New")), KeyEvent.VK_N, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:new", tr("File: {0}", tr("New")), KeyEvent.VK_N, Shortcut.GROUP_MENU), true);
     }
 
     public void actionPerformed(ActionEvent e) {
-        Main.main.addLayer(new OsmDataLayer(new DataSet(), tr("unnamed"), null));
+        Main.main.addLayer(new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null));
     }
 }

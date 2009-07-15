@@ -61,7 +61,6 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     private HashSet<Long> ways;
     private HashSet<Long> relations;
     private HashSet<Long> missingPrimitives;
-    private HashSet<Long> skippedWayIds;
     private DataSet outputDataSet;
 
     /**
@@ -319,11 +318,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
         try {
             final OsmReader osm = OsmReader.parseDataSetOsm(in, Main.pleaseWaitDlg);
-            skippedWayIds.addAll(osm.getSkippedWayIds());
             merge(osm.getDs());
-        } catch(IOException e) {
-            throw new OsmTransferException(e);
-        } catch(SAXException e) {
+        } catch(Exception e) {
             throw new OsmTransferException(e);
         }
     }
@@ -345,11 +341,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
         try {
             final OsmReader osm = OsmReader.parseDataSetOsm(in,Main.pleaseWaitDlg);
-            skippedWayIds.addAll(osm.getSkippedWayIds());
             merge(osm.getDs());
-        } catch(IOException e) {
-            throw new OsmTransferException(e);
-        } catch(SAXException e) {
+        } catch(Exception e) {
             throw new OsmTransferException(e);
         }
     }
@@ -439,24 +432,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     @Override
     public DataSet parseOsm() throws OsmTransferException {
-        skippedWayIds = new HashSet<Long>();
         missingPrimitives = new HashSet<Long>();
 
         fetchPrimitives(nodes,OsmPrimitiveType.NODE);
         fetchPrimitives(ways,OsmPrimitiveType.WAY);
         fetchPrimitives(relations,OsmPrimitiveType.RELATION);
         return outputDataSet;
-    }
-
-    /**
-     * replies the set of {@see Way}s which were present in the data fetched from the
-     * server but which were not included in the JOSM dataset because they referred
-     * to nodes not present in the dataset
-     * 
-     * @return  the set of ids of skipped ways
-     */
-    public Set<Long> getSkippedWays() {
-        return skippedWayIds;
     }
 
     /**

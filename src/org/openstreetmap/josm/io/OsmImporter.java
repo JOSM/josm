@@ -50,15 +50,5 @@ public class OsmImporter extends FileImporter {
         OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
         Main.main.addLayer(layer);
         layer.fireDataChange();
-        if (osm.getParseNotes().length() != 0) {
-            /* display at most five lines */
-            String notes = osm.getParseNotes();
-            int j = 0;
-            for (int i = 0; i < 5; i++) {
-                j = notes.indexOf('\n', j + 1);
-            }
-            j = j >= 0 ? j : notes.length();
-            JOptionPane.showMessageDialog(Main.parent, notes.substring(0, j));
-        }
     }
 }

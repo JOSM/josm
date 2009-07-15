@@ -8,6 +8,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -284,12 +285,25 @@ public class TagEditorModel extends AbstractTableModel {
             String value = primitive.get(key);
             add(key,value);
         }
+        TagModel tag = new TagModel();
         sort();
+        tags.add(tag);
         setDirty(false);
     }
 
 
+    /**
+     * applies the current state of the tag editor model to a primitive
+     * 
+     * @param primitive the primitive
+     * 
+     */
     public void applyToPrimitive(OsmPrimitive primitive) {
+        if (primitive.keys == null) {
+            primitive.keys = new HashMap<String, String>();
+        } else {
+            primitive.keys.clear();
+        }
         for (TagModel tag: tags) {
             // tag still holds an unchanged list of different values for the same key.
             // no property change command required

@@ -1,54 +1,51 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Vector;
+import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
@@ -57,40 +54,10 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
-enum WayConnectionType
-{
-    none,
-    head_to_head,
-    tail_to_tail,
-    head_to_tail,
-    tail_to_head;
-    @Override
-    public String toString()
-    {
-        String  result = "";
-        switch(this)
-        {
-        case head_to_head:
-            result = "-><-";
-            break;
-        case head_to_tail:
-            result = "->->";
-            break;
-        case tail_to_head:
-            result = "<-<-";
-            break;
-        case tail_to_tail:
-            result = "<-->";
-            break;
-        }
-
-        return result;
-    }
-}
 
 /**
  * This dialog is for editing relations.
@@ -105,27 +72,7 @@ enum WayConnectionType
  */
 public class GenericRelationEditor extends RelationEditor {
 
-    // We need this twice, so cache result
-    protected final static String applyChangesText = tr("Apply Changes");
-
-    private JLabel status;
-
-    /**
-     * The membership data.
-     */
-    private final DefaultTableModel memberData = new DefaultTableModel() {
-        @Override public boolean isCellEditable(int row, int column) {
-            return column == 0;
-        }
-        @Override public Class<?> getColumnClass(int columnIndex) {
-            return columnIndex == 1 ? OsmPrimitive.class : String.class;
-        }
-    };
-
-    /**
-     * The properties and membership lists.
-     */
-    private final JTable memberTable = new JTable(memberData);
+    static private final Logger logger = Logger.getLogger(GenericRelationEditor.class.getName());
 
     /** the tag table and its model */
     private TagEditorModel tagEditorModel;
@@ -133,6 +80,12 @@ public class GenericRelationEditor extends RelationEditor {
     private AutoCompletionCache acCache;
     private AutoCompletionList acList;
 
+    /** the member table */
+    private MemberTable memberTable;
+    private MemberTableModel memberTableModel;
+
+    /** the model for the selection table */
+    private SelectionTableModel selectionTableModel;
 
     /**
      * Creates a new relation editor for the given relation. The relation
@@ -140,68 +93,122 @@ public class GenericRelationEditor extends RelationEditor {
      *
      * If no relation is given, will create an editor for a new relation.
      *
+     * @param layer the {@see OsmDataLayer} the new or edited relation belongs to
      * @param relation relation to edit, or null to create a new one.
+     * @param selectedMembers a collection of members which shall be selected initially
      */
     public GenericRelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers )
     {
-        // Initalizes ExtendedDialog
         super(layer, relation, selectedMembers);
+
+        // initialize the autocompletion infrastructure
+        //
         acCache = AutoCompletionCache.getCacheForLayer(Main.map.mapView.getEditLayer());
         acList = new AutoCompletionList();
 
-        JPanel bothTables = setupBasicLayout(selectedMembers);
-        if (relation != null) {
-            this.tagEditorModel.initFromPrimitive(relation);
-        } else {
-            tagEditorModel.clear();
-        }
-        tagEditorModel.ensureOneTag();
-        addWindowListener(
-                new WindowAdapter() {
-                    protected void requestFocusInTopLeftCell() {
-                        SwingUtilities.invokeLater(new Runnable(){
-                            public void run()
-                            {
-                                tagEditorModel.ensureOneTag();
-                                tagTable.requestFocusInCell(0, 0);
-                            }
-                        });
-                    }
-                    @Override
-                    public void windowDeiconified(WindowEvent e) {
-                        requestFocusInTopLeftCell();
-                    }
-                    @Override
-                    public void windowOpened(WindowEvent e) {
-                        requestFocusInTopLeftCell();
-                    }
-                }
-        );
-
-        JTabbedPane tabPane = new JTabbedPane();
-        tabPane.add(bothTables, tr("Basic"));
-
-        // This sets the minimum size before scrollbars appear on the dialog
-        tabPane.setPreferredSize(new Dimension(100, 100));
-        contentConstraints = GBC.eol().fill().insets(5,10,5,0);
-        setupDialog(tabPane, new String[] { "ok.png", "cancel.png" });
-        // FIXME: Make it remember last screen position
-        setSize(findMaxDialogSize());
-
-        try { setAlwaysOnTop(true); } catch (SecurityException sx) {}
-        setVisible(true);
-    }
-
-
-    /**
-     * Basic Editor panel has two blocks: a tag table at the top and a membership list below
-     * @param selectedMembers
-     * @return a JPanel with the described layout
-     */
-    private JPanel setupBasicLayout(Collection<RelationMember> selectedMembers) {
-        // setting up the tag table
+        // init the various models
         //
         tagEditorModel = new TagEditorModel();
+        memberTableModel = new MemberTableModel();
+        selectionTableModel = new SelectionTableModel(getLayer());
+
+        // populate the models
+        //
+        if (relation != null) {
+            this.tagEditorModel.initFromPrimitive(relation);
+            this.memberTableModel.populate(relation);
+        } else {
+            tagEditorModel.clear();
+            this.memberTableModel.populate(null);
+        }
+        memberTableModel.selectMembers(selectedMembers);
+        tagEditorModel.ensureOneTag();
+
+        JSplitPane pane = buildSplitPane();
+        pane.setPreferredSize(new Dimension(100, 100));
+
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new BorderLayout());
+        pnl.add(pane,BorderLayout.CENTER);
+        pnl.setBorder(BorderFactory.createRaisedBevelBorder());
+
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(pnl,BorderLayout.CENTER);
+        getContentPane().add(buildOkCancelButtonPanel(), BorderLayout.SOUTH);
+
+        setSize(findMaxDialogSize());
+        try {
+            setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            logger.warning(tr("Caught security exception for setAlwaysOnTop(). Ignoring. Exception was: {0}", e.toString()));
+        }
+    }
+
+    /**
+     * builds the panel with the OK and  the Cancel button
+     * 
+     * @return the panel with the OK and  the Cancel button
+     */
+    protected JPanel buildOkCancelButtonPanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        pnl.add(new SideButton(new OKAction()));
+        pnl.add(new SideButton(new CancelAction()));
+
+        return pnl;
+    }
+
+    /**
+     * build the panel with the buttons on the left
+     * 
+     * @return
+     */
+    protected JPanel buildTagEditorControlPanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new GridBagLayout());
+
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridheight  =1;
+        gc.gridwidth = 1;
+        gc.insets = new Insets(0,5,0,5);
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+
+        // -----
+        AddTagAction addTagAction = new AddTagAction();
+        pnl.add(new JButton(addTagAction), gc);
+
+        // -----
+        gc.gridy = 1;
+        DeleteTagAction deleteTagAction = new DeleteTagAction();
+        tagTable.getSelectionModel().addListSelectionListener(deleteTagAction);
+        pnl.add(new JButton(deleteTagAction), gc);
+
+        // ------
+        // just grab the remaining space
+        gc.gridy = 2;
+        gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        pnl.add(new JPanel(),gc);
+        return pnl;
+    }
+
+    /**
+     * builds the panel with the tag editor
+     * 
+     * @return the panel with the tag editor
+     */
+    protected JPanel buildTagEditorPanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new GridBagLayout());
+
+        // setting up the tag table
+        //
         tagTable = new TagTable(tagEditorModel);
         acCache.initFromJOSMDataset();
         TagCellEditor editor = ((TagCellEditor)tagTable.getColumnModel().getColumn(0).getCellEditor());
@@ -211,49 +218,6 @@ public class GenericRelationEditor extends RelationEditor {
         editor.setAutoCompletionCache(acCache);
         editor.setAutoCompletionList(acList);
 
-
-        // setting up the member table
-
-        memberData.setColumnIdentifiers(new String[]{tr("Role"),tr("Occupied By"), tr("linked")});
-        memberTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        memberTable.getColumnModel().getColumn(1).setCellRenderer(new OsmPrimitivRenderer());
-        memberData.addTableModelListener(new TableModelListener() {
-            public void tableChanged(TableModelEvent tme) {
-                if (tme.getType() == TableModelEvent.UPDATE && tme.getColumn() == 0) {
-                    int row = tme.getFirstRow();
-                    getClone().members.get(row).role = memberData.getValueAt(row, 0).toString();
-                }
-            }
-        });
-        ListSelectionModel lsm = memberTable.getSelectionModel();
-        lsm.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                ArrayList<OsmPrimitive> sel;
-                int cnt = memberTable.getSelectedRowCount();
-                if(cnt > 0)
-                {
-                    sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i : memberTable.getSelectedRows()) {
-                        sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
-                    }
-                }
-                else
-                {
-                    cnt = memberTable.getRowCount();
-                    sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i = 0; i < cnt; ++i) {
-                        sel.add((OsmPrimitive)memberTable.getValueAt(i, 1));
-                    }
-                }
-                Main.ds.setSelected(sel);
-            }
-        });
-        memberTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-
-        // combine both tables and wrap them in a scrollPane
-        JPanel bothTables = new JPanel();
-        bothTables.setLayout(new GridBagLayout());
-        bothTables.add(new JLabel(tr("Tags")), GBC.eol().fill(GBC.HORIZONTAL));
         final JScrollPane scrollPane = new JScrollPane(tagTable);
 
         // this adapters ensures that the width of the tag table columns is adjusted
@@ -269,315 +233,280 @@ public class GenericRelationEditor extends RelationEditor {
                     }
                 }
         );
-        bothTables.add(scrollPane, GBC.eop().fill(GBC.BOTH));
-        bothTables.add(status = new JLabel(tr("Members")), GBC.eol().fill(GBC.HORIZONTAL));
-        // this is not exactly pretty but the four buttons simply don't fit in one line.
-        // we should have smaller buttons for situations like this.
-        JPanel buttonPanel = setupBasicButtons();
 
-        bothTables.add(new JScrollPane(memberTable), GBC.eol().fill(GBC.BOTH));
-        bothTables.add(buttonPanel, GBC.eop().fill(GBC.HORIZONTAL));
-        refreshTables();
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridheight  =1;
+        gc.gridwidth = 3;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;
+        pnl.add(new JLabel(tr("Tags")), gc);
 
-        if (selectedMembers != null) {
-            boolean scrolled = false;
-            for (int i = 0; i < memberData.getRowCount(); i++) {
-                for (RelationMember m : selectedMembers) {
-                    if (m.member == memberData.getValueAt(i, 1)
-                            && m.role.equals(memberData.getValueAt(i, 0))) {
-                        memberTable.addRowSelectionInterval(i, i);
-                        if (!scrolled) {
-                            // Ensure that the first member is visible
-                            memberTable.scrollRectToVisible(memberTable.getCellRect(i, 0, true));
-                            scrolled = true;
-                        }
-                        break;
+        gc.gridx = 0;
+        gc.gridy = 1;
+        gc.gridheight  =1;
+        gc.gridwidth = 1;
+        gc.fill = GridBagConstraints.VERTICAL;
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.weightx = 0.0;
+        gc.weighty = 1.0;
+        pnl.add(buildTagEditorControlPanel(), gc);
+
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 0.8;
+        gc.weighty = 1.0;
+        pnl.add(scrollPane, gc);
+        return pnl;
+    }
+
+    /**
+     * builds the panel for the relation member editor
+     * 
+     * @return the panel for the relation member editor
+     */
+    protected JPanel buildMemberEditorPanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new GridBagLayout());
+        // setting up the member table
+        memberTable = new MemberTable(memberTableModel);
+
+        ListSelectionModel lsm = memberTable.getSelectionModel();
+        lsm.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                ArrayList<OsmPrimitive> sel;
+                int cnt = memberTable.getSelectedRowCount();
+                if(cnt > 0) {
+                    sel = new ArrayList<OsmPrimitive>(cnt);
+                    for (int i : memberTable.getSelectedRows()) {
+                        sel.add(memberTableModel.getReferredPrimitive(i));
+                    }
+                } else {
+                    cnt = memberTable.getRowCount();
+                    sel = new ArrayList<OsmPrimitive>(cnt);
+                    for (int i = 0; i < cnt; ++i) {
+                        sel.add(memberTableModel.getReferredPrimitive(i));
                     }
                 }
-
+                Main.ds.setSelected(sel);
             }
-        }
-        return bothTables;
+        });
+
+        final JScrollPane scrollPane = new JScrollPane(memberTable);
+        // this adapters ensures that the width of the tag table columns is adjusted
+        // to the width of the scroll pane viewport. Also tried to overwrite
+        // getPreferredViewportSize() in JTable, but did not work.
+        //
+        scrollPane.addComponentListener(
+                new ComponentAdapter() {
+                    @Override public void componentResized(ComponentEvent e) {
+                        super.componentResized(e);
+                        Dimension d = scrollPane.getViewport().getExtentSize();
+                        memberTable.adjustColumnWidth(d.width);
+                    }
+                }
+        );
+
+
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridheight  =1;
+        gc.gridwidth = 3;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;
+        pnl.add(new JLabel(tr("Members")), gc);
+
+        gc.gridx = 0;
+        gc.gridy = 1;
+        gc.gridheight  =1;
+        gc.gridwidth = 1;
+        gc.fill = GridBagConstraints.VERTICAL;
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.weightx = 0.0;
+        gc.weighty = 1.0;
+        pnl.add(buildLeftButtonPanel(), gc);
+
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 0.8;
+        gc.weighty = 1.0;
+        pnl.add(scrollPane, gc);
+
+        gc.gridx = 2;
+        gc.gridy = 1;
+        gc.weightx = 0.0;
+        gc.weighty = 1.0;
+        pnl.add(buildSelectionControlButtonPanel(), gc);
+
+        gc.gridx = 3;
+        gc.gridy = 1;
+        gc.weightx = 0.2;
+        gc.weighty = 1.0;
+        pnl.add(buildSelectionTablePanel(), gc);
+
+        gc.gridx = 1;
+        gc.gridy = 2;
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;
+        pnl.add(buildButtonPanel(), gc);
+
+        return pnl;
+    }
+
+    /**
+     * builds the panel with the table displaying the currently selected primitives
+     * 
+     * @return
+     */
+    protected JPanel buildSelectionTablePanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new BorderLayout());
+
+        JTable tbl = new JTable(selectionTableModel,new SelectionTableColumnModel());
+        tbl.setEnabled(false);
+
+        JScrollPane pane = new JScrollPane(tbl);
+        pnl.add(pane, BorderLayout.CENTER);
+        return pnl;
+    }
+
+    /**
+     * builds the {@see JSplitPane} which divides the editor in an upper and a lower
+     * half
+     * 
+     * @return the split panel
+     */
+    protected JSplitPane buildSplitPane() {
+        JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        pane.setTopComponent(buildTagEditorPanel());
+        pane.setBottomComponent(buildMemberEditorPanel());
+        pane.setOneTouchExpandable(true);
+        pane.setDividerLocation(150);
+        return pane;
+    }
+
+    /**
+     * build the panel with the buttons on the left
+     * 
+     * @return
+     */
+    protected JPanel buildLeftButtonPanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new GridBagLayout());
+
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridheight  =1;
+        gc.gridwidth = 1;
+        gc.insets = new Insets(0,5,0,5);
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+        MoveUpAction moveUpAction = new MoveUpAction();
+        memberTableModel.getSelectionModel().addListSelectionListener(moveUpAction);
+        pnl.add(new JButton(moveUpAction), gc);
+
+        // -----
+        gc.gridy = 1;
+        MoveDownAction moveDownAction = new MoveDownAction();
+        memberTableModel.getSelectionModel().addListSelectionListener(moveDownAction);
+        pnl.add(new JButton(moveDownAction), gc);
+
+        // ------
+        gc.gridy = 2;
+        RemoveAction removeSelectedAction = new RemoveAction();
+        memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
+        pnl.add(new JButton(removeSelectedAction),gc);
+
+        // ------
+        // just grab the remaining space
+        gc.gridy = 3;
+        gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        pnl.add(new JPanel(),gc);
+        return pnl;
+    }
+
+    /**
+     * build the panel with the buttons for adding or removing the current selection
+     * 
+     * @return
+     */
+    protected JPanel buildSelectionControlButtonPanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new GridBagLayout());
+
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridheight  =1;
+        gc.gridwidth = 1;
+        gc.insets = new Insets(0,5,0,5);
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+        AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction();
+        selectionTableModel.addTableModelListener(addSelectionAction);
+        pnl.add(new JButton(addSelectionAction), gc);
+
+        // -----
+        gc.gridy = 1;
+        AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection();
+        selectionTableModel.addTableModelListener(addSelectedBeforeSelectionAction);
+        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedBeforeSelectionAction);
+        pnl.add(new JButton(addSelectedBeforeSelectionAction), gc);
+
+        // -----
+        gc.gridy = 2;
+        AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection();
+        selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
+        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
+        pnl.add(new JButton(addSelectedAfterSelectionAction), gc);
+
+        // -----
+        gc.gridy = 3;
+        AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction();
+        selectionTableModel.addTableModelListener(addSelectedAtEndAction);
+        pnl.add(new JButton(addSelectedAtEndAction), gc);
+
+        // -----
+        gc.gridy = 4;
+        RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction();
+        selectionTableModel.addTableModelListener(removeSelectedAction);
+        pnl.add(new JButton(removeSelectedAction), gc);
+
+        // ------
+        // just grab the remaining space
+        gc.gridy = 5;
+        gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        pnl.add(new JPanel(),gc);
+
+        return pnl;
     }
 
     /**
      * Creates the buttons for the basic editing layout
-     * @return JPanel with basic buttons
+     * @return {@see JPanel} with basic buttons
      */
-    private JPanel setupBasicButtons() {
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 4));
-
-        buttonPanel.add(createButton(marktr("Move Up"), "moveup", tr("Move the currently selected members up"), KeyEvent.VK_N, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                moveMembers(-1);
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Add Selected"),"addselected",
-                tr("Add all currently selected objects as members"), KeyEvent.VK_D, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addSelected();
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Remove Selected"),"removeselected",
-                tr("Remove all currently selected objects from relation"), KeyEvent.VK_S, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                deleteSelected();
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Sort"), "sort",
-                tr("Sort the selected relation members or the whole list"), KeyEvent.VK_O, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                sort();
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Move Down"), "movedown", tr("Move the currently selected members down"), KeyEvent.VK_J, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                moveMembers(1);
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Remove"),"remove",
-                tr("Remove the member in the current table row from this relation"), KeyEvent.VK_X, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int[] rows = memberTable.getSelectedRows();
-                RelationMember mem = new RelationMember();
-                for (int row : rows) {
-                    mem.role = memberTable.getValueAt(row, 0).toString();
-                    mem.member = (OsmPrimitive) memberTable.getValueAt(row, 1);
-                    getClone().members.remove(mem);
-                }
-                refreshTables();
-            }
-        }));
-
-        buttonPanel.add(createButton(marktr("Download Members"),"downloadincomplete",
-                tr("Download all incomplete ways and nodes in relation"), KeyEvent.VK_K, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                downloadRelationMembers();
-                refreshTables();
-            }
-        }));
-
+    protected JPanel buildButtonPanel() {
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(new SideButton(new DownlaodAction()));
         return buttonPanel;
     }
-
-    private void sort() {
-        RelationNodeMap                    map = new RelationNodeMap(getClone());
-        Vector<LinkedList<Integer>>        segments;
-        LinkedList<Integer>                segment;
-        Node                               startSearchNode;
-        Node                               endSearchNode;
-        boolean                            something_done;
-
-        /*
-         * sort any 2 or more connected elements together
-         * may be slow with many unconnected members
-         * TODO: cleanup again, too much code in 1 method
-         */
-
-        segments = new Vector<LinkedList<Integer>>();
-        // add first member of relation, not strictly necessary
-        if (map.remove(0, getClone().members.get(0)))
-        {
-            segment = new LinkedList<Integer>();
-            segment.add(Integer.valueOf(0));
-            segments.add(segment);
-        }
-        while (!map.isEmpty())
-        {
-            segment = segments.lastElement();
-
-            do
-            {
-                something_done = false;
-                startSearchNode = null;
-                endSearchNode = null;
-                if (segment.size() == 1)
-                {
-                    RelationMember  m = getClone().members.get(segment.getFirst());
-                    try
-                    {
-                        Way             w = (Way)m.member;
-                        endSearchNode = w.lastNode();
-                        startSearchNode = w.firstNode();
-                    }
-                    catch(ClassCastException e1)
-                    {
-                        try
-                        {
-                            Node n = (Node)m.member;
-                            endSearchNode = n;
-                        }
-                        catch(ClassCastException e2)
-                        {
-                            // impossible
-                        }
-                    }
-                }
-                else
-                {
-                    // add unused node of first element and unused node of last element
-                    // start with the first element
-                    RelationMember element = getClone().members.get(segment.getFirst());
-                    RelationMember other_element = getClone().members.get(segment.get(1));
-
-                    try
-                    {
-                        Way w = (Way)element.member;
-                        try
-                        {
-                            Way x = (Way)other_element.member;
-                            if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode()))
-                            {
-                                startSearchNode = w.lastNode();
-                            }
-                            else
-                            {
-                                startSearchNode = w.firstNode();
-                            }
-                        }
-                        catch(ClassCastException e3)
-                        {
-                            try
-                            {
-                                Node m = (Node)other_element.member;
-                                if (w.firstNode() == m)
-                                {
-                                    startSearchNode = w.lastNode();
-                                }
-                                else
-                                {
-                                    startSearchNode = w.firstNode();
-                                }
-                            }
-                            catch(ClassCastException e4)
-                            {
-                                // impossible
-                            }
-                        }
-                    }
-                    catch(ClassCastException e1)
-                    {
-                        try
-                        {
-                            Node n = (Node)element.member;
-                            startSearchNode = n;
-                        }
-                        catch(ClassCastException e2)
-                        {
-                            // impossible
-                        }
-                    }
-                    // now the same for the last element
-                    element = getClone().members.get(segment.getLast());
-                    other_element = getClone().members.get(segment.get(segment.size() - 2));
-
-                    try
-                    {
-                        Way w = (Way)element.member;
-                        try
-                        {
-                            Way x = (Way)other_element.member;
-                            if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode()))
-                            {
-                                endSearchNode = w.lastNode();
-                            }
-                            else
-                            {
-                                endSearchNode = w.firstNode();
-                            }
-                        }
-                        catch(ClassCastException e3)
-                        {
-                            try
-                            {
-                                Node m = (Node)other_element.member;
-                                if (w.firstNode() == m)
-                                {
-                                    endSearchNode = w.lastNode();
-                                }
-                                else
-                                {
-                                    endSearchNode = w.firstNode();
-                                }
-                            }
-                            catch(ClassCastException e4)
-                            {
-                                // impossible
-                            }
-                        }
-                    }
-                    catch(ClassCastException e1)
-                    {
-                        try
-                        {
-                            Node n = (Node)element.member;
-                            endSearchNode = n;
-                        }
-                        catch(ClassCastException e2)
-                        {
-                            // impossible
-                        }
-                    }
-                }
-
-                // let's see if we can find connected elements for endSearchNode and startSearchNode
-                if (startSearchNode != null)
-                {
-                    Integer m2 = map.find(startSearchNode, segment.getFirst());
-                    if (m2 != null)
-                    {
-                        segment.add(0, m2);
-                        map.remove(m2, getClone().members.get(m2));
-                        something_done = true;
-                    }
-                }
-                if (endSearchNode != null)
-                {
-                    Integer m2 = map.find(endSearchNode, segment.getLast());
-                    if (m2 != null)
-                    {
-                        segment.add(segment.size(), m2);
-                        map.remove(m2, getClone().members.get(m2));
-                        something_done = true;
-                    }
-                }
-            } while (something_done);
-
-            Integer next = map.pop();
-            if (next == null)
-            {
-                break;
-            }
-
-            segment = new LinkedList<Integer>();
-            segment.add(next);
-            segments.add(segment);
-        }
-        // append map.remaining() to segments list (as a single segment)
-        segment = new LinkedList<Integer>();
-        segment.addAll(map.getRemaining());
-        segments.add(segment);
-
-        // now we need to actually re-order the relation members
-        ArrayList<RelationMember>  newmembers = new ArrayList<RelationMember>();
-        for (LinkedList<Integer> segment2 : segments)
-        {
-            for (Integer p : segment2)
-            {
-                newmembers.add(getClone().members.get(p));
-            }
-        }
-        getClone().members.clear();
-        getClone().members.addAll(newmembers);
-
-        refreshTables();
-    }
-
 
     /**
      * This function saves the user's changes. Must be invoked manually.
@@ -586,26 +515,20 @@ public class GenericRelationEditor extends RelationEditor {
         if (getRelation()== null) {
             // If the user wanted to create a new relation, but hasn't added any members or
             // tags, don't add an empty relation
-            if(getClone().members.size() == 0 && tagEditorModel.getKeys().isEmpty())
+            if(memberTableModel.getRowCount() == 0 && tagEditorModel.getKeys().isEmpty())
                 return;
-            tagEditorModel.applyToPrimitive(getClone());
-            Main.main.undoRedo.add(new AddCommand(getClone()));
+            Relation clone = new Relation(getRelation());
+            tagEditorModel.applyToPrimitive(clone);
+            memberTableModel.applyToRelation(clone);
+            Main.main.undoRedo.add(new AddCommand(clone));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
-        } else if (! getRelation().hasEqualSemanticAttributes(getClone()) || tagEditorModel.isDirty()) {
-            tagEditorModel.applyToPrimitive(getClone());
-            Main.main.undoRedo.add(new ChangeCommand(getRelation(), getClone()));
+        } else if (! memberTableModel.hasSameMembersAs(getRelation()) || tagEditorModel.isDirty()) {
+            Relation clone = new Relation(getRelation());
+            tagEditorModel.applyToPrimitive(clone);
+            memberTableModel.applyToRelation(clone);
+            Main.main.undoRedo.add(new ChangeCommand(getRelation(), clone));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
         }
-    }
-
-    @Override
-    protected void buttonAction(ActionEvent evt) {
-        String a = evt.getActionCommand();
-        if(applyChangesText.equals(a)) {
-            applyChanges();
-        }
-
-        setVisible(false);
     }
 
     @Override
@@ -615,325 +538,418 @@ public class GenericRelationEditor extends RelationEditor {
     }
 
     /**
-     * Updates the references from members of the cloned relation (see {@see #getClone())
-     * after an update from the server.
-     *
-     */
-    protected void updateMemberReferencesInClone() {
-        DataSet ds = getLayer().data;
-        for (RelationMember member : getClone().members) {
-            if (member.member.id == 0) {
-                continue;
-            }
-            OsmPrimitive primitive = ds.getPrimitiveById(member.member.id);
-            if (primitive != null) {
-                member.member = primitive;
-            }
-        }
-    }
-
-    private void refreshTables() {
-        // re-load property data
-        int numLinked = 0;
-
-        // re-load membership data
-
-        memberData.setRowCount(0);
-        for (int i=0; i<getClone().members.size(); i++) {
-
-            // this whole section is aimed at finding out whether the
-            // relation member is "linked" with the next, i.e. whether
-            // (if both are ways) these ways are connected. It should
-            // really produce a much more beautiful output (with a linkage
-            // symbol somehow places between the two member lines!), and
-            // it should cache results, so... FIXME ;-)
-
-            RelationMember em = getClone().members.get(i);
-            WayConnectionType link = WayConnectionType.none;
-            RelationMember m = em;
-            RelationMember way1 = null;
-            RelationMember way2 = null;
-            int depth = 0;
-
-            while (m != null && depth < 10) {
-                if (m.member instanceof Way) {
-                    way1 = m;
-                    break;
-                } else if (m.member instanceof Relation) {
-                    if (m.member == this.getRelation()) {
-                        break;
-                    }
-                    m = ((Relation)m.member).lastMember();
-                    depth++;
-                } else {
-                    break;
-                }
-            }
-            if (way1 != null) {
-                int next = (i+1) % getClone().members.size();
-                while (next != i) {
-                    m = getClone().members.get(next);
-                    next = (next + 1) % getClone().members.size();
-                    depth = 0;
-                    while (m != null && depth < 10) {
-                        if (m.member instanceof Way) {
-                            way2 = m;
-                            break;
-                        } else if (m.member instanceof Relation) {
-                            if (m.member == this.getRelation()) {
-                                break;
-                            }
-                            m = ((Relation)(m.member)).firstMember();
-                            depth++;
-                        } else {
-                            break;
-                        }
-                    }
-                    if (way2 != null) {
-                        break;
-                    }
-                }
-            }
-            if (way2 != null) {
-                Node way1first = ((Way)(way1.member)).firstNode();
-                Node way1last = ((Way)(way1.member)).lastNode();
-                Node way2first = ((Way)(way2.member)).firstNode();
-                Node way2last = ((Way)(way2.member)).lastNode();
-                /*
-                if (way1.role.equals("forward")) {
-                    way1first = null;
-                } else if (way1.role.equals("backward")) {
-                    way1last = null;
-                }
-                if (way2.role.equals("forward")) {
-                    way2last = null;
-                } else if (way2.role.equals("backward")) {
-                    way2first = null;
-                }
-                 */
-                if (way1first != null && way2first != null && way1first.equals(way2first)) {
-                    link = WayConnectionType.tail_to_tail;
-                } else if (way1first != null && way2last != null && way1first.equals(way2last)) {
-                    link = WayConnectionType.tail_to_head;
-                } else if (way1last != null && way2first != null && way1last.equals(way2first)) {
-                    link = WayConnectionType.head_to_tail;
-                } else if (way1last != null && way2last != null && way1last.equals(way2last)) {
-                    link = WayConnectionType.head_to_head;
-                }
-
-                // end of section to determine linkedness.
-                if (link != WayConnectionType.none)
-                {
-                    ++numLinked;
-                }
-
-            }
-            memberData.addRow(new Object[]{em.role, em.member, link});
-        }
-        status.setText(tr("Members: {0} (linked: {1})", getClone().members.size(), numLinked));
-    }
-
-    private SideButton createButton(String name, String iconName, String tooltip, int mnemonic, ActionListener actionListener) {
-        return
-        new SideButton(name, iconName, "relationEditor",
-                tooltip,
-                Shortcut.registerShortcut("relationeditor:"+iconName,
-                        tr("Relation Editor: {0}", name == null ? tooltip : name),
-                        mnemonic,
-                        Shortcut.GROUP_MNEMONIC),
-                        actionListener
-        );
-    }
-
-    private void addSelected() {
-        for (OsmPrimitive p : Main.ds.getSelected()) {
-            // ordered relations may have the same member multiple times.
-            // TODO: visual indication of the fact that one is there more than once?
-            RelationMember em = new RelationMember();
-            em.member = p;
-            em.role = "";
-            // when working with ordered relations, we make an effort to
-            // add the element before the first selected member.
-            int[] rows = memberTable.getSelectedRows();
-            if (rows.length > 0) {
-                getClone().members.add(rows[0], em);
-            } else {
-                getClone().members.add(em);
-            }
-        }
-        refreshTables();
-    }
-
-    private void deleteSelected() {
-        for (OsmPrimitive p : Main.ds.getSelected()) {
-            Relation c = new Relation(getClone());
-            for (RelationMember rm : c.members) {
-                if (rm.member == p)
-                {
-                    RelationMember mem = new RelationMember();
-                    mem.role = rm.role;
-                    mem.member = rm.member;
-                    getClone().members.remove(mem);
-                }
-            }
-        }
-        refreshTables();
-    }
-
-    private void moveMembers(int direction) {
-        int[] rows = memberTable.getSelectedRows();
-        if (rows.length == 0) return;
-
-        // check if user attempted to move anything beyond the boundary of the list
-        if (rows[0] + direction < 0) return;
-        if (rows[rows.length-1] + direction >= getClone().members.size()) return;
-
-        RelationMember m[] = new RelationMember[getClone().members.size()];
-
-        // first move all selected rows from the member list into a new array,
-        // displaced by the move amount
-        for (Integer i: rows) {
-            m[i+direction] = getClone().members.get(i);
-            getClone().members.set(i, null);
-        }
-
-        // now fill the empty spots in the destination array with the remaining
-        // elements.
-        int i = 0;
-        for (RelationMember rm : getClone().members) {
-            if (rm != null) {
-                while (m[i] != null) {
-                    i++;
-                }
-                m[i++] = rm;
-            }
-        }
-
-        // and write the array back into the member list.
-        getClone().members.clear();
-        getClone().members.addAll(Arrays.asList(m));
-        refreshTables();
-        ListSelectionModel lsm = memberTable.getSelectionModel();
-        lsm.setValueIsAdjusting(true);
-        for (Integer j: rows) {
-            lsm.addSelectionInterval(j + direction, j + direction);
-        }
-        lsm.setValueIsAdjusting(false);
-    }
-
-
-    /**
      * Asynchronously download the members of the currently edited relation
      *
      */
     private void downloadRelationMembers() {
-
-        class DownloadTask extends PleaseWaitRunnable {
-            private boolean cancelled;
-            private Exception lastException;
-
-            protected void setIndeterminateEnabled(final boolean enabled) {
-                EventQueue.invokeLater(
-                        new Runnable() {
-                            public void run() {
-                                Main.pleaseWaitDlg.setIndeterminate(enabled);
-                            }
-                        }
-                );
-            }
-
-            public DownloadTask() {
-                super(tr("Download relation members"), false /* don't ignore exception */);
-            }
-            @Override
-            protected void cancel() {
-                cancelled = true;
-                OsmApi.getOsmApi().cancel();
-            }
-
-            protected void showLastException() {
-                String msg = lastException.getMessage();
-                if (msg == null) {
-                    msg = lastException.toString();
-                }
-                JOptionPane.showMessageDialog(
-                        null,
-                        msg,
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-
-            @Override
-            protected void finish() {
-                if (cancelled) return;
-                updateMemberReferencesInClone();
-                refreshTables();
-                if (lastException == null) return;
-                showLastException();
-            }
-
-            @Override
-            protected void realRun() throws SAXException, IOException, OsmTransferException {
-                try {
-                    Main.pleaseWaitDlg.setAlwaysOnTop(true);
-                    Main.pleaseWaitDlg.toFront();
-                    setIndeterminateEnabled(true);
-                    OsmServerObjectReader reader = new OsmServerObjectReader(getClone().id, OsmPrimitiveType.RELATION, true);
-                    DataSet dataSet = reader.parseOsm();
-                    if (dataSet != null) {
-                        final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
-                        visitor.merge();
-
-                        // copy the merged layer's data source info
-                        for (DataSource src : dataSet.dataSources) {
-                            getLayer().data.dataSources.add(src);
-                        }
-                        getLayer().fireDataChange();
-
-                        if (visitor.getConflicts().isEmpty())
-                            return;
-                        getLayer().getConflicts().add(visitor.getConflicts());
-                        JOptionPane op = new JOptionPane(
-                                tr("There were {0} conflicts during import.",
-                                        visitor.getConflicts().size()),
-                                        JOptionPane.WARNING_MESSAGE
-                        );
-                        JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflicts in data"));
-                        dialog.setAlwaysOnTop(true);
-                        dialog.setModal(true);
-                        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                        dialog.setVisible(true);
-                    }
-                } catch(Exception e) {
-                    if (cancelled) {
-                        System.out.println(tr("Warning: ignoring exception because task is cancelled. Exception: {0}", e.toString()));
-                        return;
-                    }
-                    lastException = e;
-                } finally {
-                    Main.pleaseWaitDlg.setAlwaysOnTop(false);
-                    setIndeterminateEnabled(false);
-                }
-            }
-        }
-
-        boolean download = false;
-        for (RelationMember member : getClone().members) {
-            if (member.member.incomplete) {
-                download = true;
-                break;
-            }
-        }
-        if (! download) return;
+        if (!memberTableModel.hasIncompleteMembers())
+            return;
         Main.worker.submit(new DownloadTask());
     }
 
     @Override
-    public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        if (!visible) {
+    public void dispose() {
+        selectionTableModel.unregister();
+        super.dispose();
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        if (!b) {
             dispose();
+        }
+    }
+
+    class AddSelectedAtStartAction extends AbstractAction implements TableModelListener {
+        public AddSelectedAtStartAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Add all primitives selected in the current dataset before the first member"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copystartright"));
+            //putValue(NAME, tr("Add Selected"));
+            refreshEnabled();
+        }
+
+        protected void refreshEnabled() {
+            setEnabled(selectionTableModel.getRowCount() >  0);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.addMembersAtBeginning(selectionTableModel.getSelection());
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            refreshEnabled();
+        }
+    }
+
+    class AddSelectedAtEndAction extends AbstractAction implements TableModelListener {
+        public AddSelectedAtEndAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Add all primitives selected in the current dataset after the last member"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyendright"));
+            //putValue(NAME, tr("Add Selected"));
+            refreshEnabled();
+        }
+
+        protected void refreshEnabled() {
+            setEnabled(selectionTableModel.getRowCount() >  0);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.addMembersAtEnd(selectionTableModel.getSelection());
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            refreshEnabled();
+        }
+    }
+
+    class AddSelectedBeforeSelection extends AbstractAction implements TableModelListener, ListSelectionListener {
+        public AddSelectedBeforeSelection() {
+            putValue(SHORT_DESCRIPTION,  tr("Add all primitives selected in the current dataset before the first selected member"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copybeforecurrentright"));
+            //putValue(NAME, tr("Add Selected"));
+            refreshEnabled();
+        }
+
+        protected void refreshEnabled() {
+            setEnabled(selectionTableModel.getRowCount() >  0
+                    && memberTableModel.getSelectionModel().getMinSelectionIndex() >= 0);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.addMembersBeforeIdx(selectionTableModel.getSelection(), memberTableModel.getSelectionModel().getMinSelectionIndex());
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            refreshEnabled();
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            refreshEnabled();
+        }
+    }
+
+    class AddSelectedAfterSelection extends AbstractAction implements TableModelListener, ListSelectionListener {
+        public AddSelectedAfterSelection() {
+            putValue(SHORT_DESCRIPTION,  tr("Add all primitives selected in the current dataset after the last selected member"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyaftercurrentright"));
+            //putValue(NAME, tr("Add Selected"));
+            refreshEnabled();
+        }
+
+        protected void refreshEnabled() {
+            setEnabled(selectionTableModel.getRowCount() >  0
+                    && memberTableModel.getSelectionModel().getMinSelectionIndex() >= 0);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.addMembersAfterIdx(selectionTableModel.getSelection(), memberTableModel.getSelectionModel().getMaxSelectionIndex());
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            refreshEnabled();
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            refreshEnabled();
+        }
+    }
+
+    class RemoveSelectedAction extends AbstractAction implements TableModelListener {
+        public RemoveSelectedAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Remove all currently selected objects from relation"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "removeselected"));
+            // putValue(NAME, tr("Remove Selected"));
+            Shortcut.registerShortcut("relationeditor:removeselected",
+                    tr("Relation Editor: Remove Selected"),
+                    KeyEvent.VK_S,
+                    Shortcut.GROUP_MNEMONIC);
+
+            DataSet ds = getLayer().data;
+            setEnabled(ds != null && !ds.getSelected().isEmpty());
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.removeMembersReferringTo(selectionTableModel.getSelection());
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            setEnabled(selectionTableModel.getRowCount() >0);
+        }
+    }
+
+    class MoveUpAction extends AbstractAction implements ListSelectionListener {
+        public MoveUpAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Move the currently selected members up"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "moveup"));
+            //putValue(NAME, tr("Move Up"));
+            Shortcut.registerShortcut("relationeditor:moveup",
+                    tr("Relation Editor: Move Up"),
+                    KeyEvent.VK_N,
+                    Shortcut.GROUP_MNEMONIC);
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.moveUp(memberTable.getSelectedRows());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(memberTableModel.canMoveUp(memberTable.getSelectedRows()));
+        }
+    }
+
+    class MoveDownAction extends AbstractAction implements ListSelectionListener {
+        public MoveDownAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Move the currently selected members down"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "movedown"));
+            //putValue(NAME, tr("Move Down"));
+            Shortcut.registerShortcut("relationeditor:moveup",
+                    tr("Relation Editor: Move Down"),
+                    KeyEvent.VK_J,
+                    Shortcut.GROUP_MNEMONIC);
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.moveDown(memberTable.getSelectedRows());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(memberTableModel.canMoveDown(memberTable.getSelectedRows()));
+        }
+    }
+
+    class RemoveAction extends AbstractAction implements ListSelectionListener {
+        public RemoveAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Remove the member in the current table row from this relation"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "remove"));
+            //putValue(NAME, tr("Remove"));
+            Shortcut.registerShortcut("relationeditor:remove",
+                    tr("Relation Editor: Remove"),
+                    KeyEvent.VK_J,
+                    Shortcut.GROUP_MNEMONIC);
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.remove(memberTable.getSelectedRows());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(memberTableModel.canRemove(memberTable.getSelectedRows()));
+        }
+    }
+
+    class OKAction extends AbstractAction {
+        public OKAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Apply the updates and close the dialog"));
+            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            putValue(NAME, tr("Apply"));
+            setEnabled(true);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            applyChanges();
+            setVisible(false);
+        }
+    }
+
+    class CancelAction extends AbstractAction {
+        public CancelAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Cancel the updates and close the dialog"));
+            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            putValue(NAME, tr("Cancel"));
+
+            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
+            getRootPane().getActionMap().put("ESCAPE", this);
+            setEnabled(true);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            setVisible(false);
+        }
+    }
+
+    class AddTagAction extends AbstractAction {
+        public AddTagAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Add an empty tag"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","add"));
+            //putValue(NAME, tr("Cancel"));
+            setEnabled(true);
+        }
+        public void actionPerformed(ActionEvent e) {
+            tagEditorModel.appendNewTag();
+        }
+    }
+
+    class DeleteTagAction extends AbstractAction implements ListSelectionListener{
+        public DeleteTagAction() {
+            putValue(SHORT_DESCRIPTION,  tr("Delete the currently selected tags"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","delete"));
+            //putValue(NAME, tr("Cancel"));
+            refreshEnabled();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            run();
+        }
+
+        /**
+         * delete a selection of tag names
+         */
+        protected void deleteTagNames() {
+            int[] rows = tagTable.getSelectedRows();
+            tagEditorModel.deleteTagNames(rows);
+        }
+
+        /**
+         * delete a selection of tag values
+         */
+        protected void deleteTagValues() {
+            int[] rows = tagTable.getSelectedRows();
+            tagEditorModel.deleteTagValues(rows);
+        }
+
+        /**
+         * delete a selection of tags
+         */
+        protected void deleteTags() {
+            tagEditorModel.deleteTags(tagTable.getSelectedRows());
+        }
+
+        public void run() {
+            if (!isEnabled())
+                return;
+            if (tagTable.getSelectedColumnCount() == 1) {
+                if (tagTable.getSelectedColumn() == 0) {
+                    deleteTagNames();
+                } else if (tagTable.getSelectedColumn() == 1) {
+                    deleteTagValues();
+                } else
+                    // should not happen
+                    //
+                    throw new IllegalStateException("unexpected selected clolumn: getSelectedColumn() is " + tagTable.getSelectedColumn());
+            } else if (tagTable.getSelectedColumnCount() == 2) {
+                deleteTags();
+            }
+            if (tagEditorModel.getRowCount() == 0) {
+                tagEditorModel.ensureOneTag();
+            }
+        }
+
+        protected void refreshEnabled() {
+            setEnabled(tagTable.getSelectedRowCount()>0 || tagTable.getSelectedColumnCount() > 0);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            refreshEnabled();
+        }
+    }
+
+    class DownlaodAction extends AbstractAction {
+        public DownlaodAction() {
+            putValue(SHORT_DESCRIPTION,   tr("Download all incomplete ways and nodes in relation"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","downloadincomplete"));
+            putValue(NAME, tr("Download Members"));
+            Shortcut.registerShortcut("relationeditor:downloadincomplete",
+                    tr("Relation Editor: Download Members"),
+                    KeyEvent.VK_K,
+                    Shortcut.GROUP_MNEMONIC);
+            setEnabled(true);
+        }
+        public void actionPerformed(ActionEvent e) {
+            downloadRelationMembers();
+        }
+    }
+
+    class DownloadTask extends PleaseWaitRunnable {
+        private boolean cancelled;
+        private Exception lastException;
+
+        protected void setIndeterminateEnabled(final boolean enabled) {
+            EventQueue.invokeLater(
+                    new Runnable() {
+                        public void run() {
+                            Main.pleaseWaitDlg.setIndeterminate(enabled);
+                        }
+                    }
+            );
+        }
+
+        public DownloadTask() {
+            super(tr("Download relation members"), false /* don't ignore exception */);
+        }
+        @Override
+        protected void cancel() {
+            cancelled = true;
+            OsmApi.getOsmApi().cancel();
+        }
+
+        protected void showLastException() {
+            String msg = lastException.getMessage();
+            if (msg == null) {
+                msg = lastException.toString();
+            }
+            JOptionPane.showMessageDialog(
+                    null,
+                    msg,
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+        @Override
+        protected void finish() {
+            if (cancelled) return;
+            memberTableModel.updateMemberReferences(getLayer().data);
+            if (lastException == null) return;
+            showLastException();
+        }
+
+        @Override
+        protected void realRun() throws SAXException, IOException, OsmTransferException {
+            try {
+                Main.pleaseWaitDlg.setAlwaysOnTop(true);
+                Main.pleaseWaitDlg.toFront();
+                setIndeterminateEnabled(true);
+                OsmServerObjectReader reader = new OsmServerObjectReader(getRelation().id, OsmPrimitiveType.RELATION, true);
+                DataSet dataSet = reader.parseOsm();
+                if (dataSet != null) {
+                    final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
+                    visitor.merge();
+
+                    // copy the merged layer's data source info
+                    for (DataSource src : dataSet.dataSources) {
+                        getLayer().data.dataSources.add(src);
+                    }
+                    getLayer().fireDataChange();
+
+                    if (visitor.getConflicts().isEmpty())
+                        return;
+                    getLayer().getConflicts().add(visitor.getConflicts());
+                    JOptionPane op = new JOptionPane(
+                            tr("There were {0} conflicts during import.",
+                                    visitor.getConflicts().size()),
+                                    JOptionPane.WARNING_MESSAGE
+                    );
+                    JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflicts in data"));
+                    dialog.setAlwaysOnTop(true);
+                    dialog.setModal(true);
+                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    dialog.setVisible(true);
+                }
+            } catch(Exception e) {
+                if (cancelled) {
+                    System.out.println(tr("Warning: ignoring exception because task is cancelled. Exception: {0}", e.toString()));
+                    return;
+                }
+                lastException = e;
+            } finally {
+                Main.pleaseWaitDlg.setAlwaysOnTop(false);
+                setIndeterminateEnabled(false);
+            }
         }
     }
 }

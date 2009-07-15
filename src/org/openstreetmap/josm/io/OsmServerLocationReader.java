@@ -23,30 +23,29 @@ public class OsmServerLocationReader extends OsmServerReader {
      */
     @Override
     public DataSet parseOsm() throws OsmTransferException {
+        InputStream in = null;
         try {
             Main.pleaseWaitDlg.progress.setValue(0);
             Main.pleaseWaitDlg.currentAction.setText(tr("Contacting Server..."));
 
-            final InputStream in = getInputStreamRaw(url, Main.pleaseWaitDlg);
+            in = getInputStreamRaw(url, Main.pleaseWaitDlg);
             if (in == null)
                 return null;
             Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
-            final DataSet data = OsmReader.parseDataSet(in, Main.pleaseWaitDlg);
-            in.close();
-            activeConnection = null;
-            return data;
-        } catch (IOException e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } catch (SAXException e) {
-            throw new OsmTransferException(e);
+            return OsmReader.parseDataSet(in, Main.pleaseWaitDlg);
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             if (cancel)
                 return null;
             throw new OsmTransferException(e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                activeConnection = null;
+            } catch(Exception e) {/* ignore it */}
         }
     }
 

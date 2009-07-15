@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -50,9 +48,6 @@ public class OsmServerObjectReader extends OsmServerReader {
             final OsmReader osm = OsmReader.parseDataSetOsm(in,Main.pleaseWaitDlg);
             final DataSet data = osm.getDs();
 
-            if (osm.getParseNotes().length() != 0) {
-                JOptionPane.showMessageDialog(Main.parent, osm.getParseNotes());
-            }
             in.close();
             activeConnection = null;
             return data;

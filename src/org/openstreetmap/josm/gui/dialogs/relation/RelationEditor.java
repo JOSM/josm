@@ -40,7 +40,6 @@ public abstract class RelationEditor extends ExtendedDialog {
      * editing.
      */
     private Relation relation;
-    private Relation clone;
 
     /** the data layer the relation belongs to */
     private OsmDataLayer layer;
@@ -102,22 +101,10 @@ public abstract class RelationEditor extends ExtendedDialog {
 
         this.relation = relation;
         this.layer = layer;
-
-        if (relation == null) {
-            // create a new relation
-            this.clone = new Relation();
-        } else {
-            // edit an existing relation
-            this.clone = new Relation(relation);
-        }
     }
 
     protected Relation getRelation() {
         return relation;
-    }
-
-    protected Relation getClone() {
-        return clone;
     }
 
     protected OsmDataLayer getLayer() {

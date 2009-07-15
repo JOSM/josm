@@ -73,12 +73,6 @@ public class OsmServerHistoryReader extends OsmServerReader {
             final OsmHistoryReader reader = new OsmHistoryReader(in);
             HistoryDataSet data = reader.parse(Main.pleaseWaitDlg);
             return data;
-        } catch (IOException e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } catch (SAXException e) {
-            throw new OsmTransferException(e);
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {

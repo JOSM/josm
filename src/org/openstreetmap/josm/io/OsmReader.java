@@ -15,11 +15,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -49,27 +50,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Imi
  */
 public class OsmReader {
+    static private final Logger logger = Logger.getLogger(OsmReader.class.getName());
 
     /**
      * The dataset to add parsed objects to.
      */
     private DataSet ds = new DataSet();
     public DataSet getDs() { return ds; }
-
-    /**
-     * Record warnings.  If there were any data inconsistencies, append
-     * a newline-terminated string.
-     */
-    private String parseNotes = new String();
-    private int parseNotesCount = 0;
-    public String getParseNotes() {
-        return parseNotes;
-    }
-
-    /** the list of ids of skipped {@see Way}s, i.e. ways which referred to nodes
-     * not included in the parsed data
-     */
-    private Set<Long> skippedWayIds = new HashSet<Long>();
 
     /**
      * The visitor to use to add the data to the set.
@@ -349,30 +336,27 @@ public class OsmReader {
 
     protected void createWays() {
         for (Entry<OsmPrimitiveData, Collection<Long>> e : ways.entrySet()) {
-            Way w = new Way();
+            Way w = new Way(e.getKey().id);
             boolean failed = false;
             for (long id : e.getValue()) {
                 Node n = findNode(id);
                 if (n == null) {
-                    /* don't report ALL of them, just a few */
-                    if (parseNotesCount++ < 6) {
-                        parseNotes += tr("Skipping a way because it includes a node that doesn''t exist: {0}\n", id);
-                    } else if (parseNotesCount == 6) {
-                        parseNotes += "...\n";
-                    }
                     failed = true;
                     break;
                 }
                 w.nodes.add(n);
             }
             if (failed) {
-                skippedWayIds.add(e.getKey().id);
-                continue;
+                logger.warning(tr("marked way {0} incomplete because referred nodes are missing in the loaded data", e.getKey().id));
+                e.getKey().copyTo(w);
+                w.incomplete = true;
+                w.nodes.clear();
+            } else {
+                e.getKey().copyTo(w);
+                w.incomplete = false;
+                adder.visit(w);
             }
-            e.getKey().copyTo(w);
-            adder.visit(w);
         }
-
     }
 
     /**
@@ -474,7 +458,7 @@ public class OsmReader {
         return parseDataSetOsm(source, pleaseWaitDlg).ds;
     }
 
-    public static OsmReader parseDataSetOsm(InputStream source,PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
+    public static OsmReader parseDataSetOsm(InputStream source, final PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
         OsmReader osm = new OsmReader();
 
         // phase 1: Parse nodes and read in raw ways
@@ -486,8 +470,14 @@ public class OsmReader {
             throw new SAXException(e1);
         }
 
-        Main.pleaseWaitDlg.currentAction.setText(tr("Prepare OSM data..."));
-        Main.pleaseWaitDlg.setIndeterminate(true);
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        pleaseWaitDlg.currentAction.setText(tr("Prepare OSM data..."));
+                        pleaseWaitDlg.setIndeterminate(true);
+                    }
+                }
+        );
 
         for (Node n : osm.nodes.values()) {
             osm.adder.visit(n);
@@ -507,19 +497,15 @@ public class OsmReader {
                 o.id = 0;
             }
 
-        Main.pleaseWaitDlg.setIndeterminate(false);
-        Main.pleaseWaitDlg.progress.setValue(0);
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        pleaseWaitDlg.setIndeterminate(false);
+                        pleaseWaitDlg.progress.setValue(0);
+                    }
+                }
+        );
 
         return osm;
-    }
-
-    /**
-     * replies a set of ids of skipped {@see Way}s, i.e. ways which were included in the downloaded
-     * data but which referred to nodes <strong>not</strong>  available in the downloaded data
-     * 
-     * @return the set of ids
-     */
-    public Set<Long> getSkippedWayIds() {
-        return skippedWayIds;
     }
 }
