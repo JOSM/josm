@@ -16,7 +16,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
@@ -40,8 +39,7 @@ public class DownloadOsmTask implements DownloadTask {
         private boolean newLayer;
         private String msg = "";
 
-        public Task(boolean newLayer, OsmServerReader reader, boolean silent,
-                int numLayers, String msg) {
+        public Task(boolean newLayer, OsmServerReader reader, boolean silent, String msg) {
             super(tr("Downloading data"));
             this.msg = msg;
             this.reader = reader;
@@ -112,7 +110,6 @@ public class DownloadOsmTask implements DownloadTask {
         Task t = new Task(newLayer,
                 new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon),
                 silent,
-                getDataLayersCount(),
                 message);
         currentBounds = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
         // We need submit instead of execute so we can wait for it to finish and get the error
@@ -134,7 +131,6 @@ public class DownloadOsmTask implements DownloadTask {
         Task t = new Task(new_layer,
                 new OsmServerLocationReader(url),
                 false,
-                getDataLayersCount(),
         "");
         task = Main.worker.submit(t, t);
     }
@@ -145,21 +141,6 @@ public class DownloadOsmTask implements DownloadTask {
 
     public String getPreferencesSuffix() {
         return "osm";
-    }
-
-    /**
-     * Finds the number of data layers currently opened
-     * @return Number of data layers
-     */
-    private int getDataLayersCount() {
-        if(Main.map == null || Main.map.mapView == null)
-            return 0;
-        int num = 0;
-        for(Layer l : Main.map.mapView.getAllLayers())
-            if(l instanceof OsmDataLayer) {
-                num++;
-            }
-        return num;
     }
 
     /*
