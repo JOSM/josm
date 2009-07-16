@@ -540,10 +540,10 @@ public class GenericRelationEditor extends RelationEditor {
             // tags, don't add an empty relation
             if(memberTableModel.getRowCount() == 0 && tagEditorModel.getKeys().isEmpty())
                 return;
-            Relation clone = new Relation(getRelation());
-            tagEditorModel.applyToPrimitive(clone);
-            memberTableModel.applyToRelation(clone);
-            Main.main.undoRedo.add(new AddCommand(clone));
+            Relation newRelation = new Relation();
+            tagEditorModel.applyToPrimitive(newRelation);
+            memberTableModel.applyToRelation(newRelation);
+            Main.main.undoRedo.add(new AddCommand(newRelation));
             DataSet.fireSelectionChanged(Main.ds.getSelected());
         } else if (! memberTableModel.hasSameMembersAs(getRelation()) || tagEditorModel.isDirty()) {
             Relation editedRelation = new Relation(getRelation());

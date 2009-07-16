@@ -112,6 +112,7 @@ public class MemberTableModel extends AbstractTableModel{
             members.set(row-1, member1);
         }
         fireTableDataChanged();
+        getSelectionModel();
         listSelectionModel.clearSelection();
         for (int row : selectedRows) {
             row--;
@@ -132,6 +133,7 @@ public class MemberTableModel extends AbstractTableModel{
             members.set(row+1, member1);
         }
         fireTableDataChanged();
+        getSelectionModel();
         listSelectionModel.clearSelection();
         for (int row : selectedRows) {
             row++;
@@ -208,6 +210,7 @@ public class MemberTableModel extends AbstractTableModel{
         for (RelationMember member: selectedMembers) {
             int row = members.indexOf(member);
             if (row >= 0) {
+                getSelectionModel();
                 listSelectionModel.addSelectionInterval(row,row);
                 min = Math.min(row, min);
             }

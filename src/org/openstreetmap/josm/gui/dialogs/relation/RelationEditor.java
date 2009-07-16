@@ -40,7 +40,9 @@ public abstract class RelationEditor extends ExtendedDialog {
      */
     private Relation relation;
 
-    /** The version of the relation when editing is started. */
+    /**
+     * The version of the relation when editing is started.  This is
+     * null if a new relation is created. */
     private Relation relationSnapshot;
 
     /** the data layer the relation belongs to */
@@ -101,7 +103,7 @@ public abstract class RelationEditor extends ExtendedDialog {
                         false
         );
 
-        this.relationSnapshot = new Relation(relation);
+        this.relationSnapshot = (relation == null) ? null : new Relation(relation);
         this.relation = relation;
         this.layer = layer;
     }
