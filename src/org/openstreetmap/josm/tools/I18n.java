@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.LinkedList;
+import java.util.MissingResourceException;
 import java.util.Vector;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * Internationalisation support.
@@ -87,5 +90,39 @@ public class I18n {
             }
         });
         return l;
+    }
+
+    public static void init()
+    {
+        /* try initial language settings, may be changed later again */
+        try { i18n = I18nFactory.getI18n(MainApplication.class); }
+        catch (MissingResourceException ex) { Locale.setDefault(Locale.ENGLISH);}
+    }
+
+    public static void set(String localeName)
+    {
+        if (localeName != null) {
+            Locale l;
+            Locale d = Locale.getDefault();
+            if (localeName.equals("he")) localeName = "iw_IL";
+            int i = localeName.indexOf('_');
+            if (i > 0) {
+                l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
+            } else {
+                l = new Locale(localeName);
+            }
+            try {
+                Locale.setDefault(l);
+                i18n = I18nFactory.getI18n(MainApplication.class);
+            } catch (MissingResourceException ex) {
+                if (!l.getLanguage().equals("en")) {
+                    System.out.println(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
+                    l.getDisplayName(), d.getDisplayName()));
+                    Locale.setDefault(d);
+                } else {
+                    i18n = null;
+                }
+            }
+        }
     }
 }

@@ -126,6 +126,7 @@ public class AboutAction extends JosmAction {
 
         JTextArea readme = loadFile(Main.class.getResource("/README"), false);
         JTextArea contribution = loadFile(Main.class.getResource("/CONTRIBUTION"), false);
+        JTextArea license = loadFile(Main.class.getResource("/LICENSE"), false);
 
         JPanel info = new JPanel(new GridBagLayout());
         JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
@@ -147,6 +148,7 @@ public class AboutAction extends JosmAction {
         about.addTab(tr("Readme"), createScrollPane(readme));
         about.addTab(tr("Revision"), createScrollPane(revision));
         about.addTab(tr("Contribution"), createScrollPane(contribution));
+        about.addTab(tr("License"), createScrollPane(license));
         about.addTab(tr("Plugins"), new JScrollPane(PluginHandler.getInfoPanel()));
 
         about.setPreferredSize(new Dimension(500,300));

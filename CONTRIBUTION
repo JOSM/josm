@@ -1,6 +1,24 @@
-JOSM was originally designed and coded by Immanuel Scholz 
-<imi@eigenheimstrasse.de>, and is now maintained by the 
-OpenStreetMap community.
+JOSM was originally designed and coded by Immanuel Scholz,
+and is now maintained by the OpenStreetMap community.
+
+The current JOSM maintainer is Dirk Stöcker.
+
+Major code contributions from (in alphabetical order):
+
+David Earl
+Gabriel Ebner
+Ulf Lamping
+Raphael Mack
+Frederik Ramm
+Dirk Stöcker
+Stefan Breunig
+Karl Guggisberg
+
+Many minor contributions and patches by others; see SVN history
+at http://josm.openstreetmap.de/svn/ for details. Use
+"josm-dev AT openstreetmap.org" to contact still active authors.
+
+Copyright rests with the contributors.
 
 The jpeg metadata extraction code is from Drew Noakes
 (http://drewnoakes.com/code/exif).
@@ -12,3 +30,6 @@ GPL. The world image is from onearth.pl.
 The gettext-commons-0.9.jar is from Felix Berger and Steffen 
 Pingel (http://xnap-commons.sourceforge.net/gettext-commons/).
 The jar file is licensed under LGPL.
+
+The Bzip2 code is from Keiron Liddle (Apache project) and licensed
+with Apache license version 2.0.

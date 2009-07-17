@@ -2,7 +2,6 @@
 //Licence: GPL
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.i18n;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.EventQueue;
@@ -14,9 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 
 import javax.swing.JFrame;
 
@@ -24,7 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.xnap.commons.i18n.I18nFactory;
+import org.openstreetmap.josm.tools.I18n;
 
 /**
  * Main window class application.
@@ -62,9 +59,7 @@ public class MainApplication extends Main {
      * Main application Startup
      */
     public static void main(final String[] argArray) {
-        /* try initial language settings, may be changed later again */
-        try { i18n = I18nFactory.getI18n(MainApplication.class); }
-        catch (MissingResourceException ex) { Locale.setDefault(Locale.ENGLISH);}
+        I18n.init();
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
 
@@ -91,38 +86,11 @@ public class MainApplication extends Main {
 
         Main.pref.init(args.containsKey("reset-preferences"));
 
-        String localeName = null; // The locale to use
-
         // Check if passed as parameter
         if (args.containsKey("language"))
-            localeName = (String)(args.get("language").toArray()[0]);
-
-        if (localeName == null)
-            localeName = Main.pref.get("language", null);
-
-        if (localeName != null) {
-            Locale l;
-            Locale d = Locale.getDefault();
-            if (localeName.equals("he")) localeName = "iw_IL";
-            int i = localeName.indexOf('_');
-            if (i > 0) {
-                l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
-            } else {
-                l = new Locale(localeName);
-            }
-            try {
-                Locale.setDefault(l);
-                i18n = I18nFactory.getI18n(MainApplication.class);
-            } catch (MissingResourceException ex) {
-                if (!l.getLanguage().equals("en")) {
-                    System.out.println(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
-                    l.getDisplayName(), d.getDisplayName()));
-                    Locale.setDefault(d);
-                } else {
-                    i18n = null;
-                }
-            }
-        }
+            I18n.set((String)(args.get("language").toArray()[0]));
+        else
+            I18n.set(Main.pref.get("language", null));
 
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
             // TODO: put in a platformHook for system that have no console by default
