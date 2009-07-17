@@ -1,6 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
-
+import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,11 +21,20 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
     private OsmDataLayer layer;
     private ArrayList<OsmPrimitive> cache;
 
-    public SelectionTableModel(OsmDataLayer layer) {
+    /**
+     * constructor
+     * 
+     * @param layer  the data layer. Must not be null.
+     * @exception IllegalArgumentException thrown if layer is null
+     */
+    public SelectionTableModel(OsmDataLayer layer) throws IllegalArgumentException {
+        if (layer == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
         this.layer = layer;
         cache = new ArrayList<OsmPrimitive>();
         DataSet.selListeners.add(this);
         Layer.listeners.add(this);
+        populateSelectedPrimitives(layer);
     }
 
 
@@ -82,5 +91,15 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     public List<? extends OsmPrimitive> getSelection() {
         return cache;
+    }
+
+    /**
+     * populates the model with the primitives currently selected in
+     * <code>layer</code>
+     * 
+     * @param layer  the data layer
+     */
+    protected void populateSelectedPrimitives(OsmDataLayer layer) {
+        selectionChanged(layer.data.getSelected());
     }
 }

@@ -346,7 +346,7 @@ public class GenericRelationEditor extends RelationEditor {
         gc.gridy = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.8;
+        gc.weightx = 0.6;
         gc.weighty = 1.0;
         pnl.add(scrollPane, gc);
 
@@ -358,7 +358,7 @@ public class GenericRelationEditor extends RelationEditor {
 
         gc.gridx = 3;
         gc.gridy = 1;
-        gc.weightx = 0.2;
+        gc.weightx = 0.4;
         gc.weighty = 1.0;
         pnl.add(buildSelectionTablePanel(), gc);
 
