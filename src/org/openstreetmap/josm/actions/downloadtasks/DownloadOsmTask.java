@@ -65,11 +65,11 @@ public class DownloadOsmTask implements DownloadTask {
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
             }
             rememberDownloadedData(dataSet);
-            OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
             if (newLayer) {
+                OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
                 Main.main.addLayer(layer);
             } else {
-                Main.main.createOrGetEditLayer().mergeFrom(layer);
+                Main.main.createOrGetEditLayer().mergeFrom(dataSet);
             }
 
             Main.pleaseWaitDlg.setCustomText("");
