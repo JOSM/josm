@@ -24,7 +24,7 @@ public class Epsg4326 implements Projection {
     }
 
     @Override public String toString() {
-        return tr("WGS84 Geographisch");
+        return tr("WGS84 Geographic");
     }
 
     public String toCode() {
