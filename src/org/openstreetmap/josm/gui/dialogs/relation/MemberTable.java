@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -133,6 +134,4 @@ public class MemberTable extends JTable implements IMemberModelListener {
             changeSelection(row, col, false, false);
         }
     }
-
-
 }

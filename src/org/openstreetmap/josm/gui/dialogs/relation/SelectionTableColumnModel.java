@@ -16,7 +16,7 @@ public class SelectionTableColumnModel  extends DefaultTableColumnModel {
         // column 0 - the member role
         col = new TableColumn(0);
         col.setHeaderValue(tr("Selection"));
-        col.setResizable(true);
+        col.setMinWidth(200);
         col.setCellRenderer(renderer);
         addColumn(col);
     }

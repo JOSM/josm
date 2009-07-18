@@ -84,6 +84,7 @@ public abstract class RelationEditor extends ExtendedDialog {
             return getRelationDialogManager().getEditorForRelation(layer, r);
         else {
             RelationEditor editor = new GenericRelationEditor(layer, r, selectedMembers);
+            getRelationDialogManager().positionOnScreen(editor);
             getRelationDialogManager().register(layer, r, editor);
             return editor;
         }

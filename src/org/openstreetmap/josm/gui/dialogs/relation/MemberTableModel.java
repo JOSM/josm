@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -204,22 +205,6 @@ public class MemberTableModel extends AbstractTableModel{
         fireTableDataChanged();
     }
 
-    public void selectMembers(Collection<RelationMember> selectedMembers) {
-        if (selectedMembers == null) return;
-        int min = Integer.MAX_VALUE;
-        for (RelationMember member: selectedMembers) {
-            int row = members.indexOf(member);
-            if (row >= 0) {
-                getSelectionModel();
-                listSelectionModel.addSelectionInterval(row,row);
-                min = Math.min(row, min);
-            }
-        }
-        if (min < Integer.MAX_VALUE) {
-            fireMakeMemberVisible(min);
-        }
-    }
-
     public void applyToRelation(Relation relation) {
         relation.members.clear();
         relation.members.addAll(members);
@@ -343,6 +328,54 @@ public class MemberTableModel extends AbstractTableModel{
         fireTableDataChanged();
         for (int row: idx) {
             getSelectionModel().addSelectionInterval(row, row);
+        }
+    }
+
+    /**
+     * Replies a collection with the currently selected relation members
+     * 
+     * @return a collection with the currently selected relation members
+     */
+    public Collection<RelationMember> getSelectedMembers() {
+        ArrayList<RelationMember> selectedMembers = new ArrayList<RelationMember>();
+        for (int i: getSelectedIndices()) {
+            selectedMembers.add(members.get(i));
+        }
+        return selectedMembers;
+    }
+
+
+    /**
+     * Selectes the members in the collection selectedMembers
+     * 
+     * @param selectedMembers the collection of selected members
+     */
+    public void setSelectedMembers(Collection<RelationMember> selectedMembers) {
+        if (selectedMembers == null || selectedMembers.isEmpty())
+            return;
+
+        // lookup the indices for the respective members
+        //
+        ArrayList<Integer> selectedIndices = new ArrayList<Integer>();
+        for (RelationMember member: selectedMembers) {
+            int idx = members.indexOf(member);
+            if (idx >= 0 && !selectedIndices.contains(idx)) {
+                selectedIndices.add(idx);
+            }
+        }
+
+        // select the members
+        //
+        Collections.sort(selectedIndices);
+        getSelectionModel().clearSelection();
+        for (int row : selectedIndices) {
+            getSelectionModel().addSelectionInterval(row, row);
+        }
+
+        // make the first selected member visible
+        //
+        if (selectedIndices.size() > 0) {
+            fireMakeMemberVisible(selectedIndices.get(0));
         }
     }
 }

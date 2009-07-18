@@ -79,6 +79,7 @@ import org.xml.sax.SAXException;
 public class GenericRelationEditor extends RelationEditor {
 
     static private final Logger logger = Logger.getLogger(GenericRelationEditor.class.getName());
+    static private final Dimension DEFAULT_EDITOR_DIMENSION = new Dimension(700,500);
 
     /** the tag table and its model */
     private TagEditorModel tagEditorModel;
@@ -129,7 +130,7 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorModel.clear();
             this.memberTableModel.populate(null);
         }
-        memberTableModel.selectMembers(selectedMembers);
+        memberTableModel.setSelectedMembers(selectedMembers);
         tagEditorModel.ensureOneTag();
 
         JSplitPane pane = buildSplitPane();
@@ -528,6 +529,9 @@ public class GenericRelationEditor extends RelationEditor {
         memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
         buttonPanel.add(new SideButton(setRoleAction));
         tfRole.getDocument().addDocumentListener(setRoleAction);
+
+        //--- copy relation action
+        buttonPanel.add(new SideButton(new DuplicateRelationAction()));
         return buttonPanel;
     }
 
@@ -576,7 +580,7 @@ public class GenericRelationEditor extends RelationEditor {
     @Override
     protected Dimension findMaxDialogSize() {
         // FIXME: Make it remember dialog size
-        return new Dimension(600, 500);
+        return new Dimension(700, 500);
     }
 
     /**
@@ -937,6 +941,27 @@ public class GenericRelationEditor extends RelationEditor {
 
         public void removeUpdate(DocumentEvent e) {
             refreshEnabled();
+        }
+    }
+
+    /**
+     * Creates a new relation with a copy of the current editor state
+     *
+     */
+    class DuplicateRelationAction extends AbstractAction {
+        public DuplicateRelationAction() {
+            putValue(SHORT_DESCRIPTION,   tr("Create a copy of this relation and open it in another editor window"));
+            // FIXME provide an icon
+            putValue(SMALL_ICON, ImageProvider.get("duplicate"));
+            putValue(NAME, tr("Duplicate"));
+            setEnabled(true);
+        }
+        public void actionPerformed(ActionEvent e) {
+            Relation copy = new Relation();
+            tagEditorModel.applyToPrimitive(copy);
+            memberTableModel.applyToRelation(copy);
+            RelationEditor editor = RelationEditor.getEditor(getLayer(), copy, memberTableModel.getSelectedMembers());
+            editor.setVisible(true);
         }
     }
 

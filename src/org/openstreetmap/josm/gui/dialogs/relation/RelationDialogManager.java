@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -11,6 +14,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+
 
 /**
  * RelationDialogManager keeps track of the open relation editors.
@@ -92,6 +96,9 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
      * @param editor the editor
      */
     public void register(OsmDataLayer layer, Relation relation, RelationEditor editor) {
+        if (relation == null) {
+            relation = new Relation();
+        }
         DialogContext context = new DialogContext(layer, relation);
         openDialogs.put(context, editor);
         editor.addWindowListener(this);
@@ -99,14 +106,15 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
     /**
      * Replies true if there is an open relation editor for the relation managed
-     * by the given layer
+     * by the given layer. Replies false if relation is null.
      * 
      * @param layer  the layer
-     * @param relation  the relation
+     * @param relation  the relation. May be null.
      * @return true if there is an open relation editor for the relation managed
      * by the given layer; false otherwise
      */
     public boolean isOpenInEditor(OsmDataLayer layer, Relation relation) {
+        if (relation == null) return false;
         DialogContext context = new DialogContext(layer, relation);
         return openDialogs.keySet().contains(context);
 
@@ -114,7 +122,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
     /**
      * Replies the editor for the relation managed by layer. Null, if no such editor
-     * is currently open.
+     * is currently open. Returns null, if relation is null.
      * 
      * @param layer the layer
      * @param relation the relation
@@ -124,6 +132,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
      * @see #isOpenInEditor(OsmDataLayer, Relation)
      */
     public RelationEditor getEditorForRelation(OsmDataLayer layer, Relation relation) {
+        if (relation == null) return null;
         DialogContext context = new DialogContext(layer, relation);
         return openDialogs.get(context);
     }
@@ -169,6 +178,76 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
         }
         if (context != null) {
             openDialogs.remove(context);
+        }
+    }
+
+    /**
+     * Positions an {@see RelationEditor} centered on the screen
+     * 
+     * @param editor the editor
+     */
+    protected void centerOnScreen(RelationEditor editor) {
+        Point p = new Point(0,0);
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        p.x = (d.width - editor.getSize().width)/2;
+        p.y = (d.height - editor.getSize().height)/2;
+        p.x = Math.max(p.x,0);
+        p.y = Math.max(p.y,0);
+        editor.setLocation(p);
+    }
+
+    /**
+     * Replies true, if there is another open {@see RelationEditor} whose
+     * upper left corner is close to <code>p</code>.
+     * 
+     * @param p  the reference point to check
+     * @return true, if there is another open {@see RelationEditor} whose
+     * upper left corner is close to <code>p</code>.
+     */
+    protected boolean hasEditorWithCloseUpperLeftCorner(Point p) {
+        for (RelationEditor editor: openDialogs.values()) {
+            Point corner = editor.getLocation();
+            if (p.x >= corner.x -5 && corner.x + 5 >= p.x
+                    && p.y >= corner.y -5 && corner.y + 5 >= p.y)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Positions a {@see RelationEditor} close to the center of the screen, in such
+     * a way, that it doesn't entirely cover another {@see RelationEditor}
+     * 
+     * @param editor
+     */
+    protected void positionCloseToScreenCenter(RelationEditor editor) {
+        Point p = new Point(0,0);
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        p.x = (d.width - editor.getSize().width)/2;
+        p.y = (d.height - editor.getSize().height)/2;
+        p.x = Math.max(p.x,0);
+        p.y = Math.max(p.y,0);
+        while(hasEditorWithCloseUpperLeftCorner(p)) {
+            p.x += 20;
+            p.y += 20;
+        }
+        editor.setLocation(p);
+    }
+
+    /**
+     * Positions a {@see RelationEditor} on the screen. Tries to center it on the
+     * screen. If it hide another instance of an editor at the same position this
+     * method tries to reposition <code>editor</code> by moving it slightly down and
+     * slightly to the right.
+     * 
+     * @param editor the editor
+     */
+    public void positionOnScreen(RelationEditor editor) {
+        if (editor == null) return;
+        if (openDialogs.isEmpty()) {
+            centerOnScreen(editor);
+        } else {
+            positionCloseToScreenCenter(editor);
         }
     }
 }
