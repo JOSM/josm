@@ -6,12 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
-import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-
 public class SelectionTableColumnModel  extends DefaultTableColumnModel {
-    public SelectionTableColumnModel() {
+    public SelectionTableColumnModel(MemberTableModel model) {
         TableColumn col = null;
-        OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
+        SelectionTableCellRenderer renderer = new SelectionTableCellRenderer();
+        renderer.setMemberTableModel(model);
 
         // column 0 - the member role
         col = new TableColumn(0);

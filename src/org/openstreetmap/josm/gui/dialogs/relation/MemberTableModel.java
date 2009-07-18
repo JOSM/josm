@@ -378,4 +378,12 @@ public class MemberTableModel extends AbstractTableModel{
             fireMakeMemberVisible(selectedIndices.get(0));
         }
     }
+
+    public boolean isEditableRelation(int row) {
+        if (row < 0 || row >= members.size()) return false;
+        RelationMember member = members.get(row);
+        if (!(member.member instanceof Relation)) return false;
+        Relation r = (Relation)member.member;
+        return ! r.incomplete;
+    }
 }

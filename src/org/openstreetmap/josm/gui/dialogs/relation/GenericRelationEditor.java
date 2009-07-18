@@ -30,10 +30,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -86,6 +88,7 @@ public class GenericRelationEditor extends RelationEditor {
     private TagTable tagTable;
     private AutoCompletionCache acCache;
     private AutoCompletionList acList;
+    private ReferringRelationsBrowserModel referrerModel;
 
     /** the member table */
     private MemberTable memberTable;
@@ -120,6 +123,7 @@ public class GenericRelationEditor extends RelationEditor {
         tagEditorModel = new TagEditorModel();
         memberTableModel = new MemberTableModel();
         selectionTableModel = new SelectionTableModel(getLayer());
+        referrerModel = new ReferringRelationsBrowserModel(relation);
 
         // populate the models
         //
@@ -142,7 +146,13 @@ public class GenericRelationEditor extends RelationEditor {
         pnl.setBorder(BorderFactory.createRaisedBevelBorder());
 
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(pnl,BorderLayout.CENTER);
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.add(tr("Tags and Members"), pnl);
+        if (relation != null && relation.id > 0) {
+            tabbedPane.add(tr("Parent Relations"), new ReferringRelationsBrowser(getLayer(), referrerModel));
+        }
+
+        getContentPane().add(tabbedPane,BorderLayout.CENTER);
         getContentPane().add(buildOkCancelButtonPanel(), BorderLayout.SOUTH);
 
         setSize(findMaxDialogSize());
@@ -380,10 +390,8 @@ public class GenericRelationEditor extends RelationEditor {
     protected JPanel buildSelectionTablePanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
-
-        JTable tbl = new JTable(selectionTableModel,new SelectionTableColumnModel());
+        JTable tbl = new JTable(selectionTableModel,new SelectionTableColumnModel(memberTableModel));
         tbl.setEnabled(false);
-
         JScrollPane pane = new JScrollPane(tbl);
         pnl.add(pane, BorderLayout.CENTER);
         return pnl;
@@ -532,6 +540,11 @@ public class GenericRelationEditor extends RelationEditor {
 
         //--- copy relation action
         buttonPanel.add(new SideButton(new DuplicateRelationAction()));
+
+        // -- edit action
+        EditAction editAction = new EditAction();
+        memberTableModel.getSelectionModel().addListSelectionListener(editAction);
+        buttonPanel.add(new SideButton(editAction));
         return buttonPanel;
     }
 
@@ -965,19 +978,47 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
+    /**
+     * Action for editing the currently selected relation
+     * 
+     *
+     */
+    class EditAction extends AbstractAction implements ListSelectionListener {
+        public EditAction() {
+            putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            putValue(NAME, tr("Edit"));
+            refreshEnabled();
+        }
+
+        protected void refreshEnabled() {
+            setEnabled(memberTable.getSelectedRowCount() == 1 && memberTableModel.isEditableRelation(memberTable.getSelectedRow()));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            int idx = memberTable.getSelectedRow();
+            if (idx < 0) return;
+            OsmPrimitive primitive = memberTableModel.getReferredPrimitive(idx);
+            if (! (primitive instanceof Relation)) return;
+            Relation r= (Relation)primitive;
+            if (r.incomplete) return;
+            RelationEditor editor = RelationEditor.getEditor(getLayer(), r, null);
+            editor.setVisible(true);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            refreshEnabled();
+        }
+    }
+
+    /**
+     * The asynchronous task for downloading relation members.
+     * 
+     *
+     */
     class DownloadTask extends PleaseWaitRunnable {
         private boolean cancelled;
         private Exception lastException;
-
-        protected void setIndeterminateEnabled(final boolean enabled) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            Main.pleaseWaitDlg.setIndeterminate(enabled);
-                        }
-                    }
-            );
-        }
 
         public DownloadTask() {
             super(tr("Download relation members"), false /* don't ignore exception */);
@@ -1012,9 +1053,15 @@ public class GenericRelationEditor extends RelationEditor {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                Main.pleaseWaitDlg.setAlwaysOnTop(true);
-                Main.pleaseWaitDlg.toFront();
-                setIndeterminateEnabled(true);
+                SwingUtilities.invokeLater(
+                        new Runnable() {
+                            public void run() {
+                                Main.pleaseWaitDlg.setAlwaysOnTop(true);
+                                Main.pleaseWaitDlg.toFront();
+                                Main.pleaseWaitDlg.setIndeterminate(true);
+                            }
+                        }
+                );
                 OsmServerObjectReader reader = new OsmServerObjectReader(getRelation().id, OsmPrimitiveType.RELATION, true);
                 DataSet dataSet = reader.parseOsm();
                 if (dataSet != null) {
@@ -1025,8 +1072,17 @@ public class GenericRelationEditor extends RelationEditor {
                     for (DataSource src : dataSet.dataSources) {
                         getLayer().data.dataSources.add(src);
                     }
-                    getLayer().fireDataChange();
-
+                    // FIXME: this is necessary because there are  dialogs listening
+                    // for DataChangeEvents which manipulate Swing components on this
+                    // thread.
+                    //
+                    SwingUtilities.invokeLater(
+                            new Runnable() {
+                                public void run() {
+                                    getLayer().fireDataChange();
+                                }
+                            }
+                    );
                     if (visitor.getConflicts().isEmpty())
                         return;
                     getLayer().getConflicts().add(visitor.getConflicts());
@@ -1048,8 +1104,14 @@ public class GenericRelationEditor extends RelationEditor {
                 }
                 lastException = e;
             } finally {
-                Main.pleaseWaitDlg.setAlwaysOnTop(false);
-                setIndeterminateEnabled(false);
+                SwingUtilities.invokeLater(
+                        new Runnable() {
+                            public void run() {
+                                Main.pleaseWaitDlg.setAlwaysOnTop(false);
+                                Main.pleaseWaitDlg.setIndeterminate(false);
+                            }
+                        }
+                );
             }
         }
     }

@@ -1,0 +1,80 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.dialogs.relation;
+
+import java.util.ArrayList;
+
+import javax.swing.AbstractListModel;
+
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
+
+public class ReferringRelationsBrowserModel extends AbstractListModel {
+
+    /** the relation */
+    private Relation relation;
+    private ArrayList<Relation> referrers;
+
+    public ReferringRelationsBrowserModel() {
+        relation = null;
+        referrers = new ArrayList<Relation>();
+    }
+    public ReferringRelationsBrowserModel(Relation relation) {
+        this();
+        this.relation = relation;
+    }
+
+    protected void fireModelUpdate() {
+        int upper = Math.max(0, referrers.size() -1);
+        fireContentsChanged(this, 0, upper);
+    }
+
+    public void setRelation(Relation relation) {
+        this.relation = relation;
+        referrers.clear();
+        fireModelUpdate();
+    }
+
+    public Object getElementAt(int index) {
+        return referrers.get(index);
+    }
+
+    public int getSize() {
+        return referrers.size();
+    }
+
+    protected boolean isReferringRelation(Relation parent) {
+        if (parent == null) return false;
+        for (RelationMember m: parent.members) {
+            if (m.member instanceof Relation) {
+                Relation child = (Relation)m.member;
+                if (child.equals(relation)) return true;
+            }
+        }
+        return false;
+    }
+
+    public void populate(ArrayList<Relation> parents) {
+        referrers.clear();
+        if (parents != null) {
+            for (Relation relation: parents) {
+                if (isReferringRelation(relation)) {
+                    referrers.add(relation);
+                }
+            }
+        }
+        fireModelUpdate();
+    }
+
+    public boolean canReload() {
+        return relation != null && relation.id > 0;
+    }
+
+    public Relation getRelation() {
+        return relation;
+    }
+
+    public Relation get(int index) {
+        return referrers.get(index);
+    }
+}
