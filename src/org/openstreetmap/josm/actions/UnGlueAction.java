@@ -49,7 +49,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
      */
     public UnGlueAction() {
         super(tr("UnGlue Ways"), "unglueways", tr("Duplicate nodes that are used by multiple ways."),
-        Shortcut.registerShortcut("tools:unglue", tr("Tool: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:unglue", tr("Tool: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, Shortcut.GROUP_EDIT), true);
         //DataSet.selListeners.add(this);
     }
 
@@ -60,23 +60,28 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
      */
     public void actionPerformed(ActionEvent e) {
 
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         String errMsg = null;
         if (checkSelection(selection)) {
             int count = 0;
-            for (Way w : Main.ds.ways) {
-                if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
-                if (!w.nodes.contains(selectedNode)) continue;
+            for (Way w : getCurrentDataSet().ways) {
+                if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                    continue;
+                }
+                if (!w.nodes.contains(selectedNode)) {
+                    continue;
+                }
                 count++;
             }
             if (count < 2) {
                 // If there aren't enough ways, maybe the user wanted to unglue the nodes
                 // (= copy tags to a new node)
-                if(checkForUnglueNode(selection))
+                if(checkForUnglueNode(selection)) {
                     unglueNode(e);
-                else
+                } else {
                     errMsg = tr("This node is not glued to anything else.");
+                }
             } else {
                 // and then do the work.
                 unglueWays();
@@ -85,9 +90,13 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
             ArrayList<Node> tmpNodes = new ArrayList<Node>();
             for (Node n : selectedNodes) {
                 int count = 0;
-                for (Way w : Main.ds.ways) {
-                    if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
-                    if (!w.nodes.contains(n)) continue;
+                for (Way w : getCurrentDataSet().ways) {
+                    if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                        continue;
+                    }
+                    if (!w.nodes.contains(n)) {
+                        continue;
+                    }
                     count++;
                 }
                 if (count >= 2) {
@@ -117,12 +126,13 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
                 tr("* One way and one or more of its nodes that are used by more than one way.")+"\n"+
                 "\n"+
                 tr("Note: If a way is selected, this way will get fresh copies of the unglued\n"+
-                   "nodes and the new nodes will be selected. Otherwise, all ways will get their\n"+
-                   "own copy and all nodes will be selected.");
+                        "nodes and the new nodes will be selected. Otherwise, all ways will get their\n"+
+                "own copy and all nodes will be selected.");
         }
 
-        if(errMsg != null)
+        if(errMsg != null) {
             JOptionPane.showMessageDialog(Main.parent, errMsg);
+        }
 
         selectedNode = null;
         selectedWay = null;
@@ -155,7 +165,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         fixRelations(selectedNode, cmds, Collections.singletonList(n));
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Unglued Node"), cmds));
-        Main.ds.setSelected(n);
+        getCurrentDataSet().setSelected(n);
         Main.map.mapView.repaint();
     }
 
@@ -175,7 +185,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         if(!(n instanceof Node))
             return false;
         boolean isPartOfWay = false;
-        for(Way w : Main.ds.ways) {
+        for(Way w : getCurrentDataSet().ways) {
             if(w.nodes.contains(n)) {
                 isPartOfWay = true;
                 break;
@@ -249,23 +259,20 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         selectedWay = null;
         for (OsmPrimitive p : selection) {
             if (p instanceof Way) {
-                if (selectedWay != null) {
+                if (selectedWay != null)
                     return false;
-                }
                 selectedWay = (Way) p;
             }
         }
-        if (selectedWay == null) {
+        if (selectedWay == null)
             return false;
-        }
 
         selectedNodes = new ArrayList<Node>();
         for (OsmPrimitive p : selection) {
             if (p instanceof Node) {
                 Node n = (Node) p;
-                if (!selectedWay.nodes.contains(n)) {
+                if (!selectedWay.nodes.contains(n))
                     return false;
-                }
                 selectedNodes.add(n);
             }
         }
@@ -310,8 +317,10 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         // modify all relations containing the node
         Relation newRel = null;
         HashSet<String> rolesToReAdd = null;
-        for (Relation r : Main.ds.relations) {
-            if (r.deleted || r.incomplete) continue;
+        for (Relation r : getCurrentDataSet().relations) {
+            if (r.deleted || r.incomplete) {
+                continue;
+            }
             newRel = null;
             rolesToReAdd = null;
             for (RelationMember rm : r.members) {
@@ -329,7 +338,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
             if (newRel != null) {
                 for (RelationMember rm : r.members) {
                     //if (rm.member != selectedNode) {
-                        newRel.members.add(rm);
+                    newRel.members.add(rm);
                     //}
                 }
                 for (Node n : newNodes) {
@@ -355,10 +364,16 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         if (selectedWay == null) {
             boolean firstway = true;
             // modify all ways containing the nodes
-            for (Way w : Main.ds.ways) {
-                if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
-                if (!w.nodes.contains(selectedNode)) continue;
-                if (!firstway) cmds.add(new ChangeCommand(w, modifyWay(selectedNode, w, cmds, newNodes)));
+            for (Way w : getCurrentDataSet().ways) {
+                if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                    continue;
+                }
+                if (!w.nodes.contains(selectedNode)) {
+                    continue;
+                }
+                if (!firstway) {
+                    cmds.add(new ChangeCommand(w, modifyWay(selectedNode, w, cmds, newNodes)));
+                }
                 firstway = false;
             }
         } else {
@@ -371,7 +386,7 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         if (selectedWay == null) { // if a node has been selected, new selection is ALL nodes
             newNodes.add(selectedNode);
         } // if a node and a way has been selected, new selection is only the new node that was added to the selected way
-        Main.ds.setSelected(newNodes);
+        getCurrentDataSet().setSelected(newNodes);
     }
 
     /**
@@ -392,18 +407,6 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
         cmds.add(new ChangeCommand(selectedWay, tmpWay)); // only one changeCommand for a way, else garbage will happen
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Dupe {0} nodes into {1} nodes", selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
-        Main.ds.setSelected(allNewNodes);
+        getCurrentDataSet().setSelected(allNewNodes);
     }
-
-// Disabled because we have such a nice help text that would not be shown otherwise.
-//
-//  /**
-//   * Enable the menu option if the selection looks like we could use it.
-//   */
-//  public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-//      setEnabled(checkSelection(newSelection) || checkSelection2(newSelection));
-//      selectedNode = null;
-//      selectedWay = null;
-//      selectedNodes = null;
-//  }
 }

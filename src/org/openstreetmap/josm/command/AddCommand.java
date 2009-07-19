@@ -10,9 +10,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.AddVisitor;
-import org.openstreetmap.josm.data.osm.visitor.DeleteVisitor;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * A command that adds an osm primitive to a dataset. Keys cannot be added this
@@ -38,12 +38,12 @@ public class AddCommand extends Command {
     }
 
     @Override public boolean executeCommand() {
-        osm.visit(new AddVisitor(getLayer().data));
+        getLayer().data.addPrimitive(osm);
         return true;
     }
 
     @Override public void undoCommand() {
-        osm.visit(new DeleteVisitor(getLayer().data));
+        getLayer().data.removePrimitive(osm);
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
@@ -51,9 +51,15 @@ public class AddCommand extends Command {
     }
 
     @Override public MutableTreeNode description() {
-        NameVisitor v = new NameVisitor();
-        osm.visit(v);
         return new DefaultMutableTreeNode(
-                new JLabel(tr("Add {0} {1}", tr(v.className), v.name), v.icon, JLabel.HORIZONTAL));
+                new JLabel(
+                        tr("Add {0} {1}",
+                                OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
+                                new PrimitiveNameFormatter().getName(osm)
+                        ),
+                        ImageProvider.get(OsmPrimitiveType.from(osm)),
+                        JLabel.HORIZONTAL
+                )
+        );
     }
 }

@@ -147,7 +147,6 @@ public class MapView extends NavigatableComponent {
     public void addLayer(Layer layer) {
         if (layer instanceof OsmDataLayer) {
             OsmDataLayer editLayer = (OsmDataLayer)layer;
-            Main.ds = editLayer.data;
             editLayer.listenerModified.add(new ModifiedChangedListener(){
                 public void modifiedChanged(boolean value, OsmDataLayer source) {
                     JOptionPane.getFrameForComponent(Main.parent).setTitle((value?"*":"")
@@ -180,7 +179,7 @@ public class MapView extends NavigatableComponent {
     }
 
     @Override
-    protected DataSet getData() {
+    protected DataSet getCurrentDataSet() {
         if(activeLayer != null && activeLayer instanceof OsmDataLayer)
             return ((OsmDataLayer)activeLayer).data;
         return new DataSet();
@@ -210,9 +209,6 @@ public class MapView extends NavigatableComponent {
      */
     public void removeLayer(Layer layer) {
         if (layer == activeLayer) {
-            if (layer instanceof OsmDataLayer) {
-                Main.ds = null;
-            }
             activeLayer = null;
         }
         if (layers.remove(layer)) {
@@ -350,14 +346,13 @@ public class MapView extends NavigatableComponent {
      */
     public void setActiveLayer(Layer layer) {
         if (!layers.contains(layer))
-            throw new IllegalArgumentException(tr("Layer {0} must be in list of layers", layer.toString()));
-        if (layer instanceof OsmDataLayer) {
-            OsmDataLayer editLayer = (OsmDataLayer)layer;
-            Main.ds = editLayer.data;
-        } else {
-            Main.ds.setSelected();
+            throw new IllegalArgumentException(tr("Layer ''{0}'' must be in list of layers", layer.toString()));
+        if (! (layer instanceof OsmDataLayer)) {
+            if (getCurrentDataSet() != null) {
+                getCurrentDataSet().setSelected();
+                DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
+            }
         }
-        DataSet.fireSelectionChanged(Main.ds.getSelected());
         Layer old = activeLayer;
         activeLayer = layer;
         if (old != layer) {

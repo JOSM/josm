@@ -132,10 +132,11 @@ public class SearchCompiler {
             } else {
                 String value = null;
 
-                if (key.equals("timestamp"))
+                if (key.equals("timestamp")) {
                     value = DateUtils.fromDate(osm.getTimestamp());
-                else
+                } else {
                     value = osm.get(key);
+                }
 
                 if (value == null)
                     return false;
@@ -168,9 +169,8 @@ public class SearchCompiler {
         private final Mode mode;
 
         public ExactKeyValue(boolean regexp, String key, String value) throws ParseError {
-            if (key == "") {
+            if (key == "")
                 throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
-            }
             this.key = key;
             this.value = value;
             if ("".equals(value) && "*".equals(key)) {
@@ -222,9 +222,8 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) throws ParseError {
 
-            if (osm.keys == null || osm.keys.isEmpty()) {
+            if (osm.keys == null || osm.keys.isEmpty())
                 return mode == Mode.NONE;
-            }
 
             switch (mode) {
             case NONE:
@@ -237,18 +236,16 @@ public class SearchCompiler {
                 return osm.get(key) != null;
             case ANY_KEY:
                 for (String v:osm.keys.values()) {
-                    if (v.equals(value)) {
+                    if (v.equals(value))
                         return true;
-                    }
                 }
                 return false;
             case EXACT:
                 return value.equals(osm.get(key));
             case ANY_KEY_REGEXP:
                 for (String v:osm.keys.values()) {
-                    if (valuePattern.matcher(v).matches()) {
+                    if (valuePattern.matcher(v).matches())
                         return true;
-                    }
                 }
                 return false;
             case ANY_VALUE_REGEXP:
@@ -256,17 +253,15 @@ public class SearchCompiler {
                 for (Entry<String, String> entry:osm.keys.entrySet()) {
                     if (keyPattern.matcher(entry.getKey()).matches()) {
                         if (mode == Mode.ANY_VALUE_REGEXP
-                                || valuePattern.matcher(entry.getValue()).matches()) {
+                                || valuePattern.matcher(entry.getValue()).matches())
                             return true;
-                        }
                     }
                 }
                 return false;
             case MISSING_KEY_REGEXP:
                 for (String k:osm.keys.keySet()) {
-                    if (keyPattern.matcher(k).matches()) {
+                    if (keyPattern.matcher(k).matches())
                         return false;
-                    }
                 }
                 return true;
             }
@@ -336,8 +331,9 @@ public class SearchCompiler {
                 String name = osm.user.name;
                 // is not Java 1.5
                 //String name = java.text.Normalizer.normalize(name, java.text.Normalizer.Form.NFC);
-                if (!caseSensitive)
+                if (!caseSensitive) {
                     name = name.toLowerCase();
+                }
                 if (name.indexOf(search) != -1)
                     return true;
             }
@@ -355,10 +351,9 @@ public class SearchCompiler {
                 this.type = Way.class;
             } else if ("relation".equals(type)) {
                 this.type = Relation.class;
-            } else {
+            } else
                 throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation",
                         type));
-            }
         }
         @Override public boolean match(OsmPrimitive osm) {
             return osm.getClass() == type;
@@ -440,16 +435,19 @@ public class SearchCompiler {
 
             // "parent" (null) should mean the same as "parent()"
             // (Always). I.e. match everything
-            if (child == null)
+            if (child == null) {
                 child = new Always();
+            }
 
             if (osm instanceof Way) {
-                for (Node n : ((Way)osm).nodes)
+                for (Node n : ((Way)osm).nodes) {
                     isParent |= child.match(n);
+                }
             } else if (osm instanceof Relation) {
                 for (RelationMember member : ((Relation)osm).members) {
-                    if (member.member != null)
+                    if (member.member != null) {
                         isParent |= child.match(member.member);
+                    }
                 }
             }
             return isParent;
@@ -463,11 +461,12 @@ public class SearchCompiler {
         @Override public boolean match(OsmPrimitive osm) throws ParseError {
             // "child" (null) should mean the same as "child()"
             // (Always). I.e. match everything
-            if (parent == null)
+            if (parent == null) {
                 parent = new Always();
+            }
 
             boolean isChild = false;
-            CollectBackReferencesVisitor backRefs = new CollectBackReferencesVisitor(Main.ds);
+            CollectBackReferencesVisitor backRefs = new CollectBackReferencesVisitor(Main.main.getCurrentDataSet());
             osm.visit(backRefs);
             for (OsmPrimitive p : backRefs.data) {
                 isChild |= parent.match(p);
@@ -484,18 +483,17 @@ public class SearchCompiler {
     }
 
     public static Match compile(String searchStr, boolean caseSensitive, boolean regexSearch)
-            throws ParseError {
+    throws ParseError {
         return new SearchCompiler(caseSensitive, regexSearch,
                 new PushbackTokenizer(
-                    new PushbackReader(new StringReader(searchStr))))
-            .parse();
+                        new PushbackReader(new StringReader(searchStr))))
+        .parse();
     }
 
     public Match parse() throws ParseError {
         Match m = parseJuxta();
-        if (!tokenizer.readIfEqual(null)) {
+        if (!tokenizer.readIfEqual(null))
             throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
-        }
         return m;
     }
 
@@ -514,9 +512,8 @@ public class SearchCompiler {
         Match a = parseNot();
         if (tokenizer.readIfEqual("|")) {
             Match b = parseNot();
-            if (a == null || b == null) {
+            if (a == null || b == null)
                 throw new ParseError(tr("Missing arguments for or."));
-            }
             return new Or(a, b);
         }
         return a;
@@ -525,9 +522,8 @@ public class SearchCompiler {
     private Match parseNot() throws ParseError {
         if (tokenizer.readIfEqual("-")) {
             Match m = parseParens();
-            if (m == null) {
+            if (m == null)
                 throw new ParseError(tr("Missing argument for not."));
-            }
             return new Not(m);
         }
         return parseParens();
@@ -536,9 +532,8 @@ public class SearchCompiler {
     private Match parseParens() throws ParseError {
         if (tokenizer.readIfEqual("(")) {
             Match m = parseJuxta();
-            if (!tokenizer.readIfEqual(")")) {
+            if (!tokenizer.readIfEqual(")"))
                 throw new ParseError(tr("Expected closing parenthesis."));
-            }
             return m;
         }
         return parsePat();
@@ -549,52 +544,58 @@ public class SearchCompiler {
 
         if (tokenizer.readIfEqual(":")) {
             String tok2 = tokenizer.readText();
-            if (tok == null) tok = "";
-            if (tok2 == null) tok2 = "";
+            if (tok == null) {
+                tok = "";
+            }
+            if (tok2 == null) {
+                tok2 = "";
+            }
             return parseKV(tok, tok2);
         }
 
         if (tokenizer.readIfEqual("=")) {
             String tok2 = tokenizer.readText();
-            if (tok == null) tok = "";
-            if (tok2 == null) tok2 = "";
+            if (tok == null) {
+                tok = "";
+            }
+            if (tok2 == null) {
+                tok2 = "";
+            }
             return new ExactKeyValue(regexSearch, tok, tok2);
         }
 
-        if (tok == null) {
+        if (tok == null)
             return null;
-        } else if (tok.equals("modified")) {
+        else if (tok.equals("modified"))
             return new Modified();
-        } else if (tok.equals("incomplete")) {
+        else if (tok.equals("incomplete"))
             return new Incomplete();
-        } else if (tok.equals("untagged")) {
+        else if (tok.equals("untagged"))
             return new Untagged();
-        } else if (tok.equals("selected")) {
+        else if (tok.equals("selected"))
             return new Selected();
-        } else if (tok.equals("child")) {
+        else if (tok.equals("child"))
             return new Child(parseParens());
-        } else if (tok.equals("parent")) {
+        else if (tok.equals("parent"))
             return new Parent(parseParens());
-        } else {
+        else
             return new Any(tok);
-        }
     }
 
     private Match parseKV(String key, String value) throws ParseError {
-        if (key.equals("type")) {
+        if (key.equals("type"))
             return new ExactType(value);
-        } else if (key.equals("user")) {
+        else if (key.equals("user"))
             return new UserMatch(value);
-        } else if (key.equals("nodes")) {
+        else if (key.equals("nodes")) {
             try {
                 String[] range = value.split("-");
-                if (range.length == 1) {
+                if (range.length == 1)
                     return new NodeCount(Integer.parseInt(value));
-                } else if (range.length == 2) {
+                else if (range.length == 2)
                     return new NodeCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
-                } else {
+                else
                     throw new ParseError(tr("Wrong number of parameters for nodes operator."));
-                }
             } catch (NumberFormatException e) {
                 throw new ParseError(tr("Incorrect value of nodes operator: {0}. Nodes operator expects number of nodes or range, for example nodes:10-20", value));
             }
@@ -605,9 +606,8 @@ public class SearchCompiler {
             } catch (NumberFormatException x) {
                 throw new ParseError(tr("Incorrect value of id operator: {0}. Number is expected.", value));
             }
-        } else {
+        } else
             return new KeyValue(key, value);
-        }
     }
 
     private int regexFlags() {
@@ -626,8 +626,9 @@ public class SearchCompiler {
         // CASE_INSENSITIVE by itself only matches US-ASCII case
         // insensitively, but the OSM data is in Unicode. With
         // UNICODE_CASE casefolding is made Unicode-aware.
-        if (!caseSensitive)
+        if (!caseSensitive) {
             searchFlags |= (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        }
 
         return searchFlags;
     }

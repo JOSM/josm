@@ -39,14 +39,14 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
     }
     @Override protected void realRun() {
         progressMonitor.setTicksCount(2);
-        sel = mode != SearchAction.SearchMode.remove ? new LinkedList<OsmPrimitive>() : Main.ds.allNonDeletedPrimitives();
+        sel = mode != SearchAction.SearchMode.remove ? new LinkedList<OsmPrimitive>() : Main.main.getCurrentDataSet().allNonDeletedPrimitives();
         try {
             URLConnection con = url.openConnection();
             progressMonitor.subTask(tr("Contact {0}...", url.getHost()));
             InputStream in = new ProgressInputStream(con, progressMonitor.createSubTaskMonitor(1, true));
             progressMonitor.subTask(tr("Downloading..."));
             Map<Long, String> ids = idReader.parseIds(in);
-            for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
+            for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedPrimitives()) {
                 if (ids.containsKey(osm.id) && osm.getClass().getName().toLowerCase().endsWith(ids.get(osm.id))) {
                     if (mode == SearchAction.SearchMode.remove) {
                         sel.remove(osm);
@@ -85,7 +85,7 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
     }
     @Override protected void finish() {
         if (sel != null) {
-            Main.ds.setSelected(sel);
+            Main.main.getCurrentDataSet().setSelected(sel);
         }
     }
 }

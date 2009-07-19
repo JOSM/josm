@@ -28,7 +28,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AddVisitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.xml.sax.Attributes;
@@ -54,11 +53,6 @@ public class OsmReader {
      */
     private DataSet ds = new DataSet();
     public DataSet getDs() { return ds; }
-
-    /**
-     * The visitor to use to add the data to the set.
-     */
-    private AddVisitor adder = new AddVisitor(ds);
 
     /**
      * All read nodes after phase 1.
@@ -348,11 +342,11 @@ public class OsmReader {
                 e.getKey().copyTo(w);
                 w.incomplete = true;
                 w.nodes.clear();
-                adder.visit(w);
+                ds.addPrimitive(w);
             } else {
                 e.getKey().copyTo(w);
                 w.incomplete = false;
-                adder.visit(w);
+                ds.addPrimitive(w);
             }
         }
     }
@@ -400,7 +394,7 @@ public class OsmReader {
         for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
             Relation en = new Relation();
             e.getKey().copyTo(en);
-            adder.visit(en);
+            ds.addPrimitive(en);
         }
 
         // Cache the ways here for much better search performance
@@ -420,7 +414,7 @@ public class OsmReader {
                     em.member = findNode(emd.id);
                     if (em.member == null) {
                         em.member = new Node(emd.id);
-                        adder.visit((Node)em.member);
+                        ds.addPrimitive(em.member);
                     }
                 } else if (emd.type.equals("way")) {
                     em.member = hm.get(emd.id);
@@ -429,13 +423,13 @@ public class OsmReader {
                     }
                     if (em.member == null) {
                         em.member = new Way(emd.id);
-                        adder.visit((Way)em.member);
+                        ds.addPrimitive(em.member);
                     }
                 } else if (emd.type.equals("relation")) {
                     em.member = findRelation(emd.id);
                     if (em.member == null) {
                         em.member = new Relation(emd.id);
-                        adder.visit((Relation)em.member);
+                        ds.addPrimitive(em.member);
                     }
                 } else {
                     // this is an error.
@@ -457,12 +451,12 @@ public class OsmReader {
     }
 
     public static OsmReader parseDataSetOsm(InputStream source, ProgressMonitor progressMonitor) throws SAXException, IOException {
-        OsmReader osm = new OsmReader();
+        OsmReader reader = new OsmReader();
 
         // phase 1: Parse nodes and read in raw ways
         InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
         try {
-            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, osm.new Parser());
+            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, reader.new Parser());
         } catch (ParserConfigurationException e1) {
             e1.printStackTrace(); // broken SAXException chaining
             throw new SAXException(e1);
@@ -470,27 +464,27 @@ public class OsmReader {
 
         progressMonitor.beginTask(tr("Prepare OSM data...", 2));
         try {
-            for (Node n : osm.nodes.values()) {
-                osm.adder.visit(n);
+            for (Node n : reader.nodes.values()) {
+                reader.ds.addPrimitive(n);
             }
 
             progressMonitor.worked(1);
 
             try {
-                osm.createWays();
-                osm.createRelations();
+                reader.createWays();
+                reader.createRelations();
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 throw new SAXException(tr("Ill-formed node id"));
             }
 
             // clear all negative ids (new to this file)
-            for (OsmPrimitive o : osm.ds.allPrimitives())
+            for (OsmPrimitive o : reader.ds.allPrimitives())
                 if (o.id < 0) {
                     o.id = 0;
                 }
 
-            return osm;
+            return reader;
         } finally {
             progressMonitor.finishTask();
         }

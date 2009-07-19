@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -23,7 +22,7 @@ public class SelectAllAction extends JosmAction implements LayerChangeListener{
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        Main.ds.setSelected(Main.ds.allNonDeletedCompletePrimitives());
+        getCurrentDataSet().setSelected(getCurrentDataSet().allNonDeletedCompletePrimitives());
     }
 
     /**
@@ -31,10 +30,7 @@ public class SelectAllAction extends JosmAction implements LayerChangeListener{
      * 
      */
     protected void refreshEnabled() {
-        setEnabled(Main.map != null
-                && Main.map.mapView !=null
-                && Main.map.mapView.getEditLayer() != null
-        );
+        setEnabled(getEditLayer() != null);
     }
 
     /* ---------------------------------------------------------------------------------- */

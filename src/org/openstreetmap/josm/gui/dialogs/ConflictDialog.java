@@ -352,7 +352,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
             for (Object o : lstConflicts.getSelectedValues()) {
                 sel.add((OsmPrimitive)o);
             }
-            Main.ds.setSelected(sel);
+            Main.main.getCurrentDataSet().setSelected(sel);
         }
 
         public void valueChanged(ListSelectionEvent e) {

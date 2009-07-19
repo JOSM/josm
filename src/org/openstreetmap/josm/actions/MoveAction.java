@@ -84,7 +84,7 @@ public class MoveAction extends JosmAction {
             disty = 0;
         }
 
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
         Command c = !Main.main.undoRedo.commands.isEmpty()

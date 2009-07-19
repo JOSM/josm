@@ -28,18 +28,20 @@ public class GpxImporter extends FileImporter {
         try {
             GpxReader r = null;
             InputStream is;
-            if (file.getName().endsWith(".gpx.gz"))
+            if (file.getName().endsWith(".gpx.gz")) {
                 is = new GZIPInputStream(new FileInputStream(file));
-            else
+            } else {
                 is = new FileInputStream(file);
+            }
             // Workaround for SAX BOM bug
             // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6206835
             if (!((is.read() == 0xef) && (is.read() == 0xbb) && (is.read() == 0xbf))) {
                 is.close();
-                if (file.getName().endsWith(".gpx.gz"))
+                if (file.getName().endsWith(".gpx.gz")) {
                     is = new GZIPInputStream(new FileInputStream(file));
-                else
+                } else {
                     is = new FileInputStream(file);
+                }
             }
             r = new GpxReader(is, file.getAbsoluteFile().getParentFile());
             r.data.storageFile = file;
@@ -47,8 +49,9 @@ public class GpxImporter extends FileImporter {
             Main.main.addLayer(gpxLayer);
             if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
                 MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
-                if (ml.data.size() > 0)
+                if (ml.data.size() > 0) {
                     Main.main.addLayer(ml);
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

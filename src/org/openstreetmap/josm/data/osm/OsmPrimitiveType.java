@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import javax.swing.ImageIcon;
+
 public enum OsmPrimitiveType {
 
     NODE ("node", tr("node"), tr("nodes")),

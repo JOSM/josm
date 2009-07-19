@@ -28,7 +28,7 @@ public final class DistributeAction extends JosmAction {
 
     public DistributeAction() {
         super(tr("Distribute Nodes"), "distribute", tr("Distribute the selected nodes to equal distances along a line."),
-        Shortcut.registerShortcut("tools:distribute", tr("Tool: {0}", tr("Distribute Nodes")), KeyEvent.VK_B, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:distribute", tr("Tool: {0}", tr("Distribute Nodes")), KeyEvent.VK_B, Shortcut.GROUP_EDIT), true);
     }
 
     /**
@@ -37,7 +37,7 @@ public final class DistributeAction extends JosmAction {
      * nodes along the straight line between these nodes.
      */
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Node> itnodes = new LinkedList<Node>();
         for (OsmPrimitive osm : sel)
@@ -47,12 +47,13 @@ public final class DistributeAction extends JosmAction {
             }
         // special case if no single nodes are selected and exactly one way is:
         // then use the way's nodes
-        if ((nodes.size() == 0) && (sel.size() == 1))
+        if ((nodes.size() == 0) && (sel.size() == 1)) {
             for (OsmPrimitive osm : sel)
                 if (osm instanceof Way) {
                     nodes.addAll(((Way)osm).nodes);
                     itnodes.addAll(((Way)osm).nodes);
                 }
+        }
 
         if (nodes.size() < 3) {
             JOptionPane.showMessageDialog(Main.parent, tr("Please select at least three nodes."));

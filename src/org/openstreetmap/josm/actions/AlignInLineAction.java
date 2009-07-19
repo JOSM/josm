@@ -30,7 +30,7 @@ public final class AlignInLineAction extends JosmAction {
 
     public AlignInLineAction() {
         super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes in to a line."),
-        Shortcut.registerShortcut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, Shortcut.GROUP_EDIT), true);
     }
 
     /**
@@ -39,7 +39,7 @@ public final class AlignInLineAction extends JosmAction {
      * nodes onto the straight line between these nodes.
      */
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Node> itnodes = new LinkedList<Node>();
         for (OsmPrimitive osm : sel)
@@ -49,12 +49,13 @@ public final class AlignInLineAction extends JosmAction {
             }
         // special case if no single nodes are selected and exactly one way is:
         // then use the way's nodes
-        if ((nodes.size() == 0) && (sel.size() == 1))
+        if ((nodes.size() == 0) && (sel.size() == 1)) {
             for (OsmPrimitive osm : sel)
                 if (osm instanceof Way) {
                     nodes.addAll(((Way)osm).nodes);
                     itnodes.addAll(((Way)osm).nodes);
                 }
+        }
         if (nodes.size() < 3) {
             JOptionPane.showMessageDialog(Main.parent, tr("Please select at least three nodes."));
             return;

@@ -50,7 +50,7 @@ abstract public class Command {
     private OsmDataLayer layer;
 
     public Command() {
-        this.layer = Main.main.map.mapView.getEditLayer();
+        this.layer = Main.map.mapView.getEditLayer();
     }
     /**
      * Executes the command on the dataset. This implementation will remember all

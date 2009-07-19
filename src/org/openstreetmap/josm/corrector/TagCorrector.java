@@ -24,22 +24,24 @@ import org.openstreetmap.josm.command.ChangeRelationMemberRoleCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public abstract class TagCorrector<P extends OsmPrimitive> {
+    private static final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     public abstract Collection<Command> execute(P primitive, P oldprimitive)
-        throws UserCancelException;
+    throws UserCancelException;
 
     private String[] applicationOptions = new String[] {
-        tr("Apply selected changes"),
-        tr("Don't apply changes"),
-        tr("Cancel")
+            tr("Apply selected changes"),
+            tr("Don't apply changes"),
+            tr("Cancel")
     };
 
     protected Collection<Command> applyCorrections(
@@ -55,7 +57,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             }
         }
 
-        if (!hasCorrections)
+        if (!hasCorrections) {
             for (List<RoleCorrection> roleCorrectionList : roleCorrectionMap
                     .values()) {
                 if (!roleCorrectionList.isEmpty()) {
@@ -63,6 +65,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     break;
                 }
             }
+        }
 
         if (hasCorrections) {
             Collection<Command> commands = new ArrayList<Command>();
@@ -71,7 +74,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             Map<OsmPrimitive, RoleCorrectionTable> roleTableMap =
                 new HashMap<OsmPrimitive, RoleCorrectionTable>();
 
-            NameVisitor nameVisitor = new NameVisitor();
+            //NameVisitor nameVisitor = new NameVisitor();
 
             final JPanel p = new JPanel(new GridBagLayout());
 
@@ -86,18 +89,20 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
             for (OsmPrimitive primitive : tagCorrectionsMap.keySet()) {
                 final List<TagCorrection> tagCorrections = tagCorrectionsMap
-                        .get(primitive);
+                .get(primitive);
 
-                if (tagCorrections.isEmpty())
+                if (tagCorrections.isEmpty()) {
                     continue;
-
-                primitive.visit(nameVisitor);
+                }
 
                 final JLabel propertiesLabel = new JLabel(tr("Properties of "));
                 p.add(propertiesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(
-                        nameVisitor.name + ":", nameVisitor.icon, JLabel.LEFT);
+                        NAME_FORMATTER.getName(primitive) + ":",
+                        ImageProvider.get(OsmPrimitiveType.from(primitive)),
+                        JLabel.LEFT
+                );
                 p.add(primitiveLabel, GBC.eol());
 
                 final TagCorrectionTable table = new TagCorrectionTable(
@@ -110,18 +115,20 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
             for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
                 final List<RoleCorrection> roleCorrections = roleCorrectionMap
-                        .get(primitive);
-                if (roleCorrections.isEmpty())
+                .get(primitive);
+                if (roleCorrections.isEmpty()) {
                     continue;
-
-                primitive.visit(nameVisitor);
+                }
 
                 final JLabel rolesLabel = new JLabel(
                         tr("Roles in relations referring to"));
                 p.add(rolesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(
-                        nameVisitor.name + ":", nameVisitor.icon, JLabel.LEFT);
+                        NAME_FORMATTER.getName(primitive),
+                        ImageProvider.get(OsmPrimitiveType.from(primitive)),
+                        JLabel.LEFT
+                );
                 p.add(primitiveLabel, GBC.eol());
 
                 final RoleCorrectionTable table = new RoleCorrectionTable(
@@ -144,9 +151,13 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
                     // create the clone
                     OsmPrimitive clone = null;
-                    if (primitive instanceof Way) clone = new Way((Way)primitive);
-                    else if (primitive instanceof Node) clone = new Node((Node)primitive);
-                    else if (primitive instanceof Relation) clone = new Relation((Relation)primitive);
+                    if (primitive instanceof Way) {
+                        clone = new Way((Way)primitive);
+                    } else if (primitive instanceof Node) {
+                        clone = new Node((Node)primitive);
+                    } else if (primitive instanceof Relation) {
+                        clone = new Relation((Relation)primitive);
+                    }
 
                     // use this structure to remember keys that have been set already so that
                     // they're not dropped by a later step
@@ -156,18 +167,22 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     for (int i = 0; i < tagCorrections.size(); i++) {
                         if (tagTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
                             TagCorrection tagCorrection = tagCorrections.get(i);
-                            if (tagCorrection.isKeyChanged() && !keysChanged.contains(tagCorrection.oldKey)) clone.remove(tagCorrection.oldKey);
+                            if (tagCorrection.isKeyChanged() && !keysChanged.contains(tagCorrection.oldKey)) {
+                                clone.remove(tagCorrection.oldKey);
+                            }
                             clone.put(tagCorrection.newKey, tagCorrection.newValue);
                             keysChanged.add(tagCorrection.newKey);
                         }
                     }
 
                     // save the clone
-                    if (!keysChanged.isEmpty()) commands.add(new ChangeCommand(primitive, clone));
+                    if (!keysChanged.isEmpty()) {
+                        commands.add(new ChangeCommand(primitive, clone));
+                    }
                 }
                 for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
                     List<RoleCorrection> roleCorrections = roleCorrectionMap
-                            .get(primitive);
+                    .get(primitive);
 
                     for (int i = 0; i < roleCorrections.size(); i++) {
                         RoleCorrection roleCorrection = roleCorrections.get(i);
@@ -176,9 +191,8 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                         }
                     }
                 }
-            } else if (answer != JOptionPane.NO_OPTION) {
+            } else if (answer != JOptionPane.NO_OPTION)
                 throw new UserCancelException();
-            }
             return commands;
         }
 

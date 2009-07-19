@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -60,8 +61,9 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         }
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
         putValue("toolbar", iconName);
-        if (register)
+        if (register) {
             Main.toolbar.register(this);
+        }
     }
 
     public void destroy() {
@@ -91,8 +93,27 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     private void setHelpId() {
         String helpId = "Action/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
-        if (helpId.endsWith("Action"))
+        if (helpId.endsWith("Action")) {
             helpId = helpId.substring(0, helpId.length()-6);
+        }
         putValue("help", helpId);
+    }
+
+    /**
+     * Replies the current edit layer
+     * 
+     * @return the current edit layer. null, if no edit layer exists
+     */
+    protected OsmDataLayer getEditLayer() {
+        return Main.main.getEditLayer();
+    }
+
+    /**
+     * Replies the current dataset
+     * 
+     * @return the current dataset. null, if no current dataset exists
+     */
+    protected DataSet getCurrentDataSet() {
+        return Main.main.getCurrentDataSet();
     }
 }

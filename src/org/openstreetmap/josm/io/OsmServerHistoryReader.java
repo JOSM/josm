@@ -3,14 +3,12 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.xml.sax.SAXException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

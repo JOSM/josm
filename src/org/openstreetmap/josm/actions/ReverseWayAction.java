@@ -29,7 +29,7 @@ public final class ReverseWayAction extends JosmAction {
 
     public ReverseWayAction() {
         super(tr("Reverse Ways"), "wayflip", tr("Reverse the direction of all selected ways."),
-        Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse Ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse Ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -46,8 +46,9 @@ public final class ReverseWayAction extends JosmAction {
             }
 
             public void visitAll() {
-                for (OsmPrimitive osm : Main.ds.getSelected())
+                for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
                     osm.visit(this);
+                }
             }
         }.visitAll();
 
@@ -68,7 +69,7 @@ public final class ReverseWayAction extends JosmAction {
                 {
                     final Collection<Command> changePropertyCommands = reverseWayTagCorrector.execute(w, wnew);
                     propertiesUpdated = propertiesUpdated
-                        || (changePropertyCommands != null && !changePropertyCommands.isEmpty());
+                    || (changePropertyCommands != null && !changePropertyCommands.isEmpty());
                     c.addAll(changePropertyCommands);
                 }
                 catch(UserCancelException ex)
@@ -79,8 +80,9 @@ public final class ReverseWayAction extends JosmAction {
             c.add(new ChangeCommand(w, wnew));
         }
         Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
-        if (propertiesUpdated)
-            DataSet.fireSelectionChanged(Main.ds.getSelected());
+        if (propertiesUpdated) {
+            DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
+        }
         Main.map.repaint();
     }
 }

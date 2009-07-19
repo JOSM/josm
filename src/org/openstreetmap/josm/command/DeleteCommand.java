@@ -24,13 +24,14 @@ import javax.swing.tree.MutableTreeNode;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -75,22 +76,25 @@ public class DeleteCommand extends Command {
     }
 
     @Override public MutableTreeNode description() {
-        NameVisitor v = new NameVisitor();
-
         if (toDelete.size() == 1) {
-            toDelete.iterator().next().visit(v);
-            return new DefaultMutableTreeNode(new JLabel(tr("Delete {1} {0}", v.name, tr(v.className)), v.icon,
-                    JLabel.HORIZONTAL));
+            OsmPrimitive primitive = toDelete.iterator().next();
+            return new DefaultMutableTreeNode(
+                    new JLabel(
+                            tr("Delete {1} {0}",
+                                    new PrimitiveNameFormatter().getName(primitive),
+                                    OsmPrimitiveType.from(primitive).getLocalizedDisplayNameSingular()
+                            ),
+                            ImageProvider.get(OsmPrimitiveType.from(primitive)),
+                            JLabel.HORIZONTAL));
         }
 
         String cname = null;
         String cnamem = null;
         for (OsmPrimitive osm : toDelete) {
-            osm.visit(v);
             if (cname == null) {
-                cname = v.className;
-                cnamem = v.classNamePlural;
-            } else if (!cname.equals(v.className)) {
+                cname = OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular();
+                cnamem = OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular();
+            } else if (!cname.equals(OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular())) {
                 cname = "object";
                 cnamem = trn("object", "objects", 2);
             }
@@ -98,8 +102,13 @@ public class DeleteCommand extends Command {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(tr("Delete {0} {1}", toDelete.size(), trn(
                 cname, cnamem, toDelete.size())), ImageProvider.get("data", cname), JLabel.HORIZONTAL));
         for (OsmPrimitive osm : toDelete) {
-            osm.visit(v);
-            root.add(new DefaultMutableTreeNode(v.toLabel()));
+            root.add(new DefaultMutableTreeNode(
+                    new JLabel(
+                            new PrimitiveNameFormatter().getName(osm),
+                            ImageProvider.get(OsmPrimitiveType.from(osm)),
+                            JLabel.HORIZONTAL)
+            )
+            );
         }
         return root;
     }
@@ -118,7 +127,7 @@ public class DeleteCommand extends Command {
      * @return command A command to perform the deletions, or null of there is nothing to delete.
      */
     public static Command deleteWithReferences(Collection<? extends OsmPrimitive> selection) {
-        CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds);
+        CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.main.getCurrentDataSet());
         for (OsmPrimitive osm : selection) {
             osm.visit(v);
         }
@@ -131,10 +140,7 @@ public class DeleteCommand extends Command {
     }
 
     private static int testRelation(Relation ref, OsmPrimitive osm) {
-        NameVisitor n = new NameVisitor();
-        ref.visit(n);
-        NameVisitor s = new NameVisitor();
-        osm.visit(s);
+        PrimitiveNameFormatter formatter = new PrimitiveNameFormatter();
         String role = new String();
         for (RelationMember m : ref.members) {
             if (m.member == osm) {
@@ -143,17 +149,18 @@ public class DeleteCommand extends Command {
             }
         }
         if (role.length() > 0)
-            return new ExtendedDialog(Main.parent,
+            return new ExtendedDialog(
+                    Main.parent,
                     tr("Conflicting relation"),
                     tr("Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?",
-                            s.name, n.name, role),
+                            formatter.getName(osm), formatter.getName(ref), role),
                             new String[] {tr("Delete from relation"), tr("Cancel")},
                             new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
         else
             return new ExtendedDialog(Main.parent,
                     tr("Conflicting relation"),
                     tr("Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?",
-                            s.name, n.name),
+                            formatter.getName(osm), formatter.getName(ref)),
                             new String[] {tr("Delete from relation"), tr("Cancel")},
                             new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
     }
@@ -190,7 +197,7 @@ public class DeleteCommand extends Command {
                 if (osm instanceof Way) {
                     for (Node n : ((Way) osm).nodes) {
                         if (!n.isTagged()) {
-                            CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
+                            CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.main.getCurrentDataSet(), false);
                             n.visit(v);
                             v.data.removeAll(del);
                             if (v.data.isEmpty()) {
@@ -207,7 +214,7 @@ public class DeleteCommand extends Command {
             return null;
 
         for (OsmPrimitive osm : del) {
-            CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
+            CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.main.getCurrentDataSet(), false);
             osm.visit(v);
             for (OsmPrimitive ref : v.data) {
                 if (del.contains(ref)) {
@@ -237,7 +244,7 @@ public class DeleteCommand extends Command {
             if (wnew.nodes.size() < 2) {
                 del.add(w);
 
-                CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.ds, false);
+                CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(Main.main.getCurrentDataSet(), false);
                 w.visit(v);
                 for (OsmPrimitive ref : v.data) {
                     if (del.contains(ref)) {
@@ -365,7 +372,7 @@ public class DeleteCommand extends Command {
      * Request confirmation if he is.
      */
     private static boolean checkAndConfirmOutlyingDeletes(Collection<OsmPrimitive> del) {
-        Area a = Main.ds.getDataSourceArea();
+        Area a = Main.main.getCurrentDataSet().getDataSourceArea();
         if (a != null) {
             for (OsmPrimitive osm : del) {
                 if (osm instanceof Node && osm.id != 0) {

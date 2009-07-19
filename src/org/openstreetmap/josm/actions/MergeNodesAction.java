@@ -54,20 +54,21 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 
     public MergeNodesAction() {
         super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
-        Shortcut.registerShortcut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, Shortcut.GROUP_EDIT), true);
         DataSet.selListeners.add(this);
     }
 
     public void actionPerformed(ActionEvent event) {
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         LinkedList<Node> selectedNodes = new LinkedList<Node>();
 
         // the selection check should stop this procedure starting if
         // nothing but node are selected - otherwise we don't care
         // anyway as long as we have at least two nodes
         for (OsmPrimitive osm : selection)
-            if (osm instanceof Node)
+            if (osm instanceof Node) {
                 selectedNodes.add((Node)osm);
+            }
 
         if (selectedNodes.size() < 2) {
             JOptionPane.showMessageDialog(Main.parent, tr("Please select at least two nodes to merge."));
@@ -92,8 +93,9 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
                 break;
             }
         }
-        if (useNode == null)
+        if (useNode == null) {
             useNode = selectedNodes.iterator().next();
+        }
 
         mergeNodes(selectedNodes, useNode);
     }
@@ -101,7 +103,7 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
     /**
      * really do the merging - returns the node that is left
      */
-    public static Node mergeNodes(LinkedList<Node> allNodes, Node dest) {
+    public Node mergeNodes(LinkedList<Node> allNodes, Node dest) {
         Node newNode = new Node(dest);
 
         // Check whether all ways have identical relationship membership. More
@@ -117,8 +119,10 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         HashMap<Pair<Relation,String>, HashSet<Node>> backlinks =
             new HashMap<Pair<Relation,String>, HashSet<Node>>();
         HashSet<Relation> relationsUsingNodes = new HashSet<Relation>();
-        for (Relation r : Main.ds.relations) {
-            if (r.deleted || r.incomplete) continue;
+        for (Relation r : getCurrentDataSet().relations) {
+            if (r.deleted || r.incomplete) {
+                continue;
+            }
             for (RelationMember rm : r.members) {
                 if (rm.member instanceof Node) {
                     for (Node n : allNodes) {
@@ -147,10 +151,12 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
                 int option = new ExtendedDialog(Main.parent,
                         tr("Merge nodes with different memberships?"),
                         tr("The selected nodes have differing relation memberships.  "
-                            + "Do you still want to merge them?"),
-                        new String[] {tr("Merge Anyway"), tr("Cancel")},
-                        new String[] {"mergenodes.png", "cancel.png"}).getValue();
-                if (option == 1) break;
+                                + "Do you still want to merge them?"),
+                                new String[] {tr("Merge Anyway"), tr("Cancel")},
+                                new String[] {"mergenodes.png", "cancel.png"}).getValue();
+                if (option == 1) {
+                    break;
+                }
                 return null;
             }
         }
@@ -159,8 +165,9 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         Map<String, Set<String>> props = new TreeMap<String, Set<String>>();
         for (Node n : allNodes) {
             for (Entry<String,String> e : n.entrySet()) {
-                if (!props.containsKey(e.getKey()))
+                if (!props.containsKey(e.getKey())) {
                     props.put(e.getKey(), new TreeSet<String>());
+                }
                 props.get(e.getKey()).add(e.getValue());
             }
         }
@@ -186,14 +193,15 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 
         if (!components.isEmpty()) {
             int answer = new ExtendedDialog(Main.parent,
-                tr("Enter values for all conflicts."),
-                p,
-                new String[] {tr("Solve Conflicts"), tr("Cancel")},
-                new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
+                    tr("Enter values for all conflicts."),
+                    p,
+                    new String[] {tr("Solve Conflicts"), tr("Cancel")},
+                    new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
             if (answer != 1)
                 return null;
-            for (Entry<String, JComboBox> e : components.entrySet())
+            for (Entry<String, JComboBox> e : components.entrySet()) {
                 newNode.put(e.getKey(), e.getValue().getEditor().getItem().toString());
+            }
         }
 
         LinkedList<Command> cmds = new LinkedList<Command>();
@@ -201,16 +209,22 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
 
         Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>();
 
-        for (Way w : Main.ds.ways) {
-            if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
+        for (Way w : getCurrentDataSet().ways) {
+            if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                continue;
+            }
             boolean modify = false;
             for (Node sn : allNodes) {
-                if (sn == dest) continue;
+                if (sn == dest) {
+                    continue;
+                }
                 if (w.nodes.contains(sn)) {
                     modify = true;
                 }
             }
-            if (!modify) continue;
+            if (!modify) {
+                continue;
+            }
             // OK - this way contains one or more nodes to change
             ArrayList<Node> nn = new ArrayList<Node>();
             Node lastNode = null;
@@ -226,11 +240,11 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
             }
             if (nn.size() < 2) {
                 CollectBackReferencesVisitor backRefs =
-                    new CollectBackReferencesVisitor(Main.ds, false);
+                    new CollectBackReferencesVisitor(getCurrentDataSet(), false);
                 w.visit(backRefs);
                 if (!backRefs.data.isEmpty()) {
                     JOptionPane.showMessageDialog(Main.parent,
-                        tr("Cannot merge nodes: " +
+                            tr("Cannot merge nodes: " +
                             "Would have to delete a way that is still used."));
                     return null;
                 }
@@ -246,7 +260,9 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         // delete any merged nodes
         del.addAll(allNodes);
         del.remove(dest);
-        if (!del.isEmpty()) cmds.add(new DeleteCommand(del));
+        if (!del.isEmpty()) {
+            cmds.add(new DeleteCommand(del));
+        }
 
         // modify all relations containing the now-deleted nodes
         for (Relation r : relationsUsingNodes) {
@@ -269,7 +285,7 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Merge {0} nodes", allNodes.size()), cmds));
-        Main.ds.setSelected(dest);
+        getCurrentDataSet().setSelected(dest);
 
         return dest;
     }

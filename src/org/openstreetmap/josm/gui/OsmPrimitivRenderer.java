@@ -12,7 +12,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Renderer that renders the objects from an OsmPrimitive as data.
@@ -23,11 +24,7 @@ import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
  * @author Frederik Ramm <frederik@remote.org>
  */
 public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer {
-
-    /**
-     * NameVisitor provides proper names and icons for OsmPrimitives
-     */
-    private NameVisitor visitor = new NameVisitor();
+    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     /**
      * Default list cell renderer - delegate for ListCellRenderer operation
@@ -64,9 +61,8 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
      */
     private Component renderer(Component def, OsmPrimitive value) {
         if (def != null && value != null && def instanceof JLabel) {
-            (value).visit(visitor);
-            ((JLabel)def).setText(visitor.name);
-            ((JLabel)def).setIcon(visitor.icon);
+            ((JLabel)def).setText(NAME_FORMATTER.getName(value));
+            ((JLabel)def).setIcon(ImageProvider.get(OsmPrimitiveType.from(value)));
         }
         return def;
     }

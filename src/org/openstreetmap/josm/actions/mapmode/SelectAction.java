@@ -206,7 +206,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         } else {
             // Currently we support moving and rotating, which do not affect relations.
             // So don't add them in the first place to make handling easier
-            Collection<OsmPrimitive> selection = Main.ds.getSelectedNodesAndWays();
+            Collection<OsmPrimitive> selection = getCurrentDataSet().getSelectedNodesAndWays();
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
             // when rotating, having only one node makes no sense - quit silently
@@ -354,7 +354,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         Collection<OsmPrimitive> osmColl = getNearestCollectionVirtual(e.getPoint(), alt);
 
         if (ctrl && shift) {
-            if (Main.ds.getSelected().isEmpty()) {
+            if (getCurrentDataSet().getSelected().isEmpty()) {
                 selectPrims(osmColl, true, false, false, false);
             }
             mode = Mode.rotate;
@@ -365,7 +365,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             // We'll do that later in mouseReleased if the user didn't try to
             // move.
             selectPrims(osmColl,
-                    shift || Main.ds.getSelected().containsAll(osmColl),
+                    shift || getCurrentDataSet().getSelected().containsAll(osmColl),
                     ctrl, false, false);
             mode = Mode.move;
         } else {
@@ -402,7 +402,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             selectionManager.unregister(Main.map.mapView);
 
             // Select Draw Tool if no selection has been made
-            if(Main.ds.getSelected().size() == 0 && !cancelDrawMode) {
+            if(getCurrentDataSet().getSelected().size() == 0 && !cancelDrawMode) {
                 Main.map.selectDrawTool(true);
                 return;
             }
@@ -418,7 +418,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         shift, ctrl, true, false);
 
                 // If the user double-clicked a node, change to draw mode
-                List<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(Main.ds.getSelected());
+                List<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(getCurrentDataSet().getSelected());
                 if(e.getClickCount() >=2 && sel.size() == 1 && sel.get(0) instanceof Node) {
                     // We need to do it like this as otherwise drawAction will see a double
                     // click and switch back to SelectMode
@@ -430,7 +430,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     return;
                 }
             } else {
-                Collection<OsmPrimitive> selection = Main.ds.getSelected();
+                Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
                 Collection<OsmPrimitive> s = new TreeSet<OsmPrimitive>();
                 int max = Main.pref.getInteger("warn.move.maxelements", 20);
                 for (OsmPrimitive osm : selection)
@@ -468,7 +468,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                             }
                         if (selNodes.size() > 0) {
                             selNodes.add(n);
-                            MergeNodesAction.mergeNodes(selNodes, n);
+                            new MergeNodesAction().mergeNodes(selNodes, n);
                         }
                     }
                 }
@@ -495,7 +495,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if (!ctrl && !shift) {
             curSel = new LinkedList<OsmPrimitive>(); // new selection will replace the old.
         } else {
-            curSel = Main.ds.getSelected();
+            curSel = getCurrentDataSet().getSelected();
         }
 
         for (OsmPrimitive osm : selectionList)
@@ -511,7 +511,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 curSel.add(osm);
             }
         }
-        Main.ds.setSelected(curSel);
+        getCurrentDataSet().setSelected(curSel);
         Main.map.mapView.repaint();
     }
 

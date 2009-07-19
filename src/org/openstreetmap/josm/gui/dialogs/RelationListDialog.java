@@ -76,7 +76,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         displaylist.addMouseListener(new MouseAdapter(){
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    Main.ds.setSelected((Relation)displaylist.getSelectedValue());
+                    Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
                 }
             }
         });
@@ -124,19 +124,25 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
+    protected int getNumRelations() {
+        if (Main.main.getCurrentDataSet() == null) return 0;
+        return Main.main.getCurrentDataSet().relations.size();
+    }
+
     public void updateList() {
         Relation selected = getSelected();
-        list.setSize(Main.ds.relations.size());
-        int i = 0;
-        for (OsmPrimitive e : DataSet.sort(Main.ds.relations)) {
-            if (!e.deleted && !e.incomplete) {
-                list.setElementAt(e, i++);
+        list.setSize(getNumRelations());
+        if (getNumRelations() > 0 ) {
+            int i = 0;
+            for (OsmPrimitive e : DataSet.sort(Main.main.getCurrentDataSet().relations)) {
+                if (!e.deleted && !e.incomplete) {
+                    list.setElementAt(e, i++);
+                }
             }
+            list.setSize(i);
         }
-        list.setSize(i);
-
-        if(Main.ds.relations.size() != 0) {
-            setTitle(tr("Relations: {0}", Main.ds.relations.size()), true);
+        if(getNumRelations() != 0) {
+            setTitle(tr("Relations: {0}", Main.main.getCurrentDataSet().relations.size()), true);
         } else {
             setTitle(tr("Relations"), false);
         }

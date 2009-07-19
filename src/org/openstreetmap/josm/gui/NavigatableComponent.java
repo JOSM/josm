@@ -26,7 +26,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.Mercator;
 
 /**
  * An component that can be navigated by a mapmover. Used as map view and for the
@@ -54,9 +53,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         setLayout(null);
     }
 
-    protected DataSet getData()
-    {
-        return Main.ds;
+    protected DataSet getCurrentDataSet() {
+        return Main.main.getCurrentDataSet();
     }
 
     /**
@@ -101,22 +99,22 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public ProjectionBounds getProjectionBounds() {
         return new ProjectionBounds(
-        new EastNorth(
-                center.east() - getWidth()/2.0*scale,
-                center.north() - getHeight()/2.0*scale),
-        new EastNorth(
-                center.east() + getWidth()/2.0*scale,
-                center.north() + getHeight()/2.0*scale));
+                new EastNorth(
+                        center.east() - getWidth()/2.0*scale,
+                        center.north() - getHeight()/2.0*scale),
+                        new EastNorth(
+                                center.east() + getWidth()/2.0*scale,
+                                center.north() + getHeight()/2.0*scale));
     };
 
     public Bounds getRealBounds() {
         return new Bounds(
-        getProjection().eastNorth2latlon(new EastNorth(
-                center.east() - getWidth()/2.0*scale,
-                center.north() - getHeight()/2.0*scale)),
-        getProjection().eastNorth2latlon(new EastNorth(
-                center.east() + getWidth()/2.0*scale,
-                center.north() + getHeight()/2.0*scale)));
+                getProjection().eastNorth2latlon(new EastNorth(
+                        center.east() - getWidth()/2.0*scale,
+                        center.north() - getHeight()/2.0*scale)),
+                        getProjection().eastNorth2latlon(new EastNorth(
+                                center.east() + getWidth()/2.0*scale,
+                                center.north() + getHeight()/2.0*scale)));
     };
 
     /**
@@ -162,7 +160,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param scale The scale to use.
      */
     private void zoomTo(EastNorth newCenter, double newScale) {
-/* TODO: check that newCenter is really inside visible world and that scale is correct, don't allow zooming out to much */
+        /* TODO: check that newCenter is really inside visible world and that scale is correct, don't allow zooming out to much */
         boolean rep = false;
         if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
@@ -176,8 +174,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
             rep = true;
             firePropertyChange("scale", oldScale, newScale);
         }
-        if(rep)
+        if(rep) {
             repaint();
+        }
     }
 
     public void zoomTo(EastNorth newCenter) {
@@ -185,10 +184,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public void zoomTo(LatLon newCenter) {
-        if (newCenter instanceof CachedLatLon)
+        if(newCenter instanceof CachedLatLon) {
             zoomTo(((CachedLatLon)newCenter).getEastNorth(), scale);
-        else
+        } else {
             zoomTo(getProjection().latlon2eastNorth(newCenter), scale);
+        }
     }
 
     public void zoomToFactor(double x, double y, double factor) {
@@ -196,9 +196,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         // New center position so that point under the mouse pointer stays the same place as it was before zooming
         // You will get the formula by simplifying this expression: newCenter = oldCenter + mouseCoordinatesInNewZoom - mouseCoordinatesInOldZoom
         zoomTo(new EastNorth(
-        center.east() - (x - getWidth()/2.0) * (newScale - scale),
-        center.north() + (y - getHeight()/2.0) * (newScale - scale)),
-        newScale);
+                center.east() - (x - getWidth()/2.0) * (newScale - scale),
+                center.north() + (y - getHeight()/2.0) * (newScale - scale)),
+                newScale);
     }
 
     public void zoomToFactor(EastNorth newCenter, double factor) {
@@ -212,11 +212,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void zoomTo(ProjectionBounds box) {
         // -20 to leave some border
         int w = getWidth()-20;
-        if (w < 20)
+        if (w < 20) {
             w = 20;
+        }
         int h = getHeight()-20;
-        if (h < 20)
+        if (h < 20) {
             h = 20;
+        }
 
         double scaleX = (box.max.east()-box.min.east())/w;
         double scaleY = (box.max.north()-box.min.north())/h;
@@ -227,7 +229,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public void zoomTo(Bounds box) {
         zoomTo(new ProjectionBounds(getProjection().latlon2eastNorth(box.min),
-        getProjection().latlon2eastNorth(box.max)));
+                getProjection().latlon2eastNorth(box.max)));
     }
 
     /**
@@ -237,9 +239,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public final Node getNearestNode(Point p) {
         double minDistanceSq = snapDistance;
         Node minPrimitive = null;
-        for (Node n : getData().nodes) {
-            if (n.deleted || n.incomplete)
+        for (Node n : getCurrentDataSet().nodes) {
+            if (n.deleted || n.incomplete) {
                 continue;
+            }
             Point sp = getPoint(n);
             double dist = p.distanceSq(sp);
             if (dist < minDistanceSq) {
@@ -248,9 +251,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
             // when multiple nodes on one point, prefer new or selected nodes
             else if(dist == minDistanceSq && minPrimitive != null
-            && ((n.id == 0 && n.selected)
-            || (!minPrimitive.selected && (n.selected || n.id == 0))))
+                    && ((n.id == 0 && n.selected)
+                            || (!minPrimitive.selected && (n.selected || n.id == 0)))) {
                 minPrimitive = n;
+            }
         }
         return minPrimitive;
     }
@@ -263,13 +267,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<WaySegment> getNearestWaySegments(Point p) {
         TreeMap<Double, List<WaySegment>> nearest = new TreeMap<Double, List<WaySegment>>();
-        for (Way w : getData().ways) {
-            if (w.deleted || w.incomplete) continue;
+        for (Way w : getCurrentDataSet().ways) {
+            if (w.deleted || w.incomplete) {
+                continue;
+            }
             Node lastN = null;
             int i = -2;
             for (Node n : w.nodes) {
                 i++;
-                if (n.deleted || n.incomplete) continue;
+                if (n.deleted || n.incomplete) {
+                    continue;
+                }
                 if (lastN == null) {
                     lastN = n;
                     continue;
@@ -282,8 +290,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 double b = p.distanceSq(A);
                 double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
                 if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
-                    if(w.selected) // prefer selected ways a little bit
+                    if(w.selected) {
                         perDist -= 0.00001;
+                    }
                     List<WaySegment> l;
                     if (nearest.containsKey(perDist)) {
                         l = nearest.get(perDist);
@@ -314,7 +323,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final WaySegment getNearestWaySegment(Point p, Collection<WaySegment> ignore) {
         List<WaySegment> nearest = getNearestWaySegments(p);
-        if (ignore != null) nearest.removeAll(ignore);
+        if (ignore != null) {
+            nearest.removeAll(ignore);
+        }
         return nearest.isEmpty() ? null : nearest.get(0);
     }
 
@@ -375,11 +386,15 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public Collection<OsmPrimitive> getAllNearest(Point p) {
         Collection<OsmPrimitive> nearest = new HashSet<OsmPrimitive>();
-            for (Way w : getData().ways) {
-            if (w.deleted || w.incomplete) continue;
+        for (Way w : getCurrentDataSet().ways) {
+            if (w.deleted || w.incomplete) {
+                continue;
+            }
             Node lastN = null;
             for (Node n : w.nodes) {
-                if (n.deleted || n.incomplete) continue;
+                if (n.deleted || n.incomplete) {
+                    continue;
+                }
                 if (lastN == null) {
                     lastN = n;
                     continue;
@@ -392,12 +407,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
                 if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
                     nearest.add(w);
-                        break;
-                    }
-                lastN = n;
+                    break;
                 }
+                lastN = n;
             }
-        for (Node n : getData().nodes) {
+        }
+        for (Node n : getCurrentDataSet().nodes) {
             if (!n.deleted && !n.incomplete
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
@@ -416,7 +431,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public Collection<Node> getNearestNodes(Point p) {
         Collection<Node> nearest = new HashSet<Node>();
-        for (Node n : getData().nodes) {
+        for (Node n : getCurrentDataSet().nodes) {
             if (!n.deleted && !n.incomplete
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
@@ -435,8 +450,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final Collection<Node> getNearestNodes(Point p, Collection<Node> ignore) {
         Collection<Node> nearest = getNearestNodes(p);
-                if (nearest == null) return null;
-        if (ignore != null) nearest.removeAll(ignore);
+        if (nearest == null) return null;
+        if (ignore != null) {
+            nearest.removeAll(ignore);
+        }
         return nearest.isEmpty() ? null : nearest;
     }
 

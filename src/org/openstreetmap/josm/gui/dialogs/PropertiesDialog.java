@@ -59,11 +59,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
@@ -87,12 +90,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener {
-
-    /**
-     * Used to display relation names in the membership table
-     */
-    private NameVisitor nameVisitor = new NameVisitor();
+public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
+    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     /**
      * Watches for double clicks and from editing or new property, depending on the
@@ -134,7 +133,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param row The row of the table from which the value is edited.
      */
     void propertyEdit(int row) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
 
         String key = propertyData.getValueAt(row, 0).toString();
@@ -317,7 +316,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * to the dataset, of course).
      */
     void add() {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
 
         JPanel p = new JPanel(new BorderLayout());
@@ -386,7 +385,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private TreeMap<String, TreeSet<String>> createAutoCompletionInfo(
             boolean edit) {
         final TreeMap<String, TreeSet<String>> allData = new TreeMap<String, TreeSet<String>>();
-        for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
+        for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedPrimitives()) {
             for (String key : osm.keySet()) {
                 TreeSet<String> values = null;
                 if (allData.containsKey(key)) {
@@ -412,7 +411,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     private void delete(int row) {
         String key = propertyData.getValueAt(row, 0).toString();
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
         DataSet.fireSelectionChanged(sel);
         selectionChanged(sel); // update table
@@ -512,8 +511,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
-                    nameVisitor.visit((Relation)value);
-                    ((JLabel)c).setText(nameVisitor.name);
+                    ((JLabel)c).setText(NAME_FORMATTER.getName((Relation)value));
                 }
                 return c;
             }
@@ -575,19 +573,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         membershipEdit(row);
                     } else if (e.getActionCommand().equals("Delete")) {
                         Relation cur = (Relation)membershipData.getValueAt(row, 0);
-                        NameVisitor n = new NameVisitor();
-                        cur.visit(n);
-
                         int result = new ExtendedDialog(Main.parent,
                                 tr("Change relation"),
-                                tr("Really delete selection from relation {0}?", n.name),
+                                tr("Really delete selection from relation {0}?", NAME_FORMATTER.getName(cur)),
                                 new String[] {tr("Delete from relation"), tr("Cancel")},
                                 new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 
                         if(result == 1)
                         {
                             Relation rel = new Relation(cur);
-                            Collection<OsmPrimitive> sel = Main.ds.getSelected();
+                            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
                             for (RelationMember rm : cur.members) {
                                 for (OsmPrimitive osm : sel) {
                                     if (rm.member == osm)
@@ -641,12 +636,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         add(buttonPanel, BorderLayout.SOUTH);
 
         DataSet.selListeners.add(this);
+        Layer.listeners.add(this);
     }
 
     @Override public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b) {
-            selectionChanged(Main.ds.getSelected());
+        if (b && Main.main.getCurrentDataSet() != null) {
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
     }
 
@@ -795,7 +791,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipData.setRowCount(0);
 
         Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
-        for (Relation r : Main.ds.relations) {
+        for (Relation r : Main.main.getCurrentDataSet().relations) {
             if (!r.deleted && !r.incomplete) {
                 for (RelationMember m : r.members) {
                     if (newSelection.contains(m.member)) {
@@ -841,4 +837,21 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             setTitle(tr("Properties / Memberships"), false);
         }
     }
+
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        if (newLayer instanceof OsmDataLayer) {
+            OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
+            selectionChanged(dataLayer.data.getSelected());
+        }
+    }
+
+    public void layerAdded(Layer newLayer) {
+        // do nothing
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        // do nothing
+    }
+
+
 }

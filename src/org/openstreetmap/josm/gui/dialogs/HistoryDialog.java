@@ -287,7 +287,7 @@ public class HistoryDialog extends ToggleDialog {
 
         public void refresh() {
             data.clear();
-            for (OsmPrimitive primitive: Main.ds.getSelected()) {
+            for (OsmPrimitive primitive: Main.main.getCurrentDataSet().getSelected()) {
                 if (primitive.id == 0) {
                     continue;
                 }
@@ -397,7 +397,7 @@ public class HistoryDialog extends ToggleDialog {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            Collection<OsmPrimitive> selection = Main.ds.getSelected();
+            Collection<OsmPrimitive> selection = Main.main.getCurrentDataSet().getSelected();
             Iterator<OsmPrimitive> it = selection.iterator();
             try {
                 while(it.hasNext()) {
@@ -453,7 +453,7 @@ public class HistoryDialog extends ToggleDialog {
         }
 
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            setEnabled(Main.ds.getSelected().size() > 0);
+            setEnabled(Main.main.getCurrentDataSet().getSelected().size() > 0);
 
         }
     }

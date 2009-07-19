@@ -42,6 +42,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -51,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class SelectionListDialog extends ToggleDialog implements SelectionChangedListener {
+public class SelectionListDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
 
     private static final int SELECTION_HISTORY_SIZE = 10;
 
@@ -79,7 +82,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     public SelectionListDialog() {
         super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."),
-        Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+                Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         selectionHistory = new LinkedList<Collection<? extends OsmPrimitive>>();
         popupMenu = new JPopupMenu();
@@ -88,8 +91,9 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         displaylist.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1)
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                     updateMap();
+                }
             }
 
             @Override
@@ -111,10 +115,10 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         selectButton = new SideButton(marktr("Select"), "select", "SelectionList",
                 tr("Set the selected elements on the map to the selected items in the list above."),
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        updateMap();
-                    }
-                });
+            public void actionPerformed(ActionEvent e) {
+                updateMap();
+            }
+        });
         buttonPanel.add(selectButton);
         BasicArrowButton selectionHistoryMenuButton = createArrowButton(selectButton);
         selectionHistoryMenuButton.addActionListener(new ActionListener() {
@@ -133,10 +137,10 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
         buttonPanel.add(new SideButton(marktr("Reload"), "refresh", "SelectionList", tr("Refresh the selection list."),
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        selectionChanged(Main.ds.getSelected());
-                    }
-                }));
+            public void actionPerformed(ActionEvent e) {
+                selectionChanged(Main.main.getCurrentDataSet().getSelected());
+            }
+        }));
 
         searchButton = new SideButton(marktr("Search"), "search", "SelectionList", tr("Search for objects."),
                 Main.main.menu.search);
@@ -158,9 +162,12 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         });
         popupMenu.add(zoomToSelection);
 
-        selectionChanged(Main.ds.getSelected());
+        if (Main.main.getCurrentDataSet() != null) {
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+        }
 
         DataSet.selListeners.add(this);
+        Layer.listeners.add(this);
     }
 
     private BasicArrowButton createArrowButton(SideButton parentButton) {
@@ -178,8 +185,9 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b)
-            selectionChanged(Main.ds.getSelected());
+        if (b && Main.main.getCurrentDataSet() != null) {
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+        }
     }
 
     protected void showPopupMenu(MouseEvent e) {
@@ -203,8 +211,9 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             return;
         for (int i = 0; i < selected.length; i++) {
             Object o = list.get(selected[i]);
-            if (o instanceof OsmPrimitive)
+            if (o instanceof OsmPrimitive) {
                 ((OsmPrimitive) o).visit(box);
+            }
         }
         if (box.getBounds() == null)
             return;
@@ -246,8 +255,9 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         OsmPrimitive selArr[] = DataSet.sort(newSelection);
         list.setSize(selArr.length);
         int i = 0;
-        for (OsmPrimitive osm : selArr)
+        for (OsmPrimitive osm : selArr) {
             list.setElementAt(osm, i++);
+        }
         if (selectionHistory != null && newSelection.size() > 0 && !newSelection.equals(historyIgnoreSelection)) {
             historyIgnoreSelection = null;
             try {
@@ -258,20 +268,22 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             } catch (NoSuchElementException e) {
             }
             selectionHistory.addFirst(newSelection);
-            while (selectionHistory.size() > SELECTION_HISTORY_SIZE)
+            while (selectionHistory.size() > SELECTION_HISTORY_SIZE) {
                 selectionHistory.removeLast();
+            }
         }
 
         int ways = 0;
         int nodes = 0;
         int relations = 0;
         for (OsmPrimitive o : newSelection) {
-            if (o instanceof Way)
+            if (o instanceof Way) {
                 ways++;
-            else if (o instanceof Node)
+            } else if (o instanceof Node) {
                 nodes++;
-            else if (o instanceof Relation)
+            } else if (o instanceof Relation) {
                 relations++;
+            }
         }
 
         if( (nodes+ways+relations) != 0) {
@@ -287,9 +299,10 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     public void updateMap() {
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
         for (int i = 0; i < list.getSize(); ++i)
-            if (displaylist.isSelectedIndex(i))
+            if (displaylist.isSelectedIndex(i)) {
                 sel.add((OsmPrimitive) list.get(i));
-        Main.ds.setSelected(sel);
+            }
+        Main.main.getCurrentDataSet().setSelected(sel);
     }
 
     /**
@@ -307,30 +320,34 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             int nodes = 0;
             int relations = 0;
             for (OsmPrimitive o : sel) {
-                if (o instanceof Way)
+                if (o instanceof Way) {
                     ways++;
-                else if (o instanceof Node)
+                } else if (o instanceof Node) {
                     nodes++;
-                else if (o instanceof Relation)
+                } else if (o instanceof Relation) {
                     relations++;
+                }
             }
             String text = "";
-            if(ways != 0)
+            if(ways != 0) {
                 text += (text.length() > 0 ? ", " : "")
                 + trn("{0} way", "{0} ways", ways, ways);
-            if(nodes != 0)
+            }
+            if(nodes != 0) {
                 text += (text.length() > 0 ? ", " : "")
                 + trn("{0} node", "{0} nodes", nodes, nodes);
-            if(relations != 0)
+            }
+            if(relations != 0) {
                 text += (text.length() > 0 ? ", " : "")
                 + trn("{0} relation", "{0} relations", relations, relations);
+            }
             setText(tr("Selection: {0}", text));
             addActionListener(this);
         }
 
         public void actionPerformed(ActionEvent e) {
             historyIgnoreSelection = sel;
-            Main.ds.setSelected(sel);
+            Main.main.getCurrentDataSet().setSelected(sel);
         }
 
     }
@@ -352,6 +369,25 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         public void actionPerformed(ActionEvent e) {
             SearchAction.searchWithoutHistory(s);
         }
+
+    }
+
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        if (newLayer instanceof OsmDataLayer) {
+            OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
+            selectionChanged(dataLayer.data.getSelected());
+
+        }
+
+    }
+
+    public void layerAdded(Layer newLayer) {
+        // do nothing
+
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        // do nothing
 
     }
 }

@@ -45,7 +45,7 @@ public abstract class AbstractInfoAction extends JosmAction {
     }
 
     protected void launchBrowser() {
-        ArrayList<OsmPrimitive> primitivesToShow = new ArrayList<OsmPrimitive>(Main.ds.getSelected());
+        ArrayList<OsmPrimitive> primitivesToShow = new ArrayList<OsmPrimitive>(getCurrentDataSet().getSelected());
 
         // filter out new primitives which are not yet uploaded to the server
         //

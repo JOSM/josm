@@ -44,10 +44,10 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
     }
 
     public void actionPerformed(ActionEvent e) {
-        if(noSelection()) return;
+        if(isEmptySelection()) return;
 
         Main.pasteBuffer = copyData();
-        Main.pasteSource = Main.main.createOrGetEditLayer();
+        Main.pasteSource = getEditLayer();
         Main.main.menu.paste.setEnabled(true); /* now we have a paste buffer we can make paste available */
 
         for(JosmAction a : listeners) {
@@ -55,13 +55,13 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
         }
     }
 
-    public static DataSet copyData() {
+    public DataSet copyData() {
         /* New pasteBuffer - will be assigned to the global one at the end */
         final DataSet pasteBuffer = new DataSet();
         final HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>();
         /* temporarily maps old nodes to new so we can do a true deep copy */
 
-        if(noSelection()) return pasteBuffer;
+        if(isEmptySelection()) return pasteBuffer;
 
         /* scan the selected objects, mapping them to copies; when copying a way or relation,
          * the copy references the copies of their child objects */
@@ -70,14 +70,16 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
                 /* check if already in pasteBuffer - e.g. two ways are selected which share a node;
                  * or a way and a node in that way is selected, we'll see it twice, once via the
                  * way and once directly; and so on. */
-                if (map.containsKey(n)) { return; }
+                if (map.containsKey(n))
+                    return;
                 Node nnew = new Node(n);
                 map.put(n, nnew);
                 pasteBuffer.addPrimitive(nnew);
             }
             public void visit(Way w) {
                 /* check if already in pasteBuffer - could have come from a relation, and directly etc. */
-                if (map.containsKey(w)) { return; }
+                if (map.containsKey(w))
+                    return;
                 Way wnew = new Way();
                 wnew.cloneFrom(w);
                 wnew.nodes.clear();
@@ -92,7 +94,8 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
                 pasteBuffer.addPrimitive(wnew);
             }
             public void visit(Relation e) {
-                if (map.containsKey(e)) { return; }
+                if (map.containsKey(e))
+                    return;
                 Relation enew = new Relation(e);
                 List<RelationMember> members = new ArrayList<RelationMember>();
                 for (RelationMember m : e.members) {
@@ -107,16 +110,20 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
                 pasteBuffer.addPrimitive(enew);
             }
             public void visitAll() {
-                for (OsmPrimitive osm : Main.ds.getSelected())
+                for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
                     osm.visit(this);
+                }
 
                 // Used internally only (in PasteTagsAction), therefore no need to translate these
-                if(Main.ds.getSelectedNodes().size() > 0)
+                if(getCurrentDataSet().getSelectedNodes().size() > 0) {
                     pasteBuffer.dataSources.add(new DataSource(null, "Copied Nodes"));
-                if(Main.ds.getSelectedWays().size() > 0)
+                }
+                if(getCurrentDataSet().getSelectedWays().size() > 0) {
                     pasteBuffer.dataSources.add(new DataSource(null, "Copied Ways"));
-                if(Main.ds.getSelectedRelations().size() > 0)
+                }
+                if(getCurrentDataSet().getSelectedRelations().size() > 0) {
                     pasteBuffer.dataSources.add(new DataSource(null, "Copied Relations"));
+                }
             }
         }.visitAll();
 
@@ -127,11 +134,13 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
         setEnabled(! newSelection.isEmpty());
     }
 
-    private static boolean noSelection() {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+    private boolean isEmptySelection() {
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         if (sel.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    tr("Please select something to copy."));
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("Please select something to copy.")
+            );
             return true;
         }
         return false;

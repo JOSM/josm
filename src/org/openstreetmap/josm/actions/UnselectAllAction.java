@@ -43,17 +43,14 @@ public class UnselectAllAction extends JosmAction implements LayerChangeListener
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        Main.ds.setSelected();
+        getCurrentDataSet().setSelected();
     }
     /**
      * Refreshes the enabled state
      * 
      */
     protected void refreshEnabled() {
-        setEnabled(Main.map != null
-                && Main.map.mapView !=null
-                && Main.map.mapView.getEditLayer() != null
-        );
+        setEnabled(getEditLayer() != null);
     }
 
     /* ---------------------------------------------------------------------------------- */

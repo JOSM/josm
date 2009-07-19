@@ -61,7 +61,7 @@ public class UndoRedoHandler implements LayerChangeListener {
             data.fireDataChange();
         }
         fireCommandsChanged();
-        Main.ds.setSelected();
+        Main.main.getCurrentDataSet().setSelected();
     }
 
     /**
@@ -83,8 +83,9 @@ public class UndoRedoHandler implements LayerChangeListener {
     }
 
     public void fireCommandsChanged() {
-        for (final CommandQueueListener l : listenerCommands)
+        for (final CommandQueueListener l : listenerCommands) {
             l.commandChanged(commands.size(), redoCommands.size());
+        }
     }
 
     public void clean() {
@@ -107,8 +108,9 @@ public class UndoRedoHandler implements LayerChangeListener {
                 changed = true;
             }
         }
-        if (changed)
+        if (changed) {
             fireCommandsChanged();
+        }
     }
 
     public void layerAdded(Layer newLayer) {}

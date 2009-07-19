@@ -139,5 +139,4 @@ public final class Node extends OsmPrimitive {
         }
         return name;
     }
-
 }

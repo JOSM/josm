@@ -178,8 +178,8 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
      */
     protected void purge(OsmPrimitive toPurge, DataSet ds, ArrayList<OsmPrimitive> hive) {
         ArrayList<OsmPrimitive> parents = new ArrayList<OsmPrimitive>();
-        parents.addAll(Main.ds.ways);
-        parents.addAll(Main.ds.relations);
+        parents.addAll(getLayer().data.ways);
+        parents.addAll(getLayer().data.relations);
         List<OsmParentChildPair> pairs = getParentChildPairs(parents, primitive);
         hive.remove(toPurge);
         for (OsmParentChildPair pair: pairs) {
@@ -216,7 +216,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
         hive.add(primitive);
         while(! hive.isEmpty()) {
             OsmPrimitive toPurge = hive.get(0);
-            purge(toPurge, Main.ds, hive);
+            purge(toPurge, getLayer().data, hive);
             if (toPurge instanceof Node) {
                 getLayer().data.nodes.remove(toPurge);
             } else if (primitive instanceof Way) {

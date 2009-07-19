@@ -27,16 +27,16 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class JoinNodeWayAction extends JosmAction {
     public JoinNodeWayAction() {
         super(tr("Join Node to Way"), "joinnodeway", tr("Join a node into the nearest way segments"),
-            Shortcut.registerShortcut("tools:joinnodeway", tr("Tool: {0}", tr("Join Node to Way")), KeyEvent.VK_J, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:joinnodeway", tr("Tool: {0}", tr("Join Node to Way")), KeyEvent.VK_J, Shortcut.GROUP_EDIT), true);
     }
 
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         if (sel.size() != 1 || !(sel.iterator().next() instanceof Node)) return;
         Node node = (Node) sel.iterator().next();
 
         List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
-            Main.map.mapView.getPoint(node));
+                Main.map.mapView.getPoint(node));
         HashMap<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
         for (WaySegment ws : wss) {
             List<Integer> is;
@@ -59,7 +59,9 @@ public class JoinNodeWayAction extends JosmAction {
             Way wnew = new Way(w);
             List<Integer> is = insertPoint.getValue();
             pruneSuccsAndReverse(is);
-            for (int i : is) wnew.nodes.add(i+1, node);
+            for (int i : is) {
+                wnew.nodes.add(i+1, node);
+            }
             cmds.add(new ChangeCommand(w, wnew));
         }
 

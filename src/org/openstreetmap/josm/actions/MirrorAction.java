@@ -13,10 +13,8 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -33,12 +31,12 @@ public final class MirrorAction extends JosmAction {
 
     public MirrorAction() {
         super(tr("Mirror"), "mirror", tr("Mirror selected nodes and ways."),
-        Shortcut.registerShortcut("tools:mirror", tr("Tool: {0}", tr("Mirror")),
-            KeyEvent.VK_M, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+                Shortcut.registerShortcut("tools:mirror", tr("Tool: {0}", tr("Mirror")),
+                        KeyEvent.VK_M, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
     }
 
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         HashSet<Node> nodes = new HashSet<Node>();
 
         for (OsmPrimitive osm : sel) {
@@ -65,8 +63,9 @@ public final class MirrorAction extends JosmAction {
 
         Collection<Command> cmds = new LinkedList<Command>();
 
-        for (Node n : nodes)
+        for (Node n : nodes) {
             cmds.add(new MoveCommand(n, 2 * (middle - n.getEastNorth().east()), 0.0));
+        }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Mirror"), cmds));
         Main.map.repaint();

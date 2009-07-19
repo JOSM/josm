@@ -30,7 +30,7 @@ public final class PasteAction extends JosmAction {
 
     public PasteAction() {
         super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
-            Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
         setEnabled(false);
     }
 
@@ -38,7 +38,7 @@ public final class PasteAction extends JosmAction {
         pasteData(Main.pasteBuffer, Main.pasteSource, e);
     }
 
-    public static void pasteData(DataSet pasteBuffer, Layer source, ActionEvent e) {
+    public  void pasteData(DataSet pasteBuffer, Layer source, ActionEvent e) {
         /* Find the middle of the pasteBuffer area */
         double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
         for (Node n : pasteBuffer.nodes) {
@@ -62,13 +62,13 @@ public final class PasteAction extends JosmAction {
         double offsetNorth = mPosition.north() - (maxNorth + minNorth)/2.0;
 
         HashMap<OsmPrimitive,OsmPrimitive> map = new HashMap<OsmPrimitive,OsmPrimitive>();
-          /* temporarily maps old nodes to new so we can do a true deep copy */
+        /* temporarily maps old nodes to new so we can do a true deep copy */
 
         /* do the deep copy of the paste buffer contents, leaving the pasteBuffer unchanged */
         for (Node n : pasteBuffer.nodes) {
             Node nnew = new Node(n);
             nnew.id = 0;
-            if (Main.main.createOrGetEditLayer() == source) {
+            if (Main.map.mapView.getEditLayer() == source) {
                 nnew.setEastNorth(nnew.getEastNorth().add(offsetEast, offsetNorth));
             }
             map.put(n, nnew);
@@ -112,7 +112,7 @@ public final class PasteAction extends JosmAction {
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Paste"), clist));
-        Main.ds.setSelected(osms);
+        getCurrentDataSet().setSelected(osms);
         Main.map.mapView.repaint();
     }
 }

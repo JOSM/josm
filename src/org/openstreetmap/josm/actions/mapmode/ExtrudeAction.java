@@ -76,8 +76,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     public ExtrudeAction(MapFrame mapFrame) {
         super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
                 Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
-            mapFrame,
-            getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
+                mapFrame,
+                getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
         putValue("help", "Action/Extrude/Extrude");
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
@@ -159,11 +159,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             EastNorth en3 = mv.getEastNorth(mousePos.x, mousePos.y);
 
             double u = ((en3.east() - en1.east()) * (en2.east() - en1.east()) +
-                        (en3.north() - en1.north()) * (en2.north() - en1.north())) /
-                       en2.distanceSq(en1);
+                    (en3.north() - en1.north()) * (en2.north() - en1.north())) /
+                    en2.distanceSq(en1);
             // the point on the segment from which the distance to mouse pos is shortest
             EastNorth base = new EastNorth(en1.east() + u * (en2.east() - en1.east()),
-                                           en1.north() + u * (en2.north() - en1.north()));
+                    en1.north() + u * (en2.north() - en1.north()));
 
             // find out the distance, in metres, between the base point and the mouse cursor
             distance = Main.proj.eastNorth2latlon(base).greatCircleDistance(Main.proj.eastNorth2latlon(en3));
@@ -218,8 +218,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         mousePos = e.getPoint();
         initialMousePos = e.getPoint();
 
-        if(selectedSegment != null)
-            Main.ds.setSelected(selectedSegment.way);
+        if(selectedSegment != null) {
+            getCurrentDataSet().setSelected(selectedSegment.way);
+        }
     }
 
     /**
@@ -240,7 +241,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Way wnew = new Way(selectedSegment.way);
             wnew.addNode(selectedSegment.lowerIndex+1, n3);
             wnew.addNode(selectedSegment.lowerIndex+1, n4);
-            if (wnew.nodes.size() == 4) wnew.addNode(n1);
+            if (wnew.nodes.size() == 4) {
+                wnew.addNode(n1);
+            }
             Collection<Command> cmds = new LinkedList<Command>();
             cmds.add(new AddCommand(n4));
             cmds.add(new AddCommand(n3));
@@ -257,18 +260,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     @Override public String getModeHelpText() {
-        if (mode == Mode.select) {
+        if (mode == Mode.select)
             return tr("Release the mouse button to select the objects in the rectangle.");
-        } else if (mode == Mode.EXTRUDE) {
+        else if (mode == Mode.EXTRUDE)
             return tr("Draw a rectangle of the desired size, then release the mouse button.");
-        } else if (mode == Mode.rotate) {
+        else if (mode == Mode.rotate)
             return tr("Release the mouse button to stop rotating.");
-        } else {
+        else
             return tr("Drag a way segment to make a rectangle.");
-        }
     }
 
-        @Override public boolean layerIsSupported(Layer l) {
-                return l instanceof OsmDataLayer;
-        }
+    @Override public boolean layerIsSupported(Layer l) {
+        return l instanceof OsmDataLayer;
+    }
 }

@@ -32,7 +32,7 @@ public class DataSetChecker {
 
         if (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
             OsmDataLayer l = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-            if (l.data != Main.ds) {
+            if (l.data != Main.main.getCurrentDataSet()) {
                 JOptionPane.showMessageDialog(Main.parent, "Main.ds / active layer mismatch");
                 return;
             }

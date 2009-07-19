@@ -20,8 +20,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -38,9 +38,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -58,6 +58,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class MapStatus extends JPanel implements Helpful {
+    private static final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     /**
      * The MapView this status belongs to.
@@ -144,11 +145,13 @@ public class MapStatus extends JPanel implements Helpful {
                 }
                 if (parent != Main.map)
                     return; // exit, if new parent.
-                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0 || ms.mousePos == null)
+                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0 || ms.mousePos == null) {
                     continue; // freeze display when holding down ctrl
+                }
 
-                if (mv.center == null)
+                if (mv.center == null) {
                     continue;
+                }
 
                 // This try/catch is a hack to stop the flooding bug reports about this.
                 // The exception needed to handle with in the first place, means that this
@@ -159,20 +162,21 @@ public class MapStatus extends JPanel implements Helpful {
                     // Set the text label in the bottom status bar
                     osmNearest = mv.getNearest(ms.mousePos);
                     if (osmNearest != null) {
-                        NameVisitor visitor = new NameVisitor();
-                        osmNearest.visit(visitor);
-                        nameText.setText(visitor.name);
-                    } else
+                        nameText.setText(NAME_FORMATTER.getName(osmNearest));
+                    } else {
                         nameText.setText(tr("(no object)"));
+                    }
 
                     // Popup Information
                     if ((ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0 ) {
                         Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
 
-                        if (osms == null)
+                        if (osms == null) {
                             continue;
-                        if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers)
+                        }
+                        if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers) {
                             continue;
+                        }
 
                         if (popup != null) {
                             try {
@@ -189,17 +193,23 @@ public class MapStatus extends JPanel implements Helpful {
 
                         JPanel c = new JPanel(new GridBagLayout());
                         for (final OsmPrimitive osm : osms) {
-                            NameVisitor visitor = new NameVisitor();
-                            osm.visit(visitor);
                             final StringBuilder text = new StringBuilder();
-                            if (osm.id == 0 || osm.modified)
-                                visitor.name = "<i><b>"+visitor.name+"*</b></i>";
-                            text.append(visitor.name);
-                            if (osm.id != 0)
+                            String name = NAME_FORMATTER.getName(osm);
+                            if (osm.id == 0 || osm.modified) {
+                                name = "<i><b>"+ new PrimitiveNameFormatter().getName(osm)+"*</b></i>";
+                            }
+                            text.append(name);
+                            if (osm.id != 0) {
                                 text.append("<br>id="+osm.id);
-                            for (Entry<String, String> e : osm.entrySet())
+                            }
+                            for (Entry<String, String> e : osm.entrySet()) {
                                 text.append("<br>"+e.getKey()+"="+e.getValue());
-                            final JLabel l = new JLabel("<html>"+text.toString()+"</html>", visitor.icon, JLabel.HORIZONTAL);
+                            }
+                            final JLabel l = new JLabel(
+                                    "<html>"+text.toString()+"</html>",
+                                    ImageProvider.get(OsmPrimitiveType.from(osm)),
+                                    JLabel.HORIZONTAL
+                            );
                             l.setFont(l.getFont().deriveFont(Font.PLAIN));
                             l.setVerticalTextPosition(JLabel.TOP);
                             l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -211,7 +221,7 @@ public class MapStatus extends JPanel implements Helpful {
                                     l.setText("<html>"+text.toString()+"</html>");
                                 }
                                 @Override public void mouseClicked(MouseEvent e) {
-                                    Main.ds.setSelected(osm);
+                                    Main.main.getCurrentDataSet().setSelected(osm);
                                     mv.repaint();
                                 }
                             });
@@ -305,11 +315,12 @@ public class MapStatus extends JPanel implements Helpful {
             Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener(){
                 public void eventDispatched(AWTEvent event) {
                     if (event instanceof ComponentEvent &&
-                        ((ComponentEvent)event).getComponent() == mapFrame.mapView) {
+                            ((ComponentEvent)event).getComponent() == mapFrame.mapView) {
                         synchronized (collector) {
                             mouseState.modifiers = ((InputEvent)event).getModifiersEx();
-                            if (event instanceof MouseEvent)
+                            if (event instanceof MouseEvent) {
                                 mouseState.mousePos = ((MouseEvent)event).getPoint();
+                            }
                             collector.notify();
                         }
                     }

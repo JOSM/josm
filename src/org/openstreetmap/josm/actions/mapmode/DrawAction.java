@@ -93,7 +93,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // Add extra shortcut N
         Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
+                Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
 
         cursorCrosshair = getCursor();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
@@ -123,15 +123,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     if(!(Main.map.mapMode instanceof DrawAction))
                         return;
                     switch(c) {
-                        case way:
-                            Main.map.mapView.setCursor(cursorJoinWay);
-                            break;
-                        case node:
-                            Main.map.mapView.setCursor(cursorJoinNode);
-                            break;
-                        default:
-                            Main.map.mapView.setCursor(cursorCrosshair);
-                            break;
+                    case way:
+                        Main.map.mapView.setCursor(cursorJoinWay);
+                        break;
+                    case node:
+                        Main.map.mapView.setCursor(cursorJoinNode);
+                        break;
+                    default:
+                        Main.map.mapView.setCursor(cursorCrosshair);
+                    break;
                     }
                 }
             });
@@ -161,16 +161,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         // This happens when nothing is selected, but we still want to highlight the "target node"
-        if (mouseOnExistingNode == null && Main.ds.getSelected().size() == 0
-                && mousePos != null)
+        if (mouseOnExistingNode == null && getCurrentDataSet().getSelected().size() == 0
+                && mousePos != null) {
             mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos);
+        }
 
         if (mouseOnExistingNode != null) {
             setCursor(Cursors.node);
             // We also need this list for the statusbar help text
             oldHighlights.add(mouseOnExistingNode);
-            if(drawTargetHighlight)
+            if(drawTargetHighlight) {
                 mouseOnExistingNode.highlighted = true;
+            }
             return;
         }
 
@@ -258,7 +260,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private void tryAgain(MouseEvent e) {
-        Main.ds.setSelected();
+        getCurrentDataSet().setSelected();
         mouseClicked(e);
     }
 
@@ -305,16 +307,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         updateKeyModifiers(e);
         mousePos = e.getPoint();
 
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         Collection<Command> cmds = new LinkedList<Command>();
 
         ArrayList<Way> reuseWays = new ArrayList<Way>(),
-            replacedWays = new ArrayList<Way>();
+        replacedWays = new ArrayList<Way>();
         boolean newNode = false;
         Node n = null;
 
-        if (!ctrl)
+        if (!ctrl) {
             n = Main.map.mapView.getNearestNode(mousePos);
+        }
 
         if (n != null) {
             // user clicked on node
@@ -322,8 +325,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // select the clicked node and do nothing else
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
-                Main.ds.setSelected(n);
-                selection = Main.ds.getSelected();
+                getCurrentDataSet().setSelected(n);
+                selection = getCurrentDataSet().getSelected();
                 // The user explicitly selected a node, so let him continue drawing
                 wayIsFinished = false;
                 return;
@@ -333,7 +336,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
             if (n.getCoor().isOutSideWorld()) {
                 JOptionPane.showMessageDialog(Main.parent,
-                    tr("Cannot add a node outside of the world."));
+                        tr("Cannot add a node outside of the world."));
                 return;
             }
             newNode = true;
@@ -365,16 +368,22 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     Way wnew = new Way(w);
 
                     pruneSuccsAndReverse(is);
-                    for (int i : is) segSet.add(
-                        Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
-                    for (int i : is) wnew.addNode(i + 1, n);
+                    for (int i : is) {
+                        segSet.add(
+                                Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
+                    }
+                    for (int i : is) {
+                        wnew.addNode(i + 1, n);
+                    }
 
                     // If ALT is pressed, a new way should be created and that new way should get
                     // selected. This works everytime unless the ways the nodes get inserted into
                     // are already selected. This is the case when creating a self-overlapping way
                     // but pressing ALT prevents this. Therefore we must de-select the way manually
                     // here so /only/ the new way will be selected after this method finishes.
-                    if(alt) wnew.selected = false;
+                    if(alt) {
+                        wnew.selected = false;
+                    }
 
                     cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
                     replacedWays.add(insertPoint.getKey());
@@ -449,8 +458,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 if(way != null) {
                     int nodeCount=0;
                     for (Node p : way.nodes)
-                        if(p.equals(n0)) nodeCount++;
-                    if(nodeCount > 1) way = null;
+                        if(p.equals(n0)) {
+                            nodeCount++;
+                        }
+                    if(nodeCount > 1) {
+                        way = null;
+                    }
                 }
 
                 if (way == null) {
@@ -475,27 +488,30 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 // Add new node to way
-                if (way.nodes.get(way.nodes.size() - 1) == n0)
+                if (way.nodes.get(way.nodes.size() - 1) == n0) {
                     way.addNode(n);
-                else
+                } else {
                     way.addNode(0, n);
+                }
 
                 extendedWay = true;
-                Main.ds.setSelected(way);
+                getCurrentDataSet().setSelected(way);
             }
         }
 
         String title;
         if (!extendedWay) {
-            if (!newNode) {
+            if (!newNode)
                 return; // We didn't do anything.
-            } else if (reuseWays.isEmpty()) {
+            else if (reuseWays.isEmpty()) {
                 title = tr("Add node");
             } else {
                 title = tr("Add node into way");
-                for (Way w : reuseWays) w.selected = false;
+                for (Way w : reuseWays) {
+                    w.selected = false;
+                }
             }
-            Main.ds.setSelected(n);
+            getCurrentDataSet().setSelected(n);
         } else if (!newNode) {
             title = tr("Connect existing way to node");
         } else if (reuseWays.isEmpty()) {
@@ -507,7 +523,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Command c = new SequenceCommand(title, cmds);
 
         Main.main.undoRedo.add(c);
-        if(!wayIsFinished) lastUsedNode = n;
+        if(!wayIsFinished) {
+            lastUsedNode = n;
+        }
 
         computeHelperLine();
         removeHighlighting();
@@ -533,9 +551,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if(selectedWay != null && selectedWay.nodes != null) {
             int posn0 = selectedWay.nodes.indexOf(currentNode);
             if( posn0 != -1 && // n0 is part of way
-                (posn0 >= 1                          && targetNode.equals(selectedWay.nodes.get(posn0-1))) || // previous node
-                (posn0 < selectedWay.nodes.size()-1) && targetNode.equals(selectedWay.nodes.get(posn0+1))) {  // next node
-                Main.ds.setSelected(targetNode);
+                    (posn0 >= 1                          && targetNode.equals(selectedWay.nodes.get(posn0-1))) || // previous node
+                    (posn0 < selectedWay.nodes.size()-1) && targetNode.equals(selectedWay.nodes.get(posn0+1))) {  // next node
+                getCurrentDataSet().setSelected(targetNode);
                 lastUsedNode = targetNode;
                 return true;
             }
@@ -617,7 +635,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         double distance = -1;
         double angle = -1;
 
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         Node selectedNode = null;
         Way selectedWay = null;
@@ -637,8 +655,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // *and* there is no node nearby (because nodes beat ways when re-using)
         if(!ctrl && currentMouseNode == null) {
             List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(mousePos);
-            for(WaySegment ws : wss)
+            for(WaySegment ws : wss) {
                 mouseOnExistingWays.add(ws.way);
+            }
         }
 
         if (currentMouseNode != null) {
@@ -691,7 +710,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         double hdg = Math.toDegrees(currentBaseNode.getCoor().heading(mouseLatLon));
         if (previousNode != null) {
             angle = hdg - Math.toDegrees(previousNode.getCoor().heading(currentBaseNode.getCoor()));
-            if (angle < 0) angle += 360;
+            if (angle < 0) {
+                angle += 360;
+            }
         }
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.setHeading(hdg);
@@ -714,10 +735,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * @return If the node is the end of exactly one way, return this.
      *  <code>null</code> otherwise.
      */
-    public static Way getWayForNode(Node n) {
+    public Way getWayForNode(Node n) {
         Way way = null;
-        for (Way w : Main.ds.ways) {
-            if (w.deleted || w.incomplete || w.nodes.size() < 1) continue;
+        for (Way w : getCurrentDataSet().ways) {
+            if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                continue;
+            }
             Node firstNode = w.nodes.get(0);
             Node lastNode = w.nodes.get(w.nodes.size() - 1);
             if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
@@ -804,14 +827,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         default:
             EastNorth P = n.getEastNorth();
-            seg = segs.iterator().next();
-            A = seg.a.getEastNorth();
-            B = seg.b.getEastNorth();
-            double a = P.distanceSq(B);
-            double b = P.distanceSq(A);
-            double c = A.distanceSq(B);
-            q = (a - b + c) / (2*c);
-            n.setEastNorth(new EastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north())));
+        seg = segs.iterator().next();
+        A = seg.a.getEastNorth();
+        B = seg.b.getEastNorth();
+        double a = P.distanceSq(B);
+        double b = P.distanceSq(A);
+        double c = A.distanceSq(B);
+        q = (a - b + c) / (2*c);
+        n.setEastNorth(new EastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north())));
         }
     }
 
@@ -882,39 +905,42 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         } else {
             // oldHighlights may store a node or way, check if it's a node
             OsmPrimitive x = oldHighlights.iterator().next();
-            if (x instanceof Node)
+            if (x instanceof Node) {
                 rv = tr("Select node under cursor.");
-            else
+            } else {
                 rv = trn("Insert new node into way.", "Insert new node into {0} ways.",
-                oldHighlights.size(), oldHighlights.size());
+                        oldHighlights.size(), oldHighlights.size());
+            }
         }
 
         /*
          * Check whether a connection will be made
          */
         if (currentBaseNode != null && !wayIsFinished) {
-            if (alt)
+            if (alt) {
                 rv += " " + tr("Start new way from last node.");
-            else
+            } else {
                 rv += " " + tr("Continue way from last node.");
+            }
         }
 
         Node n = mouseOnExistingNode;
         /*
          * Handle special case: Highlighted node == selected node => finish drawing
          */
-        if (n != null && Main.ds.getSelectedNodes().contains(n)) {
-            if (wayIsFinished)
+        if (n != null && getCurrentDataSet().getSelectedNodes().contains(n)) {
+            if (wayIsFinished) {
                 rv = tr("Select node under cursor.");
-            else
+            } else {
                 rv = tr("Finish drawing.");
+            }
         }
 
         /*
          * Handle special case: Self-Overlapping or closing way
          */
-        if (Main.ds.getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
-            Way w = (Way) Main.ds.getSelectedWays().iterator().next();
+        if (getCurrentDataSet().getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
+            Way w = (Way) getCurrentDataSet().getSelectedWays().iterator().next();
             for (Node m : w.nodes) {
                 if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
                     rv += " " + tr("Finish drawing.");

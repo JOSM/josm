@@ -78,7 +78,7 @@ public final class AddNodeAction extends JosmAction implements LayerChangeListen
 
         /* Now execute the commands to add the dupicated contents of the paste buffer to the map */
         Main.main.undoRedo.add(new AddCommand(nnew));
-        Main.ds.setSelected(nnew);
+        getCurrentDataSet().setSelected(nnew);
         Main.map.mapView.repaint();
     }
 

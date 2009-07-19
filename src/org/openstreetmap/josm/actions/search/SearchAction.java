@@ -163,10 +163,10 @@ public class SearchAction extends JosmAction implements LayerChangeListener{
             }
         }
         try {
-            Collection<OsmPrimitive> sel = Main.ds.getSelected();
+            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
             SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive, regexSearch);
             int foundMatches = 0;
-            for (OsmPrimitive osm : Main.ds.allNonDeletedCompletePrimitives()) {
+            for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives()) {
                 if (mode == SearchMode.replace) {
                     if (matcher.match(osm)) {
                         sel.add(osm);
@@ -182,7 +182,7 @@ public class SearchAction extends JosmAction implements LayerChangeListener{
                     ++foundMatches;
                 }
             }
-            Main.ds.setSelected(sel);
+            Main.main.getCurrentDataSet().setSelected(sel);
             if (foundMatches == 0) {
                 String msg = null;
                 if (mode == SearchMode.replace) {
@@ -240,10 +240,7 @@ public class SearchAction extends JosmAction implements LayerChangeListener{
      * 
      */
     protected void refreshEnabled() {
-        setEnabled(Main.map != null
-                && Main.map.mapView !=null
-                && Main.map.mapView.getEditLayer() != null
-        );
+        setEnabled(getEditLayer() != null);
     }
 
     /* ---------------------------------------------------------------------------------- */

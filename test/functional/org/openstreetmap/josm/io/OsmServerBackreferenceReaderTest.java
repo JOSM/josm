@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class OsmServerBackreferenceReaderTest {

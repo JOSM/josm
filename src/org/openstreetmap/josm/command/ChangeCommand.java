@@ -10,7 +10,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Command that basically replaces one OSM primitive by another of the
@@ -41,8 +43,11 @@ public class ChangeCommand extends Command {
     }
 
     @Override public MutableTreeNode description() {
-        NameVisitor v = new NameVisitor();
-        osm.visit(v);
-        return new DefaultMutableTreeNode(new JLabel(tr("Change {0} {1}", tr(v.className), v.name), v.icon, JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(
+                new JLabel(tr("Change {0} {1}",
+                        OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
+                        new PrimitiveNameFormatter().getName(osm)),
+                        ImageProvider.get(OsmPrimitiveType.from(osm)),
+                        JLabel.HORIZONTAL));
     }
 }

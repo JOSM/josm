@@ -159,7 +159,7 @@ public abstract class SaveActionBase extends DiskAccessAction implements LayerCh
             OsmGzipImporter osmGzipImporter = new OsmGzipImporter();
             OsmBzip2Importer osmBzip2Importer = new OsmBzip2Importer();
             if (gpxImExporter.acceptFile(file)) {
-                GpxExportAction.exportGpx(file, layer);
+                new GpxExportAction().exportGpx(file, layer);
             } else if (osmImExporter.acceptFile(file)
                     || osmGzipImporter.acceptFile(file)
                     || osmBzip2Importer.acceptFile(file))

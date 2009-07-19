@@ -78,7 +78,7 @@ public final class AlignInCircleAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Way> ways = new LinkedList<Way>();
         EastNorth center = null;

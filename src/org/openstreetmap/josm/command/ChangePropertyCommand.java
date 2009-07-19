@@ -13,7 +13,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -92,12 +93,20 @@ public class ChangePropertyCommand extends Command {
 
     @Override public MutableTreeNode description() {
         String text;
+        PrimitiveNameFormatter formatter = new PrimitiveNameFormatter();
         if (objects.size() == 1) {
-            NameVisitor v = new NameVisitor();
-            objects.iterator().next().visit(v);
+            OsmPrimitive primitive = objects.iterator().next();
+            String name = formatter.getName(primitive);
             text = value == null
-            ? tr("Remove \"{0}\" for {1} ''{2}''", key, tr(v.className), v.name)
-                    : tr("Set {0}={1} for {2} ''{3}''",key,value, tr(v.className), v.name);
+            ? tr("Remove \"{0}\" for {1} ''{2}''", key,
+                    OsmPrimitiveType.from(primitive).getLocalizedDisplayNameSingular(),
+                    name)
+                    : tr("Set {0}={1} for {2} ''{3}''",
+                            key,
+                            value,
+                            OsmPrimitiveType.from(primitive).getLocalizedDisplayNameSingular(),
+                            name
+                    );
         }
         else
         {
@@ -108,10 +117,14 @@ public class ChangePropertyCommand extends Command {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL));
         if (objects.size() == 1)
             return root;
-        NameVisitor v = new NameVisitor();
         for (OsmPrimitive osm : objects) {
-            osm.visit(v);
-            root.add(new DefaultMutableTreeNode(v.toLabel()));
+            root.add(new DefaultMutableTreeNode(
+                    new JLabel(
+                            formatter.getName(osm),
+                            ImageProvider.get(OsmPrimitiveType.from(osm)),
+                            JLabel.HORIZONTAL)
+            )
+            );
         }
         return root;
     }

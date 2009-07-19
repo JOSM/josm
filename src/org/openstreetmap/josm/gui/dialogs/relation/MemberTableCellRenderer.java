@@ -14,7 +14,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -22,6 +22,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * 
  */
 public  class MemberTableCellRenderer extends JLabel implements TableCellRenderer {
+    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
+
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
 
@@ -111,10 +113,8 @@ public  class MemberTableCellRenderer extends JLabel implements TableCellRendere
     }
 
     protected void renderPrimitive(OsmPrimitive primitive) {
-        NameVisitor visitor = new NameVisitor();
-        primitive.visit(visitor);
         setIcon(icons.get(OsmPrimitiveType.from(primitive)));
-        setText(visitor.name);
+        setText(NAME_FORMATTER.getName(primitive));
         setToolTipText(buildToolTipText(primitive));
     }
 

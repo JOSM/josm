@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
@@ -46,8 +45,8 @@ public class ZoomAction extends MapMode implements SelectionEnded {
      */
     public ZoomAction(MapFrame mapFrame) {
         super(tr("Zoom"), "zoom", tr("Zoom and move map"),
-        Shortcut.registerShortcut("mapmode:zoom", tr("Mode: {0}", tr("Zoom")), KeyEvent.VK_Z, Shortcut.GROUP_EDIT),
-        mapFrame, ImageProvider.getCursor("normal", "zoom"));
+                Shortcut.registerShortcut("mapmode:zoom", tr("Mode: {0}", tr("Zoom")), KeyEvent.VK_Z, Shortcut.GROUP_EDIT),
+                mapFrame, ImageProvider.getCursor("normal", "zoom"));
         mv = mapFrame.mapView;
         selectionManager = new SelectionManager(this, true, mv);
     }
@@ -56,8 +55,9 @@ public class ZoomAction extends MapMode implements SelectionEnded {
      * Zoom to the rectangle on the map.
      */
     public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
-        if (r.width >= 3 && r.height >= 3)
+        if (r.width >= 3 && r.height >= 3) {
             mv.zoomToFactor(mv.getEastNorth(r.x+r.width/2, r.y+r.height/2), r.getWidth()/mv.getWidth());
+        }
     }
 
     @Override public void enterMode() {

@@ -100,12 +100,14 @@ public class TaggingPreset extends AbstractAction {
         returnValue.values = new HashSet<String>();
         for (OsmPrimitive s : sel) {
             String v = s.get(key);
-            if (v != null)
+            if (v != null) {
                 returnValue.values.add(v);
-            else
+            } else {
                 returnValue.hadEmpty = true;
-            if(s.keys != null && s.keys.size() > 0)
+            }
+            if(s.keys != null && s.keys.size() > 0) {
                 returnValue.hadKeys = true;
+            }
         }
         return returnValue;
     }
@@ -148,7 +150,9 @@ public class TaggingPreset extends AbstractAction {
             } else if (usage.allSimilar()) {
                 // all objects use the same value
                 value = new JTextField();
-                for (String s : usage.values) ((JTextField) value).setText(s);
+                for (String s : usage.values) {
+                    ((JTextField) value).setText(s);
+                }
                 originalValue = ((JTextField)value).getText();
             } else {
                 // the objects have different values
@@ -157,8 +161,9 @@ public class TaggingPreset extends AbstractAction {
                 ((JComboBox)value).getEditor().setItem(DIFFERENT);
                 originalValue = DIFFERENT;
             }
-            if(locale_text == null)
+            if(locale_text == null) {
                 locale_text = tr(text);
+            }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
@@ -168,15 +173,18 @@ public class TaggingPreset extends AbstractAction {
 
             // return if unchanged
             String v = (value instanceof JComboBox) ?
-                ((JComboBox)value).getEditor().getItem().toString() :
-                ((JTextField)value).getText();
+                    ((JComboBox)value).getEditor().getItem().toString() :
+                        ((JTextField)value).getText();
 
-            if (use_last_as_default) lastValue.put(key, v);
-            if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) return;
+                    if (use_last_as_default) {
+                        lastValue.put(key, v);
+                    }
+                    if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) return;
 
-            if (delete_if_empty && v.length() == 0)
-                v = null;
-            cmds.add(new ChangePropertyCommand(sel, key, v));
+                    if (delete_if_empty && v.length() == 0) {
+                        v = null;
+                    }
+                    cmds.add(new ChangePropertyCommand(sel, key, v));
         }
         @Override boolean requestFocusInWindow() {return value.requestFocusInWindow();}
     }
@@ -199,26 +207,31 @@ public class TaggingPreset extends AbstractAction {
             Usage usage = determineBooleanUsage(sel, key);
             def = default_;
 
-            if(locale_text == null)
+            if(locale_text == null) {
                 locale_text = tr(text);
+            }
 
             String oneValue = null;
-            for (String s : usage.values) oneValue = s;
+            for (String s : usage.values) {
+                oneValue = s;
+            }
             if (usage.values.size() < 2 && (oneValue == null || OsmUtils.trueval.equals(oneValue) || OsmUtils.falseval.equals(oneValue))) {
                 if(def)
                 {
                     for (OsmPrimitive s : sel)
-                        if(s.keys != null && s.keys.size() > 0) def = false;
+                        if(s.keys != null && s.keys.size() > 0) {
+                            def = false;
+                        }
                 }
 
                 // all selected objects share the same value which is either true or false or unset,
                 // we can display a standard check box.
                 initialState = OsmUtils.trueval.equals(oneValue) ?
-                            QuadStateCheckBox.State.SELECTED :
+                        QuadStateCheckBox.State.SELECTED :
                             OsmUtils.falseval.equals(oneValue) ?
-                            QuadStateCheckBox.State.NOT_SELECTED :
-                            def ? QuadStateCheckBox.State.SELECTED
-                            : QuadStateCheckBox.State.UNSET;
+                                    QuadStateCheckBox.State.NOT_SELECTED :
+                                        def ? QuadStateCheckBox.State.SELECTED
+                                                : QuadStateCheckBox.State.UNSET;
                 check = new QuadStateCheckBox(locale_text, initialState,
                         new QuadStateCheckBox.State[] {
                         QuadStateCheckBox.State.SELECTED,
@@ -248,8 +261,8 @@ public class TaggingPreset extends AbstractAction {
             // otherwise change things according to the selected value.
             cmds.add(new ChangePropertyCommand(sel, key,
                     check.getState() == QuadStateCheckBox.State.SELECTED ? OsmUtils.trueval :
-                    check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? OsmUtils.falseval :
-                    null));
+                        check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? OsmUtils.falseval :
+                            null));
         }
         @Override boolean requestFocusInWindow() {return check.requestFocusInWindow();}
     }
@@ -279,12 +292,13 @@ public class TaggingPreset extends AbstractAction {
 
             String[] value_array = values.split(",");
             String[] display_array;
-            if(locale_display_values != null)
+            if(locale_display_values != null) {
                 display_array = locale_display_values.split(",");
-            else if(display_values != null)
+            } else if(display_values != null) {
                 display_array = display_values.split(",");
-            else
+            } else {
                 display_array = value_array;
+            }
 
             lhm = new LinkedHashMap<String,String>();
             if (!usage.allSimilar() && !usage.unused())
@@ -293,17 +307,23 @@ public class TaggingPreset extends AbstractAction {
             }
             for (int i=0; i<value_array.length; i++) {
                 lhm.put(value_array[i],
-                (locale_display_values == null) ?
-                tr(display_array[i]) : display_array[i]);
+                        (locale_display_values == null) ?
+                                tr(display_array[i]) : display_array[i]);
             }
             if(!usage.unused())
             {
                 for (String s : usage.values) {
-                    if (!lhm.containsKey(s)) lhm.put(s, s);
+                    if (!lhm.containsKey(s)) {
+                        lhm.put(s, s);
+                    }
                 }
             }
-            if (default_ != null && !lhm.containsKey(default_)) lhm.put(default_, default_);
-            if(!lhm.containsKey("")) lhm.put("", "");
+            if (default_ != null && !lhm.containsKey(default_)) {
+                lhm.put(default_, default_);
+            }
+            if(!lhm.containsKey("")) {
+                lhm.put("", "");
+            }
 
             combo = new JComboBox(lhm.values().toArray());
             combo.setEditable(editable);
@@ -329,8 +349,9 @@ public class TaggingPreset extends AbstractAction {
                 originalValue=DIFFERENT;
             }
 
-            if(locale_text == null)
+            if(locale_text == null) {
                 locale_text = tr(text);
+            }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
@@ -339,26 +360,31 @@ public class TaggingPreset extends AbstractAction {
             Object obj = combo.getSelectedItem();
             String display = (obj == null) ? null : obj.toString();
             String value = null;
-            if(display == null && combo.isEditable())
+            if(display == null && combo.isEditable()) {
                 display = combo.getEditor().getItem().toString();
+            }
 
             if (display != null)
             {
                 for (String key : lhm.keySet()) {
                     String k = lhm.get(key);
-                    if (k != null && k.equals(display)) value=key;
+                    if (k != null && k.equals(display)) {
+                        value=key;
+                    }
                 }
-                if(value == null)
+                if(value == null) {
                     value = display;
-            }
-            else
+                }
+            } else {
                 value = "";
+            }
 
             // no change if same as before
             if (value.equals(originalValue) || (originalValue == null && (value == null || value.length() == 0))) return;
 
-            if (delete_if_empty && value != null && value.length() == 0)
+            if (delete_if_empty && value != null && value.length() == 0) {
                 value = null;
+            }
             cmds.add(new ChangePropertyCommand(sel, key, value));
         }
         @Override boolean requestFocusInWindow() {return combo.requestFocusInWindow();}
@@ -369,8 +395,9 @@ public class TaggingPreset extends AbstractAction {
         public String locale_text;
 
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-            if(locale_text == null)
+            if(locale_text == null) {
                 locale_text = tr(text);
+            }
             p.add(new JLabel(locale_text), GBC.eol());
             return false;
         }
@@ -384,8 +411,9 @@ public class TaggingPreset extends AbstractAction {
         public String locale_href;
 
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
-            if(locale_text == null)
+            if(locale_text == null) {
                 locale_text = text == null ? tr("More information about this feature") : tr(text);
+            }
             String url = locale_href;
             if (url == null) {
                 url = href;
@@ -448,13 +476,14 @@ public class TaggingPreset extends AbstractAction {
         putValue(Action.NAME, getName());
         putValue("toolbar", "tagging_" + getRawName());
         putValue(SHORT_DESCRIPTION, (group != null ?
-        tr("Use preset ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
-        tr("Use preset ''{0}''", getLocaleName())));
+                tr("Use preset ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
+                    tr("Use preset ''{0}''", getLocaleName())));
     }
 
     public String getLocaleName() {
-        if(locale_name == null)
+        if(locale_name == null) {
             locale_name = tr(name);
+        }
         return locale_name;
     }
 
@@ -478,8 +507,9 @@ public class TaggingPreset extends AbstractAction {
             System.out.println("Could not get presets icon " + iconName);
             icon = new ImageIcon(iconName);
         }
-        if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 16)
+        if (Math.max(icon.getIconHeight(), icon.getIconWidth()) != 16) {
             icon = new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+        }
         putValue(Action.SMALL_ICON, icon);
     }
 
@@ -487,7 +517,7 @@ public class TaggingPreset extends AbstractAction {
      * Called from the XML parser to set the types this preset affects
      */
     private static Collection<String> allowedtypes = Arrays.asList(new String[]
-    {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
+                                                                              {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
     public void setType(String types) throws SAXException {
         this.types = Arrays.asList(types.split(","));
         for (String type : this.types) {
@@ -516,9 +546,9 @@ public class TaggingPreset extends AbstractAction {
             Object o = parser.next();
             if (o instanceof TaggingPresetMenu) {
                 TaggingPresetMenu tp = (TaggingPresetMenu) o;
-                if(tp == lastmenu)
+                if(tp == lastmenu) {
                     lastmenu = tp.group;
-                else
+                } else
                 {
                     tp.setDisplayName();
                     tp.group = lastmenu;
@@ -537,8 +567,9 @@ public class TaggingPreset extends AbstractAction {
                 tp.setDisplayName();
                 all.add(tp);
                 Main.toolbar.register(tp);
-            } else
+            } else {
                 all.getLast().data.add((Item)o);
+            }
         }
         return all;
     }
@@ -547,8 +578,9 @@ public class TaggingPreset extends AbstractAction {
         LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
         LinkedList<String> sources = new LinkedList<String>();
 
-        if(Main.pref.getBoolean("taggingpreset.enable-defaults", true))
+        if(Main.pref.getBoolean("taggingpreset.enable-defaults", true)) {
             sources.add("resource://presets/presets.xml");
+        }
         sources.addAll(Main.pref.getCollection("taggingpreset.sources", new LinkedList<String>()));
 
         for(String source : sources)
@@ -603,21 +635,23 @@ public class TaggingPreset extends AbstractAction {
 
         for (Item i : data)
         {
-            if(i instanceof Link)
+            if(i instanceof Link) {
                 l.add(i);
-            else
+            } else
             {
-                if(i.addToPanel(p, selected))
+                if(i.addToPanel(p, selected)) {
                     p.hasElements = true;
+                }
             }
         }
-        for(Item link : l)
+        for(Item link : l) {
             link.addToPanel(p, selected);
+        }
         return p;
     }
 
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = createSelection(Main.ds.getSelected());
+        Collection<OsmPrimitive> sel = createSelection(Main.main.getCurrentDataSet().getSelected());
         PresetPanel p = createPanel(sel);
         if (p == null)
             return;
@@ -626,10 +660,11 @@ public class TaggingPreset extends AbstractAction {
         if (p.getComponentCount() != 0 && (sel.size() == 0 || p.hasElements)) {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
             if(sel.size() == 0) {
-                if(originalSelectionEmpty)
+                if(originalSelectionEmpty) {
                     title = tr("Nothing selected!");
-                else
+                } else {
                     title = tr("Selection unsuitable!");
+                }
             }
 
             class PresetDialog extends ExtendedDialog {
@@ -650,10 +685,11 @@ public class TaggingPreset extends AbstractAction {
         }
         if (sel.size() != 0 && answer == 1) {
             Command cmd = createCommand(sel);
-            if (cmd != null)
+            if (cmd != null) {
                 Main.main.undoRedo.add(cmd);
+            }
         }
-        Main.ds.setSelected(Main.ds.getSelected()); // force update
+        Main.main.getCurrentDataSet().setSelected(Main.main.getCurrentDataSet().getSelected()); // force update
     }
 
     /**
@@ -675,17 +711,22 @@ public class TaggingPreset extends AbstractAction {
             {
                 if(osm instanceof Relation)
                 {
-                    if(!types.contains("relation")) continue;
+                    if(!types.contains("relation")) {
+                        continue;
+                    }
                 }
                 else if(osm instanceof Node)
                 {
-                    if(!types.contains("node")) continue;
+                    if(!types.contains("node")) {
+                        continue;
+                    }
                 }
                 else if(osm instanceof Way)
                 {
                     if(!types.contains("way") &&
-                    !(types.contains("closedway") && ((Way)osm).isClosed()))
+                            !(types.contains("closedway") && ((Way)osm).isClosed())) {
                         continue;
+                    }
                 }
             }
             sel.add(osm);
@@ -695,8 +736,9 @@ public class TaggingPreset extends AbstractAction {
 
     private Command createCommand(Collection<OsmPrimitive> sel) {
         List<Command> cmds = new LinkedList<Command>();
-        for (Item i : data)
+        for (Item i : data) {
             i.addCommands(sel, cmds);
+        }
         if (cmds.size() == 0)
             return null;
         else if (cmds.size() == 1)

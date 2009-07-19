@@ -11,7 +11,8 @@ import java.util.logging.Logger;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * deleted. - All remaining objects with modified flag set are updated.
  */
 public class OsmServerWriter {
+    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
     static private final Logger logger = Logger.getLogger(OsmServerWriter.class.getName());
 
     /**
@@ -122,22 +124,24 @@ public class OsmServerWriter {
                 //
                 progressMonitor.setTicksCount(primitives.size());
                 api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
-                NameVisitor v = new NameVisitor();
                 uploadStartTime = System.currentTimeMillis();
                 for (OsmPrimitive osm : primitives) {
-                    osm.visit(v);
                     int progress = progressMonitor.getTicks();
                     String time_left_str = timeLeft(progress, primitives.size());
                     progressMonitor.subTask(
                             tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
                                     Math.round(100.0*progress/primitives.size()), progress,
-                                    primitives.size(), time_left_str, tr(v.className), v.name, osm.id));
+                                    primitives.size(), time_left_str,
+                                    OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
+                                    NAME_FORMATTER.getName(osm),
+                                    osm.id));
                     makeApiRequest(osm);
                     processed.add(osm);
                     progressMonitor.worked(1);
                 }
                 api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
             }
+
         } finally {
             progressMonitor.finishTask();
         }

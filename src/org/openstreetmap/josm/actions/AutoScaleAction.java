@@ -78,7 +78,7 @@ public class AutoScaleAction extends JosmAction {
         } else if (mode.equals("selection") || mode.equals("conflict")) {
             Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
             if (mode.equals("selection")) {
-                sel = Main.ds.getSelected();
+                sel = getCurrentDataSet().getSelected();
             } else if (mode.equals("conflict")) {
                 if (Main.map.conflictDialog.getConflicts() != null) {
                     sel = Main.map.conflictDialog.getConflicts().getMyConflictParties();

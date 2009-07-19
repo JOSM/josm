@@ -37,16 +37,16 @@ public final class OrthogonalizeAction extends JosmAction {
 
     public OrthogonalizeAction() {
         super(tr("Orthogonalize Shape"),
-            "ortho",
-            tr("Move nodes so all angles are 90 or 270 degree"),
-            Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize Shape")),
-            KeyEvent.VK_Q,
-            Shortcut.GROUP_EDIT), true);
+                "ortho",
+                tr("Move nodes so all angles are 90 or 270 degree"),
+                Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize Shape")),
+                        KeyEvent.VK_Q,
+                        Shortcut.GROUP_EDIT), true);
     }
 
     public void actionPerformed(ActionEvent e) {
 
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         ArrayList<Node> dirnodes = new ArrayList<Node>();
 
@@ -83,7 +83,9 @@ public final class OrthogonalizeAction extends JosmAction {
                 double angle1  =Math.abs(way.nodes.get(i1).getEastNorth().heading(way.nodes.get(i2).getEastNorth()));
                 double angle2 = Math.abs(way.nodes.get(i2).getEastNorth().heading(way.nodes.get(i3).getEastNorth()));
                 double delta = Math.abs(angle2 - angle1);
-                while(delta > Math.PI) delta -= Math.PI;
+                while(delta > Math.PI) {
+                    delta -= Math.PI;
+                }
                 if(delta < Math.PI/4) {
                     JOptionPane.showMessageDialog(Main.parent, tr("Please select ways with almost right angles to orthogonalize."));
                     return;
@@ -95,11 +97,10 @@ public final class OrthogonalizeAction extends JosmAction {
             String msg = tr("<html>You are using the EPSG:4326 projection which might lead<br>" +
                     "to undesirable results when doing rectangular alignments.<br>" +
                     "Change your projection to get rid of this warning.<br>" +
-                    "Do you want to continue?");
+            "Do you want to continue?");
 
-            if (!DontShowAgainInfo.show("align_rectangular_4326", msg, false)) {
+            if (!DontShowAgainInfo.show("align_rectangular_4326", msg, false))
                 return;
-            }
         }
         // Check, if selection held neither none nor two nodes
         if(dirnodes.size() == 1) {
@@ -121,8 +122,9 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         for (OsmPrimitive osm : sel) {
-            if(!(osm instanceof Way))
+            if(!(osm instanceof Way)) {
                 continue;
+            }
 
             Way way = (Way)osm;
             int nodes = way.nodes.size();
@@ -157,14 +159,17 @@ public final class OrthogonalizeAction extends JosmAction {
                     } else {
                         diff = heading_diff(headings[i], headings[i - 1]);
                     }
-                    if (diff > angle_diff_max) angle_diff_max = diff;
+                    if (diff > angle_diff_max) {
+                        angle_diff_max = diff;
+                    }
                 }
 
                 if (angle_diff_max > Math.PI/3) {
                     // rearrange headings: everything < 0 gets PI/2-rotated
                     for (int i=0; i < sides; i++) {
-                        if (headings[i] < 0)
+                        if (headings[i] < 0) {
                             headings[i] += Math.PI/2;
+                        }
                     }
                 }
 
@@ -216,7 +221,9 @@ public final class OrthogonalizeAction extends JosmAction {
                 // In practice this will probably only happen when a way has
                 // been duplicated
 
-                if (u == 0) continue;
+                if (u == 0) {
+                    continue;
+                }
 
                 // q is a number between 0 and 1
                 // It is the point in the segment where the intersection occurs
@@ -256,8 +263,12 @@ public final class OrthogonalizeAction extends JosmAction {
     static double normalize_angle(double h, double align_to) {
         double llimit = -Math.PI/4;
         double ulimit = Math.PI/4;
-        while (h - align_to > ulimit) h -= Math.PI/2;
-        while (h - align_to < llimit) h += Math.PI/2;
+        while (h - align_to > ulimit) {
+            h -= Math.PI/2;
+        }
+        while (h - align_to < llimit) {
+            h += Math.PI/2;
+        }
 
         return h;
     }

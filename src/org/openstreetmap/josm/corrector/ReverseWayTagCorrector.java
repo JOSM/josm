@@ -114,7 +114,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             new HashMap<OsmPrimitive, List<RoleCorrection>>();
         roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
 
-        for (Relation relation : Main.ds.relations) {
+        for (Relation relation : Main.main.getCurrentDataSet().relations) {
             int position = 0;
             for (RelationMember member : relation.members) {
                 if (!member.member.hasEqualSemanticAttributes(oldway)

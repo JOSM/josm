@@ -79,7 +79,7 @@ public final class CreateCircleAction extends JosmAction {
             numberOfNodesInCircle = 100;
         }
 
-        Collection<OsmPrimitive> sel = Main.ds.getSelected();
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         Collection<Node> nodes = new LinkedList<Node>();
         Way existingWay = null;
 
@@ -169,7 +169,7 @@ public final class CreateCircleAction extends JosmAction {
             // the first node may be unused/abandoned if createcircle.nodecount is odd
             if (a1 < 999) {
                 // if it is, delete it
-                CollectBackReferencesVisitor refs = new CollectBackReferencesVisitor(Main.ds);
+                CollectBackReferencesVisitor refs = new CollectBackReferencesVisitor(getCurrentDataSet());
                 refs.visit(n1);
                 if (refs.data.isEmpty() || ((refs.data.size() == 1) && (refs.data.contains(existingWay)))) {
                     cmds.add(new DeleteCommand(n1));

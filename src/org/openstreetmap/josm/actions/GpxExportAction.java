@@ -83,7 +83,7 @@ public class GpxExportAction extends DiskAccessAction implements LayerChangeList
      */
     public void export(Layer layer) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("paramenter ''{0'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("paramenter ''{0}'' must not be null", "layer"));
         if (! (layer instanceof OsmDataLayer) && ! (layer instanceof GpxLayer))
             throw new IllegalArgumentException(tr("expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
 
@@ -97,7 +97,26 @@ public class GpxExportAction extends DiskAccessAction implements LayerChangeList
         exportGpx(file, layer);
     }
 
-    public static void exportGpx(File file, Layer layer) {
+    /**
+     * Exports a layer to a file.
+     * 
+     * <code>layer</code> must not be null. <code>layer</code> must be an instance of
+     * {@see OsmDataLayer} or {@see GpxLayer}.
+     * 
+     * @param layer the layer
+     * @exception IllegalArgumentException thrown if layer is null
+     * @exception IllegalArgumentException thrown if layer is neither an instance of {@see OsmDataLayer}
+     *  nor of {@see GpxLayer}
+     */
+
+    public void exportGpx(File file, Layer layer) {
+        if (layer == null)
+            throw new IllegalArgumentException(tr("paramenter ''{0}'' must not be null", "layer"));
+        if (! (layer instanceof OsmDataLayer) && ! (layer instanceof GpxLayer))
+            throw new IllegalArgumentException(tr("expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
+        if (file == null)
+            throw new IllegalArgumentException(tr("paramenter ''{0}'' must not be null", "file"));
+
         String fn = file.getPath();
         if (fn.indexOf('.') == -1) {
             fn += ".gpx";
@@ -171,7 +190,7 @@ public class GpxExportAction extends DiskAccessAction implements LayerChangeList
         } else if (layer instanceof GpxLayer) {
             gpxData = ((GpxLayer)layer).data;
         } else {
-            gpxData = OsmDataLayer.toGpxData(Main.ds, file);
+            gpxData = OsmDataLayer.toGpxData(getCurrentDataSet(), file);
         }
 
         // add author and copyright details to the gpx data

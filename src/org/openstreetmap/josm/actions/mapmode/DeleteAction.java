@@ -76,15 +76,15 @@ public class DeleteAction extends MapMode {
 
         Command c;
         if (ctrl) {
-            c = DeleteCommand.deleteWithReferences(Main.ds.getSelected());
+            c = DeleteCommand.deleteWithReferences(getCurrentDataSet().getSelected());
         } else {
-            c = DeleteCommand.delete(Main.ds.getSelected(), !alt);
+            c = DeleteCommand.delete(getCurrentDataSet().getSelected(), !alt);
         }
         if (c != null) {
             Main.main.undoRedo.add(c);
         }
 
-        Main.ds.setSelected();
+        getCurrentDataSet().setSelected();
         Main.map.repaint();
     }
 
@@ -123,7 +123,7 @@ public class DeleteAction extends MapMode {
             Main.main.undoRedo.add(c);
         }
 
-        Main.ds.setSelected();
+        getCurrentDataSet().setSelected();
         Main.map.mapView.repaint();
     }
 

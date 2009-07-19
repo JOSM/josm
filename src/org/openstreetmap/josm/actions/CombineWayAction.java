@@ -51,17 +51,18 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 
     public CombineWayAction() {
         super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
-        Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.GROUP_EDIT), true);
         DataSet.selListeners.add(this);
     }
 
     public void actionPerformed(ActionEvent event) {
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         LinkedList<Way> selectedWays = new LinkedList<Way>();
 
         for (OsmPrimitive osm : selection)
-            if (osm instanceof Way)
+            if (osm instanceof Way) {
                 selectedWays.add((Way)osm);
+            }
 
         if (selectedWays.size() < 2) {
             JOptionPane.showMessageDialog(Main.parent, tr("Please select at least two ways to combine."));
@@ -81,8 +82,10 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         HashMap<Pair<Relation,String>, HashSet<Way>> backlinks =
             new HashMap<Pair<Relation,String>, HashSet<Way>>();
         HashSet<Relation> relationsUsingWays = new HashSet<Relation>();
-        for (Relation r : Main.ds.relations) {
-            if (r.deleted || r.incomplete) continue;
+        for (Relation r : getCurrentDataSet().relations) {
+            if (r.deleted || r.incomplete) {
+                continue;
+            }
             for (RelationMember rm : r.members) {
                 if (rm.member instanceof Way) {
                     for(Way w : selectedWays) {
@@ -111,10 +114,12 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
                 int option = new ExtendedDialog(Main.parent,
                         tr("Combine ways with different memberships?"),
                         tr("The selected ways have differing relation memberships.  "
-                            + "Do you still want to combine them?"),
-                        new String[] {tr("Combine Anyway"), tr("Cancel")},
-                        new String[] {"combineway.png", "cancel.png"}).getValue();
-                if (option == 1) break;
+                                + "Do you still want to combine them?"),
+                                new String[] {tr("Combine Anyway"), tr("Cancel")},
+                                new String[] {"combineway.png", "cancel.png"}).getValue();
+                if (option == 1) {
+                    break;
+                }
 
                 return;
             }
@@ -124,8 +129,9 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         Map<String, Set<String>> props = new TreeMap<String, Set<String>>();
         for (Way w : selectedWays) {
             for (Entry<String,String> e : w.entrySet()) {
-                if (!props.containsKey(e.getKey()))
+                if (!props.containsKey(e.getKey())) {
                     props.put(e.getKey(), new TreeSet<String>());
+                }
                 props.get(e.getKey()).add(e.getValue());
             }
         }
@@ -138,11 +144,11 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
             Object secondTry = actuallyCombineWays(selectedWays, true);
             if (secondTry instanceof List) {
                 int option = new ExtendedDialog(Main.parent,
-                    tr("Change directions?"),
-                    tr("The ways can not be combined in their current directions.  "
-                        + "Do you want to reverse some of them?"),
-                    new String[] {tr("Reverse and Combine"), tr("Cancel")},
-                    new String[] {"wayflip.png", "cancel.png"}).getValue();
+                        tr("Change directions?"),
+                        tr("The ways can not be combined in their current directions.  "
+                                + "Do you want to reverse some of them?"),
+                                new String[] {tr("Reverse and Combine"), tr("Cancel")},
+                                new String[] {"wayflip.png", "cancel.png"}).getValue();
                 if (option != 1) return;
                 nodeList = (List<Node>) secondTry;
             } else {
@@ -159,7 +165,9 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         Way modifyWay = selectedWays.peek();
         for (Way w : selectedWays) {
             modifyWay = w;
-            if (w.id != 0) break;
+            if (w.id != 0) {
+                break;
+            }
         }
         Way newWay = new Way(modifyWay);
 
@@ -187,14 +195,15 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
 
         if (!components.isEmpty()) {
             int answer = new ExtendedDialog(Main.parent,
-                tr("Enter values for all conflicts."),
-                p,
-                new String[] {tr("Solve Conflicts"), tr("Cancel")},
-                new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
+                    tr("Enter values for all conflicts."),
+                    p,
+                    new String[] {tr("Solve Conflicts"), tr("Cancel")},
+                    new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
             if (answer != 1) return;
 
-            for (Entry<String, JComboBox> e : components.entrySet())
+            for (Entry<String, JComboBox> e : components.entrySet()) {
                 newWay.put(e.getKey(), e.getValue().getEditor().getItem().toString());
+            }
         }
 
         LinkedList<Command> cmds = new LinkedList<Command>();
@@ -223,7 +232,7 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
             cmds.add(new ChangeCommand(r, newRel));
         }
         Main.main.undoRedo.add(new SequenceCommand(tr("Combine {0} ways", selectedWays.size()), cmds));
-        Main.ds.setSelected(modifyWay);
+        getCurrentDataSet().setSelected(modifyWay);
     }
 
     /**
@@ -241,14 +250,14 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         //  4. Profit!
 
         HashSet<Pair<Node,Node>> chunkSet = new HashSet<Pair<Node,Node>>();
-        for (Way w : ways)
+        for (Way w : ways) {
             chunkSet.addAll(w.getNodePairs(ignoreDirection));
+        }
 
         LinkedList<Pair<Node,Node>> chunks = new LinkedList<Pair<Node,Node>>(chunkSet);
 
-        if (chunks.isEmpty()) {
+        if (chunks.isEmpty())
             return tr("All the ways were empty");
-        }
 
         List<Node> nodeList = Pair.toArrayList(chunks.poll());
         while (!chunks.isEmpty()) {
@@ -272,13 +281,14 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
                 it.remove();
                 break;
             }
-            if (!foundChunk) break;
+            if (!foundChunk) {
+                break;
+            }
         }
 
-        if (!chunks.isEmpty()) {
+        if (!chunks.isEmpty())
             return tr("Could not combine ways "
-                + "(They could not be merged into a single string of nodes)");
-        }
+                    + "(They could not be merged into a single string of nodes)");
 
         return nodeList;
     }

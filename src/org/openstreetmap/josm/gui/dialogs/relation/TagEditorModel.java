@@ -259,22 +259,6 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     /**
-     * initializes the model with the tags in the current JOSM selection
-     */
-    public void initFromJOSMSelection() {
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
-        clear();
-        for (OsmPrimitive element : selection) {
-            for (String key : element.keySet()) {
-                String value = element.get(key);
-                add(key,value);
-            }
-        }
-        sort();
-        setDirty(false);
-    }
-
-    /**
      * initializes the model with the tags of an OSM primitive
      * 
      * @param primitive the OSM primitive
@@ -290,7 +274,6 @@ public class TagEditorModel extends AbstractTableModel {
         tags.add(tag);
         setDirty(false);
     }
-
 
     /**
      * applies the current state of the tag editor model to a primitive
@@ -380,37 +363,6 @@ public class TagEditorModel extends AbstractTableModel {
 
         return command;
     }
-
-    /**
-     * updates the tags of the primitives in the current selection with the
-     * values in the current tag model
-     * 
-     */
-    public void updateJOSMSelection() {
-        ArrayList<Command> commands = new ArrayList<Command>();
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
-        if (selection == null)
-            return;
-        for (TagModel tag : tags) {
-            Command command = createUpdateTagCommand(selection,tag);
-            if (command != null) {
-                commands.add(command);
-            }
-        }
-        Command deleteCommand = createDeleteTagsCommand(selection);
-        if (deleteCommand != null) {
-            commands.add(deleteCommand);
-        }
-
-        SequenceCommand command = new SequenceCommand(
-                trn("Updating properties of up to {0} object", "Updating properties of up to {0} objects", selection.size(), selection.size()),
-                commands
-        );
-
-        // executes the commands and adds them to the undo/redo chains
-        Main.main.undoRedo.add(command);
-    }
-
 
     /**
      * replies the list of keys of the tags managed by this model

@@ -177,7 +177,7 @@ public class UploadAction extends JosmAction implements LayerChangeListener{
             return;
         }
 
-        ConflictCollection conflicts = Main.main.createOrGetEditLayer().getConflicts();
+        ConflictCollection conflicts = Main.map.mapView.getEditLayer().getConflicts();
         if (conflicts !=null && !conflicts.isEmpty()) {
             JOptionPane.showMessageDialog(Main.parent,tr("There are unresolved conflicts. You have to resolve these first."));
             Main.map.conflictDialog.action.button.setSelected(true);
@@ -188,7 +188,7 @@ public class UploadAction extends JosmAction implements LayerChangeListener{
         final LinkedList<OsmPrimitive> add = new LinkedList<OsmPrimitive>();
         final LinkedList<OsmPrimitive> update = new LinkedList<OsmPrimitive>();
         final LinkedList<OsmPrimitive> delete = new LinkedList<OsmPrimitive>();
-        for (OsmPrimitive osm : Main.ds.allPrimitives()) {
+        for (OsmPrimitive osm : getCurrentDataSet().allPrimitives()) {
             if (osm.get("josm/ignore") != null) {
                 continue;
             }
@@ -230,8 +230,8 @@ public class UploadAction extends JosmAction implements LayerChangeListener{
 
             @Override protected void realRun() throws SAXException, IOException {
                 try {
-                    server.uploadOsm(Main.ds.version, all, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    Main.main.createOrGetEditLayer().cleanData(server.processed, !add.isEmpty());
+                    server.uploadOsm(getCurrentDataSet().version, all, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                    getEditLayer().cleanData(server.processed, !add.isEmpty());
                 } catch (Exception sxe) {
                     if (uploadCancelled) {
                         System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());

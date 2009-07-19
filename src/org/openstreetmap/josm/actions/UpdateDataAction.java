@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -37,11 +38,7 @@ public class UpdateDataAction extends JosmAction implements LayerChangeListener{
      * 
      */
     protected void refreshEnabled() {
-        setEnabled(Main.main != null
-                && Main.map != null
-                && Main.map.mapView !=null
-                && Main.map.mapView.getEditLayer() != null
-        );
+        setEnabled(getEditLayer() != null);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -49,7 +46,7 @@ public class UpdateDataAction extends JosmAction implements LayerChangeListener{
             return;
         int bboxCount = 0;
         List<Area> areas = new ArrayList<Area>();
-        for(DataSource ds : Main.main.createOrGetEditLayer().data.dataSources) {
+        for(DataSource ds : Main.map.mapView.getEditLayer().data.dataSources) {
             areas.add(new Area(ds.bounds.asRect()));
         }
 

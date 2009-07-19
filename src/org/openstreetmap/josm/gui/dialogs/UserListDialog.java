@@ -23,6 +23,9 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -31,7 +34,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
-public class UserListDialog extends ToggleDialog implements SelectionChangedListener, MouseListener{
+public class UserListDialog extends ToggleDialog implements SelectionChangedListener, MouseListener, LayerChangeListener {
 
     /**
      * The display list.
@@ -51,20 +54,24 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
     public UserListDialog() {
         super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
-        Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+                Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         data.setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         add(new JScrollPane(userTable), BorderLayout.CENTER);
-        selectionChanged(Main.ds.getSelected());
+        if (Main.main.getCurrentDataSet() != null) {
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+        }
         userTable.addMouseListener(this);
         DataSet.selListeners.add(this);
+        Layer.listeners.add(this);
     }
 
     @Override public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b)
-            selectionChanged(Main.ds.getSelected());
+        if (b && Main.main.getCurrentDataSet() != null) {
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+        }
     }
 
     /**
@@ -90,10 +97,13 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         int all = 0;
         for (OsmPrimitive p : newSelection) {
             User u = p.user;
-            if (u == null) u = anonymousUser;
+            if (u == null) {
+                u = anonymousUser;
+            }
             UserCount uc = counters.get(u);
-            if (uc == null)
+            if (uc == null) {
                 counters.put(u, uc = new UserCount(u, 0));
+            }
             uc.count++;
             all++;
         }
@@ -122,13 +132,14 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             String userName = (String) data.getValueAt(index, 0);
             if (userName==null)
                 return;
-            Collection<OsmPrimitive> selected = Main.ds.getSelected();
+            Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getSelected();
             Collection<OsmPrimitive> byUser = new LinkedList<OsmPrimitive>();
             for (OsmPrimitive p : selected) {
-                if (p.user!= null && userName.equals(p.user.name))
+                if (p.user!= null && userName.equals(p.user.name)) {
                     byUser.add(p);
+                }
             }
-            Main.ds.setSelected(byUser);
+            Main.main.getCurrentDataSet().setSelected(byUser);
         }
     }
 
@@ -144,4 +155,19 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     public void mouseReleased(MouseEvent e) {
     }
 
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        if (newLayer instanceof OsmDataLayer) {
+            OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
+            selectionChanged(dataLayer.data.getSelected());
+
+        }
+    }
+
+    public void layerAdded(Layer newLayer) {
+        // do nothing
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        // do nothing
+    }
 }

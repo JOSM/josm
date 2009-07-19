@@ -99,7 +99,7 @@ public class ApiPreconditionChecker implements UploadHook {
                     );
                     List<OsmPrimitive> newNodes = new LinkedList<OsmPrimitive>();
                     newNodes.add(osmPrimitive);
-                    Main.ds.setSelected(newNodes);
+                    Main.main.getCurrentDataSet().setSelected(newNodes);
                     return false;
                 }
             }
@@ -119,7 +119,7 @@ public class ApiPreconditionChecker implements UploadHook {
                 List<OsmPrimitive> newNodes = new LinkedList<OsmPrimitive>();
                 newNodes.add(osmPrimitive);
 
-                Main.ds.setSelected(newNodes);
+                Main.main.getCurrentDataSet().setSelected(newNodes);
                 return false;
             }
         }

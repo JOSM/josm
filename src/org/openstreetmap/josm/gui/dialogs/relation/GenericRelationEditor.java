@@ -314,7 +314,7 @@ public class GenericRelationEditor extends RelationEditor {
                         sel.add(memberTableModel.getReferredPrimitive(i));
                     }
                 }
-                Main.ds.setSelected(sel);
+                getLayer().data.setSelected(sel);
             }
         });
 
@@ -563,7 +563,7 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorModel.applyToPrimitive(newRelation);
             memberTableModel.applyToRelation(newRelation);
             Main.main.undoRedo.add(new AddCommand(newRelation));
-            DataSet.fireSelectionChanged(Main.ds.getSelected());
+            DataSet.fireSelectionChanged(getLayer().data.getSelected());
         } else if (! memberTableModel.hasSameMembersAs(getRelation()) || tagEditorModel.isDirty()) {
             Relation editedRelation = new Relation(getRelation());
             tagEditorModel.applyToPrimitive(editedRelation);
@@ -587,7 +587,7 @@ public class GenericRelationEditor extends RelationEditor {
                 tagEditorModel.applyToPrimitive(clone);
                 memberTableModel.applyToRelation(clone);
                 Main.main.undoRedo.add(new ChangeCommand(getRelation(), clone));
-                DataSet.fireSelectionChanged(Main.ds.getSelected());
+                DataSet.fireSelectionChanged(getLayer().data.getSelected());
             }
         }
     }

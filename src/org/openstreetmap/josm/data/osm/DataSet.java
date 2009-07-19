@@ -104,13 +104,41 @@ public class DataSet implements Cloneable {
         return o;
     }
 
-    public void addPrimitive(OsmPrimitive osm) {
-        if (osm instanceof Node) {
-            nodes.add((Node) osm);
-        } else if (osm instanceof Way) {
-            ways.add((Way) osm);
-        } else if (osm instanceof Relation) {
-            relations.add((Relation) osm);
+    /**
+     * Adds a primitive to the dataset
+     * 
+     * @param primitive the primitive. Ignored if null.
+     */
+    public void addPrimitive(OsmPrimitive primitive) {
+        if (primitive == null)
+            return;
+        if (primitive instanceof Node) {
+            nodes.add((Node) primitive);
+        } else if (primitive instanceof Way) {
+            ways.add((Way) primitive);
+        } else if (primitive instanceof Relation) {
+            relations.add((Relation) primitive);
+        }
+    }
+
+    /**
+     * Removes a primitive from the dataset. This method only removes the
+     * primitive form the respective collection of primitives managed
+     * by this dataset, i.e. from {@see #nodes}, {@see #ways}, or
+     * {@see #relations}. References from other primitives to this
+     * primitive are left unchanged.
+     * 
+     * @param primitive the primitive. Ignored if null.
+     */
+    public void removePrimitive(OsmPrimitive primitive) {
+        if (primitive == null)
+            return;
+        if (primitive instanceof Node) {
+            nodes.remove(primitive);
+        } else if (primitive instanceof Way) {
+            ways.remove(primitive);
+        } else if (primitive instanceof Relation) {
+            relations.remove(primitive);
         }
     }
 
@@ -119,6 +147,8 @@ public class DataSet implements Cloneable {
         sel.addAll(getSelected(ways));
         return sel;
     }
+
+
     /**
      * Return a list of all selected objects. Even keys are returned.
      * @return List of all selected objects.
@@ -390,4 +420,6 @@ public class DataSet implements Cloneable {
             unlinkPrimitiveFromRelations(referencedPrimitive);
         }
     }
+
+
 }

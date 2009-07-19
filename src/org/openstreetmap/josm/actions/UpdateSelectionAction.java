@@ -41,7 +41,7 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
      */
     protected void handlePrimitiveGoneException(long id) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        reader.append(Main.main.createOrGetEditLayer().data,id);
+        reader.append(getCurrentDataSet(),id);
         DataSet ds = null;
         try {
             ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
@@ -193,11 +193,8 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
      *
      */
     protected void refreshEnabled() {
-        setEnabled(Main.main != null
-                && Main.map != null
-                && Main.map.mapView !=null
-                && Main.map.mapView.getEditLayer() != null
-                && ! Main.map.mapView.getEditLayer().data.getSelected().isEmpty()
+        setEnabled(getCurrentDataSet() != null
+                && ! getCurrentDataSet().getSelected().isEmpty()
         );
     }
 
@@ -207,7 +204,7 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         if (selection.size() == 0) {
             JOptionPane.showMessageDialog(
                     Main.parent,

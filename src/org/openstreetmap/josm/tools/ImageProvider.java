@@ -28,7 +28,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Helperclass to support the application with images.
@@ -94,11 +96,11 @@ public class ImageProvider {
                 try
                 {
                     MirroredInputStream is = new MirroredInputStream(name,
-                    new File(Main.pref.getPreferencesDir(), "images").toString());
+                            new File(Main.pref.getPreferencesDir(), "images").toString());
                     if(is != null)
                     {
-                      img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
-                      cache.put(name, img);
+                        img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
+                        cache.put(name, img);
                     }
                 }
                 catch(IOException e) {
@@ -106,16 +108,18 @@ public class ImageProvider {
             }
             return img == null ? null : new ImageIcon(img);
         }
-        if (subdir == null)
+        if (subdir == null) {
             subdir = "";
-        else if (!subdir.equals(""))
+        } else if (!subdir.equals("")) {
             subdir += "/";
+        }
         String ext = name.indexOf('.') != -1 ? "" : ".png";
         String full_name = subdir+name+ext;
         String cache_name = full_name;
         /* cache separately */
-        if(dirs != null && dirs.size() > 0)
+        if(dirs != null && dirs.size() > 0) {
             cache_name = "id:"+id+":"+full_name;
+        }
 
         Image img = cache.get(cache_name);
         if (img == null) {
@@ -197,8 +201,9 @@ public class ImageProvider {
 
     public static Cursor getCursor(String name, String overlay) {
         ImageIcon img = get("cursor",name);
-        if (overlay != null)
+        if (overlay != null) {
             img = overlay(img, "cursor/modifier/"+overlay, OverlayPosition.SOUTHEAST);
+        }
         Cursor c = Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
                 name.equals("crosshair") ? new Point(10,10) : new Point(3,2), "Cursor");
         return c;
@@ -250,10 +255,10 @@ public class ImageProvider {
         }
     }
 
-/* from: http://www.jidesoft.com/blog/2008/02/29/rotate-an-icon-in-java/
-* License: "feel free to use"
-*/
-final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
+    /* from: http://www.jidesoft.com/blog/2008/02/29/rotate-an-icon-in-java/
+     * License: "feel free to use"
+     */
+    final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
     /**
      * Creates a rotated version of the input image.
@@ -313,5 +318,16 @@ final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
         g2d.dispose();
         return new ImageIcon(image);
+    }
+
+    /**
+     * Replies the icon for an OSM primitive type
+     * @param type the type
+     * @return the icon
+     */
+    public static ImageIcon get(OsmPrimitiveType type) throws IllegalArgumentException {
+        if (type == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "type"));
+        return get("data",type.getAPIName());
     }
 }

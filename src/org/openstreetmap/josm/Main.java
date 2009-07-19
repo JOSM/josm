@@ -76,10 +76,7 @@ abstract public class Main {
      * Global application preferences
      */
     public static Preferences pref = new Preferences();
-    /**
-     * The global dataset.
-     */
-    public static DataSet ds = new DataSet();
+
     /**
      * The global paste buffer.
      */
@@ -166,9 +163,6 @@ abstract public class Main {
     public final void removeLayer(final Layer layer) {
         if (map != null) {
             map.mapView.removeLayer(layer);
-            if (layer instanceof OsmDataLayer) {
-                ds = new DataSet();
-            }
             if (map.mapView.getAllLayers().isEmpty()) {
                 setMapFrame(null);
             }
@@ -223,30 +217,40 @@ abstract public class Main {
         }
         map.mapView.addLayer(layer);
     }
-    /**
-     * Replies the current edit layer. Creates one if no {@see OsmDataLayer}
-     * exists. Replies null, if the currently active layer isn't an instance
-     * of {@see OsmDataLayer}.
-     *
-     * @return the current edit layer
-     */
-    public final OsmDataLayer createOrGetEditLayer() {
-        if (map == null || map.mapView.getEditLayer() == null) {
-            menu.newAction.actionPerformed(null);
-        }
-        return map.mapView.getEditLayer();
-    }
 
     /**
-     * Replies true if this map view has an edit layer
+     * Replies true if there is an edit layer which is currently
+     * active
      *
-     * @return true if this map view has an edit layer
+     * @return true if there is an edit layer which is currently
+     * active
      */
-    public boolean hasEditLayer() {
+    public boolean hasActiveEditLayer() {
         if (map == null) return false;
         if (map.mapView == null) return false;
         if (map.mapView.getEditLayer() == null) return false;
         return true;
+    }
+
+    /**
+     * Replies the current edit layer
+     * 
+     * @return the current edit layer. null, if no current edit layer exists
+     */
+    public OsmDataLayer getEditLayer() {
+        if (map == null) return null;
+        if (map.mapView == null) return null;
+        return map.mapView.getEditLayer();
+    }
+
+    /**
+     * Replies the current data set.
+     *
+     * @return the current data set. null, if no current data set exists
+     */
+    public DataSet getCurrentDataSet() {
+        if (!hasActiveEditLayer()) return null;
+        return getEditLayer().data;
     }
 
     /**
@@ -494,4 +498,6 @@ abstract public class Main {
         }
         pref.put("gui.geometry", newGeometry);
     }
+
+
 }

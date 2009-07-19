@@ -31,8 +31,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
-import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -64,7 +64,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
      */
     public void actionPerformed(ActionEvent e) {
 
-        Collection<OsmPrimitive> selection = Main.ds.getSelected();
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         if (!checkSelection(selection)) {
             JOptionPane.showMessageDialog(Main.parent, tr("The current selection cannot be used for splitting."));
@@ -98,7 +98,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
         if (selectedWay == null && selectedNodes != null) {
             HashMap<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
             for (Node n : selectedNodes) {
-                for (Way w : Main.ds.ways) {
+                for (Way w : getCurrentDataSet().ways) {
                     if (w.deleted || w.incomplete) {
                         continue;
                     }
@@ -271,7 +271,8 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
         Boolean warnmerole=false;
         Boolean warnme=false;
         // now copy all relations to new way also
-        for (Relation r : Main.ds.relations) {
+
+        for (Relation r : getCurrentDataSet().relations) {
             if (r.deleted || r.incomplete) {
                 continue;
             }
@@ -328,13 +329,11 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             JOptionPane.showMessageDialog(Main.parent, tr("A relation membership was copied to all new ways.\nYou should verify this and correct it when necessary."));
         }
 
-        NameVisitor v = new NameVisitor();
-        v.visit(selectedWay);
         Main.main.undoRedo.add(
                 new SequenceCommand(tr("Split way {0} into {1} parts",
-                        v.name, wayChunks.size()),
+                        new PrimitiveNameFormatter().getName(selectedWay), wayChunks.size()),
                         commandList));
-        Main.ds.setSelected(newSelection);
+        getCurrentDataSet().setSelected(newSelection);
     }
 
     /**
