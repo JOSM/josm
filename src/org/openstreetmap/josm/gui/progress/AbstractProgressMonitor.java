@@ -236,6 +236,10 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         return ticks;
     }
 
+    public synchronized int getTicksCount() {
+        return ticksCount;
+    }
+
     /*==========
      * Subtasks
      ==========*/

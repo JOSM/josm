@@ -71,7 +71,10 @@ public interface ProgressMonitor {
      * @param ticks Number of work units already done
      */
     void setTicks(int ticks);
+
     int getTicks();
+    int getTicksCount();
+
     /**
      * Increase number of already done work units by ticks
      * @param ticks
