@@ -52,7 +52,7 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
      */
     public SplitWayAction() {
         super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
-        Shortcut.registerShortcut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.GROUP_EDIT), true);
+                Shortcut.registerShortcut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.GROUP_EDIT), true);
         DataSet.selListeners.add(this);
     }
 
@@ -76,8 +76,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 
         Visitor splitVisitor = new AbstractVisitor() {
             public void visit(Node n) {
-                if (selectedNodes == null)
+                if (selectedNodes == null) {
                     selectedNodes = new LinkedList<Node>();
+                }
                 selectedNodes.add(n);
             }
             public void visit(Way w) {
@@ -88,8 +89,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             }
         };
 
-        for (OsmPrimitive p : selection)
+        for (OsmPrimitive p : selection) {
             p.visit(splitVisitor);
+        }
 
         // If only nodes are selected, try to guess which way to split. This works if there
         // is exactly one way that all nodes are part of.
@@ -97,9 +99,13 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             HashMap<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
             for (Node n : selectedNodes) {
                 for (Way w : Main.ds.ways) {
-                    if (w.deleted || w.incomplete) continue;
+                    if (w.deleted || w.incomplete) {
+                        continue;
+                    }
                     int last = w.nodes.size()-1;
-                    if(last <= 0) continue; // zero or one node ways
+                    if(last <= 0) {
+                        continue; // zero or one node ways
+                    }
                     Boolean circular = w.nodes.get(0).equals(w.nodes.get(last));
                     int i = 0;
                     for (Node wn : w.nodes) {
@@ -114,9 +120,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             }
             if (wayOccurenceCounter.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
-                trn("The selected node is not in the middle of any way.",
-                "The selected nodes are not in the middle of any way.",
-                selectedNodes.size()));
+                        trn("The selected node is not in the middle of any way.",
+                                "The selected nodes are not in the middle of any way.",
+                                selectedNodes.size()));
                 return;
             }
 
@@ -124,9 +130,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
                 if (entry.getValue().equals(selectedNodes.size())) {
                     if (selectedWay != null) {
                         JOptionPane.showMessageDialog(Main.parent,
-                        trn("There is more than one way using the node you selected. Please select the way also.",
-                        "There is more than one way using the nodes you selected. Please select the way also.",
-                        selectedNodes.size()));
+                                trn("There is more than one way using the node you selected. Please select the way also.",
+                                        "There is more than one way using the nodes you selected. Please select the way also.",
+                                        selectedNodes.size()));
                         return;
                     }
                     selectedWay = entry.getKey();
@@ -135,11 +141,11 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
 
             if (selectedWay == null) {
                 JOptionPane.showMessageDialog(Main.parent,
-                tr("The selected nodes do not share the same way."));
+                        tr("The selected nodes do not share the same way."));
                 return;
             }
 
-        // If a way and nodes are selected, verify that the nodes are part of the way.
+            // If a way and nodes are selected, verify that the nodes are part of the way.
         } else if (selectedWay != null && selectedNodes != null) {
 
             HashSet<Node> nds = new HashSet<Node>(selectedNodes);
@@ -148,9 +154,9 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
             }
             if (!nds.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
-                trn("The selected way does not contain the selected node.",
-                "The selected way does not contain all the selected nodes.",
-                selectedNodes.size()));
+                        trn("The selected way does not contain the selected node.",
+                                "The selected way does not contain all the selected nodes.",
+                                selectedNodes.size()));
                 return;
             }
         }
@@ -174,9 +180,8 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
                 way = true;
             } else if (p instanceof Node) {
                 node = true;
-            } else {
+            } else
                 return false;
-        }
         }
         return node;
     }
@@ -226,10 +231,11 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
         }
 
         if (wayChunks.size() < 2) {
-            if(wayChunks.get(0).get(0) == wayChunks.get(0).get(wayChunks.get(0).size()-1))
+            if(wayChunks.get(0).get(0) == wayChunks.get(0).get(wayChunks.get(0).size()-1)) {
                 JOptionPane.showMessageDialog(Main.parent, tr("You must select two or more nodes to split a circular way."));
-            else
+            } else {
                 JOptionPane.showMessageDialog(Main.parent, tr("The way cannot be split at the selected nodes. (Hint: Select nodes in the middle of the way.)"));
+            }
             return;
         }
         //Main.debug("wayChunks.size(): " + wayChunks.size());
@@ -266,38 +272,45 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
         Boolean warnme=false;
         // now copy all relations to new way also
         for (Relation r : Main.ds.relations) {
-            if (r.deleted || r.incomplete) continue;
+            if (r.deleted || r.incomplete) {
+                continue;
+            }
             Relation c = null;
             String type = "";
             int i = 0;
 
-            if(r.keys != null)
+            if(r.keys != null) {
                 type = r.keys.get("type");
+            }
 
             for (RelationMember rm : r.members) {
                 if (rm.member instanceof Way) {
                     if (rm.member == selectedWay)
                     {
-                        if(!("route".equals(type)) && !("multipolygon".equals(type)))
+                        if(!("route".equals(type)) && !("multipolygon".equals(type))) {
                             warnme = true;
-                        if (c == null)
+                        }
+                        if (c == null) {
                             c = new Relation(r);
+                        }
 
                         int j = i;
-                        boolean backwards = rm.role.equals("backward");
+                        boolean backwards = "backward".equals(rm.role);
                         for(Way wayToAdd : newWays)
                         {
                             RelationMember em = new RelationMember();
                             em.member = wayToAdd;
                             em.role = rm.role;
-                            if(em.role.length() > 0 && !("multipolygon".equals(type)))
+                            if(em.role != null && em.role.length() > 0 && !("multipolygon".equals(type))) {
                                 warnmerole = true;
+                            }
 
                             j++;
-                            if (backwards)
+                            if (backwards) {
                                 c.members.add(i, em);
-                            else
+                            } else {
                                 c.members.add(j, em);
+                            }
                         }
                         i = j;
                     }
@@ -305,20 +318,22 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
                 i++;
             }
 
-            if (c != null)
+            if (c != null) {
                 commandList.add(new ChangeCommand(r, c));
+            }
         }
-        if(warnmerole)
+        if(warnmerole) {
             JOptionPane.showMessageDialog(Main.parent, tr("A role based relation membership was copied to all new ways.\nYou should verify this and correct it when necessary."));
-        else if(warnme)
+        } else if(warnme) {
             JOptionPane.showMessageDialog(Main.parent, tr("A relation membership was copied to all new ways.\nYou should verify this and correct it when necessary."));
+        }
 
         NameVisitor v = new NameVisitor();
         v.visit(selectedWay);
         Main.main.undoRedo.add(
-            new SequenceCommand(tr("Split way {0} into {1} parts",
-                v.name, wayChunks.size()),
-            commandList));
+                new SequenceCommand(tr("Split way {0} into {1} parts",
+                        v.name, wayChunks.size()),
+                        commandList));
         Main.ds.setSelected(newSelection);
     }
 
