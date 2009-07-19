@@ -287,6 +287,8 @@ public class HistoryDialog extends ToggleDialog {
 
         public void refresh() {
             data.clear();
+            if (Main.main.getCurrentDataSet() == null)
+                return;
             for (OsmPrimitive primitive: Main.main.getCurrentDataSet().getSelected()) {
                 if (primitive.id == 0) {
                     continue;
@@ -453,7 +455,11 @@ public class HistoryDialog extends ToggleDialog {
         }
 
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            setEnabled(Main.main.getCurrentDataSet().getSelected().size() > 0);
+            if (Main.main.getCurrentDataSet() == null) {
+                setEnabled(false);
+            } else {
+                setEnabled(Main.main.getCurrentDataSet().getSelected().size() > 0);
+            }
 
         }
     }

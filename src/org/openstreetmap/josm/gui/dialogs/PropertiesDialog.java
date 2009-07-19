@@ -791,21 +791,22 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipData.setRowCount(0);
 
         Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
-        for (Relation r : Main.main.getCurrentDataSet().relations) {
-            if (!r.deleted && !r.incomplete) {
-                for (RelationMember m : r.members) {
-                    if (newSelection.contains(m.member)) {
-                        Collection<RelationMember> value = roles.get(r);
-                        if (value == null) {
-                            value = new HashSet<RelationMember>();
-                            roles.put(r, value);
+        if (Main.main.getCurrentDataSet() != null) {
+            for (Relation r : Main.main.getCurrentDataSet().relations) {
+                if (!r.deleted && !r.incomplete) {
+                    for (RelationMember m : r.members) {
+                        if (newSelection.contains(m.member)) {
+                            Collection<RelationMember> value = roles.get(r);
+                            if (value == null) {
+                                value = new HashSet<RelationMember>();
+                                roles.put(r, value);
+                            }
+                            value.add(m);
                         }
-                        value.add(m);
                     }
                 }
             }
         }
-
         for (Entry<Relation, Collection<RelationMember>> e : roles.entrySet()) {
             membershipData.addRow(new Object[]{e.getKey(), e.getValue()});
         }
