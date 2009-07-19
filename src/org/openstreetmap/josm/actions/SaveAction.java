@@ -23,21 +23,23 @@ public class SaveAction extends SaveActionBase {
      * Construct the action with "Save" as label.
      * @param layer Save this layer.
      */
-    public SaveAction(Layer layer) {
+    public SaveAction() {
         super(tr("Save"), "save", tr("Save the current data."),
-        Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.GROUP_MENU), layer);
+                Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.GROUP_MENU));
     }
 
     @Override public File getFile(Layer layer) {
         File f = layer.getAssociatedFile();
-        if(f != null && ! f.exists())
+        if(f != null && ! f.exists()) {
             f=null;
+        }
         if(f != null && layer instanceof GpxLayer && 1 !=
-        new ExtendedDialog(Main.parent, tr("Overwrite"),
-        tr("File {0} exists. Overwrite?", f.getName()),
-        new String[] {tr("Overwrite"), tr("Cancel")},
-        new String[] {"save_as.png", "cancel.png"}).getValue())
+            new ExtendedDialog(Main.parent, tr("Overwrite"),
+                    tr("File {0} exists. Overwrite?", f.getName()),
+                    new String[] {tr("Overwrite"), tr("Cancel")},
+                    new String[] {"save_as.png", "cancel.png"}).getValue()) {
             f = null;
+        }
         return f == null ? openFileDialog(layer) : f;
     }
 }

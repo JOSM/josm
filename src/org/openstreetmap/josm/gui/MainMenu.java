@@ -74,6 +74,8 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -90,9 +92,9 @@ public class MainMenu extends JMenuBar {
     public final NewAction newAction = new NewAction();
     public final OpenFileAction openFile = new OpenFileAction();
     public final OpenLocationAction openLocation = new OpenLocationAction();
-    public final JosmAction save = new SaveAction(null);
-    public final JosmAction saveAs = new SaveAsAction(null);
-    public final JosmAction gpxExport = new GpxExportAction(null);
+    public final JosmAction save = new SaveAction();
+    public final JosmAction saveAs = new SaveAsAction();
+    public final JosmAction gpxExport = new GpxExportAction();
     public final DownloadAction download = new DownloadAction();
     public final JosmAction update = new UpdateDataAction();
     public final JosmAction updateSelection = new UpdateSelectionAction();
@@ -305,5 +307,37 @@ public class MainMenu extends JMenuBar {
         current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
                 Shortcut.GROUP_DIRECT).getKeyStroke());
         add(helpMenu, about);
+
+        new PresetsMenuEnabler(presetsMenu).refreshEnabled();
+    }
+
+    class PresetsMenuEnabler implements LayerChangeListener {
+        private JMenu presetsMenu;
+        public PresetsMenuEnabler(JMenu presetsMenu) {
+            Layer.listeners.add(this);
+            this.presetsMenu = presetsMenu;
+        }
+        /**
+         * Refreshes the enabled state
+         * 
+         */
+        protected void refreshEnabled() {
+            presetsMenu.setEnabled(Main.map != null
+                    && Main.map.mapView !=null
+                    && Main.map.mapView.getEditLayer() != null
+            );
+        }
+
+        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+            refreshEnabled();
+        }
+
+        public void layerAdded(Layer newLayer) {
+            refreshEnabled();
+        }
+
+        public void layerRemoved(Layer oldLayer) {
+            refreshEnabled();
+        }
     }
 }

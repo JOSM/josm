@@ -209,14 +209,15 @@ public class MapView extends NavigatableComponent {
      * an LayerChange event is fired.
      */
     public void removeLayer(Layer layer) {
-        if (layers.remove(layer)) {
-            for (Layer.LayerChangeListener l : Layer.listeners) {
-                l.layerRemoved(layer);
-            }
-        }
         if (layer == activeLayer) {
             if (layer instanceof OsmDataLayer) {
                 Main.ds = null;
+            }
+            activeLayer = null;
+        }
+        if (layers.remove(layer)) {
+            for (Layer.LayerChangeListener l : Layer.listeners) {
+                l.layerRemoved(layer);
             }
         }
         layer.destroy();
@@ -418,7 +419,10 @@ public class MapView extends NavigatableComponent {
     public boolean zoomToEditLayerBoundingBox() {
         // workaround for #1461 (zoom to download bounding box instead of all data)
         // In case we already have an existing data layer ...
-        Collection<DataSource> dataSources = Main.main.createOrGetEditLayer().data.dataSources;
+        OsmDataLayer layer= getEditLayer();
+        if (layer == null)
+            return false;
+        Collection<DataSource> dataSources = layer.data.dataSources;
         // ... with bounding box[es] of data loaded from OSM or a file...
         BoundingXYVisitor bbox = new BoundingXYVisitor();
         for (DataSource ds : dataSources) {

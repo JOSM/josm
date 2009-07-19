@@ -17,6 +17,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -65,6 +66,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A layer holding data from a specific dataset.
@@ -429,9 +431,9 @@ public class OsmDataLayer extends Layer {
                 new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
                 new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
                 new JSeparator(),
-                new JMenuItem(new SaveAction(this)),
-                new JMenuItem(new SaveAsAction(this)),
-                new JMenuItem(new GpxExportAction(this)),
+                new JMenuItem(new LayerSaveAction(this)),
+                new JMenuItem(new LayerSaveAsAction(this)),
+                new JMenuItem(new LayerGpxExportAction(this)),
                 new JMenuItem(new ConvertToGpxLayerAction()),
                 new JSeparator(),
                 new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),

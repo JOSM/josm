@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -38,23 +39,53 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Exports data to gpx.
  */
-public class GpxExportAction extends DiskAccessAction {
+public class GpxExportAction extends DiskAccessAction implements LayerChangeListener {
 
     private final static String warningGpl = "<html><font color='red' size='-2'>"+tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.")+"</html>";
 
-    private final Layer layer;
-
-    public GpxExportAction(Layer layer) {
+    public GpxExportAction() {
         super(tr("Export to GPX..."), "exportgpx", tr("Export the data to GPX file."),
-        Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.GROUP_MENU));
-        this.layer = layer;
+                Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.GROUP_MENU));
+        Layer.listeners.add(this);
+        refreshEnabled();
+    }
+
+    protected GpxLayer getLayer() {
+        if (Main.map == null) return null;
+        if (Main.map.mapView == null) return null;
+        if (Main.map.mapView.getActiveLayer() == null) return null;
+        Layer layer = Main.map.mapView.getActiveLayer();
+        if (! (layer instanceof GpxLayer)) return null;
+        return (GpxLayer)layer;
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (layer == null && Main.map == null) {
+        if (!isEnabled())
+            return;
+        GpxLayer layer = getLayer();
+        if (layer == null) {
             JOptionPane.showMessageDialog(Main.parent, tr("Nothing to export. Get some data first."));
             return;
         }
+        export(layer);
+    }
+
+    /**
+     * Exports a layer to a file. Launches a file chooser to request the user to enter a file name.
+     * 
+     * <code>layer</code> must not be null. <code>layer</code> must be an instance of
+     * {@see OsmDataLayer} or {@see GpxLayer}.
+     * 
+     * @param layer the layer
+     * @exception IllegalArgumentException thrown if layer is null
+     * @exception IllegalArgumentException thrown if layer is neither an instance of {@see OsmDataLayer}
+     *  nor of {@see GpxLayer}
+     */
+    public void export(Layer layer) {
+        if (layer == null)
+            throw new IllegalArgumentException(tr("paramenter ''{0'' must not be null", "layer"));
+        if (! (layer instanceof OsmDataLayer) && ! (layer instanceof GpxLayer))
+            throw new IllegalArgumentException(tr("expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
 
         JFileChooser fc = createAndOpenFileChooser(false, false, null);
         if (fc == null)
@@ -63,7 +94,7 @@ public class GpxExportAction extends DiskAccessAction {
         if (file == null)
             return;
 
-        exportGpx(file, this.layer == null ? Main.main.createOrGetEditLayer() : this.layer);
+        exportGpx(file, layer);
     }
 
     public static void exportGpx(File file, Layer layer) {
@@ -119,26 +150,29 @@ public class GpxExportAction extends DiskAccessAction {
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
         int answer = new ExtendedDialog(Main.parent,
-                        tr("Export options"),
-                        p,
-                        new String[] {tr("Export and Save"), tr("Cancel")},
-                        new String[] {"exportgpx.png", "cancel.png"}).getValue();
+                tr("Export options"),
+                p,
+                new String[] {tr("Export and Save"), tr("Cancel")},
+                new String[] {"exportgpx.png", "cancel.png"}).getValue();
         if (answer != 1)
             return;
 
         Main.pref.put("lastAddAuthor", author.isSelected());
-        if (authorName.getText().length() != 0)
+        if (authorName.getText().length() != 0) {
             Main.pref.put("lastAuthorName", authorName.getText());
-        if (copyright.getText().length() != 0)
+        }
+        if (copyright.getText().length() != 0) {
             Main.pref.put("lastCopyright", copyright.getText());
+        }
 
         GpxData gpxData;
-        if (layer instanceof OsmDataLayer)
+        if (layer instanceof OsmDataLayer) {
             gpxData = ((OsmDataLayer)layer).toGpxData();
-        else if (layer instanceof GpxLayer)
+        } else if (layer instanceof GpxLayer) {
             gpxData = ((GpxLayer)layer).data;
-        else
+        } else {
             gpxData = OsmDataLayer.toGpxData(Main.ds, file);
+        }
 
         // add author and copyright details to the gpx data
         if(author.isSelected()) {
@@ -146,16 +180,26 @@ public class GpxExportAction extends DiskAccessAction {
                 gpxData.attr.put(GpxData.META_AUTHOR_NAME, authorName.getText());
                 gpxData.attr.put(GpxData.META_COPYRIGHT_AUTHOR, authorName.getText());
             }
-            if(email.getText().length() > 0) gpxData.attr.put(GpxData.META_AUTHOR_EMAIL, email.getText());
-            if(copyright.getText().length() > 0) gpxData.attr.put(GpxData.META_COPYRIGHT_LICENSE, copyright.getText());
-            if(copyrightYear.getText().length() > 0) gpxData.attr.put(GpxData.META_COPYRIGHT_YEAR, copyrightYear.getText());
+            if(email.getText().length() > 0) {
+                gpxData.attr.put(GpxData.META_AUTHOR_EMAIL, email.getText());
+            }
+            if(copyright.getText().length() > 0) {
+                gpxData.attr.put(GpxData.META_COPYRIGHT_LICENSE, copyright.getText());
+            }
+            if(copyrightYear.getText().length() > 0) {
+                gpxData.attr.put(GpxData.META_COPYRIGHT_YEAR, copyrightYear.getText());
+            }
         }
 
         // add the description to the gpx data
-        if(desc.getText().length() > 0) gpxData.attr.put(GpxData.META_DESC, desc.getText());
+        if(desc.getText().length() > 0) {
+            gpxData.attr.put(GpxData.META_DESC, desc.getText());
+        }
 
         // add keywords to the gpx data
-        if(keywords.getText().length() > 0) gpxData.attr.put(GpxData.META_KEYWORDS, keywords.getText());
+        if(keywords.getText().length() > 0) {
+            gpxData.attr.put(GpxData.META_KEYWORDS, keywords.getText());
+        }
 
         try {
             FileOutputStream fo = new FileOutputStream(file);
@@ -206,11 +250,11 @@ public class GpxExportAction extends DiskAccessAction {
         author.addActionListener(authorActionListener);
 
         KeyAdapter authorNameListener = new KeyAdapter(){
-                    @Override public void keyReleased(KeyEvent e) {
-                        boolean b = authorName.getText().length()!=0 && author.isSelected();
-                        enableCopyright(copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b);
-                    }
-                };
+            @Override public void keyReleased(KeyEvent e) {
+                boolean b = authorName.getText().length()!=0 && author.isSelected();
+                enableCopyright(copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning, b);
+            }
+        };
         authorName.addKeyListener(authorNameListener);
 
         predefined.addActionListener(new ActionListener(){
@@ -225,7 +269,7 @@ public class GpxExportAction extends DiskAccessAction {
                         "http://creativecommons.org/licenses/by-sa/2.5",
                         "public domain",
                         "http://www.gnu.org/copyleft/lesser.html",
-                        "http://www.opensource.org/licenses/bsd-license.php"};
+                "http://www.opensource.org/licenses/bsd-license.php"};
                 String license = "";
                 for (int i : l.getSelectedIndices()) {
                     if (i == 1) {
@@ -253,13 +297,47 @@ public class GpxExportAction extends DiskAccessAction {
 
         if (enable && copyrightYear.getText().length()==0) {
             copyrightYear.setText(enable ? Integer.toString(Calendar.getInstance().get(Calendar.YEAR)) : "");
-        } else if (!enable)
+        } else if (!enable) {
             copyrightYear.setText("");
+        }
 
         if (enable && copyright.getText().length()==0) {
             copyright.setText(enable ? Main.pref.get("lastCopyright", "http://creativecommons.org/licenses/by-sa/2.5") : "");
             copyright.setCaretPosition(0);
-        } else if (!enable)
+        } else if (!enable) {
             copyright.setText("");
+        }
+    }
+
+    /**
+     * Refreshes the enabled state
+     * 
+     */
+    protected void refreshEnabled() {
+        boolean check = Main.main != null
+        && Main.map != null
+        && Main.map.mapView !=null
+        && Main.map.mapView.getActiveLayer() != null;
+        if(!check) {
+            setEnabled(false);
+            return;
+        }
+        Layer layer = Main.map.mapView.getActiveLayer();
+        setEnabled(layer instanceof GpxLayer);
+    }
+
+    /* ---------------------------------------------------------------------------------- */
+    /* Interface LayerChangeListener                                                      */
+    /* ---------------------------------------------------------------------------------- */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
     }
 }

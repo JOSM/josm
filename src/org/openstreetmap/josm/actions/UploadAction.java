@@ -28,6 +28,8 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -47,7 +49,7 @@ import org.xml.sax.SAXException;
  *
  * @author imi
  */
-public class UploadAction extends JosmAction {
+public class UploadAction extends JosmAction implements LayerChangeListener{
     static private Logger logger = Logger.getLogger(UploadAction.class.getName());
 
     public static final String HISTORY_KEY = "upload.comment.history";
@@ -151,6 +153,21 @@ public class UploadAction extends JosmAction {
                 return true;
             }
         });
+
+        Layer.listeners.add(this);
+        refreshEnabled();
+    }
+
+    /**
+     * Refreshes the enabled state
+     * 
+     */
+    protected void refreshEnabled() {
+        setEnabled(Main.main != null
+                && Main.map != null
+                && Main.map.mapView !=null
+                && Main.map.mapView.getEditLayer() != null
+        );
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -580,5 +597,20 @@ public class UploadAction extends JosmAction {
                 JOptionPane.ERROR_MESSAGE
         );
         e.printStackTrace();
+    }
+
+    /* ---------------------------------------------------------------------------------- */
+    /* Interface LayerChangeListener                                                      */
+    /* ---------------------------------------------------------------------------------- */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
     }
 }

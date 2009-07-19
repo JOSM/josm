@@ -125,20 +125,24 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         boolean force = Main.pref.getBoolean("draw.rawgps.lines.force");
         boolean lines = Main.pref.getBoolean("draw.rawgps.lines", true);
         String linesKey = "draw.rawgps.lines.layer "+name;
-        if (Main.pref.hasKey(linesKey))
+        if (Main.pref.hasKey(linesKey)) {
             lines = Main.pref.getBoolean(linesKey);
+        }
         boolean large = Main.pref.getBoolean("draw.rawgps.large");
         for (Collection<GpsPoint> c : data) {
-            if (!force)
+            if (!force) {
                 old = null;
+            }
             for (GpsPoint p : c) {
                 Point screen = mv.getPoint(p.eastNorth);
-                if (lines && old != null)
+                if (lines && old != null) {
                     g.drawLine(old.x, old.y, screen.x, screen.y);
-                else if (!large)
+                } else if (!large) {
                     g.drawRect(screen.x, screen.y, 0, 0);
-                if (large)
+                }
+                if (large) {
                     g.fillRect(screen.x-1, screen.y-1, 3, 3);
+                }
                 old = screen;
             }
         }
@@ -146,13 +150,15 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 
     @Override public String getToolTipText() {
         int points = 0;
-        for (Collection<GpsPoint> c : data)
+        for (Collection<GpsPoint> c : data) {
             points += c.size();
+        }
         String tool = data.size()+" "+trn("track", "tracks", data.size())
         +" "+points+" "+trn("point", "points", points);
         File f = getAssociatedFile();
-        if (f != null)
+        if (f != null) {
             tool = "<html>"+tool+"<br>"+f.getPath()+"</html>";
+        }
         return tool;
     }
 
@@ -166,9 +172,11 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
     }
 
     @Override public void visitBoundingBox(BoundingXYVisitor v) {
-        for (Collection<GpsPoint> c : data)
-            for (GpsPoint p : c)
+        for (Collection<GpsPoint> c : data) {
+            for (GpsPoint p : c) {
                 v.visit(p.eastNorth);
+            }
+        }
     }
 
     @Override public Object getInfoComponent() {
@@ -197,17 +205,19 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                     panel.add(b);
                 }
                 String propName = "draw.rawgps.lines.layer "+name;
-                if (Main.pref.hasKey(propName))
+                if (Main.pref.hasKey(propName)) {
                     group.setSelected(r[Main.pref.getBoolean(propName) ? 1:2].getModel(), true);
-                else
+                } else {
                     group.setSelected(r[0].getModel(), true);
+                }
                 int answer = JOptionPane.showConfirmDialog(Main.parent, panel, tr("Select line drawing options"), JOptionPane.OK_CANCEL_OPTION);
                 if (answer == JOptionPane.CANCEL_OPTION)
                     return;
-                if (group.getSelection() == r[0].getModel())
+                if (group.getSelection() == r[0].getModel()) {
                     Main.pref.put(propName, null);
-                else
+                } else {
                     Main.pref.put(propName, group.getSelection() == r[1].getModel());
+                }
                 Main.map.repaint();
             }
         });
@@ -218,7 +228,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+name, Color.gray));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
                 int answer = JOptionPane.showOptionDialog(Main.parent, c, tr("Choose a color"), JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                        JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
                 switch (answer) {
                 case 0:
                     Main.pref.putColor("layer "+name, c.getColor());
@@ -249,7 +259,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
                 new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
                 new JSeparator(),
-                new JMenuItem(new GpxExportAction(this)),
+                new JMenuItem(new LayerGpxExportAction(this)),
                 color,
                 line,
                 new JMenuItem(new ConvertToDataLayerAction()),
@@ -260,8 +270,9 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
     }
 
     public void preferenceChanged(String key, String newValue) {
-        if (Main.map != null && (key.equals("draw.rawgps.lines") || key.equals("draw.rawgps.lines.force")))
+        if (Main.map != null && (key.equals("draw.rawgps.lines") || key.equals("draw.rawgps.lines.force"))) {
             Main.map.repaint();
+        }
     }
 
     @Override public void destroy() {

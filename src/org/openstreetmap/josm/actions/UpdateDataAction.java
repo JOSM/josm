@@ -14,9 +14,11 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class UpdateDataAction extends JosmAction {
+public class UpdateDataAction extends JosmAction implements LayerChangeListener{
     public UpdateDataAction() {
         super(tr("Update Data"),
                 "updatedata",
@@ -26,9 +28,25 @@ public class UpdateDataAction extends JosmAction {
                         KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY),
                         true);
+        refreshEnabled();
+        Layer.listeners.add(this);
+    }
+
+    /**
+     * Refreshes the enabled state
+     * 
+     */
+    protected void refreshEnabled() {
+        setEnabled(Main.main != null
+                && Main.map != null
+                && Main.map.mapView !=null
+                && Main.map.mapView.getEditLayer() != null
+        );
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (! isEnabled())
+            return;
         int bboxCount = 0;
         List<Area> areas = new ArrayList<Area>();
         for(DataSource ds : Main.main.createOrGetEditLayer().data.dataSources) {
@@ -69,5 +87,20 @@ public class UpdateDataAction extends JosmAction {
         }
 
         new DownloadOsmTaskList().download(false, areas);
+    }
+
+    /* ---------------------------------------------------------------------------------- */
+    /* Interface LayerChangeListener                                                      */
+    /* ---------------------------------------------------------------------------------- */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
     }
 }

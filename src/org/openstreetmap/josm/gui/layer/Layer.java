@@ -2,17 +2,25 @@
 
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.actions.GpxExportAction;
+import org.openstreetmap.josm.actions.SaveAction;
+import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * A layer encapsulates the gui component of one dataset and its representation.
@@ -132,4 +140,52 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     public String getName() {
         return name;
     }
+
+
+    public static class LayerSaveAction extends AbstractAction {
+        private Layer layer;
+        public LayerSaveAction(Layer layer) {
+            putValue(SMALL_ICON, ImageProvider.get("save"));
+            putValue(SHORT_DESCRIPTION, tr("Save the current data."));
+            putValue(NAME, tr("Save"));
+            setEnabled(true);
+            this.layer = layer;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            new SaveAction().doSave(layer);
+
+        }
+    }
+
+    public static class LayerSaveAsAction extends AbstractAction {
+        private Layer layer;
+        public LayerSaveAsAction(Layer layer) {
+            putValue(SMALL_ICON, ImageProvider.get("save_as"));
+            putValue(SHORT_DESCRIPTION, tr("Save the current data to a new file."));
+            putValue(NAME, tr("Save As..."));
+            setEnabled(true);
+            this.layer = layer;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            new SaveAsAction().doSave(layer);
+        }
+    }
+
+    public static class LayerGpxExportAction extends AbstractAction {
+        private Layer layer;
+        public LayerGpxExportAction(Layer layer) {
+            putValue(SMALL_ICON, ImageProvider.get("exportgpx"));
+            putValue(SHORT_DESCRIPTION, tr("Export the data to GPX file."));
+            putValue(NAME, tr("Export to GPX..."));
+            setEnabled(true);
+            this.layer = layer;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            new GpxExportAction().export(layer);
+        }
+    }
+
 }

@@ -22,11 +22,13 @@ abstract public class DiskAccessAction extends JosmAction {
 
     public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title) {
         String curDir = Main.pref.get("lastDirectory");
-        if (curDir.equals(""))
+        if (curDir.equals("")) {
             curDir = ".";
+        }
         JFileChooser fc = new JFileChooser(new File(curDir));
-        if (title != null)
+        if (title != null) {
             fc.setDialogTitle(title);
+        }
 
         fc.setMultiSelectionEnabled(multiple);
         for (FileImporter imExporter: ExtensionFileFilter.importers) {
@@ -39,8 +41,9 @@ abstract public class DiskAccessAction extends JosmAction {
         if (answer != JFileChooser.APPROVE_OPTION)
             return null;
 
-        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir))
+        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
             Main.pref.put("lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
+        }
 
         if (!open) {
             File file = fc.getSelectedFile();
@@ -56,15 +59,15 @@ abstract public class DiskAccessAction extends JosmAction {
         return fc;
     }
 
-    public static File createAndOpenSaveFileChooser(String title,
-    String extension)
-    {
+    public static File createAndOpenSaveFileChooser(String title, String extension) {
         String curDir = Main.pref.get("lastDirectory");
-        if (curDir.equals(""))
+        if (curDir.equals("")) {
             curDir = ".";
+        }
         JFileChooser fc = new JFileChooser(new File(curDir));
-        if (title != null)
+        if (title != null) {
             fc.setDialogTitle(title);
+        }
 
         fc.setMultiSelectionEnabled(false);
         for (FileImporter imExporter: ExtensionFileFilter.importers) {
@@ -77,27 +80,28 @@ abstract public class DiskAccessAction extends JosmAction {
         if (answer != JFileChooser.APPROVE_OPTION)
             return null;
 
-        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir))
+        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
             Main.pref.put("lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
+        }
 
         File file = fc.getSelectedFile();
-        if(extension != null)
-        {
+        if(extension != null){
             String fn = file.getPath();
             if(fn.indexOf('.') == -1)
             {
                 FileFilter ff = fc.getFileFilter();
-                if (ff instanceof ExtensionFileFilter)
+                if (ff instanceof ExtensionFileFilter) {
                     fn += "." + ((ExtensionFileFilter)ff).defaultExtension;
-                else
+                } else {
                     fn += extension;
+                }
                 file = new File(fn);
             }
         }
         if(file == null || (file.exists() && 1 != new ExtendedDialog(Main.parent,
-        tr("Overwrite"), tr("File exists. Overwrite?"),
-        new String[] {tr("Overwrite"), tr("Cancel")},
-        new String[] {"save_as.png", "cancel.png"}).getValue()))
+                tr("Overwrite"), tr("File exists. Overwrite?"),
+                new String[] {tr("Overwrite"), tr("Cancel")},
+                new String[] {"save_as.png", "cancel.png"}).getValue()))
             return null;
         return file;
     }

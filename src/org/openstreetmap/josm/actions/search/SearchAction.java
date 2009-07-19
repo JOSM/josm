@@ -22,10 +22,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class SearchAction extends JosmAction {
+public class SearchAction extends JosmAction implements LayerChangeListener{
 
     public static final int SEARCH_HISTORY_SIZE = 10;
 
@@ -39,17 +41,22 @@ public class SearchAction extends JosmAction {
 
     public SearchAction() {
         super(tr("Search..."), "dialogs/search", tr("Search for objects."),
-        Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.GROUP_HOTKEY), true);
+                Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.GROUP_HOTKEY), true);
+        Layer.listeners.add(this);
+        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
         if (Main.map == null) {
             JOptionPane.showMessageDialog(Main.parent, tr("No data loaded."));
             return;
         }
         SearchSetting s = lastSearch;
-        if (s == null)
+        if (s == null) {
             s = new SearchSetting("", false, false, SearchMode.replace);
+        }
         showSearchDialog(s);
     }
 
@@ -80,29 +87,29 @@ public class SearchAction extends JosmAction {
 
         JPanel right = new JPanel();
         JLabel description =
-        new JLabel("<html><ul>"
-                + "<li>"+tr("<b>Baker Street</b> - 'Baker' and 'Street' in any key or name.")+"</li>"
-                + "<li>"+tr("<b>\"Baker Street\"</b> - 'Baker Street' in any key or name.")+"</li>"
-                + "<li>"+tr("<b>name:Bak</b> - 'Bak' anywhere in the name.")+"</li>"
-                + "<li>"+tr("<b>type=route</b> - key 'type' with value exactly 'route'.") + "</li>"
-                + "<li>"+tr("<b>type=*</b> - key 'type' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>"
-                + "<li>"+tr("<b>-name:Bak</b> - not 'Bak' in the name.")+"</li>"
-                + "<li>"+tr("<b>foot:</b> - key=foot set to any value.")+"</li>"
-                + "<li>"+tr("<u>Special targets:</u>")+"</li>"
-                + "<li>"+tr("<b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)")+"</li>"
-                + "<li>"+tr("<b>user:</b>... - all objects changed by user")+"</li>"
-                + "<li>"+tr("<b>id:</b>... - object with given ID")+"</li>"
-                + "<li>"+tr("<b>nodes:</b>... - object with given number of nodes")+"</li>"
-                + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
-                + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
-                + "<li>"+tr("<b>incomplete</b> - all incomplete objects")+"</li>"
-                + "<li>"+tr("<b>untagged</b> - all untagged objects")+"</li>"
-                + "<li>"+tr("<b>child <i>expr</i></b> - all children of objects matching the expression")+"</li>"
-                + "<li>"+tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression")+"</li>"
-                + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"
-                + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains :)")+"</li>"
-                + "<li>"+tr("Use <b>(</b> and <b>)</b> to group expressions")+"</li>"
-                + "</ul></html>");
+            new JLabel("<html><ul>"
+                    + "<li>"+tr("<b>Baker Street</b> - 'Baker' and 'Street' in any key or name.")+"</li>"
+                    + "<li>"+tr("<b>\"Baker Street\"</b> - 'Baker Street' in any key or name.")+"</li>"
+                    + "<li>"+tr("<b>name:Bak</b> - 'Bak' anywhere in the name.")+"</li>"
+                    + "<li>"+tr("<b>type=route</b> - key 'type' with value exactly 'route'.") + "</li>"
+                    + "<li>"+tr("<b>type=*</b> - key 'type' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>"
+                    + "<li>"+tr("<b>-name:Bak</b> - not 'Bak' in the name.")+"</li>"
+                    + "<li>"+tr("<b>foot:</b> - key=foot set to any value.")+"</li>"
+                    + "<li>"+tr("<u>Special targets:</u>")+"</li>"
+                    + "<li>"+tr("<b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)")+"</li>"
+                    + "<li>"+tr("<b>user:</b>... - all objects changed by user")+"</li>"
+                    + "<li>"+tr("<b>id:</b>... - object with given ID")+"</li>"
+                    + "<li>"+tr("<b>nodes:</b>... - object with given number of nodes")+"</li>"
+                    + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
+                    + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
+                    + "<li>"+tr("<b>incomplete</b> - all incomplete objects")+"</li>"
+                    + "<li>"+tr("<b>untagged</b> - all untagged objects")+"</li>"
+                    + "<li>"+tr("<b>child <i>expr</i></b> - all children of objects matching the expression")+"</li>"
+                    + "<li>"+tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression")+"</li>"
+                    + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"
+                    + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains :)")+"</li>"
+                    + "<li>"+tr("Use <b>(</b> and <b>)</b> to group expressions")+"</li>"
+                    + "</ul></html>");
         description.setFont(description.getFont().deriveFont(Font.PLAIN));
         right.add(description);
 
@@ -111,10 +118,10 @@ public class SearchAction extends JosmAction {
         p.add(right);
 
         int result = new ExtendedDialog(Main.parent,
-            tr("Search"),
-            p,
-            new String[] {tr("Start Search"), tr("Cancel")},
-            new String[] {"dialogs/search.png", "cancel.png"}).getValue();
+                tr("Search"),
+                p,
+                new String[] {tr("Start Search"), tr("Cancel")},
+                new String[] {"dialogs/search.png", "cancel.png"}).getValue();
         if(result != 1) return;
 
         // User pressed OK - let's perform the search
@@ -131,10 +138,12 @@ public class SearchAction extends JosmAction {
      * @param s
      */
     public static void searchWithHistory(SearchSetting s) {
-        if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst()))
+        if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
             searchHistory.addFirst(s);
-        while (searchHistory.size() > SEARCH_HISTORY_SIZE)
+        }
+        while (searchHistory.size() > SEARCH_HISTORY_SIZE) {
             searchHistory.removeLast();
+        }
         lastSearch = s;
         search(s.text, s.mode, s.caseSensitive, s.regexSearch);
     }
@@ -162,8 +171,9 @@ public class SearchAction extends JosmAction {
                     if (matcher.match(osm)) {
                         sel.add(osm);
                         ++foundMatches;
-                    } else
+                    } else {
                         sel.remove(osm);
+                    }
                 } else if (mode == SearchMode.add && !osm.selected && matcher.match(osm)) {
                     sel.add(osm);
                     ++foundMatches;
@@ -175,16 +185,18 @@ public class SearchAction extends JosmAction {
             Main.ds.setSelected(sel);
             if (foundMatches == 0) {
                 String msg = null;
-                if (mode == SearchMode.replace)
+                if (mode == SearchMode.replace) {
                     msg = tr("No match found for ''{0}''", search);
-                else if (mode == SearchMode.add)
+                } else if (mode == SearchMode.add) {
                     msg = tr("Nothing added to selection by searching for ''{0}''", search);
-                else if (mode == SearchMode.remove)
+                } else if (mode == SearchMode.remove) {
                     msg = tr("Nothing removed from selection by searching for ''{0}''", search);
+                }
                 Main.map.statusLine.setHelpText(msg);
                 JOptionPane.showMessageDialog(Main.parent, msg);
-            } else
+            } else {
                 Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
+            }
         } catch (SearchCompiler.ParseError e) {
             JOptionPane.showMessageDialog(Main.parent, e.getMessage());
         }
@@ -211,14 +223,41 @@ public class SearchAction extends JosmAction {
             return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
         }
 
+        @Override
         public boolean equals(Object other) {
             if(!(other instanceof SearchSetting))
                 return false;
             SearchSetting o = (SearchSetting) other;
             return (o.caseSensitive == this.caseSensitive
-                 && o.regexSearch == this.regexSearch
-                 && o.mode.equals(this.mode)
-                 && o.text.equals(this.text));
+                    && o.regexSearch == this.regexSearch
+                    && o.mode.equals(this.mode)
+                    && o.text.equals(this.text));
         }
+    }
+
+    /**
+     * Refreshes the enabled state
+     * 
+     */
+    protected void refreshEnabled() {
+        setEnabled(Main.map != null
+                && Main.map.mapView !=null
+                && Main.map.mapView.getEditLayer() != null
+        );
+    }
+
+    /* ---------------------------------------------------------------------------------- */
+    /* Interface LayerChangeListener                                                      */
+    /* ---------------------------------------------------------------------------------- */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
     }
 }

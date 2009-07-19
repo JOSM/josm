@@ -402,8 +402,8 @@ abstract public class Main {
                             Boolean savefailed = false;
                             for (final Layer l : map.mapView.getAllLayers()) {
                                 if (l instanceof OsmDataLayer && ((OsmDataLayer)l).isModified()) {
-                                    SaveAction save = new SaveAction(l);
-                                    if(!save.doSave()) {
+                                    SaveAction save = new SaveAction();
+                                    if(!save.doSave(l)) {
                                         savefailed = true;
                                     }
                                 }

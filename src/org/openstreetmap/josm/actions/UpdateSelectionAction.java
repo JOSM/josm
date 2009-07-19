@@ -14,9 +14,12 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -28,7 +31,7 @@ import org.xml.sax.SAXException;
  * 
  *
  */
-public class UpdateSelectionAction extends JosmAction {
+public class UpdateSelectionAction extends JosmAction implements SelectionChangedListener, LayerChangeListener {
 
     /**
      * handle an exception thrown because a primitive was deleted on the server
@@ -47,6 +50,7 @@ public class UpdateSelectionAction extends JosmAction {
         }
         Main.map.mapView.getEditLayer().mergeFrom(ds);
     }
+
 
     /**
      * handle an exception thrown during updating a primitive
@@ -190,12 +194,30 @@ public class UpdateSelectionAction extends JosmAction {
                         KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY + Shortcut.GROUPS_ALT2),
                         true);
+        refreshEnabled();
+        Layer.listeners.add(this);
+        DataSet.selListeners.add(this);
+    }
+
+    /**
+     * Refreshes the enabled state
+     * 
+     */
+    protected void refreshEnabled() {
+        setEnabled(Main.main != null
+                && Main.map != null
+                && Main.map.mapView !=null
+                && Main.map.mapView.getEditLayer() != null
+                && ! Main.map.mapView.getEditLayer().data.getSelected().isEmpty()
+        );
     }
 
     /**
      * action handler
      */
     public void actionPerformed(ActionEvent e) {
+        if (! isEnabled())
+            return;
         Collection<OsmPrimitive> selection = Main.ds.getSelected();
         if (selection.size() == 0) {
             JOptionPane.showMessageDialog(
@@ -207,5 +229,21 @@ public class UpdateSelectionAction extends JosmAction {
             return;
         }
         updatePrimitives(selection);
+    }
+
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        refreshEnabled();
+    }
+
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
     }
 }

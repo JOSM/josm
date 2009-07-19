@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.OsmBzip2Importer;
@@ -33,32 +34,38 @@ import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public abstract class SaveActionBase extends DiskAccessAction {
+public abstract class SaveActionBase extends DiskAccessAction implements LayerChangeListener {
 
-    private Layer layer;
-
-    public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut, Layer layer) {
+    public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut) {
         super(name, iconName, tooltip, shortcut);
-        this.layer = layer;
+        Layer.listeners.add(this);
+        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
         doSave();
     }
 
-    public Boolean doSave() {
-        Layer layer = this.layer;
+    public boolean doSave() {
+        Layer layer = null;
         if (layer == null && Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
                 || Main.map.mapView.getActiveLayer() instanceof GpxLayer)) {
             layer = Main.map.mapView.getActiveLayer();
         }
-        if (layer == null) {
-            layer = Main.main.createOrGetEditLayer();
-        }
+        if (layer == null)
+            return false;
+        return doSave(layer);
+    }
 
+    public boolean doSave(Layer layer) {
+        if (layer == null)
+            return false;
+        if ( !(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
+            return false;
         if (!checkSaveConditions(layer))
             return false;
-
 
         File file = getFile(layer);
         if (file == null)
@@ -261,5 +268,38 @@ public abstract class SaveActionBase extends DiskAccessAction {
             if (!osm.deleted || osm.id > 0)
                 return false;
         return true;
+    }
+
+    /**
+     * Refreshes the enabled state
+     * 
+     */
+    protected void refreshEnabled() {
+        boolean check = Main.main != null
+        && Main.map != null
+        && Main.map.mapView !=null
+        && Main.map.mapView.getActiveLayer() != null;
+        if(!check) {
+            setEnabled(false);
+            return;
+        }
+        Layer layer = Main.map.mapView.getActiveLayer();
+        setEnabled(layer instanceof OsmDataLayer || layer instanceof GpxLayer);
+    }
+
+
+    /* ---------------------------------------------------------------------------------- */
+    /* Interface LayerChangeListener                                                      */
+    /* ---------------------------------------------------------------------------------- */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
     }
 }
