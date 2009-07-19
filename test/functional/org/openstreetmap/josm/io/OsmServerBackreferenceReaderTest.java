@@ -30,7 +30,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class OsmServerBackreferenceReaderTest {
@@ -122,7 +122,7 @@ public class OsmServerBackreferenceReaderTest {
 
     /**
      * creates the dataset on the server.
-     * 
+     *
      * @param ds the data set
      * @throws OsmTransferException
      */
@@ -133,7 +133,7 @@ public class OsmServerBackreferenceReaderTest {
         primitives.addAll(ds.ways);
         primitives.addAll(ds.relations);
         OsmServerWriter writer = new OsmServerWriter();
-        writer.uploadOsm("0.6", primitives);
+        writer.uploadOsm("0.6", primitives, NullProgressMonitor.INSTANCE);
     }
 
     static Properties testProperties;
@@ -181,7 +181,6 @@ public class OsmServerBackreferenceReaderTest {
         // init preferences
         //
         System.setProperty("josm.home", josmHome);
-        Main.pleaseWaitDlg = new PleaseWaitDialog(null);
         Main.pref.init(false);
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
@@ -240,7 +239,7 @@ public class OsmServerBackreferenceReaderTest {
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
         FileInputStream fis = new FileInputStream(f);
-        ds = OsmReader.parseDataSet(fis, Main.pleaseWaitDlg);
+        ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
         fis.close();
     }
 
@@ -253,7 +252,7 @@ public class OsmServerBackreferenceReaderTest {
 
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
         reader.setReadFull(false);
-        DataSet referers = reader.parseOsm();
+        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, referers.nodes.size());
         assertEquals(1, referers.ways.size());
         assertEquals(0, referers.relations.size());
@@ -272,7 +271,7 @@ public class OsmServerBackreferenceReaderTest {
 
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
         reader.setReadFull(true);
-        DataSet referers = reader.parseOsm();
+        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, referers.nodes.size());
         assertEquals(1, referers.ways.size());
         assertEquals(0, referers.relations.size());
@@ -292,7 +291,7 @@ public class OsmServerBackreferenceReaderTest {
 
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(w);
         reader.setReadFull(false);
-        DataSet referers = reader.parseOsm();
+        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(0, referers.nodes.size()); // no nodes loaded
         assertEquals(6, referers.ways.size());  // 6 ways referred by two relations
         for (Way w1: referers.ways) {
@@ -316,7 +315,7 @@ public class OsmServerBackreferenceReaderTest {
 
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(w);
         reader.setReadFull(true);
-        DataSet referers = reader.parseOsm();
+        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(6, referers.ways.size());  // 6 ways referred by two relations
         for (Way w1: referers.ways) {
             assertEquals(false, w1.incomplete);
@@ -351,7 +350,7 @@ public class OsmServerBackreferenceReaderTest {
 
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(r);
         reader.setReadFull(false);
-        DataSet referers = reader.parseOsm();
+        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
         Set<Long> referringRelationsIds = new HashSet<Long>();
         r = lookupRelation(referers, 6);
@@ -447,7 +446,7 @@ public class OsmServerBackreferenceReaderTest {
 
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(r);
         reader.setReadFull(true);
-        DataSet referers = reader.parseOsm();
+        DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
         Set<Long> referringRelationsIds = new HashSet<Long>();
         r = lookupRelation(referers, 6);

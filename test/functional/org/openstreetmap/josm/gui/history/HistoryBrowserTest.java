@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
@@ -53,7 +53,6 @@ public class HistoryBrowserTest extends JFrame {
             }
         }
         System.setProperty("josm.home", josmHome);
-        Main.pleaseWaitDlg = new PleaseWaitDialog(null);
         Main.pref.init(false);
 
         // init projection
@@ -73,7 +72,7 @@ public class HistoryBrowserTest extends JFrame {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(type, id);
         HistoryDataSet ds = null;
         try {
-            ds = reader.parseHistory();
+            ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         } catch(OsmTransferException e) {
             e.printStackTrace();
             return;

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Calendar;
@@ -26,7 +25,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
 
 public class MergeVisitorTest {
     private static Logger logger = Logger.getLogger(MergeVisitorTest.class.getName());
@@ -61,7 +59,6 @@ public class MergeVisitorTest {
             }
             System.setProperty("josm.home", josmHome);
         }
-        Main.pleaseWaitDlg = new PleaseWaitDialog(null);
         Main.pref.init(false);
 
         // init projection
@@ -862,7 +859,7 @@ public class MergeVisitorTest {
     /**
      * My dataset includes a deleted node.
      * Their dataset includes a way with three nodes, the first one being my node.
-     * 
+     *
      * => the merged way should include two nodes only. the deleted node should still be
      * in the data set
      *
@@ -924,7 +921,7 @@ public class MergeVisitorTest {
     /**
      * My dataset includes a deleted node.
      * Their dataset includes a relation with thre nodes, the first one being my node.
-     * 
+     *
      * => the merged relation should include two nodes only. the deleted node should still be
      * in the data set
      *

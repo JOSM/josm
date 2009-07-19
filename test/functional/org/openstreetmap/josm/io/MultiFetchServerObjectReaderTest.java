@@ -2,9 +2,10 @@
 package org.openstreetmap.josm.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +31,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class MultiFetchServerObjectReaderTest {
@@ -38,7 +39,7 @@ public class MultiFetchServerObjectReaderTest {
 
     /**
      * builds a large data set to be used later for testing MULTI FETCH on the server
-     * 
+     *
      * @return a large data set
      */
     protected static DataSet buildTestDataSet() {
@@ -119,7 +120,7 @@ public class MultiFetchServerObjectReaderTest {
 
     /**
      * creates the dataset on the server.
-     * 
+     *
      * @param ds the data set
      * @throws OsmTransferException
      */
@@ -131,7 +132,7 @@ public class MultiFetchServerObjectReaderTest {
         primitives.addAll(testDataSet.relations);
 
         OsmServerWriter writer = new OsmServerWriter();
-        writer.uploadOsm("0.6", primitives);
+        writer.uploadOsm("0.6", primitives, NullProgressMonitor.INSTANCE);
     }
 
     @BeforeClass
@@ -176,7 +177,6 @@ public class MultiFetchServerObjectReaderTest {
         // init preferences
         //
         System.setProperty("josm.home", josmHome);
-        Main.pleaseWaitDlg = new PleaseWaitDialog(null);
         Main.pref.init(false);
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
@@ -236,7 +236,7 @@ public class MultiFetchServerObjectReaderTest {
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
         FileInputStream fis = new FileInputStream(f);
-        ds = OsmReader.parseDataSet(fis, Main.pleaseWaitDlg);
+        ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
         fis.close();
     }
 
@@ -247,7 +247,7 @@ public class MultiFetchServerObjectReaderTest {
         for (int i =0; i< 10; i++) {
             reader.append(nodes.get(i));
         }
-        DataSet out = reader.parseOsm();
+        DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.nodes.size());
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
@@ -266,7 +266,7 @@ public class MultiFetchServerObjectReaderTest {
         for (int i =0; i< 10; i++) {
             reader.append(ways.get(i));
         }
-        DataSet out = reader.parseOsm();
+        DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.ways.size());
         Iterator<Way> it = out.ways.iterator();
         while(it.hasNext()) {
@@ -286,7 +286,7 @@ public class MultiFetchServerObjectReaderTest {
         for (int i =0; i< 10; i++) {
             reader.append(relations.get(i));
         }
-        DataSet out = reader.parseOsm();
+        DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.relations.size());
         Iterator<Relation> it = out.relations.iterator();
         while(it.hasNext()) {
@@ -306,7 +306,7 @@ public class MultiFetchServerObjectReaderTest {
         for (int i =0; i< 812; i++) {
             reader.append(nodes.get(i));
         }
-        DataSet out = reader.parseOsm();
+        DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(812, out.nodes.size());
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
@@ -327,7 +327,7 @@ public class MultiFetchServerObjectReaderTest {
         }
         Node n = new Node(9999999);
         reader.append(n); // doesn't exist
-        DataSet out = reader.parseOsm();
+        DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.nodes.size());
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
