@@ -59,7 +59,7 @@ public class DownloadAction extends JosmAction {
                 for (DownloadTask task : dialog.downloadTasks) {
                     Main.pref.put("download."+task.getPreferencesSuffix(), task.getCheckBox().isSelected());
                     if (task.getCheckBox().isSelected()) {
-                        task.download(this, dialog.minlat, dialog.minlon, dialog.maxlat, dialog.maxlon);
+                        task.download(this, dialog.minlat, dialog.minlon, dialog.maxlat, dialog.maxlon, null);
                         finish = true;
                     }
                 }

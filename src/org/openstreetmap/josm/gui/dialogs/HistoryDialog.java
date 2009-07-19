@@ -27,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -86,7 +85,7 @@ public class HistoryDialog extends ToggleDialog {
     /**
      * unregisters a {@see HistoryBrowserDialog}
      * @param id the id of the primitive whose history dialog is to be unregistered
-     * 
+     *
      */
     public static void unregisterHistoryBrowserDialog(long id) {
         if (historyBrowserDialogs == null)
@@ -97,7 +96,7 @@ public class HistoryDialog extends ToggleDialog {
     /**
      * replies the history dialog for the primitive with id <code>id</code>; null, if
      * no such {@see HistoryBrowserDialog} is currently showing
-     * 
+     *
      * @param id the id of the primitive
      * @return the dialog; null, if no such dialog is showing
      */
@@ -118,7 +117,7 @@ public class HistoryDialog extends ToggleDialog {
 
     /**
      * builds the row with the command buttons
-     * 
+     *
      * @return the rows with the command buttons
      */
     protected JPanel buildButtonRow() {
@@ -208,7 +207,7 @@ public class HistoryDialog extends ToggleDialog {
 
     /**
      * shows the {@see HistoryBrowserDialog} for a given {@see History}
-     * 
+     *
      * @param h the history. Must not be null.
      * @exception IllegalArgumentException thrown, if h is null
      */
@@ -224,7 +223,7 @@ public class HistoryDialog extends ToggleDialog {
 
     /**
      * invoked after the asynchronous {@see HistoryLoadTask} is finished.
-     * 
+     *
      * @param task the task which is calling back.
      */
     protected void postRefresh(HistoryLoadTask task) {
@@ -260,7 +259,7 @@ public class HistoryDialog extends ToggleDialog {
 
     /**
      * The table model with the history items
-     * 
+     *
      */
     class HistoryItemDataModel extends DefaultTableModel implements SelectionChangedListener{
         private ArrayList<History> data;
@@ -396,47 +395,10 @@ public class HistoryDialog extends ToggleDialog {
             postRefresh(this);
         }
 
-        /**
-         * update the title of the {@see PleaseWaitDialog} with information about
-         * which primitive is currently loaded
-         * 
-         * @param primitive the primitive to be loaded
-         */
-        protected void notifyStartLoadingHistory(final OsmPrimitive primitive) {
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            Main.pleaseWaitDlg.setTitle(
-                                    tr("Loading history for {0} with id {1}",
-                                            OsmPrimitiveType.from(primitive).getLocalizedDisplayNameSingular(),
-                                            Long.toString(primitive.id)
-                                    )
-                            );
-                        }
-                    }
-            );
-        }
-
-        /**
-         * enables/disables interminate progress indication in the {@see PleaseWaitDialog}
-         * 
-         * @param enabled true, if interminate progress indication is to enabled; false, otherwise
-         */
-        protected void setInterminateEnabled(final boolean enabled) {
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            Main.pleaseWaitDlg.setIndeterminate(enabled);
-                        }
-                    }
-            );
-        }
-
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             Collection<OsmPrimitive> selection = Main.ds.getSelected();
             Iterator<OsmPrimitive> it = selection.iterator();
-            setInterminateEnabled(true);
             try {
                 while(it.hasNext()) {
                     OsmPrimitive primitive = it.next();
@@ -446,12 +408,14 @@ public class HistoryDialog extends ToggleDialog {
                     if (primitive.id == 0) {
                         continue;
                     }
-                    notifyStartLoadingHistory(primitive);
+                    progressMonitor.indeterminateSubTask(tr("Loading history for {0} with id {1}",
+                            OsmPrimitiveType.from(primitive).getLocalizedDisplayNameSingular(),
+                            Long.toString(primitive.id)));
                     OsmServerHistoryReader reader = null;
                     HistoryDataSet ds = null;
                     try {
                         reader = new OsmServerHistoryReader(OsmPrimitiveType.from(primitive), primitive.id);
-                        ds = reader.parseHistory();
+                        ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
                     } catch(OsmTransferException e) {
                         if (cancelled)
                             return;
@@ -462,8 +426,6 @@ public class HistoryDialog extends ToggleDialog {
             } catch(OsmTransferException e) {
                 lastException = e;
                 return;
-            } finally {
-                setInterminateEnabled(false);
             }
         }
 

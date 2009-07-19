@@ -6,9 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class OsmServerObjectReader extends OsmServerReader {
@@ -29,10 +29,10 @@ public class OsmServerObjectReader extends OsmServerReader {
      * @throws IOException
      */
     @Override
-    public DataSet parseOsm() throws OsmTransferException {
+    public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
+        progressMonitor.beginTask("", 1);
         try {
-            Main.pleaseWaitDlg.progress.setValue(0);
-            Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
+            progressMonitor.subTask(tr("Downloading OSM data..."));
             StringBuffer sb = new StringBuffer();
             sb.append(type.getAPIName());
             sb.append("/");
@@ -41,11 +41,10 @@ public class OsmServerObjectReader extends OsmServerReader {
                 sb.append("/full");
             }
 
-            final InputStream in = getInputStream(sb.toString(), Main.pleaseWaitDlg);
+            final InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
             if (in == null)
                 return null;
-            Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
-            final OsmReader osm = OsmReader.parseDataSetOsm(in,Main.pleaseWaitDlg);
+            final OsmReader osm = OsmReader.parseDataSetOsm(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             final DataSet data = osm.getDs();
 
             in.close();
@@ -63,6 +62,8 @@ public class OsmServerObjectReader extends OsmServerReader {
             if (cancel)
                 return null;
             throw new OsmTransferException(e);
+        } finally {
+            progressMonitor.finishTask();
         }
     }
 

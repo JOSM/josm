@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.NameVisitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Class that uploads all changes to the osm server.
@@ -80,60 +81,65 @@ public class OsmServerWriter {
      * @param apiVersion version of the data set
      * @param primitives list of objects to send
      */
-    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives) throws OsmTransferException {
+    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         processed = new LinkedList<OsmPrimitive>();
 
         api.initialize();
 
-        Main.pleaseWaitDlg.progress.setMaximum(primitives.size());
-        Main.pleaseWaitDlg.progress.setValue(0);
+        progressMonitor.beginTask("");
 
-        // check whether we can use changeset
-        //
-        boolean canUseChangeset = api.hasChangesetSupport();
-        boolean useChangeset = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
-        if (useChangeset && ! canUseChangeset) {
-            System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use changesets, but API is not able to handle them. Ignoring changesets.", "osm-server.atomic-upload", apiVersion));
-            useChangeset = false;
-        }
+        try {
 
-        if (useChangeset) {
-            // upload everything in one changeset
+            // check whether we can use changeset
             //
-            try {
-                api.createChangeset(getChangesetComment());
-                processed.addAll(api.uploadDiff(primitives));
-            } catch(OsmTransferException e) {
-                throw e;
-            } finally {
+            boolean canUseChangeset = api.hasChangesetSupport();
+            boolean useChangeset = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
+            if (useChangeset && ! canUseChangeset) {
+                System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use changesets, but API is not able to handle them. Ignoring changesets.", "osm-server.atomic-upload", apiVersion));
+                useChangeset = false;
+            }
+
+            if (useChangeset) {
+                // upload everything in one changeset
+                //
                 try {
-                    if (canUseChangeset) {
-                        api.stopChangeset();
+                    api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
+                    processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
+                } catch(OsmTransferException e) {
+                    throw e;
+                } finally {
+                    try {
+                        if (canUseChangeset) {
+                            api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+                        }
+                    } catch (Exception ee) {
+                        ee.printStackTrace();
+                        // ignore nested exception
                     }
-                } catch (Exception ee) {
-                    ee.printStackTrace();
-                    // ignore nested exception
                 }
+            } else {
+                // upload changes individually (90% of code is for the status display...)
+                //
+                progressMonitor.setTicksCount(primitives.size());
+                api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
+                NameVisitor v = new NameVisitor();
+                uploadStartTime = System.currentTimeMillis();
+                for (OsmPrimitive osm : primitives) {
+                    osm.visit(v);
+                    int progress = progressMonitor.getTicks();
+                    String time_left_str = timeLeft(progress, primitives.size());
+                    progressMonitor.subTask(
+                            tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
+                                    Math.round(100.0*progress/primitives.size()), progress,
+                                    primitives.size(), time_left_str, tr(v.className), v.name, osm.id));
+                    makeApiRequest(osm);
+                    processed.add(osm);
+                    progressMonitor.worked(1);
+                }
+                api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
             }
-        } else {
-            // upload changes individually (90% of code is for the status display...)
-            //
-            api.createChangeset(getChangesetComment());
-            NameVisitor v = new NameVisitor();
-            uploadStartTime = System.currentTimeMillis();
-            for (OsmPrimitive osm : primitives) {
-                osm.visit(v);
-                int progress = Main.pleaseWaitDlg.progress.getValue();
-                String time_left_str = timeLeft(progress, primitives.size());
-                Main.pleaseWaitDlg.currentAction.setText(
-                        tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
-                                Math.round(100.0*progress/primitives.size()), progress,
-                                primitives.size(), time_left_str, tr(v.className), v.name, osm.id));
-                makeApiRequest(osm);
-                processed.add(osm);
-                Main.pleaseWaitDlg.progress.setValue(progress+1);
-            }
-            api.stopChangeset();
+        } finally {
+            progressMonitor.finishTask();
         }
     }
 

@@ -4,14 +4,14 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +29,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -50,18 +51,11 @@ public class DownloadDialog extends JPanel {
 
     public interface DownloadTask {
         /**
-         * Execute the download using the given bounding box
+         * Execute the download using the given bounding box. Set silent on progressMonitor
+         * if no error messages should be popped up.
          */
         void download(DownloadAction action, double minlat, double minlon,
-                double maxlat, double maxlon);
-
-        /**
-         * Execute the download using the given bounding box. Set silent to true if no error
-         * messages should be popped up. Message can be used to display an additional text below
-         * the default description.
-         */
-        void download(DownloadAction action, double minlat, double minlon,
-                double maxlat, double maxlon, boolean silent, String message);
+                double maxlat, double maxlon, ProgressMonitor progressMonitor);
 
         /**
          * Execute the download using the given URL

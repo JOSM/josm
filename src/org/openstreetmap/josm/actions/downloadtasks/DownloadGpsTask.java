@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.xml.sax.SAXException;
 
@@ -25,19 +26,15 @@ public class DownloadGpsTask implements DownloadTask {
         private BoundingBoxDownloader reader;
         private GpxData rawData;
         private final boolean newLayer;
-        private String msg = "";
 
-        public Task(boolean newLayer, BoundingBoxDownloader reader, boolean silent, String msg) {
+        public Task(boolean newLayer, BoundingBoxDownloader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading GPS data"));
-            this.msg = msg;
             this.reader = reader;
             this.newLayer = newLayer;
-            this.silent = silent;
         }
 
         @Override public void realRun() throws IOException, SAXException {
-            Main.pleaseWaitDlg.setCustomText(msg);
-            rawData = reader.parseRawGps();
+            rawData = reader.parseRawGps(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
         }
 
         @Override protected void finish() {
@@ -51,8 +48,6 @@ public class DownloadGpsTask implements DownloadTask {
                 Main.main.addLayer(layer);
             else
                 x.mergeFrom(layer);
-
-            Main.pleaseWaitDlg.setCustomText("");
         }
 
         private Layer findMergeLayer() {
@@ -71,23 +66,15 @@ public class DownloadGpsTask implements DownloadTask {
         @Override protected void cancel() {
             if (reader != null)
                 reader.cancel();
-            Main.pleaseWaitDlg.cancel.setEnabled(false);
         }
     }
 
     private JCheckBox checkBox = new JCheckBox(tr("Raw GPS data"));
 
     public void download(DownloadAction action, double minlat, double minlon,
-            double maxlat, double maxlon) {
-        download(action, minlat, minlon, maxlat, maxlon, false, "");
-    }
-
-    public void download(DownloadAction action, double minlat, double minlon,
-            double maxlat, double maxlon, boolean silent, String message) {
+            double maxlat, double maxlon, ProgressMonitor progressMonitor) {
         Task t = new Task(action.dialog.newLayer.isSelected(),
-                new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon),
-                silent,
-                message);
+                new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon), progressMonitor);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
         task = Main.worker.submit(t, t);
@@ -115,9 +102,9 @@ public class DownloadGpsTask implements DownloadTask {
 
         try {
             Task t = task.get();
-            return t.errorMessage == null
+            return t.getProgressMonitor().getErrorMessage() == null
                 ? ""
-                : t.errorMessage;
+                : t.getProgressMonitor().getErrorMessage();
         } catch (Exception e) {
             return "";
         }

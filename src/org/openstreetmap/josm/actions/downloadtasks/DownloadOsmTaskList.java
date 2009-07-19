@@ -22,6 +22,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * This class encapsulates the downloading of several bounding boxes that would otherwise be too
@@ -32,32 +34,39 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  */
 public class DownloadOsmTaskList implements Runnable {
     private List<DownloadTask> osmTasks = new LinkedList<DownloadTask>();
+    private ProgressMonitor progressMonitor;
 
     /**
      * Downloads a list of areas from the OSM Server
      * @param newLayer Set to true if all areas should be put into a single new layer
      * @param The List of Rectangle2D to download
      */
-    public void download(boolean newLayer, List<Rectangle2D> rects) {
+    public void download(boolean newLayer, List<Rectangle2D> rects, ProgressMonitor progressMonitor) {
+        this.progressMonitor = progressMonitor;
         if(newLayer) {
             Layer l = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
             Main.main.addLayer(l);
             Main.map.mapView.setActiveLayer(l);
         }
 
-        int i = 0;
-        for(Rectangle2D td : rects) {
-            i++;
-            DownloadTask dt = new DownloadOsmTask();
-            dt.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX(), true,
-                    tr("Download {0} of {1} ({2} left)", i, rects.size(), rects.size()-i));
-            osmTasks.add(dt);
+        progressMonitor.beginTask(null, rects.size());
+        try {
+            int i = 0;
+            for(Rectangle2D td : rects) {
+                i++;
+                DownloadTask dt = new DownloadOsmTask();
+                ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
+                childProgress.setSilent(true);
+                childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, rects.size(), rects.size()-i));
+                dt.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX(), childProgress);
+                osmTasks.add(dt);
+            }
+        } finally {
+            // If we try to get the error message now the download task will never have been started
+            // and we'd be stuck in a classical dead lock. Instead attach this to the worker and once
+            // run() gets called all downloadTasks have finished and we can grab the error messages.
+            Main.worker.execute(this);
         }
-
-        // If we try to get the error message now the download task will never have been started
-        // and we'd be stuck in a classical dead lock. Instead attach this to the worker and once
-        // run() gets called all downloadTasks have finished and we can grab the error messages.
-        Main.worker.execute(this);
     }
 
     /**
@@ -71,13 +80,14 @@ public class DownloadOsmTaskList implements Runnable {
             rects.add(a.getBounds2D());
         }
 
-        download(newLayer, rects);
+        download(newLayer, rects, NullProgressMonitor.INSTANCE);
     }
 
     /**
      * Grabs and displays the error messages after all download threads have finished.
      */
     public void run() {
+        progressMonitor.finishTask();
         String errors = "";
 
         for(DownloadTask dt : osmTasks) {
@@ -108,7 +118,7 @@ public class DownloadOsmTaskList implements Runnable {
     /**
      * Updates the local state of a set of primitives (given by a set of primitive
      * ids) with the state currently held on the server.
-     * 
+     *
      * @param potentiallyDeleted a set of ids to check update from the server
      */
     protected void updatePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
@@ -134,7 +144,7 @@ public class DownloadOsmTaskList implements Runnable {
      * deleted on the server. First prompts the user whether he wants to check
      * the current state on the server. If yes, retrieves the current state on the server
      * and checks whether the primitives are indeed deleted on the server.
-     * 
+     *
      * @param potentiallyDeleted a set of primitives (given by their ids)
      */
     protected void handlePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
@@ -176,7 +186,7 @@ public class DownloadOsmTaskList implements Runnable {
     /**
      * replies true, if the primitive with id <code>id</code> was downloaded into the
      * dataset <code>ds</code>
-     * 
+     *
      * @param id the id
      * @param ds the dataset
      * @return true, if the primitive with id <code>id</code> was downloaded into the
@@ -190,11 +200,11 @@ public class DownloadOsmTaskList implements Runnable {
     /**
      * replies true, if the primitive with id <code>id</code> was downloaded into the
      * dataset of one of the download tasks
-     * 
+     *
      * @param id the id
      * @return true, if the primitive with id <code>id</code> was downloaded into the
      * dataset of one of the download tasks
-     * 
+     *
      */
     public boolean wasDownloaded(long id) {
         for (DownloadTask task : osmTasks) {
@@ -208,7 +218,7 @@ public class DownloadOsmTaskList implements Runnable {
 
     /**
      * Replies the set of primitive ids which have been downloaded by this task list
-     * 
+     *
      * @return the set of primitive ids which have been downloaded by this task list
      */
     public Set<Long> getDownloadedIds() {

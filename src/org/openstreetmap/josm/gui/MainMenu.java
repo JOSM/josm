@@ -5,6 +5,9 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,12 +17,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
-
-/* For the fullscreen action */
-import java.awt.Frame;
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsDevice;
-import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
@@ -38,8 +35,8 @@ import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
-import org.openstreetmap.josm.actions.InfoAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
+import org.openstreetmap.josm.actions.InfoAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
@@ -77,6 +74,7 @@ import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -322,7 +320,7 @@ public class MainMenu extends JMenuBar {
         }
         /**
          * Refreshes the enabled state
-         * 
+         *
          */
         protected void refreshEnabled() {
             presetsMenu.setEnabled(Main.map != null

@@ -38,12 +38,13 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
         this.url = u;
     }
     @Override protected void realRun() {
-        Main.pleaseWaitDlg.currentAction.setText(tr("Contact {0}...", url.getHost()));
+        progressMonitor.setTicksCount(2);
         sel = mode != SearchAction.SearchMode.remove ? new LinkedList<OsmPrimitive>() : Main.ds.allNonDeletedPrimitives();
         try {
             URLConnection con = url.openConnection();
-            InputStream in = new ProgressInputStream(con, Main.pleaseWaitDlg);
-            Main.pleaseWaitDlg.currentAction.setText(tr("Downloading..."));
+            progressMonitor.subTask(tr("Contact {0}...", url.getHost()));
+            InputStream in = new ProgressInputStream(con, progressMonitor.createSubTaskMonitor(1, true));
+            progressMonitor.subTask(tr("Downloading..."));
             Map<Long, String> ids = idReader.parseIds(in);
             for (OsmPrimitive osm : Main.ds.allNonDeletedPrimitives()) {
                 if (ids.containsKey(osm.id) && osm.getClass().getName().toLowerCase().endsWith(ids.get(osm.id))) {
@@ -54,6 +55,7 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
                     }
                 }
             }
+            progressMonitor.worked(1);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(Main.parent, tr("Could not read from URL: \"{0}\"",url));

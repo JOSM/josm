@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -31,7 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * It is slightly different from {@see OsmReader} because we don't build an internal graph of
  * {@see OsmPrimitive}s. We use objects derived from {@see HistoryOsmPrimitive} instead and we
  * keep the data in a dedicated {@see HistoryDataSet}.
- * 
+ *
  */
 public class OsmHistoryReader {
 
@@ -209,14 +209,16 @@ public class OsmHistoryReader {
         data = new HistoryDataSet();
     }
 
-    public HistoryDataSet parse(PleaseWaitDialog dialog) throws SAXException, IOException {
+    public HistoryDataSet parse(ProgressMonitor progressMonitor) throws SAXException, IOException {
         InputSource inputSource = new InputSource(new InputStreamReader(in, "UTF-8"));
-        dialog.currentAction.setText("Parsing OSM history data ...");
+        progressMonitor.beginTask(tr("Parsing OSM history data ..."));
         try {
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new Parser());
         } catch (ParserConfigurationException e1) {
             e1.printStackTrace(); // broken SAXException chaining
             throw new SAXException(e1);
+        } finally {
+            progressMonitor.finishTask();
         }
         return data;
     }

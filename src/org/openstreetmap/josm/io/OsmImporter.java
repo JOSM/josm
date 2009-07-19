@@ -10,12 +10,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class OsmImporter extends FileImporter {
@@ -45,7 +44,7 @@ public class OsmImporter extends FileImporter {
     }
 
     protected void importData(InputStream in, File associatedFile) throws SAXException, IOException {
-        OsmReader osm = OsmReader.parseDataSetOsm(in,Main.pleaseWaitDlg);
+        OsmReader osm = OsmReader.parseDataSetOsm(in, NullProgressMonitor.INSTANCE);
         DataSet dataSet = osm.getDs();
         OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
         Main.main.addLayer(layer);

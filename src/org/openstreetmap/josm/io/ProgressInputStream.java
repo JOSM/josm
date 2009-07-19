@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Read from an other reader and increment an progress counter while on the way.
@@ -18,11 +19,18 @@ public class ProgressInputStream extends InputStream {
     private final InputStream in;
     private int readSoFar = 0;
     private int lastDialogUpdate = 0;
+    private boolean sizeKnown;
     private final URLConnection connection;
-    private PleaseWaitDialog pleaseWaitDlg;
+    private final ProgressMonitor progressMonitor;
 
-    public ProgressInputStream(URLConnection con, PleaseWaitDialog pleaseWaitDlg) throws OsmTransferException {
+    public ProgressInputStream(URLConnection con, ProgressMonitor progressMonitor) throws OsmTransferException {
         this.connection = con;
+        if (progressMonitor == null) {
+            progressMonitor = NullProgressMonitor.INSTANCE;
+        }
+        this.progressMonitor = progressMonitor;
+        progressMonitor.beginTask(tr("Contacting OSM Server..."), 1);
+        progressMonitor.indeterminateSubTask(null);
 
         try {
             this.in = con.getInputStream();
@@ -32,26 +40,23 @@ public class ProgressInputStream extends InputStream {
             throw new OsmTransferException(e);
         }
 
-        int contentLength = con.getContentLength();
-        this.pleaseWaitDlg = pleaseWaitDlg;
-        if (pleaseWaitDlg == null)
-            return;
-        if (contentLength > 0) {
-            pleaseWaitDlg.progress.setMaximum(contentLength);
-        } else {
-            pleaseWaitDlg.progress.setMaximum(0);
+        updateSize();
+        if (!sizeKnown) {
+            progressMonitor.indeterminateSubTask(tr("Downloading OSM data..."));
         }
-        pleaseWaitDlg.progress.setValue(0);
     }
 
     @Override public void close() throws IOException {
         in.close();
+        progressMonitor.finishTask();
     }
 
     @Override public int read(byte[] b, int off, int len) throws IOException {
         int read = in.read(b, off, len);
         if (read != -1) {
             advanceTicker(read);
+        } else {
+            progressMonitor.finishTask();
         }
         return read;
     }
@@ -60,6 +65,8 @@ public class ProgressInputStream extends InputStream {
         int read = in.read();
         if (read != -1) {
             advanceTicker(1);
+        } else {
+            progressMonitor.finishTask();
         }
         return read;
     }
@@ -69,29 +76,25 @@ public class ProgressInputStream extends InputStream {
      * @param amount
      */
     private void advanceTicker(int amount) {
-        if (pleaseWaitDlg == null)
-            return;
-
-        if (pleaseWaitDlg.progress.getMaximum() == 0 && connection.getContentLength() != -1) {
-            pleaseWaitDlg.progress.setMaximum(connection.getContentLength());
-        }
-
         readSoFar += amount;
+        updateSize();
 
         if (readSoFar / 1024 != lastDialogUpdate) {
             lastDialogUpdate++;
-            String progStr = " "+readSoFar/1024+"/";
-            progStr += (pleaseWaitDlg.progress.getMaximum()==0) ? "??? KB" : (pleaseWaitDlg.progress.getMaximum()/1024)+" KB";
-            pleaseWaitDlg.progress.setValue(readSoFar);
-
-            String cur = pleaseWaitDlg.currentAction.getText();
-            int i = cur.indexOf(' ');
-            if (i != -1) {
-                cur = cur.substring(0, i) + progStr;
+            if (sizeKnown) {
+                progressMonitor.setExtraText(readSoFar/1024 + " KB");
+                progressMonitor.setTicks(readSoFar);
             } else {
-                cur += progStr;
+                progressMonitor.setExtraText("??? KB");
             }
-            pleaseWaitDlg.currentAction.setText(cur);
+        }
+    }
+
+    private void updateSize() {
+        if (!sizeKnown && connection.getContentLength() > 0) {
+            sizeKnown = true;
+            progressMonitor.subTask(tr("Downloading OSM data..."));
+            progressMonitor.setTicksCount(connection.getContentLength());
         }
     }
 }

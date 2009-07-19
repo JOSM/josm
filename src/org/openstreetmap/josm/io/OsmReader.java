@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -30,7 +29,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AddVisitor;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -69,9 +68,9 @@ public class OsmReader {
 
     /**
      * constructor (for private use only)
-     * 
-     * @see #parseDataSet(InputStream, DataSet, PleaseWaitDialog)
-     * @see #parseDataSetOsm(InputStream, DataSet, PleaseWaitDialog)
+     *
+     * @see #parseDataSet(InputStream, DataSet, ProgressMonitor)
+     * @see #parseDataSetOsm(InputStream, DataSet, ProgressMonitor)
      */
     private OsmReader() {
     }
@@ -453,11 +452,11 @@ public class OsmReader {
      *      the Reference is not found here, Main.ds is searched and a copy of the
      *  element found there is returned.
      */
-    public static DataSet parseDataSet(InputStream source, PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
-        return parseDataSetOsm(source, pleaseWaitDlg).ds;
+    public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws SAXException, IOException {
+        return parseDataSetOsm(source, progressMonitor).ds;
     }
 
-    public static OsmReader parseDataSetOsm(InputStream source, final PleaseWaitDialog pleaseWaitDlg) throws SAXException, IOException {
+    public static OsmReader parseDataSetOsm(InputStream source, ProgressMonitor progressMonitor) throws SAXException, IOException {
         OsmReader osm = new OsmReader();
 
         // phase 1: Parse nodes and read in raw ways
@@ -469,42 +468,31 @@ public class OsmReader {
             throw new SAXException(e1);
         }
 
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        pleaseWaitDlg.currentAction.setText(tr("Prepare OSM data..."));
-                        pleaseWaitDlg.setIndeterminate(true);
-                    }
-                }
-        );
-
-        for (Node n : osm.nodes.values()) {
-            osm.adder.visit(n);
-        }
-
+        progressMonitor.beginTask(tr("Prepare OSM data...", 2));
         try {
-            osm.createWays();
-            osm.createRelations();
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            throw new SAXException(tr("Ill-formed node id"));
-        }
-
-        // clear all negative ids (new to this file)
-        for (OsmPrimitive o : osm.ds.allPrimitives())
-            if (o.id < 0) {
-                o.id = 0;
+            for (Node n : osm.nodes.values()) {
+                osm.adder.visit(n);
             }
 
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        pleaseWaitDlg.setIndeterminate(false);
-                        pleaseWaitDlg.progress.setValue(0);
-                    }
-                }
-        );
+            progressMonitor.worked(1);
 
-        return osm;
+            try {
+                osm.createWays();
+                osm.createRelations();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                throw new SAXException(tr("Ill-formed node id"));
+            }
+
+            // clear all negative ids (new to this file)
+            for (OsmPrimitive o : osm.ds.allPrimitives())
+                if (o.id < 0) {
+                    o.id = 0;
+                }
+
+            return osm;
+        } finally {
+            progressMonitor.finishTask();
+        }
     }
 }

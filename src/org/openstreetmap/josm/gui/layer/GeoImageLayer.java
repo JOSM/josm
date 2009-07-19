@@ -269,7 +269,6 @@ public class GeoImageLayer extends Layer {
     }
 
     private static final class Loader extends PleaseWaitRunnable {
-        boolean cancelled = false;
         private GeoImageLayer layer;
         private final Collection<File> files;
         private final GpxLayer gpxLayer;
@@ -279,7 +278,7 @@ public class GeoImageLayer extends Layer {
             this.gpxLayer = gpxLayer;
         }
         @Override protected void realRun() throws IOException {
-            Main.pleaseWaitDlg.currentAction.setText(tr("Read GPX..."));
+            progressMonitor.subTask(tr("Read GPX..."));
             LinkedList<TimedPoint> gps = new LinkedList<TimedPoint>();
 
             // Extract dates and locations from GPX input
@@ -302,19 +301,17 @@ public class GeoImageLayer extends Layer {
             }
 
             if (gps.isEmpty()) {
-                errorMessage = tr("No images with readable timestamps found.");
+                progressMonitor.setErrorMessage(tr("No images with readable timestamps found."));
                 return;
             }
 
             // read the image files
             ArrayList<ImageEntry> data = new ArrayList<ImageEntry>(files.size());
-            int i = 0;
-            Main.pleaseWaitDlg.progress.setMaximum(files.size());
+            progressMonitor.setTicksCount(files.size());
             for (File f : files) {
-                if (cancelled)
+                if (progressMonitor.isCancelled())
                     break;
-                Main.pleaseWaitDlg.currentAction.setText(tr("Reading {0}...",f.getName()));
-                Main.pleaseWaitDlg.progress.setValue(i++);
+                progressMonitor.subTask(tr("Reading {0}...",f.getName()));
 
                 ImageEntry e = new ImageEntry(f);
                 try {
@@ -326,6 +323,7 @@ public class GeoImageLayer extends Layer {
                     continue;
 
                 data.add(e);
+                progressMonitor.worked(1);
             }
             layer = new GeoImageLayer(data, gps);
             layer.calculatePosition();
@@ -334,7 +332,10 @@ public class GeoImageLayer extends Layer {
             if (layer != null)
                 Main.main.addLayer(layer);
         }
-        @Override protected void cancel() {cancelled = true;}
+        @Override
+        protected void cancel() {
+
+        }
     }
 
     public ArrayList<ImageEntry> data;

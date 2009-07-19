@@ -10,9 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CharacterCodingException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -125,7 +125,8 @@ public class OsmConnection {
     }
 
     public void cancel() {
-        Main.pleaseWaitDlg.currentAction.setText(tr("Aborting..."));
+        //TODO
+        //Main.pleaseWaitDlg.currentAction.setText(tr("Aborting..."));
         cancel = true;
         if (activeConnection != null) {
             activeConnection.setConnectTimeout(100);

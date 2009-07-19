@@ -6,15 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 
 import javax.swing.JOptionPane;
-import javax.swing.text.html.HTML;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -26,19 +23,13 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
-import org.openstreetmap.josm.gui.conflict.properties.PropertiesMerger.KeepMyVisibleStateAction;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.OsmApiException;
-import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.xml.sax.SAXException;
 
 /**
  * This is the model for resolving conflicts in the properties of the
@@ -282,7 +273,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * replies the merged visible state; null, if the merge decision is
      * {@see MergeDecisionType#UNDECIDED}.
-     * 
+     *
      * @return the merged visible state
      */
     public Boolean getMergedVisibleState() {
@@ -298,7 +289,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * decides the conflict between two deleted states
      * @param decision the decision (must not be null)
-     * 
+     *
      * @throws IllegalArgumentException thrown, if decision is null
      */
     public void decideDeletedStateConflict(MergeDecisionType decision) throws IllegalArgumentException{
@@ -313,7 +304,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * decides the conflict between two visible states
      * @param decision the decision (must not be null)
-     * 
+     *
      * @throws IllegalArgumentException thrown, if decision is null
      */
     public void decideVisibleStateConflict(MergeDecisionType decision) throws IllegalArgumentException {
@@ -418,7 +409,7 @@ public class PropertiesMergeModel extends Observable {
     }
 
     /**
-     * 
+     *
      * @param id
      */
     protected void handleExceptionWhileBuildingCommand(Exception e) {
@@ -439,7 +430,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * User has decided to keep his local version of a primitive which had been deleted
      * on the server
-     * 
+     *
      * @param id the primitive id
      */
     protected UndeletePrimitivesCommand createUndeletePrimitiveCommand(OsmPrimitive my) throws OsmTransferException {
@@ -456,7 +447,7 @@ public class PropertiesMergeModel extends Observable {
      * doesn't offer a call for "undeleting" a node. We therefore create
      * a clone of the node which we flag as new. On the next upload the
      * server will assign the node a new id.
-     * 
+     *
      * @param node the node to undelete
      */
     protected UndeletePrimitivesCommand  createUndeleteNodeCommand(Node node) {
@@ -466,7 +457,7 @@ public class PropertiesMergeModel extends Observable {
     /**
      * displays a confirmation message. The user has to confirm that additional dependent
      * nodes should be undeleted too.
-     * 
+     *
      * @param way  the way
      * @param dependent a list of dependent nodes which have to be undelete too
      * @return true, if the user confirms; false, otherwise
@@ -531,10 +522,10 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * Creates the undelete command for a way which is already deleted on the server.
-     * 
+     *
      * This method also checks whether there are additional nodes referred to by
      * this way which are deleted on the server too.
-     * 
+     *
      * @param way the way to undelete
      * @return the undelete command
      * @see #createUndeleteNodeCommand(Node)
@@ -549,7 +540,7 @@ public class PropertiesMergeModel extends Observable {
         }
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         reader.append(candidates.values());
-        DataSet ds = reader.parseOsm();
+        DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
         ArrayList<OsmPrimitive> toDelete = new ArrayList<OsmPrimitive>();
         for (OsmPrimitive their : ds.allPrimitives()) {
@@ -568,10 +559,10 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * Creates an undelete command for a relation which is already deleted on the server.
-     * 
+     *
      * This method  checks whether there are additional primitives referred to by
      * this relation which are already deleted on the server.
-     * 
+     *
      * @param r the relation
      * @return the undelete command
      * @see #createUndeleteNodeCommand(Node)
@@ -587,7 +578,7 @@ public class PropertiesMergeModel extends Observable {
 
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         reader.append(candidates.values());
-        DataSet ds = reader.parseOsm();
+        DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
         ArrayList<OsmPrimitive> toDelete = new ArrayList<OsmPrimitive>();
         for (OsmPrimitive their : ds.allPrimitives()) {

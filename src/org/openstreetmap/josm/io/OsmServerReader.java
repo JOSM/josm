@@ -13,11 +13,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * This DataReader reads directly from the REST API of the osm server.
@@ -39,13 +37,13 @@ public abstract class OsmServerReader extends OsmConnection {
      * @param pleaseWaitDlg
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      */
-    protected InputStream getInputStream(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws OsmTransferException  {
+    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
         api.initialize();
         urlStr = api.getBaseUrl() + urlStr;
-        return getInputStreamRaw(urlStr, pleaseWaitDlg);
+        return getInputStreamRaw(urlStr, progressMonitor);
     }
 
-    protected InputStream getInputStreamRaw(String urlStr, PleaseWaitDialog pleaseWaitDlg) throws OsmTransferException {
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
         URL url = null;
         try {
             url = new URL(urlStr);
@@ -96,7 +94,7 @@ public abstract class OsmServerReader extends OsmConnection {
             }
 
             String encoding = activeConnection.getContentEncoding();
-            InputStream inputStream = new ProgressInputStream(activeConnection, pleaseWaitDlg);
+            InputStream inputStream = new ProgressInputStream(activeConnection, progressMonitor);
             if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
                 inputStream = new GZIPInputStream(inputStream);
             }
@@ -113,6 +111,6 @@ public abstract class OsmServerReader extends OsmConnection {
         }
     }
 
-    public abstract DataSet parseOsm() throws OsmTransferException;
+    public abstract DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException;
 
 }

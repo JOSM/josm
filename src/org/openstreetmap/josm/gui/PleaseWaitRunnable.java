@@ -4,19 +4,14 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
@@ -26,36 +21,13 @@ import org.xml.sax.SAXException;
  *
  * @author Imi
  */
-public abstract class PleaseWaitRunnable implements Runnable {
-    public boolean silent = false;
-    public String errorMessage;
+public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
 
-    private boolean closeDialogCalled = false;
     private boolean cancelled = false;
     private boolean ignoreException;
-
     private final String title;
 
-    private ActionListener cancelListener = new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-            if (!cancelled) {
-                cancelled = true;
-                cancel();
-            }
-        }
-    };
-
-    private WindowListener windowListener = new WindowAdapter(){
-        @Override public void windowClosing(WindowEvent e) {
-            if (!closeDialogCalled) {
-                if (!cancelled) {
-                    cancelled = true;
-                    cancel();
-                }
-                closeDialog();
-            }
-        }
-    };
+    protected final ProgressMonitor progressMonitor;
 
     /**
      * Create the runnable object with a given message for the user.
@@ -72,45 +44,51 @@ public abstract class PleaseWaitRunnable implements Runnable {
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
     public PleaseWaitRunnable(String title, boolean ignoreException) {
-        this.title = title;
-        this.ignoreException = ignoreException;
+        this(title, new PleaseWaitProgressMonitor(), ignoreException);
     }
 
-    private void prepareDialog() {
-        // reset dialog state
-        errorMessage = null;
-        closeDialogCalled = false;
-
-        Main.pleaseWaitDlg.setTitle(title);
-        Main.pleaseWaitDlg.cancel.setEnabled(true);
-        Main.pleaseWaitDlg.setCustomText("");
-        Main.pleaseWaitDlg.cancel.addActionListener(cancelListener);
-        Main.pleaseWaitDlg.addWindowListener(windowListener);
-        Main.pleaseWaitDlg.setVisible(true);
+    public PleaseWaitRunnable(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
+        this.title = title;
+        this.progressMonitor = progressMonitor == null?new PleaseWaitProgressMonitor():progressMonitor;
+        this.ignoreException = ignoreException;
+        this.progressMonitor.addCancelListener(this);
     }
 
     private void doRealRun() {
         try {
             try {
-                realRun();
+                progressMonitor.beginTask(title);
+                try {
+                    realRun();
+                } finally {
+                    if (EventQueue.isDispatchThread()) {
+                        finish();
+                    } else {
+                        EventQueue.invokeAndWait(new Runnable() {
+                            public void run() {
+                                finish();
+                            }
+                        });
+                    }
+                }
             } catch (SAXException x) {
                 x.printStackTrace();
-                errorMessage = tr("Error while parsing")+": "+x.getMessage();
+                progressMonitor.setErrorMessage(tr("Error while parsing")+": "+x.getMessage());
             } catch (FileNotFoundException x) {
                 x.printStackTrace();
-                errorMessage = tr("File not found")+": "+x.getMessage();
+                progressMonitor.setErrorMessage(tr("File not found")+": "+x.getMessage());
             } catch (IOException x) {
                 x.printStackTrace();
-                errorMessage = x.getMessage();
+                progressMonitor.setErrorMessage(x.getMessage());
             } catch(OsmTransferException x) {
                 x.printStackTrace();
                 if (x.getCause() != null) {
-                    errorMessage = x.getCause().getMessage();
+                    progressMonitor.setErrorMessage(x.getCause().getMessage());
                 } else {
-                    errorMessage = x.getMessage();
+                    progressMonitor.setErrorMessage(x.getMessage());
                 }
             } finally {
-                closeDialog();
+                progressMonitor.finishTask();
             }
         } catch (final Throwable e) {
             if (!ignoreException) {
@@ -134,15 +112,13 @@ public abstract class PleaseWaitRunnable implements Runnable {
                     doRealRun();
                 }
             }).start();
-            prepareDialog();
         } else {
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    prepareDialog();
-                }
-            });
             doRealRun();
         }
+    }
+
+    public void operationCanceled() {
+        cancel();
     }
 
     /**
@@ -163,40 +139,7 @@ public abstract class PleaseWaitRunnable implements Runnable {
      */
     protected abstract void finish();
 
-    /**
-     * Close the dialog. Usually called from worker thread.
-     */
-    public void closeDialog() {
-        if (closeDialogCalled)
-            return;
-        closeDialogCalled  = true;
-        try {
-            Runnable runnable = new Runnable(){
-                public void run() {
-                    try {
-                        finish();
-                    } finally {
-                        Main.pleaseWaitDlg.setVisible(false);
-                        Main.pleaseWaitDlg.dispose();
-                        Main.pleaseWaitDlg.removeWindowListener(windowListener);
-                        Main.pleaseWaitDlg.cancel.removeActionListener(cancelListener);
-                    }
-                    if (errorMessage != null && !silent) {
-                        JOptionPane.showMessageDialog(Main.parent, errorMessage);
-                    }
-                }
-            };
-
-            // make sure, this is called in the dispatcher thread ASAP
-            if (EventQueue.isDispatchThread()) {
-                runnable.run();
-            } else {
-                EventQueue.invokeAndWait(runnable);
-            }
-
-        } catch (InterruptedException e) {
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+    public ProgressMonitor getProgressMonitor() {
+        return progressMonitor;
     }
 }

@@ -3,12 +3,10 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.xml.sax.SAXException;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmServerLocationReader extends OsmServerReader {
 
@@ -22,17 +20,15 @@ public class OsmServerLocationReader extends OsmServerReader {
      * Method to download OSM files from somewhere
      */
     @Override
-    public DataSet parseOsm() throws OsmTransferException {
+    public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         InputStream in = null;
+        progressMonitor.beginTask(tr("Contacting Server...", 10));
         try {
-            Main.pleaseWaitDlg.progress.setValue(0);
-            Main.pleaseWaitDlg.currentAction.setText(tr("Contacting Server..."));
-
-            in = getInputStreamRaw(url, Main.pleaseWaitDlg);
+            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(9, false));
             if (in == null)
                 return null;
-            Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
-            return OsmReader.parseDataSet(in, Main.pleaseWaitDlg);
+            progressMonitor.subTask(tr("Downloading OSM data..."));
+            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
@@ -40,6 +36,7 @@ public class OsmServerLocationReader extends OsmServerReader {
                 return null;
             throw new OsmTransferException(e);
         } finally {
+            progressMonitor.finishTask();
             try {
                 if (in != null) {
                     in.close();

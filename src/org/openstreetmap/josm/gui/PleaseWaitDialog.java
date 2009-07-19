@@ -1,7 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
-import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -11,7 +12,6 @@ import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
@@ -24,13 +24,12 @@ public class PleaseWaitDialog extends JDialog {
 
     private final JProgressBar progressBar = new JProgressBar();
 
-    public final JLabel currentAction = new JLabel(I18n.tr("Contacting the OSM server..."));
+    public final JLabel currentAction = new JLabel("");
     private final JLabel customText = new JLabel("");
     public final BoundedRangeModel progress = progressBar.getModel();
     public final JButton cancel = new JButton(I18n.tr("Cancel"));
 
-    public PleaseWaitDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), true);
+    private void initDialog() {
         setLayout(new GridBagLayout());
         JPanel pane = new JPanel(new GridBagLayout());
         pane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -52,6 +51,16 @@ public class PleaseWaitDialog extends JDialog {
                    Main.pref.putInteger("progressdialog.size",w);
             }
         });
+    }
+
+    public PleaseWaitDialog(Frame parent) {
+        super(parent, true);
+        initDialog();
+    }
+
+    public PleaseWaitDialog(Dialog parent) {
+        super(parent, true);
+        initDialog();
     }
 
     public void setIndeterminate(boolean newValue) {

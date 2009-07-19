@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -20,6 +19,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -28,14 +29,14 @@ import org.xml.sax.SAXException;
 
 /**
  * This action synchronizes a set of primitives with their state on the server.
- * 
+ *
  *
  */
 public class UpdateSelectionAction extends JosmAction implements SelectionChangedListener, LayerChangeListener {
 
     /**
      * handle an exception thrown because a primitive was deleted on the server
-     * 
+     *
      * @param id the primitive id
      */
     protected void handlePrimitiveGoneException(long id) {
@@ -43,7 +44,7 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
         reader.append(Main.main.createOrGetEditLayer().data,id);
         DataSet ds = null;
         try {
-            ds = reader.parseOsm();
+            ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
         } catch(Exception e) {
             handleUpdateException(e);
             return;
@@ -54,7 +55,7 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
 
     /**
      * handle an exception thrown during updating a primitive
-     * 
+     *
      * @param id the id of the primitive
      * @param e the exception
      */
@@ -71,7 +72,7 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
     /**
      * handles an exception case: primitive with id <code>id</code> is not in the current
      * data set
-     * 
+     *
      * @param id the primitive id
      */
     protected void handleMissingPrimitive(long id) {
@@ -86,9 +87,9 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
     /**
      * Updates the data for for the {@see OsmPrimitive}s in <code>selection</code>
      * with the data currently kept on the server.
-     * 
+     *
      * @param selection a collection of {@see OsmPrimitive}s to update
-     * 
+     *
      */
     public void updatePrimitives(final Collection<OsmPrimitive> selection) {
 
@@ -100,16 +101,6 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
             private DataSet ds;
             private boolean cancelled;
             Exception lastException;
-
-            protected void setIndeterminateEnabled(final boolean enabled) {
-                EventQueue.invokeLater(
-                        new Runnable() {
-                            public void run() {
-                                Main.pleaseWaitDlg.setIndeterminate(enabled);
-                            }
-                        }
-                );
-            }
 
             public UpdatePrimitiveTask() {
                 super("Update primitives", false /* don't ignore exception*/);
@@ -150,17 +141,15 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
 
             @Override
             protected void realRun() throws SAXException, IOException, OsmTransferException {
-                setIndeterminateEnabled(true);
+                progressMonitor.indeterminateSubTask("");
                 try {
                     MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
                     reader.append(selection);
-                    ds = reader.parseOsm();
+                    ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                 } catch(Exception e) {
                     if (cancelled)
                         return;
                     lastException = e;
-                } finally {
-                    setIndeterminateEnabled(false);
                 }
             }
         }
@@ -171,9 +160,9 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
     /**
      * Updates the data for for the {@see OsmPrimitive}s with id <code>id</code>
      * with the data currently kept on the server.
-     * 
+     *
      * @param id  the id of a primitive in the {@see DataSet} of the current edit layser
-     * 
+     *
      */
     public void updatePrimitive(long id) {
         OsmPrimitive primitive = Main.map.mapView.getEditLayer().data.getPrimitiveById(id);
@@ -201,7 +190,7 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
 
     /**
      * Refreshes the enabled state
-     * 
+     *
      */
     protected void refreshEnabled() {
         setEnabled(Main.main != null

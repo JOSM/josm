@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -59,6 +59,8 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -149,7 +151,7 @@ public class GenericRelationEditor extends RelationEditor {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add(tr("Tags and Members"), pnl);
         if (relation != null && relation.id > 0) {
-            tabbedPane.add(tr("Parent Relations"), new ReferringRelationsBrowser(getLayer(), referrerModel));
+            tabbedPane.add(tr("Parent Relations"), new ReferringRelationsBrowser(getLayer(), referrerModel, this));
         }
 
         getContentPane().add(tabbedPane,BorderLayout.CENTER);
@@ -165,7 +167,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel with the OK and  the Cancel button
-     * 
+     *
      * @return the panel with the OK and  the Cancel button
      */
     protected JPanel buildOkCancelButtonPanel() {
@@ -180,7 +182,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * build the panel with the buttons on the left
-     * 
+     *
      * @return
      */
     protected JPanel buildTagEditorControlPanel() {
@@ -219,7 +221,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel with the tag editor
-     * 
+     *
      * @return the panel with the tag editor
      */
     protected JPanel buildTagEditorPanel() {
@@ -286,7 +288,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel for the relation member editor
-     * 
+     *
      * @return the panel for the relation member editor
      */
     protected JPanel buildMemberEditorPanel() {
@@ -384,7 +386,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel with the table displaying the currently selected primitives
-     * 
+     *
      * @return
      */
     protected JPanel buildSelectionTablePanel() {
@@ -400,7 +402,7 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * builds the {@see JSplitPane} which divides the editor in an upper and a lower
      * half
-     * 
+     *
      * @return the split panel
      */
     protected JSplitPane buildSplitPane() {
@@ -414,7 +416,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * build the panel with the buttons on the left
-     * 
+     *
      * @return
      */
     protected JPanel buildLeftButtonPanel() {
@@ -458,7 +460,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * build the panel with the buttons for adding or removing the current selection
-     * 
+     *
      * @return
      */
     protected JPanel buildSelectionControlButtonPanel() {
@@ -575,7 +577,7 @@ public class GenericRelationEditor extends RelationEditor {
                         ),
                         JOptionPane.WARNING_MESSAGE
                 );
-                JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflict created"));
+                JDialog dialog = op.createDialog(this, tr("Conflict created"));
                 dialog.setAlwaysOnTop(true);
                 dialog.setModal(true);
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -603,7 +605,7 @@ public class GenericRelationEditor extends RelationEditor {
     private void downloadRelationMembers() {
         if (!memberTableModel.hasIncompleteMembers())
             return;
-        Main.worker.submit(new DownloadTask());
+        Main.worker.submit(new DownloadTask(this));
     }
 
     @Override
@@ -980,7 +982,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * Action for editing the currently selected relation
-     * 
+     *
      *
      */
     class EditAction extends AbstractAction implements ListSelectionListener {
@@ -1013,15 +1015,16 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * The asynchronous task for downloading relation members.
-     * 
+     *
      *
      */
     class DownloadTask extends PleaseWaitRunnable {
         private boolean cancelled;
+        private int conflictsCount;
         private Exception lastException;
 
-        public DownloadTask() {
-            super(tr("Download relation members"), false /* don't ignore exception */);
+        public DownloadTask(Dialog parent) {
+            super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /* don't ignore exception */);
         }
         @Override
         protected void cancel() {
@@ -1046,24 +1049,30 @@ public class GenericRelationEditor extends RelationEditor {
         protected void finish() {
             if (cancelled) return;
             memberTableModel.updateMemberReferences(getLayer().data);
-            if (lastException == null) return;
-            showLastException();
+            if (lastException != null) {
+                showLastException();
+            }
+
+            if (conflictsCount > 0) {
+                JOptionPane op = new JOptionPane(
+                        tr("There were {0} conflicts during import.",
+                                conflictsCount),
+                                JOptionPane.WARNING_MESSAGE
+                );
+                JDialog dialog = op.createDialog(GenericRelationEditor.this, tr("Conflicts in data"));
+                dialog.setAlwaysOnTop(true);
+                dialog.setModal(true);
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setVisible(true);
+            }
         }
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                SwingUtilities.invokeLater(
-                        new Runnable() {
-                            public void run() {
-                                Main.pleaseWaitDlg.setAlwaysOnTop(true);
-                                Main.pleaseWaitDlg.toFront();
-                                Main.pleaseWaitDlg.setIndeterminate(true);
-                            }
-                        }
-                );
+                progressMonitor.indeterminateSubTask("");
                 OsmServerObjectReader reader = new OsmServerObjectReader(getRelation().id, OsmPrimitiveType.RELATION, true);
-                DataSet dataSet = reader.parseOsm();
+                DataSet dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                 if (dataSet != null) {
                     final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
                     visitor.merge();
@@ -1083,19 +1092,10 @@ public class GenericRelationEditor extends RelationEditor {
                                 }
                             }
                     );
-                    if (visitor.getConflicts().isEmpty())
-                        return;
-                    getLayer().getConflicts().add(visitor.getConflicts());
-                    JOptionPane op = new JOptionPane(
-                            tr("There were {0} conflicts during import.",
-                                    visitor.getConflicts().size()),
-                                    JOptionPane.WARNING_MESSAGE
-                    );
-                    JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflicts in data"));
-                    dialog.setAlwaysOnTop(true);
-                    dialog.setModal(true);
-                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                    dialog.setVisible(true);
+                    if (!visitor.getConflicts().isEmpty()) {
+                        getLayer().getConflicts().add(visitor.getConflicts());
+                        conflictsCount = visitor.getConflicts().size();
+                    }
                 }
             } catch(Exception e) {
                 if (cancelled) {
@@ -1103,15 +1103,6 @@ public class GenericRelationEditor extends RelationEditor {
                     return;
                 }
                 lastException = e;
-            } finally {
-                SwingUtilities.invokeLater(
-                        new Runnable() {
-                            public void run() {
-                                Main.pleaseWaitDlg.setAlwaysOnTop(false);
-                                Main.pleaseWaitDlg.setIndeterminate(false);
-                            }
-                        }
-                );
             }
         }
     }

@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -160,7 +161,7 @@ public class UploadAction extends JosmAction implements LayerChangeListener{
 
     /**
      * Refreshes the enabled state
-     * 
+     *
      */
     protected void refreshEnabled() {
         setEnabled(Main.main != null
@@ -229,7 +230,7 @@ public class UploadAction extends JosmAction implements LayerChangeListener{
 
             @Override protected void realRun() throws SAXException, IOException {
                 try {
-                    server.uploadOsm(Main.ds.version, all);
+                    server.uploadOsm(Main.ds.version, all, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                     Main.main.createOrGetEditLayer().cleanData(server.processed, !add.isEmpty());
                 } catch (Exception sxe) {
                     if (uploadCancelled) {

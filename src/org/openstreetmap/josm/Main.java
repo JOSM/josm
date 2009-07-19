@@ -12,7 +12,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
@@ -41,7 +40,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -98,7 +96,7 @@ abstract public class Main {
     /**
      * The dialog that gets displayed during background task execution.
      */
-    public static PleaseWaitDialog pleaseWaitDlg;
+    //public static PleaseWaitDialog pleaseWaitDlg;
 
     /**
      * True, when in applet mode
@@ -229,7 +227,7 @@ abstract public class Main {
      * Replies the current edit layer. Creates one if no {@see OsmDataLayer}
      * exists. Replies null, if the currently active layer isn't an instance
      * of {@see OsmDataLayer}.
-     * 
+     *
      * @return the current edit layer
      */
     public final OsmDataLayer createOrGetEditLayer() {
@@ -241,7 +239,7 @@ abstract public class Main {
 
     /**
      * Replies true if this map view has an edit layer
-     * 
+     *
      * @return true if this map view has an edit layer
      */
     public boolean hasEditLayer() {
@@ -351,15 +349,9 @@ abstract public class Main {
         if (bounds == null) {
             bounds = !args.containsKey("no-maximize") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
         }
-
-        // preinitialize a wait dialog for all early downloads (e.g. via command line)
-        pleaseWaitDlg = new PleaseWaitDialog(null);
     }
 
     public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
-        // initialize the pleaseWaitDialog with the application as parent to handle focus stuff
-        pleaseWaitDlg = new PleaseWaitDialog(parent);
-
         if (args.containsKey("download")) {
             for (String s : args.get("download")) {
                 downloadFromParamString(false, s);
@@ -425,7 +417,7 @@ abstract public class Main {
             } else {
                 //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
                 DownloadTask osmTask = new DownloadOsmTask();
-                osmTask.download(main.menu.download, b.min.lat(), b.min.lon(), b.max.lat(), b.max.lon());
+                osmTask.download(main.menu.download, b.min.lat(), b.min.lon(), b.max.lat(), b.max.lon(), null);
             }
             return;
         }
@@ -443,7 +435,7 @@ abstract public class Main {
         if (st.countTokens() == 4) {
             try {
                 DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
-                task.download(main.menu.download, Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()));
+                task.download(main.menu.download, Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), null);
                 return;
             } catch (final NumberFormatException e) {
             }

@@ -48,7 +48,6 @@ public class PluginDownloader {
         }
 
         @Override protected void finish() {
-            Main.pleaseWaitDlg.setVisible(false);
             if (errors.length() > 0)
                 JOptionPane.showMessageDialog(Main.parent, tr("There were problems with the following plugins:\n\n {0}",errors));
             else
@@ -59,11 +58,10 @@ public class PluginDownloader {
             File pluginDir = Main.pref.getPluginsDirFile();
             if (!pluginDir.exists())
                 pluginDir.mkdirs();
-            Main.pleaseWaitDlg.progress.setMaximum(toUpdate.size());
-            int progressValue = 0;
+            progressMonitor.setTicksCount(toUpdate.size());
             for (PluginInformation d : toUpdate) {
-                Main.pleaseWaitDlg.progress.setValue(progressValue++);
-                Main.pleaseWaitDlg.currentAction.setText(tr("Downloading Plugin {0}...", d.name));
+                progressMonitor.subTask(tr("Downloading Plugin {0}...", d.name));
+                progressMonitor.worked(1);
                 File pluginFile = new File(pluginDir, d.name + ".jar.new");
                 if(download(d, pluginFile))
                     count++;

@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -36,6 +35,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
 
 /**
  * This is browser for a list of relations which refer to another relations
- * 
+ *
  *
  */
 public class ReferringRelationsBrowser extends JPanel {
@@ -55,6 +55,7 @@ public class ReferringRelationsBrowser extends JPanel {
     private OsmDataLayer layer;
     private JCheckBox cbReadFull;
     private EditAction editAction;
+    private final GenericRelationEditor relationEditor;
 
     /**
      * build the GUI
@@ -82,7 +83,8 @@ public class ReferringRelationsBrowser extends JPanel {
         add(pnl, BorderLayout.SOUTH);
     }
 
-    public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model) {
+    public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model, GenericRelationEditor relationEditor) {
+        this.relationEditor = relationEditor;
         this.model = model;
         this.layer = layer;
         build();
@@ -110,7 +112,7 @@ public class ReferringRelationsBrowser extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
             boolean full = cbReadFull.isSelected();
-            ReloadTask task = new ReloadTask(full);
+            ReloadTask task = new ReloadTask(full, relationEditor);
             Main.worker.submit(task);
         }
 
@@ -129,7 +131,7 @@ public class ReferringRelationsBrowser extends JPanel {
 
     /**
      * Action for editing the currently selected relation
-     * 
+     *
      */
     class EditAction extends AbstractAction implements ListSelectionListener {
         public EditAction() {
@@ -180,18 +182,8 @@ public class ReferringRelationsBrowser extends JPanel {
         private DataSet referrers;
         private boolean full;
 
-        protected void setIndeterminateEnabled(final boolean enabled) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            Main.pleaseWaitDlg.setIndeterminate(enabled);
-                        }
-                    }
-            );
-        }
-
-        public ReloadTask(boolean full) {
-            super(tr("Download referring relations"), false /* don't ignore exception */);
+        public ReloadTask(boolean full, Dialog parent) {
+            super(tr("Download referring relations"), new PleaseWaitProgressMonitor(parent), false /* don't ignore exception */);
             referrers = null;
         }
         @Override
@@ -236,11 +228,9 @@ public class ReferringRelationsBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                Main.pleaseWaitDlg.setAlwaysOnTop(true);
-                Main.pleaseWaitDlg.toFront();
-                setIndeterminateEnabled(true);
+                progressMonitor.indeterminateSubTask(null);
                 OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(model.getRelation(), full);
-                referrers = reader.parseOsm();
+                referrers = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                 if (referrers != null) {
                     final MergeVisitor visitor = new MergeVisitor(getLayer().data, referrers);
                     visitor.merge();
@@ -269,7 +259,7 @@ public class ReferringRelationsBrowser extends JPanel {
                                     visitor.getConflicts().size()),
                                     JOptionPane.WARNING_MESSAGE
                     );
-                    JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflicts in data"));
+                    JDialog dialog = op.createDialog(ReferringRelationsBrowser.this, tr("Conflicts in data"));
                     dialog.setAlwaysOnTop(true);
                     dialog.setModal(true);
                     dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -281,9 +271,6 @@ public class ReferringRelationsBrowser extends JPanel {
                     return;
                 }
                 lastException = e;
-            } finally {
-                Main.pleaseWaitDlg.setAlwaysOnTop(false);
-                setIndeterminateEnabled(false);
             }
         }
     }

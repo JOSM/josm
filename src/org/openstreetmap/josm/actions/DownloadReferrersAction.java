@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 /**
  * This action loads the set of primitives referring to the current selection from the OSM
  * server.
- * 
+ *
  *
  */
 public class DownloadReferrersAction extends JosmAction implements SelectionChangedListener, LayerChangeListener {
@@ -48,7 +48,7 @@ public class DownloadReferrersAction extends JosmAction implements SelectionChan
     /**
      * Downloads the primitives referring to the primitives in <code>primitives</code>.
      * Does nothing if primitives is null or empty.
-     * 
+     *
      * @param primitives the collection of primitives.
      */
     public void downloadReferrers(Collection<OsmPrimitive> primitives) {
@@ -67,7 +67,7 @@ public class DownloadReferrersAction extends JosmAction implements SelectionChan
 
     /**
      * The asynchronous task for downloading referring primitives
-     * 
+     *
      */
     class DownloadReferrersTask extends PleaseWaitRunnable {
         private DataSet ds;
@@ -75,16 +75,6 @@ public class DownloadReferrersAction extends JosmAction implements SelectionChan
         Exception lastException;
         private Collection<OsmPrimitive> primitives;
         private DataSet parents;
-
-        protected void setIndeterminateEnabled(final boolean enabled) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            Main.pleaseWaitDlg.setIndeterminate(enabled);
-                        }
-                    }
-            );
-        }
 
         public DownloadReferrersTask(Collection<OsmPrimitive> primitives) {
             super("Download referrers", false /* don't ignore exception*/);
@@ -139,46 +129,43 @@ public class DownloadReferrersAction extends JosmAction implements SelectionChan
                             visitor.getConflicts().size()),
                             JOptionPane.WARNING_MESSAGE
             );
-            JDialog dialog = op.createDialog(Main.pleaseWaitDlg, tr("Conflicts in data"));
+            JDialog dialog = op.createDialog(null, tr("Conflicts in data"));
             dialog.setAlwaysOnTop(true);
             dialog.setModal(true);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             dialog.setVisible(true);
         }
 
-        protected void downloadParents(OsmPrimitive primitive) throws OsmTransferException{
+        protected void downloadParents(OsmPrimitive primitive, ProgressMonitor progressMonitor) throws OsmTransferException{
             OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(primitive);
-            DataSet ds = reader.parseOsm();
+            DataSet ds = reader.parseOsm(progressMonitor);
             MergeVisitor visitor = new MergeVisitor(parents, ds);
             visitor.merge();
         }
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            setIndeterminateEnabled(true);
             try {
+                progressMonitor.setTicksCount(primitives.size());
                 int i=1;
                 for (OsmPrimitive primitive: primitives) {
                     if (cancelled)
                         return;
-                    String title = tr("({0}/{1}) Loading parents of primitive {2}", i+1,primitives.size(), primitive.getName());
-                    Main.pleaseWaitDlg.setTitle(title);
-                    downloadParents(primitive);
+                    progressMonitor.subTask(tr("({0}/{1}) Loading parents of primitive {2}", i+1,primitives.size(), primitive.getName()));
+                    downloadParents(primitive, progressMonitor.createSubTaskMonitor(1, false));
                     i++;
                 }
             } catch(Exception e) {
                 if (cancelled)
                     return;
                 lastException = e;
-            } finally {
-                setIndeterminateEnabled(false);
             }
         }
     }
 
     /**
      * Refreshes the enabled state
-     * 
+     *
      */
     protected void refreshEnabled() {
         setEnabled(Main.map != null

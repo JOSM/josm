@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
-import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -63,31 +63,32 @@ public class DiffResultReader extends AbstractVisitor {
     /**
      * Parse the given input source and return the dataset.
      */
-    public static void parseDiffResult(String source, Collection<OsmPrimitive> osm, Collection<OsmPrimitive> processed, Map<OsmPrimitive,Long> newIdMap, PleaseWaitDialog pleaseWaitDlg)
+    public static void parseDiffResult(String source, Collection<OsmPrimitive> osm, Collection<OsmPrimitive> processed, Map<OsmPrimitive,Long> newIdMap, ProgressMonitor progressMonitor)
     throws SAXException, IOException {
 
-       DiffResultReader drr = new DiffResultReader();
-       drr.processed = processed;
-       drr.newIdMap = newIdMap;
-       InputSource inputSource = new InputSource(new StringReader(source));
-       try {
-           SAXParserFactory.newInstance().newSAXParser().parse(inputSource, drr.new Parser());
-       } catch (ParserConfigurationException e1) {
-           e1.printStackTrace(); // broken SAXException chaining
-           throw new SAXException(e1);
-       }
+        progressMonitor.beginTask(tr("Preparing data..."));
+        try {
 
-       if (pleaseWaitDlg != null) {
-           pleaseWaitDlg.progress.setValue(0);
-           pleaseWaitDlg.currentAction.setText(tr("Preparing data..."));
-       }
+            DiffResultReader drr = new DiffResultReader();
+            drr.processed = processed;
+            drr.newIdMap = newIdMap;
+            InputSource inputSource = new InputSource(new StringReader(source));
+            try {
+                SAXParserFactory.newInstance().newSAXParser().parse(inputSource, drr.new Parser());
+            } catch (ParserConfigurationException e1) {
+                e1.printStackTrace(); // broken SAXException chaining
+                throw new SAXException(e1);
+            }
 
-       for (OsmPrimitive p : osm) {
-           //System.out.println("old: "+ p);
-           p.visit(drr);
-           //System.out.println("new: "+ p);
-           //System.out.println("");
-       }
+            for (OsmPrimitive p : osm) {
+                //System.out.println("old: "+ p);
+                p.visit(drr);
+                //System.out.println("new: "+ p);
+                //System.out.println("");
+            }
+        } finally {
+            progressMonitor.finishTask();
+        }
     }
 
     public void visit(Node n) {

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -278,14 +278,18 @@ public class OsmApi extends OsmConnection {
      * @param comment the "commit comment" for the new changeset
      * @throws OsmTransferException signifying a non-200 return code, or connection errors
      */
-    public void createChangeset(String comment) throws OsmTransferException {
-        changeset = new Changeset();
-        notifyStatusMessage(tr("Opening changeset..."));
-        Properties sysProp = System.getProperties();
-        Object ua = sysProp.get("http.agent");
-        changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
-        changeset.put("comment", comment);
-        createPrimitive(changeset);
+    public void createChangeset(String comment, ProgressMonitor progressMonitor) throws OsmTransferException {
+        progressMonitor.beginTask((tr("Opening changeset...")));
+        try {
+            changeset = new Changeset();
+            Properties sysProp = System.getProperties();
+            Object ua = sysProp.get("http.agent");
+            changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
+            changeset.put("comment", comment);
+            createPrimitive(changeset);
+        } finally {
+            progressMonitor.finishTask();
+        }
     }
 
     /**
@@ -293,11 +297,15 @@ public class OsmApi extends OsmConnection {
      *
      * @throws OsmTransferException if something goes wrong.
      */
-    public void stopChangeset() throws OsmTransferException {
-        initialize();
-        notifyStatusMessage(tr("Closing changeset..."));
-        sendRequest("PUT", "changeset" + "/" + changeset.id + "/close", null);
-        changeset = null;
+    public void stopChangeset(ProgressMonitor progressMonitor) throws OsmTransferException {
+        progressMonitor.beginTask(tr("Closing changeset..."));
+        try {
+            initialize();
+            sendRequest("PUT", "changeset" + "/" + changeset.id + "/close", null);
+            changeset = null;
+        } finally {
+            progressMonitor.finishTask();
+        }
     }
 
     /**
@@ -307,37 +315,40 @@ public class OsmApi extends OsmConnection {
      * @return list of processed primitives
      * @throws OsmTransferException if something is wrong
      */
-    public Collection<OsmPrimitive> uploadDiff(final Collection<OsmPrimitive> list) throws OsmTransferException {
+    public Collection<OsmPrimitive> uploadDiff(final Collection<OsmPrimitive> list, ProgressMonitor progressMonitor) throws OsmTransferException {
 
-        if (changeset == null)
-            throw new OsmTransferException(tr("No changeset present for diff upload"));
-
-        initialize();
-        final ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
-
-        CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
-
-        notifyStatusMessage(tr("Preparing..."));
-        for (OsmPrimitive osm : list) {
-            osm.visit(duv);
-            notifyRelativeProgress(1);
-        }
-        notifyStatusMessage(tr("Uploading..."));
-        setAutoProgressIndication(true);
-
-        String diff = duv.getDocument();
+        progressMonitor.beginTask("", list.size() * 2);
         try {
-            String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
-            DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(), Main.pleaseWaitDlg);
-        } catch(OsmTransferException e) {
-            throw e;
-        } catch(Exception e) {
-            throw new OsmTransferException(e);
-        } finally {
-            setAutoProgressIndication(false);
-        }
+            if (changeset == null)
+                throw new OsmTransferException(tr("No changeset present for diff upload"));
 
-        return processed;
+            initialize();
+            final ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
+
+            CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
+
+            progressMonitor.subTask(tr("Preparing..."));
+            for (OsmPrimitive osm : list) {
+                osm.visit(duv);
+                progressMonitor.worked(1);
+            }
+            progressMonitor.indeterminateSubTask(tr("Uploading..."));
+
+            String diff = duv.getDocument();
+            try {
+                String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
+                DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(),
+                        progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            } catch(OsmTransferException e) {
+                throw e;
+            } catch(Exception e) {
+                throw new OsmTransferException(e);
+            }
+
+            return processed;
+        } finally {
+            progressMonitor.finishTask();
+        }
     }
 
 
@@ -467,40 +478,8 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * notifies any listeners about the current state of this API. Currently just
-     * displays the message in the global progress dialog, see {@see Main#pleaseWaitDlg}
-     *
-     * @param message a status message.
-     */
-    protected void notifyStatusMessage(String message) {
-        Main.pleaseWaitDlg.currentAction.setText(message);
-    }
-
-    /**
-     * notifies any listeners about the current about a relative progress. Currently just
-     * increments the progress monitor in the in the global progress dialog, see {@see Main#pleaseWaitDlg}
-     *
-     * @param int the delta
-     */
-    protected void notifyRelativeProgress(int delta) {
-        int current= Main.pleaseWaitDlg.progress.getValue();
-        Main.pleaseWaitDlg.progress.setValue(current + delta);
-    }
-
-
-    protected void setAutoProgressIndication(final boolean enabled) {
-        EventQueue.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        Main.pleaseWaitDlg.setIndeterminate(enabled);
-                    }
-                }
-        );
-    }
-
-    /**
      * returns the API capabilities; null, if the API is not initialized yet
-     * 
+     *
      * @return the API capabilities
      */
     public Capabilities getCapabilities() {

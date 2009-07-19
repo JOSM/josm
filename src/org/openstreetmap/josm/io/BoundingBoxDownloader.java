@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.SAXException;
 
 
@@ -38,20 +39,21 @@ public class BoundingBoxDownloader extends OsmServerReader {
      *      contain only one list, since the server cannot distinguish between
      *      ways.
      */
-    public GpxData parseRawGps() throws IOException, SAXException {
-        Main.pleaseWaitDlg.progress.setValue(0);
-        Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
+    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws IOException, SAXException {
+        progressMonitor.beginTask("", 1);
         try {
+            progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
             String url = "trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=";
 
             boolean done = false;
             GpxData result = null;
             for (int i = 0;!done;++i) {
-                Main.pleaseWaitDlg.currentAction.setText(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
-                InputStream in = getInputStream(url+i, Main.pleaseWaitDlg);
+                progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
+                InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true));
                 if (in == null) {
                     break;
                 }
+                progressMonitor.setTicks(0);
                 GpxData currentGpx = new GpxReader(in, null).data;
                 if (result == null) {
                     result = currentGpx;
@@ -82,6 +84,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
             if (e instanceof RuntimeException)
                 throw (RuntimeException)e;
             throw new RuntimeException(e);
+        } finally {
+            progressMonitor.finishTask();
         }
     }
 
@@ -90,17 +94,14 @@ public class BoundingBoxDownloader extends OsmServerReader {
      * @return A data set containing all data retrieved from that url
      */
     @Override
-    public DataSet parseOsm() throws OsmTransferException {
+    public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
+        progressMonitor.beginTask(tr("Contacting OSM Server..."), 10);
         try {
-            Main.pleaseWaitDlg.progress.setValue(0);
-            Main.pleaseWaitDlg.currentAction.setText(tr("Contacting OSM Server..."));
-            Main.pleaseWaitDlg.setIndeterminate(true);
-            final InputStream in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, Main.pleaseWaitDlg);
-            Main.pleaseWaitDlg.setIndeterminate(false);
+            progressMonitor.indeterminateSubTask(null);
+            final InputStream in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
             if (in == null)
                 return null;
-            Main.pleaseWaitDlg.currentAction.setText(tr("Downloading OSM data..."));
-            final DataSet data = OsmReader.parseDataSet(in,Main.pleaseWaitDlg);
+            final DataSet data = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
             in.close();
             activeConnection = null;
             return data;
@@ -116,6 +117,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
             if (cancel)
                 return null;
             throw new OsmTransferException(e);
+        } finally {
+            progressMonitor.finishTask();
         }
     }
 }
