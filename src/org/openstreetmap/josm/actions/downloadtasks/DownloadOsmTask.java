@@ -52,6 +52,12 @@ public class DownloadOsmTask implements DownloadTask {
             dataSet = reader.parseOsm();
         }
 
+        protected OsmDataLayer getEditLayer() {
+            if (Main.map == null) return null;
+            if (Main.map.mapView == null) return null;
+            return Main.map.mapView.getEditLayer();
+        }
+
         @Override protected void finish() {
             if (dataSet == null)
                 return; // user canceled download or error occurred
@@ -65,11 +71,11 @@ public class DownloadOsmTask implements DownloadTask {
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
             }
             rememberDownloadedData(dataSet);
-            if (newLayer) {
+            if (newLayer || getEditLayer() == null) {
                 OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
                 Main.main.addLayer(layer);
             } else {
-                Main.main.createOrGetEditLayer().mergeFrom(dataSet);
+                getEditLayer().mergeFrom(dataSet);
             }
 
             Main.pleaseWaitDlg.setCustomText("");
