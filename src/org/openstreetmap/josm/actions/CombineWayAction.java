@@ -38,6 +38,8 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -47,15 +49,19 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Imi
  */
-public class CombineWayAction extends JosmAction implements SelectionChangedListener {
+public class CombineWayAction extends JosmAction implements SelectionChangedListener,LayerChangeListener {
 
     public CombineWayAction() {
         super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
                 Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.GROUP_EDIT), true);
         DataSet.selListeners.add(this);
+        Layer.listeners.add(this);
+        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent event) {
+        if (getCurrentDataSet() == null)
+            return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         LinkedList<Way> selectedWays = new LinkedList<Way>();
 
@@ -297,16 +303,36 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
      * Enable the "Combine way" menu option if more then one way is selected
      */
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        boolean first = false;
-        for (OsmPrimitive osm : newSelection) {
-            if (osm instanceof Way) {
-                if (first) {
-                    setEnabled(true);
-                    return;
-                }
-                first = true;
-            }
-        }
-        setEnabled(false);
+        refreshEnabled();
     }
+
+    protected void refreshEnabled() {
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+            return;
+        }
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        int numWays = 0;
+
+        for (OsmPrimitive osm : selection)
+            if (osm instanceof Way) {
+                numWays++;
+            }
+        setEnabled(numWays >= 2);
+    }
+
+
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
+    }
+
 }
