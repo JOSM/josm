@@ -15,6 +15,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -297,26 +301,8 @@ public class GenericRelationEditor extends RelationEditor {
         // setting up the member table
         memberTable = new MemberTable(memberTableModel);
 
-        ListSelectionModel lsm = memberTable.getSelectionModel();
-        lsm.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                ArrayList<OsmPrimitive> sel;
-                int cnt = memberTable.getSelectedRowCount();
-                if(cnt > 0) {
-                    sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i : memberTable.getSelectedRows()) {
-                        sel.add(memberTableModel.getReferredPrimitive(i));
-                    }
-                } else {
-                    cnt = memberTable.getRowCount();
-                    sel = new ArrayList<OsmPrimitive>(cnt);
-                    for (int i = 0; i < cnt; ++i) {
-                        sel.add(memberTableModel.getReferredPrimitive(i));
-                    }
-                }
-                getLayer().data.setSelected(sel);
-            }
-        });
+        memberTable.getSelectionModel().addListSelectionListener(new SelectionSynchronizer());
+        memberTable.addMouseListener(new MemberTableDblClickAdapter());
 
         final JScrollPane scrollPane = new JScrollPane(memberTable);
         // this adapters ensures that the width of the tag table columns is adjusted
@@ -332,7 +318,6 @@ public class GenericRelationEditor extends RelationEditor {
                     }
                 }
         );
-
 
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
@@ -363,25 +348,56 @@ public class GenericRelationEditor extends RelationEditor {
         gc.weighty = 1.0;
         pnl.add(scrollPane, gc);
 
-        gc.gridx = 2;
-        gc.gridy = 1;
-        gc.weightx = 0.0;
-        gc.weighty = 1.0;
-        pnl.add(buildSelectionControlButtonPanel(), gc);
+        JPanel pnl2 = new JPanel();
+        pnl2.setLayout(new GridBagLayout());
 
-        gc.gridx = 3;
-        gc.gridy = 1;
-        gc.weightx = 0.4;
-        gc.weighty = 1.0;
-        pnl.add(buildSelectionTablePanel(), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 2;
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridheight  =1;
+        gc.gridwidth = 3;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        pnl.add(buildButtonPanel(), gc);
+        pnl2.add(new JLabel(tr("Selection")), gc);
 
-        return pnl;
+        gc.gridx = 0;
+        gc.gridy = 1;
+        gc.gridheight  =1;
+        gc.gridwidth = 1;
+        gc.fill = GridBagConstraints.VERTICAL;
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.weightx = 0.0;
+        gc.weighty = 1.0;
+        pnl2.add(buildSelectionControlButtonPanel(), gc);
+
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.weightx = 1.0;
+        gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        pnl2.add(buildSelectionTablePanel(), gc);
+
+        final JSplitPane splitPane = new  JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setLeftComponent(pnl);
+        splitPane.setRightComponent(pnl2);
+        splitPane.setOneTouchExpandable(false);
+        addWindowListener(
+                new WindowAdapter() {
+                    @Override
+                    public void windowOpened(WindowEvent e) {
+                        // has to be called when the window is visible, otherwise
+                        // no effect
+                        splitPane.setDividerLocation(0.6);
+                    }
+                }
+        );
+
+        JPanel pnl3 = new JPanel();
+        pnl3.setLayout(new BorderLayout());
+        pnl3.add(splitPane, BorderLayout.CENTER);
+        pnl3.add(buildButtonPanel(), BorderLayout.SOUTH);
+        return pnl3;
     }
 
     /**
@@ -406,11 +422,20 @@ public class GenericRelationEditor extends RelationEditor {
      * @return the split panel
      */
     protected JSplitPane buildSplitPane() {
-        JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         pane.setTopComponent(buildTagEditorPanel());
         pane.setBottomComponent(buildMemberEditorPanel());
         pane.setOneTouchExpandable(true);
-        pane.setDividerLocation(150);
+        addWindowListener(
+                new WindowAdapter() {
+                    @Override
+                    public void windowOpened(WindowEvent e) {
+                        // has to be called when the window is visible, otherwise
+                        // no effect
+                        pane.setDividerLocation(0.3);
+                    }
+                }
+        );
         return pane;
     }
 
@@ -997,7 +1022,7 @@ public class GenericRelationEditor extends RelationEditor {
             setEnabled(memberTable.getSelectedRowCount() == 1 && memberTableModel.isEditableRelation(memberTable.getSelectedRow()));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        public void run()  {
             int idx = memberTable.getSelectedRow();
             if (idx < 0) return;
             OsmPrimitive primitive = memberTableModel.getReferredPrimitive(idx);
@@ -1008,8 +1033,36 @@ public class GenericRelationEditor extends RelationEditor {
             editor.setVisible(true);
         }
 
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+            run();
+        }
+
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
+        }
+    }
+
+    class MemberTableDblClickAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+                new EditAction().run();
+            }
+        }
+    }
+
+    class SelectionSynchronizer implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent e) {
+            ArrayList<OsmPrimitive> sel;
+            int cnt = memberTable.getSelectedRowCount();
+            if (cnt <=0) return;
+            sel = new ArrayList<OsmPrimitive>(cnt);
+            for (int i : memberTable.getSelectedRows()) {
+                sel.add(memberTableModel.getReferredPrimitive(i));
+            }
+            getLayer().data.setSelected(sel);
         }
     }
 
