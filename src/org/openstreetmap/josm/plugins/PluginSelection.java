@@ -66,11 +66,16 @@ public class PluginSelection {
         StringBuilder toUpdateStr = new StringBuilder();
         for (String pluginName : Main.pref.getCollection("plugins", Collections.<String>emptySet())) {
             PluginInformation local = localPlugins.get(pluginName);
-            PluginInformation description = availablePlugins.get(local.name);
+            PluginInformation description = availablePlugins.get(pluginName);
 
-            if (description.version != null && !description.version.equals(local.version)) {
+            if (description == null) {
+                System.out.println(tr("Plug-in named {0} is not available. Update skipped.", pluginName));
+                continue;
+            }
+
+            if (local == null || (description.version != null && !description.version.equals(local.version))) {
                 toUpdate.add(description);
-                toUpdateStr.append(description.name+"\n");
+                toUpdateStr.append(pluginName+"\n");
             }
         }
         if (toUpdate.isEmpty()) {
