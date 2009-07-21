@@ -1000,6 +1000,8 @@ public class GenericRelationEditor extends RelationEditor {
             Relation copy = new Relation();
             tagEditorModel.applyToPrimitive(copy);
             memberTableModel.applyToRelation(copy);
+            getLayer().data.addPrimitive(copy);
+            getLayer().fireDataChange();
             RelationEditor editor = RelationEditor.getEditor(getLayer(), copy, memberTableModel.getSelectedMembers());
             editor.setVisible(true);
         }
