@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class UnselectAllAction extends JosmAction implements LayerChangeListener {
+public class UnselectAllAction extends JosmAction {
 
     public UnselectAllAction() {
         super(tr("Unselect All"), "unselectall", tr("Unselect all objects."),
@@ -36,8 +36,6 @@ public class UnselectAllAction extends JosmAction implements LayerChangeListener
                 Shortcut.registerShortcut("edit:unselectallescape", tr("Edit: {0}", tr("Unselect All (Escape)")),
                         KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT).getKeyStroke(),
                         tr("Unselect All"));
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -49,22 +47,8 @@ public class UnselectAllAction extends JosmAction implements LayerChangeListener
      * Refreshes the enabled state
      * 
      */
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

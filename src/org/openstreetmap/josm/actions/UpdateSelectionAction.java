@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
  *
  *
  */
-public class UpdateSelectionAction extends JosmAction implements SelectionChangedListener, LayerChangeListener {
+public class UpdateSelectionAction extends JosmAction {
 
     /**
      * handle an exception thrown because a primitive was deleted on the server
@@ -183,16 +183,14 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
                         KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY + Shortcut.GROUPS_ALT2),
                         true);
-        refreshEnabled();
-        Layer.listeners.add(this);
-        DataSet.selListeners.add(this);
     }
 
     /**
      * Refreshes the enabled state
      *
      */
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         setEnabled(getCurrentDataSet() != null
                 && ! getCurrentDataSet().getSelected().isEmpty()
         );
@@ -215,21 +213,5 @@ public class UpdateSelectionAction extends JosmAction implements SelectionChange
             return;
         }
         updatePrimitives(selection);
-    }
-
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        refreshEnabled();
-    }
-
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

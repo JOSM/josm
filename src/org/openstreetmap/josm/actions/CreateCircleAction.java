@@ -72,6 +72,9 @@ public final class CreateCircleAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
+
         int numberOfNodesInCircle = Main.pref.getInteger("createcircle.nodecount", 8);
         if (numberOfNodesInCircle < 1) {
             numberOfNodesInCircle = 1;
@@ -263,5 +266,10 @@ public final class CreateCircleAction extends JosmAction {
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Create Circle"), cmds));
         Main.map.repaint();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
     }
 }

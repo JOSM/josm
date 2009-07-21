@@ -31,6 +31,8 @@ public class JoinNodeWayAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         if (sel.size() != 1 || !(sel.iterator().next() instanceof Node)) return;
         Node node = (Node) sel.iterator().next();
@@ -82,5 +84,10 @@ public class JoinNodeWayAction extends JosmAction {
         is.addAll(is2);
         Collections.sort(is);
         Collections.reverse(is);
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
     }
 }

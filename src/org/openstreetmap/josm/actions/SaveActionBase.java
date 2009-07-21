@@ -25,7 +25,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.OsmBzip2Importer;
@@ -34,12 +33,10 @@ import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public abstract class SaveActionBase extends DiskAccessAction implements LayerChangeListener {
+public abstract class SaveActionBase extends DiskAccessAction {
 
     public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut) {
         super(name, iconName, tooltip, shortcut);
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -274,9 +271,9 @@ public abstract class SaveActionBase extends DiskAccessAction implements LayerCh
      * Refreshes the enabled state
      * 
      */
-    protected void refreshEnabled() {
-        boolean check = Main.main != null
-        && Main.map != null
+    @Override
+    protected void updateEnabledState() {
+        boolean check =  Main.map != null
         && Main.map.mapView !=null
         && Main.map.mapView.getActiveLayer() != null;
         if(!check) {
@@ -285,21 +282,5 @@ public abstract class SaveActionBase extends DiskAccessAction implements LayerCh
         }
         Layer layer = Main.map.mapView.getActiveLayer();
         setEnabled(layer instanceof OsmDataLayer || layer instanceof GpxLayer);
-    }
-
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

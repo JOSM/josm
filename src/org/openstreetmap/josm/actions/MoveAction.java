@@ -109,4 +109,9 @@ public class MoveAction extends JosmAction {
 
         Main.map.mapView.repaint();
     }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
+    }
 }

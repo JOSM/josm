@@ -28,8 +28,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
@@ -50,7 +48,7 @@ import org.xml.sax.SAXException;
  *
  * @author imi
  */
-public class UploadAction extends JosmAction implements LayerChangeListener{
+public class UploadAction extends JosmAction{
     static private Logger logger = Logger.getLogger(UploadAction.class.getName());
 
     public static final String HISTORY_KEY = "upload.comment.history";
@@ -154,24 +152,20 @@ public class UploadAction extends JosmAction implements LayerChangeListener{
                 return true;
             }
         });
-
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     /**
      * Refreshes the enabled state
      *
      */
-    protected void refreshEnabled() {
-        setEnabled(Main.main != null
-                && Main.map != null
-                && Main.map.mapView !=null
-                && Main.map.mapView.getEditLayer() != null
-        );
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getEditLayer() != null);
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
         if (Main.map == null) {
             JOptionPane.showMessageDialog(Main.parent,tr("Nothing to upload. Get some data first."));
             return;
@@ -598,20 +592,5 @@ public class UploadAction extends JosmAction implements LayerChangeListener{
                 JOptionPane.ERROR_MESSAGE
         );
         e.printStackTrace();
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

@@ -31,7 +31,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -39,15 +38,13 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Exports data to gpx.
  */
-public class GpxExportAction extends DiskAccessAction implements LayerChangeListener {
+public class GpxExportAction extends DiskAccessAction {
 
     private final static String warningGpl = "<html><font color='red' size='-2'>"+tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.")+"</html>";
 
     public GpxExportAction() {
         super(tr("Export to GPX..."), "exportgpx", tr("Export the data to GPX file."),
                 Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.GROUP_MENU));
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     protected GpxLayer getLayer() {
@@ -332,7 +329,8 @@ public class GpxExportAction extends DiskAccessAction implements LayerChangeList
      * Refreshes the enabled state
      * 
      */
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         boolean check = Main.main != null
         && Main.map != null
         && Main.map.mapView !=null
@@ -343,20 +341,5 @@ public class GpxExportAction extends DiskAccessAction implements LayerChangeList
         }
         Layer layer = Main.map.mapView.getActiveLayer();
         setEnabled(layer instanceof GpxLayer);
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

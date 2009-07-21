@@ -29,8 +29,6 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -38,8 +36,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -49,14 +45,11 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Imi
  */
-public class CombineWayAction extends JosmAction implements SelectionChangedListener,LayerChangeListener {
+public class CombineWayAction extends JosmAction {
 
     public CombineWayAction() {
         super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
                 Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.GROUP_EDIT), true);
-        DataSet.selListeners.add(this);
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -299,14 +292,8 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
         return nodeList;
     }
 
-    /**
-     * Enable the "Combine way" menu option if more then one way is selected
-     */
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        refreshEnabled();
-    }
-
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
             return;
@@ -320,19 +307,4 @@ public class CombineWayAction extends JosmAction implements SelectionChangedList
             }
         setEnabled(numWays >= 2);
     }
-
-
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
-    }
-
 }

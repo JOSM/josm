@@ -10,13 +10,11 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class SelectAllAction extends JosmAction implements LayerChangeListener{
+public class SelectAllAction extends JosmAction {
 
     public SelectAllAction() {
         super(tr("Select All"),"selectall", tr("Select all undeleted objects in the data layer. This selects incomplete objects too."),
                 Shortcut.registerShortcut("system:selectall", tr("Edit: {0}", tr("Select All")), KeyEvent.VK_A, Shortcut.GROUP_MENU), true);
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -29,22 +27,8 @@ public class SelectAllAction extends JosmAction implements LayerChangeListener{
      * Refreshes the enabled state
      * 
      */
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

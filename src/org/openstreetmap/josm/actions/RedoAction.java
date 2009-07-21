@@ -21,7 +21,7 @@ public class RedoAction extends JosmAction {
      */
     public RedoAction() {
         super(tr("Redo"), "redo", tr("Redo the last undone action."),
-        Shortcut.registerShortcut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, Shortcut.GROUP_MENU), true);
         setEnabled(false);
     }
 
@@ -30,5 +30,10 @@ public class RedoAction extends JosmAction {
             return;
         Main.map.repaint();
         Main.main.undoRedo.redo();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(Main.map != null);
     }
 }

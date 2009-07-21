@@ -70,4 +70,9 @@ public final class MirrorAction extends JosmAction {
         Main.main.undoRedo.add(new SequenceCommand(tr("Mirror"), cmds));
         Main.map.repaint();
     }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
+    }
 }

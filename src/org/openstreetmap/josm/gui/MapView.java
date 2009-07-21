@@ -182,7 +182,7 @@ public class MapView extends NavigatableComponent {
     protected DataSet getCurrentDataSet() {
         if(activeLayer != null && activeLayer instanceof OsmDataLayer)
             return ((OsmDataLayer)activeLayer).data;
-        return new DataSet();
+        return null;
     }
 
     /**

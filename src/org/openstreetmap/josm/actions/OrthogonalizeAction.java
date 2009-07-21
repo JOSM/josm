@@ -45,7 +45,8 @@ public final class OrthogonalizeAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-
+        if (!isEnabled())
+            return;
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         ArrayList<Node> dirnodes = new ArrayList<Node>();
@@ -276,5 +277,10 @@ public final class OrthogonalizeAction extends JosmAction {
     static double heading_diff(double h1, double h2) {
         double heading_delta = h1 > h2 ? h1 - h2 : h2 - h1;
         return heading_delta;
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
     }
 }

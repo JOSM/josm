@@ -14,10 +14,8 @@ import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -25,20 +23,12 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This action displays a dialog where the user can enter a latitude and longitude,
  * and when ok is pressed, a new node is created at the specified position.
  */
-public final class AddNodeAction extends JosmAction implements LayerChangeListener {
+public final class AddNodeAction extends JosmAction {
 
     public AddNodeAction() {
         super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude and longitude."),
                 Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
                         Shortcut.SHIFT_DEFAULT), true);
-        Layer.listeners.add(this);
-        refreshEnabled();
-    }
-
-    protected void refreshEnabled() {
-        setEnabled(Main.map != null
-                && Main.map.mapView != null
-                && Main.map.mapView.getEditLayer() != null);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -82,16 +72,10 @@ public final class AddNodeAction extends JosmAction implements LayerChangeListen
         Main.map.mapView.repaint();
     }
 
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getEditLayer() != null);
     }
 
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
-    }
 }
+

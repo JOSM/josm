@@ -39,6 +39,8 @@ public final class AlignInLineAction extends JosmAction {
      * nodes onto the straight line between these nodes.
      */
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Node> itnodes = new LinkedList<Node>();
@@ -123,5 +125,10 @@ public final class AlignInLineAction extends JosmAction {
         // Do it!
         Main.main.undoRedo.add(new SequenceCommand(tr("Align Nodes in Line"), cmds));
         Main.map.repaint();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
     }
 }

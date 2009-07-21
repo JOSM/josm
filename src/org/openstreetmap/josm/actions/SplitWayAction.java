@@ -33,6 +33,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -42,7 +44,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * original order.  Selected nodes at the end of a way are ignored.
  */
 
-public class SplitWayAction extends JosmAction implements SelectionChangedListener {
+public class SplitWayAction extends JosmAction {
 
     private Way selectedWay;
     private List<Node> selectedNodes;
@@ -53,7 +55,6 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
     public SplitWayAction() {
         super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
                 Shortcut.registerShortcut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.GROUP_EDIT), true);
-        DataSet.selListeners.add(this);
     }
 
     /**
@@ -336,10 +337,12 @@ public class SplitWayAction extends JosmAction implements SelectionChangedListen
         getCurrentDataSet().setSelected(newSelection);
     }
 
-    /**
-     * Enable the "split way" menu option if the selection looks like we could use it.
-     */
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        setEnabled(checkSelection(newSelection));
+    @Override
+    protected void updateEnabledState() {
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+            return;
+        }
+        setEnabled(checkSelection(getCurrentDataSet().getSelected()));
     }
 }

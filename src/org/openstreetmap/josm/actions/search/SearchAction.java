@@ -22,12 +22,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class SearchAction extends JosmAction implements LayerChangeListener{
+public class SearchAction extends JosmAction{
 
     public static final int SEARCH_HISTORY_SIZE = 10;
 
@@ -42,8 +40,6 @@ public class SearchAction extends JosmAction implements LayerChangeListener{
     public SearchAction() {
         super(tr("Search..."), "dialogs/search", tr("Search for objects."),
                 Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.GROUP_HOTKEY), true);
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -239,22 +235,8 @@ public class SearchAction extends JosmAction implements LayerChangeListener{
      * Refreshes the enabled state
      * 
      */
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

@@ -84,4 +84,9 @@ public abstract class AbstractInfoAction extends JosmAction {
     }
 
     protected abstract String createInfoUrl(OsmPrimitive primitive);
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
+    }
 }

@@ -21,7 +21,7 @@ public class UndoAction extends JosmAction {
      */
     public UndoAction() {
         super(tr("Undo"), "undo", tr("Undo the last action."),
-        Shortcut.registerShortcut("system:undo", tr("Edit: {0}", tr("Undo")), KeyEvent.VK_Z, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:undo", tr("Edit: {0}", tr("Undo")), KeyEvent.VK_Z, Shortcut.GROUP_MENU), true);
         setEnabled(false);
     }
 
@@ -30,5 +30,10 @@ public class UndoAction extends JosmAction {
             return;
         Main.map.repaint();
         Main.main.undoRedo.undo();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(Main.map != null);
     }
 }

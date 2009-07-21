@@ -15,11 +15,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class UpdateDataAction extends JosmAction implements LayerChangeListener{
+public class UpdateDataAction extends JosmAction{
     public UpdateDataAction() {
         super(tr("Update Data"),
                 "updatedata",
@@ -29,15 +28,14 @@ public class UpdateDataAction extends JosmAction implements LayerChangeListener{
                         KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY),
                         true);
-        refreshEnabled();
-        Layer.listeners.add(this);
     }
 
     /**
      * Refreshes the enabled state
      * 
      */
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
     }
 
@@ -84,20 +82,5 @@ public class UpdateDataAction extends JosmAction implements LayerChangeListener{
         }
 
         new DownloadOsmTaskList().download(false, areas);
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
     }
 }

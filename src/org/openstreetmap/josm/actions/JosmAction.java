@@ -3,19 +3,31 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Collection;
+
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Base class helper for all Actions in JOSM. Just to make the life easier.
- *
+ * 
+ * A JosmAction is a {@see LayerChangeListener} and a {@see SelectionChangedListener}. Upon
+ * a layer change event or a selection change event it invokes {@see #updateEnabled()}.
+ * Subclasses can override {@see #updateEnabled()} in order to update the {@see #isEnabled()}-state
+ * of a JosmAction depending on the {@see #getCurrentDataSet()} and the current layers
+ * (see also {@see #getEditLayer()}).
+ * 
  * destroy() from interface Destroyable is called e.g. for MapModes, when the last layer has
  * been removed and so the mapframe will be destroyed. For other JosmActions, destroy() may never
  * be called (currently).
@@ -25,6 +37,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     protected Shortcut sc;
+    private LayerChangeAdapter layerChangeAdapter;
+    private SelectionChangeAdapter selectionChangeAdapter;
 
     public Shortcut getShortcut() {
         if (sc == null) {
@@ -64,6 +78,12 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         if (register) {
             Main.toolbar.register(this);
         }
+        installAdapters();
+    }
+
+    public JosmAction() {
+        setHelpId();
+        installAdapters();
     }
 
     public void destroy() {
@@ -71,11 +91,15 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
             Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
             Main.contentPane.getActionMap().remove(sc.getKeyStroke());
         }
+        if (Layer.listeners != null) {
+            Layer.listeners.remove(layerChangeAdapter);
+        }
+        if (DataSet.selListeners != null) {
+            DataSet.selListeners.remove(selectionChangeAdapter);
+        }
     }
 
-    public JosmAction() {
-        setHelpId();
-    }
+
 
     /**
      * needs to be overridden to be useful
@@ -115,5 +139,57 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      */
     protected DataSet getCurrentDataSet() {
         return Main.main.getCurrentDataSet();
+    }
+
+    private void installAdapters() {
+        // make this action listen to layer change and selection change events
+        //
+        layerChangeAdapter = new LayerChangeAdapter();
+        selectionChangeAdapter = new SelectionChangeAdapter();
+        Layer.listeners.add(layerChangeAdapter);
+        DataSet.selListeners.add(selectionChangeAdapter);
+        updateEnabledState();
+    }
+
+    /**
+     * This method is called when a layer change event or a selection update event
+     * occurs, see {@see LayerChangeListener} and {@see SelectionChangedListener}.
+     * 
+     * The default implementation is empty. Subclasses can override the method
+     * in order to set the {@see #isEnabled()}-state of a JosmAction depending on
+     * the {@see #getCurrentDataSet()} and the current layers (see
+     * also {@see #getEditLayer()}).
+     * 
+     */
+    protected void updateEnabledState() {
+        // override in subclasses
+    }
+
+    /**
+     * Adapter for layer change events
+     *
+     */
+    private class LayerChangeAdapter implements LayerChangeListener {
+        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+            updateEnabledState();
+        }
+
+        public void layerAdded(Layer newLayer) {
+            updateEnabledState();
+        }
+
+        public void layerRemoved(Layer oldLayer) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * Adapter for selection change events
+     *
+     */
+    private class SelectionChangeAdapter implements SelectionChangedListener {
+        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+            updateEnabledState();
+        }
     }
 }

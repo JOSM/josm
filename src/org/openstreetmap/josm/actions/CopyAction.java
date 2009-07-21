@@ -15,7 +15,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
@@ -26,7 +25,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public final class CopyAction extends JosmAction implements SelectionChangedListener {
+public final class CopyAction extends JosmAction {
 
     private LinkedList<JosmAction> listeners;
 
@@ -34,8 +33,6 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
         super(tr("Copy"), "copy",
                 tr("Copy selected objects to paste buffer."),
                 Shortcut.registerShortcut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, Shortcut.GROUP_MENU), true);
-        setEnabled(false);
-        DataSet.selListeners.add(this);
         listeners = new LinkedList<JosmAction>();
     }
 
@@ -130,8 +127,9 @@ public final class CopyAction extends JosmAction implements SelectionChangedList
         return pasteBuffer;
     }
 
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        setEnabled(! newSelection.isEmpty());
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
     }
 
     private boolean isEmptySelection() {

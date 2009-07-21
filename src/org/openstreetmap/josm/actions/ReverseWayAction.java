@@ -17,41 +17,36 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
 import org.openstreetmap.josm.corrector.UserCancelException;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public final class ReverseWayAction extends JosmAction {
+public final class ReverseWayAction extends JosmAction implements SelectionChangedListener, LayerChangeListener {
 
     public ReverseWayAction() {
         super(tr("Reverse Ways"), "wayflip", tr("Reverse the direction of all selected ways."),
                 Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse Ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
+        DataSet.selListeners.add(this);
+        Layer.listeners.add(this);
+        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (! isEnabled())
+            return;
+        if (getCurrentDataSet() == null)
+            return;
+
         final Collection<Way> sel = new LinkedList<Way>();
-        new AbstractVisitor() {
-            public void visit(Node n) {
+        for (OsmPrimitive primitive : getCurrentDataSet().getSelected()) {
+            if (primitive instanceof Way) {
+                sel.add((Way)primitive);
             }
-
-            public void visit(Way w) {
-                sel.add(w);
-            }
-
-            public void visit(Relation e) {
-            }
-
-            public void visitAll() {
-                for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
-                    osm.visit(this);
-                }
-            }
-        }.visitAll();
-
+        }
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Please select at least one way."));
@@ -84,5 +79,37 @@ public final class ReverseWayAction extends JosmAction {
             DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
         }
         Main.map.repaint();
+    }
+
+    protected int getNumWaysInSelection() {
+        if (getCurrentDataSet() == null) return 0;
+        int ret = 0;
+        for (OsmPrimitive primitive : getCurrentDataSet().getSelected()) {
+            if (primitive instanceof Way) {
+                ret++;
+            }
+        }
+        return ret;
+    }
+
+    protected void refreshEnabled() {
+        setEnabled(getNumWaysInSelection() > 0);
+    }
+
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        refreshEnabled();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        refreshEnabled();
+
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        refreshEnabled();
+    }
+
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        refreshEnabled();
     }
 }

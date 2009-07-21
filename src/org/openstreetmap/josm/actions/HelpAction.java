@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.StringReader;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -63,12 +62,13 @@ public class HelpAction extends AbstractAction {
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
                     return;
-                if (e.getURL() == null)
+                if (e.getURL() == null) {
                     help.setText("<html>404 not found</html>");
-                else if (e.getURL().toString().endsWith("action=edit"))
+                } else if (e.getURL().toString().endsWith("action=edit")) {
                     OpenBrowser.displayUrl(e.getURL().toString());
-                else
+                } else {
                     setHelpUrl(e.getURL().toString());
+                }
             }
         });
         help.setContentType("text/html");
@@ -118,13 +118,15 @@ public class HelpAction extends AbstractAction {
         } else if (e.getActionCommand() == null) {
             String topic = null;
             Point mouse = Main.parent.getMousePosition();
-            if (mouse != null)
+            if (mouse != null) {
                 topic = contextSensitiveHelp(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
+            }
             if (topic == null) {
                 helpBrowser.setVisible(false);
                 setHelpUrl(baseurl+pathbase+"Help");
-            } else
+            } else {
                 help(topic);
+            }
         } else {
             helpBrowser.setVisible(false);
             setHelpUrl(baseurl+pathbase+"Help");
@@ -175,8 +177,9 @@ public class HelpAction extends AbstractAction {
         {
             int i = pathbase.length()+baseurl.length();
             String title = url.substring(i);
-            if(languageCode.length() != 0 && !title.startsWith(languageCode))
+            if(languageCode.length() != 0 && !title.startsWith(languageCode)) {
                 title = languageCode + title;
+            }
             langurl = url.substring(0, i) + title;
         }
         boolean loaded = false;
@@ -184,43 +187,45 @@ public class HelpAction extends AbstractAction {
         {
             loaded = loadHelpUrl(url, langurl, true);
         }
-        if(!loaded)
+        if(!loaded) {
             loaded = loadHelpUrl(url, langurl, false);
-        if(!loaded)
+        }
+        if(!loaded) {
             help.setText(tr("Error while loading page {0}",url));
+        }
         helpBrowser.setVisible(true);
     }
 
     private boolean loadHelpUrl(String url, String langurl, boolean lang)
     {
-      this.url = lang ? langurl : url;
-      boolean loaded = false;
-      try {
-          String txt = reader.read(this.url);
-          if(txt.length() == 0)
-          {
-              if(lang)
-                  throw new IOException();
-              else
-              {
-                if(url.equals(langurl))
-                {
-                    txt = ("<HTML>"+tr("Help page missing. Create it in <A HREF=\"{0}\">english</A>.",
-                    url+"?action=edit")+"</HTML>");
-                }
+        this.url = lang ? langurl : url;
+        boolean loaded = false;
+        try {
+            String txt = reader.read(this.url);
+            if(txt.length() == 0)
+            {
+                if(lang)
+                    throw new IOException();
                 else
                 {
-                    txt = ("<HTML>"+tr("Help page missing. Create it in <A HREF=\"{0}\">english</A> or <A HREF=\"{1}\">your language</A>.",
-                    url+"?action=edit", langurl+"?action=edit")+"</HTML>");
+                    if(url.equals(langurl))
+                    {
+                        txt = ("<HTML>"+tr("Help page missing. Create it in <A HREF=\"{0}\">english</A>.",
+                                url+"?action=edit")+"</HTML>");
+                    }
+                    else
+                    {
+                        txt = ("<HTML>"+tr("Help page missing. Create it in <A HREF=\"{0}\">english</A> or <A HREF=\"{1}\">your language</A>.",
+                                url+"?action=edit", langurl+"?action=edit")+"</HTML>");
+                    }
                 }
-              }
-          }
-          help.setText(txt);
-          help.setCaretPosition(0);
-          loaded = true;
-      } catch (IOException ex) {
-      }
-      return loaded;
+            }
+            help.setText(txt);
+            help.setCaretPosition(0);
+            loaded = true;
+        } catch (IOException ex) {
+        }
+        return loaded;
     }
 
     /**

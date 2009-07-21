@@ -16,21 +16,18 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public final class PasteTagsAction extends JosmAction implements SelectionChangedListener {
+public final class PasteTagsAction extends JosmAction {
 
     public PasteTagsAction(JosmAction copyAction) {
         super(tr("Paste Tags"), "pastetags",
                 tr("Apply tags of contents of paste buffer to all selected items."),
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), true);
-        DataSet.selListeners.add(this);
         copyAction.addListener(this);
-        setEnabled(false);
     }
 
     private void pasteKeys(Collection<Command> clist, Collection<? extends OsmPrimitive> pasteBufferSubset, Collection<OsmPrimitive> selectionSubset) {
@@ -124,7 +121,12 @@ public final class PasteTagsAction extends JosmAction implements SelectionChange
         possiblyEnable(getCurrentDataSet().getSelected(), newPasteBuffer);
     }
 
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        possiblyEnable(newSelection, Main.pasteBuffer);
+    @Override
+    protected void updateEnabledState() {
+        if (getCurrentDataSet() == null || Main.pasteBuffer == null) {
+            setEnabled(false);
+            return;
+        }
+        possiblyEnable(getCurrentDataSet().getSelected(), Main.pasteBuffer);
     }
 }

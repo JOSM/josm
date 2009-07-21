@@ -31,10 +31,11 @@ public final class PasteAction extends JosmAction {
     public PasteAction() {
         super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
                 Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
-        setEnabled(false);
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
         pasteData(Main.pasteBuffer, Main.pasteSource, e);
     }
 
@@ -114,5 +115,21 @@ public final class PasteAction extends JosmAction {
         Main.main.undoRedo.add(new SequenceCommand(tr("Paste"), clist));
         getCurrentDataSet().setSelected(osms);
         Main.map.mapView.repaint();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        if (getCurrentDataSet() == null || getCurrentDataSet().getSelected().isEmpty()) {
+            setEnabled(false);
+            return;
+        }
+        if (Main.pasteBuffer == null) {
+            setEnabled(false);
+        }
+        setEnabled(
+                !Main.pasteBuffer.nodes.isEmpty()
+                || !Main.pasteBuffer.ways.isEmpty()
+                || !Main.pasteBuffer.relations.isEmpty()
+        );
     }
 }

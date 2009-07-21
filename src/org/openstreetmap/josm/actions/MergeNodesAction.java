@@ -28,8 +28,6 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -50,15 +48,17 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author Matthew Newton
  *
  */
-public class MergeNodesAction extends JosmAction implements SelectionChangedListener {
+public class MergeNodesAction extends JosmAction {
 
     public MergeNodesAction() {
         super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
                 Shortcut.registerShortcut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, Shortcut.GROUP_EDIT), true);
-        DataSet.selListeners.add(this);
     }
 
     public void actionPerformed(ActionEvent event) {
+        if (!isEnabled())
+            return;
+
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         LinkedList<Node> selectedNodes = new LinkedList<Node>();
 
@@ -294,13 +294,18 @@ public class MergeNodesAction extends JosmAction implements SelectionChangedList
     /**
      * Enable the "Merge Nodes" menu option if more then one node is selected
      */
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        boolean ok = true;
-        if (newSelection.size() < 2) {
+    @Override
+    public void updateEnabledState() {
+        if (getCurrentDataSet() == null || getCurrentDataSet().getSelected().isEmpty()) {
             setEnabled(false);
             return;
         }
-        for (OsmPrimitive osm : newSelection) {
+        boolean ok = true;
+        if (getCurrentDataSet().getSelected().size() < 2) {
+            setEnabled(false);
+            return;
+        }
+        for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
             if (!(osm instanceof Node)) {
                 ok = false;
                 break;

@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * If a single node is selected, it will copy that node and remove all tags from the old one
  */
 
-public class UnGlueAction extends JosmAction { //implements SelectionChangedListener {
+public class UnGlueAction extends JosmAction {
 
     private Node selectedNode;
     private Way selectedWay;
@@ -50,7 +50,6 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
     public UnGlueAction() {
         super(tr("UnGlue Ways"), "unglueways", tr("Duplicate nodes that are used by multiple ways."),
                 Shortcut.registerShortcut("tools:unglue", tr("Tool: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, Shortcut.GROUP_EDIT), true);
-        //DataSet.selListeners.add(this);
     }
 
     /**
@@ -408,5 +407,10 @@ public class UnGlueAction extends JosmAction { //implements SelectionChangedList
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Dupe {0} nodes into {1} nodes", selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
         getCurrentDataSet().setSelected(allNewNodes);
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
     }
 }

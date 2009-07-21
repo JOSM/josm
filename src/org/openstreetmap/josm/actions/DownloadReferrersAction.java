@@ -34,15 +34,11 @@ import org.xml.sax.SAXException;
  *
  *
  */
-public class DownloadReferrersAction extends JosmAction implements SelectionChangedListener, LayerChangeListener {
+public class DownloadReferrersAction extends JosmAction{
 
     public DownloadReferrersAction() {
         super(tr("Download referrers from OSM..."), "downloadreferrers", tr("Download primitives referring to one of the selected primitives"),
                 Shortcut.registerShortcut("file:downloadreferrers", tr("File: {0}", tr("Download referrers...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY), true);
-
-        Layer.listeners.add(this);
-        DataSet.selListeners.add(this);
-        refreshEnabled();
     }
 
     /**
@@ -167,33 +163,8 @@ public class DownloadReferrersAction extends JosmAction implements SelectionChan
      * Refreshes the enabled state
      *
      */
-    protected void refreshEnabled() {
-        setEnabled(Main.map != null
-                && Main.map.mapView !=null
-                && Main.map.mapView.getEditLayer() != null
-                && ! Main.map.mapView.getEditLayer().data.getSelected().isEmpty()
-        );
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface SelectionChangeListener                                                  */
-    /* ---------------------------------------------------------------------------------- */
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        refreshEnabled();
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                      */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
     }
 }

@@ -116,4 +116,10 @@ public class AutoScaleAction extends JosmAction {
         }
         return v;
     }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(Main.map != null);
+    }
+
 }

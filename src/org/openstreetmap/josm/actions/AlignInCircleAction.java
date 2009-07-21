@@ -78,6 +78,9 @@ public final class AlignInCircleAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled())
+            return;
+
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         Collection<Node> nodes = new LinkedList<Node>();
         Collection<Way> ways = new LinkedList<Way>();
@@ -206,5 +209,10 @@ public final class AlignInCircleAction extends JosmAction {
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Align Nodes in Circle"), cmds));
         Main.map.repaint();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
     }
 }
