@@ -52,6 +52,8 @@ public class DeleteAction extends MapMode {
 
     @Override public void enterMode() {
         super.enterMode();
+        if (!isEnabled())
+            return;
         Main.map.mapView.addMouseListener(this);
     }
 
@@ -133,5 +135,10 @@ public class DeleteAction extends MapMode {
 
     @Override public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(Main.map != null && Main.map.mapView != null && Main.map.mapView.isActiveLayerDrawable());
     }
 }

@@ -203,6 +203,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     @Override public void enterMode() {
+        if (!isEnabled())
+            return;
         super.enterMode();
         currCursor = Cursors.crosshair;
         selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
@@ -928,7 +930,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Handle special case: Highlighted node == selected node => finish drawing
          */
-        if (n != null && getCurrentDataSet().getSelectedNodes().contains(n)) {
+        if (n != null && getCurrentDataSet() != null && getCurrentDataSet().getSelectedNodes().contains(n)) {
             if (wayIsFinished) {
                 rv = tr("Select node under cursor.");
             } else {
@@ -939,7 +941,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Handle special case: Self-Overlapping or closing way
          */
-        if (getCurrentDataSet().getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
+        if (getCurrentDataSet() != null && getCurrentDataSet().getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
             Way w = (Way) getCurrentDataSet().getSelectedWays().iterator().next();
             for (Node m : w.nodes) {
                 if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
@@ -953,5 +955,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     @Override public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(getEditLayer() != null);
     }
 }
