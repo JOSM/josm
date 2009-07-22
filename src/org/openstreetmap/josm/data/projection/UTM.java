@@ -353,12 +353,6 @@ public class UTM implements Projection {
         return "epsg325833";
     }
 
-    public ProjectionBounds getWorldBounds()
-    {
-        Bounds b = getWorldBoundsLatLon();
-        return new ProjectionBounds(latlon2eastNorth(b.min), latlon2eastNorth(b.max));
-    }
-
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(

@@ -276,12 +276,6 @@ public class Lambert implements Projection {
         return new LatLon(lt, lg);
     }
 
-    public ProjectionBounds getWorldBounds()
-    {
-        Bounds b = getWorldBoundsLatLon();
-        return new ProjectionBounds(latlon2eastNorth(b.min), latlon2eastNorth(b.max));
-    }
-
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(

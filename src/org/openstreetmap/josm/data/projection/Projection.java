@@ -62,6 +62,5 @@ public interface Projection {
     /**
      * Get the bounds of the world
      */
-    ProjectionBounds getWorldBounds();
     Bounds getWorldBoundsLatLon();
 }

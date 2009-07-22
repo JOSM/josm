@@ -627,6 +627,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * mouseClicked() (FIXME).
      */
     private void computeHelperLine() {
+        MapView mv = Main.map.mapView;
         if (mousePos == null) {
             // Don't draw the line.
             currentMouseEastNorth = null;
@@ -650,13 +651,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setDist(-1);
 
         if (!ctrl && mousePos != null) {
-            currentMouseNode = Main.map.mapView.getNearestNode(mousePos);
+            currentMouseNode = mv.getNearestNode(mousePos);
         }
 
         // We need this for highlighting and we'll only do so if we actually want to re-use
         // *and* there is no node nearby (because nodes beat ways when re-using)
         if(!ctrl && currentMouseNode == null) {
-            List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(mousePos);
+            List<WaySegment> wss = mv.getNearestWaySegments(mousePos);
             for(WaySegment ws : wss) {
                 mouseOnExistingWays.add(ws.way);
             }
@@ -669,7 +670,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             mouseOnExistingNode = currentMouseNode;
         } else {
             // no node found in clicked area
-            currentMouseEastNorth = Main.map.mapView.getEastNorth(mousePos.x, mousePos.y);
+            currentMouseEastNorth = mv.getEastNorth(mousePos.x, mousePos.y);
         }
 
         for (OsmPrimitive p : selection) {
@@ -707,7 +708,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return; // Don't create zero length way segments.
 
         // find out the distance, in metres, between the base point and the mouse cursor
-        LatLon mouseLatLon = Main.proj.eastNorth2latlon(currentMouseEastNorth);
+        LatLon mouseLatLon = mv.getProjection().eastNorth2latlon(currentMouseEastNorth);
         distance = currentBaseNode.getCoor().greatCircleDistance(mouseLatLon);
         double hdg = Math.toDegrees(currentBaseNode.getCoor().heading(mouseLatLon));
         if (previousNode != null) {

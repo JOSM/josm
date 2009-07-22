@@ -12,6 +12,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,12 +29,14 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -294,20 +297,43 @@ public class MapView extends NavigatableComponent {
 
         // draw world borders
         tempG.setColor(Color.WHITE);
-        ProjectionBounds b = getProjection().getWorldBounds();
-        Point min = getPoint(b.min);
-        Point max = getPoint(b.max);
-        int x1 = Math.min(min.x, max.x);
-        int y1 = Math.min(min.y, max.y);
-        int x2 = Math.max(min.x, max.x);
-        int y2 = Math.max(min.y, max.y);
-        if (x1 > 0 || y1 > 0 || x2 < getWidth() || y2 < getHeight()) {
-            tempG.drawRect(x1, y1, x2-x1+1, y2-y1+1);
+        GeneralPath path = new GeneralPath();
+        Bounds b = getProjection().getWorldBoundsLatLon();
+        double lat = b.min.lat();
+        double lon = b.min.lon();
+
+        Point p = getPoint(b.min);
+        path.moveTo(p.x, p.y);
+
+        double max = b.max.lat();
+        for(; lat <= max; lat += 1.0)
+        {
+            p = getPoint(new LatLon(lat >= max ? max : lat, lon));
+            path.lineTo(p.x, p.y);
+        }
+        lat = max; max = b.max.lon();
+        for(; lon <= max; lon += 1.0)
+        {
+            p = getPoint(new LatLon(lat, lon >= max ? max : lon));
+            path.lineTo(p.x, p.y);
+        }
+        lon = max; max = b.min.lat();
+        for(; lat >= max; lat -= 1.0)
+        {
+            p = getPoint(new LatLon(lat <= max ? max : lat, lon));
+            path.lineTo(p.x, p.y);
+        }
+        lat = max; max = b.min.lon();
+        for(; lon >= max; lon -= 1.0)
+        {
+            p = getPoint(new LatLon(lat, lon <= max ? max : lon));
+            path.lineTo(p.x, p.y);
         }
 
         if (playHeadMarker != null) {
             playHeadMarker.paint(tempG, this);
         }
+        tempG.draw(path);
 
         g.drawImage(offscreenBuffer, 0, 0, null);
         super.paint(g);
@@ -321,7 +347,7 @@ public class MapView extends NavigatableComponent {
             box = new BoundingXYVisitor();
         }
         if (box.getBounds() == null) {
-            box.visit(getProjection().getWorldBounds());
+            box.visit(getProjection().getWorldBoundsLatLon());
         }
         if (!box.hasExtend()) {
             box.enlargeBoundingBox();

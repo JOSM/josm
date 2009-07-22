@@ -195,15 +195,15 @@ public class OsmDataLayer extends Layer {
      * Draw nodes last to overlap the ways they belong to.
      */
     @Override public void paint(final Graphics g, final MapView mv) {
-        boolean active = Main.map.mapView.getActiveLayer() == this;
+        boolean active = mv.getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
-        boolean virtual = !inactive && Main.map.mapView.isVirtualNodesEnabled();
+        boolean virtual = !inactive && mv.isVirtualNodesEnabled();
 
         // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
         if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.dataSources.isEmpty()) {
             // initialize area with current viewport
-            Rectangle b = Main.map.mapView.getBounds();
+            Rectangle b = mv.getBounds();
             // on some platforms viewport bounds seem to be offset from the left,
             // over-grow it just to be sure
             b.grow(100, 100);
@@ -212,8 +212,8 @@ public class OsmDataLayer extends Layer {
             // now succesively subtract downloaded areas
             for (DataSource src : data.dataSources) {
                 if (src.bounds != null && !src.bounds.min.equals(src.bounds.max)) {
-                    EastNorth en1 = Main.proj.latlon2eastNorth(src.bounds.min);
-                    EastNorth en2 = Main.proj.latlon2eastNorth(src.bounds.max);
+                    EastNorth en1 = mv.getProjection().latlon2eastNorth(src.bounds.min);
+                    EastNorth en2 = mv.getProjection().latlon2eastNorth(src.bounds.max);
                     Point p1 = mv.getPoint(en1);
                     Point p2 = mv.getPoint(en2);
                     Rectangle r = new Rectangle(Math.min(p1.x, p2.x),Math.min(p1.y, p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));
@@ -535,7 +535,7 @@ public class OsmDataLayer extends Layer {
 
     /**
      * replies the set of conflicts currently managed in this layer
-     * 
+     *
      * @return the set of conflicts currently managed in this layer
      */
     public ConflictCollection getConflicts() {

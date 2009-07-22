@@ -71,8 +71,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public double getDist100Pixel()
     {
-        LatLon ll1 = getLatLon(0,0);
-        LatLon ll2 = getLatLon(100,0);
+        int w = getWidth()/2;
+        int h = getHeight()/2;
+        LatLon ll1 = getLatLon(w-50,h);
+        LatLon ll2 = getLatLon(w+50,h);
         return ll1.greatCircleDistance(ll2);
     }
 
@@ -102,19 +104,27 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 new EastNorth(
                         center.east() - getWidth()/2.0*scale,
                         center.north() - getHeight()/2.0*scale),
-                        new EastNorth(
-                                center.east() + getWidth()/2.0*scale,
-                                center.north() + getHeight()/2.0*scale));
+                new EastNorth(
+                        center.east() + getWidth()/2.0*scale,
+                        center.north() + getHeight()/2.0*scale));
     };
 
+    /* FIXME: replace with better method - used by MapSlider */
+    public ProjectionBounds getMaxProjectionBounds() {
+        Bounds b = getProjection().getWorldBoundsLatLon();
+        return new ProjectionBounds(getProjection().latlon2eastNorth(b.min),
+            getProjection().latlon2eastNorth(b.max));
+    };
+
+    /* FIXME: replace with better method - used by Main to reset Bounds when projection changes, don't use otherwise */
     public Bounds getRealBounds() {
         return new Bounds(
                 getProjection().eastNorth2latlon(new EastNorth(
                         center.east() - getWidth()/2.0*scale,
                         center.north() - getHeight()/2.0*scale)),
-                        getProjection().eastNorth2latlon(new EastNorth(
-                                center.east() + getWidth()/2.0*scale,
-                                center.north() + getHeight()/2.0*scale)));
+                getProjection().eastNorth2latlon(new EastNorth(
+                        center.east() + getWidth()/2.0*scale,
+                        center.north() + getHeight()/2.0*scale)));
     };
 
     /**
@@ -160,13 +170,47 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param scale The scale to use.
      */
     private void zoomTo(EastNorth newCenter, double newScale) {
-        /* TODO: check that newCenter is really inside visible world and that scale is correct, don't allow zooming out to much */
         boolean rep = false;
+
+        Bounds b = getProjection().getWorldBoundsLatLon();
+        CachedLatLon cl = new CachedLatLon(newCenter);
+        boolean changed = false;;
+        double lat = cl.lat();
+        double lon = cl.lon();
+        if(lat < b.min.lat()) {changed = true; lat = b.min.lat(); }
+        else if(lat > b.max.lat()) {changed = true; lat = b.max.lat(); }
+        if(lon < b.min.lon()) {changed = true; lon = b.min.lon(); }
+        else if(lon > b.max.lon()) {changed = true; lon = b.max.lon(); }
+        if(changed)
+          newCenter = new CachedLatLon(lat, lon).getEastNorth();
         if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
             center = newCenter;
             rep = true;
             firePropertyChange("center", oldCenter, newCenter);
+        }
+
+        int width = getWidth()/2;
+        int height = getHeight()/2;
+        LatLon l1 = new LatLon(b.min.lat(), lon);
+        LatLon l2 = new LatLon(b.max.lat(), lon);
+        EastNorth e1 = getProjection().latlon2eastNorth(l1);
+        EastNorth e2 = getProjection().latlon2eastNorth(l2);
+        double d = e2.north() - e1.north();
+        if(d < height*newScale)
+        {
+            double newScaleH = d/height;
+            e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.min.lon()));
+            e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.max.lon()));
+            d = e2.east() - e1.east();
+            if(d < width*newScale)
+                newScale = Math.max(newScaleH, d/width);
+        }
+        else
+        {
+            d = d/(l1.greatCircleDistance(l2)*height*10);
+            if(newScale < d)
+                newScale = d;
         }
         if (scale != newScale) {
             double oldScale = scale;
@@ -174,6 +218,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             rep = true;
             firePropertyChange("scale", oldScale, newScale);
         }
+
         if(rep) {
             repaint();
         }
@@ -460,7 +505,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * @return The projection to be used in calculating stuff.
      */
-    protected Projection getProjection() {
+    public Projection getProjection() {
         return Main.proj;
     }
 

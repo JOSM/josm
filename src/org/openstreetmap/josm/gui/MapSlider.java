@@ -29,7 +29,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
     public void propertyChange(PropertyChangeEvent evt) {
         if (getModel().getValueIsAdjusting()) return;
 
-        ProjectionBounds world = Main.proj.getWorldBounds();
+        ProjectionBounds world = this.mv.getMaxProjectionBounds();
         ProjectionBounds current = this.mv.getProjectionBounds();
 
         double cur_e = current.max.east()-current.min.east();
@@ -53,7 +53,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
     public void stateChanged(ChangeEvent e) {
         if (preventChange) return;
 
-        ProjectionBounds world = Main.proj.getWorldBounds();
+        ProjectionBounds world = this.mv.getMaxProjectionBounds();
         double fact = Math.pow(1.1, getValue());
         double es = world.max.east()-world.min.east();
         double n = world.max.north()-world.min.north();
