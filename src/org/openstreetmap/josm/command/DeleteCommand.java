@@ -89,18 +89,21 @@ public class DeleteCommand extends Command {
         }
 
         String cname = null;
+        String apiname = null;
         String cnamem = null;
         for (OsmPrimitive osm : toDelete) {
             if (cname == null) {
+                apiname = OsmPrimitiveType.from(osm).getAPIName();
                 cname = OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular();
-                cnamem = OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular();
+                cnamem = OsmPrimitiveType.from(osm).getLocalizedDisplayNamePlural();
             } else if (!cname.equals(OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular())) {
-                cname = "object";
+                apiname = "object";
+                cname = trn("object", "objects", 1);
                 cnamem = trn("object", "objects", 2);
             }
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(tr("Delete {0} {1}", toDelete.size(), trn(
-                cname, cnamem, toDelete.size())), ImageProvider.get("data", cname), JLabel.HORIZONTAL));
+                cname, cnamem, toDelete.size())), ImageProvider.get("data", apiname), JLabel.HORIZONTAL));
         for (OsmPrimitive osm : toDelete) {
             root.add(new DefaultMutableTreeNode(
                     new JLabel(
