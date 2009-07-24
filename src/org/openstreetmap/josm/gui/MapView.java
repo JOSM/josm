@@ -416,6 +416,13 @@ public class MapView extends NavigatableComponent {
     public OsmDataLayer getEditLayer() {
         if (activeLayer instanceof OsmDataLayer)
             return (OsmDataLayer)activeLayer;
+
+        // the first OsmDataLayer is the edit layer
+        //
+        for (Layer layer : layers) {
+            if (layer instanceof OsmDataLayer)
+                return (OsmDataLayer)layer;
+        }
         return null;
     }
 

@@ -219,13 +219,11 @@ abstract public class Main {
     }
 
     /**
-     * Replies true if there is an edit layer which is currently
-     * active
+     * Replies true if there is an edit layer
      *
-     * @return true if there is an edit layer which is currently
-     * active
+     * @return true if there is an edit layer
      */
-    public boolean hasActiveEditLayer() {
+    public boolean hasEditLayer() {
         if (map == null) return false;
         if (map.mapView == null) return false;
         if (map.mapView.getEditLayer() == null) return false;
@@ -249,7 +247,7 @@ abstract public class Main {
      * @return the current data set. null, if no current data set exists
      */
     public DataSet getCurrentDataSet() {
-        if (!hasActiveEditLayer()) return null;
+        if (!hasEditLayer()) return null;
         return getEditLayer().data;
     }
 
