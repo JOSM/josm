@@ -19,8 +19,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +43,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -192,6 +188,16 @@ public class GenericRelationEditor extends RelationEditor {
             logger.warning(tr("Caught security exception for setAlwaysOnTop(). Ignoring. Exception was: {0}", e
                     .toString()));
         }
+
+        addWindowListener(
+                new WindowAdapter() {
+                    @Override
+                    public void windowOpened(WindowEvent e) {
+                        cleanSelfReferences();
+                    }
+                }
+        );
+
     }
 
     /**
@@ -625,6 +631,39 @@ public class GenericRelationEditor extends RelationEditor {
         super.setVisible(b);
         if (!b) {
             dispose();
+        }
+    }
+
+    /**
+     * checks whether the current relation has members referring to itself. If so,
+     * warns the users and provides an option for removing these members.
+     * 
+     */
+    protected void cleanSelfReferences() {
+        ArrayList<OsmPrimitive> toCheck = new ArrayList<OsmPrimitive>();
+        toCheck.add(getRelation());
+        if (memberTableModel.hasMembersReferringTo(toCheck)) {
+            int ret = ConditionalOptionPaneUtil.showOptionDialog(
+                    "clean_relation_self_references",
+                    Main.parent,
+                    tr("<html>There is at least one member in this relation referring<br>"
+                            + "to the relation itself.<br>"
+                            + "This creates circular dependencies and is dicuraged.<br>"
+                            + "How do you want to proceed with circular dependencies?</html>"),
+                            tr("Warning"),
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            new String[]{tr("Remove them, clean up relation"), tr("Ignore them, leave relation as is")},
+                            tr("Remove them, clean up relation")
+            );
+            switch(ret) {
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.NO_OPTION: return;
+            case JOptionPane.YES_OPTION:
+                memberTableModel.removeMembersReferringTo(toCheck);
+                break;
+            }
         }
     }
 
@@ -1315,4 +1354,6 @@ public class GenericRelationEditor extends RelationEditor {
             }
         }
     }
+
+
 }

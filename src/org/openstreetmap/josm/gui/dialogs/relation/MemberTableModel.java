@@ -394,10 +394,20 @@ public class MemberTableModel extends AbstractTableModel {
         }
     }
 
-    public boolean isEditableRelation(int row) {
-        if (row < 0 || row >= members.size())
+    /**
+     * Replies true if the index-th relation members referrs
+     * to an editable relation, i.e. a relation which is not
+     * incomplete.
+     * 
+     * @param index the index
+     * @return true, if the index-th relation members referrs
+     * to an editable relation, i.e. a relation which is not
+     * incomplete
+     */
+    public boolean isEditableRelation(int index) {
+        if (index < 0 || index >= members.size())
             return false;
-        RelationMember member = members.get(row);
+        RelationMember member = members.get(index);
         if (!(member.member instanceof Relation))
             return false;
         Relation r = (Relation) member.member;
@@ -428,7 +438,6 @@ public class MemberTableModel extends AbstractTableModel {
         }
         return false;
     }
-
 
     void sort() {
         RelationNodeMap map = new RelationNodeMap(members);
