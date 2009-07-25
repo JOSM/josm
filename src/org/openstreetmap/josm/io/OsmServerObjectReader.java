@@ -31,6 +31,7 @@ public class OsmServerObjectReader extends OsmServerReader {
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask("", 1);
+        InputStream in = null;
         try {
             progressMonitor.subTask(tr("Downloading OSM data..."));
             StringBuffer sb = new StringBuffer();
@@ -41,29 +42,26 @@ public class OsmServerObjectReader extends OsmServerReader {
                 sb.append("/full");
             }
 
-            final InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
+            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
             if (in == null)
                 return null;
             final OsmReader osm = OsmReader.parseDataSetOsm(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             final DataSet data = osm.getDs();
-
-            in.close();
-            activeConnection = null;
             return data;
-        } catch (IOException e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } catch (SAXException e) {
-            throw new OsmTransferException(e);
         } catch(OsmTransferException e) {
+            if (cancel) return null;
             throw e;
         } catch (Exception e) {
-            if (cancel)
-                return null;
+            if (cancel) return null;
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
+            if (in!=null) {
+                try {
+                    in.close();
+                } catch(Exception e) {}
+            }
+            activeConnection = null;
         }
     }
 
