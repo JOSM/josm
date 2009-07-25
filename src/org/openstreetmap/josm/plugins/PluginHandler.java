@@ -11,6 +11,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedMap;
@@ -255,20 +256,15 @@ public class PluginHandler {
                 new String[] {tr("Disable plugin"), tr("Cancel")},
                 new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
             if (answer == 1) {
-                LinkedList<String> plugins = new LinkedList<String>(Arrays.asList(Main.pref.get("plugins").split(",")));
+                List<String> plugins = new ArrayList<String>(Main.pref.getCollection("plugins", Collections.<String>emptyList()));
                 if (plugins.contains(plugin.info.name)) {
                     while (plugins.remove(plugin.info.name)) {}
-                    String p = "";
-                    for (String s : plugins)
-                        p += ","+s;
-                    if (p.length() > 0)
-                        p = p.substring(1);
-                    Main.pref.put("plugins", p);
+                    Main.pref.putCollection("plugins", plugins);
                     JOptionPane.showMessageDialog(Main.parent,
                     tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."));
                 } else {
                     JOptionPane.showMessageDialog(Main.parent,
-                    tr("The plugin could not be removed. Please tell the people you got JOSM from about the problem."));
+                    tr("The plugin could not be removed. Probably it was already disabled"));
                 }
                 return true;
             }
