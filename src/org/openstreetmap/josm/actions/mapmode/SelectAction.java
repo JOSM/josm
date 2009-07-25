@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -58,6 +59,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SelectAction extends MapMode implements SelectionEnded {
+    static private final Logger logger = Logger.getLogger(SelectAction.class.getName());
 
     /**
      * Replies true if we are currently running on OSX

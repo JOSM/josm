@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -61,6 +62,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
+    static private final Logger logger = Logger.getLogger(DrawAction.class.getName());
+
     final private Cursor cursorCrosshair;
     final private Cursor cursorJoinNode;
     final private Cursor cursorJoinWay;
@@ -238,6 +241,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
         }
+
+        // when exiting we let everybody know about the currently selected
+        // primitives
+        //
+        DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
     }
 
     /**
@@ -273,6 +281,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * the helper line until the user chooses to draw something else.
      */
     private void finishDrawing() {
+        // let everybody else know about the current selection
+        //
+        DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
         lastUsedNode = null;
         wayIsFinished = true;
         Main.map.selectSelectTool(true);

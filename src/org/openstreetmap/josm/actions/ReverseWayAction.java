@@ -17,22 +17,16 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
 import org.openstreetmap.josm.corrector.UserCancelException;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public final class ReverseWayAction extends JosmAction implements SelectionChangedListener, LayerChangeListener {
+public final class ReverseWayAction extends JosmAction {
 
     public ReverseWayAction() {
         super(tr("Reverse Ways"), "wayflip", tr("Reverse the direction of all selected ways."),
                 Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse Ways")), KeyEvent.VK_R, Shortcut.GROUP_EDIT), true);
-        DataSet.selListeners.add(this);
-        Layer.listeners.add(this);
-        refreshEnabled();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -92,24 +86,8 @@ public final class ReverseWayAction extends JosmAction implements SelectionChang
         return ret;
     }
 
-    protected void refreshEnabled() {
+    @Override
+    protected void updateEnabledState() {
         setEnabled(getNumWaysInSelection() > 0);
-    }
-
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        refreshEnabled();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        refreshEnabled();
-
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        refreshEnabled();
-    }
-
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        refreshEnabled();
     }
 }

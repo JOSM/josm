@@ -119,12 +119,9 @@ public final class PasteAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        if (getCurrentDataSet() == null || Main.pasteBuffer == null) {
             setEnabled(false);
             return;
-        }
-        if (Main.pasteBuffer == null) {
-            setEnabled(false);
         }
         setEnabled(
                 !Main.pasteBuffer.nodes.isEmpty()
