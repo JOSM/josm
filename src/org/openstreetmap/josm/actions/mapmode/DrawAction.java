@@ -49,6 +49,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -337,8 +338,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // no node found in clicked area
             n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
             if (n.getCoor().isOutSideWorld()) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("Cannot add a node outside of the world."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Cannot add a node outside of the world."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
                 return;
             }
             newNode = true;

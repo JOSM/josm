@@ -13,10 +13,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 
 /**
-  * see PlatformHook.java
-  */
+ * see PlatformHook.java
+ */
 public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook, InvocationHandler {
     private static PlatformHookOsx ivhandler = new PlatformHookOsx();
+    @Override
     public void preStartupHook(){
         // This will merge our MenuBar into the system menu.
         // MUST be set before Swing is initialized!
@@ -24,6 +25,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         // They just insist on painting themselves...
         System.setProperty("apple.laf.useScreenMenuBar", "true");
     }
+    @Override
     public void startupHook() {
         // Here we register callbacks for the menu entries in the system menu
         try {
@@ -41,9 +43,6 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             // by closing all its windows.
             System.out.println("Failed to register with OSX: " + ex);
         }
-
-        // Ctrl + mouse 1 is suppressing mouseDragged events
-        SelectAction.needMouseMove = true;
     }
     public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
@@ -54,9 +53,8 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Main.main.menu.about.actionPerformed(null);
         } else if (method.getName().equals("handlePreferences")) {
             Main.main.menu.preferences.actionPerformed(null);
-        } else {
+        } else
             return null;
-        }
         if (args[0] != null) {
             try {
                 args[0].getClass().getDeclaredMethod("setHandled", new Class[] { boolean.class }).invoke(args[0], new Object[] { handled });
@@ -66,10 +64,12 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         }
         return null;
     }
+    @Override
     public void openUrl(String url) throws IOException {
         // Ain't that KISS?
         Runtime.getRuntime().exec("open " + url);
     }
+    @Override
     public void initShortcutGroups() {
         // Everything but Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_MENU is guesswork.
         Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_DEFAULT+Shortcut.GROUP_NONE),    Integer.toString(-1));
@@ -96,6 +96,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_DIRECT),     Integer.toString(KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK));
         Main.pref.put("shortcut.groups."+(Shortcut.GROUPS_ALT2+Shortcut.GROUP_MNEMONIC),   Integer.toString(KeyEvent.ALT_DOWN_MASK));
     }
+    @Override
     public void initSystemShortcuts() {
         // Yeah, it's a long, long list. And people always complain that OSX has no shortcuts.
         Shortcut.registerSystemShortcut("apple-reserved-01", "reserved", KeyEvent.VK_SPACE, KeyEvent.META_DOWN_MASK).setAutomatic(); // Show or hide the Spotlight search field (when multiple languages are installed, may rotate through enabled script systems).
@@ -234,6 +235,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Shortcut.registerSystemShortcut("view:zoomout", "reserved", KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
 
     }
+    @Override
     public String makeTooltip(String name, Shortcut sc) {
         String lafid = UIManager.getLookAndFeel().getID();
         boolean canHtml = true;
@@ -242,15 +244,23 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             canHtml = false;
         }
         String result = "";
-        if (canHtml) result += "<html>";
+        if (canHtml) {
+            result += "<html>";
+        }
         result += name;
         if (sc != null && sc.getKeyText().length() != 0) {
             result += " ";
-            if (canHtml) result += "<font size='-2'>";
+            if (canHtml) {
+                result += "<font size='-2'>";
+            }
             result += "("+sc.getKeyText()+")";
-            if (canHtml) result += "</font>";
+            if (canHtml) {
+                result += "</font>";
+            }
         }
-        if (canHtml) result += "&nbsp;</html>";
+        if (canHtml) {
+            result += "&nbsp;</html>";
+        }
         return result;
     }
 }

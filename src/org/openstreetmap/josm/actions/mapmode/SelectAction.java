@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -57,7 +58,17 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SelectAction extends MapMode implements SelectionEnded {
-    public static boolean needMouseMove = false;
+
+    /**
+     * Replies true if we are currently running on OSX
+     * 
+     * @return true if we are currently running on OSX
+     */
+    public static boolean isPlatformOsx() {
+        return Main.platform != null
+        && Main.platform instanceof PlatformHookOsx;
+    }
+
     enum Mode { move, rotate, select }
     private Mode mode = null;
     private long mouseDownTime = 0;
@@ -253,12 +264,11 @@ public class SelectAction extends MapMode implements SelectionEnded {
         didMove = true;
     }
 
-    /**
-     * Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
-     *
-     */
+
     @Override public void mouseMoved(MouseEvent e) {
-        if (needMouseMove && mode == Mode.rotate) {
+        // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
+        //
+        if (isPlatformOsx() && mode == Mode.rotate) {
             mouseDragged(e);
         }
     }
