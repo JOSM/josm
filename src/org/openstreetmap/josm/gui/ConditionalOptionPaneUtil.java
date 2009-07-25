@@ -27,6 +27,7 @@ import org.openstreetmap.josm.tools.GBC;
  * 
  */
 public class ConditionalOptionPaneUtil {
+    static public final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
 
     /**
      * this is a static utility class only
@@ -54,6 +55,43 @@ public class ConditionalOptionPaneUtil {
         Main.pref.put("message."+prefKey, enabled);
     }
 
+    /**
+     * Displays an confirmation dialog with some option buttons given by <code>optionType</code>.
+     * It is always on top even if there are other open windows like detached dialogs,
+     * relation editors, history browsers and the like.
+     * 
+     * Set <code>optionType</code> to {@see JOptionPane#YES_NO_OPTION} for a dialog with a YES and
+     * a NO button.
+
+     * Set <code>optionType</code> to {@see JOptionPane#YES_NO_CANCEL_OPTION} for a dialog with a YES,
+     * a NO and a CANCEL button
+     * 
+     * Replies true, if the selected option is equal to <code>trueOption</code>, otherwise false.
+     * Replies true, if the dialog is not displayed because the respective preference option
+     * <code>preferenceKey</code> is set to false.
+     * 
+     * @param preferenceKey the preference key
+     * @param parent  the parent component
+     * @param message  the message
+     * @param title the title
+     * @param optionType  the option type
+     * @param messageType the message type
+     * @param options a list of options
+     * @param defaultOption the default option
+     * 
+     * 
+     * @return the index of the selected option. {@see JOptionPane#CLOSED_OPTION} if the dialog was closed.
+     * {@see ConditionalOptionPaneUtil#DIALOG_DISABLED_OPTION} if the dialog is disabled.
+     * 
+     */
+    static public int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
+        if (!getDialogShowingEnabled(preferenceKey))
+            return DIALOG_DISABLED_OPTION;
+        MessagePanel pnl = new MessagePanel(preferenceKey, message);
+        int ret = OptionPaneUtil.showOptionDialog(parent, pnl, title, optionType, messageType, options,defaultOption);
+        pnl.remeberDialogShowingEnabled();
+        return ret;
+    }
 
     /**
      * Displays an confirmation dialog with some option buttons given by <code>optionType</code>.
