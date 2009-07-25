@@ -119,7 +119,7 @@ public final class PasteAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null || getCurrentDataSet().getSelected().isEmpty()) {
+        if (getCurrentDataSet() == null) {
             setEnabled(false);
             return;
         }
