@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 
@@ -64,6 +65,26 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
         }
         fireModelUpdate();
     }
+
+    /**
+     * Populates the browser with the list of referring relations in the {@see DataSet} ds.
+     * 
+     * @param ds the data set
+     */
+    public void populate(DataSet ds) {
+        referrers.clear();
+        if (ds == null) {
+            fireModelUpdate();
+            return;
+        }
+        for (Relation parent : ds.relations) {
+            if (isReferringRelation(parent)) {
+                referrers.add(parent);
+            }
+        }
+        fireModelUpdate();
+    }
+
 
     public boolean canReload() {
         return relation != null && relation.id > 0;
