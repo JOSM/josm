@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -402,6 +403,32 @@ public class MemberTableModel extends AbstractTableModel {
         Relation r = (Relation) member.member;
         return !r.incomplete;
     }
+
+    /**
+     * Replies true if there is at least one relation member in this model
+     * which refers to at least on the primitives in <code>primitives</code>.
+     * 
+     * @param primitives the collection of primitives
+     * @return true if there is at least one relation member in this model
+     * which refers to at least on the primitives in <code>primitives</code>; false
+     * otherwise
+     */
+    public boolean hasMembersReferringTo(Collection<OsmPrimitive> primitives) {
+        if (primitives == null || primitives.isEmpty())
+            return false;
+        HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
+        for(RelationMember member : members) {
+            referrers.add(member.member);
+        }
+        Iterator<OsmPrimitive> it = primitives.iterator();
+        while(it.hasNext()) {
+            OsmPrimitive referred = it.next();
+            if (referrers.contains(referred))
+                return true;
+        }
+        return false;
+    }
+
 
     void sort() {
         RelationNodeMap map = new RelationNodeMap(members);

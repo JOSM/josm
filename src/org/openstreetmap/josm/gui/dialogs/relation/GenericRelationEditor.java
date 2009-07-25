@@ -722,8 +722,19 @@ public class GenericRelationEditor extends RelationEditor {
             Shortcut.registerShortcut("relationeditor:removeselected", tr("Relation Editor: Remove Selected"),
                     KeyEvent.VK_S, Shortcut.GROUP_MNEMONIC);
 
+            updateEnabledState();
+        }
+
+        protected void updateEnabledState() {
             DataSet ds = getLayer().data;
-            setEnabled(ds != null && !ds.getSelected().isEmpty());
+            if (ds == null || ds.getSelected().isEmpty()) {
+                setEnabled(false);
+                return;
+            }
+            // only enable the action if we have members referring to the
+            // selected primitives
+            //
+            setEnabled(memberTableModel.hasMembersReferringTo(ds.getSelected()));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -731,7 +742,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         public void tableChanged(TableModelEvent e) {
-            setEnabled(selectionTableModel.getRowCount() > 0);
+            updateEnabledState();
         }
     }
 
