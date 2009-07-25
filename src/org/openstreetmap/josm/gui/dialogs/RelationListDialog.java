@@ -96,13 +96,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         //
         editAction = new EditAction();
         displaylist.addListSelectionListener(editAction);
-        displaylist.addMouseListener(new MouseAdapter(){
-            @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    editAction.run();
-                }
-            }
-        });
         buttonPanel.add(new SideButton(editAction), GBC.std());
 
         // the delete action
