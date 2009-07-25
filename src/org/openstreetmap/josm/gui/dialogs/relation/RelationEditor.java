@@ -107,14 +107,31 @@ public abstract class RelationEditor extends ExtendedDialog {
         this.layer = layer;
     }
 
+    /**
+     * Replies the currently edited relation
+     * 
+     * @return the currently edited relation
+     */
     protected Relation getRelation() {
         return relation;
     }
 
+    /**
+     * Replies the {@see OsmDataLayer} in whose context this relation editor is
+     * open
+     * 
+     * @return the {@see OsmDataLayer} in whose context this relation editor is
+     * open
+     */
     protected OsmDataLayer getLayer() {
         return layer;
     }
 
+    /**
+     * Replies the state of the edited relation when the editor has been launched
+     * 
+     * @return the state of the edited relation when the editor has been launched
+     */
     protected Relation getRelationSnapshot() {
         return relationSnapshot;
     }

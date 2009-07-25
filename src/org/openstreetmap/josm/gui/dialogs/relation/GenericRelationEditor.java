@@ -585,45 +585,6 @@ public class GenericRelationEditor extends RelationEditor {
         return buttonPanel;
     }
 
-    /**
-     * This function saves the user's changes. Must be invoked manually.
-     */
-    protected void applyChanges() {
-        if (getRelation() == null) {
-            // If the user wanted to create a new relation, but hasn't added any members or
-            // tags, don't add an empty relation
-            if (memberTableModel.getRowCount() == 0 && tagEditorModel.getKeys().isEmpty())
-                return;
-            Relation newRelation = new Relation();
-            tagEditorModel.applyToPrimitive(newRelation);
-            memberTableModel.applyToRelation(newRelation);
-            Main.main.undoRedo.add(new AddCommand(newRelation));
-            DataSet.fireSelectionChanged(getLayer().data.getSelected());
-        } else if (!memberTableModel.hasSameMembersAs(getRelation()) || tagEditorModel.isDirty()) {
-            Relation editedRelation = new Relation(getRelation());
-            tagEditorModel.applyToPrimitive(editedRelation);
-            memberTableModel.applyToRelation(editedRelation);
-            if (isDirtyRelation()) {
-                Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
-                getLayer().getConflicts().add(conflict);
-                JOptionPane op = new JOptionPane(tr("<html>The relation has changed outside of the editor.<br>"
-                        + "Your edit can't be applied directly, a conflict has been created instead.</html>"),
-                        JOptionPane.WARNING_MESSAGE);
-                JDialog dialog = op.createDialog(this, tr("Conflict created"));
-                dialog.setAlwaysOnTop(true);
-                dialog.setModal(true);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
-            } else {
-                Relation clone = new Relation(getRelation());
-                tagEditorModel.applyToPrimitive(clone);
-                memberTableModel.applyToRelation(clone);
-                Main.main.undoRedo.add(new ChangeCommand(getRelation(), clone));
-                DataSet.fireSelectionChanged(getLayer().data.getSelected());
-            }
-        }
-    }
-
     @Override
     protected Dimension findMaxDialogSize() {
         // FIXME: Make it remember dialog size
@@ -847,6 +808,61 @@ public class GenericRelationEditor extends RelationEditor {
     }
 
     class OKAction extends AbstractAction {
+        /**
+         * apply updates to a new relation
+         */
+        protected void applyNewRelation() {
+            // If the user wanted to create a new relation, but hasn't added any members or
+            // tags, don't add an empty relation
+            if (memberTableModel.getRowCount() == 0 && tagEditorModel.getKeys().isEmpty())
+                return;
+            Relation newRelation = new Relation();
+            tagEditorModel.applyToPrimitive(newRelation);
+            memberTableModel.applyToRelation(newRelation);
+            Main.main.undoRedo.add(new AddCommand(newRelation));
+            DataSet.fireSelectionChanged(getLayer().data.getSelected());
+        }
+
+        /**
+         * apply updates to an existing relation
+         */
+        protected void applyExistingRelation() {
+            Relation editedRelation = new Relation(getRelation());
+            tagEditorModel.applyToPrimitive(editedRelation);
+            memberTableModel.applyToRelation(editedRelation);
+            if (isDirtyRelation()) {
+                Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
+                getLayer().getConflicts().add(conflict);
+                JOptionPane op = new JOptionPane(
+                        tr("<html>The relation has changed outside of the editor.<br>"
+                                + "Your edits can't be applied directly, a conflict has been created instead.</html>"),
+                                JOptionPane.WARNING_MESSAGE
+                );
+                JDialog dialog = op.createDialog(GenericRelationEditor.this, tr("Conflict created"));
+                dialog.setAlwaysOnTop(true);
+                dialog.setModal(true);
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setVisible(true);
+            } else {
+                tagEditorModel.applyToPrimitive(editedRelation);
+                memberTableModel.applyToRelation(editedRelation);
+                Main.main.undoRedo.add(new ChangeCommand(getRelation(), editedRelation));
+                DataSet.fireSelectionChanged(getLayer().data.getSelected());
+            }
+        }
+
+        /**
+         * Applies updates
+         */
+        protected void applyChanges() {
+            if (getRelation() == null) {
+                applyNewRelation();
+            } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
+                    || tagEditorModel.isDirty()) {
+                applyExistingRelation();
+            }
+        }
+
         public OKAction() {
             putValue(SHORT_DESCRIPTION, tr("Apply the updates and close the dialog"));
             putValue(SMALL_ICON, ImageProvider.get("ok"));

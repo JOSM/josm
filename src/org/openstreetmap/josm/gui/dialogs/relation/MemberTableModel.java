@@ -63,7 +63,9 @@ public class MemberTableModel extends AbstractTableModel {
     public void populate(Relation relation) {
         members.clear();
         if (relation != null && relation.members != null) {
-            members.addAll(relation.members);
+            // make sure we work with clones of the relation members
+            // in the model.
+            members.addAll(new Relation(relation).members);
         }
         fireTableDataChanged();
     }
