@@ -93,7 +93,7 @@ public class SearchCompiler {
         @Override public boolean match(OsmPrimitive osm) throws ParseError {
 
             if (regexSearch) {
-                if (osm.keys == null)
+                if (!osm.hasKeys())
                     return false;
 
                 /* The string search will just get a key like
@@ -114,7 +114,7 @@ public class SearchCompiler {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 }
 
-                for (Entry<String, String> e : osm.keys.entrySet()) {
+                for (Entry<String, String> e : osm.entrySet()) {
                     String k = e.getKey();
                     String v = e.getValue();
 
@@ -222,7 +222,7 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) throws ParseError {
 
-            if (osm.keys == null || osm.keys.isEmpty())
+            if (!osm.hasKeys())
                 return mode == Mode.NONE;
 
             switch (mode) {
@@ -250,7 +250,7 @@ public class SearchCompiler {
                 return false;
             case ANY_VALUE_REGEXP:
             case EXACT_REGEXP:
-                for (Entry<String, String> entry:osm.keys.entrySet()) {
+                for (Entry<String, String> entry:osm.entrySet()) {
                     if (keyPattern.matcher(entry.getKey()).matches()) {
                         if (mode == Mode.ANY_VALUE_REGEXP
                                 || valuePattern.matcher(entry.getValue()).matches())
@@ -259,7 +259,7 @@ public class SearchCompiler {
                 }
                 return false;
             case MISSING_KEY_REGEXP:
-                for (String k:osm.keys.keySet()) {
+                for (String k:osm.keySet()) {
                     if (keyPattern.matcher(k).matches())
                         return false;
                 }
@@ -279,7 +279,7 @@ public class SearchCompiler {
         private String s;
         public Any(String s) {this.s = s;}
         @Override public boolean match(OsmPrimitive osm) throws ParseError {
-            if (osm.keys == null)
+            if (!osm.hasKeys())
                 return s.equals("");
 
             String search;
@@ -300,7 +300,7 @@ public class SearchCompiler {
 
             // is not Java 1.5
             //search = java.text.Normalizer.normalize(search, java.text.Normalizer.Form.NFC);
-            for (Entry<String, String> e : osm.keys.entrySet()) {
+            for (Entry<String, String> e : osm.entrySet()) {
                 if (regexSearch) {
                     String key = e.getKey();
                     String value = e.getValue();

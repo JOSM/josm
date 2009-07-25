@@ -239,18 +239,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             if (value.equals(tr("<different>"))) {
                 HashMap<String, Vector<OsmPrimitive>> map=new HashMap<String, Vector<OsmPrimitive>>();
                 for (OsmPrimitive osm: sel) {
-                    if(osm.keys != null)
+                    String val=osm.get(key);
+                    if(val != null)
                     {
-                        String val=osm.keys.get(key);
-                        if(val != null)
-                        {
-                            if (map.containsKey(val)) {
-                                map.get(val).add(osm);
-                            } else {
-                                Vector<OsmPrimitive> v = new Vector<OsmPrimitive>();
-                                v.add(osm);
-                                map.put(val, v);
-                            }
+                        if (map.containsKey(val)) {
+                            map.get(val).add(osm);
+                        } else {
+                            Vector<OsmPrimitive> v = new Vector<OsmPrimitive>();
+                            v.add(osm);
+                            map.put(val, v);
                         }
                     }
                 }

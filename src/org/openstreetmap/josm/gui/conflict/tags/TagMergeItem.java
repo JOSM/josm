@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui.conflict.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.HashMap;
-
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 
@@ -55,14 +53,8 @@ public class TagMergeItem {
         if (my == null) throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "my"));
         if (their == null) throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "their"));
         this.key = key;
-        myTagValue = null;
-        if (my.keys != null && my.keys.containsKey(key)) {
-            myTagValue = my.keys.get(key);
-        }
-        theirTagValue = null;
-        if (their.keys != null && their.keys.containsKey(key)) {
-            theirTagValue = their.keys.get(key);
-        }
+        myTagValue = my.get(key);
+        theirTagValue = their.get(key);
     }
 
     /**
@@ -107,22 +99,16 @@ public class TagMergeItem {
         if (mergeDecision == MergeDecisionType.UNDECIDED) {
             throw new IllegalStateException(tr("cannot apply undecided tag merge item"));
         } else if (mergeDecision == MergeDecisionType.KEEP_THEIR) {
-            if (theirTagValue == null && primitive.keys != null) {
-                primitive.keys.remove(key);
+            if (theirTagValue == null) {
+                primitive.remove(key);
             } else if (theirTagValue != null) {
-                if (primitive.keys == null) {
-                    primitive.keys = new HashMap<String, String>();
-                }
-                primitive.keys.put(key, theirTagValue);
+                primitive.put(key, theirTagValue);
             }
         } else if (mergeDecision == MergeDecisionType.KEEP_MINE) {
-            if (myTagValue == null && primitive.keys != null) {
-                primitive.keys.remove(key);
+            if (myTagValue == null) {
+                primitive.remove(key);
             } else if (myTagValue != null) {
-                if (primitive.keys == null) {
-                    primitive.keys = new HashMap<String, String>();
-                }
-                primitive.keys.put(key, myTagValue);
+                primitive.put(key, myTagValue);
             }
         } else {
            // should not happen

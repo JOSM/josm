@@ -73,10 +73,7 @@ public class ApiPreconditionChecker implements UploadHook {
 
     private boolean checkMaxNodes(Collection<OsmPrimitive> add, long maxNodes) {
         for (OsmPrimitive osmPrimitive : add) {
-            if (osmPrimitive.keys == null) {
-                continue;
-            }
-            for (Entry<String,String> e : osmPrimitive.keys.entrySet()) {
+            for (Entry<String,String> e : osmPrimitive.entrySet()) {
                 if(e.getValue().length() > 255) {
                     if (osmPrimitive.deleted) {
                         // if OsmPrimitive is going to be deleted we automatically shorten the

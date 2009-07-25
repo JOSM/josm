@@ -29,11 +29,6 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  */
 abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
-    /**
-     * The key/value list for this primitive.
-     */
-    public Map<String, String> keys;
-
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
     public Integer mappaintVisibleCode = 0;
@@ -218,6 +213,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         return id == 0 ? super.hashCode() : (int)(id<<2)+ret[0];
     }
 
+    /*------------
+     * Keys handling
+     ------------*/
+
+    /**
+     * The key/value list for this primitive.
+     */
+    public Map<String, String> keys;
+
     /**
      * Set the given value to the given key
      * @param key The key, for which the value is to be set.
@@ -247,8 +251,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         mappaintStyle = null;
     }
 
-    public String getName() {
-        return null;
+    /**
+     * Added in revision 1843
+     * Please do not use in plug-ins until this version becomes JOSM tested
+     */
+    public final void removeAll() {
+        keys = null;
+        mappaintStyle = null;
     }
 
     public final String get(String key) {
@@ -265,6 +274,23 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         if (keys == null)
             return Collections.emptyList();
         return keys.keySet();
+    }
+
+    /**
+     * Added in revision 1843
+     * Please do not use in plug-ins until this version becomes JOSM tested
+     */
+    public final boolean hasKeys() {
+        return keys != null && !keys.isEmpty();
+    }
+
+
+
+
+
+
+    public String getName() {
+        return null;
     }
 
     /**

@@ -17,7 +17,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -37,10 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
-import org.openstreetmap.josm.actions.SaveAction;
-import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -66,7 +62,6 @@ import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A layer holding data from a specific dataset.
@@ -81,7 +76,7 @@ public class OsmDataLayer extends Layer {
 
     /**
      * Replies a new unique name for a data layer
-     * 
+     *
      * @return a new unique name for a data layer
      */
     static public String createNewName() {
@@ -496,8 +491,9 @@ public class OsmDataLayer extends Layer {
                 wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
                 wpt.setTime();
             }
-            if (n.keys != null && n.keys.containsKey("name")) {
-                wpt.attr.put("name", n.keys.get("name"));
+            String name = n.get("name");
+            if (name != null) {
+                wpt.attr.put("name", name);
             }
         }
         return gpxData;

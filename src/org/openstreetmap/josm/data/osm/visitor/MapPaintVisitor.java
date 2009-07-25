@@ -494,12 +494,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             return;
         }
-        else if (drawMultipolygon && r.keys != null && "multipolygon".equals(r.keys.get("type")))
+        else if (drawMultipolygon && "multipolygon".equals(r.get("type")))
         {
             if(drawMultipolygon(r))
               return;
         }
-        else if (drawRestriction && r.keys != null && "restriction".equals(r.keys.get("type")))
+        else if (drawRestriction && "restriction".equals(r.get("type")))
         {
             drawRestriction(r);
         }
@@ -750,7 +750,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         IconElemStyle nodeStyle = getPrimitiveNodeStyle(r);
 
         if (nodeStyle == null) {
-            r.putError(tr("Style for restriction {0} not found.", r.keys.get("restriction")), true);
+            r.putError(tr("Style for restriction {0} not found.", r.get("restriction")), true);
             return;
         }
 
@@ -1111,9 +1111,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     protected String getNodeName(Node n) {
         String name = null;
-        if (n.keys != null) {
+        if (n.hasKeys()) {
             for (String rn : regionalNameOrder) {
-                name = n.keys.get(rn);
+                name = n.get(rn);
                 if (name != null) break;
             }
         }

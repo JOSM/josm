@@ -163,11 +163,11 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     private void addTags(OsmPrimitive osm, String tagname, boolean tagOpen) {
-        if (osm.keys != null) {
+        if (osm.hasKeys()) {
             if (tagOpen) {
                 out.println(">");
             }
-            for (Entry<String, String> e : osm.keys.entrySet()) {
+            for (Entry<String, String> e : osm.entrySet()) {
                 if ((osm instanceof Changeset) || !("created_by".equals(e.getKey())))
                     out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
                             "' v='"+XmlWriter.encode(e.getValue())+ "' />");

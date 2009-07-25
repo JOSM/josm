@@ -3,16 +3,16 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.Main;
 
 public class ElemStyles
 {
@@ -184,11 +184,11 @@ public class ElemStyles
             if(o.keys != null && !(o instanceof Node))
             {
                 boolean noclosed = o instanceof Way && !((Way)o).isClosed();
-                Iterator<String> iterator = o.keys.keySet().iterator();
+                Iterator<String> iterator = o.keySet().iterator();
                 while(iterator.hasNext())
                 {
                     String key = iterator.next();
-                    String val = o.keys.get(key);
+                    String val = o.get(key);
                     AreaElemStyle s = areas.get("n" + key + "=" + val);
                     if(s == null || (s.closed && noclosed))
                         s = areas.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val));

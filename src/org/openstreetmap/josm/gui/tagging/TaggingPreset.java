@@ -105,9 +105,7 @@ public class TaggingPreset extends AbstractAction {
             } else {
                 returnValue.hadEmpty = true;
             }
-            if(s.keys != null && s.keys.size() > 0) {
-                returnValue.hadKeys = true;
-            }
+            returnValue.hadKeys = returnValue.hadKeys | s.hasKeys();
         }
         return returnValue;
     }
@@ -219,7 +217,7 @@ public class TaggingPreset extends AbstractAction {
                 if(def)
                 {
                     for (OsmPrimitive s : sel)
-                        if(s.keys != null && s.keys.size() > 0) {
+                        if(s.hasKeys()) {
                             def = false;
                         }
                 }
@@ -380,9 +378,9 @@ public class TaggingPreset extends AbstractAction {
             }
 
             // no change if same as before
-            if (value.equals(originalValue) || (originalValue == null && (value == null || value.length() == 0))) return;
+            if (value.equals(originalValue) || (originalValue == null &&  value.length() == 0)) return;
 
-            if (delete_if_empty && value != null && value.length() == 0) {
+            if (delete_if_empty && value.length() == 0) {
                 value = null;
             }
             cmds.add(new ChangePropertyCommand(sel, key, value));

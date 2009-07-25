@@ -8,13 +8,11 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -23,8 +21,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * TagEditorModel is a table model.
- * 
- * 
+ *
+ *
  * @author gubaer
  *
  */
@@ -103,9 +101,9 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * adds a tag to the model
-     * 
+     *
      * @param tag the tag. Must not be null.
-     * 
+     *
      * @exception IllegalArgumentException thrown, if tag is null
      */
     public void add(TagModel tag) {
@@ -128,13 +126,13 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * adds a tag given by a name/value pair to the tag editor model.
-     * 
+     *
      * If there is no tag with name <code>name</name> yet, a new {@link TagModel} is created
      * and append to this model.
-     * 
+     *
      * If there is a tag with name <code>name</name>, <code>value</code> is merged to the list
      * of values for this tag.
-     * 
+     *
      * @param name the name; converted to "" if null
      * @param value the value; converted to "" if null
      */
@@ -182,7 +180,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * deletes the names of the tags given by tagIndices
-     * 
+     *
      * @param tagIndices a list of tag indices
      */
     public void deleteTagNames(int [] tagIndices) {
@@ -200,7 +198,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * deletes the values of the tags given by tagIndices
-     * 
+     *
      * @param tagIndices the lit of tag indices
      */
     public void deleteTagValues(int [] tagIndices) {
@@ -218,7 +216,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * deletes the tags given by tagIndices
-     * 
+     *
      * @param tagIndices the list of tag indices
      */
     public void deleteTags(int [] tagIndices) {
@@ -260,7 +258,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * initializes the model with the tags of an OSM primitive
-     * 
+     *
      * @param primitive the OSM primitive
      */
     public void initFromPrimitive(OsmPrimitive primitive) {
@@ -277,16 +275,12 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * applies the current state of the tag editor model to a primitive
-     * 
+     *
      * @param primitive the primitive
-     * 
+     *
      */
     public void applyToPrimitive(OsmPrimitive primitive) {
-        if (primitive.keys == null) {
-            primitive.keys = new HashMap<String, String>();
-        } else {
-            primitive.keys.clear();
-        }
+        primitive.removeAll();
         for (TagModel tag: tags) {
             // tag still holds an unchanged list of different values for the same key.
             // no property change command required
@@ -305,7 +299,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * checks whether the tag model includes a tag with a given key
-     * 
+     *
      * @param key  the key
      * @return true, if the tag model includes the tag; false, otherwise
      */
@@ -344,10 +338,7 @@ public class TagEditorModel extends AbstractTableModel {
         ArrayList<Command> commands = new ArrayList<Command>();
 
         for (OsmPrimitive primitive : primitives) {
-            if (primitive.keys == null) {
-                continue;
-            }
-            for (String oldkey : primitive.keys.keySet()) {
+            for (String oldkey : primitive.keySet()) {
                 if (!currentkeys.contains(oldkey)) {
                     ChangePropertyCommand deleteCommand =
                         new ChangePropertyCommand(primitive,oldkey,null);
@@ -366,7 +357,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * replies the list of keys of the tags managed by this model
-     * 
+     *
      * @return the list of keys managed by this model
      */
     public List<String> getKeys() {
@@ -396,7 +387,7 @@ public class TagEditorModel extends AbstractTableModel {
     /**
      * updates the name of a tag and sets the dirty state to  true if
      * the new name is different from the old name.
-     * 
+     *
      * @param tag   the tag
      * @param newName  the new name
      */
@@ -411,7 +402,7 @@ public class TagEditorModel extends AbstractTableModel {
     /**
      * updates the value value of a tag and sets the dirty state to true if the
      * new name is different from the old name
-     * 
+     *
      * @param tag  the tag
      * @param newValue  the new value
      */
@@ -425,7 +416,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * replies true, if this model has been updated
-     * 
+     *
      * @return true, if this model has been updated
      */
     public boolean isDirty() {

@@ -23,8 +23,6 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -33,8 +31,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -278,12 +274,11 @@ public class SplitWayAction extends JosmAction {
                 continue;
             }
             Relation c = null;
-            String type = "";
-            int i = 0;
-
-            if(r.keys != null) {
-                type = r.keys.get("type");
+            String type = r.get("type");
+            if (type == null) {
+                type = "";
             }
+            int i = 0;
 
             for (RelationMember rm : r.members) {
                 if (rm.member instanceof Way) {

@@ -44,7 +44,7 @@ public final class PasteTagsAction extends JosmAction {
             }
 
             for (String key : m.keySet()) {
-                clist.add(new ChangePropertyCommand(selectionSubset, key, osm.keys.get(key)));
+                clist.add(new ChangePropertyCommand(selectionSubset, key, osm.get(key)));
             }
         }
     }
@@ -82,13 +82,9 @@ public final class PasteTagsAction extends JosmAction {
 
     private boolean containsSameKeysWithDifferentValues(Collection<? extends OsmPrimitive> osms) {
         Map<String,String> kvSeen = new HashMap<String,String>();
-        for (Iterator<? extends OsmPrimitive> it = osms.iterator(); it.hasNext();) {
-            OsmPrimitive osm = it.next();
-            if (osm.keys == null || osm.keys.isEmpty()) {
-                continue;
-            }
-            for (String key : osm.keys.keySet()) {
-                String value = osm.keys.get(key);
+        for (OsmPrimitive osm:osms) {
+            for (String key : osm.keySet()) {
+                String value = osm.get(key);
                 if (! kvSeen.containsKey(key)) {
                     kvSeen.put(key, value);
                 } else if (! kvSeen.get(key).equals(value))
