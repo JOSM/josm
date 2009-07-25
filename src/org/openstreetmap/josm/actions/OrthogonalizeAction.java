@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.DontShowAgainInfo;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -98,9 +98,15 @@ public final class OrthogonalizeAction extends JosmAction {
             String msg = tr("<html>You are using the EPSG:4326 projection which might lead<br>" +
                     "to undesirable results when doing rectangular alignments.<br>" +
                     "Change your projection to get rid of this warning.<br>" +
-            "Do you want to continue?");
-
-            if (!DontShowAgainInfo.show("align_rectangular_4326", msg, false))
+            "Do you want to continue?</html>");
+            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "align_rectangular_4326",
+                    Main.parent,
+                    msg,
+                    tr("Warning"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION))
                 return;
         }
         // Check, if selection held neither none nor two nodes

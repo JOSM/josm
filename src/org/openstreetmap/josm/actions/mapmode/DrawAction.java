@@ -498,6 +498,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
                 extendedWay = true;
                 getCurrentDataSet().setSelected(way);
+                DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
             }
         }
 
@@ -514,6 +515,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
             }
             getCurrentDataSet().setSelected(n);
+            DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
         } else if (!newNode) {
             title = tr("Connect existing way to node");
         } else if (reuseWays.isEmpty()) {
@@ -556,6 +558,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     (posn0 >= 1                          && targetNode.equals(selectedWay.nodes.get(posn0-1))) || // previous node
                     (posn0 < selectedWay.nodes.size()-1) && targetNode.equals(selectedWay.nodes.get(posn0+1))) {  // next node
                 getCurrentDataSet().setSelected(targetNode);
+                DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
                 lastUsedNode = targetNode;
                 return true;
             }

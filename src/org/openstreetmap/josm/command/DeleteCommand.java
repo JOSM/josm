@@ -30,9 +30,9 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
-import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -390,9 +390,16 @@ public class DeleteCommand extends Command {
                                         "This can cause problems because other objects (that you don't see) might use them." +
                                         "<br>" +
                                 "Do you really want to delete?") + "</html>"));
-                        return DontShowAgainInfo.show("delete_outside_nodes", msg, false, JOptionPane.YES_NO_OPTION, JOptionPane.YES_OPTION);
+                        return ConditionalOptionPaneUtil.showConfirmationDialog(
+                                "delete_outside_nodes",
+                                Main.parent,
+                                msg,
+                                tr("Delete confirmation"),
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                JOptionPane.YES_OPTION
+                        );
                     }
-
                 }
             }
         }

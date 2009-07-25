@@ -56,6 +56,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -64,7 +65,6 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.DateUtils;
-import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
@@ -686,7 +686,14 @@ public class GpxLayer extends Layer {
             JPanel msg = new JPanel(new GridBagLayout());
             msg.add(new JLabel(tr("<html>Upload of unprocessed GPS data as map data is considered harmful.<br>If you want to upload traces, look here:")), GBC.eol());
             msg.add(new UrlLabel(tr("http://www.openstreetmap.org/traces")), GBC.eop());
-            if (!DontShowAgainInfo.show("convert_to_data", msg))
+            if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "convert_to_data",
+                    Main.parent,
+                    msg,
+                    tr("Warning"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    JOptionPane.OK_OPTION))
                 return;
             DataSet ds = new DataSet();
             for (GpxTrack trk : data.tracks) {

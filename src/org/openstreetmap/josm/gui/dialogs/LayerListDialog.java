@@ -21,6 +21,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -29,6 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -36,7 +38,6 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
-import org.openstreetmap.josm.tools.DontShowAgainInfo;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -77,22 +78,32 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
                 if (((OsmDataLayer)l).isModified())
                 {
                     int result = new ExtendedDialog(Main.parent, tr("Unsaved Changes"),
-                        tr("There are unsaved changes. Delete the layer anwyay?"),
-                        new String[] {tr("Delete Layer"), tr("Cancel")},
-                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+                            tr("There are unsaved changes. Delete the layer anwyay?"),
+                            new String[] {tr("Delete Layer"), tr("Cancel")},
+                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 
                     if(result != 1) return;
                 }
-                else if(!DontShowAgainInfo.show("delete_layer", tr("Do you really want to delete the whole layer?"), false))
+                else if (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                        "delete_layer",
+                        Main.parent,
+                        tr("Do you really want to delete the whole layer?"),
+                        tr("Confirmation"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        JOptionPane.YES_OPTION))
                     return;
             }
             Main.main.removeLayer(l);
-            if (sel >= instance.getModel().getSize())
+            if (sel >= instance.getModel().getSize()) {
                 sel = instance.getModel().getSize()-1;
-            if (instance.getSelectedValue() == null)
+            }
+            if (instance.getSelectedValue() == null) {
                 instance.setSelectedIndex(sel);
-            if (Main.map != null)
+            }
+            if (Main.map != null) {
                 Main.map.mapView.setActiveLayer((Layer)instance.getSelectedValue());
+            }
         }
     }
 
@@ -162,7 +173,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
      */
     public LayerListDialog(MapFrame mapFrame) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
-        Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, Shortcut.GROUP_LAYER), 100);
+                Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, Shortcut.GROUP_LAYER), 100);
         instance = new JList(model);
         listScrollPane = new JScrollPane(instance);
         add(listScrollPane, BorderLayout.CENTER);
@@ -173,8 +184,9 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
                 JLabel label = (JLabel)super.getListCellRendererComponent(list,
                         layer.name, index, isSelected, cellHasFocus);
                 Icon icon = layer.getIcon();
-                if (!layer.visible)
+                if (!layer.visible) {
                     icon = ImageProvider.overlay(icon, "overlay/invisible", OverlayPosition.SOUTHEAST);
+                }
                 label.setIcon(icon);
                 label.setToolTipText(layer.getToolTipText());
                 return label;
@@ -184,8 +196,9 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
         final MapView mapView = mapFrame.mapView;
 
         Collection<Layer> data = mapView.getAllLayers();
-        for (Layer l : data)
+        for (Layer l : data) {
             model.addElement(l);
+        }
 
         instance.setSelectedValue(mapView.getActiveLayer(), true);
         instance.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -193,8 +206,9 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
             public void valueChanged(ListSelectionEvent e) {
                 if (instance.getModel().getSize() == 0)
                     return;
-                if (instance.getSelectedIndex() == -1)
+                if (instance.getSelectedIndex() == -1) {
                     instance.setSelectedIndex(e.getFirstIndex());
+                }
                 mapView.setActiveLayer((Layer)instance.getSelectedValue());
             }
         });
@@ -209,12 +223,14 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
                 menu.show(listScrollPane, p.x, p.y-3);
             }
             @Override public void mousePressed(MouseEvent e) {
-                if (e.isPopupTrigger())
+                if (e.isPopupTrigger()) {
                     openPopup(e);
+                }
             }
             @Override public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger())
+                if (e.isPopupTrigger()) {
                     openPopup(e);
+                }
             }
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -257,7 +273,7 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
         buttonPanel.add(new SideButton(deleteAction, "delete"));
 
         mergeButton = new SideButton("mergedown", "LayerList", tr("Merge the layer directly below into the selected layer."),
-        new ActionListener(){
+                new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 Layer lTo = (Layer)instance.getSelectedValue();
                 Layer lFrom = (Layer)model.get(instance.getSelectedIndex()+1);
@@ -310,8 +326,9 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
             Layer.listeners.remove(this);
             return;
         }
-        if (instance.getSelectedIndex() == -1)
+        if (instance.getSelectedIndex() == -1) {
             instance.setSelectedIndex(0);
+        }
         updateButtonEnabled();
     }
 
@@ -319,8 +336,9 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
      * If the newLayer is not the actual selection, select it.
      */
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (newLayer != instance.getSelectedValue())
+        if (newLayer != instance.getSelectedValue()) {
             instance.setSelectedValue(newLayer, true);
+        }
         updateButtonEnabled();
     }
 }
