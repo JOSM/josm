@@ -39,7 +39,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
      *      contain only one list, since the server cannot distinguish between
      *      ways.
      */
-    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws IOException, SAXException {
+    public GpxData parseRawGps(ProgressMonitor progressMonitor) throws IOException, SAXException,OsmTransferException {
         progressMonitor.beginTask("", 1);
         try {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
@@ -77,6 +77,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 return null;
             throw e;
         } catch (SAXException e) {
+            throw e;
+        } catch (OsmTransferException e) {
             throw e;
         } catch (Exception e) {
             if (cancel)

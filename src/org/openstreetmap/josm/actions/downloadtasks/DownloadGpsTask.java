@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
 public class DownloadGpsTask implements DownloadTask {
@@ -33,7 +34,7 @@ public class DownloadGpsTask implements DownloadTask {
             this.newLayer = newLayer;
         }
 
-        @Override public void realRun() throws IOException, SAXException {
+        @Override public void realRun() throws IOException, SAXException, OsmTransferException {
             rawData = reader.parseRawGps(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
         }
 
