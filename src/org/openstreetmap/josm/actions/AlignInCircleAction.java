@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -82,8 +83,8 @@ public final class AlignInCircleAction extends JosmAction {
             return;
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        Collection<Node> nodes = new LinkedList<Node>();
-        Collection<Way> ways = new LinkedList<Way>();
+        List<Node> nodes = new LinkedList<Node>();
+        List<Way> ways = new LinkedList<Way>();
         EastNorth center = null;
         double radius = 0;
         boolean regular = false;
@@ -99,7 +100,7 @@ public final class AlignInCircleAction extends JosmAction {
         // special case if no single nodes are selected and exactly one way is:
         // then use the way's nodes
         if ((nodes.size() <= 2) && (ways.size() == 1)) {
-            Way way = (Way) ways.toArray()[0];
+            Way way = ways.get(0);
 
             // some more special combinations:
             // When is selected node that is part of the way, then make a regular polygon, selected
@@ -110,13 +111,13 @@ public final class AlignInCircleAction extends JosmAction {
             // When one more node, part of the way, is selected, set the radius equal to the
             // distance between two nodes.
             if (nodes.size() > 0) {
-                if (nodes.size() == 1 && way.nodes.contains(nodes.toArray()[0])) {
+                if (nodes.size() == 1 && way.nodes.contains(nodes.get(0))) {
                     regular = true;
                 } else {
 
-                    center = ((Node) nodes.toArray()[way.nodes.contains(nodes.toArray()[0]) ? 1 : 0]).getEastNorth();
+                    center = nodes.get(way.nodes.contains(nodes.get(0)) ? 1 : 0).getEastNorth();
                     if (nodes.size() == 2) {
-                        radius = distance(((Node) nodes.toArray()[0]).getEastNorth(), ((Node) nodes.toArray()[1]).getEastNorth());
+                        radius = distance(nodes.get(0).getEastNorth(), nodes.get(1).getEastNorth());
                     }
                 }
                 nodes = new LinkedList<Node>();
@@ -143,8 +144,8 @@ public final class AlignInCircleAction extends JosmAction {
 
             // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
             for (int i = 0; i < nodes.size(); i++) {
-                EastNorth n0 = ((Node) nodes.toArray()[i]).getEastNorth();
-                EastNorth n1 = ((Node) nodes.toArray()[(i+1) % nodes.size()]).getEastNorth();
+                EastNorth n0 = nodes.get(i).getEastNorth();
+                EastNorth n1 = nodes.get((i+1) % nodes.size()).getEastNorth();
 
                 BigDecimal x0 = new BigDecimal(n0.east());
                 BigDecimal y0 = new BigDecimal(n0.north());
@@ -186,9 +187,9 @@ public final class AlignInCircleAction extends JosmAction {
 
         if (regular) { // Make a regular polygon
             double angle = Math.PI * 2 / nodes.size();
-            pc = new PolarCoor(((Node) nodes.toArray()[0]).getEastNorth(), center, 0);
+            pc = new PolarCoor(nodes.get(0).getEastNorth(), center, 0);
 
-            if (pc.angle > (new PolarCoor(((Node) nodes.toArray()[1]).getEastNorth(), center, 0).angle)) {
+            if (pc.angle > (new PolarCoor(nodes.get(1).getEastNorth(), center, 0).angle)) {
                 angle *= -1;
             }
 

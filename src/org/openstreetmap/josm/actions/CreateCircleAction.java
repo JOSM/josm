@@ -7,22 +7,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.Shortcut;
-
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * - Create a new circle from two selected nodes or a way with 2 nodes which represent the diameter of the circle.
@@ -83,7 +83,7 @@ public final class CreateCircleAction extends JosmAction {
         }
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        Collection<Node> nodes = new LinkedList<Node>();
+        List<Node> nodes = new LinkedList<Node>();
         Way existingWay = null;
 
         for (OsmPrimitive osm : sel)
@@ -112,10 +112,10 @@ public final class CreateCircleAction extends JosmAction {
         if (nodes.size() == 2) {
             // diameter: two single nodes needed or a way with two nodes
 
-            Node   n1 = ((Node)nodes.toArray()[0]);
+            Node   n1 = nodes.get(0);
             double x1 = n1.getEastNorth().east();
             double y1 = n1.getEastNorth().north();
-            Node   n2 = ((Node)nodes.toArray()[1]);
+            Node   n2 = nodes.get(1);
             double x2 = n2.getEastNorth().east();
             double y2 = n2.getEastNorth().north();
 
@@ -186,13 +186,13 @@ public final class CreateCircleAction extends JosmAction {
             // triangle: three single nodes needed or a way with three nodes
 
             // let's get some shorter names
-            Node   n1 = ((Node)nodes.toArray()[0]);
+            Node   n1 = nodes.get(0);
             double x1 = n1.getEastNorth().east();
             double y1 = n1.getEastNorth().north();
-            Node   n2 = ((Node)nodes.toArray()[1]);
+            Node   n2 = nodes.get(1);
             double x2 = n2.getEastNorth().east();
             double y2 = n2.getEastNorth().north();
-            Node   n3 = ((Node)nodes.toArray()[2]);
+            Node   n3 = nodes.get(2);
             double x3 = n3.getEastNorth().east();
             double y3 = n3.getEastNorth().north();
 
