@@ -89,7 +89,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
         fireTableDataChanged();
     }
 
-    public List<? extends OsmPrimitive> getSelection() {
+    public List<OsmPrimitive> getSelection() {
         return cache;
     }
 

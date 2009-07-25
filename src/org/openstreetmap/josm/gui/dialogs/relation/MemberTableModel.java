@@ -249,7 +249,7 @@ public class MemberTableModel extends AbstractTableModel {
         return selectedIndices;
     }
 
-    public void addMembersAtBeginning(List<? extends OsmPrimitive> primitives) {
+    public void addMembersAtBeginning(List<OsmPrimitive> primitives) {
         if (primitives == null)
             return;
         for (OsmPrimitive primitive : primitives) {

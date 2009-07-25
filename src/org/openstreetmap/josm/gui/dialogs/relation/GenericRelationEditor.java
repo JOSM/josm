@@ -19,9 +19,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -39,6 +45,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -59,7 +67,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
@@ -309,7 +319,7 @@ public class GenericRelationEditor extends RelationEditor {
      * @return the panel for the relation member editor
      */
     protected JPanel buildMemberEditorPanel() {
-        JPanel pnl = new JPanel();
+        final JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
         // setting up the member table
         memberTable = new MemberTable(memberTableModel);
@@ -402,6 +412,7 @@ public class GenericRelationEditor extends RelationEditor {
                 splitPane.setDividerLocation(0.6);
             }
         });
+
 
         JPanel pnl3 = new JPanel();
         pnl3.setLayout(new BorderLayout());
@@ -616,7 +627,60 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
-    class AddSelectedAtStartAction extends AbstractAction implements TableModelListener {
+    class AddAbortException extends Exception  {
+    }
+
+    abstract class  AddFromSelectionAction extends AbstractAction {
+        private PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
+
+        protected boolean isPotentialDuplicate(OsmPrimitive primitive) {
+            return memberTableModel.hasMembersReferringTo(Collections.singleton(primitive));
+        }
+
+        protected boolean confirmAddingPrimtive(OsmPrimitive primitive)  throws AddAbortException {
+            String msg = tr("<html>This relation already has one or more members referring to<br>"
+                    + "the primitive ''{0}''<br>"
+                    + "<br>"
+                    + "Do you really want to add another relation member?</html>",
+                    nameFormatter.getName(primitive)
+            );
+            int ret = ConditionalOptionPaneUtil.showOptionDialog(
+                    "add_primitive_to_relation",
+                    Main.parent,
+                    msg,
+                    tr("Multiple members referring to same primitive"),
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    null
+            );
+            switch(ret) {
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
+            case JOptionPane.YES_OPTION: return true;
+            case JOptionPane.NO_OPTION: return false;
+            case JOptionPane.CLOSED_OPTION: return false;
+            case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
+            }
+            // should not happen
+            return false;
+        }
+
+        protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
+            if (primitives == null || primitives.isEmpty())
+                return primitives;
+            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            Iterator<OsmPrimitive> it = primitives.iterator();
+            while(it.hasNext()) {
+                OsmPrimitive primitive = it.next();
+                if (isPotentialDuplicate(primitive) && confirmAddingPrimtive(primitive)) {
+                    ret.add(primitive);
+                }
+            }
+            return ret;
+        }
+    }
+
+    class AddSelectedAtStartAction extends AddFromSelectionAction implements TableModelListener {
         public AddSelectedAtStartAction() {
             putValue(SHORT_DESCRIPTION,
                     tr("Add all primitives selected in the current dataset before the first member"));
@@ -630,7 +694,12 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         public void actionPerformed(ActionEvent e) {
-            memberTableModel.addMembersAtBeginning(selectionTableModel.getSelection());
+            try {
+                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
+                memberTableModel.addMembersAtBeginning(toAdd);
+            } catch(AddAbortException ex) {
+                // do nothing
+            }
         }
 
         public void tableChanged(TableModelEvent e) {
@@ -638,7 +707,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
-    class AddSelectedAtEndAction extends AbstractAction implements TableModelListener {
+    class AddSelectedAtEndAction extends AddFromSelectionAction implements TableModelListener {
         public AddSelectedAtEndAction() {
             putValue(SHORT_DESCRIPTION, tr("Add all primitives selected in the current dataset after the last member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyendright"));
@@ -651,7 +720,12 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         public void actionPerformed(ActionEvent e) {
-            memberTableModel.addMembersAtEnd(selectionTableModel.getSelection());
+            try {
+                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
+                memberTableModel.addMembersAtEnd(toAdd);
+            } catch(AddAbortException ex) {
+                // do nothing
+            }
         }
 
         public void tableChanged(TableModelEvent e) {
@@ -659,7 +733,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
-    class AddSelectedBeforeSelection extends AbstractAction implements TableModelListener, ListSelectionListener {
+    class AddSelectedBeforeSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
         public AddSelectedBeforeSelection() {
             putValue(SHORT_DESCRIPTION,
                     tr("Add all primitives selected in the current dataset before the first selected member"));
@@ -674,8 +748,15 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         public void actionPerformed(ActionEvent e) {
-            memberTableModel.addMembersBeforeIdx(selectionTableModel.getSelection(), memberTableModel
-                    .getSelectionModel().getMinSelectionIndex());
+            try {
+                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
+                memberTableModel.addMembersBeforeIdx(toAdd, memberTableModel
+                        .getSelectionModel().getMinSelectionIndex());
+            } catch(AddAbortException ex) {
+                // do nothing
+            }
+
+
         }
 
         public void tableChanged(TableModelEvent e) {
@@ -687,7 +768,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
-    class AddSelectedAfterSelection extends AbstractAction implements TableModelListener, ListSelectionListener {
+    class AddSelectedAfterSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
         public AddSelectedAfterSelection() {
             putValue(SHORT_DESCRIPTION,
                     tr("Add all primitives selected in the current dataset after the last selected member"));
@@ -702,8 +783,13 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         public void actionPerformed(ActionEvent e) {
-            memberTableModel.addMembersAfterIdx(selectionTableModel.getSelection(), memberTableModel
-                    .getSelectionModel().getMaxSelectionIndex());
+            try {
+                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
+                memberTableModel.addMembersAfterIdx(toAdd, memberTableModel
+                        .getSelectionModel().getMaxSelectionIndex());
+            } catch(AddAbortException ex) {
+                // do nothing
+            }
         }
 
         public void tableChanged(TableModelEvent e) {
