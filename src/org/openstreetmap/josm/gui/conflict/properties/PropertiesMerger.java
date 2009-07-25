@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -581,7 +582,7 @@ public class PropertiesMerger extends JPanel implements Observer {
                     tr("Yes, reset the id"),
                     tr("No, abort")
             };
-            int ret = JOptionPane.showOptionDialog(
+            int ret = OptionPaneUtil.showOptionDialog(
                     null,
                     tr("<html>To keep your local version, JOSM<br>"
                             + "has to reset the id of {0} {1} to 0.<br>"
@@ -594,7 +595,6 @@ public class PropertiesMerger extends JPanel implements Observer {
                     tr("Reset id to 0"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
-                    null,
                     options,
                     options[1]
             );
@@ -623,7 +623,7 @@ public class PropertiesMerger extends JPanel implements Observer {
                     tr("Yes, purge it"),
                     tr("No, abort")
             };
-            int ret = JOptionPane.showOptionDialog(
+            int ret = OptionPaneUtil.showOptionDialog(
                     null,
                     tr("<html>JOSM will have to remove your local primitive with id {0}<br>"
                             + "from the dataset.<br>"
@@ -633,7 +633,6 @@ public class PropertiesMerger extends JPanel implements Observer {
                     tr("Remove from dataset"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
-                    null,
                     options,
                     options[1]
             );

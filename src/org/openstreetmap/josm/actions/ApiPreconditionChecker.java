@@ -14,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction.UploadHook;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 
@@ -46,7 +47,7 @@ public class ApiPreconditionChecker implements UploadHook {
                 int total = 0;
                 total = add.size() + update.size() + delete.size();
                 if(total > maxElements) {
-                    JOptionPane.showMessageDialog(
+                    OptionPaneUtil.showMessageDialog(
                             Main.parent,
                             tr("Current number of changes exceeds the max. number of changes, current is {0}, max is {1}",
                                     total,
@@ -60,7 +61,7 @@ public class ApiPreconditionChecker implements UploadHook {
             }
         } catch (OsmApiInitializationException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.parent,
                     tr("Failed to initialize API. Please try again later."),
                     tr("API initialization failed"),
@@ -87,7 +88,7 @@ public class ApiPreconditionChecker implements UploadHook {
                         osmPrimitive.put(e.getKey(), e.getValue().substring(0, 255));
                         continue;
                     }
-                    JOptionPane.showMessageDialog(Main.parent,
+                    OptionPaneUtil.showMessageDialog(Main.parent,
                             tr("Length of value for tag ''{0}'' on primitive {1} exceeds the max. allowed length {2}. Values length is {3}.",
                                     e.getKey(), Long.toString(osmPrimitive.id), 255, e.getValue().length()
                             ),
@@ -103,7 +104,7 @@ public class ApiPreconditionChecker implements UploadHook {
 
             if (osmPrimitive instanceof Way &&
                     ((Way)osmPrimitive).nodes.size() > maxNodes) {
-                JOptionPane.showMessageDialog(
+                OptionPaneUtil.showMessageDialog(
                         Main.parent,
                         tr("{0} nodes in way {1} exceed the max. allowed number of nodes {2}",
                                 ((Way)osmPrimitive).nodes.size(),

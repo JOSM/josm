@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.tools.GBC;
@@ -165,14 +166,19 @@ public class PlaceSelection implements DownloadSelection {
                     String searchtext = searchTerm.getText();
                     if(searchtext.length()==0)
                     {
-                        JOptionPane.showMessageDialog(Main.parent,tr("Please enter a search string"));
+                        OptionPaneUtil.showMessageDialog(
+                                Main.parent,
+                                tr("Please enter a search string"),
+                                tr("Information"),
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
                     }
                     else
                     {
                         component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         component.repaint();
                         URL url = new URL("http://gazetteer.openstreetmap.org/namefinder/search.xml?find="
-                        +java.net.URLEncoder.encode(searchTerm.getText(), "UTF-8"));
+                                +java.net.URLEncoder.encode(searchTerm.getText(), "UTF-8"));
                         HttpURLConnection activeConnection = (HttpURLConnection)url.openConnection();
                         //System.out.println("got return: "+activeConnection.getResponseCode());
                         activeConnection.setConnectTimeout(15000);
@@ -317,6 +323,8 @@ public class PlaceSelection implements DownloadSelection {
 
     // if bounding box selected on other tab, de-select item
     public void boundingBoxChanged(DownloadDialog gui) {
-        if (!updatingSelf) searchResultDisplay.clearSelection();
+        if (!updatingSelf) {
+            searchResultDisplay.clearSelection();
+        }
     }
 }

@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -85,8 +86,12 @@ public class AutoScaleAction extends JosmAction {
                 }
             }
             if (sel.isEmpty()) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        mode.equals("selection") ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        (mode.equals("selection") ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to")),
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
                 return null;
             }
             for (OsmPrimitive osm : sel) {

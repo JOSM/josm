@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -99,8 +100,9 @@ public class DownloadOsmTaskList implements Runnable {
         }
 
         if(! errors.equals("")) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    tr("The following errors occurred during mass download:") + "\r\n" + errors,
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("<html>The following errors occurred during mass download: {0}</html>", errors),
                     tr("Errors during Download"),
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -166,13 +168,12 @@ public class DownloadOsmTaskList implements Runnable {
                 potentiallyDeleted.size(), options[0], options[1]
         );
 
-        int ret = JOptionPane.showOptionDialog(
+        int ret =OptionPaneUtil.showOptionDialog(
                 Main.parent,
                 message,
                 tr("Deleted or moved primitives"),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE,
-                null,
                 options,
                 options[0]
         );

@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -308,7 +309,12 @@ public class ChildRelationBrowser extends JPanel {
             if (msg == null) {
                 msg = lastException.toString();
             }
-            JOptionPane.showMessageDialog(null, msg, tr("Error"), JOptionPane.ERROR_MESSAGE);
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    msg,
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
         protected void refreshView(Relation relation){
@@ -330,15 +336,12 @@ public class ChildRelationBrowser extends JPanel {
             }
 
             if (conflictsCount > 0) {
-                JOptionPane op = new JOptionPane(
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
                         tr("There were {0} conflicts during import.", conflictsCount),
+                        tr("Conflicts in data"),
                         JOptionPane.WARNING_MESSAGE
                 );
-                JDialog dialog = op.createDialog(ChildRelationBrowser.this, tr("Conflicts in data"));
-                dialog.setAlwaysOnTop(true);
-                dialog.setModal(true);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
             }
         }
 
@@ -422,7 +425,12 @@ public class ChildRelationBrowser extends JPanel {
             if (msg == null) {
                 msg = lastException.toString();
             }
-            JOptionPane.showMessageDialog(null, msg, tr("Error"), JOptionPane.ERROR_MESSAGE);
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    msg,
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
         protected void refreshView(Relation relation){
@@ -444,15 +452,12 @@ public class ChildRelationBrowser extends JPanel {
             }
 
             if (conflictsCount > 0) {
-                JOptionPane op = new JOptionPane(
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
                         tr("There were {0} conflicts during import.", conflictsCount),
+                        tr("Conflicts in data"),
                         JOptionPane.WARNING_MESSAGE
                 );
-                JDialog dialog = op.createDialog(ChildRelationBrowser.this, tr("Conflicts in data"));
-                dialog.setAlwaysOnTop(true);
-                dialog.setModal(true);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
             }
         }
 

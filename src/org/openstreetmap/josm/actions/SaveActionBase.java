@@ -22,6 +22,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -89,7 +90,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return false;
         }
         if (Main.map == null) {
-            JOptionPane.showMessageDialog(Main.parent, tr("No document open so nothing to save."));
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("No document open so nothing to save."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return false;
         }
 
@@ -127,7 +133,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
             srcStream = new FileInputStream(src);
             dstStream = new FileOutputStream(dst);
         } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not back up file.")+"\n"+e.getMessage());
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Could not back up file. Exception is: {0}", e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             return;
         }
         byte buf[] = new byte[1<<16];
@@ -191,13 +202,23 @@ public abstract class SaveActionBase extends DiskAccessAction {
                     tmpFile.delete();
                 }
             } else {
-                JOptionPane.showMessageDialog(Main.parent, tr("Unknown file extension."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Unknown file extension for file ''{0}''", file.toString()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
                 return;
             }
             layer.cleanData(null, false);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while saving.")+"\n"+e.getMessage());
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("<html>An error occurred while saving. <br>Error is: <br>{0}</html>", e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
 
             try {
                 // if the file save failed, then the tempfile will not
@@ -207,7 +228,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 }
             } catch (IOException e2) {
                 e2.printStackTrace();
-                JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while restoring backup file.")+"\n"+e2.getMessage());
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("<html>An error occurred while restoring backup file.<br> Error is: <br>{0}</html>", e2.getMessage()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
     }
@@ -234,7 +260,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
                     tmpFile.delete();
                 }
             } else {
-                JOptionPane.showMessageDialog(Main.parent, tr("Unknown file extension."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Unknown file extension."),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
                 return;
             }
         } catch (IOException e) {
@@ -249,7 +280,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while restoring backup file.")+"\n"+e.getMessage());
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("<html>An error occurred while restoring backup file.<br>Error is:<br>{0}</html>", e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );;
         }
     }
 

@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -245,8 +246,13 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         // Revert move
                         ((MoveCommand) c).moveAgain(-dx, -dy);
 
-                        JOptionPane.showMessageDialog(Main.parent,
-                                tr("Cannot move objects outside of the world."));
+                        OptionPaneUtil.showMessageDialog(
+                                Main.parent,
+                                tr("Cannot move objects outside of the world."),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE
+
+                        );
                         restoreCursor();
                         return;
                     }

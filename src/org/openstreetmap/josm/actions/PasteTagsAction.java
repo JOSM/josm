@@ -102,19 +102,18 @@ public final class PasteTagsAction extends JosmAction {
     private void possiblyEnable(Collection<? extends OsmPrimitive> selection, DataSet pasteBuffer) {
         /* only enable if there is something selected to paste into and
             if we don't have conflicting keys in the pastebuffer */
-        setEnabled(selection != null &&
-                ! selection.isEmpty() &&
-                ! pasteBuffer.allPrimitives().isEmpty() &&
-                (getCurrentDataSet().getSelectedNodes().isEmpty() ||
-                        ! containsSameKeysWithDifferentValues(pasteBuffer.nodes)) &&
-                        (getCurrentDataSet().getSelectedWays().isEmpty() ||
-                                ! containsSameKeysWithDifferentValues(pasteBuffer.ways)) &&
-                                (getCurrentDataSet().getSelectedRelations().isEmpty() ||
-                                        ! containsSameKeysWithDifferentValues(pasteBuffer.relations)));
+        DataSet ds = getCurrentDataSet();
+        if (ds == null || ds.getSelected().isEmpty() || pasteBuffer == null || pasteBuffer.allPrimitives().isEmpty()) {
+            setEnabled(false);
+            return;
+        }
+        setEnabled((!ds.getSelectedNodes().isEmpty() && ! containsSameKeysWithDifferentValues(pasteBuffer.nodes)) ||
+                (!ds.getSelectedWays().isEmpty() && ! containsSameKeysWithDifferentValues(pasteBuffer.ways)) ||
+                (! ds.getSelectedRelations().isEmpty() && ! containsSameKeysWithDifferentValues(pasteBuffer.relations)));
     }
 
     @Override public void pasteBufferChanged(DataSet newPasteBuffer) {
-        possiblyEnable(getCurrentDataSet().getSelected(), newPasteBuffer);
+        updateEnabledState();
     }
 
     @Override

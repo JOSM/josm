@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -101,8 +102,12 @@ public class MoveAction extends JosmAction {
             if (n.getCoor().isOutSideWorld()) {
                 // Revert move
                 ((MoveCommand) c).moveAgain(-distx, -disty);
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("Cannot move objects outside of the world."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Cannot move objects outside of the world."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
                 return;
             }
         }

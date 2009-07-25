@@ -71,7 +71,12 @@ public class MergeNodesAction extends JosmAction {
             }
 
         if (selectedNodes.size() < 2) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Please select at least two nodes to merge."));
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("Please select at least two nodes to merge."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
 

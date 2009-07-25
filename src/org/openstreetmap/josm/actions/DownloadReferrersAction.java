@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -84,7 +85,7 @@ public class DownloadReferrersAction extends JosmAction{
             if (msg == null) {
                 msg = lastException.toString();
             }
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.map,
                     msg,
                     tr("Error"),
@@ -120,16 +121,14 @@ public class DownloadReferrersAction extends JosmAction{
             if (visitor.getConflicts().isEmpty())
                 return;
             Main.map.mapView.getEditLayer().getConflicts().add(visitor.getConflicts());
-            JOptionPane op = new JOptionPane(
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
                     tr("There were {0} conflicts during import.",
-                            visitor.getConflicts().size()),
-                            JOptionPane.WARNING_MESSAGE
+                            visitor.getConflicts().size()
+                    ),
+                    tr("Conflicts during download"),
+                    JOptionPane.WARNING_MESSAGE
             );
-            JDialog dialog = op.createDialog(null, tr("Conflicts in data"));
-            dialog.setAlwaysOnTop(true);
-            dialog.setModal(true);
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
         }
 
         protected void downloadParents(OsmPrimitive primitive, ProgressMonitor progressMonitor) throws OsmTransferException{

@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.conflict.ConflictResolver;
 import org.openstreetmap.josm.gui.conflict.properties.OperationCancelledException;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -173,7 +174,7 @@ public class ConflictResolutionDialog extends JDialog {
                 Object[] options = {
                         tr("Apply partial resolutions"),
                         tr("Continue resolving")};
-                int n = JOptionPane.showOptionDialog(null,
+                int n = OptionPaneUtil.showOptionDialog(null,
                         tr("<html>You didn''t finish to resolve all conflicts.<br>"
                                 + "Click <strong>{0}</strong> to apply already resolved conflicts anyway.<br>"
                                 + "You can resolve the remaining conflicts later.<br>"
@@ -183,7 +184,6 @@ public class ConflictResolutionDialog extends JDialog {
                         tr("Warning"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE,
-                        null,
                         options,
                         options[1]
                 );

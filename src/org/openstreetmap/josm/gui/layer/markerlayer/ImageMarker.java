@@ -60,10 +60,11 @@ public class ImageMarker extends ButtonMarker {
         scale.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ev) {
                 p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                if (scale.getModel().isSelected())
+                if (scale.getModel().isSelected()) {
                     ((JLabel)vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
-                else
+                } else {
                     ((JLabel)vp.getView()).setIcon(new ImageIcon(imageUrl));
+                }
                 p.setCursor(Cursor.getDefaultCursor());
             }
         });
@@ -71,6 +72,7 @@ public class ImageMarker extends ButtonMarker {
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
         JDialog dlg = pane.createDialog(Main.parent, imageUrl.toString());
         dlg.setModal(false);
+        dlg.toFront();
         dlg.setVisible(true);
     }
 

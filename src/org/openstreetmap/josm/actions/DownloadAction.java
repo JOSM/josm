@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.tools.GBC;
@@ -31,7 +32,7 @@ public class DownloadAction extends JosmAction {
 
     public DownloadAction() {
         super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
-        Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
+                Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -45,10 +46,12 @@ public class DownloadAction extends JosmAction {
         dlg.setResizable(true);
         dialog.setOptionPane(pane);
 
-        if (dlg.getWidth() > 1000)
+        if (dlg.getWidth() > 1000) {
             dlg.setSize(1000, dlg.getHeight());
-        if (dlg.getHeight() > 600)
+        }
+        if (dlg.getHeight() > 600) {
             dlg.setSize(dlg.getWidth(),600);
+        }
 
         boolean finish = false;
         while (!finish) {
@@ -63,13 +66,20 @@ public class DownloadAction extends JosmAction {
                         finish = true;
                     }
                 }
-            } else
+            } else {
                 finish = true;
-            if (!finish)
-                JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one task to download"));
+            }
+            if (!finish) {
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Please select at least one task to download"),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
 
-                dialog = null;
+        dialog = null;
         dlg.dispose();
     }
 }

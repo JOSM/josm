@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialog;
@@ -245,7 +246,7 @@ public class HistoryDialog extends ToggleDialog {
             if (msg == null) {
                 msg = task.getLastException().toString();
             }
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.parent,
                     tr(
                             "<html>Failed to load history from the server. Details:<br>{0}</html>",

@@ -12,6 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -28,7 +29,7 @@ public class OpenFileAction extends DiskAccessAction {
      */
     public OpenFileAction() {
         super(tr("Open..."), "open", tr("Open a file."),
-        Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open...")), KeyEvent.VK_O, Shortcut.GROUP_MENU));
+                Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open...")), KeyEvent.VK_O, Shortcut.GROUP_MENU));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -36,8 +37,9 @@ public class OpenFileAction extends DiskAccessAction {
         if (fc == null)
             return;
         File[] files = fc.getSelectedFiles();
-        for (int i = files.length; i > 0; --i)
+        for (int i = files.length; i > 0; --i) {
             openFile(files[i-1]);
+        }
     }
 
     /**
@@ -47,12 +49,18 @@ public class OpenFileAction extends DiskAccessAction {
         try {
             System.out.println("Open file: " + file.getAbsolutePath() + " (" + file.length() + " bytes)");
             for (FileImporter importer : ExtensionFileFilter.importers)
-                if (importer.acceptFile(file))
+                if (importer.acceptFile(file)) {
                     importer.importData(file);
+                }
         } catch (IOException x) {
             x.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not read \"{0}\"", file.getName()) + "\n"
-                    + x.getMessage());
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Could not read file ''{0}\''. Error is: <br>{1}</html>", file.getName(), x.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+
         }
     }
 

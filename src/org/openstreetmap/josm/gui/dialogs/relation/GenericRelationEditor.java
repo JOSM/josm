@@ -712,7 +712,12 @@ public class GenericRelationEditor extends RelationEditor {
                     + "Skipping relation ''{0}''.</html>",
                     this.nameFormatter.getName(primitive)
             );
-            OptionPaneUtil.showMessageDialog(Main.parent, msg, tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    msg,
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
         }
 
         protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
@@ -985,16 +990,13 @@ public class GenericRelationEditor extends RelationEditor {
             if (isDirtyRelation()) {
                 Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
                 getLayer().getConflicts().add(conflict);
-                JOptionPane op = new JOptionPane(
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
                         tr("<html>The relation has changed outside of the editor.<br>"
                                 + "Your edits can't be applied directly, a conflict has been created instead.</html>"),
+                                tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE
                 );
-                JDialog dialog = op.createDialog(GenericRelationEditor.this, tr("Conflict created"));
-                dialog.setAlwaysOnTop(true);
-                dialog.setModal(true);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
             } else {
                 tagEditorModel.applyToPrimitive(editedRelation);
                 memberTableModel.applyToRelation(editedRelation);
@@ -1291,7 +1293,12 @@ public class GenericRelationEditor extends RelationEditor {
             if (msg == null) {
                 msg = lastException.toString();
             }
-            JOptionPane.showMessageDialog(null, msg, tr("Error"), JOptionPane.ERROR_MESSAGE);
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    msg,
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
 
         @Override
@@ -1304,13 +1311,12 @@ public class GenericRelationEditor extends RelationEditor {
             }
 
             if (conflictsCount > 0) {
-                JOptionPane op = new JOptionPane(tr("There were {0} conflicts during import.", conflictsCount),
-                        JOptionPane.WARNING_MESSAGE);
-                JDialog dialog = op.createDialog(GenericRelationEditor.this, tr("Conflicts in data"));
-                dialog.setAlwaysOnTop(true);
-                dialog.setModal(true);
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("There were {0} conflicts during import.", conflictsCount),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
         }
 

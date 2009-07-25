@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -51,8 +52,9 @@ public class RenameLayerAction extends AbstractAction {
             panel.add(filerename);
             filerename.setEnabled(file != null);
         }
-        if (filerename.isEnabled())
+        if (filerename.isEnabled()) {
             filerename.setSelected(Main.pref.getBoolean("layer.rename-file", true));
+        }
 
         final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
             @Override public void selectInitialValue() {
@@ -61,30 +63,39 @@ public class RenameLayerAction extends AbstractAction {
             }
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Rename layer"));
+        dlg.setModal(true);
+        dlg.setAlwaysOnTop(true);
+        dlg.toFront();
         dlg.setVisible(true);
 
         Object answer = optionPane.getValue();
         if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE ||
-                (answer instanceof Integer && (Integer)answer != JOptionPane.OK_OPTION)) {
+                (answer instanceof Integer && (Integer)answer != JOptionPane.OK_OPTION))
             return;
-        }
 
         String nameText = name.getText();
         if (filerename.isEnabled()) {
             Main.pref.put("layer.rename-file", filerename.isSelected());
             if (filerename.isSelected()) {
                 String newname = nameText;
-                if (newname.indexOf("/") == -1 && newname.indexOf("\\") == -1)
+                if (newname.indexOf("/") == -1 && newname.indexOf("\\") == -1) {
                     newname = file.getParent() + File.separator + newname;
+                }
                 String oldname = file.getName();
-                if (name.getText().indexOf('.') == -1 && oldname.indexOf('.') >= 0)
+                if (name.getText().indexOf('.') == -1 && oldname.indexOf('.') >= 0) {
                     newname += oldname.substring(oldname.lastIndexOf('.'));
+                }
                 File newFile = new File(newname);
                 if (file.renameTo(newFile)) {
                     layer.setAssociatedFile(newFile);
                     nameText = newFile.getName();
                 } else {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Could not rename the file \"{0}\".", file.getPath()));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("Could not rename file ''{0}''", file.getPath()),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                    );
                     return;
                 }
             }

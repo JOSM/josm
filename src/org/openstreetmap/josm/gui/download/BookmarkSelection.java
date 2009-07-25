@@ -22,6 +22,7 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.BookmarkList;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -77,7 +78,12 @@ public class BookmarkSelection implements DownloadSelection {
             public void actionPerformed(ActionEvent e) {
 
                 if (tempBookmark == null) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please enter the desired coordinates first."));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("Please enter the desired coordinates first."),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     return;
                 }
                 tempBookmark.name = JOptionPane.showInputDialog(Main.parent,tr("Please enter a name for the location."));
@@ -93,7 +99,12 @@ public class BookmarkSelection implements DownloadSelection {
             public void actionPerformed(ActionEvent e) {
                 Object sel = bookmarks.getSelectedValue();
                 if (sel == null) {
-                    JOptionPane.showMessageDialog(Main.parent,tr("Select a bookmark first."));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("Select a bookmark first."),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     return;
                 }
                 ((DefaultListModel)bookmarks.getModel()).removeElement(sel);

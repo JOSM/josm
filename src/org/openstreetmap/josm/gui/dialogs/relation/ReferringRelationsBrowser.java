@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
@@ -201,8 +202,8 @@ public class ReferringRelationsBrowser extends JPanel {
             if (msg == null) {
                 msg = lastException.toString();
             }
-            JOptionPane.showMessageDialog(
-                    null,
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
                     msg,
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
@@ -258,16 +259,13 @@ public class ReferringRelationsBrowser extends JPanel {
                     if (visitor.getConflicts().isEmpty())
                         return;
                     getLayer().getConflicts().add(visitor.getConflicts());
-                    JOptionPane op = new JOptionPane(
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
                             tr("There were {0} conflicts during import.",
                                     visitor.getConflicts().size()),
+                                    tr("Warning"),
                                     JOptionPane.WARNING_MESSAGE
                     );
-                    JDialog dialog = op.createDialog(ReferringRelationsBrowser.this, tr("Conflicts in data"));
-                    dialog.setAlwaysOnTop(true);
-                    dialog.setModal(true);
-                    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                    dialog.setVisible(true);
                 }
             } catch(Exception e) {
                 if (cancelled) {

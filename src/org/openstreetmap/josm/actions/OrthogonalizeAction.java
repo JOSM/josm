@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
+import javax.swing.text.html.Option;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -56,7 +58,12 @@ public final class OrthogonalizeAction extends JosmAction {
             // Check if not more than two nodes in the selection
             if(osm instanceof Node) {
                 if(dirnodes.size() == 2) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Only two nodes allowed"));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("Only two nodes allowed"),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     return;
                 }
                 dirnodes.add((Node) osm);
@@ -64,14 +71,24 @@ public final class OrthogonalizeAction extends JosmAction {
             }
             // Check if selection consists now only of ways
             if (!(osm instanceof Way)) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Selection must consist only of ways."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Selection must consist only of ways."),
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
                 return;
             }
 
             // Check if every way is made of at least four segments and closed
             Way way = (Way)osm;
             if ((way.nodes.size() < 5) || (!way.nodes.get(0).equals(way.nodes.get(way.nodes.size() - 1)))) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Please select one or more closed ways of at least four nodes."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Please select one or more closed ways of at least four nodes."),
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
                 return;
             }
 
@@ -111,7 +128,12 @@ public final class OrthogonalizeAction extends JosmAction {
         }
         // Check, if selection held neither none nor two nodes
         if(dirnodes.size() == 1) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Only one node selected"));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Only one node selected"),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
 

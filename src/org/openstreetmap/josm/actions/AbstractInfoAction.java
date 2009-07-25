@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -57,7 +58,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         }
 
         if (primitivesToShow.isEmpty()) {
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.parent,
                     tr("Please select at least one already uploaded node, way, or relation."),
                     tr("Warning"),

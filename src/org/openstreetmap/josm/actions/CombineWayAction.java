@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -64,7 +65,12 @@ public class CombineWayAction extends JosmAction {
             }
 
         if (selectedWays.size() < 2) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Please select at least two ways to combine."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Please select at least two ways to combine."),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
             return;
         }
 
@@ -151,7 +157,12 @@ public class CombineWayAction extends JosmAction {
                 if (option != 1) return;
                 nodeList = (List<Node>) secondTry;
             } else {
-                JOptionPane.showMessageDialog(Main.parent, secondTry);
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        secondTry, // FIXME: not sure whether this fits in a dialog
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
                 return;
             }
         }

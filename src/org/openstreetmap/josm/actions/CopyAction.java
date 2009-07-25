@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class CopyAction extends JosmAction {
@@ -135,9 +136,11 @@ public final class CopyAction extends JosmAction {
     private boolean isEmptySelection() {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         if (sel.isEmpty()) {
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.parent,
-                    tr("Please select something to copy.")
+                    tr("Please select something to copy."),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE
             );
             return true;
         }

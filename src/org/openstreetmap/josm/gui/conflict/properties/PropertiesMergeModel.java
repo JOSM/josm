@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
@@ -416,7 +417,7 @@ public class PropertiesMergeModel extends Observable {
         e.printStackTrace();
         String msg = e.getMessage() != null ? e.getMessage() : e.toString();
         msg = msg.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-        JOptionPane.showMessageDialog(
+        OptionPaneUtil.showMessageDialog(
                 Main.parent,
                 tr("<html>An error occurred while communicating with the server<br>"
                         + "Details: {0}</html>",
@@ -467,7 +468,7 @@ public class PropertiesMergeModel extends Observable {
                 tr("Yes, undelete them too"),
                 tr("No, cancel operation")
         };
-        int ret = JOptionPane.showOptionDialog(
+        int ret = OptionPaneUtil.showOptionDialog(
                 Main.parent,
                 tr("<html>There are {0} additional nodes used by way {1}<br>"
                         + "which are deleted on the server.<br>"
@@ -477,7 +478,6 @@ public class PropertiesMergeModel extends Observable {
                         tr("Undelete additional nodes?"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
-                        null,
                         options,
                         options[0]
         );
@@ -496,7 +496,7 @@ public class PropertiesMergeModel extends Observable {
                 tr("Yes, undelete them too"),
                 tr("No, cancel operation")
         };
-        int ret = JOptionPane.showOptionDialog(
+        int ret = OptionPaneUtil.showOptionDialog(
                 Main.parent,
                 tr("<html>There are {0} additional primitives referred to by relation {1}<br>"
                         + "which are deleted on the server.<br>"
@@ -506,7 +506,6 @@ public class PropertiesMergeModel extends Observable {
                         tr("Undelete dependent primitives?"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
-                        null,
                         options,
                         options[0]
         );

@@ -28,6 +28,7 @@ import javax.swing.ListSelectionModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -61,7 +62,12 @@ public class GpxExportAction extends DiskAccessAction {
             return;
         GpxLayer layer = getLayer();
         if (layer == null) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Nothing to export. Get some data first."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Nothing to export. Get some data first."),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
             return;
         }
         export(layer);
