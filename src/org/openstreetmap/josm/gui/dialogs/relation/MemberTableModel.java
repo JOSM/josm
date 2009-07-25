@@ -250,7 +250,7 @@ public class MemberTableModel extends AbstractTableModel {
         if (primitives == null)
             return;
         for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember(null, primitive);
+            RelationMember member = new RelationMember("", primitive);
             members.add(0, member);
         }
         fireTableDataChanged();
@@ -266,7 +266,7 @@ public class MemberTableModel extends AbstractTableModel {
             return;
 
         for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember(null, primitive);
+            RelationMember member = new RelationMember("", primitive);
             members.add(member);
         }
         fireTableDataChanged();
@@ -282,7 +282,7 @@ public class MemberTableModel extends AbstractTableModel {
             return;
 
         for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember(null, primitive);
+            RelationMember member = new RelationMember("", primitive);
             members.add(idx, member);
         }
         fireTableDataChanged();
@@ -298,7 +298,7 @@ public class MemberTableModel extends AbstractTableModel {
             return;
         int j = 1;
         for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember(null, primitive);
+            RelationMember member = new RelationMember("", primitive);
             members.add(idx + j, member);
             j++;
         }
@@ -414,10 +414,9 @@ public class MemberTableModel extends AbstractTableModel {
          * TODO: cleanup again, too much code in 1 method
          */
 
-        if (map.isEmpty()) {
+        if (map.isEmpty())
             // empty relation or incomplete members
             return;
-        }
         segments = new Vector<LinkedList<Integer>>();
 
         while (!map.isEmpty()) {
