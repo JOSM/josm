@@ -22,6 +22,22 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
  */
 public class RelationDialogManager extends WindowAdapter implements LayerChangeListener{
 
+    /** keeps track of open relation editors */
+    static RelationDialogManager relationDialogManager;
+
+    /**
+     * Replies the singleton {@see RelationDialogManager}
+     * 
+     * @return the singleton {@see RelationDialogManager}
+     */
+    static public RelationDialogManager getRelationDialogManager() {
+        if (RelationDialogManager.relationDialogManager == null) {
+            RelationDialogManager.relationDialogManager = new RelationDialogManager();
+            Layer.listeners.add(RelationDialogManager.relationDialogManager);
+        }
+        return RelationDialogManager.relationDialogManager;
+    }
+
     /**
      * Helper class for keeping the context of a relation editor. A relation editor
      * is open for a specific relation managed by a specific {@see OsmDataLayer}
@@ -250,4 +266,5 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
             positionCloseToScreenCenter(editor);
         }
     }
+
 }

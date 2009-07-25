@@ -57,6 +57,12 @@ public class ReferringRelationsBrowser extends JPanel {
     private EditAction editAction;
     private final GenericRelationEditor relationEditor;
 
+    /** state flag for this browser. Initially initialized is false.
+     * It becomes initialized after the first download of the parent
+     * relations.
+     */
+    private boolean initialized;
+
     /**
      * build the GUI
      */
@@ -88,6 +94,26 @@ public class ReferringRelationsBrowser extends JPanel {
         this.model = model;
         this.layer = layer;
         build();
+    }
+
+
+    /**
+     * Replies true this browser has initialized itself by downloading the reference relations
+     * parents.
+     * 
+     * @return true this browser has initialized itself by downloading the reference relations
+     * parents; false, otherwise
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void init() {
+        if (initialized) return;
+        initialized = true;
+        boolean full = cbReadFull.isSelected();
+        ReloadTask task = new ReloadTask(full, relationEditor);
+        Main.worker.submit(task);
     }
 
     protected OsmDataLayer getLayer() {

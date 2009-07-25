@@ -39,6 +39,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -91,6 +93,7 @@ public class GenericRelationEditor extends RelationEditor {
     private TagTable tagTable;
     private AutoCompletionCache acCache;
     private AutoCompletionList acList;
+    private ReferringRelationsBrowser referrerBrowser;
     private ReferringRelationsBrowserModel referrerModel;
 
     /** the member table */
@@ -151,8 +154,22 @@ public class GenericRelationEditor extends RelationEditor {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add(tr("Tags and Members"), pnl);
         if (relation != null && relation.id > 0) {
-            tabbedPane.add(tr("Parent Relations"), new ReferringRelationsBrowser(getLayer(), referrerModel, this));
+            referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel, this);
+            tabbedPane.add(tr("Parent Relations"), referrerBrowser);
         }
+        tabbedPane.add(tr("Child Relations"), new ChildRelationBrowser(getLayer(), relation));
+        tabbedPane.addChangeListener(
+                new ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+                        int index = sourceTabbedPane.getSelectedIndex();
+                        String title = sourceTabbedPane.getTitleAt(index);
+                        if (title.equals(tr("Parent Relations"))) {
+                            referrerBrowser.init();
+                        }
+                    }
+                }
+        );
 
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
         getContentPane().add(buildOkCancelButtonPanel(), BorderLayout.SOUTH);
@@ -764,7 +781,7 @@ public class GenericRelationEditor extends RelationEditor {
             // putValue(NAME, tr("Sort"));
             Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_T,
                     Shortcut.GROUP_MNEMONIC);
-            setEnabled(false);
+            //setEnabled(false);
         }
 
         public void actionPerformed(ActionEvent e) {

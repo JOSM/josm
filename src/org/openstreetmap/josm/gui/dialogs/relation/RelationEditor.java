@@ -12,28 +12,26 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public abstract class RelationEditor extends ExtendedDialog {
 
-    /** keeps track of open relation editors */
-    static private RelationDialogManager relationDialogManager;
+    /** the list of registered relation editor classes */
+    private static ArrayList<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
 
     /**
-     * Replies the singleton {@see RelationDialogManager}
+     * Registers a relation editor class. Depending on the type of relation to be edited
+     * {@see #getEditor(OsmDataLayer, Relation, Collection)} will create an instance of
+     * this class.
      * 
-     * @return the singleton {@see RelationDialogManager}
+     * @param clazz the class
      */
-    static public RelationDialogManager getRelationDialogManager() {
-        if (relationDialogManager == null) {
-            relationDialogManager = new RelationDialogManager();
-            Layer.listeners.add(relationDialogManager);
+    public void registerRelationEditor(Class<RelationEditor> clazz) {
+        if (clazz == null) return;
+        if (!editors.contains(clazz)) {
+            editors.add(clazz);
         }
-        return relationDialogManager;
     }
-
-    public static ArrayList<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
 
     /**
      * The relation that this editor is working on.
@@ -80,12 +78,12 @@ public abstract class RelationEditor extends ExtendedDialog {
                 // plod on
             }
         }
-        if (getRelationDialogManager().isOpenInEditor(layer, r))
-            return getRelationDialogManager().getEditorForRelation(layer, r);
+        if (RelationDialogManager.getRelationDialogManager().isOpenInEditor(layer, r))
+            return RelationDialogManager.getRelationDialogManager().getEditorForRelation(layer, r);
         else {
             RelationEditor editor = new GenericRelationEditor(layer, r, selectedMembers);
-            getRelationDialogManager().positionOnScreen(editor);
-            getRelationDialogManager().register(layer, r, editor);
+            RelationDialogManager.getRelationDialogManager().positionOnScreen(editor);
+            RelationDialogManager.getRelationDialogManager().register(layer, r, editor);
             return editor;
         }
     }

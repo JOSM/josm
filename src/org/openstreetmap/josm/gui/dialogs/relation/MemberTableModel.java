@@ -414,18 +414,30 @@ public class MemberTableModel extends AbstractTableModel {
          * TODO: cleanup again, too much code in 1 method
          */
 
-        if (map.isEmpty())
+        if (map.isEmpty()) {
             // empty relation or incomplete members
             return;
-        segments = new Vector<LinkedList<Integer>>();
-        // add first member of relation, not strictly necessary
-        if (map.remove(0, members.get(0))) {
-            segment = new LinkedList<Integer>();
-            segment.add(Integer.valueOf(0));
-            segments.add(segment);
         }
+        segments = new Vector<LinkedList<Integer>>();
+
         while (!map.isEmpty()) {
-            segment = segments.lastElement();
+            // find an element for the next segment
+            // try first element in relation if we just started
+            // otherwise, or if first element is another relation, just fetch some element from the
+            // map
+            Integer next;
+            if ((segments.size() == 0) && map.remove(0, members.get(0))) {
+                next = 0;
+            } else {
+                next = map.pop();
+                if (next == null) {
+                    break;
+                }
+            }
+
+            segment = new LinkedList<Integer>();
+            segment.add(next);
+            segments.add(segment);
 
             do {
                 something_done = false;
@@ -515,31 +527,25 @@ public class MemberTableModel extends AbstractTableModel {
                 }
             } while (something_done);
 
-            Integer next = map.pop();
-            if (next == null) {
-                break;
-            }
-
+        }
+        if (segments.size() > 0) {
+            // append map.remaining() to segments list (as a single segment)
             segment = new LinkedList<Integer>();
-            segment.add(next);
+            segment.addAll(map.getRemaining());
             segments.add(segment);
-        }
-        // append map.remaining() to segments list (as a single segment)
-        segment = new LinkedList<Integer>();
-        segment.addAll(map.getRemaining());
-        segments.add(segment);
 
-        // now we need to actually re-order the relation members
-        ArrayList<RelationMember> newmembers = new ArrayList<RelationMember>();
-        for (LinkedList<Integer> segment2 : segments) {
-            for (Integer p : segment2) {
-                newmembers.add(members.get(p));
+            // now we need to actually re-order the relation members
+            ArrayList<RelationMember> newmembers = new ArrayList<RelationMember>();
+            for (LinkedList<Integer> segment2 : segments) {
+                for (Integer p : segment2) {
+                    newmembers.add(members.get(p));
+                }
             }
-        }
-        members.clear();
-        members.addAll(newmembers);
+            members.clear();
+            members.addAll(newmembers);
 
-        fireTableDataChanged();
+            fireTableDataChanged();
+        }
     }
 
     // simple version of code that was removed from GenericReleationEditor
