@@ -68,6 +68,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
@@ -665,6 +666,16 @@ public class GenericRelationEditor extends RelationEditor {
             return false;
         }
 
+        protected void warnOfCircularReferences(OsmPrimitive primitive) {
+            String msg = tr("<html>You are trying to add a relation to itself.<br>"
+                    + "<br>"
+                    + "This creates circular references and is therefore discouraged.<br>"
+                    + "Skipping relation ''{0}''.</html>",
+                    this.nameFormatter.getName(primitive)
+            );
+            OptionPaneUtil.showMessageDialog(Main.parent, msg, tr("Warning"), JOptionPane.WARNING_MESSAGE);
+        }
+
         protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
             if (primitives == null || primitives.isEmpty())
                 return primitives;
@@ -672,6 +683,10 @@ public class GenericRelationEditor extends RelationEditor {
             Iterator<OsmPrimitive> it = primitives.iterator();
             while(it.hasNext()) {
                 OsmPrimitive primitive = it.next();
+                if (primitive instanceof Relation && getRelation().equals(primitive)) {
+                    warnOfCircularReferences(primitive);
+                    continue;
+                }
                 if (isPotentialDuplicate(primitive) && confirmAddingPrimtive(primitive)) {
                     ret.add(primitive);
                 }
