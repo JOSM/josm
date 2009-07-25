@@ -514,42 +514,43 @@ public class GenericRelationEditor extends RelationEditor {
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction();
-        selectionTableModel.addTableModelListener(addSelectionAction);
-        pnl.add(new JButton(addSelectionAction), gc);
-
-        // -----
-        gc.gridy = 1;
-        AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection();
-        selectionTableModel.addTableModelListener(addSelectedBeforeSelectionAction);
-        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedBeforeSelectionAction);
-        pnl.add(new JButton(addSelectedBeforeSelectionAction), gc);
-
-        // -----
-        gc.gridy = 2;
-        AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection();
-        selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
-        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
-        pnl.add(new JButton(addSelectedAfterSelectionAction), gc);
-
-        // -----
-        gc.gridy = 3;
         AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction();
         selectionTableModel.addTableModelListener(addSelectedAtEndAction);
         pnl.add(new JButton(addSelectedAtEndAction), gc);
 
         // -----
-        gc.gridy = 4;
+        gc.gridy = 1;
         RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction();
         selectionTableModel.addTableModelListener(removeSelectedAction);
         pnl.add(new JButton(removeSelectedAction), gc);
 
         // ------
         // just grab the remaining space
-        gc.gridy = 5;
+        gc.gridy = 2;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         pnl.add(new JPanel(), gc);
+
+        // -----
+        gc.gridy = 3;
+        gc.weighty = 0.0;
+        AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction();
+        selectionTableModel.addTableModelListener(addSelectionAction);
+        pnl.add(new JButton(addSelectionAction), gc);
+
+        // -----
+        gc.gridy = 4;
+        AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection();
+        selectionTableModel.addTableModelListener(addSelectedBeforeSelectionAction);
+        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedBeforeSelectionAction);
+        pnl.add(new JButton(addSelectedBeforeSelectionAction), gc);
+
+        // -----
+        gc.gridy = 5;
+        AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection();
+        selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
+        memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
+        pnl.add(new JButton(addSelectedAfterSelectionAction), gc);
 
         return pnl;
     }
