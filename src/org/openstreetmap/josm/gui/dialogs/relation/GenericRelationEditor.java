@@ -725,7 +725,7 @@ public class GenericRelationEditor extends RelationEditor {
             Iterator<OsmPrimitive> it = primitives.iterator();
             while(it.hasNext()) {
                 OsmPrimitive primitive = it.next();
-                if (primitive instanceof Relation && getRelation().equals(primitive)) {
+                if (primitive instanceof Relation && getRelation() != null && getRelation().equals(primitive)) {
                     warnOfCircularReferences(primitive);
                     continue;
                 }
