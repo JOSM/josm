@@ -135,6 +135,9 @@ public class RelationTreeModel implements TreeModel {
      * 
      */
     public void populate(Relation root) {
+        if (root == null) {
+            root = new Relation();
+        }
         this.root = root;
         fireRootReplacedEvent();
     }
