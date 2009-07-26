@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -130,7 +131,11 @@ public class UnGlueAction extends JosmAction {
         }
 
         if(errMsg != null) {
-            JOptionPane.showMessageDialog(Main.parent, errMsg);
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    errMsg,
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE);
         }
 
         selectedNode = null;

@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 
@@ -41,14 +42,19 @@ public class NMEAImporter extends FileImporter {
 
     private void showNmeaInfobox(boolean success, NmeaReader r) {
         String msg = tr("Coordinates imported: ") + r.getNumberOfCoordinates() + "\n" + tr("Malformed sentences: ")
-                + r.getParserMalformed() + "\n" + tr("Checksum errors: ") + r.getParserChecksumErrors() + "\n";
-        if (!success) // don't scare the user unneccessarily
+        + r.getParserMalformed() + "\n" + tr("Checksum errors: ") + r.getParserChecksumErrors() + "\n";
+        if (!success) {
             msg += tr("Unknown sentences: ") + r.getParserUnknown() + "\n";
+        }
         msg += tr("Zero coordinates: ") + r.getParserZeroCoordinates();
         if (success) {
-            JOptionPane.showMessageDialog(Main.parent, msg, tr("NMEA import success"), JOptionPane.INFORMATION_MESSAGE);
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    msg,
+                    tr("NMEA import success"),
+                    JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(Main.parent, msg, tr("NMEA import faliure!"), JOptionPane.ERROR_MESSAGE);
+            OptionPaneUtil.showMessageDialog(Main.parent, msg, tr("NMEA import faliure!"), JOptionPane.ERROR_MESSAGE);
         }
     }
 

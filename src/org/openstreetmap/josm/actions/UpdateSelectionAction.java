@@ -16,6 +16,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -204,7 +205,7 @@ public class UpdateSelectionAction extends JosmAction {
             return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         if (selection.size() == 0) {
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.parent,
                     tr("There are no selected primitives to update."),
                     tr("Selection empty"),

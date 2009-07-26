@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -71,7 +72,7 @@ public class MergeNodesAction extends JosmAction {
             }
 
         if (selectedNodes.size() < 2) {
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.parent,
                     tr("Please select at least two nodes to merge."),
                     tr("Warning"),
@@ -248,9 +249,13 @@ public class MergeNodesAction extends JosmAction {
                     new CollectBackReferencesVisitor(getCurrentDataSet(), false);
                 w.visit(backRefs);
                 if (!backRefs.data.isEmpty()) {
-                    JOptionPane.showMessageDialog(Main.parent,
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
                             tr("Cannot merge nodes: " +
-                            "Would have to delete a way that is still used."));
+                            "Would have to delete a way that is still used."),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
                     return null;
                 }
                 del.add(w);

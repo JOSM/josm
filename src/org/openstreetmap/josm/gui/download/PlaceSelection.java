@@ -189,8 +189,13 @@ public class PlaceSelection implements DownloadSelection {
                 }
                 catch (Exception x)
                 {
-                    JOptionPane.showMessageDialog(Main.parent,tr("Cannot read place search results from server"));
                     x.printStackTrace();
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("Cannot read place search results from server"),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
                 component.setCursor(oldCursor);
             }

@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 
 public class Lambert implements Projection {
     /**
@@ -51,9 +52,9 @@ public class Lambert implements Projection {
     public static final double cMaxLatZone1 = Math.toRadians(57 * 0.9);
 
     public static final double zoneLimits[] = { Math.toRadians(53.5 * 0.9), // between Zone 1 and Zone 2 (in grad *0.9)
-            Math.toRadians(50.5 * 0.9), // between Zone 2 and Zone 3
-            Math.toRadians(47.51963 * 0.9), // between Zone 3 and Zone 4
-            Math.toRadians(46.17821 * 0.9) };// lowest latitude of Zone 4
+        Math.toRadians(50.5 * 0.9), // between Zone 2 and Zone 3
+        Math.toRadians(47.51963 * 0.9), // between Zone 3 and Zone 4
+        Math.toRadians(46.17821 * 0.9) };// lowest latitude of Zone 4
 
     public static final double cMinLonZones = Math.toRadians(-4.9074074074074059 * 0.9);
 
@@ -83,23 +84,21 @@ public class Lambert implements Projection {
         boolean outOfLambertZones = false;
         if (lt >= zoneLimits[3] && lt <= cMaxLatZone1 && lg >= cMinLonZones && lg <= cMaxLonZones) {
             // zone I
-            if (lt > zoneLimits[0])
+            if (lt > zoneLimits[0]) {
                 currentZone = 0;
-            // zone II
-            else if (lt > zoneLimits[1])
+            } else if (lt > zoneLimits[1]) {
                 currentZone = 1;
-            // zone III
-            else if (lt > zoneLimits[2])
+            } else if (lt > zoneLimits[2]) {
                 currentZone = 2;
-            // zone III or IV
-            else if (lt > zoneLimits[3])
+            } else if (lt > zoneLimits[3])
                 // Note: zone IV is dedicated to Corsica island and extends from 47.8 to
                 // 45.9 degrees of latitude. There is an overlap with zone III that can be
                 // solved only with longitude (covers Corsica if lon > 7.2 degree)
-                if (lg < Math.toRadians(8 * 0.9))
+                if (lg < Math.toRadians(8 * 0.9)) {
                     currentZone = 2;
-                else
+                } else {
                     currentZone = 3;
+                }
         } else {
             outOfLambertZones = true; // possible when MAX_LAT is used
         }
@@ -108,13 +107,15 @@ public class Lambert implements Projection {
                 layoutZone = currentZone;
             } else if (layoutZone != currentZone) {
                 if ((currentZone < layoutZone && Math.abs(zoneLimits[currentZone] - lt) > cMaxOverlappingZones)
-                || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
-                    JOptionPane.showMessageDialog(Main.parent,
-                    tr("IMPORTANT : data positioned far away from\n"
-                    + "the current Lambert zone limits.\n"
-                    + "Do not upload any data after this message.\n"
-                    + "Undo your last action, save your work\n"
-                    + "and start a new layer on the new zone."));
+                        || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
+                    OptionPaneUtil.showMessageDialog(Main.parent,
+                            tr("IMPORTANT : data positioned far away from\n"
+                                    + "the current Lambert zone limits.\n"
+                                    + "Do not upload any data after this message.\n"
+                                    + "Undo your last action, save your work\n"
+                                    + "and start a new layer on the new zone."),
+                                    tr("Warning"),
+                                    JOptionPane.WARNING_MESSAGE);
                     layoutZone = -1;
                 } else {
                     System.out.println("temporarily extend Lambert zone " + layoutZone + " projection at lat,lon:"
@@ -129,11 +130,12 @@ public class Lambert implements Projection {
 
     public LatLon eastNorth2latlon(EastNorth p) {
         LatLon geo;
-        if (layoutZone == -1)
+        if (layoutZone == -1) {
             // possible until the Lambert zone is determined by latlon2eastNorth() with a valid LatLon
             geo = Geographic(p, Xs[currentZone], Ys[currentZone], c[currentZone], n[currentZone]);
-        else
+        } else {
             geo = Geographic(p, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
+        }
         // translate ellipsoid Clark => GRS80 (WGS83)
         LatLon wgs = Clark2GRS80(geo);
         return new LatLon(Math.toDegrees(wgs.lat()), Math.toDegrees(wgs.lon()));
@@ -196,7 +198,7 @@ public class Lambert implements Projection {
         while (delta > epsilon) {
             double eslt = Ellipsoid.clarke.e * Math.sin(lat);
             double nlt = 2.0 * Math.atan(Math.pow((1.0 + eslt) / (1.0 - eslt), Ellipsoid.clarke.e / 2.0) * l) - Math.PI
-                    / 2.0;
+            / 2.0;
             delta = Math.abs(nlt - lat);
             lat = nlt;
         }
@@ -260,7 +262,7 @@ public class Lambert implements Projection {
             double s2 = Math.sin(lt);
             s2 *= s2;
             double l = Math.atan((Z / norm)
-                / (1.0 - (ell.a * ell.e2 * Math.cos(lt) / (norm * Math.sqrt(1.0 - ell.e2 * s2)))));
+                    / (1.0 - (ell.a * ell.e2 * Math.cos(lt) / (norm * Math.sqrt(1.0 - ell.e2 * s2)))));
             delta = Math.abs(l - lt);
             lt = l;
         }

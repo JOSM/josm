@@ -105,7 +105,12 @@ public final class OrthogonalizeAction extends JosmAction {
                     delta -= Math.PI;
                 }
                 if(delta < Math.PI/4) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select ways with almost right angles to orthogonalize."));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("Please select ways with almost right angles to orthogonalize."),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                     return;
                 }
             }

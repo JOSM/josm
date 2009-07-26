@@ -51,9 +51,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -604,6 +604,9 @@ public class GenericRelationEditor extends RelationEditor {
         // --- copy relation action
         buttonPanel.add(new SideButton(new DuplicateRelationAction()));
 
+        // --- apply relation action
+        buttonPanel.add(new SideButton(new ApplyAction()));
+
         // --- delete relation action
         buttonPanel.add(new SideButton(new DeleteCurrentRelationAction()));
         return buttonPanel;
@@ -1001,7 +1004,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
-    class OKAction extends AbstractAction {
+    abstract class SavingAction extends AbstractAction {
         /**
          * apply updates to a new relation
          */
@@ -1013,57 +1016,154 @@ public class GenericRelationEditor extends RelationEditor {
             Relation newRelation = new Relation();
             tagEditorModel.applyToPrimitive(newRelation);
             memberTableModel.applyToRelation(newRelation);
-            Main.main.undoRedo.add(new AddCommand(newRelation));
+            Main.main.undoRedo.add(new AddCommand(getLayer(),newRelation));
+
+            // make sure everybody is notified about the changes
+            //
             DataSet.fireSelectionChanged(getLayer().data.getSelected());
+            getLayer().fireDataChange();
+            GenericRelationEditor.this.setRelation(newRelation);
+            RelationDialogManager.getRelationDialogManager().updateContext(
+                    getLayer(),
+                    getRelation(),
+                    GenericRelationEditor.this
+            );
         }
 
         /**
-         * apply updates to an existing relation
+         * Apply the updates for an existing relation which has not been changed
+         * outside of the relation editor.
+         * 
          */
-        protected void applyExistingRelation() {
+        protected void applyExistingConflictingRelation() {
             Relation editedRelation = new Relation(getRelation());
             tagEditorModel.applyToPrimitive(editedRelation);
             memberTableModel.applyToRelation(editedRelation);
-            if (isDirtyRelation()) {
-                Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
-                getLayer().getConflicts().add(conflict);
-                OptionPaneUtil.showMessageDialog(
-                        Main.parent,
-                        tr("<html>The relation has changed outside of the editor.<br>"
-                                + "Your edits can't be applied directly, a conflict has been created instead.</html>"),
-                                tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE
-                );
-            } else {
-                tagEditorModel.applyToPrimitive(editedRelation);
-                memberTableModel.applyToRelation(editedRelation);
-                Main.main.undoRedo.add(new ChangeCommand(getRelation(), editedRelation));
-                DataSet.fireSelectionChanged(getLayer().data.getSelected());
-            }
+            Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
+            Main.main.undoRedo.add(new ConflictAddCommand(getLayer(),conflict));
         }
 
         /**
-         * Applies updates
+         * Apply the updates for an existing relation which has been changed
+         * outside of the relation editor.
+         * 
          */
-        protected void applyChanges() {
-            if (getRelation() == null) {
-                applyNewRelation();
-            } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
-                    || tagEditorModel.isDirty()) {
-                applyExistingRelation();
-            }
+        protected void applyExistingNonConflictingRelation() {
+            Relation editedRelation = new Relation(getRelation());
+            tagEditorModel.applyToPrimitive(editedRelation);
+            memberTableModel.applyToRelation(editedRelation);
+            Main.main.undoRedo.add(new ChangeCommand(getRelation(), editedRelation));
+            DataSet.fireSelectionChanged(getLayer().data.getSelected());
+            getLayer().fireDataChange();
+            // this will refresh the snapshot and update the dialog title
+            //
+            setRelation(getRelation());
         }
 
-        public OKAction() {
-            putValue(SHORT_DESCRIPTION, tr("Apply the updates and close the dialog"));
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
+        protected boolean confirmClosingBecauseOfDirtyState() {
+            String [] options = new String[] {
+                    tr("Yes, create a conflict and close"),
+                    tr("No, continue editing")
+            };
+            int ret = OptionPaneUtil.showOptionDialog(
+                    Main.parent,
+                    tr("<html>This relation has been changed outside of the editor.<br>"
+                            + "You can't apply your changes and continue editing.<br>"
+                            + "<br>"
+                            + "Do you want to create a conflict and close the editor?</html>"),
+                            tr("Conflict in data"),
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            options,
+                            options[0]
+            );
+            switch(ret) {
+            case JOptionPane.CANCEL_OPTION: return false;
+            case JOptionPane.YES_OPTION: return true;
+            case JOptionPane.NO_OPTION: return false;
+            }
+            return false;
+        }
+
+        protected void warnDoubleConflict() {
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Layer ''{0}'' already has a conflict for primitive<br>"
+                            + "''{1}''.<br>"
+                            + "Please resolve this conflict first, then try again.</html>",
+                            getLayer().getName(),
+                            new PrimitiveNameFormatter().getName(getRelation())
+                    ),
+                    tr("Double conflict"),
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }
+
+    class ApplyAction extends SavingAction {
+        public ApplyAction() {
+            putValue(SHORT_DESCRIPTION, tr("Apply the current updates"));
+            putValue(SMALL_ICON, ImageProvider.get("save"));
             putValue(NAME, tr("Apply"));
             setEnabled(true);
         }
 
+        public void run() {
+            if (getRelation() == null) {
+                applyNewRelation();
+            } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
+                    || tagEditorModel.isDirty()) {
+                if (isDirtyRelation()) {
+                    if (confirmClosingBecauseOfDirtyState()) {
+                        if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
+                            warnDoubleConflict();
+                            return;
+                        }
+                        applyExistingConflictingRelation();
+                        setVisible(false);
+                    }
+                } else {
+                    applyExistingNonConflictingRelation();
+                }
+            }
+        }
+
         public void actionPerformed(ActionEvent e) {
-            applyChanges();
+            run();
+        }
+    }
+
+    class OKAction extends SavingAction {
+        public OKAction() {
+            putValue(SHORT_DESCRIPTION, tr("Apply the updates and close the dialog"));
+            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            putValue(NAME, tr("OK"));
+            setEnabled(true);
+        }
+
+        public void run() {
+            if (getRelation() == null) {
+                applyNewRelation();
+            } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
+                    || tagEditorModel.isDirty()) {
+                if (isDirtyRelation()) {
+                    if (confirmClosingBecauseOfDirtyState()) {
+                        if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
+                            warnDoubleConflict();
+                            return;
+                        }
+                        applyExistingConflictingRelation();
+                    } else
+                        return;
+                } else {
+                    applyExistingNonConflictingRelation();
+                }
+            }
             setVisible(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            run();
         }
     }
 

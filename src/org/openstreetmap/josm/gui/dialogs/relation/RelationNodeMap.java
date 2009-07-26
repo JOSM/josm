@@ -56,15 +56,22 @@ public class RelationNodeMap {
     void add(int n, RelationMember m) {
         if (m.member instanceof Way) {
             Way w = (Way) m.member;
-            if (!points.containsKey(w.firstNode())) {
-                points.put(w.firstNode(), new java.util.TreeSet<Integer>());
+            if (w.lastNode() == w.firstNode())
+            {
+                nodes.put(w.firstNode(), Integer.valueOf(n));
             }
-            points.get(w.firstNode()).add(Integer.valueOf(n));
+            else
+            {
+                if (!points.containsKey(w.firstNode())) {
+                    points.put(w.firstNode(), new java.util.TreeSet<Integer>());
+                }
+                points.get(w.firstNode()).add(Integer.valueOf(n));
 
-            if (!points.containsKey(w.lastNode())) {
-                points.put(w.lastNode(), new java.util.TreeSet<Integer>());
+                if (!points.containsKey(w.lastNode())) {
+                    points.put(w.lastNode(), new java.util.TreeSet<Integer>());
+                }
+                points.get(w.lastNode()).add(Integer.valueOf(n));
             }
-            points.get(w.lastNode()).add(Integer.valueOf(n));
         } else if (m.member instanceof Node) {
             Node node = (Node) m.member;
             nodes.put(node, Integer.valueOf(n));
@@ -76,8 +83,16 @@ public class RelationNodeMap {
     boolean remove(int n, RelationMember a) {
         boolean result;
         if (a.member instanceof Way) {
-            result = points.get(((Way) a.member).firstNode()).remove(n);
-            result &= points.get(((Way) a.member).lastNode()).remove(n);
+            Way w = (Way) a.member;
+            if (w.firstNode() == w.lastNode())
+            {
+                result = (nodes.remove(w.firstNode()) != null);
+            }
+            else
+            {
+                result = points.get(w.firstNode()).remove(n);
+                result &= points.get(w.lastNode()).remove(n);
+            }
         } else {
             result = (nodes.remove(a.member) != null);
         }

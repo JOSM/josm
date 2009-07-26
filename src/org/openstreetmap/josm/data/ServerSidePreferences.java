@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.Base64;
@@ -47,7 +48,9 @@ public class ServerSidePreferences extends Preferences {
             try {
                 System.out.println("reading preferences from "+serverUrl);
                 URLConnection con = serverUrl.openConnection();
-                if (con instanceof HttpURLConnection) addAuth((HttpURLConnection) con);
+                if (con instanceof HttpURLConnection) {
+                    addAuth((HttpURLConnection) con);
+                }
                 con.connect();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 StringBuilder b = new StringBuilder();
@@ -55,7 +58,9 @@ public class ServerSidePreferences extends Preferences {
                     b.append(line);
                     b.append("\n");
                 }
-                if (con instanceof HttpURLConnection) ((HttpURLConnection) con).disconnect();
+                if (con instanceof HttpURLConnection) {
+                    ((HttpURLConnection) con).disconnect();
+                }
                 return b.toString();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -76,10 +81,20 @@ public class ServerSidePreferences extends Preferences {
                 out.close();
                 con.getInputStream().close();
                 con.disconnect();
-                JOptionPane.showMessageDialog(Main.parent, tr("Preferences stored on {0}", u.getHost()));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Preferences stored on {0}", u.getHost()),
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(Main.parent, tr("Could not upload preferences. Reason: {0}", e.getMessage()));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Could not upload preferences. Reason: {0}", e.getMessage()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
     }
@@ -118,17 +133,20 @@ public class ServerSidePreferences extends Preferences {
 
     public void download(String userName, String password) {
         resetToDefault();
-        if (!properties.containsKey("osm-server.username") && userName != null)
+        if (!properties.containsKey("osm-server.username") && userName != null) {
             properties.put("osm-server.username", userName);
-        if (!properties.containsKey("osm-server.password") && password != null)
+        }
+        if (!properties.containsKey("osm-server.password") && password != null) {
             properties.put("osm-server.password", password);
+        }
         String cont = connection.download();
         if (cont == null) return;
         Reader in = new StringReader(cont);
         try {
             XmlObjectParser.Uniform<Prop> parser = new XmlObjectParser.Uniform<Prop>(in, "tag", Prop.class);
-            for (Prop p : parser)
+            for (Prop p : parser) {
                 properties.put(p.key, p.value);
+            }
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
@@ -143,8 +161,9 @@ public class ServerSidePreferences extends Preferences {
     public void upload() {
         StringBuilder b = new StringBuilder("<preferences>\n");
         for (Entry<String, String> p : properties.entrySet()) {
-            if (p.getKey().equals("osm-server.password"))
+            if (p.getKey().equals("osm-server.password")) {
                 continue; // do not upload password. It would get stored in plain!
+            }
             b.append("<tag key='");
             b.append(XmlWriter.encode(p.getKey()));
             b.append("' value='");
@@ -162,13 +181,15 @@ public class ServerSidePreferences extends Preferences {
             bookmarks = new LinkedList<Bookmark>();
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 StringTokenizer st = new StringTokenizer(line, ",");
-                if (st.countTokens() < 5)
+                if (st.countTokens() < 5) {
                     continue;
+                }
                 Bookmark b = new Bookmark();
                 b.name = st.nextToken();
                 try {
-                    for (int i = 0; i < b.latlon.length; ++i)
+                    for (int i = 0; i < b.latlon.length; ++i) {
                         b.latlon[i] = Double.parseDouble(st.nextToken());
+                    }
                     bookmarks.add(b);
                 } catch (NumberFormatException x) {
                     // line not parsed

@@ -88,25 +88,29 @@ public abstract class RelationEditor extends ExtendedDialog {
         }
     }
 
-    protected RelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers)
-    {
+    protected RelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
         // Initalizes ExtendedDialog
         super(Main.parent,
-                relation == null
-                ? tr("Create new relation in layer ''{0}''", layer.getName())
-                        : (relation.id == 0
-                                ? tr ("Edit new relation in layer ''{0}''", layer.getName())
-                                        : tr("Edit relation #{0} in layer ''{1}''", relation.id, layer.getName())
-                        ),
-                        new String[] { tr("Apply Changes"), tr("Cancel")},
-                        false
+                "",
+                new String[] { tr("Apply Changes"), tr("Cancel")},
+                false
         );
-
-        this.relationSnapshot = (relation == null) ? null : new Relation(relation);
-        this.relation = relation;
         this.layer = layer;
+        setRelation(relation);
     }
 
+    /**
+     * updates the title of the relation editor
+     */
+    protected void updateTitle() {
+        if (getRelation() == null) {
+            setTitle(tr("Create new relation in layer ''{0}''", layer.getName()));
+        } else if (getRelation().id == 0) {
+            setTitle(tr("Edit new relation in layer ''{0}''", layer.getName()));
+        } else {
+            setTitle(tr("Edit relation #{0} in layer ''{1}''", relation.id, layer.getName()));
+        }
+    }
     /**
      * Replies the currently edited relation
      * 
@@ -114,6 +118,18 @@ public abstract class RelationEditor extends ExtendedDialog {
      */
     protected Relation getRelation() {
         return relation;
+    }
+
+    /**
+     * Sets the currently edited relation. Creates a snapshot of the current
+     * state of the relation. See {@see #getRelationSnapshot()}
+     * 
+     * @param relation the relation
+     */
+    protected void setRelation(Relation relation) {
+        this.relationSnapshot = (relation == null) ? null : new Relation(relation);
+        this.relation = relation;
+        updateTitle();
     }
 
     /**

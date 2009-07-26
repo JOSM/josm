@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -278,7 +279,12 @@ abstract public class Main {
         try {
             Main.proj = (Projection)Class.forName(name).newInstance();
         } catch (final Exception e) {
-            JOptionPane.showMessageDialog(null, tr("The projection {0} could not be activated. Using Mercator", name));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("The projection {0} could not be activated. Using Mercator", name),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             Main.proj = new Mercator();
         }
         if(!Main.proj.equals(oldProj))
@@ -415,7 +421,12 @@ abstract public class Main {
         if (s.startsWith("http:")) {
             final Bounds b = OsmUrlToBounds.parse(s);
             if (b == null) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed URL: \"{0}\"", s));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Ignoring malformed URL: \"{0}\"", s),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
             } else {
                 //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
                 DownloadTask osmTask = new DownloadOsmTask();
@@ -428,7 +439,12 @@ abstract public class Main {
             try {
                 main.menu.openFile.openFile(new File(new URI(s)));
             } catch (URISyntaxException e) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Ignoring malformed file URL: \"{0}\"", s));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Ignoring malformed file URL: \"{0}\"", s),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
             return;
         }

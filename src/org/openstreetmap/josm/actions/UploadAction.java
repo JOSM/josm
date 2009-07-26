@@ -25,6 +25,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
@@ -173,7 +174,12 @@ public class UploadAction extends JosmAction{
 
         ConflictCollection conflicts = Main.map.mapView.getEditLayer().getConflicts();
         if (conflicts !=null && !conflicts.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent,tr("There are unresolved conflicts. You have to resolve these first."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("There are unresolved conflicts. You have to resolve these first."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             Main.map.conflictDialog.action.button.setSelected(true);
             Main.map.conflictDialog.action.actionPerformed(null);
             return;

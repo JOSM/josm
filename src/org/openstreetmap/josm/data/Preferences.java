@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -44,10 +45,10 @@ import org.openstreetmap.josm.tools.ColorHelper;
 public class Preferences {
 
     /**
-    * Internal storage for the preferenced directory.
-    * Do not access this variable directly!
-    * @see #getPreferencesDirFile()
-    */
+     * Internal storage for the preferenced directory.
+     * Do not access this variable directly!
+     * @see #getPreferencesDirFile()
+     */
     private File preferencesDirFile = null;
 
     public static interface PreferenceChangedListener {
@@ -130,13 +131,15 @@ public class Preferences {
         locations.add(Main.pref.getPreferencesDir());
         String s;
         if ((s = System.getenv("JOSM_RESOURCES")) != null) {
-            if (!s.endsWith(File.separator))
+            if (!s.endsWith(File.separator)) {
                 s = s + File.separator;
+            }
             locations.add(s);
         }
         if ((s = System.getProperty("josm.resources")) != null) {
-            if (!s.endsWith(File.separator))
+            if (!s.endsWith(File.separator)) {
                 s = s + File.separator;
+            }
             locations.add(s);
         }
         String appdata = System.getenv("APPDATA");
@@ -179,31 +182,36 @@ public class Preferences {
     synchronized public Map<String, String> getAllPrefix(final String prefix) {
         final Map<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,String> e : properties.entrySet())
-            if (e.getKey().startsWith(prefix))
+            if (e.getKey().startsWith(prefix)) {
                 all.put(e.getKey(), e.getValue());
+            }
         for (final Entry<String,String> e : override.entrySet())
             if (e.getKey().startsWith(prefix))
-                if (e.getValue() == null)
+                if (e.getValue() == null) {
                     all.remove(e.getKey());
-                else
+                } else {
                     all.put(e.getKey(), e.getValue());
+                }
         return all;
     }
 
     synchronized public TreeMap<String, String> getAllColors() {
         final TreeMap<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,String> e : defaults.entrySet())
-            if (e.getKey().startsWith("color.") && e.getValue() != null)
+            if (e.getKey().startsWith("color.") && e.getValue() != null) {
                 all.put(e.getKey().substring(6), e.getValue());
+            }
         for (final Entry<String,String> e : properties.entrySet())
-            if (e.getKey().startsWith("color."))
+            if (e.getKey().startsWith("color.")) {
                 all.put(e.getKey().substring(6), e.getValue());
+            }
         for (final Entry<String,String> e : override.entrySet())
             if (e.getKey().startsWith("color."))
-                if (e.getValue() == null)
+                if (e.getValue() == null) {
                     all.remove(e.getKey().substring(6));
-                else
+                } else {
                     all.put(e.getKey().substring(6), e.getValue());
+                }
         return all;
     }
 
@@ -212,10 +220,11 @@ public class Preferences {
     }
 
     synchronized public void putDefault(final String key, final String def) {
-        if(!defaults.containsKey(key) || defaults.get(key) == null)
+        if(!defaults.containsKey(key) || defaults.get(key) == null) {
             defaults.put(key, def);
-        else if(def != null && !defaults.get(key).equals(def))
+        } else if(def != null && !defaults.get(key).equals(def)) {
             System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
+        }
     }
 
     synchronized public boolean getBoolean(final String key) {
@@ -234,15 +243,17 @@ public class Preferences {
 
     synchronized public boolean put(final String key, String value) {
         String oldvalue = properties.get(key);
-        if(value != null && value.length() == 0)
+        if(value != null && value.length() == 0) {
             value = null;
+        }
         if(!((oldvalue == null && (value == null || value.equals(defaults.get(key))))
-        || (value != null && oldvalue != null && oldvalue.equals(value))))
+                || (value != null && oldvalue != null && oldvalue.equals(value))))
         {
-            if (value == null)
+            if (value == null) {
                 properties.remove(key);
-            else
+            } else {
                 properties.put(key, value);
+            }
             save();
             firePreferenceChanged(key, value);
             return true;
@@ -267,8 +278,9 @@ public class Preferences {
     }
 
     private final void firePreferenceChanged(final String key, final String value) {
-        for (final PreferenceChangedListener l : listener)
+        for (final PreferenceChangedListener l : listener) {
             l.preferenceChanged(key, value);
+        }
     }
 
     /**
@@ -281,12 +293,13 @@ public class Preferences {
         try {
             setSystemProperties();
             final PrintWriter out = new PrintWriter(new OutputStreamWriter(
-            new FileOutputStream(getPreferencesDir() + "preferences"), "utf-8"), false);
+                    new FileOutputStream(getPreferencesDir() + "preferences"), "utf-8"), false);
             for (final Entry<String, String> e : properties.entrySet()) {
                 String s = defaults.get(e.getKey());
                 /* don't save default values */
-                if(s == null || !s.equals(e.getValue()))
+                if(s == null || !s.equals(e.getValue())) {
                     out.println(e.getKey() + "=" + e.getValue());
+                }
             }
             out.close();
         } catch (final IOException e) {
@@ -299,7 +312,7 @@ public class Preferences {
     public void load() throws IOException {
         properties.clear();
         final BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
+                new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
         int lineNumber = 0;
         ArrayList<Integer> errLines = new ArrayList<Integer>();
         for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
@@ -321,25 +334,37 @@ public class Preferences {
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {
             if(!prefDir.isDirectory()) {
-                JOptionPane.showMessageDialog(null, tr("Cannot open preferences directory: {0}",Main.pref.getPreferencesDir()));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Cannot open preferences directory: {0}",Main.pref.getPreferencesDir()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
                 return;
             }
-        }
-        else
+        } else {
             prefDir.mkdirs();
+        }
 
-        if (!new File(getPreferencesDir()+"preferences").exists())
+        if (!new File(getPreferencesDir()+"preferences").exists()) {
             resetToDefault();
+        }
 
         try {
-            if (reset)
+            if (reset) {
                 resetToDefault();
-            else
+            } else {
                 load();
+            }
         } catch (final IOException e1) {
             e1.printStackTrace();
             String backup = getPreferencesDir() + "preferences.bak";
-            JOptionPane.showMessageDialog(null, tr("Preferences file had errors. Making backup of old one to {0}.", backup));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Preferences file had errors. Making backup of old one to {0}.", backup),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             new File(getPreferencesDir() + "preferences").renameTo(new File(backup));
             save();
         }
@@ -361,10 +386,11 @@ public class Preferences {
 
     public Collection<Bookmark> loadBookmarks() throws IOException {
         File bookmarkFile = new File(getPreferencesDir()+"bookmarks");
-        if (!bookmarkFile.exists())
+        if (!bookmarkFile.exists()) {
             bookmarkFile.createNewFile();
+        }
         BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(bookmarkFile), "utf-8"));
+                new FileInputStream(bookmarkFile), "utf-8"));
 
         LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -374,8 +400,9 @@ public class Preferences {
             {
                 Bookmark b = new Bookmark();
                 b.name = m.group(1);
-                for (int i = 0; i < b.latlon.length; ++i)
+                for (int i = 0; i < b.latlon.length; ++i) {
                     b.latlon[i] = Double.parseDouble(m.group(i+2));
+                }
                 bookmarks.add(b);
             }
         }
@@ -386,14 +413,16 @@ public class Preferences {
 
     public void saveBookmarks(Collection<Bookmark> bookmarks) throws IOException {
         File bookmarkFile = new File(Main.pref.getPreferencesDir()+"bookmarks");
-        if (!bookmarkFile.exists())
+        if (!bookmarkFile.exists()) {
             bookmarkFile.createNewFile();
+        }
         PrintWriter out = new PrintWriter(new OutputStreamWriter(
-        new FileOutputStream(bookmarkFile), "utf-8"));
+                new FileOutputStream(bookmarkFile), "utf-8"));
         for (Bookmark b : bookmarks) {
             out.print(b.name+"\u001e");
-            for (int i = 0; i < b.latlon.length; ++i)
+            for (int i = 0; i < b.latlon.length; ++i) {
                 out.print(b.latlon[i]+(i<b.latlon.length-1?"\u001e":""));
+            }
             out.println();
         }
         out.close();
@@ -421,8 +450,9 @@ public class Preferences {
     synchronized public Color getColor(String colName, String specName, Color def) {
         putDefault("color."+colName, ColorHelper.color2html(def));
         String colStr = specName != null ? get("color."+specName) : "";
-        if(colStr.equals(""))
+        if(colStr.equals("")) {
             colStr = get("color."+colName);
+        }
         return colStr.equals("") ? def : ColorHelper.html2color(colStr);
     }
 
@@ -480,8 +510,9 @@ public class Preferences {
     synchronized public double getDouble(String key, String def) {
         putDefault(key, def);
         String v = get(key);
-        if(v != null && v.length() != 0)
+        if(v != null && v.length() != 0) {
             try { return Double.parseDouble(v); } catch(NumberFormatException e) {}
+        }
         try { return Double.parseDouble(def); } catch(NumberFormatException e) {}
         return 0.0;
     }
@@ -493,10 +524,11 @@ public class Preferences {
             String d = null;
             for(String a : def)
             {
-                if(d != null)
+                if(d != null) {
                     d += "\u001e" + a;
-                else
+                } else {
                     d = a;
+                }
             }
             putDefault(key, d);
         }
@@ -505,10 +537,11 @@ public class Preferences {
             if(s.indexOf("\u001e") < 0) /* FIXME: legacy code, remove later */
             {
                 String r =s;
-                if(r.indexOf("§§§") > 0) /* history dialog */
+                if(r.indexOf("§§§") > 0) {
                     r = r.replaceAll("§§§","\u001e");
-                else /* old style ';' separation */
+                } else {
                     r = r.replace(';','\u001e');
+                }
                 if(!r.equals(s)) /* save the converted string */
                 {
                     put(key,r);
@@ -533,10 +566,11 @@ public class Preferences {
         {
             for(String a : val)
             {
-                if(s != null)
+                if(s != null) {
                     s += "\u001e" + a;
-                else
+                } else {
                     s = a;
+                }
             }
         }
 

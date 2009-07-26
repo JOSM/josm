@@ -120,6 +120,21 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
         editor.addWindowListener(this);
     }
 
+    public void updateContext(OsmDataLayer layer, Relation relation, RelationEditor editor) {
+        // lookup the entry for editor and remove it
+        //
+        for (DialogContext context: openDialogs.keySet()) {
+            if (openDialogs.get(context) == editor) {
+                openDialogs.remove(context);
+                break;
+            }
+        }
+        // don't add a window listener. Editor is already known to the relation dialog manager
+        //
+        DialogContext context = new DialogContext(layer, relation);
+        openDialogs.put(context, editor);
+    }
+
     /**
      * Closes the editor open for a specific layer and a specific relation.
      * 

@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmIdReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -58,22 +59,33 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
             progressMonitor.worked(1);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not read from URL: \"{0}\"",url));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Could not read from URL: \"{0}\"",url),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         } catch (SAXException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent,tr("Parsing error in URL: \"{0}\"",url));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Parsing error in URL: \"{0}\"",url),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         } catch(OsmTransferException e) {
             e.printStackTrace();
             if (e.getCause() != null) {
                 if (e.getCause() instanceof IOException ) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Could not read from URL: \"{0}\"",url),
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent, tr("Could not read from URL: \"{0}\"",url),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
                 } else if (e.getCause() instanceof SAXException) {
-                    JOptionPane.showMessageDialog(Main.parent,tr("Parsing error in URL: \"{0}\"",url),
+                    OptionPaneUtil.showMessageDialog(Main.parent,tr("Parsing error in URL: \"{0}\"",url),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                JOptionPane.showMessageDialog(Main.parent,tr("Error while communicating with server.",url),
+                OptionPaneUtil.showMessageDialog(Main.parent,tr("Error while communicating with server.",url),
                         tr("Error"), JOptionPane.ERROR_MESSAGE);
             }
 

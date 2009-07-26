@@ -230,7 +230,12 @@ public class GpxExportAction extends DiskAccessAction {
             fo.close();
         } catch (IOException x) {
             x.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn,x.getMessage()), tr("Error"), JOptionPane.ERROR_MESSAGE);
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Error while exporting {0}:\n{1}", fn,x.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -284,7 +289,13 @@ public class GpxExportAction extends DiskAccessAction {
                 JList l = new JList(new String[]{"Creative Commons By-SA", "public domain", "GNU Lesser Public License (LGPL)", "BSD License (MIT/X11)"});
                 l.setVisibleRowCount(4);
                 l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-                int answer = JOptionPane.showConfirmDialog(Main.parent, new JScrollPane(l),tr("Choose a predefined license"), JOptionPane.OK_CANCEL_OPTION);
+                int answer = OptionPaneUtil.showConfirmationDialog(
+                        Main.parent,
+                        new JScrollPane(l),
+                        tr("Choose a predefined license"),
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
                 if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
                     return;
                 final String[] urls = {

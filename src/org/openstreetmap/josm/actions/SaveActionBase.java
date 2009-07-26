@@ -86,11 +86,16 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     public boolean checkSaveConditions(Layer layer) {
         if (layer == null) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Internal Error: cannot check conditions for no layer. Please report this as a bug."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Internal Error: cannot check conditions for no layer. Please report this as a bug."),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             return false;
         }
         if (Main.map == null) {
-            JOptionPane.showMessageDialog(
+            OptionPaneUtil.showMessageDialog(
                     Main.parent,
                     tr("No document open so nothing to save."),
                     tr("Warning"),
@@ -270,7 +275,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("An error occurred while saving.")+"\n"+e.getMessage());
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("An error occurred while saving. Error is: {0}", e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
         try {
             // if the file save failed, then the tempfile will not

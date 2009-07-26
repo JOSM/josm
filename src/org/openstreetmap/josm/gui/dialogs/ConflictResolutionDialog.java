@@ -97,6 +97,7 @@ public class ConflictResolutionDialog extends JDialog {
     public void setVisible(boolean isVisible) {
         if (isVisible){
             restorePositionAndDimension();
+            toFront();
         } else {
             rememberPositionAndDimension();
         }
@@ -129,6 +130,11 @@ public class ConflictResolutionDialog extends JDialog {
      */
     protected void build() {
         setTitle(tr("Resolve conflicts"));
+        try {
+            setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: couldn't setAlwaysOnTop(true) for ConflictResolution Dialog. Exception: {0}", e.toString()));
+        }
         getContentPane().setLayout(new BorderLayout());
 
         resolver = new ConflictResolver();

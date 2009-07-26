@@ -12,6 +12,7 @@ import javax.swing.tree.MutableTreeNode;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -34,6 +35,14 @@ public class AddCommand extends Command {
      */
     public AddCommand(OsmPrimitive osm) {
         super();
+        this.osm = osm;
+    }
+
+    /**
+     * Create the command and specify the element to add.
+     */
+    public AddCommand(OsmDataLayer layer, OsmPrimitive osm) {
+        super(layer);
         this.osm = osm;
     }
 

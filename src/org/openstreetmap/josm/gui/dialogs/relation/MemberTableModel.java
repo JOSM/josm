@@ -439,6 +439,41 @@ public class MemberTableModel extends AbstractTableModel {
         return false;
     }
 
+    /**
+     * get a node we can link against when sorting members
+     * @param element the element we want to link against
+     * @param linked_element already linked against element
+     * @return the unlinked node if element is a way, the node itself if element is a node, null otherwise
+     */
+    private static Node getUnusedNode(RelationMember element, RelationMember linked_element)
+    {
+        Node    result = null;
+
+        if (element.member instanceof Way) {
+            Way w = (Way) element.member;
+            if (linked_element.member instanceof Way) {
+                Way x = (Way) linked_element.member;
+                if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode())) {
+                    result = w.lastNode();
+                } else {
+                    result = w.firstNode();
+                }
+            } else if (linked_element.member instanceof Node) {
+                Node m = (Node) linked_element.member;
+                if (w.firstNode() == m) {
+                    result = w.lastNode();
+                } else {
+                    result = w.firstNode();
+                }
+            }
+        } else if (element.member instanceof Node) {
+            Node n = (Node) element.member;
+            result = n;
+        }
+
+        return result;
+    }
+
     void sort() {
         RelationNodeMap map = new RelationNodeMap(members);
         Vector<LinkedList<Integer>> segments;
@@ -449,12 +484,12 @@ public class MemberTableModel extends AbstractTableModel {
 
         /*
          * sort any 2 or more connected elements together may be slow with many unconnected members
-         * TODO: cleanup again, too much code in 1 method
          */
 
-        if (map.isEmpty())
+        if (map.isEmpty()) {
             // empty relation or incomplete members
             return;
+        }
         segments = new Vector<LinkedList<Integer>>();
 
         while (!map.isEmpty()) {
@@ -481,68 +516,26 @@ public class MemberTableModel extends AbstractTableModel {
                 startSearchNode = null;
                 endSearchNode = null;
                 if (segment.size() == 1) {
+                    // only one element in segment, so try to link against each linkable node of element
                     RelationMember m = members.get(segment.getFirst());
                     if (m.member instanceof Way) {
                         Way w = (Way) m.member;
                         endSearchNode = w.lastNode();
-                        startSearchNode = w.firstNode();
+                        if (w.lastNode() != w.firstNode())
+                        {
+                            startSearchNode = w.firstNode();
+                        }
                     } else if (m.member instanceof Node) {
                         Node n = (Node) m.member;
                         endSearchNode = n;
                     }
                 } else {
                     // add unused node of first element and unused node of last element
-                    // start with the first element
-                    RelationMember element = members.get(segment.getFirst());
-                    RelationMember other_element = members.get(segment.get(1));
+                    // start with the first element (compared to next element)
+                    startSearchNode = getUnusedNode(members.get(segment.getFirst()), members.get(segment.get(1)));
 
-                    if (element.member instanceof Way) {
-                        Way w = (Way) element.member;
-                        if (other_element.member instanceof Way) {
-                            Way x = (Way) other_element.member;
-                            if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode())) {
-                                startSearchNode = w.lastNode();
-                            } else {
-                                startSearchNode = w.firstNode();
-                            }
-                        } else if (other_element.member instanceof Node) {
-                            Node m = (Node) other_element.member;
-                            if (w.firstNode() == m) {
-                                startSearchNode = w.lastNode();
-                            } else {
-                                startSearchNode = w.firstNode();
-                            }
-                        }
-                    } else if (element.member instanceof Node) {
-                        Node n = (Node) element.member;
-                        startSearchNode = n;
-                    }
-
-                    // now the same for the last element
-                    element = members.get(segment.getLast());
-                    other_element = members.get(segment.get(segment.size() - 2));
-
-                    if (element.member instanceof Way) {
-                        Way w = (Way) element.member;
-                        if (other_element.member instanceof Way) {
-                            Way x = (Way) other_element.member;
-                            if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode())) {
-                                endSearchNode = w.lastNode();
-                            } else {
-                                endSearchNode = w.firstNode();
-                            }
-                        } else if (other_element.member instanceof Node) {
-                            Node m = (Node) other_element.member;
-                            if (w.firstNode() == m) {
-                                endSearchNode = w.lastNode();
-                            } else {
-                                endSearchNode = w.firstNode();
-                            }
-                        }
-                    } else if (element.member instanceof Node) {
-                        Node n = (Node) element.member;
-                        endSearchNode = n;
-                    }
+                    // now the same for the last element (compared to previous element)
+                    endSearchNode = getUnusedNode(members.get(segment.getLast()), members.get(segment.get(segment.size() - 2)));
                 }
 
                 // let's see if we can find connected elements for endSearchNode and startSearchNode
@@ -565,6 +558,7 @@ public class MemberTableModel extends AbstractTableModel {
             } while (something_done);
 
         }
+
         if (segments.size() > 0) {
             // append map.remaining() to segments list (as a single segment)
             segment = new LinkedList<Integer>();

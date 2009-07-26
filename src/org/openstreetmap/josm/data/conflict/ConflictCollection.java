@@ -66,7 +66,14 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
         }
     }
 
-    protected void addConflict(Conflict<?> conflict) {
+    /**
+     * Adds a conflict to the collection
+     * 
+     * @param conflict the conflict
+     * @exception IllegalStateException thrown, if this collection already includes a
+     * conflict for conflict.getMy()
+     */
+    protected void addConflict(Conflict<?> conflict) throws IllegalStateException {
         if (hasConflictForMy(conflict.getMy()))
             throw new IllegalStateException(tr("already registered a conflict for primitive ''{0}''", conflict.getMy().toString()));
         if (!conflicts.contains(conflict)) {
