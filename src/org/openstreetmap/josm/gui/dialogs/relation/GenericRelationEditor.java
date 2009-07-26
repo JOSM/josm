@@ -160,10 +160,8 @@ public class GenericRelationEditor extends RelationEditor {
         getContentPane().setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add(tr("Tags and Members"), pnl);
-        if (relation != null && relation.id > 0) {
-            referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel, this);
-            tabbedPane.add(tr("Parent Relations"), referrerBrowser);
-        }
+        referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel, this);
+        tabbedPane.add(tr("Parent Relations"), referrerBrowser);
         tabbedPane.add(tr("Child Relations"), new ChildRelationBrowser(getLayer(), relation));
         tabbedPane.addChangeListener(
                 new ChangeListener() {

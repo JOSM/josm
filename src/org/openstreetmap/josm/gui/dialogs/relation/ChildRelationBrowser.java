@@ -418,6 +418,9 @@ public class ChildRelationBrowser extends JPanel {
                 PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
                 while(! relationsToDownload.isEmpty() && !cancelled) {
                     Relation r = relationsToDownload.pop();
+                    if (r.id == 0) {
+                        continue;
+                    }
                     rememberChildRelationsToDownload(r);
                     progressMonitor.setCustomText(tr("Downloading relation {0}", nameFormatter.getName(r)));
                     OsmServerObjectReader reader = new OsmServerObjectReader(r.id, OsmPrimitiveType.RELATION,
@@ -513,6 +516,26 @@ public class ChildRelationBrowser extends JPanel {
             }
         }
 
+        protected void mergeDataSet(DataSet dataSet) {
+            if (dataSet != null) {
+                final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
+                visitor.merge();
+                // FIXME: this is necessary because there are dialogs listening
+                // for DataChangeEvents which manipulate Swing components on this
+                // thread.
+                //
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        getLayer().fireDataChange();
+                    }
+                });
+                if (!visitor.getConflicts().isEmpty()) {
+                    getLayer().getConflicts().add(visitor.getConflicts());
+                    conflictsCount +=  visitor.getConflicts().size();
+                }
+            }
+        }
+
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
@@ -520,28 +543,15 @@ public class ChildRelationBrowser extends JPanel {
                 Iterator<Relation> it = relations.iterator();
                 while(it.hasNext() && !cancelled) {
                     Relation r = it.next();
+                    if (r.id == 0) {
+                        continue;
+                    }
                     progressMonitor.setCustomText(tr("Downloading relation {0}", nameFormatter.getName(r)));
                     OsmServerObjectReader reader = new OsmServerObjectReader(r.id, OsmPrimitiveType.RELATION,
                             true);
                     DataSet dataSet = reader.parseOsm(progressMonitor
                             .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    if (dataSet != null) {
-                        final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
-                        visitor.merge();
-                        // FIXME: this is necessary because there are dialogs listening
-                        // for DataChangeEvents which manipulate Swing components on this
-                        // thread.
-                        //
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                getLayer().fireDataChange();
-                            }
-                        });
-                        if (!visitor.getConflicts().isEmpty()) {
-                            getLayer().getConflicts().add(visitor.getConflicts());
-                            conflictsCount +=  visitor.getConflicts().size();
-                        }
-                    }
+                    mergeDataSet(dataSet);
                     refreshView(r);
                 }
             } catch (Exception e) {
