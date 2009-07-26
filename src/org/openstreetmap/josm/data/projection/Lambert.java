@@ -12,7 +12,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.ProjectionBounds;
 
 public class Lambert implements Projection {
     /**
@@ -69,8 +68,6 @@ public class Lambert implements Projection {
 
     private static int currentZone = 0;
 
-    private static boolean dontDisplayErrors = false;
-
     /**
      * @param p  WGS84 lat/lon (ellipsoid GRS80) (in degree)
      * @return eastnorth projection in Lambert Zone (ellipsoid Clark)
@@ -109,7 +106,6 @@ public class Lambert implements Projection {
         if (!outOfLambertZones) {
             if (layoutZone == -1) {
                 layoutZone = currentZone;
-                dontDisplayErrors = false;
             } else if (layoutZone != currentZone) {
                 if ((currentZone < layoutZone && Math.abs(zoneLimits[currentZone] - lt) > cMaxOverlappingZones)
                 || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
@@ -120,16 +116,14 @@ public class Lambert implements Projection {
                     + "Undo your last action, save your work\n"
                     + "and start a new layer on the new zone."));
                     layoutZone = -1;
-                    dontDisplayErrors = true;
                 } else {
                     System.out.println("temporarily extend Lambert zone " + layoutZone + " projection at lat,lon:"
                             + lt + "," + lg);
                 }
             }
         }
-        if (layoutZone == -1) {
+        if (layoutZone == -1)
             return ConicProjection(lt, lg, Xs[currentZone], Ys[currentZone], c[currentZone], n[currentZone]);
-        } // else
         return ConicProjection(lt, lg, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
     }
 
@@ -279,7 +273,7 @@ public class Lambert implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-        new LatLon(-90.0, -180.0),
-        new LatLon(90.0, 180.0));
+                new LatLon(45.0, -4.9074074074074059),
+                new LatLon(57.0, 10.2));
     }
 }

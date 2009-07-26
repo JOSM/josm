@@ -446,7 +446,7 @@ abstract public class Main {
         main.menu.openFile.openFile(new File(s));
     }
 
-    protected static void determinePlatformHook() {
+    public static void determinePlatformHook() {
         String os = System.getProperty("os.name");
         if (os == null) {
             System.err.println("Your operating system has no name, so I'm guessing its some kind of *nix.");

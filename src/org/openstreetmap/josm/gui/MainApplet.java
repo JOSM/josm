@@ -100,6 +100,12 @@ public class MainApplet extends JApplet {
 
         Main.preConstructorInit(args);
         Main.parent = this;
+
+        // initialize the plaform hook, and
+        Main.determinePlatformHook();
+        // call the really early hook before we anything else
+        Main.platform.preStartupHook();
+
         new MainCaller().postConstructorProcessCmdLine(args);
 
         MainMenu m = Main.main.menu; // shortcut
