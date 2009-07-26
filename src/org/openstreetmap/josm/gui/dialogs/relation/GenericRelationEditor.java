@@ -731,7 +731,12 @@ public class GenericRelationEditor extends RelationEditor {
                     warnOfCircularReferences(primitive);
                     continue;
                 }
-                if (isPotentialDuplicate(primitive) && confirmAddingPrimtive(primitive)) {
+                if (isPotentialDuplicate(primitive))  {
+                    if (confirmAddingPrimtive(primitive)) {
+                        ret.add(primitive);
+                    }
+                    continue;
+                } else {
                     ret.add(primitive);
                 }
             }
