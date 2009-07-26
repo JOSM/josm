@@ -117,7 +117,21 @@ public class ReferringRelationsBrowser extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
             boolean full = cbReadFull.isSelected();
-            ReloadTask task = new ReloadTask(full, relationEditor);
+            final ParentRelationLoadingTask task = new ParentRelationLoadingTask(
+                    model.getRelation(),
+                    getLayer(),
+                    full,
+                    new PleaseWaitProgressMonitor()
+            );
+            task.setContinuation(
+                    new Runnable() {
+                        public void run() {
+                            if (task.isCancelled() || task.hasError())
+                                return;
+                            model.populate(task.getParents());
+                        }
+                    }
+            );
             Main.worker.submit(task);
         }
 
@@ -173,106 +187,6 @@ public class ReferringRelationsBrowser extends JPanel {
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2)  {
                 editAction.run();
-            }
-        }
-    }
-
-    /**
-     * Asynchronous task for loading the parent relations
-     *
-     */
-    class ReloadTask extends PleaseWaitRunnable {
-        private boolean cancelled;
-        private Exception lastException;
-        private DataSet referrers;
-        private boolean full;
-
-        public ReloadTask(boolean full, Dialog parent) {
-            super(tr("Download referring relations"), new PleaseWaitProgressMonitor(parent), false /* don't ignore exception */);
-            referrers = null;
-        }
-        @Override
-        protected void cancel() {
-            cancelled = true;
-            OsmApi.getOsmApi().cancel();
-        }
-
-        protected void showLastException() {
-            String msg = lastException.getMessage();
-            if (msg == null) {
-                msg = lastException.toString();
-            }
-            OptionPaneUtil.showMessageDialog(
-                    Main.parent,
-                    msg,
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-
-        @Override
-        protected void finish() {
-            if (cancelled) return;
-            if (lastException != null) {
-                showLastException();
-                return;
-            }
-            final ArrayList<Relation> parents = new ArrayList<Relation>();
-            for (Relation parent : referrers.relations) {
-                parents.add((Relation)getLayer().data.getPrimitiveById(parent.id));
-            }
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            model.populate(parents);
-                        }
-                    }
-            );
-        }
-
-        @Override
-        protected void realRun() throws SAXException, IOException, OsmTransferException {
-            try {
-                progressMonitor.indeterminateSubTask(null);
-                OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(model.getRelation(), full);
-                referrers = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-                if (referrers != null) {
-                    final MergeVisitor visitor = new MergeVisitor(getLayer().data, referrers);
-                    visitor.merge();
-
-                    // copy the merged layer's data source info
-                    for (DataSource src : referrers.dataSources) {
-                        getLayer().data.dataSources.add(src);
-                    }
-                    // FIXME: this is necessary because there are  dialogs listening
-                    // for DataChangeEvents which manipulate Swing components on this
-                    // thread.
-                    //
-                    SwingUtilities.invokeLater(
-                            new Runnable() {
-                                public void run() {
-                                    getLayer().fireDataChange();
-                                }
-                            }
-                    );
-
-                    if (visitor.getConflicts().isEmpty())
-                        return;
-                    getLayer().getConflicts().add(visitor.getConflicts());
-                    OptionPaneUtil.showMessageDialog(
-                            Main.parent,
-                            tr("There were {0} conflicts during import.",
-                                    visitor.getConflicts().size()),
-                                    tr("Warning"),
-                                    JOptionPane.WARNING_MESSAGE
-                    );
-                }
-            } catch(Exception e) {
-                if (cancelled) {
-                    System.out.println(tr("Warning: ignoring exception because task is cancelled. Exception: {0}", e.toString()));
-                    return;
-                }
-                lastException = e;
             }
         }
     }

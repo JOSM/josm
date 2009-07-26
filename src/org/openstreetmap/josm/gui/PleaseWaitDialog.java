@@ -46,11 +46,16 @@ public class PleaseWaitDialog extends JDialog {
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {}
             public void componentResized(ComponentEvent ev) {
-               int w = getWidth();
-               if(w > 200)
-                   Main.pref.putInteger("progressdialog.size",w);
+                int w = getWidth();
+                if(w > 200) {
+                    Main.pref.putInteger("progressdialog.size",w);
+                }
             }
         });
+        // make sure this dialog is always on top of the main JOSM window
+        // and all the other windows (relation editors, detached dialogs, etc.)
+        //
+        setAlwaysOnTop(true);
     }
 
     public PleaseWaitDialog(Frame parent) {
@@ -82,5 +87,16 @@ public class PleaseWaitDialog extends JDialog {
         customText.setVisible(true);
         customText.setText(text);
         setSize(Main.pref.getInteger("progressdialog.size", 600), 120);
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible) {
+            // make sure this dialog is always on top of the main JOSM window
+            // and all the other windows (relation editors, detached dialogs, etc.)
+            //
+            toFront();
+        }
     }
 }

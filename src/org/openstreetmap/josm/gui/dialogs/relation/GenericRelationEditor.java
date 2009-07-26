@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -32,7 +31,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,6 +51,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -491,20 +490,26 @@ public class GenericRelationEditor extends RelationEditor {
         memberTableModel.getSelectionModel().addListSelectionListener(moveDownAction);
         pnl.add(new JButton(moveDownAction), gc);
 
-        // ------
+        // -- edit action
         gc.gridy = 2;
+        EditAction editAction = new EditAction();
+        memberTableModel.getSelectionModel().addListSelectionListener(editAction);
+        pnl.add(new JButton(editAction),gc);
+
+        // ------
+        gc.gridy = 3;
         RemoveAction removeSelectedAction = new RemoveAction();
         memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
         pnl.add(new JButton(removeSelectedAction), gc);
 
         // ------
-        gc.gridy = 3;
+        gc.gridy = 4;
         SortAction sortAction = new SortAction();
         pnl.add(new JButton(sortAction), gc);
 
         // ------
         // just grab the remaining space
-        gc.gridy = 4;
+        gc.gridy = 5;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         pnl.add(new JPanel(), gc);
@@ -577,7 +582,11 @@ public class GenericRelationEditor extends RelationEditor {
      */
     protected JPanel buildButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        // --- download members
         buttonPanel.add(new SideButton(new DownlaodAction()));
+
+        // --- role editing
         buttonPanel.add(new JLabel(tr("Role:")));
         tfRole = new JTextField(10);
         tfRole.addFocusListener(new FocusAdapter() {
@@ -595,10 +604,8 @@ public class GenericRelationEditor extends RelationEditor {
         // --- copy relation action
         buttonPanel.add(new SideButton(new DuplicateRelationAction()));
 
-        // -- edit action
-        EditAction editAction = new EditAction();
-        memberTableModel.getSelectionModel().addListSelectionListener(editAction);
-        buttonPanel.add(new SideButton(editAction));
+        // --- delete relation action
+        buttonPanel.add(new SideButton(new DeleteCurrentRelationAction()));
         return buttonPanel;
     }
 
@@ -865,7 +872,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     class RemoveSelectedAction extends AbstractAction implements TableModelListener {
         public RemoveSelectedAction() {
-            putValue(SHORT_DESCRIPTION, tr("Remove all currently selected objects from relation"));
+            putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected primitives"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "removeselected"));
             // putValue(NAME, tr("Remove Selected"));
             Shortcut.registerShortcut("relationeditor:removeselected", tr("Relation Editor: Remove Selected"),
@@ -950,7 +957,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     class RemoveAction extends AbstractAction implements ListSelectionListener {
         public RemoveAction() {
-            putValue(SHORT_DESCRIPTION, tr("Remove the member in the current table row from this relation"));
+            putValue(SHORT_DESCRIPTION, tr("Remove the currently selected members from this relation"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "remove"));
             // putValue(NAME, tr("Remove"));
             Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"), KeyEvent.VK_J,
@@ -964,6 +971,33 @@ public class GenericRelationEditor extends RelationEditor {
 
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(memberTableModel.canRemove(memberTable.getSelectedRows()));
+        }
+    }
+
+    class DeleteCurrentRelationAction extends AbstractAction {
+        public DeleteCurrentRelationAction() {
+            putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            putValue(NAME, tr("Delete"));
+            updateEnabledState();
+        }
+
+        public void run() {
+            Relation toDelete = getRelation();
+            if (toDelete == null)
+                return;
+            org.openstreetmap.josm.actions.mapmode.DeleteAction.deleteRelation(
+                    getLayer(),
+                    toDelete
+            );
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            run();
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(getRelation() != null);
         }
     }
 
@@ -1210,7 +1244,7 @@ public class GenericRelationEditor extends RelationEditor {
         public EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
-            putValue(NAME, tr("Edit"));
+            //putValue(NAME, tr("Edit"));
             refreshEnabled();
         }
 

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.awt.geom.Area;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -421,5 +422,29 @@ public class DataSet implements Cloneable {
         }
     }
 
-
+    /**
+     * Replies a list of parent relations which refer to the relation
+     * <code>child</code>. Replies an empty list if child is null.
+     * 
+     * @param child the child relation
+     * @return a list of parent relations which refer to the relation
+     * <code>child</code>
+     */
+    public List<Relation> getParentRelations(Relation child) {
+        ArrayList<Relation> parents = new ArrayList<Relation>();
+        if (child == null)
+            return parents;
+        for (Relation parent : relations) {
+            if (parent == child) {
+                continue;
+            }
+            for (RelationMember member: parent.members) {
+                if (member.refersTo(child)) {
+                    parents.add(parent);
+                    break;
+                }
+            }
+        }
+        return parents;
+    }
 }

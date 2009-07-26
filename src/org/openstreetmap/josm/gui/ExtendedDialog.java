@@ -64,6 +64,7 @@ public class ExtendedDialog extends JDialog {
 
         bTexts = buttonTexts;
         setupDialog(lbl, buttonIcons);
+        setAlwaysOnTop(true);
         setVisible(true);
     }
 
@@ -193,5 +194,13 @@ public class ExtendedDialog extends JDialog {
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
         .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
         rootPane.getActionMap().put("ESCAPE", actionListener);
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible) {
+            toFront();
+        }
     }
 }

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractListModel;
 
@@ -54,7 +55,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
         return false;
     }
 
-    public void populate(ArrayList<Relation> parents) {
+    public void populate(List<Relation> parents) {
         referrers.clear();
         if (parents != null) {
             for (Relation relation: parents) {

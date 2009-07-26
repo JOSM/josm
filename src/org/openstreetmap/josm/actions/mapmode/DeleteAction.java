@@ -12,9 +12,12 @@ import java.util.Collections;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -78,9 +81,9 @@ public class DeleteAction extends MapMode {
 
         Command c;
         if (ctrl) {
-            c = DeleteCommand.deleteWithReferences(getCurrentDataSet().getSelected());
+            c = DeleteCommand.deleteWithReferences(getEditLayer(),getCurrentDataSet().getSelected());
         } else {
-            c = DeleteCommand.delete(getCurrentDataSet().getSelected(), !alt);
+            c = DeleteCommand.delete(getEditLayer(),getCurrentDataSet().getSelected(), !alt);
         }
         if (c != null) {
             Main.main.undoRedo.add(c);
@@ -109,17 +112,17 @@ public class DeleteAction extends MapMode {
             WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
             if (ws != null) {
                 if (shift) {
-                    c = DeleteCommand.deleteWaySegment(ws);
+                    c = DeleteCommand.deleteWaySegment(getEditLayer(),ws);
                 } else if (ctrl) {
-                    c = DeleteCommand.deleteWithReferences(Collections.singleton((OsmPrimitive)ws.way));
+                    c = DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton((OsmPrimitive)ws.way));
                 } else {
-                    c = DeleteCommand.delete(Collections.singleton((OsmPrimitive)ws.way), !alt);
+                    c = DeleteCommand.delete(getEditLayer(),Collections.singleton((OsmPrimitive)ws.way), !alt);
                 }
             }
         } else if (ctrl) {
-            c = DeleteCommand.deleteWithReferences(Collections.singleton(sel));
+            c = DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(sel));
         } else {
-            c = DeleteCommand.delete(Collections.singleton(sel), !alt);
+            c = DeleteCommand.delete(getEditLayer(),Collections.singleton(sel), !alt);
         }
         if (c != null) {
             Main.main.undoRedo.add(c);
@@ -140,5 +143,31 @@ public class DeleteAction extends MapMode {
     @Override
     protected void updateEnabledState() {
         setEnabled(Main.map != null && Main.map.mapView != null && Main.map.mapView.isActiveLayerDrawable());
+    }
+
+    /**
+     * Deletes the relation in the context of the given layer. Also notifies
+     * {@see RelationDialogManager} and {@see OsmDataLayer#fireDataChange()} events.
+     * 
+     * @param layer the layer in whose context the relation is deleted. Must not be null.
+     * @param toDelete  the relation to be deleted. Must  not be null.
+     * @exception IllegalArgumentException thrown if layer is null
+     * @exception IllegalArgumentException thrown if toDelete is nul
+     */
+    public static void deleteRelation(OsmDataLayer layer, Relation toDelete) {
+        if (layer == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+        if (toDelete == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "toDelete"));
+        if (toDelete == null)
+            return;
+        Command cmd = DeleteCommand.delete(layer, Collections.singleton(toDelete));
+        if (cmd != null) {
+            // cmd can be null if the user cancels dialogs DialogCommand displays
+            //
+            Main.main.undoRedo.add(cmd);
+            RelationDialogManager.getRelationDialogManager().close(layer, toDelete);
+            layer.fireDataChange();
+        }
     }
 }

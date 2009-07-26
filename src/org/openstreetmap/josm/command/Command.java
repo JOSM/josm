@@ -52,6 +52,16 @@ abstract public class Command {
     public Command() {
         this.layer = Main.map.mapView.getEditLayer();
     }
+
+    /**
+     * Creates a new command in the context of a specific data layer
+     * 
+     * @param layer the data layer
+     */
+    public Command(OsmDataLayer layer) {
+        this.layer = layer;
+    }
+
     /**
      * Executes the command on the dataset. This implementation will remember all
      * primitives returned by fillModifiedData for restoring them on undo.

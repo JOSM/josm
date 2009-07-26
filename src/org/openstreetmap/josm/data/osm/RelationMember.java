@@ -35,6 +35,18 @@ public class RelationMember {
         return '"' + role + "\"=" + member;
     }
 
+    /**
+     * Replies true, if this relation member refers to the primitive
+     * 
+     * @param primitive  the primitive to check
+     * @return true, if this relation member refers to the primitive
+     */
+    public boolean refersTo(OsmPrimitive primitive) {
+        if (primitive == null) return false;
+        if (member == null) return false;
+        return member == primitive;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

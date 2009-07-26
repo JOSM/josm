@@ -121,6 +121,20 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     }
 
     /**
+     * Closes the editor open for a specific layer and a specific relation.
+     * 
+     * @param layer  the layer
+     * @param relation the relation
+     */
+    public void close(OsmDataLayer layer, Relation relation) {
+        DialogContext context = new DialogContext(layer, relation);
+        RelationEditor editor = openDialogs.get(context);
+        if (editor != null) {
+            editor.setVisible(false);
+        }
+    }
+
+    /**
      * Replies true if there is an open relation editor for the relation managed
      * by the given layer. Replies false if relation is null.
      * 
