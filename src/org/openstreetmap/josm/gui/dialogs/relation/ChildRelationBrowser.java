@@ -9,6 +9,7 @@ import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -345,43 +346,94 @@ public class ChildRelationBrowser extends JPanel {
             }
         }
 
+        /**
+         * warns the user if a relation couldn't be loaded because it was deleted on
+         * the server (the server replied a HTTP code 410)
+         * 
+         * @param r the relation
+         */
+        protected void warnBecauseOfDeletedRelation(Relation r) {
+            PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
+
+            String message = tr("<html>The child relation<br>"
+                    + "{0}<br>"
+                    + "is deleted on the server. It can't be loaded",
+                    nameFormatter.getName(r)
+            );
+
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    message,
+                    tr("Relation is deleted"),
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+
+        /**
+         * Remembers the child relations to download
+         * 
+         * @param parent the parent relation
+         */
+        protected void rememberChildRelationsToDownload(Relation parent) {
+            downloadedRelationIds.add(parent.id);
+            for (RelationMember member: parent.members) {
+                if (member.member instanceof Relation) {
+                    Relation child = (Relation)member.member;
+                    if (!downloadedRelationIds.contains(child)) {
+                        relationsToDownload.push(child);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Merges the primitives in <code>ds</code> to the dataset of the
+         * edit layer
+         * 
+         * @param ds the data set
+         */
+        protected void mergeDataSet(DataSet ds) {
+            if (ds != null) {
+                final MergeVisitor visitor = new MergeVisitor(getLayer().data, ds);
+                visitor.merge();
+                // FIXME: this is necessary because there are dialogs listening
+                // for DataChangeEvents which manipulate Swing components on this
+                // thread.
+                //
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        getLayer().fireDataChange();
+                    }
+                });
+                if (!visitor.getConflicts().isEmpty()) {
+                    getLayer().getConflicts().add(visitor.getConflicts());
+                    conflictsCount +=  visitor.getConflicts().size();
+                }
+            }
+        }
+
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
                 while(! relationsToDownload.isEmpty() && !cancelled) {
                     Relation r = relationsToDownload.pop();
-                    downloadedRelationIds.add(r.id);
-                    for (RelationMember member: r.members) {
-                        if (member.member instanceof Relation) {
-                            Relation child = (Relation)member.member;
-                            if (!downloadedRelationIds.contains(child)) {
-                                relationsToDownload.push(child);
-                            }
-                        }
-                    }
+                    rememberChildRelationsToDownload(r);
                     progressMonitor.setCustomText(tr("Downloading relation {0}", nameFormatter.getName(r)));
                     OsmServerObjectReader reader = new OsmServerObjectReader(r.id, OsmPrimitiveType.RELATION,
                             true);
-                    DataSet dataSet = reader.parseOsm(progressMonitor
-                            .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    if (dataSet != null) {
-                        final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
-                        visitor.merge();
-                        // FIXME: this is necessary because there are dialogs listening
-                        // for DataChangeEvents which manipulate Swing components on this
-                        // thread.
-                        //
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                getLayer().fireDataChange();
-                            }
-                        });
-                        if (!visitor.getConflicts().isEmpty()) {
-                            getLayer().getConflicts().add(visitor.getConflicts());
-                            conflictsCount +=  visitor.getConflicts().size();
+                    DataSet dataSet = null;
+                    try {
+                        dataSet = reader.parseOsm(progressMonitor
+                                .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                    } catch(OsmApiException e) {
+                        if (e.getResponseCode() == HttpURLConnection.HTTP_GONE) {
+                            warnBecauseOfDeletedRelation(r);
+                            continue;
                         }
+                        throw e;
                     }
+                    mergeDataSet(dataSet);
                     refreshView(r);
                 }
             } catch (Exception e) {
