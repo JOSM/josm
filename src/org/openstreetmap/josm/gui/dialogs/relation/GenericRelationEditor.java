@@ -752,7 +752,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         protected void refreshEnabled() {
-            setEnabled(selectionTableModel.getRowCount() > 0);
+            setEnabled(selectionTableModel.getRowCount() > 0 && memberTableModel.getRowCount() > 0);
         }
 
         public void actionPerformed(ActionEvent e) {
