@@ -124,7 +124,14 @@ public class AutoScaleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.map != null);
+        if ("selection".equals(mode)) {
+            setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
+        } else {
+            setEnabled(
+                    Main.map != null
+                    && Main.map.mapView != null
+                    && Main.map.mapView.getAllLayers().size() > 0
+            );
+        }
     }
-
 }

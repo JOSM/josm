@@ -13,12 +13,20 @@ public final class ZoomOutAction extends JosmAction {
 
     public ZoomOutAction() {
         super(tr("Zoom Out"), "dialogs/zoomout", tr("Zoom Out"),
-        Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom Out")), KeyEvent.VK_MINUS, Shortcut.GROUP_DIRECT), true);
-        setEnabled(true);
+                Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom Out")), KeyEvent.VK_MINUS, Shortcut.GROUP_DIRECT), true);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (Main.map == null) return;
         Main.map.mapView.zoomToFactor(1/0.9);
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(
+                Main.map != null
+                && Main.map.mapView != null
+                && Main.map.mapView.getAllLayers().size() > 0
+        );
     }
 }

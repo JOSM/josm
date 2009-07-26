@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class ZoomInAction extends JosmAction {
@@ -14,11 +15,20 @@ public final class ZoomInAction extends JosmAction {
     public ZoomInAction() {
         super(tr("Zoom In"), "dialogs/zoomin", tr("Zoom In"),
                 Shortcut.registerShortcut("view:zoomin", tr("View: {0}", tr("Zoom In")), KeyEvent.VK_PLUS, Shortcut.GROUP_DIRECT), true);
-        setEnabled(true);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (Main.map == null) return;
         Main.map.mapView.zoomToFactor(0.9);
     }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(
+                Main.map != null
+                && Main.map.mapView != null
+                && Main.map.mapView.getAllLayers().size() > 0
+        );
+    }
+
 }
