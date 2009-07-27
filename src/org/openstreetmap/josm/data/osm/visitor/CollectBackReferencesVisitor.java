@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
@@ -46,7 +46,7 @@ public class CollectBackReferencesVisitor extends AbstractVisitor {
     public void visit(Node n) {
         for (Way w : ds.ways) {
             if (w.deleted || w.incomplete) continue;
-            for (Node n2 : w.nodes) {
+            for (Node n2 : w.getNodes()) {
                 if (n == n2) {
                     data.add(w);
                     if (indirectRefs) {

@@ -143,11 +143,11 @@ public class CombineWayAction extends JosmAction {
 
         List<Node> nodeList = null;
         Object firstTry = actuallyCombineWays(selectedWays, false);
-        if (firstTry instanceof List) {
+        if (firstTry instanceof List<?>) {
             nodeList = (List<Node>) firstTry;
         } else {
             Object secondTry = actuallyCombineWays(selectedWays, true);
-            if (secondTry instanceof List) {
+            if (secondTry instanceof List<?>) {
                 int option = new ExtendedDialog(Main.parent,
                         tr("Change directions?"),
                         tr("The ways can not be combined in their current directions.  "
@@ -181,8 +181,7 @@ public class CombineWayAction extends JosmAction {
         }
         Way newWay = new Way(modifyWay);
 
-        newWay.nodes.clear();
-        newWay.nodes.addAll(nodeList);
+        newWay.setNodes(nodeList);
 
         // display conflict dialog
         Map<String, JComboBox> components = new HashMap<String, JComboBox>();

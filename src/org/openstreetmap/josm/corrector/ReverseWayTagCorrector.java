@@ -75,7 +75,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
         ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
         primitives.add(way);
-        primitives.addAll(way.nodes);
+        primitives.addAll(way.getNodes());
 
         for (OsmPrimitive primitive : primitives) {
             tagCorrectionsMap.put(primitive, new ArrayList<TagCorrection>());

@@ -53,8 +53,8 @@ public final class DistributeAction extends JosmAction {
         if ((nodes.size() == 0) && (sel.size() == 1)) {
             for (OsmPrimitive osm : sel)
                 if (osm instanceof Way) {
-                    nodes.addAll(((Way)osm).nodes);
-                    itnodes.addAll(((Way)osm).nodes);
+                    nodes.addAll(((Way)osm).getNodes());
+                    itnodes.addAll(((Way)osm).getNodes());
                 }
         }
 

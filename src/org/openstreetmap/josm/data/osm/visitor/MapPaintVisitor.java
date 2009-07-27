@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -161,7 +162,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
      * @param w The way to draw.
      */
     public void visit(Way w) {
-        if(w.nodes.size() < 2)
+        if(w.getNodesCount() < 2)
         {
             w.mappaintVisibleCode = viewid;
             return;
@@ -173,7 +174,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         double miny = 10000;
         double maxy = -10000;
 
-        for (Node n : w.nodes)
+        for (Node n : w.getNodes())
         {
             if(n.getEastNorth().east() > maxx) maxx = n.getEastNorth().east();
             if(n.getEastNorth().north() > maxy) maxy = n.getEastNorth().north();
@@ -292,7 +293,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(!s.over)
                 {
                     lastN = null;
-                    for(Node n : w.nodes)
+                    for(Node n : w.getNodes())
                     {
                         if(lastN != null)
                         {
@@ -307,7 +308,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         /* draw the way */
         lastN = null;
-        Iterator<Node> it = w.nodes.iterator();
+        Iterator<Node> it = w.getNodes().iterator();
         while (it.hasNext())
         {
             Node n = it.next();
@@ -325,7 +326,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(s.over)
                 {
                     lastN = null;
-                    for(Node n : w.nodes)
+                    for(Node n : w.getNodes())
                     {
                         if(lastN != null)
                         {
@@ -364,7 +365,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             Way w = null;
             Boolean selected = false;
-            ArrayList<Node> n = null;
+            List<Node> n = null;
             Boolean joined = true;
             while(joined && left != 0)
             {
@@ -379,23 +380,23 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         else
                         {
                             int mode = 0;
-                            int cl = c.nodes.size()-1;
+                            int cl = c.getNodesCount()-1;
                             int nl;
                             if(n == null)
                             {
-                                nl = w.nodes.size()-1;
-                                if(w.nodes.get(nl) == c.nodes.get(0)) mode = 21;
-                                else if(w.nodes.get(nl) == c.nodes.get(cl)) mode = 22;
-                                else if(w.nodes.get(0) == c.nodes.get(0)) mode = 11;
-                                else if(w.nodes.get(0) == c.nodes.get(cl)) mode = 12;
+                                nl = w.getNodesCount()-1;
+                                if(w.getNode(nl) == c.getNode(0)) mode = 21;
+                                else if(w.getNode(nl) == c.getNode(cl)) mode = 22;
+                                else if(w.getNode(0) == c.getNode(0)) mode = 11;
+                                else if(w.getNode(0) == c.getNode(cl)) mode = 12;
                             }
                             else
                             {
                                 nl = n.size()-1;
-                                if(n.get(nl) == c.nodes.get(0)) mode = 21;
-                                else if(n.get(0) == c.nodes.get(cl)) mode = 12;
-                                else if(n.get(0) == c.nodes.get(0)) mode = 11;
-                                else if(n.get(nl) == c.nodes.get(cl)) mode = 22;
+                                if(n.get(nl) == c.getNode(0)) mode = 21;
+                                else if(n.get(0) == c.getNode(cl)) mode = 12;
+                                else if(n.get(0) == c.getNode(0)) mode = 11;
+                                else if(n.get(nl) == c.getNode(cl)) mode = 22;
                             }
                             if(mode != 0)
                             {
@@ -403,20 +404,20 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                                 joined = true;
                                 if(c.selected) selected = true;
                                 --left;
-                                if(n == null) n = new ArrayList<Node>(w.nodes);
+                                if(n == null) n = w.getNodes();
                                 n.remove((mode == 21 || mode == 22) ? nl : 0);
                                 if(mode == 21)
-                                    n.addAll(c.nodes);
+                                    n.addAll(c.getNodes());
                                 else if(mode == 12)
-                                    n.addAll(0, c.nodes);
+                                    n.addAll(0, c.getNodes());
                                 else if(mode == 22)
                                 {
-                                    for(Node node : c.nodes)
+                                    for(Node node : c.getNodes())
                                         n.add(nl, node);
                                 }
                                 else /* mode == 11 */
                                 {
-                                    for(Node node : c.nodes)
+                                    for(Node node : c.getNodes())
                                         n.add(0, node);
                                 }
                             }
@@ -550,7 +551,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(m.member instanceof Way)
                 {
                     Way w = (Way) m.member;
-                    if(w.nodes.size() < 2)
+                    if(w.getNodesCount() < 2)
                     {
                         r.putError(tr("Way ''{0}'' with less than two points.",
                         w.getName()), true);
@@ -639,10 +640,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Node fromNode = null;
         if(fromWay.firstNode() == via) {
             //System.out.println("From way heading away from via");
-            fromNode = fromWay.nodes.get(1);
+            fromNode = fromWay.getNode(1);
         } else {
             //System.out.println("From way heading towards via");
-            fromNode = fromWay.nodes.get(fromWay.nodes.size()-2);
+            fromNode = fromWay.getNode(fromWay.nodes.size()-2);
         }
 
         Point pFrom = nc.getPoint(fromNode);
@@ -795,7 +796,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(m.member instanceof Way)
                 {
                     Way w = (Way) m.member;
-                    if(w.nodes.size() < 2)
+                    if(w.getNodesCount() < 2)
                     {
                         r.putError(tr("Way ''{0}'' with less than two points.",
                         w.getName()), true);
@@ -880,7 +881,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     PolyData(Way w)
                     {
                         way = w;
-                        for (Node n : w.nodes)
+                        for (Node n : w.getNodes())
                         {
                             p = nc.getPoint(n);
                             poly.addPoint(p.x,p.y);
@@ -1058,7 +1059,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     {
         Polygon polygon = new Polygon();
 
-        for (Node n : w.nodes)
+        for (Node n : w.getNodes())
         {
             Point p = nc.getPoint(n);
             polygon.addPoint(p.x,p.y);

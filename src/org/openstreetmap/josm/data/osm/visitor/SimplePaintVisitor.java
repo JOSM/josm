@@ -19,10 +19,10 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
@@ -268,7 +268,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     }
 
     public void visitVirtual(Way w) {
-        Iterator<Node> it = w.nodes.iterator();
+        Iterator<Node> it = w.getNodes().iterator();
         if (it.hasNext()) {
             Point lastP = nc.getPoint(it.next());
             while(it.hasNext())
@@ -293,7 +293,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
      * @param w The way to draw.
      */
     public void visit(Way w) {
-        if (w.incomplete || w.nodes.size() < 2)
+        if (w.incomplete || w.getNodesCount() < 2)
             return;
 
         /* show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
@@ -360,7 +360,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
                 GeneralPath path = new GeneralPath();
 
                 boolean first = true;
-                for (Node n : ((Way) m.member).nodes) {
+                for (Node n : ((Way) m.member).getNodes()) {
                     if (n.incomplete || n.deleted) continue;
                     Point p = nc.getPoint(n);
                     if (first) {

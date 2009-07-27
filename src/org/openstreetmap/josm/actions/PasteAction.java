@@ -80,11 +80,10 @@ public final class PasteAction extends JosmAction {
             wnew.id = 0;
             /* make sure we reference the new nodes corresponding to the old ones */
             List<Node> nodes = new ArrayList<Node>();
-            for (Node n : w.nodes) {
+            for (Node n : w.getNodes()) {
                 nodes.add((Node)map.get(n));
             }
-            wnew.nodes.clear();
-            wnew.nodes.addAll(nodes);
+            wnew.setNodes(nodes);
             map.put(w, wnew);
         }
         for (Relation r : pasteBuffer.relations) {

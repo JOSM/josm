@@ -80,15 +80,14 @@ public final class CopyAction extends JosmAction {
                     return;
                 Way wnew = new Way();
                 wnew.cloneFrom(w);
-                wnew.nodes.clear();
                 List<Node> nodes = new ArrayList<Node>();
-                for (Node n : w.nodes) {
+                for (Node n : w.getNodes()) {
                     if (! map.containsKey(n)) {
                         n.visit(this);
                     }
                     nodes.add((Node)map.get(n));
                 }
-                wnew.nodes.addAll(nodes);
+                wnew.setNodes(nodes);
                 pasteBuffer.addPrimitive(wnew);
             }
             public void visit(Relation e) {

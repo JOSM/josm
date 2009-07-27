@@ -216,7 +216,7 @@ public class MergeNodesAction extends JosmAction {
         Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>();
 
         for (Way w : getCurrentDataSet().ways) {
-            if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+            if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                 continue;
             }
             boolean modify = false;
@@ -224,7 +224,7 @@ public class MergeNodesAction extends JosmAction {
                 if (sn == dest) {
                     continue;
                 }
-                if (w.nodes.contains(sn)) {
+                if (w.getNodes().contains(sn)) {
                     modify = true;
                 }
             }
@@ -234,8 +234,7 @@ public class MergeNodesAction extends JosmAction {
             // OK - this way contains one or more nodes to change
             ArrayList<Node> nn = new ArrayList<Node>();
             Node lastNode = null;
-            for (int i = 0; i < w.nodes.size(); i++) {
-                Node pushNode = w.nodes.get(i);
+            for (Node pushNode: w.getNodes()) {
                 if (allNodes.contains(pushNode)) {
                     pushNode = dest;
                 }
@@ -261,8 +260,7 @@ public class MergeNodesAction extends JosmAction {
                 del.add(w);
             } else {
                 Way newWay = new Way(w);
-                newWay.nodes.clear();
-                newWay.nodes.addAll(nn);
+                newWay.setNodes(nn);
                 cmds.add(new ChangeCommand(w, newWay));
             }
         }

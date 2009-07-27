@@ -98,7 +98,7 @@ public final class CreateCircleAction extends JosmAction {
             for (OsmPrimitive osm : sel)
                 if (osm instanceof Way) {
                     existingWay = ((Way)osm);
-                    for (Node n : ((Way)osm).nodes)
+                    for (Node n : ((Way)osm).getNodes())
                     {
                         if(!nodes.contains(n)) {
                             nodes.add(n);

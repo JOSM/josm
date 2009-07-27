@@ -64,7 +64,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
     /**
      * Replies true if we are currently running on OSX
-     * 
+     *
      * @return true if we are currently running on OSX
      */
     public static boolean isPlatformOsx() {
@@ -305,8 +305,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 if(Main.pref.getInteger("mappaint.node.virtual-size", 8) > 0)
                 {
                     Way w = (Way)osm;
-                    Point p1 = c.getPoint(w.nodes.get(nearestWS.lowerIndex));
-                    Point p2 = c.getPoint(w.nodes.get(nearestWS.lowerIndex+1));
+                    Point p1 = c.getPoint(w.getNode(nearestWS.lowerIndex));
+                    Point p2 = c.getPoint(w.getNode(nearestWS.lowerIndex+1));
                     if(SimplePaintVisitor.isLargeSegment(p1, p2, Main.pref.getInteger("mappaint.node.virtual-space", 70)))
                     {
                         Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
@@ -316,12 +316,12 @@ public class SelectAction extends MapMode implements SelectionEnded {
                             // virtual ways list. Otherwise ways that coincidentally have their
                             // virtual node at the same spot will be joined which is likely unwanted
                             if(virtualWayNode != null) {
-                                if(  !w.nodes.get(nearestWS.lowerIndex+1).equals(virtualWayNode)
-                                        && !w.nodes.get(nearestWS.lowerIndex  ).equals(virtualWayNode)) {
+                                if(  !w.getNode(nearestWS.lowerIndex+1).equals(virtualWayNode)
+                                        && !w.getNode(nearestWS.lowerIndex).equals(virtualWayNode)) {
                                     continue;
                                 }
                             } else {
-                                virtualWayNode = w.nodes.get(nearestWS.lowerIndex+1);
+                                virtualWayNode = w.getNode(nearestWS.lowerIndex+1);
                             }
 
                             virtualWays.add(nearestWS);
@@ -458,7 +458,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     } else if(osm instanceof Way)
                     {
                         s.add(osm);
-                        s.addAll(((Way)osm).nodes);
+                        s.addAll(((Way)osm).getNodes());
                     }
                     if(s.size() > max)
                     {

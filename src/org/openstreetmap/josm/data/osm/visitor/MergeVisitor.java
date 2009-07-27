@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -50,9 +51,9 @@ public class MergeVisitor extends AbstractVisitor {
 
     /**
      * constructor
-     * 
+     *
      * The visitor will merge <code>theirDataSet</code> onto <code>myDataSet</code>
-     * 
+     *
      * @param myDataSet  dataset with my primitives
      * @param theirDataSet dataset with their primitives.
      */
@@ -75,15 +76,15 @@ public class MergeVisitor extends AbstractVisitor {
 
     /**
      * Merges a primitive <code>other</code> of type <P> onto my primitives.
-     * 
+     *
      * If other.id != 0 it tries to merge it with an corresponding primitive from
      * my dataset with the same id. If this is not possible a conflict is remembered
      * in {@see #conflicts}.
-     * 
+     *
      * If other.id == 0 it tries to find a primitive in my dataset with id == 0 which
      * is semantically equal. If it finds one it merges its technical attributes onto
      * my primitive.
-     * 
+     *
      * @param <P>  the type of the other primitive
      * @param other  the other primitive
      * @param myPrimitives the collection of my relevant primitives (i.e. only my
@@ -170,8 +171,8 @@ public class MergeVisitor extends AbstractVisitor {
 
     private void fixWay(Way w) {
         boolean replacedSomething = false;
-        LinkedList<Node> newNodes = new LinkedList<Node>();
-        for (Node myNode : w.nodes) {
+        List<Node> newNodes = new LinkedList<Node>();
+        for (Node myNode : w.getNodes()) {
             Node mergedNode = (Node) merged.get(myNode);
             if (mergedNode != null) {
                 if (!mergedNode.deleted) {
@@ -183,8 +184,7 @@ public class MergeVisitor extends AbstractVisitor {
             }
         }
         if (replacedSomething) {
-            w.nodes.clear();
-            w.nodes.addAll(newNodes);
+            w.setNodes(newNodes);
         }
     }
 
@@ -309,7 +309,7 @@ public class MergeVisitor extends AbstractVisitor {
     /**
      * Runs the merge operation. Successfully merged {@see OsmPrimitive}s are in
      * {@see #getMyDataSet()}.
-     * 
+     *
      * See {@see #getConflicts()} for a map of conflicts after the merge operation.
      */
     public void merge() {
@@ -321,7 +321,7 @@ public class MergeVisitor extends AbstractVisitor {
 
     /**
      * replies my dataset
-     * 
+     *
      * @return
      */
     public DataSet getMyDataSet() {
@@ -331,7 +331,7 @@ public class MergeVisitor extends AbstractVisitor {
 
     /**
      * replies the map of conflicts
-     * 
+     *
      * @return the map of conflicts
      */
     public ConflictCollection getConflicts() {

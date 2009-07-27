@@ -103,11 +103,11 @@ public class ApiPreconditionChecker implements UploadHook {
             }
 
             if (osmPrimitive instanceof Way &&
-                    ((Way)osmPrimitive).nodes.size() > maxNodes) {
+                    ((Way)osmPrimitive).getNodesCount() > maxNodes) {
                 OptionPaneUtil.showMessageDialog(
                         Main.parent,
                         tr("{0} nodes in way {1} exceed the max. allowed number of nodes {2}",
-                                ((Way)osmPrimitive).nodes.size(),
+                                ((Way)osmPrimitive).getNodesCount(),
                                 Long.toString(osmPrimitive.id),
                                 maxNodes
                         ),

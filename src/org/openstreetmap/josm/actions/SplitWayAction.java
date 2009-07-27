@@ -105,13 +105,13 @@ public class SplitWayAction extends JosmAction {
                     if (w.deleted || w.incomplete) {
                         continue;
                     }
-                    int last = w.nodes.size()-1;
+                    int last = w.getNodesCount()-1;
                     if(last <= 0) {
                         continue; // zero or one node ways
                     }
-                    Boolean circular = w.nodes.get(0).equals(w.nodes.get(last));
+                    boolean circular = w.isClosed();
                     int i = 0;
-                    for (Node wn : w.nodes) {
+                    for (Node wn : w.getNodes()) {
                         if ((circular || (i > 0 && i < last)) && n.equals(wn)) {
                             Integer old = wayOccurenceCounter.get(w);
                             wayOccurenceCounter.put(w, (old == null) ? 1 : old+1);
@@ -158,7 +158,7 @@ public class SplitWayAction extends JosmAction {
         } else if (selectedWay != null && selectedNodes != null) {
 
             HashSet<Node> nds = new HashSet<Node>(selectedNodes);
-            for (Node n : selectedWay.nodes) {
+            for (Node n : selectedWay.getNodes()) {
                 nds.remove(n);
             }
             if (!nds.isEmpty()) {
@@ -210,7 +210,7 @@ public class SplitWayAction extends JosmAction {
         List<Node> currentWayChunk = new ArrayList<Node>();
         wayChunks.add(currentWayChunk);
 
-        Iterator<Node> it = selectedWay.nodes.iterator();
+        Iterator<Node> it = selectedWay.getNodes().iterator();
         while (it.hasNext()) {
             Node currentNode = it.next();
             boolean atEndOfWay = currentWayChunk.isEmpty() || !it.hasNext();
@@ -272,8 +272,7 @@ public class SplitWayAction extends JosmAction {
 
         // First, change the original way
         Way changedWay = new Way(selectedWay);
-        changedWay.nodes.clear();
-        changedWay.nodes.addAll(chunkIt.next());
+        changedWay.setNodes(chunkIt.next());
         commandList.add(new ChangeCommand(selectedWay, changedWay));
         newSelection.add(selectedWay);
 

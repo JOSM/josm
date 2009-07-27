@@ -374,7 +374,7 @@ public class SearchCompiler {
         private int count;
         public NodeCount(int count) {this.count = count;}
         @Override public boolean match(OsmPrimitive osm) {
-            return osm instanceof Way && ((Way) osm).nodes.size() == count;
+            return osm instanceof Way && ((Way) osm).getNodesCount() == count;
         }
         @Override public String toString() {return "nodes="+count;}
     }
@@ -393,7 +393,7 @@ public class SearchCompiler {
         }
         @Override public boolean match(OsmPrimitive osm) {
             if(!(osm instanceof Way)) return false;
-            int size = ((Way)osm).nodes.size();
+            int size = ((Way)osm).getNodesCount();
             return (size >= minCount) && (size <= maxCount);
         }
         @Override public String toString() {return "nodes="+minCount+"-"+maxCount;}
@@ -440,7 +440,7 @@ public class SearchCompiler {
             }
 
             if (osm instanceof Way) {
-                for (Node n : ((Way)osm).nodes) {
+                for (Node n : ((Way)osm).getNodes()) {
                     isParent |= child.match(n);
                 }
             } else if (osm instanceof Relation) {

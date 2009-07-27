@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
 import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
@@ -57,7 +59,9 @@ public final class ReverseWayAction extends JosmAction {
         Collection<Command> c = new LinkedList<Command>();
         for (Way w : sel) {
             Way wnew = new Way(w);
-            Collections.reverse(wnew.nodes);
+            List<Node> nodesCopy = wnew.getNodes();
+            Collections.reverse(nodesCopy);
+            wnew.setNodes(nodesCopy);
             if (Main.pref.getBoolean("tag-correction.reverse-way", true)) {
                 try
                 {

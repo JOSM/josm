@@ -66,10 +66,10 @@ public class UnGlueAction extends JosmAction {
         if (checkSelection(selection)) {
             int count = 0;
             for (Way w : getCurrentDataSet().ways) {
-                if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                     continue;
                 }
-                if (!w.nodes.contains(selectedNode)) {
+                if (!w.getNodes().contains(selectedNode)) {
                     continue;
                 }
                 count++;
@@ -91,10 +91,10 @@ public class UnGlueAction extends JosmAction {
             for (Node n : selectedNodes) {
                 int count = 0;
                 for (Way w : getCurrentDataSet().ways) {
-                    if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                    if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                         continue;
                     }
-                    if (!w.nodes.contains(n)) {
+                    if (!w.getNodes().contains(n)) {
                         continue;
                     }
                     count++;
@@ -190,7 +190,7 @@ public class UnGlueAction extends JosmAction {
             return false;
         boolean isPartOfWay = false;
         for(Way w : getCurrentDataSet().ways) {
-            if(w.nodes.contains(n)) {
+            if(w.getNodes().contains(n)) {
                 isPartOfWay = true;
                 break;
             }
@@ -231,11 +231,11 @@ public class UnGlueAction extends JosmAction {
             if (p instanceof Node) {
                 selectedNode = (Node) p;
                 if (size == 1 || selectedWay != null)
-                    return size == 1 || selectedWay.nodes.contains(selectedNode);
+                    return size == 1 || selectedWay.getNodes().contains(selectedNode);
             } else if (p instanceof Way) {
                 selectedWay = (Way) p;
                 if (size == 2 && selectedNode != null)
-                    return selectedWay.nodes.contains(selectedNode);
+                    return selectedWay.getNodes().contains(selectedNode);
             }
         }
 
@@ -275,14 +275,14 @@ public class UnGlueAction extends JosmAction {
         for (OsmPrimitive p : selection) {
             if (p instanceof Node) {
                 Node n = (Node) p;
-                if (!selectedWay.nodes.contains(n))
+                if (!selectedWay.getNodes().contains(n))
                     return false;
                 selectedNodes.add(n);
             }
         }
 
         if (selectedNodes.size() < 1) {
-            selectedNodes.addAll(selectedWay.nodes);
+            selectedNodes.addAll(selectedWay.getNodes());
         }
 
         return true;
@@ -297,7 +297,7 @@ public class UnGlueAction extends JosmAction {
      */
     private Way modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
         ArrayList<Node> nn = new ArrayList<Node>();
-        for (Node pushNode : w.nodes) {
+        for (Node pushNode : w.getNodes()) {
             if (originalNode == pushNode) {
                 // clone the node for all other ways
                 pushNode = new Node(pushNode);
@@ -308,8 +308,7 @@ public class UnGlueAction extends JosmAction {
             nn.add(pushNode);
         }
         Way newWay = new Way(w);
-        newWay.nodes.clear();
-        newWay.nodes.addAll(nn);
+        newWay.setNodes(nn);
 
         return newWay;
     }
@@ -369,10 +368,10 @@ public class UnGlueAction extends JosmAction {
             boolean firstway = true;
             // modify all ways containing the nodes
             for (Way w : getCurrentDataSet().ways) {
-                if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+                if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                     continue;
                 }
-                if (!w.nodes.contains(selectedNode)) {
+                if (!w.getNodes().contains(selectedNode)) {
                     continue;
                 }
                 if (!firstway) {

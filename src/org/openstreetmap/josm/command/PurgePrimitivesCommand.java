@@ -20,19 +20,18 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Physically removes an {@see OsmPrimitive} from the dataset of the edit
  * layer and disconnects any references from {@see Way}s or {@see Relation}s
  * to this primitive.
- * 
+ *
  * This command is necessary if a local {@see OsmPrimitive} has been deleted on
  * the server by another user and if the local user decides to delete his version
  * too. If he only deleted it "logically" JOSM would try to delete it on the server
  * which would result in an non resolvable conflict.
- * 
+ *
  */
 public class PurgePrimitivesCommand extends ConflictResolveCommand{
 
@@ -43,7 +42,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
      * the child, either because a {@see Way} includes a {@see Node} or
      * because a {@see Relation} refers to any other {@see OsmPrimitive}
      * via a relation member.
-     * 
+     *
      */
     static class OsmParentChildPair {
         private OsmPrimitive parent;
@@ -99,7 +98,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
      * creates a list of all {@see OsmParentChildPair}s for a given {@see OsmPrimitive}
      * as child and given set of parents. We don't use {@see CollectBackReferencesVisitor}
      * because it seems quite inefficient.
-     * 
+     *
      * @param parents  the set of potential parents
      * @param child the child
      * @return the list of {@see OsmParentChildPair}
@@ -109,7 +108,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
         for (OsmPrimitive parent : parents) {
             if (parent instanceof Way) {
                 Way w = (Way)parent;
-                for (OsmPrimitive node : w.nodes) {
+                for (OsmPrimitive node : w.getNodes()) {
                     if (node == child) {
                         OsmParentChildPair pair = new OsmParentChildPair(parent, node);
                         if (! pairs.contains(pair)) {
@@ -169,12 +168,12 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
 
     /**
      * Purges an {@see OsmPrimitive} <code>toPurge</code> from a {@see DataSet}.
-     * 
+     *
      * @param toPurge the primitive to purge
      * @param ds  the dataset to purge from
      * @param hive the hive of {@see OsmPrimitive}s we remember other {@see OsmPrimitive}
      * we have to purge because we purge <code>toPurge</code>.
-     * 
+     *
      */
     protected void purge(OsmPrimitive toPurge, DataSet ds, ArrayList<OsmPrimitive> hive) {
         ArrayList<OsmPrimitive> parents = new ArrayList<OsmPrimitive>();

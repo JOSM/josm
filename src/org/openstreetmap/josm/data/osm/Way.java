@@ -4,14 +4,14 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.util.HashSet;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -25,6 +25,45 @@ public final class Way extends OsmPrimitive {
      * All way nodes in this way
      */
     public final List<Node> nodes = new ArrayList<Node>();
+
+    /**
+     *
+     * You can modify returned list but changes will not be propagated back
+     * to the Way. Use {@link #setNodes(List)} to update this way
+     * @return Nodes composing the way
+     * @since 1862
+     */
+    public List<Node> getNodes() {
+        return new CopyList<Node>(nodes.toArray(new Node[nodes.size()]));
+    }
+
+    /**
+     * @param nodes
+     * @since 1862
+     */
+    public void setNodes(List<Node> nodes) {
+        this.nodes.clear();
+        this.nodes.addAll(nodes);
+    }
+
+    /**
+     *
+     * @return
+     * @since 1862
+     */
+    public int getNodesCount() {
+        return nodes.size();
+    }
+
+    /**
+     *
+     * @param index
+     * @return
+     * @since 1862
+     */
+    public Node getNode(int index) {
+        return nodes.get(index);
+    }
 
     /* mappaint data */
     public boolean isMappaintArea = false;

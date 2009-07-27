@@ -44,7 +44,7 @@ public final class MirrorAction extends JosmAction {
             if (osm instanceof Node) {
                 nodes.add((Node)osm);
             } else if (osm instanceof Way) {
-                nodes.addAll(((Way)osm).nodes);
+                nodes.addAll(((Way)osm).getNodes());
             }
         }
 

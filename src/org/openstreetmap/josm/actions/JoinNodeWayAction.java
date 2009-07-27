@@ -49,8 +49,8 @@ public class JoinNodeWayAction extends JosmAction {
                 insertPoints.put(ws.way, is);
             }
 
-            if (ws.way.nodes.get(ws.lowerIndex) != node
-                    && ws.way.nodes.get(ws.lowerIndex+1) != node) {
+            if (ws.way.getNode(ws.lowerIndex) != node
+                    && ws.way.getNode(ws.lowerIndex+1) != node) {
                 is.add(ws.lowerIndex);
             }
         }
