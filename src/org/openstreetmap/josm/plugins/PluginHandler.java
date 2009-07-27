@@ -33,6 +33,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.tools.GBC;
@@ -50,20 +51,27 @@ public class PluginHandler {
     public static void loadPlugins(boolean early) {
         List<String> plugins = new LinkedList<String>();
         Collection<String> cp = Main.pref.getCollection("plugins", null);
-        if (cp != null)
+        if (cp != null) {
             plugins.addAll(cp);
-        if (System.getProperty("josm.plugins") != null)
+        }
+        if (System.getProperty("josm.plugins") != null) {
             plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
+        }
 
         String [] oldplugins = new String[] {"mappaint", "unglueplugin",
-        "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
-        "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
-        "namefinder", "waypoints", "slippy_map_chooser", "tcx-support"};
+                "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
+                "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
+                "namefinder", "waypoints", "slippy_map_chooser", "tcx-support"};
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
                 plugins.remove(p);
                 Main.pref.removeFromCollection("plugins", p);
-                JOptionPane.showMessageDialog(Main.parent, tr("Warning - loading of {0} plugin was requested. This plugin is no longer required.", p));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Loading of {0} plugin was requested. This plugin is no longer required.", p),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
         }
 
@@ -74,11 +82,17 @@ public class PluginHandler {
         for (String pluginName : plugins) {
             PluginInformation info = PluginInformation.findPlugin(pluginName);
             if (info != null) {
-                if (info.early != early)
+                if (info.early != early) {
                     continue;
+                }
                 if (info.mainversion > AboutAction.getVersionNumber()) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Plugin {0} requires JOSM update to version {1}.", pluginName,
-                    info.mainversion));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("Plugin {0} requires JOSM update to version {1}.", pluginName,
+                                    info.mainversion),
+                                    tr("Warning"),
+                                    JOptionPane.WARNING_MESSAGE
+                    );
                     continue;
                 }
                 if(info.requires != null)
@@ -91,17 +105,26 @@ public class PluginHandler {
                     }
                     if(warn != null)
                     {
-                        JOptionPane.showMessageDialog(Main.parent,
-                        tr("Plugin {0} is required by plugin {1} but was not found.",
-                        warn, pluginName));
+                        OptionPaneUtil.showMessageDialog(Main.parent,
+                                tr("Plugin {0} is required by plugin {1} but was not found.",
+                                        warn, pluginName),
+                                        tr("Error"),
+                                        JOptionPane.ERROR_MESSAGE
+                        );
                         continue;
                     }
                 }
-                if (!p.containsKey(info.stage))
+                if (!p.containsKey(info.stage)) {
                     p.put(info.stage, new LinkedList<PluginInformation>());
+                }
                 p.get(info.stage).add(info);
             } else if(early) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Plugin not found: {0}.", pluginName));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Plugin not found: {0}.", pluginName),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
 
@@ -113,20 +136,25 @@ public class PluginHandler {
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
             } else if (d > maxTime) {
-                JOptionPane.showMessageDialog(Main.parent,
-                   "<html>" +
-                   tr("Last plugin update more than {0} days ago.", d) +
-                   "<br><em>" +
-                   tr("(You can change the number of days after which this warning appears<br>by setting the config option 'pluginmanager.warntime'.)") +
-                   "</html>");
+                OptionPaneUtil.showMessageDialog(Main.parent,
+                        "<html>" +
+                        tr("Last plugin update more than {0} days ago.", d) +
+                        "<br><em>" +
+                        tr("(You can change the number of days after which this warning appears<br>by setting the config option 'pluginmanager.warntime'.)") +
+                        "</html>",
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
         }
 
         // iterate all plugins and collect all libraries of all plugins:
         List<URL> allPluginLibraries = new ArrayList<URL>();
-        for (Collection<PluginInformation> c : p.values())
-            for (PluginInformation info : c)
+        for (Collection<PluginInformation> c : p.values()) {
+            for (PluginInformation info : c) {
                 allPluginLibraries.addAll(info.libraries);
+            }
+        }
         // create a classloader for all plugins:
         URL[] jarUrls = new URL[allPluginLibraries.size()];
         jarUrls = allPluginLibraries.toArray(jarUrls);
@@ -145,10 +173,10 @@ public class PluginHandler {
                     e.printStackTrace();
 
                     int result = new ExtendedDialog(Main.parent,
-                        tr("Disable plugin"),
-                        tr("Could not load plugin {0}. Delete from preferences?", info.name),
-                        new String[] {tr("Disable plugin"), tr("Keep plugin")},
-                        new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+                            tr("Disable plugin"),
+                            tr("Could not load plugin {0}. Delete from preferences?", info.name),
+                            new String[] {tr("Disable plugin"), tr("Keep plugin")},
+                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 
                     if(result == 1)
                     {
@@ -160,8 +188,9 @@ public class PluginHandler {
         }
     }
     public static void setMapFrame(MapFrame old, MapFrame map) {
-        for (PluginProxy plugin : pluginList)
+        for (PluginProxy plugin : pluginList) {
             plugin.mapFrameInitialized(old, map);
+        }
     }
 
     public static Object getPlugin(String name) {
@@ -173,8 +202,9 @@ public class PluginHandler {
 
     public static void addDownloadSelection(List<DownloadSelection> downloadSelections)
     {
-        for (PluginProxy p : pluginList)
+        for (PluginProxy p : pluginList) {
             p.addDownloadSelection(downloadSelections);
+        }
     }
     public static void getPreferenceSetting(Collection<PreferenceSettingFactory> settings)
     {
@@ -186,7 +216,8 @@ public class PluginHandler {
     public static void earlyCleanup()
     {
         if (!PluginDownloader.moveUpdatedPlugins()) {
-            JOptionPane.showMessageDialog(null,
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
                     tr("Activating the updated plugins failed. Check if JOSM has the permission to overwrite the existing ones."),
                     tr("Plugins"), JOptionPane.ERROR_MESSAGE);
         }
@@ -196,31 +227,35 @@ public class PluginHandler {
         PluginProxy plugin = null;
 
         // Check for an explicit problem when calling a plugin function
-        if (e instanceof PluginException)
+        if (e instanceof PluginException) {
             plugin = ((PluginException)e).plugin;
+        }
 
         if (plugin == null)
         {
             String name = null;
             /**
-            * Analyze the stack of the argument and find a name of a plugin, if
-            * some known problem pattern has been found.
-            *
-            * Note: This heuristic is not meant as discrimination against specific
-            * plugins, but only to stop the flood of similar bug reports about plugins.
-            * Of course, plugin writers are free to install their own version of
-            * an exception handler with their email address listed to receive
-            * bug reports ;-).
-            */
+             * Analyze the stack of the argument and find a name of a plugin, if
+             * some known problem pattern has been found.
+             *
+             * Note: This heuristic is not meant as discrimination against specific
+             * plugins, but only to stop the flood of similar bug reports about plugins.
+             * Of course, plugin writers are free to install their own version of
+             * an exception handler with their email address listed to receive
+             * bug reports ;-).
+             */
             for (StackTraceElement element : e.getStackTrace()) {
                 String c = element.getClassName();
 
-                if (c.contains("wmsplugin.") || c.contains(".WMSLayer"))
+                if (c.contains("wmsplugin.") || c.contains(".WMSLayer")) {
                     name = "wmsplugin";
-                if (c.contains("livegps."))
+                }
+                if (c.contains("livegps.")) {
                     name = "livegps";
-                if (c.startsWith("UtilsPlugin."))
+                }
+                if (c.startsWith("UtilsPlugin.")) {
                     name = "UtilsPlugin";
+                }
 
                 if (c.startsWith("org.openstreetmap.josm.plugins.")) {
                     String p = c.substring("org.openstreetmap.josm.plugins.".length());
@@ -228,8 +263,9 @@ public class PluginHandler {
                         name = p.substring(0,p.indexOf('.'));
                     }
                 }
-                if(name != null)
-                  break;
+                if(name != null) {
+                    break;
+                }
             }
             for (PluginProxy p : pluginList)
             {
@@ -243,28 +279,34 @@ public class PluginHandler {
 
         if (plugin != null) {
             int answer = new ExtendedDialog(Main.parent,
-                tr("Disable plugin"),
-                tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)
+                    tr("Disable plugin"),
+                    tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)
                     + "\n"
                     + (plugin.info.author != null
-                        ? tr("According to the information within the plugin, the author is {0}.", plugin.info.author)
-                        : "")
-                    + "\n"
-                    + tr("Try updating to the newest version of this plugin before reporting a bug.")
-                    + "\n"
-                    + tr("Should the plugin be disabled?"),
-                new String[] {tr("Disable plugin"), tr("Cancel")},
-                new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+                            ? tr("According to the information within the plugin, the author is {0}.", plugin.info.author)
+                                    : "")
+                                    + "\n"
+                                    + tr("Try updating to the newest version of this plugin before reporting a bug.")
+                                    + "\n"
+                                    + tr("Should the plugin be disabled?"),
+                                    new String[] {tr("Disable plugin"), tr("Cancel")},
+                                    new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
             if (answer == 1) {
                 List<String> plugins = new ArrayList<String>(Main.pref.getCollection("plugins", Collections.<String>emptyList()));
                 if (plugins.contains(plugin.info.name)) {
                     while (plugins.remove(plugin.info.name)) {}
                     Main.pref.putCollection("plugins", plugins);
-                    JOptionPane.showMessageDialog(Main.parent,
-                    tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."));
+                    OptionPaneUtil.showMessageDialog(Main.parent,
+                            tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(Main.parent,
-                    tr("The plugin could not be removed. Probably it was already disabled"));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            tr("The plugin could not be removed. Probably it was already disabled"),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
                 return true;
             }
@@ -275,8 +317,9 @@ public class PluginHandler {
     {
         String text = "";
         String pl = Main.pref.get("plugins");
-        if(pl != null && pl.length() != 0)
+        if(pl != null && pl.length() != 0) {
             text += "Plugins: "+pl+"\n";
+        }
         for (final PluginProxy pp : pluginList) {
             text += "Plugin " + pp.info.name + (pp.info.version != null && !pp.info.version.equals("") ? " Version: "+pp.info.version+"\n" : "\n");
         }
@@ -301,7 +344,12 @@ public class PluginHandler {
                     JTextArea a = new JTextArea(10,40);
                     a.setEditable(false);
                     a.setText(b.toString());
-                    JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a));
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent,
+                            new JScrollPane(a),
+                            tr("Plugin information"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                 }
             }), GBC.eol());
 

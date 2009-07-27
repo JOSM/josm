@@ -7,14 +7,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
@@ -85,8 +84,9 @@ public class PluginInformation {
         try {
             Manifest manifest = new Manifest();
             manifest.read(manifestStream);
-            if(url != null)
+            if(url != null) {
                 downloadlink = url;
+            }
             scanManifest(manifest, url != null);
         } catch (IOException e) {
             throw new PluginException(null, name, e);
@@ -99,16 +99,18 @@ public class PluginInformation {
         Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");
         String s = attr.getValue(lang+"Plugin-Link");
-        if(s == null)
+        if(s == null) {
             s = attr.getValue("Plugin-Link");
+        }
         link = s;
         requires = attr.getValue("Plugin-Requires");
         s = attr.getValue(lang+"Plugin-Description");
         if(s == null)
         {
             s = attr.getValue("Plugin-Description");
-            if(s != null)
+            if(s != null) {
                 s = tr(s);
+            }
         }
         description = s;
         early = Boolean.parseBoolean(attr.getValue("Plugin-Early"));
@@ -150,23 +152,26 @@ public class PluginInformation {
         if (classPath != null) {
             for (String entry : classPath.split(" ")) {
                 File entryFile;
-                if (new File(entry).isAbsolute())
+                if (new File(entry).isAbsolute()) {
                     entryFile = new File(entry);
-                else
+                } else {
                     entryFile = new File(file.getParent(), entry);
+                }
 
                 libraries.add(fileToURL(entryFile));
             }
         }
-        for (Object o : attr.keySet())
+        for (Object o : attr.keySet()) {
             this.attr.put(o.toString(), attr.getValue(o.toString()));
+        }
     }
 
     public String getLinkDescription()
     {
         String d = description == null ? tr("no description available") : description;
-        if(link != null)
+        if(link != null) {
             d += " <A HREF=\""+link+"\">"+tr("More details")+"</A>";
+        }
         return d;
     }
 
@@ -261,8 +266,9 @@ public class PluginInformation {
     public static Collection<String> getPluginLocations() {
         Collection<String> locations = Main.pref.getAllPossiblePreferenceDirs();
         Collection<String> all = new ArrayList<String>(locations.size());
-        for (String s : locations)
+        for (String s : locations) {
             all.add(s+"plugins");
+        }
         return all;
     }
 }

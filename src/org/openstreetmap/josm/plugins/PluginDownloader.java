@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.xml.sax.SAXException;
 
@@ -48,24 +49,36 @@ public class PluginDownloader {
         }
 
         @Override protected void finish() {
-            if (errors.length() > 0)
-                JOptionPane.showMessageDialog(Main.parent, tr("There were problems with the following plugins:\n\n {0}",errors));
-            else
-                JOptionPane.showMessageDialog(Main.parent, trn("{0} Plugin successfully downloaded. Please restart JOSM.", "{0} Plugins successfully downloaded. Please restart JOSM.", count, count));
+            if (errors.length() > 0) {
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("There were problems with the following plugins:\n\n {0}",errors),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            } else {
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        trn("{0} Plugin successfully downloaded. Please restart JOSM.", "{0} Plugins successfully downloaded. Please restart JOSM.", count, count),
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
         }
 
         @Override protected void realRun() throws SAXException, IOException {
             File pluginDir = Main.pref.getPluginsDirFile();
-            if (!pluginDir.exists())
+            if (!pluginDir.exists()) {
                 pluginDir.mkdirs();
+            }
             progressMonitor.setTicksCount(toUpdate.size());
             for (PluginInformation d : toUpdate) {
                 progressMonitor.subTask(tr("Downloading Plugin {0}...", d.name));
                 progressMonitor.worked(1);
                 File pluginFile = new File(pluginDir, d.name + ".jar.new");
-                if(download(d, pluginFile))
+                if(download(d, pluginFile)) {
                     count++;
-                else
+                } else
                 {
                     errors += d.name + "\n";
                     failed.add(d);
@@ -87,15 +100,16 @@ public class PluginDownloader {
     public static int downloadDescription() {
         int count = 0;
         for (String site : getSites()) {
-        /* TODO: remove old site files (everything except .jar) */
+            /* TODO: remove old site files (everything except .jar) */
             try {
                 BufferedReader r = new BufferedReader(new InputStreamReader(new URL(site).openStream(), "utf-8"));
                 new File(Main.pref.getPreferencesDir()+"plugins").mkdir();
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(new File(Main.pref.getPluginsDirFile(),
-                count + "-site-" + site.replaceAll("[/:\\\\ <>|]", "_") + ".txt")), "utf-8"));
-                for (String line = r.readLine(); line != null; line = r.readLine())
+                        new FileOutputStream(new File(Main.pref.getPluginsDirFile(),
+                                count + "-site-" + site.replaceAll("[/:\\\\ <>|]", "_") + ".txt")), "utf-8"));
+                for (String line = r.readLine(); line != null; line = r.readLine()) {
                     out.append(line+"\n");
+                }
                 r.close();
                 out.close();
                 count++;
@@ -109,10 +123,10 @@ public class PluginDownloader {
         if(pd.mainversion > AboutAction.getVersionNumber())
         {
             int answer = new ExtendedDialog(Main.parent,
-                        tr("Skip download"),
-                        tr("JOSM version {0} required for plugin {1}.", pd.mainversion, pd.name),
-                        new String[] {tr("Download Plugin"), tr("Skip Download")},
-                        new String[] {"download.png", "cancel.png"}).getValue();
+                    tr("Skip download"),
+                    tr("JOSM version {0} required for plugin {1}.", pd.mainversion, pd.name),
+                    new String[] {tr("Download Plugin"), tr("Skip Download")},
+                    new String[] {"download.png", "cancel.png"}).getValue();
             if (answer != 1)
                 return false;
         }
@@ -121,8 +135,9 @@ public class PluginDownloader {
             InputStream in = new URL(pd.downloadlink).openStream();
             OutputStream out = new FileOutputStream(file);
             byte[] buffer = new byte[8192];
-            for (int read = in.read(buffer); read != -1; read = in.read(buffer))
+            for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                 out.write(buffer, 0, read);
+            }
             out.close();
             in.close();
             new PluginInformation(file);

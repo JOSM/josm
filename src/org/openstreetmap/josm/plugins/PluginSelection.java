@@ -37,6 +37,7 @@ import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 public class PluginSelection {
@@ -47,12 +48,21 @@ public class PluginSelection {
 
     public void updateDescription(JPanel pluginPanel) {
         int count = PluginDownloader.downloadDescription();
-        if (count > 0)
-            JOptionPane.showMessageDialog(Main.parent,
-                trn("Downloaded plugin information from {0} site",
-                    "Downloaded plugin information from {0} sites", count, count));
-        else
-            JOptionPane.showMessageDialog(Main.parent, tr("No plugin information found."));
+        if (count > 0) {
+            OptionPaneUtil.showMessageDialog(Main.parent,
+                    trn("Downloaded plugin information from {0} site",
+                            "Downloaded plugin information from {0} sites", count, count),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE
+            );
+        } else {
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("No plugin information found."),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
         drawPanel(pluginPanel);
     }
 
@@ -79,21 +89,27 @@ public class PluginSelection {
             }
         }
         if (toUpdate.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent, tr("All installed plugins are up to date."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("All installed plugins are up to date."),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
             done = true;
         } else {
             int answer = new ExtendedDialog(Main.parent,
-                        tr("Update"),
-                        tr("Update the following plugins:\n\n{0}", toUpdateStr.toString()),
-                        new String[] {tr("Update Plugins"), tr("Cancel")},
-                        new String[] {"dialogs/refresh.png", "cancel.png"}).getValue();
+                    tr("Update"),
+                    tr("Update the following plugins:\n\n{0}", toUpdateStr.toString()),
+                    new String[] {tr("Update Plugins"), tr("Cancel")},
+                    new String[] {"dialogs/refresh.png", "cancel.png"}).getValue();
             if (answer == 1) {
                 PluginDownloader.update(toUpdate);
                 done = true;
             }
         }
-        if (done && num >= 1)
+        if (done && num >= 1) {
             Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
+        }
         drawPanel(pluginPanel);
     }
 
@@ -109,7 +125,7 @@ public class PluginSelection {
                 PluginInformation ap = availablePlugins.get(name);
                 PluginInformation pi = localPlugins.get(name);
                 if(pi == null || (pi.version == null && ap.version != null)
-                || (pi.version != null && !pi.version.equals(ap.version)))
+                        || (pi.version != null && !pi.version.equals(ap.version)))
                 {
                     toDownload.add(ap);
                     msg += name + "\n";
@@ -118,20 +134,22 @@ public class PluginSelection {
         }
         if (!toDownload.isEmpty()) {
             int answer = new ExtendedDialog(Main.parent,
-                        tr("Download missing plugins"),
-                        tr("Download the following plugins?\n\n{0}", msg),
-                        new String[] {tr("Download Plugins"), tr("Cancel")},
-                        new String[] {"download.png", "cancel.png"}).getValue();
+                    tr("Download missing plugins"),
+                    tr("Download the following plugins?\n\n{0}", msg),
+                    new String[] {tr("Download Plugins"), tr("Cancel")},
+                    new String[] {"download.png", "cancel.png"}).getValue();
             Collection<PluginInformation> error =
-            (answer != 1 ? toDownload : new PluginDownloader().download(toDownload));
-            for (PluginInformation pd : error)
+                (answer != 1 ? toDownload : new PluginDownloader().download(toDownload));
+            for (PluginInformation pd : error) {
                 pluginMap.put(pd.name, false);
+            }
 
         }
         LinkedList<String> plugins = new LinkedList<String>();
         for (Map.Entry<String, Boolean> d : pluginMap.entrySet()) {
-            if (d.getValue())
+            if (d.getValue()) {
                 plugins.add(d.getKey());
+            }
         }
 
         Collections.sort(plugins);
@@ -143,13 +161,15 @@ public class PluginSelection {
         loadPlugins();
         Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
 
-        if (pluginMap == null)
+        if (pluginMap == null) {
             pluginMap = new HashMap<String, Boolean>();
-        else {
+        } else {
             // Keep the map in bounds; possibly slightly pointless.
             Set<String> pluginsToRemove = new HashSet<String>();
             for (final String pname : pluginMap.keySet()) {
-                if (availablePlugins.get(pname) == null) pluginsToRemove.add(pname);
+                if (availablePlugins.get(pname) == null) {
+                    pluginsToRemove.add(pname);
+                }
             }
 
             for (String pname : pluginsToRemove) {
@@ -166,23 +186,26 @@ public class PluginSelection {
         int row = 0;
         for (final PluginInformation plugin : availablePlugins.values()) {
             boolean enabled = (enabledPlugins != null) && enabledPlugins.contains(plugin.name);
-            if (pluginMap.get(plugin.name) == null)
+            if (pluginMap.get(plugin.name) == null) {
                 pluginMap.put(plugin.name, enabled);
+            }
 
             String remoteversion = plugin.version;
-            if ((remoteversion == null) || remoteversion.equals(""))
+            if ((remoteversion == null) || remoteversion.equals("")) {
                 remoteversion = tr("unknown");
-            else if(plugin.oldmode)
+            } else if(plugin.oldmode) {
                 remoteversion += "*";
+            }
 
             String localversion = "";
             PluginInformation p = localPlugins.get(plugin.name);
             if(p != null)
             {
-                if (p.version != null && !p.version.equals(""))
+                if (p.version != null && !p.version.equals("")) {
                     localversion = p.version;
-                else
+                } else {
                     localversion = tr("unknown");
+                }
                 localversion = " (" + localversion + ")";
             }
 
@@ -244,16 +267,19 @@ public class PluginSelection {
             if (pluginFiles != null) {
                 Arrays.sort(pluginFiles);
                 for (File f : pluginFiles) {
-                    if (!f.isFile())
+                    if (!f.isFile()) {
                         continue;
+                    }
                     String fname = f.getName();
                     if (fname.endsWith(".jar")) {
                         try {
                             PluginInformation info = new PluginInformation(f,fname.substring(0,fname.length()-4));
-                            if (!availablePlugins.containsKey(info.name))
+                            if (!availablePlugins.containsKey(info.name)) {
                                 availablePlugins.put(info.name, info);
-                            if (!localPlugins.containsKey(info.name))
+                            }
+                            if (!localPlugins.containsKey(info.name)) {
                                 localPlugins.put(info.name, info);
+                            }
                         } catch (PluginException x) {
                         }
                     } else if (fname.endsWith(".jar.new")) {
@@ -289,10 +315,11 @@ public class PluginSelection {
                                         try
                                         {
                                             PluginInformation info = new PluginInformation(
-                                            new ByteArrayInputStream(manifest.getBytes("utf-8")),
-                                            name.substring(0,name.length()-4), url);
-                                            if(!availablePlugins.containsKey(info.name))
+                                                    new ByteArrayInputStream(manifest.getBytes("utf-8")),
+                                                    name.substring(0,name.length()-4), url);
+                                            if(!availablePlugins.containsKey(info.name)) {
                                                 availablePlugins.put(info.name, info);
+                                            }
                                         }
                                         catch (Exception e)
                                         {
@@ -309,10 +336,11 @@ public class PluginSelection {
                             if(name != null)
                             {
                                 PluginInformation info = new PluginInformation(
-                                new ByteArrayInputStream(manifest.getBytes("utf-8")),
-                                name.substring(0,name.length()-4), url);
-                                if(!availablePlugins.containsKey(info.name))
+                                        new ByteArrayInputStream(manifest.getBytes("utf-8")),
+                                        name.substring(0,name.length()-4), url);
+                                if(!availablePlugins.containsKey(info.name)) {
                                     availablePlugins.put(info.name, info);
+                                }
                             }
                             r.close();
                         } catch (Exception e) {
@@ -321,7 +349,12 @@ public class PluginSelection {
                         }
                         if(err > 0)
                         {
-                          JOptionPane.showMessageDialog(Main.parent, tr("Error reading plugin information file: {0}", f.getName()));
+                            OptionPaneUtil.showMessageDialog(
+                                    Main.parent,
+                                    tr("Error reading plugin information file: {0}", f.getName()),
+                                    tr("Error"),
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                         }
                     }
                 }
@@ -329,10 +362,12 @@ public class PluginSelection {
         }
         for (PluginProxy proxy : PluginHandler.pluginList)
         {
-            if (!availablePlugins.containsKey(proxy.info.name))
+            if (!availablePlugins.containsKey(proxy.info.name)) {
                 availablePlugins.put(proxy.info.name, proxy.info);
-            if (!localPlugins.containsKey(proxy.info.name))
+            }
+            if (!localPlugins.containsKey(proxy.info.name)) {
                 localPlugins.put(proxy.info.name, proxy.info);
+            }
         }
     }
 }
