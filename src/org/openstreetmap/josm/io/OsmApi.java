@@ -354,7 +354,7 @@ public class OsmApi extends OsmConnection {
 
 
     private void sleepAndListen() throws OsmTransferCancelledException {
-        // System.out.print("backing off for 10 seconds...");
+        System.out.print(tr("Waiting 10 seconds ... "));
         for(int i=0; i < 10; i++) {
             if (cancel || isAuthCancelled())
                 throw new OsmTransferCancelledException();
@@ -362,6 +362,17 @@ public class OsmApi extends OsmConnection {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {}
         }
+        System.out.println(tr("OK - trying again."));
+    }
+
+    /**
+     * Replies the max. number of retries in case of 5XX errors on the server
+     * 
+     * @return the max number of retries
+     */
+    protected int getMaxRetries() {
+        int ret = Main.pref.getInteger("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
+        return Math.max(ret,0);
     }
 
     /**
@@ -384,8 +395,7 @@ public class OsmApi extends OsmConnection {
 
         StringBuffer responseBody = new StringBuffer();
 
-        int retries = Main.pref.getInteger("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
-        retries = Math.max(0,retries);
+        int retries = getMaxRetries();
 
         while(true) { // the retry loop
             try {
@@ -422,6 +432,8 @@ public class OsmApi extends OsmConnection {
                 if (retCode >= 500) {
                     if (retries-- > 0) {
                         sleepAndListen();
+                        int maxRetries = getMaxRetries();
+                        System.out.println(tr("Starting retry {0} of {1}.", maxRetries - retries,maxRetries));
                         continue;
                     }
                 }
