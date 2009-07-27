@@ -272,6 +272,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private void tryAgain(MouseEvent e) {
         getCurrentDataSet().setSelected();
+        DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
         mouseClicked(e);
     }
 
@@ -340,6 +341,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
                 getCurrentDataSet().setSelected(n);
+                DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
                 selection = getCurrentDataSet().getSelected();
                 // The user explicitly selected a node, so let him continue drawing
                 wayIsFinished = false;
