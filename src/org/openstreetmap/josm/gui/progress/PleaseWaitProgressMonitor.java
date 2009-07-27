@@ -22,6 +22,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     private static final int PROGRESS_BAR_MAX = 100;
     private final Window dialogParent;
+    private int currentProgressValue = 0;
 
     private PleaseWaitDialog dialog;
 
@@ -109,17 +110,16 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         });
     }
 
-    public void worked(int ticks) {
-        this.ticks += ticks;
-        updateProgress(0);
-    }
-
-    protected void updateProgress(final double progressValue) {
-        doInEDT(new Runnable() {
-            public void run() {
-                dialog.progress.setValue((int)(progressValue * PROGRESS_BAR_MAX));
-            }
-        });
+    protected void updateProgress(double progressValue) {
+        final int newValue = (int)(progressValue * PROGRESS_BAR_MAX);
+        if (newValue != currentProgressValue) {
+            currentProgressValue = newValue;
+            doInEDT(new Runnable() {
+                public void run() {
+                    dialog.progress.setValue(currentProgressValue);
+                }
+            });
+        }
     }
 
     @Override

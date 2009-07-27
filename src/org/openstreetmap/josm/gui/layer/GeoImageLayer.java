@@ -67,11 +67,13 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.GeoImageLayer.ImageLoader.ImageLoadedListener;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateParser;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
@@ -264,7 +266,10 @@ public class GeoImageLayer extends Layer {
         }
 
         public void imageLoaded() {
-            Main.map.mapView.repaint();
+            MapFrame frame = Main.map;
+            if (frame != null) {
+              frame.mapView.repaint();
+            }
         }
     }
 
@@ -279,26 +284,42 @@ public class GeoImageLayer extends Layer {
         }
         @Override protected void realRun() throws IOException {
             progressMonitor.subTask(tr("Read GPX..."));
+            progressMonitor.setTicksCount(10 + files.size());
             LinkedList<TimedPoint> gps = new LinkedList<TimedPoint>();
 
             // Extract dates and locations from GPX input
 
-            for (GpxTrack trk : gpxLayer.data.tracks) {
+            ProgressMonitor gpxSubTask = progressMonitor.createSubTaskMonitor(10, true);
+            int size = 0;
+            for (GpxTrack trk:gpxLayer.data.tracks) {
                 for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint p : segment) {
-                        LatLon c = p.getCoor();
-                        if (!p.attr.containsKey("time"))
-                            throw new IOException(tr("No time for point {0} x {1}",c.lat(),c.lon()));
-                        Date d = null;
-                        try {
-                            d = DateParser.parse((String) p.attr.get("time"));
-                        } catch (ParseException e) {
-                            throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.attr.get("time"),c.lat(),c.lon()));
-                        }
-                        gps.add(new TimedPoint(d, c));
-                    }
+                    size += segment.size();
                 }
             }
+            gpxSubTask.beginTask(null, size);
+
+            try {
+                for (GpxTrack trk : gpxLayer.data.tracks) {
+                    for (Collection<WayPoint> segment : trk.trackSegs) {
+                        for (WayPoint p : segment) {
+                            LatLon c = p.getCoor();
+                            if (!p.attr.containsKey("time"))
+                                throw new IOException(tr("No time for point {0} x {1}",c.lat(),c.lon()));
+                            Date d = null;
+                            try {
+                                d = DateParser.parse((String) p.attr.get("time"));
+                            } catch (ParseException e) {
+                                throw new IOException(tr("Cannot read time \"{0}\" from point {1} x {2}",p.attr.get("time"),c.lat(),c.lon()));
+                            }
+                            gps.add(new TimedPoint(d, c));
+                            gpxSubTask.worked(1);
+                        }
+                    }
+                }
+            } finally {
+                gpxSubTask.finishTask();
+            }
+
 
             if (gps.isEmpty()) {
                 progressMonitor.setErrorMessage(tr("No images with readable timestamps found."));
@@ -307,7 +328,6 @@ public class GeoImageLayer extends Layer {
 
             // read the image files
             ArrayList<ImageEntry> data = new ArrayList<ImageEntry>(files.size());
-            progressMonitor.setTicksCount(files.size());
             for (File f : files) {
                 if (progressMonitor.isCancelled())
                     break;
@@ -316,6 +336,7 @@ public class GeoImageLayer extends Layer {
                 ImageEntry e = new ImageEntry(f);
                 try {
                     e.time = ExifReader.readTime(f);
+                    progressMonitor.worked(1);
                 } catch (ParseException e1) {
                     continue;
                 }
@@ -323,7 +344,6 @@ public class GeoImageLayer extends Layer {
                     continue;
 
                 data.add(e);
-                progressMonitor.worked(1);
             }
             layer = new GeoImageLayer(data, gps);
             layer.calculatePosition();
