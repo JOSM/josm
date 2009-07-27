@@ -199,7 +199,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
-        dlg.setAlwaysOnTop(true);
+        try {
+            dlg.setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to put properties dialog always on top. Exception was: {0}", e.toString()));
+        }
         dlg.toFront();
 
         values.getEditor().addActionListener(new ActionListener() {
@@ -342,7 +346,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         };
         JDialog dialog = pane.createDialog(Main.parent, tr("Change values?"));
-        dialog.setAlwaysOnTop(true);
+        try {
+            dialog.setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to put dialog always on top. Exception was: {0}", e.toString()));
+        }
         dialog.toFront();
         dialog.setVisible(true);
 

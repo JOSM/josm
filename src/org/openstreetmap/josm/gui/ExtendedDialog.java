@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -64,7 +66,11 @@ public class ExtendedDialog extends JDialog {
 
         bTexts = buttonTexts;
         setupDialog(lbl, buttonIcons);
-        setAlwaysOnTop(true);
+        try {
+            setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to put extended dialog always on top. Exception was: {0}", e.toString()));
+        }
         setVisible(true);
     }
 

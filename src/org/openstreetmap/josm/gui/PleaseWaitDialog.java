@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
@@ -55,7 +57,11 @@ public class PleaseWaitDialog extends JDialog {
         // make sure this dialog is always on top of the main JOSM window
         // and all the other windows (relation editors, detached dialogs, etc.)
         //
-        setAlwaysOnTop(true);
+        try {
+            setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to put ''please wait dialog'' always on top. Exception was: {0}", e.toString()));
+        }
     }
 
     public PleaseWaitDialog(Frame parent) {

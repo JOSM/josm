@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Component;
 import java.awt.HeadlessException;
 
@@ -37,7 +39,11 @@ public class OptionPaneUtil {
      * @param dialog the dialog
      */
     static protected void prepareDialog(JDialog dialog) {
-        dialog.setAlwaysOnTop(true);
+        try {
+            dialog.setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to put option pane dialog always on top. Exception was: {0}", e.toString()));
+        }
         dialog.setModal(true);
         dialog.toFront();
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

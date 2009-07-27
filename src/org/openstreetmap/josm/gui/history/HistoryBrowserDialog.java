@@ -68,7 +68,11 @@ public class HistoryBrowserDialog extends JDialog {
      */
     public HistoryBrowserDialog(History history) {
         super(JOptionPane.getFrameForComponent(Main.parent), false);
-        setAlwaysOnTop(true);
+        try {
+            setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to put history browser always on top. Exception was: {0}", e.toString()));
+        }
         build();
         setHistory(history);
         renderTitle(history);
