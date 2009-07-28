@@ -100,12 +100,12 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         // create the panel with buttons
         //
         JPanel buttonPanel = new JPanel(new GridLayout(1,3));
-        buttonPanel.add(new SideButton(marktr("New"), "addrelation", "Selection", tr("Create a new relation"), new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // call relation editor with null argument to create new relation
-                RelationEditor.getEditor(Main.map.mapView.getEditLayer(),null, null).setVisible(true);
-            }
-        }), GBC.std());
+
+        // the new action
+        //
+        NewAction newAction = new NewAction();
+        Layer.listeners.add(newAction);
+        buttonPanel.add(new SideButton(newAction), GBC.std());
 
         // the edit action
         //
@@ -310,6 +310,43 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
+        }
+    }
+
+    /**
+     * The edit action
+     *
+     */
+    class NewAction extends AbstractAction implements LayerChangeListener{
+        public NewAction() {
+            putValue(SHORT_DESCRIPTION,tr("Create a new relation"));
+            putValue(NAME, tr("New"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "addrelation"));
+            setEnabled(false);
+        }
+
+        public void run() {
+            RelationEditor.getEditor(Main.map.mapView.getEditLayer(),null, null).setVisible(true);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            run();
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(Main.main != null && Main.main.getEditLayer() != null);
+        }
+
+        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+            updateEnabledState();
+        }
+
+        public void layerAdded(Layer newLayer) {
+            updateEnabledState();
+        }
+
+        public void layerRemoved(Layer oldLayer) {
+            updateEnabledState();
         }
     }
 }

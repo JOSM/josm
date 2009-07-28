@@ -88,13 +88,24 @@ public abstract class RelationEditor extends ExtendedDialog {
         }
     }
 
-    protected RelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
+    /**
+     * Creates a new relation editor
+     * 
+     * @param layer  the {@see OsmDataLayer} in whose context a relation is edited. Must not be null.
+     * @param relation the relation. Can be null if a new relation is to be edited.
+     * @param selectedMembers  a collection of members in <code>relation</code> which the editor
+     * should display selected when the editor is first displayed on screen
+     * @throws IllegalArgumentException thrown if layer is null
+     */
+    protected RelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers)  throws IllegalArgumentException{
         // Initalizes ExtendedDialog
         super(Main.parent,
                 "",
                 new String[] { tr("Apply Changes"), tr("Cancel")},
                 false
         );
+        if (layer == null)
+            throw new IllegalArgumentException(tr("parameter ''layer'' must not be null", "layer"));
         this.layer = layer;
         setRelation(relation);
     }
