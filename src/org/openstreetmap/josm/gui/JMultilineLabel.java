@@ -112,7 +112,7 @@ public class JMultilineLabel extends JComponent {
                     y += textLayout.getDescent() + textLayout.getLeading() + textLayout.getAscent();
                     max = Math.max(max, textLayout.getVisibleAdvance());
                 }
-                w += max;
+                w = Math.max(max, w);
             }
         }
         return new Dimension((int)Math.ceil(w), (int)Math.ceil(y) + insets.bottom);
