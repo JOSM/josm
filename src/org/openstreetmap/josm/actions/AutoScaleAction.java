@@ -58,7 +58,7 @@ public class AutoScaleAction extends JosmAction {
         this.mode = mode;
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public void autoScale()  {
         if (Main.map != null) {
             BoundingXYVisitor bbox = getBoundingBox();
             if (bbox != null && bbox.getBounds() != null) {
@@ -66,6 +66,10 @@ public class AutoScaleAction extends JosmAction {
             }
         }
         putValue("active", true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        autoScale();
     }
 
     private BoundingXYVisitor getBoundingBox() {
