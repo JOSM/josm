@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.Future;
 
 import javax.swing.JCheckBox;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -56,6 +58,30 @@ public class DownloadOsmTask implements DownloadTask {
             return Main.map.mapView.getEditLayer();
         }
 
+        protected int getNumDataLayers() {
+            int count = 0;
+            if (Main.map == null) return 0;
+            if (Main.map.mapView == null) return 0;
+            Collection<Layer> layers = Main.map.mapView.getAllLayers();
+            for (Layer layer : layers) {
+                if (layer instanceof OsmDataLayer) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        protected OsmDataLayer getFirstDataLayer() {
+            if (Main.map == null) return null;
+            if (Main.map.mapView == null) return null;
+            Collection<Layer> layers = Main.map.mapView.getAllLayers();
+            for (Layer layer : layers) {
+                if (layer instanceof OsmDataLayer)
+                    return (OsmDataLayer) layer;
+            }
+            return null;
+        }
+
         @Override protected void finish() {
             if (dataSet == null)
                 return; // user canceled download or error occurred
@@ -66,11 +92,20 @@ public class DownloadOsmTask implements DownloadTask {
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
             }
             rememberDownloadedData(dataSet);
-            if (newLayer || getEditLayer() == null) {
+            int numDataLayers = getNumDataLayers();
+            if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
+                // the user explicitly wants a new layer, we don't have any layer at all
+                // or it is not clear which layer to merge to
+                //
                 OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
                 Main.main.addLayer(layer);
             } else {
-                getEditLayer().mergeFrom(dataSet);
+                OsmDataLayer target;
+                target = getEditLayer();
+                if (target == null) {
+                    target = getFirstDataLayer();
+                }
+                target.mergeFrom(dataSet);
             }
         }
 
