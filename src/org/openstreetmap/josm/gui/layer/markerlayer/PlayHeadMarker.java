@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.tools.AudioPlayer;
 
@@ -60,8 +61,8 @@ public class PlayHeadMarker extends Marker {
 
     private PlayHeadMarker() {
         super(new LatLon(0.0,0.0), "",
-              Main.pref.get("marker.audiotracericon", "audio-tracer"),
-              null, -1.0, 0.0);
+                Main.pref.get("marker.audiotracericon", "audio-tracer"),
+                null, -1.0, 0.0);
         enabled = Main.pref.getBoolean("marker.traceaudio", true);
         if (! enabled) return;
         dropTolerance = Main.pref.getInteger("marker.playHeadDropTolerance", 50);
@@ -86,7 +87,7 @@ public class PlayHeadMarker extends Marker {
     @Override public boolean containsPoint(Point p) {
         Point screen = Main.map.mapView.getPoint(getEastNorth());
         Rectangle r = new Rectangle(screen.x, screen.y, symbol.getIconWidth(),
-        symbol.getIconHeight());
+                symbol.getIconHeight());
         return r.contains(p);
     }
 
@@ -95,8 +96,9 @@ public class PlayHeadMarker extends Marker {
      * (at least a short distance)
      */
     public void startDrag() {
-        if (timer != null)
+        if (timer != null) {
             timer.stop();
+        }
         wasPlaying = AudioPlayer.playing();
         if (wasPlaying) {
             try { AudioPlayer.pause(); }
@@ -108,11 +110,13 @@ public class PlayHeadMarker extends Marker {
      * reinstate the old map mode after switching temporarily to do a play head drag
      */
     private void endDrag(boolean reset) {
-        if (! wasPlaying || reset)
+        if (! wasPlaying || reset) {
             try { AudioPlayer.pause(); }
             catch (Exception ex) { AudioPlayer.audioMalfunction(ex);}
-        if (reset)
+        }
+        if (reset) {
             setCoor(oldCoor);
+        }
         Main.map.selectMapMode(oldMode);
         Main.map.mapView.repaint();
         timer.start();
@@ -152,8 +156,9 @@ public class PlayHeadMarker extends Marker {
                 for (Marker m : recent.parentLayer.data) {
                     if (m instanceof AudioMarker) {
                         AudioMarker a = (AudioMarker) m;
-                        if (a.time > cw.time)
+                        if (a.time > cw.time) {
                             break;
+                        }
                         ca = a;
                     }
                 }
@@ -162,7 +167,12 @@ public class PlayHeadMarker extends Marker {
 
         if (ca == null) {
             /* Not close enough to track, or no audio marker found for some other reason */
-            JOptionPane.showMessageDialog(Main.parent, tr("You need to drag the play head near to the GPX track whose associated sound track you were playing (after the first marker)."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("You need to drag the play head near to the GPX track whose associated sound track you were playing (after the first marker)."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             endDrag(true);
         } else {
             setCoor(cw.getCoor());
@@ -201,7 +211,9 @@ public class PlayHeadMarker extends Marker {
         }
 
         /* We found the closest marker: did we actually hit it? */
-        if (ca != null && ! ca.containsPoint(startPoint)) ca = null;
+        if (ca != null && ! ca.containsPoint(startPoint)) {
+            ca = null;
+        }
 
         /* If we didn't hit an audio marker, we need to create one at the nearest point on the track */
         if (ca == null) {
@@ -210,7 +222,12 @@ public class PlayHeadMarker extends Marker {
             EastNorth enPlus25px = Main.map.mapView.getEastNorth(p.x+dropTolerance, p.y);
             WayPoint cw = recent.parentLayer.fromLayer.nearestPointOnTrack(en, enPlus25px.east() - en.east());
             if (cw == null) {
-                JOptionPane.showMessageDialog(Main.parent, tr("You need to SHIFT-drag the play head onto an audio marker or onto the track point where you want to synchronize."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("You need to SHIFT-drag the play head onto an audio marker or onto the track point where you want to synchronize."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
                 endDrag(true);
                 return;
             }
@@ -220,15 +237,30 @@ public class PlayHeadMarker extends Marker {
         /* Actually do the synchronization */
         if(ca == null)
         {
-            JOptionPane.showMessageDialog(Main.parent,tr("Unable to create new audio marker."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Unable to create new audio marker."),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             endDrag(true);
         }
         else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Audio synchronized at point {0}.", ca.text));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Audio synchronized at point {0}.", ca.text),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
             setCoor(ca.getCoor());
             endDrag(false);
         } else {
-            JOptionPane.showMessageDialog(Main.parent,tr("Unable to synchronize in layer being played."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Unable to synchronize in layer being played."),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             endDrag(true);
         }
     }
@@ -263,9 +295,9 @@ public class PlayHeadMarker extends Marker {
         if (recentlyPlayedMarker == null)
             return;
         double audioTime = recentlyPlayedMarker.time +
-            AudioPlayer.position() -
-            recentlyPlayedMarker.offset -
-            recentlyPlayedMarker.syncOffset;
+        AudioPlayer.position() -
+        recentlyPlayedMarker.offset -
+        recentlyPlayedMarker.syncOffset;
         if (Math.abs(audioTime - time) < animationInterval)
             return;
         if (recentlyPlayedMarker.parentLayer == null) return;
@@ -288,17 +320,21 @@ public class PlayHeadMarker extends Marker {
                     }
                     w1 = w;
                 }
-                if (w2 != null) break;
+                if (w2 != null) {
+                    break;
+                }
             }
-            if (w2 != null) break;
+            if (w2 != null) {
+                break;
+            }
         }
 
         if (w1 == null)
             return;
         setEastNorth(w2 == null ?
-            w1.getEastNorth() :
-            w1.getEastNorth().interpolate(w2.getEastNorth(),
-                    (audioTime - w1.time)/(w2.time - w1.time)));
+                w1.getEastNorth() :
+                    w1.getEastNorth().interpolate(w2.getEastNorth(),
+                            (audioTime - w1.time)/(w2.time - w1.time)));
         time = audioTime;
         Main.map.mapView.repaint();
     }

@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.plugins.PluginDownloader;
 import org.openstreetmap.josm.plugins.PluginSelection;
 import org.openstreetmap.josm.tools.GBC;
@@ -77,44 +79,74 @@ public class PluginPreference implements PreferenceSetting {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
         final DefaultListModel model = new DefaultListModel();
-        for (String s : PluginDownloader.getSites())
+        for (String s : PluginDownloader.getSites()) {
             model.addElement(s);
+        }
         final JList list = new JList(model);
         p.add(new JScrollPane(list), GBC.std().fill());
         JPanel buttons = new JPanel(new GridBagLayout());
         buttons.add(new JButton(new AbstractAction(tr("Add")){
             public void actionPerformed(ActionEvent e) {
-                String s = JOptionPane.showInputDialog(gui, tr("Add JOSM Plugin description URL."));
-                if (s != null)
+                String s = OptionPaneUtil.showInputDialog(
+                        gui,
+                        tr("Add JOSM Plugin description URL."),
+                        tr("Enter URL"),
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                if (s != null) {
                     model.addElement(s);
+                }
             }
         }), GBC.eol().fill(GBC.HORIZONTAL));
         buttons.add(new JButton(new AbstractAction(tr("Edit")){
             public void actionPerformed(ActionEvent e) {
                 if (list.getSelectedValue() == null) {
-                    JOptionPane.showMessageDialog(gui, tr("Please select an entry."));
+                    OptionPaneUtil.showMessageDialog(
+                            gui,
+                            tr("Please select an entry."),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
                     return;
                 }
-                String s = JOptionPane.showInputDialog(gui, tr("Edit JOSM Plugin description URL."), list.getSelectedValue());
+                String s = (String)OptionPaneUtil.showInputDialog(
+                        Main.parent,
+                        tr("Edit JOSM Plugin description URL."),
+                        tr("JOSM Plugin description URL"),
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        null,
+                        list.getSelectedValue()
+                );
                 model.setElementAt(s, list.getSelectedIndex());
             }
         }), GBC.eol().fill(GBC.HORIZONTAL));
         buttons.add(new JButton(new AbstractAction(tr("Delete")){
             public void actionPerformed(ActionEvent event) {
                 if (list.getSelectedValue() == null) {
-                    JOptionPane.showMessageDialog(gui, tr("Please select an entry."));
+                    OptionPaneUtil.showMessageDialog(
+                            gui,
+                            tr("Please select an entry."),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
                     return;
                 }
                 model.removeElement(list.getSelectedValue());
             }
         }), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(buttons, GBC.eol());
-        int answer = JOptionPane.showConfirmDialog(gui, p, tr("Configure Plugin Sites"), JOptionPane.OK_CANCEL_OPTION);
+        int answer = OptionPaneUtil.showConfirmationDialog(
+                gui,
+                p,
+                tr("Configure Plugin Sites"), JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
         if (answer != JOptionPane.OK_OPTION)
             return;
         Collection<String> sites = new LinkedList<String>();
-        for (int i = 0; i < model.getSize(); ++i)
+        for (int i = 0; i < model.getSize(); ++i) {
             sites.add((String)model.getElementAt(i));
+        }
         PluginDownloader.setSites(sites);
     }
 

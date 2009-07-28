@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -29,9 +30,9 @@ import javax.swing.JOptionPane;
  *
  */
 public class Shortcut {
-//  public static final int SHIFT = KeyEvent.SHIFT_DOWN_MASK;
-//  public static final int CTRL = KeyEvent.CTRL_DOWN_MASK;
-//  public static final int SHIFT_CTRL = KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
+    //  public static final int SHIFT = KeyEvent.SHIFT_DOWN_MASK;
+    //  public static final int CTRL = KeyEvent.CTRL_DOWN_MASK;
+    //  public static final int SHIFT_CTRL = KeyEvent.SHIFT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
     public static final int SHIFT_DEFAULT = 1;
     private String shortText;        // the unique ID of the shortcut
     private String longText;         // a human readable description that will be shown in the preferences
@@ -134,7 +135,9 @@ public class Shortcut {
      */
     public void setAssignedUser(boolean assignedUser) {
         this.reset = (!this.assignedUser && assignedUser);
-        if (assignedUser) assignedDefault = false;
+        if (assignedUser) {
+            assignedDefault = false;
+        }
         this.assignedUser = assignedUser;
     }
 
@@ -214,13 +217,11 @@ public class Shortcut {
 
     // check if something collides with an existing shortcut
     private static Shortcut findShortcut(int requestedKey, int modifier) {
-        if (modifier == groups.get(GROUP_NONE)) {
+        if (modifier == groups.get(GROUP_NONE))
             return null;
-        }
         for (Shortcut sc : shortcuts.values()) {
-            if (sc.isSame(requestedKey, modifier)) {
+            if (sc.isSame(requestedKey, modifier))
                 return sc;
-            }
         }
         return null;
     }
@@ -237,9 +238,8 @@ public class Shortcut {
         int[] mods = {groups.get(requestedGroup + GROUPS_DEFAULT), groups.get(requestedGroup + GROUPS_ALT1), groups.get(requestedGroup + GROUPS_ALT2)};
         for (int m : mods) {
             for (int k = KeyEvent.VK_A; k < KeyEvent.VK_Z; k++) { // we'll limit ourself to 100% safe keys
-                if ( findShortcut(k, m) == null ) {
+                if ( findShortcut(k, m) == null )
                     return new Shortcut(shortText, longText, requestedKey, requestedGroup, k, m, false, false);
-                }
             }
         }
         return new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, groups.get(GROUP_NONE), false, false);
@@ -280,7 +280,9 @@ public class Shortcut {
         String p = Main.pref.get("shortcut.shortcut."+i, null);
         while (p != null) {
             Shortcut sc = new Shortcut(p);
-            if (sc.getAssignedUser()) registerShortcut(sc);
+            if (sc.getAssignedUser()) {
+                registerShortcut(sc);
+            }
             i++;
             p = Main.pref.get("shortcut.shortcut."+i, null);
         }
@@ -289,7 +291,9 @@ public class Shortcut {
         p = Main.pref.get("shortcut.shortcut."+i, null);
         while (p != null) {
             Shortcut sc = new Shortcut(p);
-            if (!sc.getAssignedUser() && sc.getAssignedDefault()) registerShortcut(sc);
+            if (!sc.getAssignedUser() && sc.getAssignedDefault()) {
+                registerShortcut(sc);
+            }
             i++;
             p = Main.pref.get("shortcut.shortcut."+i, null);
         }
@@ -298,7 +302,9 @@ public class Shortcut {
         p = Main.pref.get("shortcut.shortcut."+i, null);
         while (p != null) {
             Shortcut sc = new Shortcut(p);
-            if (!sc.getAssignedUser() && !sc.getAssignedDefault()) registerShortcut(sc);
+            if (!sc.getAssignedUser() && !sc.getAssignedDefault()) {
+                registerShortcut(sc);
+            }
             i++;
             p = Main.pref.get("shortcut.shortcut."+i, null);
         }
@@ -306,13 +312,13 @@ public class Shortcut {
 
     // shutdown handling
     public static void savePrefs() {
-//      we save this directly from the preferences pane, so don't overwrite these values here
-//      for (int i = GROUP_NONE; i < GROUP__MAX+GROUPS_ALT2; i++) {
-//      Main.pref.put("shortcut.groups."+i, Groups.get(i).toString());
-//      }
+        //      we save this directly from the preferences pane, so don't overwrite these values here
+        //      for (int i = GROUP_NONE; i < GROUP__MAX+GROUPS_ALT2; i++) {
+        //      Main.pref.put("shortcut.groups."+i, Groups.get(i).toString());
+        //      }
         int i = 0;
         for (Shortcut sc : shortcuts.values()) {
-//          TODO: Remove sc.getAssignedUser() when we fixed all internal conflicts
+            //          TODO: Remove sc.getAssignedUser() when we fixed all internal conflicts
             if (!sc.getAutomatic() && !sc.getReset() && sc.getAssignedUser()) {
                 Main.pref.put("shortcut.shortcut."+i, sc.asPrefString());
                 i++;
@@ -325,11 +331,12 @@ public class Shortcut {
     private static void registerShortcut(Shortcut sc) {
         // put a user configured shortcut in as-is -- unless there's a conflict
         if(sc.getAssignedUser() && findShortcut(sc.getAssignedKey(),
-        sc.getAssignedModifier()) == null)
+                sc.getAssignedModifier()) == null) {
             shortcuts.put(sc.getShortText(), sc);
-        else
+        } else {
             registerShortcut(sc.getShortText(), sc.getLongText(), sc.getRequestedKey(),
-            sc.getRequestedGroup(), sc.getAssignedModifier(), sc);
+                    sc.getRequestedGroup(), sc.getAssignedModifier(), sc);
+        }
     }
 
     /**
@@ -338,9 +345,8 @@ public class Shortcut {
      * This registers a system shortcut. See PlatformHook for details.
      */
     public static Shortcut registerSystemShortcut(String shortText, String longText, int key, int modifier) {
-        if (shortcuts.containsKey(shortText)) {
+        if (shortcuts.containsKey(shortText))
             return shortcuts.get(shortText);
-        }
         Shortcut potentialShortcut = findShortcut(key, modifier);
         if (potentialShortcut != null) {
             // this always is a logic error in the hook
@@ -390,10 +396,11 @@ public class Shortcut {
         }
         Integer defaultModifier = groups.get(requestedGroup + GROUPS_DEFAULT);
         if(modifier != null) {
-            if(modifier == SHIFT_DEFAULT)
+            if(modifier == SHIFT_DEFAULT) {
                 defaultModifier |= KeyEvent.SHIFT_DOWN_MASK;
-            else
+            } else {
                 defaultModifier = modifier;
+            }
         }
         else if (defaultModifier == null) { // garbage in, no shortcut out
             defaultModifier = groups.get(GROUP_NONE + GROUPS_DEFAULT);
@@ -436,7 +443,7 @@ public class Shortcut {
 
     // a lengthy warning message
     private static void displayWarning(Shortcut conflictsWith, Shortcut potentialShortcut, String shortText, String longText) {
-        JOptionPane.showMessageDialog(Main.parent,
+        OptionPaneUtil.showMessageDialog(Main.parent,
                 tr("Setting the keyboard shortcut ''{0}'' for the action ''{1}'' ({2}) failed\n"+
                         "because the shortcut is already taken by the action ''{3}'' ({4}).\n\n",
                         conflictsWith.getKeyText(), longText, shortText,
@@ -446,7 +453,9 @@ public class Shortcut {
                                 :
                                     tr("Using the shortcut ''{0}'' instead.\n\n", potentialShortcut.getKeyText())
                         )+
-                        tr("(Hint: You can edit the shortcuts in the preferences.)")
+                        tr("(Hint: You can edit the shortcuts in the preferences.)"),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
         );
     }
 }

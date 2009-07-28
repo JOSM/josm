@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.GBC;
 
 public class AdvancedPreference implements PreferenceSetting {
@@ -82,26 +83,28 @@ public class AdvancedPreference implements PreferenceSetting {
                 if(column == 1)
                 {
                     data.put((String) model.getValueAt(row, 0),
-                    (String) model.getValueAt(row, 1));
+                            (String) model.getValueAt(row, 1));
                 }
             }
 
         };
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer(){
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column)
+                    boolean isSelected, boolean hasFocus, int row, int column)
             {
                 JLabel label=new JLabel();
                 String s = defaults.get(value);
                 if(s != null)
                 {
-                    if(s.equals(model.getValueAt(row, 1)))
+                    if(s.equals(model.getValueAt(row, 1))) {
                         label.setToolTipText(tr("Current value is default."));
-                    else
+                    } else {
                         label.setToolTipText(tr("Default value is ''{0}''.", s));
-                }
-                else
+                    }
+                } else {
                     label.setToolTipText(tr("Default value currently unknown (setting has not been used yet)."));
+                }
                 label.setText((String)value);
                 return label;
             }
@@ -146,8 +149,9 @@ public class AdvancedPreference implements PreferenceSetting {
 
         list.addMouseListener(new MouseAdapter(){
             @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2)
+                if (e.getClickCount() == 2) {
                     editPreference(gui, list);
+                }
             }
         });
     }
@@ -156,14 +160,17 @@ public class AdvancedPreference implements PreferenceSetting {
         TreeSet<String> ts = new TreeSet<String>(orig.keySet());
         for (String s : defaults.keySet())
         {
-            if(!ts.contains(s))
+            if(!ts.contains(s)) {
                 ts.add(s);
+            }
         }
         data = new TreeMap<String, String>();
         for (String s : ts)
         {
             String val = Main.pref.get(s);
-            if(val == null) val = "";
+            if(val == null) {
+                val = "";
+            }
             data.put(s, val);
         }
     }
@@ -179,8 +186,9 @@ public class AdvancedPreference implements PreferenceSetting {
 
             // Make 'wmsplugin cache' search for e.g. 'cache.wmsplugin'
             for (String bit : input) {
-                if (!prefKey.contains(bit) && !prefValue.contains(bit))
+                if (!prefKey.contains(bit) && !prefValue.contains(bit)) {
                     canHas = false;
+                }
             }
 
             if (canHas) {
@@ -195,23 +203,38 @@ public class AdvancedPreference implements PreferenceSetting {
             if(value.length() != 0)
             {
                 String origValue = orig.get(key);
-                if (origValue == null || !origValue.equals(value))
+                if (origValue == null || !origValue.equals(value)) {
                     Main.pref.put(key, value);
+                }
                 orig.remove(key); // processed.
             }
         }
-        for (Entry<String, String> e : orig.entrySet())
+        for (Entry<String, String> e : orig.entrySet()) {
             Main.pref.put(e.getKey(), null);
+        }
         return false;
     }
 
 
     private void editPreference(final PreferenceDialog gui, final JTable list) {
         if (list.getSelectedRowCount() != 1) {
-            JOptionPane.showMessageDialog(gui, tr("Please select the row to edit."));
+            OptionPaneUtil.showMessageDialog(
+                    gui,
+                    tr("Please select the row to edit."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
-        String v = JOptionPane.showInputDialog(tr("New value for {0}", model.getValueAt(list.getSelectedRow(), 0)), model.getValueAt(list.getSelectedRow(), 1));
+        String v = (String) OptionPaneUtil.showInputDialog(
+                Main.parent,
+                tr("New value for {0}", model.getValueAt(list.getSelectedRow(), 0)),
+                tr("New value"),
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                model.getValueAt(list.getSelectedRow(), 1)
+        );
         if (v != null) {
             data.put((String) model.getValueAt(list.getSelectedRow(), 0), v);
             model.setValueAt(v, list.getSelectedRow(), 1);
@@ -220,7 +243,12 @@ public class AdvancedPreference implements PreferenceSetting {
 
     private void removePreference(final PreferenceDialog gui, final JTable list) {
         if (list.getSelectedRowCount() == 0) {
-            JOptionPane.showMessageDialog(gui, tr("Please select the row to delete."));
+            OptionPaneUtil.showMessageDialog(
+                    gui,
+                    tr("Please select the row to delete."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
         for(int row: list.getSelectedRows()) {
@@ -237,7 +265,12 @@ public class AdvancedPreference implements PreferenceSetting {
         p.add(key, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
         p.add(new JLabel(tr("Value")), GBC.std().insets(0,0,5,0));
         p.add(value, GBC.eol().insets(5,0,0,0).fill(GBC.HORIZONTAL));
-        int answer = JOptionPane.showConfirmDialog(gui, p, tr("Enter a new key/value pair"), JOptionPane.OK_CANCEL_OPTION);
+        int answer = OptionPaneUtil.showConfirmationDialog(
+                gui, p,
+                tr("Enter a new key/value pair"),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
         if (answer == JOptionPane.OK_OPTION) {
             data.put(key.getText(), value.getText());
             model.addRow(new String[]{key.getText(), value.getText()});

@@ -66,11 +66,6 @@ public class ExtendedDialog extends JDialog {
 
         bTexts = buttonTexts;
         setupDialog(lbl, buttonIcons);
-        try {
-            setAlwaysOnTop(true);
-        } catch(SecurityException e) {
-            System.out.println(tr("Warning: failed to put extended dialog always on top. Exception was: {0}", e.toString()));
-        }
         setVisible(true);
     }
 
@@ -142,6 +137,14 @@ public class ExtendedDialog extends JDialog {
 
         setSize(d);
         setLocationRelativeTo(parent);
+
+        // try to put always on top
+        //
+        try {
+            setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to bring extended dialog always on top. Exception: {0}", e.toString()));
+        }
     }
 
     /**

@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
@@ -597,10 +598,20 @@ public class TaggingPreset extends AbstractAction {
                 allPresets.addAll(TaggingPreset.readAll(new BufferedReader(r)));
             } catch (IOException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(Main.parent, tr("Could not read tagging preset source: {0}",source));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Could not read tagging preset source: {0}",source),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             } catch (SAXException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(Main.parent, tr("Error parsing {0}: ", source)+e.getMessage());
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Error parsing {0}: ", source)+e.getMessage(),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
         return allPresets;

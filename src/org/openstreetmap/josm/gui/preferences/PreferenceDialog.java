@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.GBC;
@@ -94,11 +95,18 @@ public class PreferenceDialog extends JTabbedPane {
         boolean requiresRestart = false;
         for (PreferenceSetting setting : settings)
         {
-            if(setting.ok())
+            if(setting.ok()) {
                 requiresRestart = true;
+            }
         }
-        if (requiresRestart)
-            JOptionPane.showMessageDialog(Main.parent,tr("You have to restart JOSM for some settings to take effect."));
+        if (requiresRestart) {
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("You have to restart JOSM for some settings to take effect."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
         Main.parent.repaint();
     }
 
@@ -138,9 +146,8 @@ public class PreferenceDialog extends JTabbedPane {
     @SuppressWarnings("unchecked")
     public <T>  T getSetting(Class<? extends T> clazz) {
         for (PreferenceSetting setting:settings) {
-            if (clazz.isAssignableFrom(setting.getClass())) {
+            if (clazz.isAssignableFrom(setting.getClass()))
                 return (T)setting;
-            }
         }
         return null;
     }

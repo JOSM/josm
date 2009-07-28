@@ -168,7 +168,12 @@ public class UploadAction extends JosmAction{
         if (!isEnabled())
             return;
         if (Main.map == null) {
-            JOptionPane.showMessageDialog(Main.parent,tr("Nothing to upload. Get some data first."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("Nothing to upload. Get some data first."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
 
@@ -202,7 +207,12 @@ public class UploadAction extends JosmAction{
         }
 
         if (add.isEmpty() && update.isEmpty() && delete.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent,tr("No changes to upload."));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("No changes to upload."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
 
@@ -349,13 +359,12 @@ public class UploadAction extends JosmAction{
                 options[0], options[1], options[2]
         );
         int optionsType = JOptionPane.YES_NO_CANCEL_OPTION;
-        int ret = JOptionPane.showOptionDialog(
+        int ret = OptionPaneUtil.showOptionDialog(
                 null,
                 msg,
                 tr("Conflict detected"),
                 optionsType,
                 JOptionPane.ERROR_MESSAGE,
-                null,
                 options,
                 defaultOption
         );
@@ -389,13 +398,12 @@ public class UploadAction extends JosmAction{
                 options[0], options[1]
         );
         int optionsType = JOptionPane.YES_NO_OPTION;
-        int ret = JOptionPane.showOptionDialog(
+        int ret = OptionPaneUtil.showOptionDialog(
                 null,
                 msg,
                 tr("Conflict detected"),
                 optionsType,
                 JOptionPane.ERROR_MESSAGE,
-                null,
                 options,
                 defaultOption
         );
@@ -432,7 +440,7 @@ public class UploadAction extends JosmAction{
      * @param e the exception
      */
     protected void handlePreconditionFailed(OsmApiException e) {
-        JOptionPane.showMessageDialog(
+        OptionPaneUtil.showMessageDialog(
                 Main.parent,
                 tr("<html>Uploading to the server <strong>failed</strong> because your current<br>"
                         +"dataset violates a precondition.<br>"
@@ -482,7 +490,7 @@ public class UploadAction extends JosmAction{
                 + "</html>",
                 e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         );
-        JOptionPane.showMessageDialog(
+        OptionPaneUtil.showMessageDialog(
                 Main.parent,
                 msg,
                 tr("Primitive already deleted"),
@@ -557,7 +565,7 @@ public class UploadAction extends JosmAction{
                         + "</html>",
                         ex.getDisplayMessage()
                 );
-                JOptionPane.showMessageDialog(
+                OptionPaneUtil.showMessageDialog(
                         Main.map,
                         msg,
                         tr("Upload to OSM API failed"),
@@ -574,7 +582,7 @@ public class UploadAction extends JosmAction{
             msg = e.toString();
         }
         e.printStackTrace();
-        JOptionPane.showMessageDialog(
+        OptionPaneUtil.showMessageDialog(
                 Main.map,
                 msg,
                 tr("Upload to OSM API failed"),
@@ -588,7 +596,7 @@ public class UploadAction extends JosmAction{
      * @param e the exception
      */
     protected void handleOsmApiInitializationException(OsmApiInitializationException e) {
-        JOptionPane.showMessageDialog(
+        OptionPaneUtil.showMessageDialog(
                 Main.parent,
                 tr(   "Failed to initialize communication with the OSM server {0}.\n"
                         + "Check the server URL in your preferences and your internet connection.",

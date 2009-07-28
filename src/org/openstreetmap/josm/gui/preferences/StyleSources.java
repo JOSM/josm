@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -61,12 +62,21 @@ public class StyleSources extends JPanel {
         public String getTooltip()
         {
             String s = tr("Short Description: {0}", getName()) + "<br>" + tr("URL: {0}", url);
-            if(author != null) s += "<br>" + tr("Author: {0}", author);
-            if(link != null) s += "<br>" + tr("Webpage: {0}", link);
-            if(description != null) s += "<br>" + tr("Description: {0}", description);
-            if(version != null) s += "<br>" + tr("Version: {0}", version);
+            if(author != null) {
+                s += "<br>" + tr("Author: {0}", author);
+            }
+            if(link != null) {
+                s += "<br>" + tr("Webpage: {0}", link);
+            }
+            if(description != null) {
+                s += "<br>" + tr("Description: {0}", description);
+            }
+            if(version != null) {
+                s += "<br>" + tr("Version: {0}", version);
+            }
             return "<html>" + s + "</html>";
         }
+        @Override
         public String toString()
         {
             return getName() + " (" + url + ")";
@@ -75,7 +85,7 @@ public class StyleSources extends JPanel {
 
     class MyCellRenderer extends JLabel implements ListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value,
-        int index, boolean isSelected, boolean cellHasFocus)
+                int index, boolean isSelected, boolean cellHasFocus)
         {
             String s = value.toString();
             setText(s);
@@ -106,9 +116,11 @@ public class StyleSources extends JPanel {
         this.iconpref = iconpref;
 
         Collection<String> sources = Main.pref.getCollection(pref, null);
-        if(sources != null)
-            for(String s : sources)
+        if(sources != null) {
+            for(String s : sources) {
                 ((DefaultListModel)sourcesList.getModel()).addElement(s);
+            }
+        }
 
         JButton iconadd = null;
         JButton iconedit = null;
@@ -118,29 +130,50 @@ public class StyleSources extends JPanel {
         {
             iconsList = new JList(new DefaultListModel());
             sources = Main.pref.getCollection(iconpref, null);
-            if(sources != null)
-                for(String s : sources)
+            if(sources != null) {
+                for(String s : sources) {
                     ((DefaultListModel)iconsList.getModel()).addElement(s);
+                }
+            }
 
             iconadd = new JButton(tr("Add"));
             iconadd.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                    String source = JOptionPane.showInputDialog(Main.parent, tr("Icon paths"));
-                    if (source != null)
+                    String source = OptionPaneUtil.showInputDialog(
+                            Main.parent,
+                            tr("Icon paths"),
+                            tr("Icon paths"),
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+                    if (source != null) {
                         ((DefaultListModel)iconsList.getModel()).addElement(source);
+                    }
                 }
             });
 
             iconedit = new JButton(tr("Edit"));
             iconedit.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                    if (sourcesList.getSelectedIndex() == -1)
-                        JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
-                    else {
-                        String source = JOptionPane.showInputDialog(Main.parent,
-                        tr("Icon paths"), iconsList.getSelectedValue());
-                        if (source != null)
+                    if (sourcesList.getSelectedIndex() == -1) {
+                        OptionPaneUtil.showMessageDialog(
+                                Main.parent,
+                                tr("Please select the row to edit."),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                    } else {
+                        String source = (String)OptionPaneUtil.showInputDialog(
+                                Main.parent,
+                                tr("Icon paths"),
+                                tr("Icon paths"),
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                null,
+                                iconsList.getSelectedValue()
+                        );
+                        if (source != null) {
                             ((DefaultListModel)iconsList.getModel()).setElementAt(source, iconsList.getSelectedIndex());
+                        }
                     }
                 }
             });
@@ -148,9 +181,12 @@ public class StyleSources extends JPanel {
             icondelete = new JButton(tr("Delete"));
             icondelete.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                    if (iconsList.getSelectedIndex() == -1)
-                        JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
-                    else {
+                    if (iconsList.getSelectedIndex() == -1) {
+                        OptionPaneUtil.showMessageDialog(
+                                Main.parent, tr("Please select the row to delete."),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE);
+                    } else {
                         ((DefaultListModel)iconsList.getModel()).remove(iconsList.getSelectedIndex());
                     }
                 }
@@ -160,22 +196,37 @@ public class StyleSources extends JPanel {
         JButton add = new JButton(tr("Add"));
         add.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                String source = JOptionPane.showInputDialog(Main.parent, name);
-                if (source != null)
+                String source = OptionPaneUtil.showInputDialog(
+                        Main.parent,
+                        name,
+                        name,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (source != null) {
                     ((DefaultListModel)sourcesList.getModel()).addElement(source);
+                }
             }
         });
 
         JButton edit = new JButton(tr("Edit"));
         edit.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                if (sourcesList.getSelectedIndex() == -1)
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to edit."));
-                else {
-                    String source = JOptionPane.showInputDialog(Main.parent,
-                    name, sourcesList.getSelectedValue());
-                    if (source != null)
+                if (sourcesList.getSelectedIndex() == -1) {
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent, tr("Please select the row to edit."),
+                            tr("Warning"), JOptionPane.WARNING_MESSAGE);
+                } else {
+                    String source = (String)OptionPaneUtil.showInputDialog(
+                            Main.parent,
+                            name,
+                            name,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            null,
+                            sourcesList.getSelectedValue()
+                    );
+                    if (source != null) {
                         ((DefaultListModel)sourcesList.getModel()).setElementAt(source, sourcesList.getSelectedIndex());
+                    }
                 }
             }
         });
@@ -183,9 +234,10 @@ public class StyleSources extends JPanel {
         JButton delete = new JButton(tr("Delete"));
         delete.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                if (sourcesList.getSelectedIndex() == -1)
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."));
-                else {
+                if (sourcesList.getSelectedIndex() == -1) {
+                    OptionPaneUtil.showMessageDialog(Main.parent, tr("Please select the row to delete."),
+                            tr("Warning"), JOptionPane.WARNING_MESSAGE);
+                } else {
                     ((DefaultListModel)sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
                 }
             }
@@ -194,11 +246,13 @@ public class StyleSources extends JPanel {
         JButton copy = new JButton(tr("Copy defaults"));
         copy.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                if (sourcesDefaults.getSelectedIndex() == -1)
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to copy."));
-                else {
+                if (sourcesDefaults.getSelectedIndex() == -1) {
+                    OptionPaneUtil.showMessageDialog(
+                            Main.parent, tr("Please select the row to copy."),
+                            tr("Warning"), JOptionPane.WARNING_MESSAGE);
+                } else {
                     ((DefaultListModel)sourcesList.getModel()).addElement(
-                    ((SourceInfo)sourcesDefaults.getSelectedValue()).url);
+                            ((SourceInfo)sourcesDefaults.getSelectedValue()).url);
                 }
             }
         });
@@ -212,8 +266,9 @@ public class StyleSources extends JPanel {
                 if (num > 0)
                 {
                     ArrayList<String> l = new ArrayList<String>();
-                    for (int i = 0; i < num; ++i)
+                    for (int i = 0; i < num; ++i) {
                         MirroredInputStream.cleanup((String)sourcesList.getModel().getElementAt(i));
+                    }
                 }
             }
         });
@@ -255,26 +310,32 @@ public class StyleSources extends JPanel {
         if (num > 0)
         {
             ArrayList<String> l = new ArrayList<String>();
-            for (int i = 0; i < num; ++i)
+            for (int i = 0; i < num; ++i) {
                 l.add((String)sourcesList.getModel().getElementAt(i));
-            if(Main.pref.putCollection(pref, l))
+            }
+            if(Main.pref.putCollection(pref, l)) {
                 changed = true;
+            }
         }
-        else if(Main.pref.putCollection(pref, null))
+        else if(Main.pref.putCollection(pref, null)) {
             changed = true;
+        }
         if(iconsList != null)
         {
             num = iconsList.getModel().getSize();
             if (num > 0)
             {
                 ArrayList<String> l = new ArrayList<String>();
-                for (int i = 0; i < num; ++i)
+                for (int i = 0; i < num; ++i) {
                     l.add((String)iconsList.getModel().getElementAt(i));
-                if(Main.pref.putCollection(iconpref, l))
+                }
+                if(Main.pref.putCollection(iconpref, l)) {
                     changed = true;
+                }
             }
-            else if(Main.pref.putCollection(iconpref, null))
+            else if(Main.pref.putCollection(iconpref, null)) {
                 changed = true;
+            }
         }
         return changed;
     }
@@ -312,24 +373,25 @@ public class StyleSources extends JPanel {
                         {
                             String key = m.group(1);
                             String value = m.group(2);
-                            if("author".equals(key) && last.author == null)
+                            if("author".equals(key) && last.author == null) {
                                 last.author = value;
-                            else if("version".equals(key))
+                            } else if("version".equals(key)) {
                                 last.version = value;
-                            else if("link".equals(key) && last.link == null)
+                            } else if("link".equals(key) && last.link == null) {
                                 last.link = value;
-                            else if("description".equals(key) && last.description == null)
+                            } else if("description".equals(key) && last.description == null) {
                                 last.description = value;
-                            else if("shortdescription".equals(key) && last.shortdescription == null)
+                            } else if("shortdescription".equals(key) && last.shortdescription == null) {
                                 last.shortdescription = value;
-                            else if((lang+"author").equals(key))
+                            } else if((lang+"author").equals(key)) {
                                 last.author = value;
-                            else if((lang+"link").equals(key))
+                            } else if((lang+"link").equals(key)) {
                                 last.link = value;
-                            else if((lang+"description").equals(key))
+                            } else if((lang+"description").equals(key)) {
                                 last.description = value;
-                            else if((lang+"shortdescription").equals(key))
+                            } else if((lang+"shortdescription").equals(key)) {
                                 last.shortdescription = value;
+                            }
                         }
                     }
                     catch (IllegalStateException e)

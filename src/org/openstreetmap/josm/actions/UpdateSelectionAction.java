@@ -13,13 +13,10 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
@@ -62,7 +59,7 @@ public class UpdateSelectionAction extends JosmAction {
      */
     protected void handleUpdateException(Exception e) {
         e.printStackTrace();
-        JOptionPane.showMessageDialog(
+        OptionPaneUtil.showMessageDialog(
                 Main.parent,
                 tr("Failed to update the selected primitives."),
                 tr("Update failed"),
@@ -77,7 +74,7 @@ public class UpdateSelectionAction extends JosmAction {
      * @param id the primitive id
      */
     protected void handleMissingPrimitive(long id) {
-        JOptionPane.showMessageDialog(
+        OptionPaneUtil.showMessageDialog(
                 Main.parent,
                 tr("Could not find primitive with id {0} in the current dataset", new Long(id).toString()),
                 tr("Missing primitive"),
@@ -113,7 +110,7 @@ public class UpdateSelectionAction extends JosmAction {
                 if (msg == null) {
                     msg = lastException.toString();
                 }
-                JOptionPane.showMessageDialog(
+                OptionPaneUtil.showMessageDialog(
                         Main.map,
                         msg,
                         tr("Error"),

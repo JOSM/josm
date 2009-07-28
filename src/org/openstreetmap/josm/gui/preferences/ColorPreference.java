@@ -35,6 +35,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.gui.MapScaler;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -80,12 +81,13 @@ public class ColorPreference implements PreferenceSetting {
         Map<String, String> colorKeyList_mappaint = new TreeMap<String, String>();
         Map<String, String> colorKeyList_layer = new TreeMap<String, String>();
         for(String key : colorMap.keySet()) {
-            if(key.startsWith("layer "))
+            if(key.startsWith("layer ")) {
                 colorKeyList_layer.put(getName(key), key);
-            else if(key.startsWith("mappaint."))
+            } else if(key.startsWith("mappaint.")) {
                 colorKeyList_mappaint.put(getName(key), key);
-            else
+            } else {
                 colorKeyList.put(getName(key), key);
+            }
         }
         for (Entry<String, String> k : colorKeyList.entrySet()) {
             Vector<Object> row = new Vector<Object>(2);
@@ -154,11 +156,14 @@ public class ColorPreference implements PreferenceSetting {
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
                 JColorChooser chooser = new JColorChooser((Color)colors.getValueAt(sel, 1));
-                int answer = JOptionPane.showConfirmDialog(gui, chooser,
-                tr("Choose a color for {0}", getName((String)colors.getValueAt(sel, 0))),
-                JOptionPane.OK_CANCEL_OPTION);
-                if (answer == JOptionPane.OK_OPTION)
+                int answer = OptionPaneUtil.showConfirmationDialog(
+                        gui, chooser,
+                        tr("Choose a color for {0}", getName((String)colors.getValueAt(sel, 0))),
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+                if (answer == JOptionPane.OK_OPTION) {
                     colors.setValueAt(chooser.getColor(), sel, 1);
+                }
             }
         });
         defaultSet = new JButton(tr("Set to default"));
@@ -167,8 +172,9 @@ public class ColorPreference implements PreferenceSetting {
                 int sel = colors.getSelectedRow();
                 String name = (String)colors.getValueAt(sel, 0);
                 Color c = Main.pref.getDefaultColor(name);
-                if (c != null)
+                if (c != null) {
                     colors.setValueAt(c, sel, 1);
+                }
             }
         });
         JButton defaultAll = new JButton(tr("Set all to default"));
@@ -176,10 +182,11 @@ public class ColorPreference implements PreferenceSetting {
             public void actionPerformed(ActionEvent e) {
                 for(int i = 0; i < colors.getRowCount(); ++i)
                 {
-                  String name = (String)colors.getValueAt(i, 0);
-                  Color c = Main.pref.getDefaultColor(name);
-                  if (c != null)
-                      colors.setValueAt(c, i, 1);
+                    String name = (String)colors.getValueAt(i, 0);
+                    Color c = Main.pref.getDefaultColor(name);
+                    if (c != null) {
+                        colors.setValueAt(c, i, 1);
+                    }
                 }
             }
         });
@@ -256,14 +263,16 @@ public class ColorPreference implements PreferenceSetting {
 
     public boolean ok() {
         Boolean ret = false;
-        for(String d : del)
+        for(String d : del) {
             Main.pref.put("color."+d, null);
+        }
         for (int i = 0; i < colors.getRowCount(); ++i) {
             String key = (String)colors.getValueAt(i, 0);
             if(Main.pref.putColor(key, (Color)colors.getValueAt(i, 1)))
             {
-                if(key.startsWith("mappaint."))
+                if(key.startsWith("mappaint.")) {
                     ret = true;
+                }
             }
         }
         org.openstreetmap.josm.gui.layer.OsmDataLayer.createHatchTexture();

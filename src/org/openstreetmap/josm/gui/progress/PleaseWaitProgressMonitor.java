@@ -15,7 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
@@ -72,6 +74,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         EventQueue.invokeLater(runnable);
     }
 
+    @Override
     public void doBeginTask() {
         doInEDT(new Runnable() {
             public void run() {
@@ -79,9 +82,8 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                     dialog = new PleaseWaitDialog((Frame)dialogParent);
                 } else if (dialogParent instanceof Dialog) {
                     dialog = new PleaseWaitDialog((Dialog)dialogParent);
-                } else {
+                } else
                     throw new ProgressException("PleaseWaitDialog parent must be either Frame or Dialog");
-                }
 
                 dialog.cancel.setEnabled(true);
                 dialog.setCustomText("");
@@ -93,6 +95,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         });
     }
 
+    @Override
     public void doFinishTask() {
         doInEDT(new Runnable() {
             public void run() {
@@ -102,7 +105,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                     dialog.removeWindowListener(windowListener);
                     dialog.cancel.removeActionListener(cancelListener);
                     if (getErrorMessage() != null) {
-                        JOptionPane.showMessageDialog(Main.parent, getErrorMessage());
+                        OptionPaneUtil.showMessageDialog(
+                                Main.parent, getErrorMessage(),
+                                tr("Error"),
+                                JOptionPane.ERROR_MESSAGE);
                     }
                     dialog = null;
                 }
@@ -110,6 +116,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         });
     }
 
+    @Override
     protected void updateProgress(double progressValue) {
         final int newValue = (int)(progressValue * PROGRESS_BAR_MAX);
         if (newValue != currentProgressValue) {

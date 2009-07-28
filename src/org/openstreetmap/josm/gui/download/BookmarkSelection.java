@@ -86,7 +86,11 @@ public class BookmarkSelection implements DownloadSelection {
                     );
                     return;
                 }
-                tempBookmark.name = JOptionPane.showInputDialog(Main.parent,tr("Please enter a name for the location."));
+                tempBookmark.name = OptionPaneUtil.showInputDialog(
+                        Main.parent,tr("Please enter a name for the location."),
+                        tr("Name of location"),
+                        JOptionPane.QUESTION_MESSAGE
+                );
                 if (tempBookmark.name != null && !tempBookmark.name.equals("")) {
                     ((DefaultListModel)bookmarks.getModel()).addElement(tempBookmark);
                     bookmarks.save();

@@ -69,6 +69,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -124,9 +125,8 @@ public class GeoImageLayer extends Layer {
             SoftReference<Image> cachedImageRef = loadedImageCache.get(file);
             if (cachedImageRef != null) {
                 Image cachedImage = cachedImageRef.get();
-                if (cachedImage != null) {
+                if (cachedImage != null)
                     return cachedImage;
-                }
             }
             return Toolkit.getDefaultToolkit().createImage(currentEntry.file.getAbsolutePath());
         }
@@ -146,9 +146,8 @@ public class GeoImageLayer extends Layer {
             return scaledBI;
         }
         private void loadImage() {
-            if (currentEntry != null) {
+            if (currentEntry != null)
                 return;
-            }
             while (!queue.isEmpty()) {
                 currentEntry = queue.get(0);
                 queue.remove(0);
@@ -216,9 +215,8 @@ public class GeoImageLayer extends Layer {
             loadImage();
 
             while (true) {
-                if (entry.scaledImage != null) {
+                if (entry.scaledImage != null)
                     return entry.scaledImage;
-                }
                 try {
                     wait();
                 } catch (InterruptedException e) {}
@@ -258,11 +256,10 @@ public class GeoImageLayer extends Layer {
         }
 
         public Image getIcon() {
-            if (icon.scaledImage == null) {
+            if (icon.scaledImage == null)
                 return EMPTY_IMAGE;
-            } else {
+            else
                 return icon.scaledImage;
-            }
         }
 
         public void imageLoaded() {
@@ -329,8 +326,9 @@ public class GeoImageLayer extends Layer {
             // read the image files
             ArrayList<ImageEntry> data = new ArrayList<ImageEntry>(files.size());
             for (File f : files) {
-                if (progressMonitor.isCancelled())
+                if (progressMonitor.isCancelled()) {
                     break;
+                }
                 progressMonitor.subTask(tr("Reading {0}...",f.getName()));
 
                 ImageEntry e = new ImageEntry(f);
@@ -340,8 +338,9 @@ public class GeoImageLayer extends Layer {
                 } catch (ParseException e1) {
                     continue;
                 }
-                if (e.time == null)
+                if (e.time == null) {
                     continue;
+                }
 
                 data.add(e);
             }
@@ -349,8 +348,9 @@ public class GeoImageLayer extends Layer {
             layer.calculatePosition();
         }
         @Override protected void finish() {
-            if (layer != null)
+            if (layer != null) {
                 Main.main.addLayer(layer);
+            }
         }
         @Override
         protected void cancel() {
@@ -411,8 +411,9 @@ public class GeoImageLayer extends Layer {
                 if (e.getButton() != MouseEvent.BUTTON1)
                     return;
                 mousePressed  = true;
-                if (visible)
+                if (visible) {
                     Main.map.mapView.repaint();
+                }
             }
             @Override public void mouseReleased(MouseEvent ev) {
                 if (ev.getButton() != MouseEvent.BUTTON1)
@@ -422,8 +423,9 @@ public class GeoImageLayer extends Layer {
                     return;
                 for (int i = data.size(); i > 0; --i) {
                     ImageEntry e = data.get(i-1);
-                    if (e.pos == null)
+                    if (e.pos == null) {
                         continue;
+                    }
                     Point p = Main.map.mapView.getPoint(e.pos);
                     Rectangle r = new Rectangle(p.x-ICON_SIZE/2, p.y-ICON_SIZE/2, ICON_SIZE, ICON_SIZE);
                     if (r.contains(ev.getPoint())) {
@@ -439,8 +441,9 @@ public class GeoImageLayer extends Layer {
             public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
             public void layerAdded(Layer newLayer) {}
             public void layerRemoved(Layer oldLayer) {
-                if (oldLayer == self)
+                if (oldLayer == self) {
                     Main.map.mapView.removeMouseListener(mouseAdapter);
+                }
             }
         });
     }
@@ -549,14 +552,16 @@ public class GeoImageLayer extends Layer {
             prevButton.setEnabled(currentImage > 0);
             nextButton.setEnabled(currentImage < data.size() - 1);
 
-            if (scaleToggle.getModel().isSelected())
+            if (scaleToggle.getModel().isSelected()) {
                 imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image,
                         Math.max(imageViewport.getWidth(), imageViewport.getHeight()))));
-            else
+            } else {
                 imageLabel.setIcon(new ImageIcon(imageLoader.waitForImage(currentImageEntry.image)));
+            }
 
-            if (centerToggle.getModel().isSelected())
+            if (centerToggle.getModel().isSelected()) {
                 Main.map.mapView.zoomTo(currentImageEntry.pos);
+            }
 
             dlg.setTitle(currentImageEntry.image +
                     " (" + currentImageEntry.pos.toDisplayString() + ")");
@@ -593,8 +598,9 @@ public class GeoImageLayer extends Layer {
                 ImageEntry e = (ImageEntry)value;
                 setIcon(new ImageIcon(e.getIcon()));
                 setText(e.image.getName()+" ("+dateFormat.format(new Date(e.time.getTime()+(delta+gpstimezone)))+")");
-                if (e.pos == null)
+                if (e.pos == null) {
                     setForeground(Color.red);
+                }
                 return this;
             }
         });
@@ -606,8 +612,9 @@ public class GeoImageLayer extends Layer {
     @Override public String getToolTipText() {
         int i = 0;
         for (ImageEntry e : data)
-            if (e.pos != null)
+            if (e.pos != null) {
                 i++;
+            }
         return data.size()+" "+trn("image","images",data.size())+". "+tr("{0} within the track.",i);
     }
 
@@ -661,8 +668,9 @@ public class GeoImageLayer extends Layer {
     }
 
     @Override public void visitBoundingBox(BoundingXYVisitor v) {
-        for (ImageEntry e : data)
+        for (ImageEntry e : data) {
             v.visit(e.pos);
+        }
     }
 
     @Override public Component[] getMenuEntries() {
@@ -722,11 +730,21 @@ public class GeoImageLayer extends Layer {
         try {
             exifDate = ExifReader.readTime(f);
         } catch (ParseException e) {
-            JOptionPane.showMessageDialog(Main.parent, tr("The date in file \"{0}\" could not be parsed.", f.getName()));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("The date in file \"{0}\" could not be parsed.", f.getName()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             return;
         }
         if (exifDate == null) {
-            JOptionPane.showMessageDialog(Main.parent, tr("There is no EXIF time within the file \"{0}\".", f.getName()));
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("There is no EXIF time within the file \"{0}\".", f.getName()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             return;
         }
         JPanel p = new JPanel(new GridBagLayout());
@@ -737,31 +755,50 @@ public class GeoImageLayer extends Layer {
         p.add(gpsText, GBC.eol().fill(GBC.HORIZONTAL));
         p.add(new JLabel(tr("GPS unit timezone (difference to photo)")), GBC.eol());
         String t = Main.pref.get("tagimages.gpstimezone", "0");
-        if (t.charAt(0) != '-')
+        if (t.charAt(0) != '-') {
             t = "+"+t;
+        }
         JTextField gpsTimezone = new JTextField(t);
         p.add(gpsTimezone, GBC.eol().fill(GBC.HORIZONTAL));
 
         while (true) {
-            int answer = JOptionPane.showConfirmDialog(Main.parent, p, tr("Synchronize Time with GPS Unit"), JOptionPane.OK_CANCEL_OPTION);
+            int answer = OptionPaneUtil.showConfirmationDialog(
+                    Main.parent,
+                    p,
+                    tr("Synchronize Time with GPS Unit"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
             if (answer != JOptionPane.OK_OPTION || gpsText.getText().equals(""))
                 return;
             try {
                 delta = DateParser.parse(gpsText.getText()).getTime() - exifDate.getTime();
                 String time = gpsTimezone.getText();
-                if (!time.equals("") && time.charAt(0) == '+')
+                if (!time.equals("") && time.charAt(0) == '+') {
                     time = time.substring(1);
-                if (time.equals(""))
+                }
+                if (time.equals("")) {
                     time = "0";
+                }
                 gpstimezone = Long.valueOf(time)*60*60*1000;
                 Main.pref.put("tagimages.delta", ""+delta);
                 Main.pref.put("tagimages.gpstimezone", time);
                 calculatePosition();
                 return;
             } catch (NumberFormatException x) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Time entered could not be parsed."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Time entered could not be parsed."),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             } catch (ParseException x) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Time entered could not be parsed."));
+                OptionPaneUtil.showMessageDialog(
+                        Main.parent,
+                        tr("Time entered could not be parsed."),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
         }
     }

@@ -36,11 +36,17 @@ public class BookmarkList extends JList {
         DefaultListModel model = (DefaultListModel)getModel();
         model.removeAllElements();
         try {
-            for (Preferences.Bookmark b : Main.pref.loadBookmarks())
+            for (Preferences.Bookmark b : Main.pref.loadBookmarks()) {
                 model.addElement(b);
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not read bookmarks.")+"\n"+e.getMessage());
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Could not read bookmarks.<br>{0}</html>", e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -50,11 +56,17 @@ public class BookmarkList extends JList {
     public void save() {
         try {
             Collection<Preferences.Bookmark> bookmarks = new LinkedList<Preferences.Bookmark>();
-            for (Object o : ((DefaultListModel)getModel()).toArray())
+            for (Object o : ((DefaultListModel)getModel()).toArray()) {
                 bookmarks.add((Preferences.Bookmark)o);
+            }
             Main.pref.saveBookmarks(bookmarks);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(Main.parent,tr("Could not write bookmark.")+"\n"+e.getMessage());
+            OptionPaneUtil.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Could not write bookmark.<br>{0}</html>", e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 }
