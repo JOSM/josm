@@ -467,7 +467,11 @@ public class OsmApi extends OsmConnection {
                 activeConnection.disconnect();
 
                 if (retCode != 200)
-                    throw new OsmApiException(retCode,errorHeader.trim(),responseBody.toString().trim());
+                    throw new OsmApiException(
+                            retCode,
+                            errorHeader == null? null : errorHeader.trim(),
+                                    responseBody == null ? null : responseBody.toString().trim()
+                    );
 
                 return responseBody.toString();
             } catch (UnknownHostException e) {
