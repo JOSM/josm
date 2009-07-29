@@ -3,6 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -15,10 +17,12 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
@@ -91,68 +95,7 @@ public class UploadAction extends JosmAction{
          * Displays a screen where the actions that would be taken are displayed and
          * give the user the possibility to cancel the upload.
          */
-        uploadHooks.add(new UploadHook() {
-            public boolean checkUpload(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
-
-                JPanel p = new JPanel(new GridBagLayout());
-
-                OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
-
-                if (!add.isEmpty()) {
-                    p.add(new JLabel(tr("Objects to add:")), GBC.eol());
-                    JList l = new JList(add.toArray());
-                    l.setCellRenderer(renderer);
-                    l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
-                    p.add(new JScrollPane(l), GBC.eol().fill());
-                }
-
-                if (!update.isEmpty()) {
-                    p.add(new JLabel(tr("Objects to modify:")), GBC.eol());
-                    JList l = new JList(update.toArray());
-                    l.setCellRenderer(renderer);
-                    l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
-                    p.add(new JScrollPane(l), GBC.eol().fill());
-                }
-
-                if (!delete.isEmpty()) {
-                    p.add(new JLabel(tr("Objects to delete:")), GBC.eol());
-                    JList l = new JList(delete.toArray());
-                    l.setCellRenderer(renderer);
-                    l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
-                    p.add(new JScrollPane(l), GBC.eol().fill());
-                }
-
-                p.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
-                SuggestingJHistoryComboBox cmt = new SuggestingJHistoryComboBox();
-                List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
-                cmt.setHistory(cmtHistory);
-                //final JTextField cmt = new JTextField(lastCommitComment);
-                p.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
-
-                while(true) {
-                    int result = new ExtendedDialog(Main.parent,
-                            tr("Upload these changes?"),
-                            p,
-                            new String[] {tr("Upload Changes"), tr("Cancel")},
-                            new String[] {"upload.png", "cancel.png"}).getValue();
-
-                    // cancel pressed
-                    if (result != 1) return false;
-
-                    // don't allow empty commit message
-                    if (cmt.getText().trim().length() < 3) {
-                        continue;
-                    }
-
-                    // store the history of comments
-                    cmt.addCurrentItemToHistory();
-                    Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
-
-                    break;
-                }
-                return true;
-            }
-        });
+        uploadHooks.add(new UploadConfirmationHook());
     }
 
     /**
@@ -274,48 +217,7 @@ public class UploadAction extends JosmAction{
      * @param id the primitive ID
      */
     protected void synchronizePrimitive(final String id) {
-
-        /**
-         * The asynchronous task to update a a specific id
-         *
-         */
-        class UpdatePrimitiveTask extends  PleaseWaitRunnable {
-
-            private boolean uploadCancelled = false;
-            private boolean uploadFailed = false;
-            private Exception lastException = null;
-
-            public UpdatePrimitiveTask() {
-                super(tr("Updating primitive"),false /* don't ignore exceptions */);
-            }
-
-            @Override protected void realRun() throws SAXException, IOException {
-                try {
-                    UpdateSelectionAction act = new UpdateSelectionAction();
-                    act.updatePrimitive(Long.parseLong(id));
-                } catch (Exception sxe) {
-                    if (uploadCancelled) {
-                        System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
-                        return;
-                    }
-                    uploadFailed = true;
-                    lastException = sxe;
-                }
-            }
-
-            @Override protected void finish() {
-                if (uploadFailed) {
-                    handleFailedUpload(lastException);
-                }
-            }
-
-            @Override protected void cancel() {
-                OsmApi.getOsmApi().cancel();
-                uploadCancelled = true;
-            }
-        }
-
-        Main.worker.execute(new UpdatePrimitiveTask());
+        Main.worker.execute(new UpdatePrimitiveTask(Long.parseLong(id)));
     }
 
     /**
@@ -369,13 +271,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case JOptionPane.CANCEL_OPTION: return;
-        case 0: synchronizePrimitive(id); break;
-        case 1: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.CANCEL_OPTION: return;
+            case 0: synchronizePrimitive(id); break;
+            case 1: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -408,12 +310,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case 1: return;
-        case 0: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case 1: return;
+            case 0: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -606,5 +508,128 @@ public class UploadAction extends JosmAction{
                 JOptionPane.ERROR_MESSAGE
         );
         e.printStackTrace();
+    }
+
+    /**
+     * The asynchronous task to update a specific id
+     *
+     */
+    class UpdatePrimitiveTask extends  PleaseWaitRunnable {
+
+        private boolean uploadCancelled = false;
+        private boolean uploadFailed = false;
+        private Exception lastException = null;
+        private long id;
+
+        public UpdatePrimitiveTask(long id) {
+            super(tr("Updating primitive"),false /* don't ignore exceptions */);
+        }
+
+        @Override protected void realRun() throws SAXException, IOException {
+            try {
+                UpdateSelectionAction act = new UpdateSelectionAction();
+                act.updatePrimitive(id);
+            } catch (Exception sxe) {
+                if (uploadCancelled) {
+                    System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
+                    return;
+                }
+                uploadFailed = true;
+                lastException = sxe;
+            }
+        }
+
+        @Override protected void finish() {
+            if (uploadFailed) {
+                handleFailedUpload(lastException);
+            }
+        }
+
+        @Override protected void cancel() {
+            OsmApi.getOsmApi().cancel();
+            uploadCancelled = true;
+        }
+    }
+
+
+    class UploadConfirmationHook implements UploadHook {
+
+        private JCheckBox cbUseAtomicUpload;
+
+        protected JPanel buildChangesetControlPanel() {
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
+            pnl.add(cbUseAtomicUpload = new JCheckBox(tr("upload all changes in one request")));
+            cbUseAtomicUpload.setToolTipText(tr("Enable to upload all changes in one request, disable to use one request per changed primitive"));
+            boolean useAtomicUpload = Main.pref.getBoolean("osm-server.atomic-upload", true);
+            cbUseAtomicUpload.setSelected(useAtomicUpload);
+            cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasChangesetSupport());
+            return pnl;
+        }
+
+        public boolean checkUpload(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
+
+            JPanel p = new JPanel(new GridBagLayout());
+
+            OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
+
+            if (!add.isEmpty()) {
+                p.add(new JLabel(tr("Objects to add:")), GBC.eol());
+                JList l = new JList(add.toArray());
+                l.setCellRenderer(renderer);
+                l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
+                p.add(new JScrollPane(l), GBC.eol().fill());
+            }
+
+            if (!update.isEmpty()) {
+                p.add(new JLabel(tr("Objects to modify:")), GBC.eol());
+                JList l = new JList(update.toArray());
+                l.setCellRenderer(renderer);
+                l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
+                p.add(new JScrollPane(l), GBC.eol().fill());
+            }
+
+            if (!delete.isEmpty()) {
+                p.add(new JLabel(tr("Objects to delete:")), GBC.eol());
+                JList l = new JList(delete.toArray());
+                l.setCellRenderer(renderer);
+                l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
+                p.add(new JScrollPane(l), GBC.eol().fill());
+            }
+
+            p.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
+            SuggestingJHistoryComboBox cmt = new SuggestingJHistoryComboBox();
+            List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+            cmt.setHistory(cmtHistory);
+            p.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
+            //final JTextField cmt = new JTextField(lastCommitComment);
+
+            // configuration options for atomic upload
+            p.add(buildChangesetControlPanel(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+
+            while(true) {
+                int result = new ExtendedDialog(Main.parent,
+                        tr("Upload these changes?"),
+                        p,
+                        new String[] {tr("Upload Changes"), tr("Cancel")},
+                        new String[] {"upload.png", "cancel.png"}).getValue();
+
+                // cancel pressed
+                if (result != 1) return false;
+
+                // don't allow empty commit message
+                if (cmt.getText().trim().length() < 3) {
+                    continue;
+                }
+
+                // store the history of comments
+                cmt.addCurrentItemToHistory();
+                Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
+                Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
+
+                break;
+            }
+            return true;
+        }
     }
 }

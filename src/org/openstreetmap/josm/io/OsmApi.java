@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 
-import javax.swing.JPopupMenu;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
