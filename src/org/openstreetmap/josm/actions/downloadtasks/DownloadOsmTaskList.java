@@ -100,13 +100,14 @@ public class DownloadOsmTaskList implements Runnable {
             if(err.equals("")) {
                 continue;
             }
-            errors += "* " + err + "\r\n";
+            errors += "<br>* " + err;
         }
 
         if(! errors.equals("")) {
             OptionPaneUtil.showMessageDialog(
                     Main.parent,
-                    tr("<html>The following errors occurred during mass download: {0}</html>", errors),
+                    "<html>"+tr("The following errors occurred during mass download:{0}", errors)
+                    +"</html>",
                     tr("Errors during Download"),
                     JOptionPane.ERROR_MESSAGE);
             return;
