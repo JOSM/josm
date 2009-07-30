@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class UpdateDataAction extends JosmAction{
@@ -31,7 +32,7 @@ public class UpdateDataAction extends JosmAction{
 
     /**
      * Refreshes the enabled state
-     * 
+     *
      */
     @Override
     protected void updateEnabledState() {
@@ -80,6 +81,6 @@ public class UpdateDataAction extends JosmAction{
             return;
         }
 
-        new DownloadOsmTaskList().download(false, areas);
+        new DownloadOsmTaskList().download(false, areas, new PleaseWaitProgressMonitor());
     }
 }

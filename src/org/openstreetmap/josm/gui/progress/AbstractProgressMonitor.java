@@ -18,6 +18,8 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         String customText;
         String extraText;
         Boolean intermediate;
+
+        boolean finishRequested;
     }
 
     private final CancelHandler cancelHandler;
@@ -85,21 +87,12 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
         if (state != State.FINISHED) {
 
             if (state == State.IN_SUBTASK) {
-                // Make sure the subtask didn't start yet (once task start it must be finished)
-                boolean broken = currentChild.state != State.INIT;
-                for (Request request:requests) {
-                    broken = broken | request.originator.state != State.INIT;
-                }
-                if (broken) {
-                    throw new ProgressException("Cannot call finishTask when there are unfinished tasks");
-                } else {
-                    state = State.IN_TASK;
-                }
+                requestedState.finishRequested = true;
+            } else {
+                checkState(State.IN_TASK);
+                state = State.FINISHED;
+                doFinishTask();
             }
-
-            checkState(State.IN_TASK);
-            state = State.FINISHED;
-            doFinishTask();
         }
     }
 
@@ -281,23 +274,27 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     }
 
     private void applyThisRequest(Request request) {
-        if (request.customText != null) {
-            this.customText = request.customText;
-        }
+        if (request.finishRequested) {
+            finishTask();
+        } else {
+            if (request.customText != null) {
+                this.customText = request.customText;
+            }
 
-        if (request.title != null) {
-            this.taskTitle = request.title;
-        }
+            if (request.title != null) {
+                this.taskTitle = request.title;
+            }
 
-        if (request.intermediate != null) {
-            this.intermediateTask = request.intermediate;
-        }
+            if (request.intermediate != null) {
+                this.intermediateTask = request.intermediate;
+            }
 
-        if (request.extraText != null) {
-            this.extraText = request.extraText;
-        }
+            if (request.extraText != null) {
+                this.extraText = request.extraText;
+            }
 
-        resetState();
+            resetState();
+        }
     }
 
     protected synchronized void childFinished(AbstractProgressMonitor child) {

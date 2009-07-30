@@ -23,7 +23,6 @@ import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
@@ -75,13 +74,18 @@ public class DownloadOsmTaskList implements Runnable {
      * @param newLayer Set to true if all areas should be put into a single new layer
      * @param The Collection of Areas to download
      */
-    public void download(boolean newLayer, Collection<Area> areas) {
-        List<Rectangle2D> rects = new LinkedList<Rectangle2D>();
-        for(Area a : areas) {
-            rects.add(a.getBounds2D());
-        }
+    public void download(boolean newLayer, Collection<Area> areas, ProgressMonitor progressMonitor) {
+        progressMonitor.beginTask(tr("Updating data"));
+        try {
+            List<Rectangle2D> rects = new LinkedList<Rectangle2D>();
+            for(Area a : areas) {
+                rects.add(a.getBounds2D());
+            }
 
-        download(newLayer, rects, NullProgressMonitor.INSTANCE);
+            download(newLayer, rects, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+        } finally {
+            progressMonitor.finishTask();
+        }
     }
 
     /**
