@@ -61,14 +61,14 @@ public class OsmApiException extends OsmTransferException {
         .append(responseCode);
         if (errorHeader != null) {
             sb.append(", Error Header=<")
-            .append(errorHeader)
+            .append(tr(errorHeader))
             .append(">");
         }
         if (errorBody != null) {
             errorBody = errorBody.trim();
             if(!errorBody.equals(errorHeader)) {
                 sb.append(", Error Body=<")
-                .append(errorBody)
+                .append(tr(errorBody))
                 .append(">");
             }
         }
