@@ -523,6 +523,7 @@ public class UploadAction extends JosmAction{
 
         public UpdatePrimitiveTask(long id) {
             super(tr("Updating primitive"),false /* don't ignore exceptions */);
+            this.id = id;
         }
 
         @Override protected void realRun() throws SAXException, IOException {
