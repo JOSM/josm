@@ -38,76 +38,84 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      */
     protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
-        api.initialize();
-        urlStr = api.getBaseUrl() + urlStr;
-        return getInputStreamRaw(urlStr, progressMonitor);
+        try {
+            api.initialize();
+            urlStr = api.getBaseUrl() + urlStr;
+            return getInputStreamRaw(urlStr, progressMonitor);
+        } finally {
+            progressMonitor.invalidate();
+        }
     }
 
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
-        URL url = null;
         try {
-            url = new URL(urlStr);
-        } catch(MalformedURLException e) {
-            throw new OsmTransferException(e);
-        }
-        try {
-            activeConnection = (HttpURLConnection)url.openConnection();
-        } catch(Exception e) {
-            throw new OsmTransferException(tr("Failed to open connection to API {0}", url.toExternalForm()), e);
-        }
-        if (cancel) {
-            activeConnection.disconnect();
-            return null;
-        }
+            URL url = null;
+            try {
+                url = new URL(urlStr);
+            } catch(MalformedURLException e) {
+                throw new OsmTransferException(e);
+            }
+            try {
+                activeConnection = (HttpURLConnection)url.openConnection();
+            } catch(Exception e) {
+                throw new OsmTransferException(tr("Failed to open connection to API {0}", url.toExternalForm()), e);
+            }
+            if (cancel) {
+                activeConnection.disconnect();
+                return null;
+            }
 
-        if (Main.pref.getBoolean("osm-server.use-compression", true)) {
-            activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
-        }
+            if (Main.pref.getBoolean("osm-server.use-compression", true)) {
+                activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
+            }
 
-        activeConnection.setConnectTimeout(15000);
+            activeConnection.setConnectTimeout(15000);
 
-        try {
-            System.out.println("GET " + url);
-            activeConnection.connect();
-        } catch (Exception e) {
-            throw new OsmTransferException(tr("Couldn't connect to the osm server. Please check your internet connection."), e);
-        }
-        try {
-            if (isAuthCancelled() && activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
-                throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
+            try {
+                System.out.println("GET " + url);
+                activeConnection.connect();
+            } catch (Exception e) {
+                throw new OsmTransferException(tr("Couldn't connect to the osm server. Please check your internet connection."), e);
+            }
+            try {
+                if (isAuthCancelled() && activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+                    throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
 
-            if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                String errorHeader = activeConnection.getHeaderField("Error");
-                InputStream i = null;
-                i = activeConnection.getErrorStream();
-                StringBuilder errorBody = new StringBuilder();
-                if (i != null) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(i));
-                    String s;
-                    while((s = in.readLine()) != null) {
-                        errorBody.append(s);
-                        errorBody.append("\n");
+                if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                    String errorHeader = activeConnection.getHeaderField("Error");
+                    InputStream i = null;
+                    i = activeConnection.getErrorStream();
+                    StringBuilder errorBody = new StringBuilder();
+                    if (i != null) {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                        String s;
+                        while((s = in.readLine()) != null) {
+                            errorBody.append(s);
+                            errorBody.append("\n");
+                        }
                     }
+
+                    throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString());
                 }
 
-                throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString());
-            }
+                String encoding = activeConnection.getContentEncoding();
+                InputStream inputStream = new ProgressInputStream(activeConnection, progressMonitor);
+                if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
+                    inputStream = new GZIPInputStream(inputStream);
+                }
+                else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
+                    inputStream = new InflaterInputStream(inputStream, new Inflater(true));
+                }
+                return inputStream;
+            } catch(Exception e) {
+                if (e instanceof OsmTransferException)
+                    throw (OsmTransferException)e;
+                else
+                    throw new OsmTransferException(e);
 
-            String encoding = activeConnection.getContentEncoding();
-            InputStream inputStream = new ProgressInputStream(activeConnection, progressMonitor);
-            if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
-                inputStream = new GZIPInputStream(inputStream);
             }
-            else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
-                inputStream = new InflaterInputStream(inputStream, new Inflater(true));
-            }
-            return inputStream;
-        } catch(Exception e) {
-            if (e instanceof OsmTransferException)
-                throw (OsmTransferException)e;
-            else
-                throw new OsmTransferException(e);
-
+        } finally {
+            progressMonitor.invalidate();
         }
     }
 

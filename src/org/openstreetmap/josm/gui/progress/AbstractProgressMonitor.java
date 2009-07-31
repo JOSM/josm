@@ -97,9 +97,10 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     }
 
     public synchronized void invalidate() {
-        checkState(State.INIT);
-        state = State.FINISHED;
-        doFinishTask();
+        if (state == State.INIT) {
+            state = State.FINISHED;
+            doFinishTask();
+        }
     }
 
     public synchronized void subTask(final String title) {

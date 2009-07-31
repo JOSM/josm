@@ -35,6 +35,7 @@ public class ProgressInputStream extends InputStream {
         try {
             this.in = con.getInputStream();
         } catch (IOException e) {
+            progressMonitor.finishTask();
             if (con.getHeaderField("Error") != null)
                 throw new OsmTransferException(tr(con.getHeaderField("Error")));
             throw new OsmTransferException(e);
