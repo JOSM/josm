@@ -99,7 +99,8 @@ public class MapFrame extends JPanel implements Destroyable {
         toggleDialogs.setLayout(new BoxLayout(toggleDialogs, BoxLayout.Y_AXIS));
 
         toolBarToggle.setFloatable(false);
-        addToggleDialog(new LayerListDialog(this));
+        LayerListDialog.createInstance(this);
+        addToggleDialog(LayerListDialog.getInstance());
         addToggleDialog(new PropertiesDialog(this));
         addToggleDialog(new HistoryDialog());
         addToggleDialog(new SelectionListDialog());
@@ -132,14 +133,17 @@ public class MapFrame extends JPanel implements Destroyable {
      * Delegates the call to all Destroyables within this component (e.g. MapModes)
      */
     public void destroy() {
-        for (ToggleDialog t : allDialogs)
+        for (ToggleDialog t : allDialogs) {
             t.close();
+        }
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
-            if (toolBarActions.getComponent(i) instanceof Destroyable)
+            if (toolBarActions.getComponent(i) instanceof Destroyable) {
                 ((Destroyable)toolBarActions).destroy();
+            }
         for (int i = 0; i < toolBarToggle.getComponentCount(); ++i)
-            if (toolBarToggle.getComponent(i) instanceof Destroyable)
+            if (toolBarToggle.getComponent(i) instanceof Destroyable) {
                 ((Destroyable)toolBarToggle).destroy();
+            }
 
         // remove menu entries
         Main.main.menu.viewMenu.setVisible(false);
@@ -194,8 +198,9 @@ public class MapFrame extends JPanel implements Destroyable {
     @Override public void setVisible(boolean aFlag) {
         boolean old = isVisible();
         super.setVisible(aFlag);
-        if (old != aFlag)
+        if (old != aFlag) {
             firePropertyChange("visible", old, aFlag);
+        }
     }
 
 
@@ -208,8 +213,9 @@ public class MapFrame extends JPanel implements Destroyable {
     public void selectMapMode(MapMode mapMode) {
         if (mapMode == this.mapMode)
             return;
-        if (this.mapMode != null)
+        if (this.mapMode != null) {
             this.mapMode.exitMode();
+        }
         this.mapMode = mapMode;
         mapMode.enterMode();
     }
@@ -229,13 +235,15 @@ public class MapFrame extends JPanel implements Destroyable {
         jb.add(toolBarToggle);
         if(Main.pref.getBoolean("sidetoolbar.visible", true))
         {
-            if(Main.pref.getBoolean("sidetoolbar.scrollable", true))
+            if(Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
                 panel.add(new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION),
-                BorderLayout.WEST);
-            else
+                        BorderLayout.WEST);
+            } else {
                 panel.add(jb, BorderLayout.WEST);
+            }
         }
-        if (statusLine != null && Main.pref.getBoolean("statusline.visible", true))
+        if (statusLine != null && Main.pref.getBoolean("statusline.visible", true)) {
             panel.add(statusLine, BorderLayout.SOUTH);
+        }
     }
 }

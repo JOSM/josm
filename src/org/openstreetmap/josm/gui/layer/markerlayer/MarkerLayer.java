@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
@@ -61,13 +62,6 @@ public class MarkerLayer extends Layer {
     private boolean mousePressed = false;
     public GpxLayer fromLayer = null;
 
-    /*
-    private Icon audioTracerIcon = null;
-    private EastNorth playheadPosition = null;
-    private static Timer timer = null;
-    private static double audioAnimationInterval = 0.0; // seconds
-    private static double playheadTime = -1.0;
-     */
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
 
         super(name);
@@ -121,7 +115,7 @@ public class MarkerLayer extends Layer {
                         if (! mousePressedInButton)
                             return;
                         mousePressed  = true;
-                        if (visible) {
+                        if (isVisible()) {
                             Main.map.mapView.repaint();
                         }
                     }
@@ -129,7 +123,7 @@ public class MarkerLayer extends Layer {
                         if (ev.getButton() != MouseEvent.BUTTON1 || ! mousePressed)
                             return;
                         mousePressed = false;
-                        if (!visible)
+                        if (!isVisible())
                             return;
                         if (ev.getPoint() != null) {
                             for (Marker mkr : data) {
@@ -160,9 +154,9 @@ public class MarkerLayer extends Layer {
     @Override public void paint(Graphics g, MapView mv) {
         boolean mousePressedTmp = mousePressed;
         Point mousePos = mv.getMousePosition();
-        String mkrTextShow = Main.pref.get("marker.show "+name, "show");
+        String mkrTextShow = Main.pref.get("marker.show "+getName(), "show");
 
-        g.setColor(getColor(name));
+        g.setColor(getColor(getName()));
 
         for (Marker mkr : data) {
             if (mousePos != null && mkr.containsPoint(mousePos)) {
@@ -194,7 +188,7 @@ public class MarkerLayer extends Layer {
     }
 
     @Override public Object getInfoComponent() {
-        return "<html>"+trn("{0} consists of {1} marker", "{0} consists of {1} markers", data.size(), name, data.size()) + "</html>";
+        return "<html>"+trn("{0} consists of {1} marker", "{0} consists of {1} markers", data.size(), getName(), data.size()) + "</html>";
     }
 
     @Override public Component[] getMenuEntries() {
@@ -202,7 +196,7 @@ public class MarkerLayer extends Layer {
         color.putClientProperty("help", "Action/LayerCustomizeColor");
         color.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(getColor(name));
+                JColorChooser c = new JColorChooser(getColor(getName()));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
                 int answer = OptionPaneUtil.showOptionDialog(
                         Main.parent,
@@ -214,14 +208,14 @@ public class MarkerLayer extends Layer {
                         options[0]
                 );
                 switch (answer) {
-                case 0:
-                    Main.pref.putColor("layer "+name, c.getColor());
-                    break;
-                case 1:
-                    return;
-                case 2:
-                    Main.pref.putColor("layer "+name, null);
-                    break;
+                    case 0:
+                        Main.pref.putColor("layer "+getName(), c.getColor());
+                        break;
+                    case 1:
+                        return;
+                    case 2:
+                        Main.pref.putColor("layer "+getName(), null);
+                        break;
                 }
                 Main.map.repaint();
             }
@@ -281,9 +275,9 @@ public class MarkerLayer extends Layer {
         });
 
         Collection<Component> components = new ArrayList<Component>();
-        components.add(new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)));
-        components.add(new JMenuItem(new LayerListDialog.ShowHideMarkerText(this)));
-        components.add(new JMenuItem(new LayerListDialog.DeleteLayerAction(this)));
+        components.add(new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)));
+        components.add(new JMenuItem(new ShowHideMarkerText(this)));
+        components.add(new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)));
         components.add(new JSeparator());
         components.add(color);
         components.add(new JSeparator());
@@ -449,4 +443,21 @@ public class MarkerLayer extends Layer {
         }
     }
 
+
+    public final  class ShowHideMarkerText extends AbstractAction {
+        private final Layer layer;
+
+        public ShowHideMarkerText(Layer layer) {
+            super(tr("Show/Hide Text/Icons"), ImageProvider.get("dialogs", "showhide"));
+            putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the marker text and icons."));
+            putValue("help", "Action/ShowHideTextIcons");
+            this.layer = layer;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String current = Main.pref.get("marker.show "+layer.getName(),"show");
+            Main.pref.put("marker.show "+layer.getName(), current.equalsIgnoreCase("show") ? "hide" : "show");
+            Main.map.mapView.repaint();
+        }
+    }
 }

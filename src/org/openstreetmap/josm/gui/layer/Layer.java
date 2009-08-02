@@ -7,6 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,6 +40,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 abstract public class Layer implements Destroyable, MapViewPaintable {
+    static public final String VISIBLE_PROP = Layer.class.getName() + ".visible";
+    static public final String NAME_PROP = Layer.class.getName() + ".name";
+
+    /** keeps track of property change listeners */
+    private PropertyChangeSupport propertyChangeSupport;
 
     /**
      * Interface to notify listeners of the change of the active layer.
@@ -57,7 +64,11 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * The visibility state of the layer.
+     * 
+     * @deprecated use {@see #setVisible(boolean)} and {@see #isVisible()} instead. This field
+     * is going to be private (or protected) in a future release.
      */
+    @Deprecated
     public boolean visible = true;
 
     /**
@@ -67,7 +78,11 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * The name of this layer.
+     * 
+     * @deprecated use {@see #getName()} and {@see #setName(String)} instead. This field
+     * is going to be private  (or protected) in the future.
      */
+    @Deprecated
     public String name;
     /**
      * If a file is associated with this layer, this variable should be set to it.
@@ -78,7 +93,8 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      * Create the layer and fill in the necessary components.
      */
     public Layer(String name) {
-        this.name = name;
+        this.propertyChangeSupport = new PropertyChangeSupport(this);
+        setName(name);
     }
 
     /**
@@ -141,6 +157,23 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
         return name;
     }
 
+    /**
+     * Sets the name of the layer
+     *
+     *@param name the name. If null, the name is set to the empty string.
+     *
+     */
+    public void setName(String name) {
+        if (name == null) {
+            name = "";
+        }
+        String oldValue = this.name;
+        this.name = name;
+        if (!oldValue.equals(this.name)) {
+            propertyChangeSupport.firePropertyChange(NAME_PROP, oldValue, this.name);
+        }
+    }
+
 
     public static class LayerSaveAction extends AbstractAction {
         private Layer layer;
@@ -188,4 +221,60 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
         }
     }
 
+    /**
+     * Sets the visibility of this layer. Emits property change event for
+     * property {@see #VISIBLE_PROP}.
+     * 
+     * @param visible true, if the layer is visible; false, otherwise.
+     */
+    public void setVisible(boolean visible) {
+        boolean oldValue = this.visible;
+        this.visible  = visible;
+        if (oldValue != this.visible) {
+            fireVisibleChanged(oldValue, this.visible);
+        }
+    }
+
+    /**
+     * Replies true if this layer is visible. False, otherwise.
+     * @return  true if this layer is visible. False, otherwise.
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Toggles the visibility state of this layer.
+     */
+    public void toggleVisible() {
+        setVisible(!isVisible());
+    }
+
+    /**
+     * Adds a {@see PropertyChangeListener}
+     * 
+     * @param listener the listener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Removes a {@see PropertyChangeListener}
+     * 
+     * @param listener the listener
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    /**
+     * fires a property change for the property {@see #VISIBLE_PROP}
+     * 
+     * @param oldValue the old value
+     * @param newValue the new value
+     */
+    protected void fireVisibleChanged(boolean oldValue, boolean newValue) {
+        propertyChangeSupport.firePropertyChange(VISIBLE_PROP, oldValue, newValue);
+    }
 }

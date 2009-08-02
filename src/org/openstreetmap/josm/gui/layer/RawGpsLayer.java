@@ -12,19 +12,13 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -32,11 +26,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.text.html.Option;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -50,7 +41,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.io.MultiPartFormOutputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
@@ -90,7 +80,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 }
                 ds.ways.add(w);
             }
-            Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", RawGpsLayer.this.name), null));
+            Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", RawGpsLayer.this.getName()), null));
             Main.main.removeLayer(RawGpsLayer.this);
         }
     }
@@ -128,12 +118,12 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
     }
 
     @Override public void paint(Graphics g, MapView mv) {
-        g.setColor(Main.pref.getColor(marktr("gps point"), "layer "+name, Color.gray));
+        g.setColor(Main.pref.getColor(marktr("gps point"), "layer "+getName(), Color.gray));
         Point old = null;
 
         boolean force = Main.pref.getBoolean("draw.rawgps.lines.force");
         boolean lines = Main.pref.getBoolean("draw.rawgps.lines", true);
-        String linesKey = "draw.rawgps.lines.layer "+name;
+        String linesKey = "draw.rawgps.lines.layer "+getName();
         if (Main.pref.hasKey(linesKey)) {
             lines = Main.pref.getBoolean(linesKey);
         }
@@ -196,7 +186,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
             points += c.size();
         }
         b.append("</html>");
-        return "<html>"+trn("{0} consists of {1} track", "{0} consists of {1} tracks", data.size(), name, data.size())+" ("+trn("{0} point", "{0} points", points, points)+")<br>"+b.toString();
+        return "<html>"+trn("{0} consists of {1} track", "{0} consists of {1} tracks", data.size(), getName(), data.size())+" ("+trn("{0} point", "{0} points", points, points)+")<br>"+b.toString();
     }
 
     @Override public Component[] getMenuEntries() {
@@ -213,7 +203,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                     group.add(b);
                     panel.add(b);
                 }
-                String propName = "draw.rawgps.lines.layer "+name;
+                String propName = "draw.rawgps.lines.layer "+getName();
                 if (Main.pref.hasKey(propName)) {
                     group.setSelected(r[Main.pref.getBoolean(propName) ? 1:2].getModel(), true);
                 } else {
@@ -240,7 +230,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
         color.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+name, Color.gray));
+                JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+getName(), Color.gray));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
                 int answer = OptionPaneUtil.showOptionDialog(
                         Main.parent,
@@ -250,12 +240,12 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                         JOptionPane.PLAIN_MESSAGE, options, options[0]);
                 switch (answer) {
                     case 0:
-                        Main.pref.putColor("layer "+name, c.getColor());
+                        Main.pref.putColor("layer "+getName(), c.getColor());
                         break;
                     case 1:
                         return;
                     case 2:
-                        Main.pref.putColor("layer "+name, null);
+                        Main.pref.putColor("layer "+getName(), null);
                         break;
                 }
                 Main.map.repaint();
@@ -264,8 +254,8 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 
         if (Main.applet)
             return new Component[]{
-                new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
                 new JSeparator(),
                 color,
                 line,
@@ -275,8 +265,8 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
         return new Component[]{
-                new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
                 new JSeparator(),
                 new JMenuItem(new LayerGpxExportAction(this)),
                 color,

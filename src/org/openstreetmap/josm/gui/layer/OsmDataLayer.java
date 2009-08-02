@@ -406,7 +406,7 @@ public class OsmDataLayer extends Layer {
             osm.visit(counter);
         }
         final JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(tr("{0} consists of:", name)), GBC.eol());
+        p.add(new JLabel(tr("{0} consists of:", getName())), GBC.eol());
         for (int i = 0; i < counter.normal.length; ++i) {
             String s = counter.normal[i]+" "+trn(counter.names[i],counter.names[i]+"s",counter.normal[i]);
             if (counter.deleted[i] > 0) {
@@ -422,16 +422,21 @@ public class OsmDataLayer extends Layer {
     @Override public Component[] getMenuEntries() {
         if (Main.applet)
             return new Component[]{
-                new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createActivateLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
+                new JSeparator(),
+                new JMenuItem(LayerListDialog.getInstance().createMergeLayerAction(this)),
                 new JSeparator(),
                 new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
         return new Component[]{
-                new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createActivateLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
                 new JSeparator(),
+                new JMenuItem(LayerListDialog.getInstance().createMergeLayerAction(this)),
                 new JMenuItem(new LayerSaveAction(this)),
                 new JMenuItem(new LayerSaveAsAction(this)),
                 new JMenuItem(new LayerGpxExportAction(this)),
@@ -514,7 +519,7 @@ public class OsmDataLayer extends Layer {
             super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
         }
         public void actionPerformed(ActionEvent e) {
-            Main.main.addLayer(new GpxLayer(toGpxData(), tr("Converted from: {0}", name)));
+            Main.main.addLayer(new GpxLayer(toGpxData(), tr("Converted from: {0}", getName())));
             Main.main.removeLayer(OsmDataLayer.this);
         }
     }

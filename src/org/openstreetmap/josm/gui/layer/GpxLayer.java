@@ -44,8 +44,6 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
-import org.openstreetmap.josm.actions.SaveAction;
-import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -90,12 +88,12 @@ public class GpxLayer extends Layer {
 
     public GpxLayer(GpxData d, String name) {
         this(d);
-        this.name = name;
+        this.setName(name);
     }
 
     public GpxLayer(GpxData d, String name, boolean isLocal) {
         this(d);
-        this.name = name;
+        this.setName(name);
         this.isLocalFile = isLocal;
     }
 
@@ -128,7 +126,7 @@ public class GpxLayer extends Layer {
                     group.add(b);
                     panel.add(b);
                 }
-                String propName = "draw.rawgps.lines.layer " + name;
+                String propName = "draw.rawgps.lines.layer " + getName();
                 if (Main.pref.hasKey(propName)) {
                     group.setSelected(r[Main.pref.getBoolean(propName) ? 1 : 2].getModel(), true);
                 } else {
@@ -156,7 +154,7 @@ public class GpxLayer extends Layer {
         color.putClientProperty("help", "Action/LayerCustomizeColor");
         color.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(getColor(name));
+                JColorChooser c = new JColorChooser(getColor(getName()));
                 Object[] options = new Object[] { tr("OK"), tr("Cancel"), tr("Default") };
                 int answer = OptionPaneUtil.showOptionDialog(
                         Main.parent,
@@ -168,12 +166,12 @@ public class GpxLayer extends Layer {
                 );
                 switch (answer) {
                     case 0:
-                        Main.pref.putColor("layer " + name, c.getColor());
+                        Main.pref.putColor("layer " + getName(), c.getColor());
                         break;
                     case 1:
                         return;
                     case 2:
-                        Main.pref.putColor("layer " + name, null);
+                        Main.pref.putColor("layer " + getName(), null);
                         break;
                 }
                 Main.map.repaint();
@@ -195,7 +193,7 @@ public class GpxLayer extends Layer {
                     }
                 }
 
-                MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", name),
+                MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", getName()),
                         getAssociatedFile(), me);
                 if (ml.data.size() > 0) {
                     Main.main.addLayer(ml);
@@ -255,7 +253,7 @@ public class GpxLayer extends Layer {
                     } else {
                         names = "";
                     }
-                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", name) + names,
+                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", getName()) + names,
                             getAssociatedFile(), me);
                     if (sel != null) {
                         double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
@@ -311,13 +309,13 @@ public class GpxLayer extends Layer {
         });
 
         if (Main.applet)
-            return new Component[] { new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)), new JSeparator(), color, line,
+            return new Component[] { new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)), new JSeparator(), color, line,
                 new JMenuItem(new ConvertToDataLayerAction()), new JSeparator(),
                 new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)), new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this)) };
-        return new Component[] { new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)), new JSeparator(),
+        return new Component[] { new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)), new JSeparator(),
                 new JMenuItem(new LayerSaveAction(this)), new JMenuItem(new LayerSaveAsAction(this)), color, line,
                 tagimage, importAudio, markersFromNamedTrackpoints, new JMenuItem(new ConvertToDataLayerAction()),
                 new JMenuItem(new DownloadAlongTrackAction()), new JSeparator(),
@@ -415,7 +413,7 @@ public class GpxLayer extends Layer {
          ********** STEP 1 - GET CONFIG VALUES **************************
          ****************************************************************/
         // Long startTime = System.currentTimeMillis();
-        Color neutralColor = getColor(name);
+        Color neutralColor = getColor(getName());
         // also draw lines between points belonging to different segments
         boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");
         // draw direction arrows on the lines
@@ -430,7 +428,7 @@ public class GpxLayer extends Layer {
         // draw line between points, global setting
         boolean lines = (Main.pref.getBoolean("draw.rawgps.lines", true) || (Main.pref
                 .getBoolean("draw.rawgps.lines.localfiles") && this.isLocalFile));
-        String linesKey = "draw.rawgps.lines.layer " + name;
+        String linesKey = "draw.rawgps.lines.layer " + getName();
         // draw lines, per-layer setting
         if (Main.pref.hasKey(linesKey)) {
             lines = Main.pref.getBoolean(linesKey);
@@ -725,7 +723,7 @@ public class GpxLayer extends Layer {
                 }
             }
             Main.main
-            .addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", GpxLayer.this.name), getAssociatedFile()));
+            .addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", GpxLayer.this.getName()), getAssociatedFile()));
             Main.main.removeLayer(GpxLayer.this);
         }
     }

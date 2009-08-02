@@ -265,7 +265,7 @@ public class GeoImageLayer extends Layer {
         public void imageLoaded() {
             MapFrame frame = Main.map;
             if (frame != null) {
-              frame.mapView.repaint();
+                frame.mapView.repaint();
             }
         }
     }
@@ -275,7 +275,7 @@ public class GeoImageLayer extends Layer {
         private final Collection<File> files;
         private final GpxLayer gpxLayer;
         public Loader(Collection<File> files, GpxLayer gpxLayer) {
-            super(tr("Images for {0}", gpxLayer.name));
+            super(tr("Images for {0}", gpxLayer.getName()));
             this.files = files;
             this.gpxLayer = gpxLayer;
         }
@@ -411,7 +411,7 @@ public class GeoImageLayer extends Layer {
                 if (e.getButton() != MouseEvent.BUTTON1)
                     return;
                 mousePressed  = true;
-                if (visible) {
+                if (isVisible()) {
                     Main.map.mapView.repaint();
                 }
             }
@@ -419,7 +419,7 @@ public class GeoImageLayer extends Layer {
                 if (ev.getButton() != MouseEvent.BUTTON1)
                     return;
                 mousePressed = false;
-                if (!visible)
+                if (!isVisible())
                     return;
                 for (int i = data.size(); i > 0; --i) {
                     ImageEntry e = data.get(i-1);
@@ -698,8 +698,8 @@ public class GeoImageLayer extends Layer {
             }
         });
         return new Component[]{
-                new JMenuItem(new LayerListDialog.ShowHideLayerAction(this)),
-                new JMenuItem(new LayerListDialog.DeleteLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
+                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
                 new JSeparator(),
                 sync,
                 new JSeparator(),

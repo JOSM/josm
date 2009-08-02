@@ -71,7 +71,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
         save(file, layer);
 
-        layer.name = file.getName();
+        layer.setName(file.getName());
         layer.setAssociatedFile(file);
         Main.parent.repaint();
         return true;

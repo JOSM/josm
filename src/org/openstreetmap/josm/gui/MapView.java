@@ -14,6 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +58,7 @@ import org.openstreetmap.josm.tools.AudioPlayer;
  *
  * @author imi
  */
-public class MapView extends NavigatableComponent {
+public class MapView extends NavigatableComponent implements PropertyChangeListener {
 
 
     /**
@@ -176,6 +178,7 @@ public class MapView extends NavigatableComponent {
                 l.activeLayerChange(old, layer);
             }
         }
+        layer.addPropertyChangeListener(this);
         AudioPlayer.reset();
         repaint();
     }
@@ -202,7 +205,7 @@ public class MapView extends NavigatableComponent {
      * @return true if the active layer is visible, false otherwise
      */
     public boolean isActiveLayerVisible() {
-        return isActiveLayerDrawable() && activeLayer.visible;
+        return isActiveLayerDrawable() && activeLayer.isVisible();
     }
 
     /**
@@ -211,6 +214,9 @@ public class MapView extends NavigatableComponent {
      */
     public void removeLayer(Layer layer) {
         if (layer == activeLayer) {
+            for (Layer.LayerChangeListener l : Layer.listeners) {
+                l.activeLayerChange(layer, null);
+            }
             activeLayer = null;
         }
         if (layers.remove(layer)) {
@@ -218,6 +224,7 @@ public class MapView extends NavigatableComponent {
                 l.layerRemoved(layer);
             }
         }
+        layer.removePropertyChangeListener(this);
         layer.destroy();
         AudioPlayer.reset();
     }
@@ -282,7 +289,7 @@ public class MapView extends NavigatableComponent {
 
         for (int i = layers.size()-1; i >= 0; --i) {
             Layer l = layers.get(i);
-            if (l.visible/* && l != getActiveLayer()*/) {
+            if (l.isVisible()/* && l != getActiveLayer()*/) {
                 l.paint(tempG, this);
             }
         }
@@ -470,5 +477,11 @@ public class MapView extends NavigatableComponent {
 
     public boolean removeTemporaryLayer(MapViewPaintable mvp) {
         return temporaryLayers.remove(mvp);
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(Layer.VISIBLE_PROP)) {
+            repaint();
+        }
     }
 }

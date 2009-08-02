@@ -42,7 +42,7 @@ public class RenameLayerAction extends AbstractAction {
 
     public void actionPerformed(ActionEvent e) {
         Box panel = Box.createVerticalBox();
-        final JTextField name = new JTextField(layer.name);
+        final JTextField name = new JTextField(layer.getName());
         panel.add(name);
         JCheckBox filerename = new JCheckBox(tr("Also rename the file"));
         if (Main.applet) {
@@ -104,7 +104,7 @@ public class RenameLayerAction extends AbstractAction {
                 }
             }
         }
-        layer.name = nameText;
+        layer.setName(nameText);
         Main.parent.repaint();
     }
 }
