@@ -174,7 +174,19 @@ public class LayerListDialog extends ToggleDialog implements LayerChangeListener
     public LayerListDialog(MapFrame mapFrame) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
                 Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L, Shortcut.GROUP_LAYER), 100);
-        instance = new JList(model);
+        instance = new JList(model) {
+            @Override
+            protected void processMouseEvent(MouseEvent e) {
+                // if the layer list is embedded in a detached dialog, the last row is
+                // is selected if a user clicks in the empty space *below* the last row.
+                // This mouse event filter prevents this.
+                //
+                int idx = locationToIndex(e.getPoint());
+                if (getCellBounds(idx, idx).contains(e.getPoint())) {
+                    super.processMouseEvent(e);
+                }
+            }
+        };
         listScrollPane = new JScrollPane(instance);
         add(listScrollPane, BorderLayout.CENTER);
         instance.setBackground(UIManager.getColor("Button.background"));
