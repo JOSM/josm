@@ -171,7 +171,9 @@ public class UpdateSelectionAction extends JosmAction {
                 } else if (primitive instanceof Way) {
                     Way way = (Way)primitive;
                     for (Node node: way.nodes) {
-                        reader.append(node);
+                        if (node.id > 0) {
+                            reader.append(node);
+                        }
                     }
                 }
             }
