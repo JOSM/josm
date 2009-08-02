@@ -62,6 +62,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     private HashSet<Long> missingPrimitives;
     private DataSet outputDataSet;
 
+    private boolean cancelled = false;
+
     /**
      * constructor
      *
@@ -229,7 +231,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @see #append(Relation)
      *
      */
-    public MultiFetchServerObjectReader append(Collection<OsmPrimitive> primitives) {
+    public MultiFetchServerObjectReader append(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null) return this;
         for (OsmPrimitive primitive : primitives) {
             appendGeneric(primitive);
@@ -362,6 +364,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     protected void singleGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor) throws OsmTransferException {
         for (long id : pkg) {
             try {
+                progressMonitor.setCustomText(tr("Fetching {0} with id {1} from ''{2}''", type.getLocalizedDisplayNameSingular(), id, OsmApi.getOsmApi().getBaseUrl()));
                 singleGetId(type, id, progressMonitor);
             } catch(OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
@@ -393,9 +396,10 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @exception OsmTransferException thrown if an error occurs while communicating with the API server
      */
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{
+        progressMonitor.setCustomText(tr("Fetching a package of {0} from ''{1}''", type.getLocalizedDisplayNameSingular(), OsmApi.getOsmApi().getBaseUrl()));
         Set<Long> toFetch = new HashSet<Long>(ids);
         toFetch.addAll(ids);
-        while(! toFetch.isEmpty()) {
+        while(! toFetch.isEmpty() && !isCanceled()) {
             Set<Long> pkg = extractIdPackage(toFetch);
             try {
                 multiGetIdPackage(type, pkg, progressMonitor);
@@ -434,9 +438,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         progressMonitor.beginTask("");
         try {
             missingPrimitives = new HashSet<Long>();
-
+            if (isCanceled())return null;
             fetchPrimitives(nodes,OsmPrimitiveType.NODE, progressMonitor);
+            if (isCanceled())return null;
             fetchPrimitives(ways,OsmPrimitiveType.WAY, progressMonitor);
+            if (isCanceled())return null;
             fetchPrimitives(relations,OsmPrimitiveType.RELATION, progressMonitor);
             return outputDataSet;
         } finally {

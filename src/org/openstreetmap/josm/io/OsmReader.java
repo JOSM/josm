@@ -328,20 +328,20 @@ public class OsmReader {
     protected void createWays() {
         for (Entry<OsmPrimitiveData, Collection<Long>> e : ways.entrySet()) {
             Way w = new Way(e.getKey().id);
-            boolean failed = false;
+            boolean incomplete = false;
             for (long id : e.getValue()) {
                 Node n = findNode(id);
                 if (n == null) {
-                    failed = true;
-                    break;
+                    n = new Node(id);
+                    n.incomplete = true;
+                    incomplete = true;
                 }
                 w.nodes.add(n);
             }
-            if (failed) {
-                logger.warning(tr("marked way {0} incomplete because referred nodes are missing in the loaded data", e.getKey().id));
+            if (incomplete) {
+                logger.warning(tr("marked way {0} with {1} nodes incomplete because at least one node was missing in the loaded data and is therefore incomplete too", e.getKey().id, w.nodes.size()));
                 e.getKey().copyTo(w);
                 w.incomplete = true;
-                w.nodes.clear();
                 ds.addPrimitive(w);
             } else {
                 e.getKey().copyTo(w);

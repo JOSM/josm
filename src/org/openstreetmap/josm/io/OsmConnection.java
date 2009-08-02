@@ -144,4 +144,14 @@ public class OsmConnection {
         ByteBuffer bytes = encoder.encode(CharBuffer.wrap(auth));
         con.addRequestProperty("Authorization", "Basic "+Base64.encode(bytes));
     }
+
+    /**
+     * Replies true if this connection is canceled
+     * 
+     * @return true if this connection is canceled
+     * @return
+     */
+    public boolean isCanceled() {
+        return cancel;
+    }
 }

@@ -9,12 +9,8 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -42,9 +38,12 @@ public class UpdateDataAction extends JosmAction{
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
+        if (getEditLayer() == null)
+            return;
+
         int bboxCount = 0;
         List<Area> areas = new ArrayList<Area>();
-        for(DataSource ds : Main.map.mapView.getEditLayer().data.dataSources) {
+        for(DataSource ds : getEditLayer().data.dataSources) {
             areas.add(new Area(ds.bounds.asRect()));
         }
 
@@ -72,15 +71,14 @@ public class UpdateDataAction extends JosmAction{
         }
 
         if(bboxCount == 0) {
-            OptionPaneUtil.showMessageDialog(
-                    Main.parent,
-                    tr("No data to update found. Have you already opened or downloaded a data layer?"),
-                    tr("No data"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
+            // no bounds defined in the dataset? we update all primitives in the data set
+            // using a series of multi fetch requests
+            //
+            new UpdateSelectionAction().updatePrimitives(getEditLayer().data.allPrimitives());
+        } else {
+            // bounds defined? => use the bbox downloader
+            //
+            new DownloadOsmTaskList().download(false, areas, new PleaseWaitProgressMonitor());
         }
-
-        new DownloadOsmTaskList().download(false, areas, new PleaseWaitProgressMonitor());
     }
 }

@@ -7,27 +7,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
 /**
  * This action synchronizes a set of primitives with their state on the server.
- *
  *
  */
 public class UpdateSelectionAction extends JosmAction {
@@ -44,42 +46,9 @@ public class UpdateSelectionAction extends JosmAction {
         try {
             ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
         } catch(Exception e) {
-            handleUpdateException(e);
-            return;
+            ExceptionDialogUtil.explainException(e);
         }
         Main.map.mapView.getEditLayer().mergeFrom(ds);
-    }
-
-
-    /**
-     * handle an exception thrown during updating a primitive
-     *
-     * @param id the id of the primitive
-     * @param e the exception
-     */
-    protected void handleUpdateException(Exception e) {
-        e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
-                Main.parent,
-                tr("Failed to update the selected primitives."),
-                tr("Update failed"),
-                JOptionPane.ERROR_MESSAGE
-        );
-    }
-
-    /**
-     * handles an exception case: primitive with id <code>id</code> is not in the current
-     * data set
-     *
-     * @param id the primitive id
-     */
-    protected void handleMissingPrimitive(long id) {
-        OptionPaneUtil.showMessageDialog(
-                Main.parent,
-                tr("Could not find primitive with id {0} in the current dataset", new Long(id).toString()),
-                tr("Missing primitive"),
-                JOptionPane.ERROR_MESSAGE
-        );
     }
 
     /**
@@ -90,69 +59,8 @@ public class UpdateSelectionAction extends JosmAction {
      *
      */
     public void updatePrimitives(final Collection<OsmPrimitive> selection) {
-
-        /**
-         * The asynchronous task for updating the data using multi fetch.
-         *
-         */
-        class UpdatePrimitiveTask extends PleaseWaitRunnable {
-            private DataSet ds;
-            private boolean cancelled;
-            Exception lastException;
-
-            public UpdatePrimitiveTask() {
-                super("Update primitives", false /* don't ignore exception*/);
-                cancelled = false;
-            }
-
-            protected void showLastException() {
-                String msg = lastException.getMessage();
-                if (msg == null) {
-                    msg = lastException.toString();
-                }
-                OptionPaneUtil.showMessageDialog(
-                        Main.map,
-                        msg,
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-
-            @Override
-            protected void cancel() {
-                cancelled = true;
-                OsmApi.getOsmApi().cancel();
-            }
-
-            @Override
-            protected void finish() {
-                if (cancelled)
-                    return;
-                if (lastException != null) {
-                    showLastException();
-                    return;
-                }
-                if (ds != null) {
-                    Main.map.mapView.getEditLayer().mergeFrom(ds);
-                }
-            }
-
-            @Override
-            protected void realRun() throws SAXException, IOException, OsmTransferException {
-                progressMonitor.indeterminateSubTask("");
-                try {
-                    MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-                    reader.append(selection);
-                    ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                } catch(Exception e) {
-                    if (cancelled)
-                        return;
-                    lastException = e;
-                }
-            }
-        }
-
-        Main.worker.submit(new UpdatePrimitiveTask());
+        UpdatePrimitivesTask task = new UpdatePrimitivesTask(selection);
+        Main.worker.submit(task);
     }
 
     /**
@@ -160,13 +68,18 @@ public class UpdateSelectionAction extends JosmAction {
      * with the data currently kept on the server.
      *
      * @param id  the id of a primitive in the {@see DataSet} of the current edit layser
-     *
+     * @exception IllegalStateException thrown if there is no primitive with <code>id</code> in
+     *   the current dataset
+     * @exception IllegalStateException thrown if there is no current dataset
+     * 
      */
-    public void updatePrimitive(long id) {
-        OsmPrimitive primitive = Main.map.mapView.getEditLayer().data.getPrimitiveById(id);
-        Set<OsmPrimitive> s = new HashSet<OsmPrimitive>();
-        s.add(primitive);
-        updatePrimitives(s);
+    public void updatePrimitive(long id) throws IllegalStateException{
+        if (getEditLayer() == null)
+            throw new IllegalStateException(tr("No current dataset found"));
+        OsmPrimitive primitive = getEditLayer().data.getPrimitiveById(id);
+        if (primitive == null)
+            throw new IllegalStateException(tr("Didn't find a primitive with id {0} in the current dataset", id));
+        updatePrimitives(Collections.singleton(primitive));
     }
 
     /**
@@ -211,5 +124,93 @@ public class UpdateSelectionAction extends JosmAction {
             return;
         }
         updatePrimitives(selection);
+    }
+
+    /**
+     * The asynchronous task for updating the data using multi fetch.
+     *
+     */
+    class UpdatePrimitivesTask extends PleaseWaitRunnable {
+        private DataSet ds;
+        private boolean canceled;
+        private Exception lastException;
+        private Collection<? extends OsmPrimitive> toUpdate;
+        private MultiFetchServerObjectReader reader;
+
+        public UpdatePrimitivesTask(Collection<? extends OsmPrimitive> toUpdate) {
+            super("Update primitives", false /* don't ignore exception*/);
+            canceled = false;
+            this.toUpdate = toUpdate;
+        }
+
+        @Override
+        protected void cancel() {
+            canceled = true;
+            if (reader != null) {
+                reader.cancel();
+            }
+        }
+
+        @Override
+        protected void finish() {
+            if (canceled)
+                return;
+            if (lastException != null) {
+                ExceptionDialogUtil.explainException(lastException);
+                return;
+            }
+            if (ds != null) {
+                Main.map.mapView.getEditLayer().mergeFrom(ds);
+            }
+        }
+
+        protected void initMultiFetchReaderWithNodes(MultiFetchServerObjectReader reader) {
+            for (OsmPrimitive primitive : toUpdate) {
+                if (primitive instanceof Node && primitive.id > 0) {
+                    reader.append((Node)primitive);
+                } else if (primitive instanceof Way) {
+                    Way way = (Way)primitive;
+                    for (Node node: way.nodes) {
+                        reader.append(node);
+                    }
+                }
+            }
+        }
+
+        protected void initMultiFetchReaderWithWays(MultiFetchServerObjectReader reader) {
+            for (OsmPrimitive primitive : toUpdate) {
+                if (primitive instanceof Way && primitive.id > 0) {
+                    reader.append((Way)primitive);
+                }
+            }
+        }
+
+        protected void initMultiFetchReaderWithRelations(MultiFetchServerObjectReader reader) {
+            for (OsmPrimitive primitive : toUpdate) {
+                if (primitive instanceof Relation && primitive.id > 0) {
+                    reader.append((Relation)primitive);
+                }
+            }
+        }
+
+        @Override
+        protected void realRun() throws SAXException, IOException, OsmTransferException {
+            progressMonitor.indeterminateSubTask("");
+            this.ds = new DataSet();
+            DataSet theirDataSet;
+            try {
+                reader = new MultiFetchServerObjectReader();
+                initMultiFetchReaderWithNodes(reader);
+                initMultiFetchReaderWithWays(reader);
+                initMultiFetchReaderWithRelations(reader);
+                theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                MergeVisitor merger = new MergeVisitor(ds, theirDataSet);
+                merger.merge();
+            } catch(Exception e) {
+                if (canceled)
+                    return;
+                lastException = e;
+            }
+        }
     }
 }
