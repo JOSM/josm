@@ -373,9 +373,12 @@ public class MemberTableModel extends AbstractTableModel {
         //
         ArrayList<Integer> selectedIndices = new ArrayList<Integer>();
         for (RelationMember member : selectedMembers) {
-            int idx = members.indexOf(member);
-            if (idx >= 0 && !selectedIndices.contains(idx)) {
-                selectedIndices.add(idx);
+            for (int idx = 0; idx < members.size(); idx ++) {
+                if (members.get(idx).equals(member)) {
+                    if (!selectedIndices.contains(idx)) {
+                        selectedIndices.add(idx);
+                    }
+                }
             }
         }
 
@@ -486,10 +489,9 @@ public class MemberTableModel extends AbstractTableModel {
          * sort any 2 or more connected elements together may be slow with many unconnected members
          */
 
-        if (map.isEmpty()) {
+        if (map.isEmpty())
             // empty relation or incomplete members
             return;
-        }
         segments = new Vector<LinkedList<Integer>>();
 
         while (!map.isEmpty()) {

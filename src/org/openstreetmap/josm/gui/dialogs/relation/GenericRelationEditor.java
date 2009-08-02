@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -82,12 +83,6 @@ import org.xml.sax.SAXException;
 /**
  * This dialog is for editing relations.
  * 
- * In the basic form, it provides two tables, one with the relation tags and one with the relation
- * members. (Relation tags can be edited through the normal properties dialog as well, if you manage
- * to get a relation selected!)
- * 
- * @author Frederik Ramm <frederik@remote.org>
- * 
  */
 public class GenericRelationEditor extends RelationEditor {
 
@@ -145,7 +140,6 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorModel.clear();
             this.memberTableModel.populate(null);
         }
-        memberTableModel.setSelectedMembers(selectedMembers);
         tagEditorModel.ensureOneTag();
 
         JSplitPane pane = buildSplitPane();
@@ -195,6 +189,7 @@ public class GenericRelationEditor extends RelationEditor {
                 }
         );
 
+        memberTableModel.setSelectedMembers(selectedMembers);
     }
 
     /**
@@ -330,6 +325,7 @@ public class GenericRelationEditor extends RelationEditor {
 
         memberTable.getSelectionModel().addListSelectionListener(new SelectionSynchronizer());
         memberTable.addMouseListener(new MemberTableDblClickAdapter());
+        memberTableModel.addMemberModelListener(memberTable);
 
         final JScrollPane scrollPane = new JScrollPane(memberTable);
         // this adapters ensures that the width of the tag table columns is adjusted
@@ -1388,6 +1384,17 @@ public class GenericRelationEditor extends RelationEditor {
                     && memberTableModel.isEditableRelation(memberTable.getSelectedRow()));
         }
 
+        protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
+            Collection<RelationMember> members = new HashSet<RelationMember>();
+            Collection<OsmPrimitive> selection = getLayer().data.getSelected();
+            for (RelationMember member: r.members) {
+                if (selection.contains(member.member)) {
+                    members.add(member);
+                }
+            }
+            return members;
+        }
+
         public void run() {
             int idx = memberTable.getSelectedRow();
             if (idx < 0)
@@ -1398,7 +1405,8 @@ public class GenericRelationEditor extends RelationEditor {
             Relation r = (Relation) primitive;
             if (r.incomplete)
                 return;
-            RelationEditor editor = RelationEditor.getEditor(getLayer(), r, null);
+
+            RelationEditor editor = RelationEditor.getEditor(getLayer(), r, getMembersForCurrentSelection(r));
             editor.setVisible(true);
         }
 

@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.HashSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -22,6 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
@@ -33,6 +36,8 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and
@@ -244,13 +249,23 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             setEnabled(false);
         }
+        protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
+            Collection<RelationMember> members = new HashSet<RelationMember>();
+            Collection<OsmPrimitive> selection = Main.map.mapView.getEditLayer().data.getSelected();
+            for (RelationMember member: r.members) {
+                if (selection.contains(member.member)) {
+                    members.add(member);
+                }
+            }
+            return members;
+        }
 
         public void run() {
             if (!isEnabled()) return;
             Relation toEdit = getSelected();
             if (toEdit == null)
                 return;
-            RelationEditor.getEditor(Main.map.mapView.getEditLayer(),toEdit, null).setVisible(true);
+            RelationEditor.getEditor(Main.map.mapView.getEditLayer(),toEdit, getMembersForCurrentSelection(toEdit)).setVisible(true);
         }
 
         public void actionPerformed(ActionEvent e) {
