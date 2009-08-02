@@ -600,6 +600,7 @@ public class GenericRelationEditor extends RelationEditor {
         memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
         buttonPanel.add(new SideButton(setRoleAction));
         tfRole.getDocument().addDocumentListener(setRoleAction);
+        tfRole.addActionListener(setRoleAction);
 
         // --- copy relation action
         buttonPanel.add(new SideButton(new DuplicateRelationAction()));
@@ -665,12 +666,12 @@ public class GenericRelationEditor extends RelationEditor {
                             tr("Remove them, clean up relation")
             );
             switch(ret) {
-                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
-                case JOptionPane.CLOSED_OPTION: return;
-                case JOptionPane.NO_OPTION: return;
-                case JOptionPane.YES_OPTION:
-                    memberTableModel.removeMembersReferringTo(toCheck);
-                    break;
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.NO_OPTION: return;
+            case JOptionPane.YES_OPTION:
+                memberTableModel.removeMembersReferringTo(toCheck);
+                break;
             }
         }
     }
@@ -703,11 +704,11 @@ public class GenericRelationEditor extends RelationEditor {
                     null
             );
             switch(ret) {
-                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
-                case JOptionPane.YES_OPTION: return true;
-                case JOptionPane.NO_OPTION: return false;
-                case JOptionPane.CLOSED_OPTION: return false;
-                case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
+            case JOptionPane.YES_OPTION: return true;
+            case JOptionPane.NO_OPTION: return false;
+            case JOptionPane.CLOSED_OPTION: return false;
+            case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
             }
             // should not happen
             return false;
@@ -1078,9 +1079,9 @@ public class GenericRelationEditor extends RelationEditor {
                             options[0]
             );
             switch(ret) {
-                case JOptionPane.CANCEL_OPTION: return false;
-                case JOptionPane.YES_OPTION: return true;
-                case JOptionPane.NO_OPTION: return false;
+            case JOptionPane.CANCEL_OPTION: return false;
+            case JOptionPane.YES_OPTION: return true;
+            case JOptionPane.NO_OPTION: return false;
             }
             return false;
         }
@@ -1287,10 +1288,44 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         protected void refreshEnabled() {
-            setEnabled(memberTable.getSelectedRowCount() > 0 && !tfRole.getText().equals(""));
+            setEnabled(memberTable.getSelectedRowCount() > 0);
+        }
+
+        protected boolean isEmptyRole() {
+            return tfRole.getText() == null || tfRole.getText().trim().equals("");
+        }
+
+        protected boolean confirmSettingEmptyRole(int onNumMembers) {
+            String message = tr("<html>You are setting an empty role on {0} primitives.<br>"
+                    + "This is equal to deleting the roles of these primitives.<br>"
+                    + "Do you really want to apply the new role?</html>", onNumMembers);
+            String [] options = new String[] {
+                    tr("Yes, apply it"),
+                    tr("No, don't apply")
+            };
+            int ret = ConditionalOptionPaneUtil.showOptionDialog(
+                    "relation_editor.confirm_applying_empty_role",
+                    Main.parent,
+                    message,
+                    tr("Confirm empty role"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    options,
+                    options[0]
+            );
+            switch(ret) {
+            case JOptionPane.YES_OPTION: return true;
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return true;
+            default:
+                return false;
+            }
         }
 
         public void actionPerformed(ActionEvent e) {
+            if (isEmptyRole()) {
+                if (! confirmSettingEmptyRole(memberTable.getSelectedRowCount()))
+                    return;
+            }
             memberTableModel.updateRole(memberTable.getSelectedRows(), tfRole.getText());
         }
 
