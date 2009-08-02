@@ -22,12 +22,12 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -165,49 +165,12 @@ public class UploadAction extends JosmAction{
             if(!hook.checkUpload(add, update, delete))
                 return;
 
-        final OsmServerWriter server = new OsmServerWriter();
         final Collection<OsmPrimitive> all = new LinkedList<OsmPrimitive>();
         all.addAll(add);
         all.addAll(update);
         all.addAll(delete);
 
-        class UploadDiffTask extends  PleaseWaitRunnable {
-
-            private boolean uploadCancelled = false;
-            private boolean uploadFailed = false;
-            private Exception lastException = null;
-
-            public UploadDiffTask() {
-                super(tr("Uploading"),false /* don't ignore exceptions */);
-            }
-
-            @Override protected void realRun() throws SAXException, IOException {
-                try {
-                    server.uploadOsm(getCurrentDataSet().version, all, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    getEditLayer().cleanData(server.processed, !add.isEmpty());
-                } catch (Exception sxe) {
-                    if (uploadCancelled) {
-                        System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
-                        return;
-                    }
-                    uploadFailed = true;
-                    lastException = sxe;
-                }
-            }
-
-            @Override protected void finish() {
-                if (uploadFailed) {
-                    handleFailedUpload(lastException);
-                }
-            }
-
-            @Override protected void cancel() {
-                server.disconnectActiveConnection();
-                uploadCancelled = true;
-            }
-        }
-
-        Main.worker.execute(new UploadDiffTask());
+        Main.worker.execute(new UploadDiffTask(all));
     }
 
     /**
@@ -271,13 +234,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case JOptionPane.CANCEL_OPTION: return;
-            case 0: synchronizePrimitive(id); break;
-            case 1: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        case JOptionPane.CLOSED_OPTION: return;
+        case JOptionPane.CANCEL_OPTION: return;
+        case 0: synchronizePrimitive(id); break;
+        case 1: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -310,12 +273,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case 1: return;
-            case 0: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        case JOptionPane.CLOSED_OPTION: return;
+        case 1: return;
+        case 0: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -337,28 +300,6 @@ public class UploadAction extends JosmAction{
     }
 
     /**
-     * Handles an upload error due to a violated precondition, i.e. a HTTP return code 412
-     *
-     * @param e the exception
-     */
-    protected void handlePreconditionFailed(OsmApiException e) {
-        OptionPaneUtil.showMessageDialog(
-                Main.parent,
-                tr("<html>Uploading to the server <strong>failed</strong> because your current<br>"
-                        +"dataset violates a precondition.<br>"
-                        +"The error message is:<br>"
-                        + "{0}"
-                        + "</html>",
-                        e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                ),
-                tr("Precondition violation"),
-                JOptionPane.ERROR_MESSAGE
-        );
-        e.printStackTrace();
-    }
-
-
-    /**
      * Handles an error due to a delete request on an already deleted
      * {@see OsmPrimitive}, i.e. a HTTP response code 410, where we know what
      * {@see OsmPrimitive} is responsible for the error.
@@ -377,31 +318,6 @@ public class UploadAction extends JosmAction{
     }
 
     /**
-     * handles the case of an error due to a delete request on an already deleted
-     * {@see OsmPrimitive}, i.e. a HTTP response code 410, where we don't know which
-     * {@see OsmPrimitive} is causing the error.
-     *
-     * @param e the exception
-     */
-    protected void handleGoneForUnknownPrimitive(OsmApiException e) {
-        String msg =  tr("<html>Uploading <strong>failed</strong> because a primitive you tried to<br>"
-                + "delete on the server is already deleted.<br>"
-                + "<br>"
-                + "The error message is:<br>"
-                + "{0}"
-                + "</html>",
-                e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        );
-        OptionPaneUtil.showMessageDialog(
-                Main.parent,
-                msg,
-                tr("Primitive already deleted"),
-                JOptionPane.ERROR_MESSAGE
-        );
-
-    }
-
-    /**
      * Handles an error which is caused by a delete request for an already deleted
      * {@see OsmPrimitive} on the server, i.e. a HTTP response code of 410.
      * Note that an <strong>update</strong> on an already deleted object results
@@ -417,7 +333,7 @@ public class UploadAction extends JosmAction{
             handleGoneForKnownPrimitive(m.group(1), m.group(2));
         } else {
             logger.warning(tr("Error header \"{0}\" does not match expected pattern \"{1}\"",e.getErrorHeader(), pattern));
-            handleGoneForUnknownPrimitive(e);
+            ExceptionDialogUtil.explainGoneForUnknownPrimitive(e);
         }
     }
 
@@ -431,7 +347,7 @@ public class UploadAction extends JosmAction{
         // API initialization failed. Notify the user and return.
         //
         if (e instanceof OsmApiInitializationException) {
-            handleOsmApiInitializationException((OsmApiInitializationException)e);
+            ExceptionDialogUtil.explainOsmApiInitializationException((OsmApiInitializationException)e);
             return;
         }
 
@@ -447,7 +363,7 @@ public class UploadAction extends JosmAction{
             // There was a precondition failed. Notify the user.
             //
             else if (ex.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
-                handlePreconditionFailed(ex);
+                ExceptionDialogUtil.explainPreconditionFailed(ex);
                 return;
             }
             // Tried to delete an already deleted primitive? Let the user
@@ -477,37 +393,7 @@ public class UploadAction extends JosmAction{
             }
         }
 
-        // For any other exception just notify the user
-        //
-        String msg = e.getMessage();
-        if (msg == null) {
-            msg = e.toString();
-        }
-        e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
-                Main.map,
-                msg,
-                tr("Upload to OSM API failed"),
-                JOptionPane.ERROR_MESSAGE
-        );
-    }
-
-    /**
-     * handles an exception caught during OSM API initialization
-     *
-     * @param e the exception
-     */
-    protected void handleOsmApiInitializationException(OsmApiInitializationException e) {
-        OptionPaneUtil.showMessageDialog(
-                Main.parent,
-                tr(   "Failed to initialize communication with the OSM server {0}.\n"
-                        + "Check the server URL in your preferences and your internet connection.",
-                        Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
-                ),
-                tr("Error"),
-                JOptionPane.ERROR_MESSAGE
-        );
-        e.printStackTrace();
+        ExceptionDialogUtil.explainException(e);
     }
 
     /**
@@ -631,6 +517,48 @@ public class UploadAction extends JosmAction{
                 break;
             }
             return true;
+        }
+    }
+
+
+    class UploadDiffTask extends  PleaseWaitRunnable {
+        private boolean uploadCancelled = false;
+        private Exception lastException = null;
+        private Collection <OsmPrimitive> toUpload;
+        private OsmServerWriter writer;
+
+        public UploadDiffTask(Collection <OsmPrimitive> toUpload) {
+            super(tr("Uploading"),false /* don't ignore exceptions */);
+            this.toUpload = toUpload;
+        }
+
+        @Override protected void realRun() throws SAXException, IOException {
+            writer = new OsmServerWriter();
+            try {
+                writer.uploadOsm(getCurrentDataSet().version, toUpload, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                getEditLayer().cleanData(writer.processed, !toUpload.isEmpty());
+            } catch (Exception sxe) {
+                if (uploadCancelled) {
+                    System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
+                    return;
+                }
+                lastException = sxe;
+            }
+        }
+
+        @Override protected void finish() {
+            if (uploadCancelled)
+                return;
+            if (lastException != null) {
+                handleFailedUpload(lastException);
+            }
+        }
+
+        @Override protected void cancel() {
+            uploadCancelled = true;
+            if (writer != null) {
+                writer.disconnectActiveConnection();
+            }
         }
     }
 }

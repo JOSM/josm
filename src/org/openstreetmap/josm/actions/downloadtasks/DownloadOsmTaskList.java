@@ -113,6 +113,16 @@ public class DownloadOsmTaskList implements Runnable {
             return;
         }
 
+        // FIXME: this is a hack. We assume that the user canceled the whole download if at least
+        // one task was canceled or if it failed
+        //
+        for (DownloadTask task: osmTasks) {
+            if (task instanceof DownloadOsmTask) {
+                DownloadOsmTask osmTask = (DownloadOsmTask)task;
+                if (osmTask.isCanceled() || osmTask.isFailed())
+                    return;
+            }
+        }
         Set<Long> myPrimitiveIds = Main.map.mapView.getEditLayer().data.getCompletePrimitiveIds();
         Set<Long> downloadedIds = getDownloadedIds();
         myPrimitiveIds.removeAll(downloadedIds);
@@ -232,7 +242,9 @@ public class DownloadOsmTaskList implements Runnable {
         for (DownloadTask task : osmTasks) {
             if(task instanceof DownloadOsmTask) {
                 DataSet ds = ((DownloadOsmTask)task).getDownloadedData();
-                ret.addAll(ds.getPrimitiveIds());
+                if (ds != null) {
+                    ret.addAll(ds.getPrimitiveIds());
+                }
             }
         }
         return ret;

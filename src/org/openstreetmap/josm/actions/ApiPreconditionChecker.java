@@ -14,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction.UploadHook;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -60,13 +61,7 @@ public class ApiPreconditionChecker implements UploadHook {
                 }
             }
         } catch (OsmApiInitializationException e) {
-            e.printStackTrace();
-            OptionPaneUtil.showMessageDialog(
-                    Main.parent,
-                    tr("Failed to initialize API. Please try again later."),
-                    tr("API initialization failed"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+            ExceptionDialogUtil.explainOsmTransferException(e);
             return false;
         }
         return true;

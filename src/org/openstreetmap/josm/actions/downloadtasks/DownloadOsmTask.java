@@ -40,12 +40,14 @@ public class DownloadOsmTask implements DownloadTask {
     private static Bounds currentBounds;
     private Future<Task> task = null;
     private DataSet downloadedData;
+    private boolean canceled = false;
+    private boolean failed = false;
 
     private class Task extends PleaseWaitRunnable {
         private OsmServerReader reader;
         private DataSet dataSet;
         private boolean newLayer;
-        private boolean cancelled;
+        private boolean canceled;
         private Exception lastException;
 
         public Task(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
@@ -58,7 +60,7 @@ public class DownloadOsmTask implements DownloadTask {
             try {
                 dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {
-                if (cancelled) {
+                if (canceled) {
                     logger.warning(tr("Ignoring exception because download has been cancelled. Exception was: {0}" + e.toString()));
                     return;
                 }
@@ -101,10 +103,11 @@ public class DownloadOsmTask implements DownloadTask {
         }
 
         @Override protected void finish() {
-            if (cancelled)
+            if (canceled)
                 return;
             if (lastException != null) {
                 ExceptionDialogUtil.explainException(lastException);
+                DownloadOsmTask.this.setFailed(true);
                 return;
             }
             if (dataSet == null)
@@ -134,15 +137,33 @@ public class DownloadOsmTask implements DownloadTask {
         }
 
         @Override protected void cancel() {
+            this.canceled = true;
             if (reader != null) {
                 reader.cancel();
             }
+            DownloadOsmTask.this.setCanceled(true);
         }
     }
     private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"), true);
 
     private void rememberDownloadedData(DataSet ds) {
         this.downloadedData = ds;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public void setFailed(boolean failed) {
+        this.failed = failed;
     }
 
     public DataSet getDownloadedData() {
