@@ -34,7 +34,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 
 /**
  * This is the tabular editor component for OSM tags.
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class TagTable extends JTable  {
@@ -47,7 +47,7 @@ public class TagTable extends JTable  {
     /**
      * The table has two columns. The first column is used for editing rendering and
      * editing tag keys, the second for rendering and editing tag values.
-     * 
+     *
      */
     static class TagTableColumnModel extends DefaultTableColumnModel {
 
@@ -82,7 +82,7 @@ public class TagTable extends JTable  {
      *   <li>it automatically add a new empty row when the user leaves the
      *   last cell in the table</li>
      * <ul>
-     * 
+     *
      * @author gubaer
      *
      */
@@ -131,7 +131,7 @@ public class TagTable extends JTable  {
             }
 
 
-            if (col == 0 && row == 0) {
+            if (col <= 0 && row <= 0) {
                 // change nothing
             } else if (col == 1) {
                 col--;
@@ -146,22 +146,22 @@ public class TagTable extends JTable  {
     /**
      * Action to be run when the user invokes a delete action on the table, for
      * instance by pressing DEL.
-     * 
+     *
      * Depending on the shape on the current selection the action deletes individual
      * values or entire tags from the model.
-     * 
+     *
      * If the current selection consists of cells in the second column only, the keys of
      * the selected tags are set to the empty string.
-     * 
+     *
      * If the current selection consists of cell in the third column only, the values of the
      * selected tags are set to the empty string.
-     * 
+     *
      *  If the current selection consists of cells in the second and the third column,
      *  the selected tags are removed from the model.
-     * 
+     *
      *  This action listens to the table selection. It becomes enabled when the selection
      *  is non-empty, otherwise it is disabled.
-     * 
+     *
      *
      */
     class DeleteAction extends RunnableAction implements ListSelectionListener {
@@ -247,7 +247,7 @@ public class TagTable extends JTable  {
 
     /**
      * Action to be run when the user adds a new tag.
-     * 
+     *
      *
      */
     class AddAction extends RunnableAction {
@@ -273,7 +273,7 @@ public class TagTable extends JTable  {
     private RunnableAction addAction = null;
 
     /**
-     * 
+     *
      * @return the delete action used by this table
      */
     public RunnableAction getDeleteAction() {
@@ -325,7 +325,7 @@ public class TagTable extends JTable  {
 
     /**
      * constructor
-     * 
+     *
      * @param model
      * @param columnModel
      */
@@ -339,9 +339,9 @@ public class TagTable extends JTable  {
     /**
      * adjusts the width of the columns for the tag name and the tag value
      * to the width of the scroll panes viewport.
-     * 
+     *
      * Note: {@see #getPreferredScrollableViewportSize()} did not work as expected
-     * 
+     *
      * @param scrollPaneWidth the width of the scroll panes viewport
      */
     public void adjustColumnWidth(int scrollPaneWidth) {

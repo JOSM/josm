@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -24,8 +26,6 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 public class MemberTable extends JTable implements IMemberModelListener {
 
     /**
@@ -38,7 +38,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
 
     /**
      * constructor
-     * 
+     *
      * @param model
      * @param columnModel
      */
@@ -74,9 +74,9 @@ public class MemberTable extends JTable implements IMemberModelListener {
     /**
      * adjusts the width of the columns for the tag name and the tag value to the width of the
      * scroll panes viewport.
-     * 
+     *
      * Note: {@see #getPreferredScrollableViewportSize()} did not work as expected
-     * 
+     *
      * @param scrollPaneWidth the width of the scroll panes viewport
      */
     public void adjustColumnWidth(int scrollPaneWidth) {
@@ -103,8 +103,8 @@ public class MemberTable extends JTable implements IMemberModelListener {
      * pressing TAB or ENTER. The action alters the standard navigation path from cell to cell: <ul>
      * <li>it jumps over cells in the first column</li> <li>it automatically add a new empty row
      * when the user leaves the last cell in the table</li> <ul>
-     * 
-     * 
+     *
+     *
      */
     class SelectNextColumnCellAction extends AbstractAction {
         public void actionPerformed(ActionEvent e) {
@@ -131,7 +131,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
     /**
      * Action to be run when the user navigates to the previous cell in the table, for instance by
      * pressing Shift-TAB
-     * 
+     *
      */
     class SelectPreviousColumnCellAction extends AbstractAction {
 
@@ -142,7 +142,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
                 getCellEditor().stopCellEditing();
             }
 
-            if (col == 0 && row == 0) {
+            if (col <= 0 && row <= 0) {
                 // change nothing
             } else if (row > 0) {
                 col = 0;
@@ -165,7 +165,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
 
     /**
      * Replies the popup menu for this table
-     * 
+     *
      * @return the popup menu
      */
     protected JPopupMenu getPopUpMenu() {
