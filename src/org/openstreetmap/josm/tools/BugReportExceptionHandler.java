@@ -57,7 +57,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             "version of JOSM, please consider being kind and file a bug report."),
             tr("Unexpected Exception"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE,
             options, options[0]);
-            if (answer == JOptionPane.YES_OPTION) {
+            if (answer == 1) {
                 try {
                     StringWriter stack = new StringWriter();
                     e.printStackTrace(new PrintWriter(stack));
