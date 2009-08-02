@@ -64,6 +64,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
@@ -619,16 +620,6 @@ public class GenericRelationEditor extends RelationEditor {
     protected Dimension findMaxDialogSize() {
         // FIXME: Make it remember dialog size
         return new Dimension(700, 500);
-    }
-
-    /**
-     * Asynchronously download the members of the currently edited relation
-     * 
-     */
-    private void downloadRelationMembers() {
-        if (!memberTableModel.hasIncompleteMembers())
-            return;
-        Main.worker.submit(new DownloadTask(this));
     }
 
     @Override
@@ -1272,11 +1263,17 @@ public class GenericRelationEditor extends RelationEditor {
             putValue(NAME, tr("Download Members"));
             Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
                     KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
-            setEnabled(true);
+            updateEnabledState();
         }
 
         public void actionPerformed(ActionEvent e) {
-            downloadRelationMembers();
+            if (!isEnabled())
+                return;
+            Main.worker.submit(new DownloadTask(GenericRelationEditor.this));
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(getRelation() != null && getRelation().id > 0);
         }
     }
 
@@ -1472,26 +1469,13 @@ public class GenericRelationEditor extends RelationEditor {
             OsmApi.getOsmApi().cancel();
         }
 
-        protected void showLastException() {
-            String msg = lastException.getMessage();
-            if (msg == null) {
-                msg = lastException.toString();
-            }
-            OptionPaneUtil.showMessageDialog(
-                    Main.parent,
-                    msg,
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-
         @Override
         protected void finish() {
             if (cancelled)
                 return;
             memberTableModel.updateMemberReferences(getLayer().data);
             if (lastException != null) {
-                showLastException();
+                ExceptionDialogUtil.explainException(lastException);
             }
 
             if (conflictsCount > 0) {

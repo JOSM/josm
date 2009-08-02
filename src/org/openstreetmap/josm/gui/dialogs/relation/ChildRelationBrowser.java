@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
@@ -305,19 +306,6 @@ public class ChildRelationBrowser extends JPanel {
             OsmApi.getOsmApi().cancel();
         }
 
-        protected void showLastException() {
-            String msg = lastException.getMessage();
-            if (msg == null) {
-                msg = lastException.toString();
-            }
-            OptionPaneUtil.showMessageDialog(
-                    Main.parent,
-                    msg,
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-
         protected void refreshView(Relation relation){
             for (int i=0; i < childTree.getRowCount(); i++) {
                 Relation reference = (Relation)childTree.getPathForRow(i).getLastPathComponent();
@@ -332,7 +320,7 @@ public class ChildRelationBrowser extends JPanel {
             if (cancelled)
                 return;
             if (lastException != null) {
-                showLastException();
+                ExceptionDialogUtil.explainException(lastException);
                 return;
             }
 
@@ -475,19 +463,6 @@ public class ChildRelationBrowser extends JPanel {
             OsmApi.getOsmApi().cancel();
         }
 
-        protected void showLastException() {
-            String msg = lastException.getMessage();
-            if (msg == null) {
-                msg = lastException.toString();
-            }
-            OptionPaneUtil.showMessageDialog(
-                    Main.parent,
-                    msg,
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-
         protected void refreshView(Relation relation){
             for (int i=0; i < childTree.getRowCount(); i++) {
                 Relation reference = (Relation)childTree.getPathForRow(i).getLastPathComponent();
@@ -502,7 +477,7 @@ public class ChildRelationBrowser extends JPanel {
             if (cancelled)
                 return;
             if (lastException != null) {
-                showLastException();
+                ExceptionDialogUtil.explainException(lastException);
                 return;
             }
 
