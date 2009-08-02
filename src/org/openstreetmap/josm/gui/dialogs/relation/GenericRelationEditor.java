@@ -119,6 +119,7 @@ public class GenericRelationEditor extends RelationEditor {
     public GenericRelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
         super(layer, relation, selectedMembers);
 
+
         // initialize the autocompletion infrastructure
         //
         acCache = AutoCompletionCache.getCacheForLayer(Main.map.mapView.getEditLayer());
@@ -136,6 +137,11 @@ public class GenericRelationEditor extends RelationEditor {
         if (relation != null) {
             this.tagEditorModel.initFromPrimitive(relation);
             this.memberTableModel.populate(relation);
+            if (!getLayer().data.relations.contains(relation)) {
+                // treat it as a new relation if it doesn't exist in the
+                // data set yet.
+                setRelation(null);
+            }
         } else {
             tagEditorModel.clear();
             this.memberTableModel.populate(null);
@@ -1359,8 +1365,6 @@ public class GenericRelationEditor extends RelationEditor {
             Relation copy = new Relation();
             tagEditorModel.applyToPrimitive(copy);
             memberTableModel.applyToRelation(copy);
-            getLayer().data.addPrimitive(copy);
-            getLayer().fireDataChange();
             RelationEditor editor = RelationEditor.getEditor(getLayer(), copy, memberTableModel.getSelectedMembers());
             editor.setVisible(true);
         }
