@@ -106,8 +106,7 @@ public class Lambert implements Projection {
             if (layoutZone == -1) {
                 layoutZone = currentZone;
             } else if (layoutZone != currentZone) {
-                if ((currentZone < layoutZone && Math.abs(zoneLimits[currentZone] - lt) > cMaxOverlappingZones)
-                        || (currentZone > layoutZone && Math.abs(zoneLimits[layoutZone] - lt) > cMaxOverlappingZones)) {
+                if (farawayFromLambertZoneFrance(lt,lg)) {
                     OptionPaneUtil.showMessageDialog(Main.parent,
                             tr("IMPORTANT : data positioned far away from\n"
                                     + "the current Lambert zone limits.\n"
@@ -272,10 +271,22 @@ public class Lambert implements Projection {
         return new LatLon(lt, lg);
     }
 
+    private boolean farawayFromLambertZoneFrance(double lat, double lon) {
+        if (lat < (zoneLimits[3] - cMaxOverlappingZones) || (lat > (cMaxLatZone1 + cMaxOverlappingZones))
+                || (lon < (cMinLonZones - cMaxOverlappingZones)) || (lon > (cMaxLonZones + cMaxOverlappingZones)))
+            return true;
+        return false;
+    }
+
     public Bounds getWorldBoundsLatLon()
     {
+        // These are not the Lambert Zone boundaries but we keep these values until coordinates outside the
+        // projection boundaries are handled correctly.
         return new Bounds(
+                new LatLon(-85.05112877980659, -180.0),
+                new LatLon(85.05112877980659, 180.0));
+        /*return new Bounds(
                 new LatLon(45.0, -4.9074074074074059),
-                new LatLon(57.0, 10.2));
+                new LatLon(57.0, 10.2));*/
     }
 }
