@@ -10,8 +10,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Reads the history of an {@see OsmPrimitive} from the OSM API server.
  *
@@ -42,11 +40,10 @@ public class OsmServerHistoryReader extends OsmServerReader {
     /**
      * don't use - not implemented!
      *
-     * @exception NotImplementedException
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-        throw new NotImplementedException();
+        return null;
     }
 
     /**
