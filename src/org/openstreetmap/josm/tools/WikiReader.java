@@ -3,15 +3,18 @@ package org.openstreetmap.josm.tools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 /**
  * Read a trac-wiki page.
- *
+ * 
  * @author imi
  */
 public class WikiReader {
@@ -28,10 +31,10 @@ public class WikiReader {
 
     /**
      * Read the page specified by the url and return the content.
-     *
-     * If the url is within the baseurl path, parse it as an trac wikipage and
-     * replace relative pathes etc..
-     *
+     * 
+     * If the url is within the baseurl path, parse it as an trac wikipage and replace relative
+     * pathes etc..
+     * 
      * @return Either the string of the content of the wiki page.
      * @throws IOException Throws, if the page could not be loaded.
      */
@@ -44,17 +47,55 @@ public class WikiReader {
 
     public String readLang(String text) {
         String languageCode = LanguageInfo.getLanguageCodeWiki();
-        String url = baseurl + "/wiki/"+languageCode+text;
+        String url = baseurl + "/wiki/" + languageCode + text;
         String res = "";
+        InputStream in = null;
         try {
-            res = readFromTrac(new BufferedReader(new InputStreamReader(new URL(url).openStream(), "utf-8")));
-        } catch (IOException ioe) {}
-        if(res.length() == 0 && languageCode.length() != 0)
-        {
-            url = baseurl + "/wiki/"+text;
+            in = new URL(url).openStream();
+            res = readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
+        } catch (IOException ioe) {
+            System.out.println(tr("Warning: failed to read MOTD from ''{0}''. Exception was: {1}", url, ioe
+                    .toString()));
+        } catch(SecurityException e) {
+            System.out.println(tr(
+                    "Warning: failed to read MOTD from ''{0}'' for security reasons. Exception was: {1}", url, e
+                    .toString()));
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        if (res.length() == 0 && languageCode.length() != 0) {
+            url = baseurl + "/wiki/" + text;
             try {
-                res = readFromTrac(new BufferedReader(new InputStreamReader(new URL(url).openStream(), "utf-8")));
-            } catch (IOException ioe) {}
+                in = new URL(url).openStream();
+            } catch (IOException e) {
+                System.out.println(tr("Warning: failed to read MOTD from ''{0}''. Exception was: {1}", url, e
+                        .toString()));
+                return res;
+            } catch (SecurityException e) {
+                System.out.println(tr(
+                        "Warning: failed to read MOTD from ''{0}'' for security reasons. Exception was: {1}", url, e
+                        .toString()));
+                return res;
+            }
+            try {
+                res = readFromTrac(new BufferedReader(new InputStreamReader(in, "utf-8")));
+            } catch (IOException ioe) {
+                System.out.println(tr("Warning: failed to read MOTD from ''{0}''. Exception was: {1}", url, ioe
+                        .toString()));
+                return res;
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
         }
         return res;
     }
@@ -62,8 +103,9 @@ public class WikiReader {
     private String readNormal(BufferedReader in) throws IOException {
         String b = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            if(!line.contains("[[TranslatedPages]]"))
+            if (!line.contains("[[TranslatedPages]]")) {
                 b += line.replaceAll(" />", ">") + "\n";
+            }
         }
         return "<html>" + b + "</html>";
     }
@@ -73,23 +115,24 @@ public class WikiReader {
         boolean transl = false;
         String b = "";
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            if (line.contains("<div id=\"searchable\">"))
+            if (line.contains("<div id=\"searchable\">")) {
                 inside = true;
-            else if (line.contains("<div class=\"wiki-toc trac-nav\""))
+            } else if (line.contains("<div class=\"wiki-toc trac-nav\"")) {
                 transl = true;
-            else if (line.contains("<div class=\"wikipage searchable\">"))
+            } else if (line.contains("<div class=\"wikipage searchable\">")) {
                 inside = true;
-            else if (line.contains("<div class=\"buttons\">"))
+            } else if (line.contains("<div class=\"buttons\">")) {
                 inside = false;
-            if (inside && !transl) {
-                b += line.replaceAll("<img src=\"/", "<img src=\""+baseurl+"/")
-                         .replaceAll("href=\"/", "href=\""+baseurl+"/")
-                         .replaceAll(" />", ">") + "\n";
             }
-            else if (transl && line.contains("</div>"))
+            if (inside && !transl) {
+                b += line.replaceAll("<img src=\"/", "<img src=\"" + baseurl + "/").replaceAll("href=\"/",
+                        "href=\"" + baseurl + "/").replaceAll(" />", ">")
+                        + "\n";
+            } else if (transl && line.contains("</div>")) {
                 transl = false;
+            }
         }
-        if(b.indexOf("      Describe ") >= 0)
+        if (b.indexOf("      Describe ") >= 0)
             return "";
         return "<html>" + b + "</html>";
     }

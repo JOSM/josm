@@ -57,13 +57,14 @@ public class AboutAction extends JosmAction {
         boolean manifest = false;
         URL u = Main.class.getResource("/REVISION");
         if(u == null) {
-            try {
-                manifest = true;
-                u = new URL("jar:" + Main.class.getProtectionDomain().getCodeSource().getLocation().toString()
-                        + "!/META-INF/MANIFEST.MF");
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            //            try {
+            manifest = true;
+            //                u = new URL("jar:" + Main.class.getProtectionDomain().getCodeSource().getLocation().toString()
+            //                        + "!/META-INF/MANIFEST.MF");
+            u = Main.class.getResource("/META-INF/MANIFEST.MF");
+            //            } catch (MalformedURLException e) {
+            //                e.printStackTrace();
+            //            }
         }
         revision = loadFile(u, manifest);
 
@@ -154,7 +155,7 @@ public class AboutAction extends JosmAction {
         about.setPreferredSize(new Dimension(500,300));
 
         JOptionPane.showMessageDialog(Main.parent, about, tr("About JOSM..."),
-        JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));
+                JOptionPane.INFORMATION_MESSAGE, ImageProvider.get("logo"));
     }
 
     private JScrollPane createScrollPane(JTextArea area) {
@@ -193,16 +194,18 @@ public class AboutAction extends JosmAction {
         JTextArea area = new JTextArea(tr("File could not be found."));
         area.setEditable(false);
         Font font = Font.getFont("monospaced");
-        if (font != null)
+        if (font != null) {
             area.setFont(font);
+        }
         if (resource == null)
             return area;
         BufferedReader in;
         try {
             in = new BufferedReader(new InputStreamReader(resource.openStream()));
             String s = "";
-            for (String line = in.readLine(); line != null; line = in.readLine())
+            for (String line = in.readLine(); line != null; line = in.readLine()) {
                 s += line + "\n";
+            }
             if (manifest) {
                 s = Pattern.compile("\n ", Pattern.DOTALL).matcher(s).replaceAll("");
                 s = Pattern.compile("^(SHA1-Digest|Name): .*?$", Pattern.DOTALL|Pattern.MULTILINE).matcher(s).replaceAll("");

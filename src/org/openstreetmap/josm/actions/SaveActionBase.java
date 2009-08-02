@@ -319,6 +319,10 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     @Override
     protected void updateEnabledState() {
+        if (Main.applet) {
+            setEnabled(false);
+            return;
+        }
         boolean check =  Main.map != null
         && Main.map.mapView !=null
         && Main.map.mapView.getActiveLayer() != null;

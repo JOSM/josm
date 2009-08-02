@@ -98,29 +98,23 @@ public class BoundingBoxDownloader extends OsmServerReader {
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(tr("Contacting OSM Server..."), 10);
+        InputStream in = null;
         try {
             progressMonitor.indeterminateSubTask(null);
-            final InputStream in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
+            in = getInputStream("map?bbox="+lon1+","+lat1+","+lon2+","+lat2, progressMonitor.createSubTaskMonitor(9, false));
             if (in == null)
                 return null;
-            final DataSet data = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
-            in.close();
-            activeConnection = null;
-            return data;
-        } catch (IOException e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } catch (SAXException e) {
-            throw new OsmTransferException(e);
+            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
-            if (cancel)
-                return null;
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
+            if (in != null) {
+                try {in.close();} catch(IOException e) {}
+            }
+            activeConnection = null;
         }
     }
 }

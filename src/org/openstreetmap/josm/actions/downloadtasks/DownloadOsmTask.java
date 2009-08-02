@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
 
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -33,6 +35,8 @@ import org.xml.sax.SAXException;
  * Run in the worker thread.
  */
 public class DownloadOsmTask implements DownloadTask {
+    private static final Logger logger = Logger.getLogger(DownloadOsmTask.class.getName());
+
     private static Bounds currentBounds;
     private Future<Task> task = null;
     private DataSet downloadedData;
@@ -41,6 +45,8 @@ public class DownloadOsmTask implements DownloadTask {
         private OsmServerReader reader;
         private DataSet dataSet;
         private boolean newLayer;
+        private boolean cancelled;
+        private Exception lastException;
 
         public Task(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading data"), progressMonitor, false);
@@ -49,7 +55,19 @@ public class DownloadOsmTask implements DownloadTask {
         }
 
         @Override public void realRun() throws IOException, SAXException, OsmTransferException {
-            dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            try {
+                dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            } catch(Exception e) {
+                if (cancelled) {
+                    logger.warning(tr("Ignoring exception because download has been cancelled. Exception was: {0}" + e.toString()));
+                    return;
+                }
+                if (e instanceof OsmTransferException) {
+                    lastException = e;
+                } else {
+                    lastException = new OsmTransferException(e);
+                }
+            }
         }
 
         protected OsmDataLayer getEditLayer() {
@@ -83,6 +101,12 @@ public class DownloadOsmTask implements DownloadTask {
         }
 
         @Override protected void finish() {
+            if (cancelled)
+                return;
+            if (lastException != null) {
+                ExceptionDialogUtil.explainException(lastException);
+                return;
+            }
             if (dataSet == null)
                 return; // user canceled download or error occurred
             if (dataSet.allPrimitives().isEmpty()) {

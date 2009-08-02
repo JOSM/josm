@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.tools.XmlObjectParser;
  * @author Imi
  */
 public class ServerSidePreferences extends Preferences {
+    static private final Logger logger = Logger.getLogger(ServerSidePreferences.class.getName());
 
     private final Connection connection;
 
@@ -180,10 +182,13 @@ public class ServerSidePreferences extends Preferences {
     }
 
     @Override public Collection<Bookmark> loadBookmarks() {
+        URL url = null;
         try {
             Collection<Bookmark> bookmarks;
-            BufferedReader in = new BufferedReader(new InputStreamReader(new URL("http://"+connection.serverUrl.getHost()+"/josm/bookmarks").openStream()));
             bookmarks = new LinkedList<Bookmark>();
+            url = new URL("http://"+connection.serverUrl.getHost()+"/josm/bookmarks");
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 StringTokenizer st = new StringTokenizer(line, ",");
                 if (st.countTokens() < 5) {
@@ -208,6 +213,9 @@ public class ServerSidePreferences extends Preferences {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch(SecurityException e) {
+            e.printStackTrace();
+            logger.warning(tr("Failed to load bookmarks from ''{0}'' for security reasons. Exception was: {1}",  url == null ? "null" : url.toExternalForm(), e.toString()));
         }
         return Collections.emptyList();
     }

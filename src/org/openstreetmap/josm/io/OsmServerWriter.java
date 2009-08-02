@@ -135,7 +135,7 @@ public class OsmServerWriter {
                                     OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
                                     NAME_FORMATTER.getName(osm),
                                     osm.id));
-                    makeApiRequest(osm);
+                    makeApiRequest(osm,progressMonitor);
                     processed.add(osm);
                     progressMonitor.worked(1);
                 }
@@ -147,9 +147,9 @@ public class OsmServerWriter {
         }
     }
 
-    void makeApiRequest(OsmPrimitive osm) throws OsmTransferException {
+    void makeApiRequest(OsmPrimitive osm, ProgressMonitor progressMonitor) throws OsmTransferException {
         if (osm.deleted) {
-            api.deletePrimitive(osm);
+            api.deletePrimitive(osm, progressMonitor);
         } else if (osm.id == 0) {
             api.createPrimitive(osm);
         } else {

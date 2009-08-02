@@ -105,5 +105,4 @@ abstract public class DiskAccessAction extends JosmAction {
             return null;
         return file;
     }
-
 }

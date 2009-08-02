@@ -20,6 +20,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -267,10 +268,13 @@ public class OsmApi extends OsmConnection {
      * @param osm the primitive
      * @throws OsmTransferException if something goes wrong
      */
-    public void deletePrimitive(OsmPrimitive osm) throws OsmTransferException {
+    public void deletePrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
         initialize();
-        // legacy mode does not require payload. normal mode (0.6 and up) requires payload for version matching.
-        sendRequest("DELETE", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.id, version.equals("0.5") ? null : toXml(osm, false));
+        // can't use a the individual DELETE method in the 0.6 API. Java doesn't allow
+        // submitting a DELETE request with content, the 0.6 API requires it, however. Falling back
+        // to diff upload.
+        //
+        uploadDiff(Collections.singleton(osm), monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
     }
 
     /**
@@ -399,7 +403,7 @@ public class OsmApi extends OsmConnection {
 
         while(true) { // the retry loop
             try {
-                URL url = new URL(new URL(getBaseUrl()), urlSuffix, new MyHttpHandler());
+                URL url = new URL(new URL(getBaseUrl()), urlSuffix);
                 System.out.print(requestMethod + " " + url + "... ");
                 activeConnection = (HttpURLConnection)url.openConnection();
                 activeConnection.setConnectTimeout(15000);

@@ -65,7 +65,14 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
      */
     public SlippyMapChooser() {
         super();
-        cachedLoader = new OsmFileCacheTileLoader(this);
+        try {
+            cachedLoader = new OsmFileCacheTileLoader(this);
+        } catch(SecurityException e) {
+            // set to null if a SecurityException was thrown
+            // while creating the cachedLoader
+            //
+            cachedLoader = null;
+        }
         uncachedLoader = new OsmTileLoader(this);
         setZoomContolsVisible(false);
         setMapMarkerVisible(false);
@@ -73,7 +80,11 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         // We need to set an initial size - this prevents a wrong zoom selection for
         // the area before the component has been displayed the first time
         setBounds(new Rectangle(getMinimumSize()));
-        setFileCacheEnabled(Main.pref.getBoolean("slippy_map_chooser.file_cache", true));
+        if (cachedLoader == null) {
+            setFileCacheEnabled(false);
+        } else {
+            setFileCacheEnabled(Main.pref.getBoolean("slippy_map_chooser.file_cache", true));
+        }
         setMaxTilesInMemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
 
         String mapStyle = Main.pref.get("slippy_map_chooser.mapstyle", "mapnik");
