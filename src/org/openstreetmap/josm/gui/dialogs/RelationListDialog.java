@@ -126,6 +126,10 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     public void updateList() {
+        if (Main.main.getCurrentDataSet() == null) {
+            list.setSize(0);
+            return;
+        }
         Relation selected = getSelected();
         list.setSize(getNumRelations());
         if (getNumRelations() > 0 ) {
@@ -146,14 +150,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     public void activeLayerChange(Layer a, Layer b) {
-        if ((a == null || a instanceof OsmDataLayer) && b instanceof OsmDataLayer) {
-            if (a != null) {
-                ((OsmDataLayer)a).listenerDataChanged.remove(this);
-            }
-            ((OsmDataLayer)b).listenerDataChanged.add(this);
-            updateList();
-            repaint();
-        }
+        updateList();
     }
 
     public void layerRemoved(Layer a) {
@@ -170,7 +167,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     public void dataChanged(OsmDataLayer l) {
         updateList();
-        repaint();
     }
 
     /**
@@ -212,7 +208,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     /**
      * Selects the relation <code>relation</code> in the list of relations.
-     * 
+     *
      * @param relation  the relation
      */
     public void selectRelation(Relation relation) {
