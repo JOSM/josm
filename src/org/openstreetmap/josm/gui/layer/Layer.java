@@ -169,7 +169,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
         }
         String oldValue = this.name;
         this.name = name;
-        if (!oldValue.equals(this.name)) {
+        if (!this.name.equals(oldValue)) {
             propertyChangeSupport.firePropertyChange(NAME_PROP, oldValue, this.name);
         }
     }
