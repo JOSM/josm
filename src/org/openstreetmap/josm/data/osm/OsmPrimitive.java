@@ -99,7 +99,23 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     /**
      * If set to true, this object is currently selected.
      */
+    @Deprecated
     public volatile boolean selected = false;
+
+    /**
+     *
+     * @since 1899
+     */
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+    /**
+     *
+     * @since 1899
+     */
+    public boolean isSelected() {
+        return selected;
+    }
 
     /**
      * If set to true, this object is highlighted. Currently this is only used to
@@ -178,7 +194,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     public final void delete(boolean deleted) {
         this.deleted = deleted;
-        selected = false;
+        setSelected(false);
         modified = true;
     }
 
@@ -302,7 +318,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         id = osm.id;
         modified = osm.modified;
         deleted = osm.deleted;
-        selected = osm.selected;
+        setSelected(osm.isSelected());
         timestamp = osm.timestamp;
         version = osm.version;
         incomplete = osm.incomplete;

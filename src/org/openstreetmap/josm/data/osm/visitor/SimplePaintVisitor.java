@@ -148,7 +148,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
            require changing the colour while painting... */
         //profilerN = 0;
         for (final OsmPrimitive osm : data.relations)
-            if (!osm.deleted && !osm.selected)
+            if (!osm.deleted && !osm.isSelected())
             {
                 osm.visit(this);
         //        profilerN++;
@@ -162,7 +162,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.deleted && !osm.selected && osm.isTagged())
+            if (!osm.deleted && !osm.isSelected() && osm.isTagged())
             {
                 osm.visit(this);
         //        profilerN++;
@@ -170,7 +170,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         displaySegments();
 
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.deleted && !osm.selected && !osm.isTagged())
+            if (!osm.deleted && !osm.isSelected() && !osm.isTagged())
             {
                 osm.visit(this);
         //        profilerN++;
@@ -201,7 +201,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.deleted && !osm.selected)
+            if (!osm.deleted && !osm.isSelected())
             {
                 osm.visit(this);
         //        profilerN++;
@@ -252,7 +252,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
         else if (n.highlighted)
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        else if (n.selected)
+        else if (n.isSelected())
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         else if(n.isTagged())
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
@@ -299,18 +299,18 @@ public class SimplePaintVisitor extends AbstractVisitor {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
            (even if the tag is negated as in oneway=false) or the way is selected */
 
-        boolean showThisDirectionArrow = w.selected
+        boolean showThisDirectionArrow = w.isSelected()
         || (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys()));
         /* head only takes over control if the option is true,
            the direction should be shown at all and not only because it's selected */
-        boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !w.selected && showHeadArrowOnly;
+        boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !w.isSelected() && showHeadArrowOnly;
         Color wayColor;
 
         if (inactive) {
             wayColor = inactiveColor;
         } else if(w.highlighted) {
             wayColor = highlightColor;
-        } else if(w.selected) {
+        } else if(w.isSelected()) {
             wayColor = selectedColor;
         } else if (!w.isTagged()) {
             wayColor = untaggedWayColor;
@@ -340,7 +340,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         Color col;
         if (inactive) {
             col = inactiveColor;
-        } else if (r.selected) {
+        } else if (r.isSelected()) {
             col = selectedColor;
         } else {
             col = relationColor;

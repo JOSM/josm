@@ -1,20 +1,21 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -107,7 +108,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Adds a primitive to the dataset
-     * 
+     *
      * @param primitive the primitive. Ignored if null.
      */
     public void addPrimitive(OsmPrimitive primitive) {
@@ -128,7 +129,7 @@ public class DataSet implements Cloneable {
      * by this dataset, i.e. from {@see #nodes}, {@see #ways}, or
      * {@see #relations}. References from other primitives to this
      * primitive are left unchanged.
-     * 
+     *
      * @param primitive the primitive. Ignored if null.
      */
     public void removePrimitive(OsmPrimitive primitive) {
@@ -187,7 +188,7 @@ public class DataSet implements Cloneable {
         clearSelection(ways);
         clearSelection(relations);
         for (OsmPrimitive osm : selection) {
-            osm.selected = true;
+            osm.setSelected(true);
         }
         fireSelectionChanged(selection);
     }
@@ -202,7 +203,7 @@ public class DataSet implements Cloneable {
         clearSelection(relations);
         for (OsmPrimitive o : osm)
             if (o != null) {
-                o.selected = true;
+                o.setSelected(true);
             }
         fireSelectionChanged(Arrays.asList(osm));
     }
@@ -215,7 +216,7 @@ public class DataSet implements Cloneable {
         if (list == null)
             return;
         for (OsmPrimitive osm : list) {
-            osm.selected = false;
+            osm.setSelected(false);
         }
     }
 
@@ -228,7 +229,7 @@ public class DataSet implements Cloneable {
         if (list == null)
             return sel;
         for (OsmPrimitive osm : list)
-            if (osm.selected && !osm.deleted) {
+            if (osm.isSelected() && !osm.deleted) {
                 sel.add(osm);
             }
         return sel;
@@ -346,7 +347,7 @@ public class DataSet implements Cloneable {
     /**
      * Replies the set of ids of all complete primitivies (i.e. those with
      * ! primitive.incomplete)
-     * 
+     *
      * @return the set of ids of all complete primitivies
      */
     public Set<Long> getCompletePrimitiveIds() {
@@ -376,7 +377,7 @@ public class DataSet implements Cloneable {
 
     /**
      * removes all references from ways in this dataset to a particular node
-     * 
+     *
      * @param node the node
      */
     public void unlinkNodeFromWays(Node node) {
@@ -392,7 +393,7 @@ public class DataSet implements Cloneable {
 
     /**
      * removes all references from relations in this dataset  to this primitive
-     * 
+     *
      * @param primitive the primitive
      */
     public void unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
@@ -410,7 +411,7 @@ public class DataSet implements Cloneable {
     /**
      * removes all references from from other primitives  to the
      * referenced primitive
-     * 
+     *
      * @param referencedPrimitive the referenced primitive
      */
     public void unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
@@ -425,7 +426,7 @@ public class DataSet implements Cloneable {
     /**
      * Replies a list of parent relations which refer to the relation
      * <code>child</code>. Replies an empty list if child is null.
-     * 
+     *
      * @param child the child relation
      * @return a list of parent relations which refer to the relation
      * <code>child</code>

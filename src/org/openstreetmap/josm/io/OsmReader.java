@@ -85,7 +85,7 @@ public class OsmReader {
             osm.id = id;
             osm.keys = keys;
             osm.modified = modified;
-            osm.selected = selected;
+            osm.setSelected(selected);
             osm.deleted = deleted;
             osm.setTimestamp(timestamp);
             osm.user = user;

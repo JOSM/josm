@@ -176,10 +176,10 @@ public class SearchAction extends JosmAction{
                     } else {
                         sel.remove(osm);
                     }
-                } else if (mode == SearchMode.add && !osm.selected && matcher.match(osm)) {
+                } else if (mode == SearchMode.add && !osm.isSelected() && matcher.match(osm)) {
                     sel.add(osm);
                     ++foundMatches;
-                } else if (mode == SearchMode.remove && osm.selected && matcher.match(osm)) {
+                } else if (mode == SearchMode.remove && osm.isSelected() && matcher.match(osm)) {
                     sel.remove(osm);
                     ++foundMatches;
                 }

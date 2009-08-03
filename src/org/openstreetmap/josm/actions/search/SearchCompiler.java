@@ -408,7 +408,7 @@ public class SearchCompiler {
 
     private static class Selected extends Match {
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.selected;
+            return osm.isSelected();
         }
         @Override public String toString() {return "selected";}
     }

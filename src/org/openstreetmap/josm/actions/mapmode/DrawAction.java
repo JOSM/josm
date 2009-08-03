@@ -402,7 +402,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     // but pressing ALT prevents this. Therefore we must de-select the way manually
                     // here so /only/ the new way will be selected after this method finishes.
                     if(alt) {
-                        wnew.selected = false;
+                        wnew.setSelected(false);
                     }
 
                     cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
@@ -529,7 +529,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             } else {
                 title = tr("Add node into way");
                 for (Way w : reuseWays) {
-                    w.selected = false;
+                    w.setSelected(false);
                 }
             }
             getCurrentDataSet().setSelected(n);

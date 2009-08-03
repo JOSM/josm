@@ -296,8 +296,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
             // when multiple nodes on one point, prefer new or selected nodes
             else if(dist == minDistanceSq && minPrimitive != null
-                    && ((n.id == 0 && n.selected)
-                            || (!minPrimitive.selected && (n.selected || n.id == 0)))) {
+                    && ((n.id == 0 && n.isSelected())
+                            || (!minPrimitive.isSelected() && (n.isSelected() || n.id == 0)))) {
                 minPrimitive = n;
             }
         }
@@ -335,7 +335,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 double b = p.distanceSq(A);
                 double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
                 if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
-                    if(w.selected) {
+                    if(w.isSelected()) {
                         perDist -= 0.00001;
                     }
                     List<WaySegment> l;
