@@ -14,10 +14,10 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -58,6 +59,7 @@ import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
  * 
  */
 public class LayerListDialog extends ToggleDialog {
+    static private final Logger logger = Logger.getLogger(LayerListDialog.class.getName());
 
     /** the unique instance of the dialog */
     static private LayerListDialog instance;
@@ -111,6 +113,7 @@ public class LayerListDialog extends ToggleDialog {
         // -- activate action
         ActivateLayerAction activateLayerAction = new ActivateLayerAction();
         adaptTo(activateLayerAction, selectionModel);
+        adaptToLayerChanges(activateLayerAction);
         buttonPanel.add(new SideButton(activateLayerAction, "activate"));
 
         // -- show hide action
@@ -158,12 +161,16 @@ public class LayerListDialog extends ToggleDialog {
         // init the model
         //
         final MapView mapView = mapFrame.mapView;
-        model.populate(mapView.getAllLayers());
+        model.populate();
         model.setSelectedLayer(mapView.getActiveLayer());
         model.addLayerListModelListener(
                 new LayerListModelListener() {
                     public void makeVisible(int index, Layer layer) {
                         layerList.ensureIndexIsVisible(index);
+                    }
+
+                    public void refresh() {
+                        layerList.repaint();
                     }
                 }
         );
@@ -207,10 +214,36 @@ public class LayerListDialog extends ToggleDialog {
         );
     }
 
+    protected void adaptToLayerChanges(final IEnabledStateUpdating listener) {
+        Layer.listeners.add(
+                new LayerChangeListener() {
+                    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+                        listener.updateEnabledState();
+                    }
+                    public void layerAdded(Layer newLayer) {
+                        listener.updateEnabledState();
+                    }
+                    public void layerRemoved(Layer oldLayer) {
+                        listener.updateEnabledState();
+                    }
+                }
+        );
+    }
+
+
+    private enum DeleteDecision {
+        deleteCurrent,
+        dontDeleteCurrent,
+        deleteAll,
+        cancel
+    }
+
     /**
      * The action to delete the currently selected layer
      */
     public final  class DeleteLayerAction extends AbstractAction implements IEnabledStateUpdating {
+
+
 
         private  Layer layer;
 
@@ -255,14 +288,45 @@ public class LayerListDialog extends ToggleDialog {
             return ConditionalOptionPaneUtil.showConfirmationDialog(
                     "delete_layer",
                     Main.parent,
-                    tr("Do you really want to delete the whole layer ''{0}''?", layer.getName()),
+                    tr("Do you really want to delete layer ''{0}''?", layer.getName()),
                     tr("Confirmation"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     JOptionPane.YES_OPTION);
         }
 
-        public void deleteLayer(Layer layer) {
+        protected DeleteDecision confirmDeleteMultipleLayer(Layer layer, int idx, int numLayers) {
+            String options[] = new String[] {
+                    tr("Yes"),
+                    tr("No"),
+                    tr("Delete all"),
+                    tr("Cancel")
+            };
+            int ret = ConditionalOptionPaneUtil.showOptionDialog(
+                    "delete_layer",
+                    Main.parent,
+                    tr("Do you really want to delete layer ''{0}''?", layer.getName()),
+                    tr("Deleting layer {0} of {1}", idx+1, numLayers),
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    options,
+                    options[0]
+            );
+            switch(ret) {
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return DeleteDecision.deleteAll;
+            case JOptionPane.CLOSED_OPTION: return DeleteDecision.cancel;
+            case 0: return DeleteDecision.deleteCurrent;
+            case 1: return DeleteDecision.dontDeleteCurrent;
+            case 2: return DeleteDecision.deleteAll;
+            case 3: return DeleteDecision.cancel;
+            default:
+                // shouldn't happen. This is the safest option.
+                return DeleteDecision.cancel;
+            }
+        }
+
+
+        public void deleteSingleLayer(Layer layer) {
             if (layer == null)
                 return;
             if (layer instanceof OsmDataLayer) {
@@ -281,14 +345,41 @@ public class LayerListDialog extends ToggleDialog {
             Main.main.removeLayer(layer);
         }
 
+        public void deleteMultipleLayers(List<Layer> layers) {
+            boolean doAskConfirmation = true;
+            for (int i=0; i < layers.size(); i++) {
+                Layer layer = layers.get(i);
+                if (layer instanceof OsmDataLayer) {
+                    OsmDataLayer dataLayer = (OsmDataLayer)layer;
+                    if (dataLayer.isModified() && ! confirmSkipSaving(dataLayer)) {
+                        continue;
+                    }
+                }
+                if (doAskConfirmation) {
+                    DeleteDecision decision = confirmDeleteMultipleLayer(layer, i, layers.size());
+                    switch(decision) {
+                    case deleteCurrent: /* do nothing */ break;
+                    case deleteAll: doAskConfirmation = false; break;
+                    case dontDeleteCurrent: continue;
+                    case cancel: return;
+                    }
+                }
+                // model and view are going to be updated via LayerChangeListener
+                //
+                Main.main.removeLayer(layer);
+            }
+        }
+
         public void actionPerformed(ActionEvent e) {
             if (this.layer == null) {
                 List<Layer> selectedLayers = getModel().getSelectedLayers();
-                for (Layer layer: selectedLayers) {
-                    deleteLayer(layer);
+                if (selectedLayers.size() == 1) {
+                    deleteSingleLayer(selectedLayers.get(0));
+                } else {
+                    deleteMultipleLayers(selectedLayers);
                 }
             } else {
-                deleteLayer(this.layer);
+                deleteSingleLayer(this.layer);
             }
         }
 
@@ -565,6 +656,7 @@ public class LayerListDialog extends ToggleDialog {
      */
     public interface LayerListModelListener {
         public void makeVisible(int index, Layer layer);
+        public void refresh();
     }
 
     /**
@@ -580,12 +672,11 @@ public class LayerListDialog extends ToggleDialog {
      */
     public class LayerListModel extends DefaultListModel implements LayerChangeListener, PropertyChangeListener{
 
-        private ArrayList<Layer> layers;
+        //private ArrayList<Layer> layers;
         private DefaultListSelectionModel selectionModel;
         private CopyOnWriteArrayList<LayerListModelListener> listeners;
 
         private LayerListModel(DefaultListSelectionModel selectionModel) {
-            layers = new ArrayList<Layer>();
             this.selectionModel = selectionModel;
             listeners = new CopyOnWriteArrayList<LayerListModelListener>();
         }
@@ -612,19 +703,28 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
-        public void populate(Collection<Layer> layers) {
-            if (layers == null)
-                return;
-            this.layers.clear();
-            this.layers.addAll(layers);
-            for (Layer layer: this.layers) {
-                layer.addPropertyChangeListener(this);
+        protected void fireRefresh() {
+            for (LayerListModelListener listener : listeners) {
+                listener.refresh();
+            }
+        }
+
+        public void populate() {
+            if (getLayers() != null) {
+                for (Layer layer: getLayers()) {
+                    // make sure the model is registered exactly once
+                    //
+                    layer.removePropertyChangeListener(this);
+                    layer.addPropertyChangeListener(this);
+                }
             }
             fireContentsChanged(this, 0, getSize());
         }
 
         public void setSelectedLayer(Layer layer) {
-            int idx = layers.indexOf(layer);
+            if (layer == null || getLayers() == null)
+                return;
+            int idx = getLayers().indexOf(layer);
             if (idx >= 0) {
                 selectionModel.setSelectionInterval(idx, idx);
             }
@@ -634,9 +734,10 @@ public class LayerListDialog extends ToggleDialog {
 
         public List<Layer> getSelectedLayers() {
             ArrayList<Layer> selected = new ArrayList<Layer>();
-            for (int i=0; i<layers.size(); i++) {
+            if (getLayers() == null) return selected;
+            for (int i=0; i<getLayers().size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
-                    selected.add(layers.get(i));
+                    selected.add(getLayers().get(i));
                 }
             }
             return selected;
@@ -644,7 +745,8 @@ public class LayerListDialog extends ToggleDialog {
 
         public List<Integer> getSelectedRows() {
             ArrayList<Integer> selected = new ArrayList<Integer>();
-            for (int i=0; i<layers.size();i++) {
+            if (getLayers() == null) return selected;
+            for (int i=0; i<getLayers().size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(i);
                 }
@@ -652,45 +754,28 @@ public class LayerListDialog extends ToggleDialog {
             return selected;
         }
 
-        public void removeLayer(Layer layer) {
+        protected void removeLayer(Layer layer) {
             if (layer == null)
                 return;
-            List<Integer> selectedRows = getSelectedRows();
-            int deletedRow = layers.indexOf(layer);
-            if (deletedRow < 0)
-                // layer not found in the list of layers
-                return;
-            layers.remove(layer);
-            fireContentsChanged(this, 0,getSize());
-            for (int row: selectedRows) {
-                if (row < deletedRow) {
-                    selectionModel.addSelectionInterval(row, row);
-                } else if (row == deletedRow){
-                    // do nothing
-                } else {
-                    selectionModel.addSelectionInterval(row-1, row-1);
-                }
-            }
+            fireRefresh();
             ensureSelectedIsVisible();
         }
 
-        public void addLayer(Layer layer) {
+        protected void addLayer(Layer layer) {
             if (layer == null) return;
-            if (layers.contains(layer)) return;
-            layers.add(layer);
             layer.addPropertyChangeListener(this);
             fireContentsChanged(this, 0, getSize());
         }
 
         public Layer getFirstLayer() {
             if (getSize() == 0) return null;
-            return layers.get(0);
+            return getLayers().get(0);
         }
 
         public Layer getLayer(int index) {
             if (index < 0 || index >= getSize())
                 return null;
-            return layers.get(index);
+            return getLayers().get(index);
         }
 
         public boolean canMoveUp() {
@@ -702,10 +787,9 @@ public class LayerListDialog extends ToggleDialog {
             if (!canMoveUp()) return;
             List<Integer> sel = getSelectedRows();
             for (int row: sel) {
-                Layer l1 = layers.get(row);
-                Layer l2 = layers.get(row-1);
-                layers.set(row, l2);
-                layers.set(row-1,l1);
+                Layer l1 = getLayers().get(row);
+                Layer l2 = getLayers().get(row-1);
+                Main.map.mapView.moveLayer(l2,row);
                 Main.map.mapView.moveLayer(l1, row-1);
             }
             fireContentsChanged(this, 0, getSize());
@@ -718,7 +802,7 @@ public class LayerListDialog extends ToggleDialog {
 
         public boolean canMoveDown() {
             List<Integer> sel = getSelectedRows();
-            return !sel.isEmpty() && sel.get(sel.size()-1) < layers.size()-1;
+            return !sel.isEmpty() && sel.get(sel.size()-1) < getLayers().size()-1;
         }
 
         public void moveDown() {
@@ -726,11 +810,10 @@ public class LayerListDialog extends ToggleDialog {
             List<Integer> sel = getSelectedRows();
             Collections.reverse(sel);
             for (int row: sel) {
-                Layer l1 = layers.get(row);
-                Layer l2 = layers.get(row+1);
-                layers.set(row, l2);
-                layers.set(row+1,l1);
+                Layer l1 = getLayers().get(row);
+                Layer l2 = getLayers().get(row+1);
                 Main.map.mapView.moveLayer(l1, row+1);
+                Main.map.mapView.moveLayer(l2, row);
             }
             fireContentsChanged(this, 0, getSize());
             selectionModel.clearSelection();
@@ -743,8 +826,9 @@ public class LayerListDialog extends ToggleDialog {
         protected void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
             if (index <0 )return;
-            if (index >= layers.size()) return;
-            Layer layer = layers.get(index);
+            if (getLayers() == null) return;
+            if (index >= getLayers().size()) return;
+            Layer layer = getLayers().get(index);
             fireMakeVisible(index, layer);
         }
 
@@ -752,7 +836,7 @@ public class LayerListDialog extends ToggleDialog {
             ArrayList<Layer> targets = new ArrayList<Layer>();
             if (layer == null)
                 return targets;
-            for(Layer target: layers) {
+            for(Layer target: getLayers()) {
                 if (layer == target) {
                     continue;
                 }
@@ -764,12 +848,17 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         public void activateLayer(Layer layer) {
-            layers.remove(layer);
-            layers.add(0,layer);
+            Main.map.mapView.moveLayer(layer,0);
             Main.map.mapView.setActiveLayer(layer);
             layer.setVisible(true);
             selectionModel.setSelectionInterval(0,0);
             ensureSelectedIsVisible();
+        }
+
+        protected List<Layer> getLayers() {
+            if (Main.map == null) return null;
+            if (Main.map.mapView == null) return null;
+            return Main.map.mapView.getAllLayersAsList();
         }
 
         /* ------------------------------------------------------------------------------ */
@@ -777,11 +866,13 @@ public class LayerListDialog extends ToggleDialog {
         /* ------------------------------------------------------------------------------ */
         @Override
         public Object getElementAt(int index) {
-            return layers.get(index);
+            return getLayers().get(index);
         }
 
         @Override
         public int getSize() {
+            List<Layer> layers = getLayers();
+            if (layers == null) return 0;
             return layers.size();
         }
 
@@ -790,14 +881,14 @@ public class LayerListDialog extends ToggleDialog {
         /* ------------------------------------------------------------------------------ */
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             if (oldLayer != null) {
-                int idx = layers.indexOf(oldLayer);
+                int idx = getLayers().indexOf(oldLayer);
                 if (idx >= 0) {
                     fireContentsChanged(this, idx,idx);
                 }
             }
 
             if (newLayer != null) {
-                int idx = layers.indexOf(newLayer);
+                int idx = getLayers().indexOf(newLayer);
                 if (idx >= 0) {
                     fireContentsChanged(this, idx,idx);
                 }
@@ -808,9 +899,16 @@ public class LayerListDialog extends ToggleDialog {
             addLayer(newLayer);
         }
 
-        public void layerRemoved(Layer oldLayer) {
-            removeLayer(oldLayer);
+        public void layerRemoved(final Layer oldLayer) {
+            SwingUtilities.invokeLater(
+                    new Runnable() {
+                        public void run() {
+                            removeLayer(oldLayer);
+                        }
+                    }
+            );
         }
+
 
         /* ------------------------------------------------------------------------------ */
         /* Interface PropertyChangeListener                                               */
@@ -818,9 +916,9 @@ public class LayerListDialog extends ToggleDialog {
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getSource() instanceof Layer) {
                 Layer layer = (Layer)evt.getSource();
-                int idx = layers.indexOf(layer);
+                final int idx = getLayers().indexOf(layer);
                 if (idx < 0) return;
-                fireContentsChanged(this, idx, idx);
+                fireRefresh();
             }
         }
     }

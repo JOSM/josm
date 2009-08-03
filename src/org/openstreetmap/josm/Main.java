@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.SplashScreen;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -215,6 +216,10 @@ abstract public class Main {
             mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction());
             mapFrame.setVisible(true);
             mapFrame.setVisibleDialogs();
+            // bootstrapping problem: make sure the layer list dialog is going to
+            // listen to change events of the very first layer
+            //
+            layer.addPropertyChangeListener(LayerListDialog.getInstance().getModel());
         }
         map.mapView.addLayer(layer);
     }

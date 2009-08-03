@@ -94,7 +94,7 @@ public class DownloadOsmTask implements DownloadTask {
         protected OsmDataLayer getFirstDataLayer() {
             if (Main.map == null) return null;
             if (Main.map.mapView == null) return null;
-            Collection<Layer> layers = Main.map.mapView.getAllLayers();
+            Collection<Layer> layers = Main.map.mapView.getAllLayersAsList();
             for (Layer layer : layers) {
                 if (layer instanceof OsmDataLayer)
                     return (OsmDataLayer) layer;

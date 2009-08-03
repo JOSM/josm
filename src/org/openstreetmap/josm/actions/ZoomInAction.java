@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class ZoomInAction extends JosmAction {
@@ -27,7 +26,7 @@ public final class ZoomInAction extends JosmAction {
         setEnabled(
                 Main.map != null
                 && Main.map.mapView != null
-                && Main.map.mapView.getAllLayers().size() > 0
+                && Main.map.mapView.hasLayers()
         );
     }
 

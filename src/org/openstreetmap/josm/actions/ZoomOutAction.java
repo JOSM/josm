@@ -26,7 +26,7 @@ public final class ZoomOutAction extends JosmAction {
         setEnabled(
                 Main.map != null
                 && Main.map.mapView != null
-                && Main.map.mapView.getAllLayers().size() > 0
+                && Main.map.mapView.hasLayers()
         );
     }
 }

@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -45,6 +46,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * objects are visible on the map and can be selected there. Relations are not.
  */
 public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataChangeListener {
+    private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
     static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     /**

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
@@ -208,16 +209,23 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         return isActiveLayerDrawable() && activeLayer.isVisible();
     }
 
+    protected void fireActiveLayerChanged(Layer oldLayer, Layer newLayer) {
+        for (Layer.LayerChangeListener l : Layer.listeners) {
+            l.activeLayerChange(oldLayer, newLayer);
+        }
+    }
+
     /**
      * Remove the layer from the mapview. If the layer was in the list before,
      * an LayerChange event is fired.
      */
     public void removeLayer(Layer layer) {
+        boolean deletedLayerWasActiveLayer = false;
+
         if (layer == activeLayer) {
-            for (Layer.LayerChangeListener l : Layer.listeners) {
-                l.activeLayerChange(layer, null);
-            }
             activeLayer = null;
+            deletedLayerWasActiveLayer = true;
+            fireActiveLayerChanged(layer, null);
         }
         if (layers.remove(layer)) {
             for (Layer.LayerChangeListener l : Layer.listeners) {
@@ -227,6 +235,15 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         layer.removePropertyChangeListener(this);
         layer.destroy();
         AudioPlayer.reset();
+        if (layer instanceof OsmDataLayer && deletedLayerWasActiveLayer) {
+            for (Layer l : layers) {
+                if (l instanceof OsmDataLayer) {
+                    activeLayer = l;
+                    fireActiveLayerChanged(null, activeLayer);
+                }
+            }
+        }
+        repaint();
     }
 
     private boolean virtualNodesEnabled = false;
@@ -367,6 +384,31 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     public Collection<Layer> getAllLayers() {
         return Collections.unmodifiableCollection(layers);
+    }
+
+    /**
+     * @return An unmodifiable ordered list of all layers
+     */
+    public List<Layer> getAllLayersAsList() {
+        return Collections.unmodifiableList(layers);
+    }
+
+    /**
+     * Replies the number of layers managed by this mav view
+     * 
+     * @return the number of layers managed by this mav view
+     */
+    public int getNumLayers() {
+        return layers.size();
+    }
+
+    /**
+     * Replies true if there is at least one layer in this map view
+     * 
+     * @return true if there is at least one layer in this map view
+     */
+    public boolean hasLayers() {
+        return getNumLayers() > 0;
     }
 
     /**
