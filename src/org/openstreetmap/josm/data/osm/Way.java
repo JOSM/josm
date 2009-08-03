@@ -23,7 +23,11 @@ public final class Way extends OsmPrimitive {
 
     /**
      * All way nodes in this way
+     * 
+     * @deprecated This public field will become private or protected in the future.
+     *  Use the new public API instead.
      */
+    @Deprecated
     public final List<Node> nodes = new ArrayList<Node>();
 
     /**
