@@ -66,7 +66,7 @@ public class DeleteCommand extends Command {
     /**
      * Constructor for a single data item. Use the collection constructor to delete multiple
      * objects.
-     * 
+     *
      * @param layer the layer context for deleting this primitive
      * @param data the primitive to delete
      */
@@ -78,7 +78,7 @@ public class DeleteCommand extends Command {
     /**
      * Constructor for a collection of data to be deleted in the context of
      * a specific layer
-     * 
+     *
      * @param layer the layer context for deleting these primitives
      * @param data the primitives to delete
      */
@@ -136,14 +136,14 @@ public class DeleteCommand extends Command {
 
     /**
      * Delete the primitives and everything they reference.
-     * 
+     *
      * If a node is deleted, the node and all ways and relations the node is part of are deleted as
      * well.
-     * 
+     *
      * If a way is deleted, all relations the way is member of are also deleted.
-     * 
+     *
      * If a way is deleted, only the way and no nodes are deleted.
-     * 
+     *
      * @param selection The list of all object to be deleted.
      * @return command A command to perform the deletions, or null of there is nothing to delete.
      */
@@ -203,7 +203,7 @@ public class DeleteCommand extends Command {
             if (! (osm instanceof Way) ) {
                 continue;
             }
-            for (Node n : ((Way) osm).nodes) {
+            for (Node n : ((Way) osm).getNodes()) {
                 if (n.isTagged()) {
                     continue;
                 }
@@ -220,13 +220,13 @@ public class DeleteCommand extends Command {
 
     /**
      * Try to delete all given primitives.
-     * 
+     *
      * If a node is used by a way, it's removed from that way. If a node or a way is used by a
      * relation, inform the user and do not delete.
-     * 
+     *
      * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
      * they are part of a relation, inform the user and do not delete.
-     * 
+     *
      * @param layer the {@see OsmDataLayer} in whose context a primitive the primitives are deleted
      * @param selection The objects to delete.
      * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
@@ -278,7 +278,7 @@ public class DeleteCommand extends Command {
         for (Way w : waysToBeChanged) {
             Way wnew = new Way(w);
             wnew.removeNodes(primitivesToDelete);
-            if (wnew.nodes.size() < 2) {
+            if (wnew.getNodesCount() < 2) {
                 primitivesToDelete.add(w);
 
                 CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
@@ -346,18 +346,18 @@ public class DeleteCommand extends Command {
                 continue; // process existing ways only
             }
             Way wnew = new Way(w);
-            ArrayList<Node> nodesToStrip = new ArrayList<Node>();
+            List<Node> nodesToKeep = new ArrayList<Node>();
             // lookup new nodes which have been added to the set of deleted
             // nodes ...
-            for (Node n : wnew.nodes) {
-                if (n.id == 0 && primitivesToDelete.contains(n)) {
-                    nodesToStrip.add(n);
+            for (Node n : wnew.getNodes()) {
+                if (n.id != 0 || !primitivesToDelete.contains(n)) {
+                    nodesToKeep.add(n);
                 }
             }
             // .. and remove them from the way
             //
-            wnew.nodes.removeAll(nodesToStrip);
-            if (!nodesToStrip.isEmpty()) {
+            wnew.setNodes(nodesToKeep);
+            if (nodesToKeep.size() < w.getNodesCount()) {
                 cmds.add(new ChangeCommand(w, wnew));
             }
         }
@@ -372,32 +372,31 @@ public class DeleteCommand extends Command {
     public static Command deleteWaySegment(OsmDataLayer layer, WaySegment ws) {
         List<Node> n1 = new ArrayList<Node>(), n2 = new ArrayList<Node>();
 
-        n1.addAll(ws.way.nodes.subList(0, ws.lowerIndex + 1));
-        n2.addAll(ws.way.nodes.subList(ws.lowerIndex + 1, ws.way.nodes.size()));
+        n1.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
+        n2.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount()));
 
         if (n1.size() < 2 && n2.size() < 2)
             return new DeleteCommand(layer, Collections.singleton(ws.way));
 
         Way wnew = new Way(ws.way);
-        wnew.nodes.clear();
 
         if (n1.size() < 2) {
-            wnew.nodes.addAll(n2);
+            wnew.setNodes(n2);
             return new ChangeCommand(ws.way, wnew);
         } else if (n2.size() < 2) {
-            wnew.nodes.addAll(n1);
+            wnew.setNodes(n1);
             return new ChangeCommand(ws.way, wnew);
         } else {
             Collection<Command> cmds = new LinkedList<Command>();
 
-            wnew.nodes.addAll(n1);
+            wnew.setNodes(n1);
             cmds.add(new ChangeCommand(ws.way, wnew));
 
             Way wnew2 = new Way();
             if (wnew.keys != null) {
                 wnew2.keys = new HashMap<String, String>(wnew.keys);
             }
-            wnew2.nodes.addAll(n2);
+            wnew2.setNodes(n2);
             cmds.add(new AddCommand(wnew2));
 
             return new SequenceCommand(tr("Split way segment"), cmds);
@@ -407,7 +406,7 @@ public class DeleteCommand extends Command {
     /**
      * Check whether user is about to delete data outside of the download area. Request confirmation
      * if he is.
-     * 
+     *
      * @param layer the layer in whose context data is deleted
      * @param primitivesToDelete the primitives to delete
      * @return true, if deleting outlying primitives is OK; false, otherwise

@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
-import javax.swing.text.html.Option;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -95,11 +94,11 @@ public final class OrthogonalizeAction extends JosmAction {
             // Check if every edge in the way is a definite edge of at least 45 degrees of direction change
             // Otherwise, two segments could be turned into same direction and intersection would fail.
             // Or changes of shape would be too serious.
-            for (int i1=0; i1 < way.nodes.size()-1; i1++) {
-                int i2 = (i1+1) % (way.nodes.size()-1);
-                int i3 = (i1+2) % (way.nodes.size()-1);
-                double angle1  =Math.abs(way.nodes.get(i1).getEastNorth().heading(way.nodes.get(i2).getEastNorth()));
-                double angle2 = Math.abs(way.nodes.get(i2).getEastNorth().heading(way.nodes.get(i3).getEastNorth()));
+            for (int i1=0; i1 < way.getNodesCount()-1; i1++) {
+                int i2 = (i1+1) % (way.getNodesCount()-1);
+                int i3 = (i1+2) % (way.getNodesCount()-1);
+                double angle1  =Math.abs(way.getNode(i1).getEastNorth().heading(way.getNode(i2).getEastNorth()));
+                double angle2 = Math.abs(way.getNode(i2).getEastNorth().heading(way.getNode(i3).getEastNorth()));
                 double delta = Math.abs(angle2 - angle1);
                 while(delta > Math.PI) {
                     delta -= Math.PI;
@@ -161,12 +160,12 @@ public final class OrthogonalizeAction extends JosmAction {
             }
 
             Way way = (Way)osm;
-            int nodes = way.nodes.size();
+            int nodes = way.getNodesCount();
             int sides = nodes - 1;
             // Copy necessary data into a more suitable data structure
             EastNorth en[] = new EastNorth[sides];
             for (int i=0; i < sides; i++) {
-                en[i] = new EastNorth(way.nodes.get(i).getEastNorth().east(), way.nodes.get(i).getEastNorth().north());
+                en[i] = new EastNorth(way.getNode(i).getEastNorth().east(), way.getNode(i).getEastNorth().north());
             }
 
             if (! use_dirnodes) {
@@ -177,8 +176,8 @@ public final class OrthogonalizeAction extends JosmAction {
                 double headings[] = new double[sides];
                 double weights[] = new double[sides];
                 for (int i=0; i < sides; i++) {
-                    headings[i] = normalize_angle(way.nodes.get(i).getEastNorth().heading(way.nodes.get(i+1).getEastNorth()));
-                    weights[i] = way.nodes.get(i).getEastNorth().distance(way.nodes.get(i+1).getEastNorth());
+                    headings[i] = normalize_angle(way.getNode(i).getEastNorth().heading(way.getNode(i+1).getEastNorth()));
+                    weights[i] = way.getNode(i).getEastNorth().distance(way.getNode(i+1).getEastNorth());
                 }
 
                 // CAVEAT: for orientations near -PI/4 or PI/4 the mapping into ONE orientation fails
@@ -269,7 +268,7 @@ public final class OrthogonalizeAction extends JosmAction {
                         B.east() + q * (A.east() - B.east()),
                         B.north() + q * (A.north() - B.north()));
 
-                Node n = way.nodes.get(i2);
+                Node n = way.getNode(i2);
 
                 LatLon ill = Main.proj.eastNorth2latlon(intersection);
                 if (!ill.equalsEpsilon(n.getCoor())) {

@@ -343,7 +343,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             int orderNumber = 0;
             lastN = null;
-            for(Node n : w.nodes)
+            for(Node n : w.getNodes())
             {
                 if(lastN != null)
                 {
@@ -428,8 +428,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if(n != null)
             {
                 w = new Way(w);
-                w.nodes.clear();
-                w.nodes.addAll(n);
+                w.setNodes(n);
                 w.selected = selected;
             }
             if(!w.isClosed())
@@ -643,7 +642,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             fromNode = fromWay.getNode(1);
         } else {
             //System.out.println("From way heading towards via");
-            fromNode = fromWay.getNode(fromWay.nodes.size()-2);
+            fromNode = fromWay.getNode(fromWay.getNodesCount()-2);
         }
 
         Point pFrom = nc.getPoint(fromNode);
@@ -935,14 +934,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 {
                     Polygon polygon = new Polygon();
 
-                    for (Node n : wInner.nodes)
+                    for (Node n : wInner.getNodes())
                     {
                         Point pInner = nc.getPoint(n);
                         polygon.addPoint(pInner.x,pInner.y);
                     }
                     if(!wInner.isClosed())
                     {
-                        Point pInner = nc.getPoint(wInner.nodes.get(0));
+                        Point pInner = nc.getPoint(wInner.getNode(0));
                         polygon.addPoint(pInner.x,pInner.y);
                     }
                     PolyData o = null;

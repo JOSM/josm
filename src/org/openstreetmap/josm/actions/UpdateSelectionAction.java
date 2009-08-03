@@ -71,7 +71,7 @@ public class UpdateSelectionAction extends JosmAction {
      * @exception IllegalStateException thrown if there is no primitive with <code>id</code> in
      *   the current dataset
      * @exception IllegalStateException thrown if there is no current dataset
-     * 
+     *
      */
     public void updatePrimitive(long id) throws IllegalStateException{
         if (getEditLayer() == null)
@@ -170,7 +170,7 @@ public class UpdateSelectionAction extends JosmAction {
                     reader.append((Node)primitive);
                 } else if (primitive instanceof Way) {
                     Way way = (Way)primitive;
-                    for (Node node: way.nodes) {
+                    for (Node node: way.getNodes()) {
                         if (node.id > 0) {
                             reader.append(node);
                         }

@@ -532,7 +532,7 @@ public class PropertiesMergeModel extends Observable {
     protected UndeletePrimitivesCommand createUndeleteWayCommand(final Way way) throws OsmTransferException {
 
         HashMap<Long,OsmPrimitive> candidates = new HashMap<Long,OsmPrimitive>();
-        for (Node n : way.nodes) {
+        for (Node n : way.getNodes()) {
             if (n.id > 0 && ! candidates.values().contains(n)) {
                 candidates.put(n.id, n);
             }

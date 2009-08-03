@@ -27,8 +27,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -151,8 +151,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
     public void paint(Graphics g, MapView mv) {
         if (selectedSegment != null) {
-            Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
-            Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex + 1);
+            Node n1 = selectedSegment.way.getNode(selectedSegment.lowerIndex);
+            Node n2 = selectedSegment.way.getNode(selectedSegment.lowerIndex + 1);
 
             EastNorth en1 = n1.getEastNorth();
             EastNorth en2 = n2.getEastNorth();
@@ -232,8 +232,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         restoreCursor();
         if (selectedSegment == null) return;
         if (mousePos.distance(initialMousePos) > 10) {
-            Node n1 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex);
-            Node n2 = selectedSegment.way.nodes.get(selectedSegment.lowerIndex+1);
+            Node n1 = selectedSegment.way.getNode(selectedSegment.lowerIndex);
+            Node n2 = selectedSegment.way.getNode(selectedSegment.lowerIndex+1);
             EastNorth en3 = n2.getEastNorth().add(xoff, yoff);
             Node n3 = new Node(Main.proj.eastNorth2latlon(en3));
             EastNorth en4 = n1.getEastNorth().add(xoff, yoff);
@@ -241,7 +241,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Way wnew = new Way(selectedSegment.way);
             wnew.addNode(selectedSegment.lowerIndex+1, n3);
             wnew.addNode(selectedSegment.lowerIndex+1, n4);
-            if (wnew.nodes.size() == 4) {
+            if (wnew.getNodesCount() == 4) {
                 wnew.addNode(n1);
             }
             Collection<Command> cmds = new LinkedList<Command>();

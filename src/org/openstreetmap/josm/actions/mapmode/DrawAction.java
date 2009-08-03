@@ -390,7 +390,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     pruneSuccsAndReverse(is);
                     for (int i : is) {
                         segSet.add(
-                                Pair.sort(new Pair<Node,Node>(w.nodes.get(i), w.nodes.get(i+1))));
+                                Pair.sort(new Pair<Node,Node>(w.getNode(i), w.getNode(i+1))));
                     }
                     for (int i : is) {
                         wnew.addNode(i + 1, n);
@@ -477,7 +477,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // Don't allow creation of self-overlapping ways
                 if(way != null) {
                     int nodeCount=0;
-                    for (Node p : way.nodes)
+                    for (Node p : way.getNodes())
                         if(p.equals(n0)) {
                             nodeCount++;
                         }
@@ -502,13 +502,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 // Connected to a node that's already in the way
-                if(way.nodes.contains(n)) {
+                if(way.getNodes().contains(n)) {
                     wayIsFinished = true;
                     selection.clear();
                 }
 
                 // Add new node to way
-                if (way.nodes.get(way.nodes.size() - 1) == n0) {
+                if (way.getNode(way.getNodesCount() - 1) == n0) {
                     way.addNode(n);
                 } else {
                     way.addNode(0, n);
@@ -570,11 +570,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * @return Boolean True if this would create a selfcontaining way, false otherwise.
      */
     private boolean isSelfContainedWay(Way selectedWay, Node currentNode, Node targetNode) {
-        if(selectedWay != null && selectedWay.nodes != null) {
-            int posn0 = selectedWay.nodes.indexOf(currentNode);
+        if(selectedWay != null) {
+            int posn0 = selectedWay.getNodes().indexOf(currentNode);
             if( posn0 != -1 && // n0 is part of way
-                    (posn0 >= 1                          && targetNode.equals(selectedWay.nodes.get(posn0-1))) || // previous node
-                    (posn0 < selectedWay.nodes.size()-1) && targetNode.equals(selectedWay.nodes.get(posn0+1))) {  // next node
+                    (posn0 >= 1                             && targetNode.equals(selectedWay.getNode(posn0-1))) || // previous node
+                    (posn0 < selectedWay.getNodesCount()-1) && targetNode.equals(selectedWay.getNode(posn0+1))) {  // next node
                 getCurrentDataSet().setSelected(targetNode);
                 DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
                 lastUsedNode = targetNode;
@@ -713,14 +713,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 return;
             if (selectedWay.isFirstLastNode(lastUsedNode)) {
                 currentBaseNode = lastUsedNode;
-                if (lastUsedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1) && selectedWay.nodes.size() > 1) {
-                    previousNode = selectedWay.nodes.get(selectedWay.nodes.size()-2);
+                if (lastUsedNode == selectedWay.getNode(selectedWay.getNodesCount()-1) && selectedWay.getNodesCount() > 1) {
+                    previousNode = selectedWay.getNode(selectedWay.getNodesCount()-2);
                 }
             }
         } else if (selectedWay == null) {
             currentBaseNode = selectedNode;
         } else {
-            if (selectedNode == selectedWay.nodes.get(0) || selectedNode == selectedWay.nodes.get(selectedWay.nodes.size()-1)) {
+            if (selectedNode == selectedWay.getNode(0) || selectedNode == selectedWay.getNode(selectedWay.getNodesCount()-1)) {
                 currentBaseNode = selectedNode;
             }
         }
@@ -762,11 +762,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     public Way getWayForNode(Node n) {
         Way way = null;
         for (Way w : getCurrentDataSet().ways) {
-            if (w.deleted || w.incomplete || w.nodes.size() < 1) {
+            if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                 continue;
             }
-            Node firstNode = w.nodes.get(0);
-            Node lastNode = w.nodes.get(w.nodes.size() - 1);
+            Node firstNode = w.getNode(0);
+            Node lastNode = w.getNode(w.getNodesCount() - 1);
             if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
                 if (way != null)
                     return null;
@@ -965,7 +965,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
          */
         if (getCurrentDataSet() != null && getCurrentDataSet().getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
             Way w = (Way) getCurrentDataSet().getSelectedWays().iterator().next();
-            for (Node m : w.nodes) {
+            for (Node m : w.getNodes()) {
                 if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
                     rv += " " + tr("Finish drawing.");
                     break;

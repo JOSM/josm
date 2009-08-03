@@ -22,7 +22,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
     /**
      * Populates the model with the nodes in the two {@see Way}s <code>my</code> and
      * <code>their</code>.
-     * 
+     *
      * @param my  my way (i.e. the way in the local dataset)
      * @param their their way (i.e. the way in the server dataset)
      * @exception IllegalArgumentException thrown, if my is null
@@ -36,10 +36,10 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
         getMergedEntries().clear();
         getMyEntries().clear();
         getTheirEntries().clear();
-        for (Node n : my.nodes) {
+        for (Node n : my.getNodes()) {
             getMyEntries().add(n);
         }
-        for (Node n : their.nodes) {
+        for (Node n : their.getNodes()) {
             getTheirEntries().add(n);
         }
         if (myAndTheirEntriesEqual()) {
@@ -54,7 +54,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
 
     /**
      * Builds the command to resolve conflicts in the node list of a way
-     * 
+     *
      * @param my  my way. Must not be null.
      * @param their  their way. Must not be null
      * @return the command

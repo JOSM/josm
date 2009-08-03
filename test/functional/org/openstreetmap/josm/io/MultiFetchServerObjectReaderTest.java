@@ -32,7 +32,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class MultiFetchServerObjectReaderTest {
@@ -274,7 +273,7 @@ public class MultiFetchServerObjectReaderTest {
             Way w1 = it.next();
             Way w2 = (Way)ds.getPrimitiveById(w1.id);
             assertNotNull(w2);
-            assertEquals(w2.nodes.size(), w1.nodes.size());
+            assertEquals(w2.getNodesCount(), w1.getNodesCount());
             assertEquals(w2.get("name"),w1.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());
@@ -339,6 +338,6 @@ public class MultiFetchServerObjectReaderTest {
         }
         assertFalse(reader.getMissingPrimitives().isEmpty());
         assertEquals(1, reader.getMissingPrimitives().size());
-        assertEquals(9999999, reader.getMissingPrimitives().iterator().next());
+        assertEquals(9999999, (long)reader.getMissingPrimitives().iterator().next());
     }
 }

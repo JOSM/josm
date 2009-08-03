@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class OsmServerBackreferenceReaderTest {
@@ -279,7 +278,7 @@ public class OsmServerBackreferenceReaderTest {
         for (Way way: referers.ways) {
             assertEquals(w.id, way.id);
             assertEquals(false, way.incomplete);
-            assertEquals(10, w.nodes.size());
+            assertEquals(10, w.getNodesCount());
         }
     }
 
@@ -325,7 +324,7 @@ public class OsmServerBackreferenceReaderTest {
         Set<Long> expectedNodeIds = new HashSet<Long>();
         for (Way way: referers.ways) {
             Way orig = (Way)ds.getPrimitiveById(way.id);
-            for(Node n: orig.nodes) {
+            for(Node n: orig.getNodes()) {
                 expectedNodeIds.add(n.id);
             }
         }
@@ -416,7 +415,7 @@ public class OsmServerBackreferenceReaderTest {
     protected Set<Long> getNodeIdsInWay(Way way) {
         HashSet<Long> ret = new HashSet<Long>();
         if (way == null)return ret;
-        for (Node n: way.nodes) {
+        for (Node n: way.getNodes()) {
             ret.add(n.id);
         }
         return ret;

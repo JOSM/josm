@@ -54,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * This dialog displays the {@see ConflictCollection} of the active {@see OsmDataLayer} in a toggle
  * dialog on the right of the main frame.
- * 
+ *
  */
 public final class ConflictDialog extends ToggleDialog implements LayerChangeListener, IConflictListener, SelectionChangedListener{
 
@@ -127,7 +127,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
 
     /**
      * Launches a conflict resolution dialog for the first selected conflict
-     * 
+     *
      */
     private final void resolve() {
         if (conflicts == null) return;
@@ -179,7 +179,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
             }
             public void visit(Way w) {
                 Node lastN = null;
-                for (Node n : w.nodes) {
+                for (Node n : w.getNodes()) {
                     if (lastN == null) {
                         lastN = n;
                         continue;
@@ -205,7 +205,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
 
     /**
      * replies the conflict collection currently held by this dialog; may be null
-     * 
+     *
      * @return the conflict collection currently held by this dialog; may be null
      */
     public ConflictCollection getConflicts() {

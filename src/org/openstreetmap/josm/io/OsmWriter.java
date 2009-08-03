@@ -116,7 +116,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
             out.println("/>");
         } else {
             out.println(">");
-            for (Node n : w.nodes) {
+            for (Node n : w.getNodes()) {
                 out.println("    <nd ref='"+getUsedId(n)+"' />");
             }
             addTags(w, "way", false);

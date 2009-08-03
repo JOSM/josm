@@ -3,7 +3,9 @@ package org.openstreetmap.josm.data.osm.visitor;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -21,7 +23,7 @@ import org.openstreetmap.josm.data.osm.Way;
  * it turns {@see OsmPrimitive} referred to by {@see Relation}s in the original collection into
  * incomplete {@see OsmPrimitive}s in the "hull", if they are not themselves present in the
  * original collection.
- * 
+ *
  */
 public class MergeSourceBuildingVisitor extends AbstractVisitor {
     private DataSet selectionBase;
@@ -32,10 +34,10 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
      * Creates the visitor. The visitor starts to build the "hull" from
      * the currently selected primitives in the dataset <code>selectionBase</code>,
      * i.e. from {@see DataSet#getSelected()}.
-     * 
+     *
      * @param selectionBase the dataset. Must not be null.
      * @exception IllegalArgumentException thrown if selectionBase is null
-     * 
+     *
      */
     public MergeSourceBuildingVisitor(DataSet selectionBase) throws IllegalArgumentException {
         if (selectionBase == null)
@@ -47,7 +49,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
 
     /**
      * Remebers a node in the "hull"
-     * 
+     *
      * @param n the node
      */
     protected void rememberNode(Node n) {
@@ -59,23 +61,24 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
 
     /**
      * remembers a way in the hull
-     * 
+     *
      * @param w the way
      */
     protected void rememberWay(Way w) {
         if (isAlreadyRemembered(w))
             return;
         Way clone = new Way(w);
-        clone.nodes.clear();
-        for (Node n: w.nodes) {
-            clone.nodes.add((Node)mappedPrimitives.get(n));
+        List<Node> newNodes = new ArrayList<Node>();
+        for (Node n: w.getNodes()) {
+            newNodes.add((Node)mappedPrimitives.get(n));
         }
+        clone.setNodes(newNodes);
         mappedPrimitives.put(w, clone);
     }
 
     /**
      * Remembers a relation in the hull
-     * 
+     *
      * @param r the relation
      */
     protected void rememberRelation(Relation r) {
@@ -159,7 +162,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     public void visit(Way w) {
         // remember all nodes this way refers to ...
         //
-        for (Node n: w.nodes) {
+        for (Node n: w.getNodes()) {
             if (! isAlreadyRemembered(n)) {
                 n.visit(this);
             }

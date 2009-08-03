@@ -318,7 +318,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
             Node lastN = null;
             int i = -2;
-            for (Node n : w.nodes) {
+            for (Node n : w.getNodes()) {
                 i++;
                 if (n.deleted || n.incomplete) {
                     continue;
@@ -436,7 +436,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 continue;
             }
             Node lastN = null;
-            for (Node n : w.nodes) {
+            for (Node n : w.getNodes()) {
                 if (n.deleted || n.incomplete) {
                     continue;
                 }

@@ -318,7 +318,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
             wayColor = dfltWayColor;
         }
 
-        Iterator<Node> it = w.nodes.iterator();
+        Iterator<Node> it = w.getNodes().iterator();
         if (it.hasNext()) {
             Point lastP = nc.getPoint(it.next());
             for (int orderNumber = 1; it.hasNext(); orderNumber++) {

@@ -182,7 +182,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     public MultiFetchServerObjectReader append(Way way) {
         if (way == null) return this;
         if (way.id == 0) return this;
-        for (Node node: way.nodes) {
+        for (Node node: way.getNodes()) {
             if (node.id > 0) {
                 remember(node.id, OsmPrimitiveType.NODE);
             }

@@ -64,8 +64,6 @@ import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-import sun.security.action.GetLongAction;
-
 /**
  * A layer holding data from a specific dataset.
  * The data can be fully edited.
@@ -320,7 +318,7 @@ public class OsmDataLayer extends Layer {
     /**
      * Cleanup the layer after save to disk. Just marks the layer as unmodified.
      * Leaves the undo/redo stack unchanged.
-     * 
+     *
      */
     public void cleanupAfterSaveToDisk() {
         setModified(false);
@@ -469,7 +467,7 @@ public class OsmDataLayer extends Layer {
             }
 
             ArrayList<WayPoint> trkseg = null;
-            for (Node n : w.nodes) {
+            for (Node n : w.getNodes()) {
                 if (n.incomplete || n.deleted) {
                     trkseg = null;
                     continue;

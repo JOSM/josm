@@ -285,7 +285,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 
             // ways
             for (Way w : nc.getCurrentDataSet().ways) {
-                if (w.deleted || w.nodes.isEmpty() || w.incomplete)
+                if (w.deleted || w.getNodesCount() == 0 || w.incomplete)
                         continue;
                 if (alt) {
                     for (Node n : w.nodes) {

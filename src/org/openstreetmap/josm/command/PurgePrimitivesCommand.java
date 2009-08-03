@@ -189,9 +189,9 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
                 // if a way ends up with less than two node we
                 // remember it on the "hive"
                 //
-                if (w.nodes.size() < 2) {
+                if (w.getNodesCount() < 2) {
                     System.out.println(tr("Warning: Purging way {0} because number of nodes dropped below 2. Current is {1}",
-                            w.id,w.nodes.size()));
+                            w.id,w.getNodesCount()));
                     if (!hive.contains(w)) {
                         hive.add(w);
                     }

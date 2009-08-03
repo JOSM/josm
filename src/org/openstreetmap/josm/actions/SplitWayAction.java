@@ -284,7 +284,7 @@ public class SplitWayAction extends JosmAction {
                 wayToAdd.keys = new HashMap<String, String>(selectedWay.keys);
             }
             newWays.add(wayToAdd);
-            wayToAdd.nodes.addAll(chunkIt.next());
+            wayToAdd.setNodes(chunkIt.next());
             commandList.add(new AddCommand(wayToAdd));
             //Main.debug("wayToAdd: " + wayToAdd);
             newSelection.add(wayToAdd);
