@@ -215,7 +215,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 );
                 return;
             }
-            layer.cleanData(null, false);
+            layer.cleanupAfterSaveToDisk();
         } catch (IOException e) {
             e.printStackTrace();
             OptionPaneUtil.showMessageDialog(

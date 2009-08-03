@@ -98,16 +98,18 @@ public class UndoRedoHandler implements LayerChangeListener {
         fireCommandsChanged();
     }
 
-    public void layerRemoved(Layer oldLayer) {
+    public void clean(Layer layer) {
+        if (layer == null)
+            return;
         boolean changed = false;
         for (Iterator<Command> it = commands.iterator(); it.hasNext();) {
-            if (it.next().invalidBecauselayerRemoved(oldLayer)) {
+            if (it.next().invalidBecauselayerRemoved(layer)) {
                 it.remove();
                 changed = true;
             }
         }
         for (Iterator<Command> it = redoCommands.iterator(); it.hasNext();) {
-            if (it.next().invalidBecauselayerRemoved(oldLayer)) {
+            if (it.next().invalidBecauselayerRemoved(layer)) {
                 it.remove();
                 changed = true;
             }
@@ -115,6 +117,10 @@ public class UndoRedoHandler implements LayerChangeListener {
         if (changed) {
             fireCommandsChanged();
         }
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        clean(oldLayer);
     }
 
     public void layerAdded(Layer newLayer) {}

@@ -4,12 +4,14 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
@@ -33,7 +35,7 @@ public class OsmServerWriter {
      * If a server connection error occurs, this may contain fewer entries
      * than where passed in the list to upload*.
      */
-    public Collection<OsmPrimitive> processed;
+    private Collection<OsmPrimitive> processed;
 
     private OsmApi api = OsmApi.getOsmApi();
 
@@ -78,6 +80,77 @@ public class OsmServerWriter {
     }
 
     /**
+     * Uploads the changes individually. Invokes one API call per uploaded primitmive.
+     * 
+     * @param primitives the collection of primitives to upload
+     * @param progressMonitor the progress monitor
+     * @throws OsmTransferException thrown if an exception occurs
+     */
+    protected void uploadChangesIndividually(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+        try {
+            progressMonitor.setTicksCount(primitives.size());
+            api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
+            uploadStartTime = System.currentTimeMillis();
+            for (OsmPrimitive osm : primitives) {
+                int progress = progressMonitor.getTicks();
+                String time_left_str = timeLeft(progress, primitives.size());
+                progressMonitor.subTask(
+                        tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
+                                Math.round(100.0*progress/primitives.size()), progress,
+                                primitives.size(), time_left_str,
+                                OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
+                                NAME_FORMATTER.getName(osm),
+                                osm.id));
+                makeApiRequest(osm,progressMonitor);
+                processed.add(osm);
+                progressMonitor.worked(1);
+            }
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new OsmTransferException(e);
+        } finally {
+            try {
+                api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+            } catch(Exception e) {
+                Changeset changeset = api.getCurrentChangeset();
+                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.id));
+                logger.warning(tr("Failed to close changeset {0}, will be closed by server after timeout. Exception was: {1}",
+                        changesetId, e.toString()));
+            }
+        }
+    }
+
+    /**
+     * Upload all changes in one diff upload
+     * 
+     * @param primitives the collection of primitives to upload
+     * @param progressMonitor  the progress monitor
+     * @throws OsmTransferException thrown if an exception occurs
+     */
+    protected void uploadChangesAsDiffUpload(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+        // upload everything in one changeset
+        //
+        try {
+            api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
+            processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new OsmTransferException(e);
+        } finally {
+            try {
+                api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+            } catch (Exception ee) {
+                Changeset changeset = api.getCurrentChangeset();
+                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.id));
+                logger.warning(tr("Failed to close changeset {0}, will be closed by server after timeout. Exception was: {1}",
+                        changesetId, ee.toString()));
+            }
+        }
+    }
+
+    /**
      * Send the dataset to the server.
      *
      * @param apiVersion version of the data set
@@ -91,7 +164,6 @@ public class OsmServerWriter {
         progressMonitor.beginTask("");
 
         try {
-
             // check whether we can use changeset
             //
             boolean canUseChangeset = api.hasChangesetSupport();
@@ -102,46 +174,10 @@ public class OsmServerWriter {
             }
 
             if (useChangeset) {
-                // upload everything in one changeset
-                //
-                try {
-                    api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
-                    processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
-                } catch(OsmTransferException e) {
-                    throw e;
-                } finally {
-                    try {
-                        if (canUseChangeset) {
-                            api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
-                        }
-                    } catch (Exception ee) {
-                        ee.printStackTrace();
-                        // ignore nested exception
-                    }
-                }
+                uploadChangesAsDiffUpload(primitives, progressMonitor);
             } else {
-                // upload changes individually (90% of code is for the status display...)
-                //
-                progressMonitor.setTicksCount(primitives.size());
-                api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
-                uploadStartTime = System.currentTimeMillis();
-                for (OsmPrimitive osm : primitives) {
-                    int progress = progressMonitor.getTicks();
-                    String time_left_str = timeLeft(progress, primitives.size());
-                    progressMonitor.subTask(
-                            tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
-                                    Math.round(100.0*progress/primitives.size()), progress,
-                                    primitives.size(), time_left_str,
-                                    OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
-                                    NAME_FORMATTER.getName(osm),
-                                    osm.id));
-                    makeApiRequest(osm,progressMonitor);
-                    processed.add(osm);
-                    progressMonitor.worked(1);
-                }
-                api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+                uploadChangesIndividually(primitives, progressMonitor);
             }
-
         } finally {
             progressMonitor.finishTask();
         }
@@ -161,5 +197,14 @@ public class OsmServerWriter {
         if (api != null && api.activeConnection != null) {
             api.activeConnection.disconnect();
         }
+    }
+
+    /**
+     * Replies the collection of successfully processed primitives
+     * 
+     * @return the collection of successfully processed primitives
+     */
+    public Collection<OsmPrimitive> getProcessedPrimitives() {
+        return processed;
     }
 }

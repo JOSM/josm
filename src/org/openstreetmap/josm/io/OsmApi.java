@@ -506,4 +506,12 @@ public class OsmApi extends OsmConnection {
         return capabilities;
     }
 
+    /**
+     * Replies the current changeset
+     * 
+     * @return the current changeset
+     */
+    public Changeset getCurrentChangeset() {
+        return changeset;
+    }
 }

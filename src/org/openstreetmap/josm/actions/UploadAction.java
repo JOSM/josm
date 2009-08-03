@@ -234,13 +234,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case JOptionPane.CANCEL_OPTION: return;
-        case 0: synchronizePrimitive(id); break;
-        case 1: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.CANCEL_OPTION: return;
+            case 0: synchronizePrimitive(id); break;
+            case 1: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -273,12 +273,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case 1: return;
-        case 0: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case 1: return;
+            case 0: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -536,7 +536,6 @@ public class UploadAction extends JosmAction{
             writer = new OsmServerWriter();
             try {
                 writer.uploadOsm(getCurrentDataSet().version, toUpload, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                getEditLayer().cleanData(writer.processed, !toUpload.isEmpty());
             } catch (Exception sxe) {
                 if (uploadCancelled) {
                     System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
@@ -549,6 +548,11 @@ public class UploadAction extends JosmAction{
         @Override protected void finish() {
             if (uploadCancelled)
                 return;
+
+            // we always clean the data, even in case of errors. It's possible the data was
+            // partially uploaded
+            //
+            getEditLayer().cleanupAfterUpload(writer.getProcessedPrimitives());
             if (lastException != null) {
                 handleFailedUpload(lastException);
             }

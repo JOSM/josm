@@ -64,6 +64,8 @@ import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+import sun.security.action.GetLongAction;
+
 /**
  * A layer holding data from a specific dataset.
  * The data can be fully edited.
@@ -316,45 +318,43 @@ public class OsmDataLayer extends Layer {
     }
 
     /**
+     * Cleanup the layer after save to disk. Just marks the layer as unmodified.
+     * Leaves the undo/redo stack unchanged.
+     * 
+     */
+    public void cleanupAfterSaveToDisk() {
+        setModified(false);
+    }
+
+    /**
      * Clean out the data behind the layer. This means clearing the redo/undo lists,
-     * really deleting all deleted objects and reset the modified flags. This is done
-     * after a successfull upload.
+     * really deleting all deleted objects and reset the modified flags. This should
+     * be done after an upload, even after a partial upload.
      *
      * @param processed A list of all objects that were actually uploaded.
-     *         May be <code>null</code>, which means nothing has been uploaded but
-     *         saved to disk instead. Note that an empty collection for "processed"
-     *      means that an upload has been attempted but failed.
+     *         May be <code>null</code>, which means nothing has been uploaded
      */
-    public void cleanData(final Collection<OsmPrimitive> processed, boolean dataAdded) {
+    public void cleanupAfterUpload(final Collection<OsmPrimitive> processed) {
 
         // return immediately if an upload attempt failed
-        if (processed != null && processed.isEmpty() && !dataAdded)
+        if (processed == null || processed.isEmpty())
             return;
 
-        Main.main.undoRedo.clean();
+        Main.main.undoRedo.clean(this);
 
         // if uploaded, clean the modified flags as well
-        if (processed != null) {
-            final Set<OsmPrimitive> processedSet = new HashSet<OsmPrimitive>(processed);
-            for (final Iterator<Node> it = data.nodes.iterator(); it.hasNext();) {
-                cleanIterator(it, processedSet);
-            }
-            for (final Iterator<Way> it = data.ways.iterator(); it.hasNext();) {
-                cleanIterator(it, processedSet);
-            }
-            for (final Iterator<Relation> it = data.relations.iterator(); it.hasNext();) {
-                cleanIterator(it, processedSet);
-            }
+        final Set<OsmPrimitive> processedSet = new HashSet<OsmPrimitive>(processed);
+        for (final Iterator<Node> it = data.nodes.iterator(); it.hasNext();) {
+            cleanIterator(it, processedSet);
+        }
+        for (final Iterator<Way> it = data.ways.iterator(); it.hasNext();) {
+            cleanIterator(it, processedSet);
+        }
+        for (final Iterator<Relation> it = data.relations.iterator(); it.hasNext();) {
+            cleanIterator(it, processedSet);
         }
 
-        // update the modified flag
-        boolean b = (getAssociatedFile() != null && processed != null);
-        if (b && !dataAdded)
-            return; // do nothing when uploading non-harmful changes.
-
-        // modified if server changed the data (esp. the id).
-        uploadedModified = b && dataAdded;
-        setModified(uploadedModified);
+        setModified(true);
     }
 
     /**

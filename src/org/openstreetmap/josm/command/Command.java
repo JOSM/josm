@@ -88,6 +88,7 @@ abstract public class Command {
         for (Entry<OsmPrimitive, OsmPrimitive> e : cloneMap.entrySet()) {
             e.getKey().cloneFrom(e.getValue());
         }
+        getLayer().setModified(true);
     }
 
     /**
