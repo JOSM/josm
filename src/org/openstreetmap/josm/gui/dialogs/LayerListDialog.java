@@ -281,7 +281,7 @@ public class LayerListDialog extends ToggleDialog {
                     new String[] {tr("Delete Layer"), tr("Cancel")},
                     new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 
-            return result != 1;
+            return result == 1;
         }
 
         protected boolean confirmDeleteLayer(Layer layer) {
@@ -331,11 +331,12 @@ public class LayerListDialog extends ToggleDialog {
                 return;
             if (layer instanceof OsmDataLayer) {
                 OsmDataLayer dataLayer = (OsmDataLayer)layer;
-                if (dataLayer.isModified() && ! confirmSkipSaving(dataLayer))
-                    return;
+                if (dataLayer.isModified()) {
+                    if (! confirmSkipSaving(dataLayer))
+                        return;
+                }
                 else if (!confirmDeleteLayer(dataLayer))
                     return;
-
             } else {
                 if (!confirmDeleteLayer(layer))
                     return;
