@@ -41,10 +41,21 @@ public class OptionPaneUtil {
      * @param dialog the dialog
      */
     static protected void prepareDialog(JDialog dialog) {
-        try {
-            dialog.setAlwaysOnTop(true);
-        } catch(SecurityException e) {
-            System.out.println(tr("Warning: failed to put option pane dialog always on top. Exception was: {0}", e.toString()));
+
+        // always on top can be disabled in a configuration option. This is necessary
+        // for some WM on Linux, i.e. fluxbox. There, always-on-top propagates to the
+        // parent window, i.e. the JOSM window itself.
+        //
+        // FIXME: this is a temporary solution. I'm still looking for an approach which
+        // works across all OS and WMs. Can we get rid of "always-on-top" in JOSM
+        // completely?
+        //
+        if (Main.pref.getBoolean("window-handling.option-pane-always-on-top", true)) {
+            try {
+                dialog.setAlwaysOnTop(true);
+            } catch(SecurityException e) {
+                System.out.println(tr("Warning: failed to put option pane dialog always on top. Exception was: {0}", e.toString()));
+            }
         }
         dialog.setModal(true);
         dialog.toFront();
