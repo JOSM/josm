@@ -72,6 +72,14 @@ public class AutoScaleAction extends JosmAction {
         autoScale();
     }
 
+    protected Layer getActiveLayer() {
+        try {
+            return Main.map.mapView.getActiveLayer();
+        } catch(NullPointerException e) {
+            return null;
+        }
+    }
+
     private BoundingXYVisitor getBoundingBox() {
         BoundingXYVisitor v = new BoundingXYVisitor();
         if (mode.equals("data")) {
@@ -79,7 +87,9 @@ public class AutoScaleAction extends JosmAction {
                 l.visitBoundingBox(v);
             }
         } else if (mode.equals("layer")) {
-            Main.map.mapView.getActiveLayer().visitBoundingBox(v);
+            if (getActiveLayer() == null)
+                return null;
+            getActiveLayer().visitBoundingBox(v);
         } else if (mode.equals("selection") || mode.equals("conflict")) {
             Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
             if (mode.equals("selection")) {
@@ -130,6 +140,8 @@ public class AutoScaleAction extends JosmAction {
     protected void updateEnabledState() {
         if ("selection".equals(mode)) {
             setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
+        }  else if ("layer".equals(mode)) {
+            setEnabled(getActiveLayer() != null);
         } else {
             setEnabled(
                     Main.map != null
