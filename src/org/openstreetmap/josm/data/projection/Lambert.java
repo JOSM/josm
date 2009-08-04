@@ -145,7 +145,7 @@ public class Lambert implements Projection {
     }
 
     public String toCode() {
-        return "EPSG::"+(27571+currentZone);
+        return "EPSG:"+(27571+currentZone-1);
     }
 
     public String getCacheDirectoryName() {
