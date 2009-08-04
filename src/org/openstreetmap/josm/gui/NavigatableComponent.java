@@ -69,6 +69,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return new Long(id.getValue()).intValue();
     }
 
+    public String getDist100PixelText()
+    {
+        double dist = getDist100Pixel();
+        return dist >= 2000 ? Math.round(dist/100)/10 +" km" : (dist >= 1
+        ? Math.round(dist*10)/10 +" m" : "< 1 m");
+    }
+
     public double getDist100Pixel()
     {
         int w = getWidth()/2;

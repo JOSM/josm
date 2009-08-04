@@ -24,9 +24,7 @@ public class MapScaler extends JComponent implements Helpful {
     }
 
     @Override public void paint(Graphics g) {
-        double dist = mv.getDist100Pixel();
-        String text = dist >= 2000 ? Math.round(dist/100)/10 +" km" : (dist >= 1
-        ? Math.round(dist*10)/10 +" m" : "< 1 m");
+        String text = mv.getDist100PixelText();
         Rectangle2D bound = g.getFontMetrics().getStringBounds(text, g);
         g.setColor(getColor());
         g.drawLine(0, 5, 99, 5);
