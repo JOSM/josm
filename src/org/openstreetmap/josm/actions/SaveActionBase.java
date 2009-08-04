@@ -220,7 +220,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             e.printStackTrace();
             OptionPaneUtil.showMessageDialog(
                     Main.parent,
-                    tr("<html>An error occurred while saving. <br>Error is: <br>{0}</html>", e.getMessage()),
+                    tr("<html>An error occurred while saving.<br>Error is: <br>{0}</html>", e.getMessage()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
@@ -235,7 +235,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 e2.printStackTrace();
                 OptionPaneUtil.showMessageDialog(
                         Main.parent,
-                        tr("<html>An error occurred while restoring backup file.<br> Error is: <br>{0}</html>", e2.getMessage()),
+                        tr("<html>An error occurred while restoring backup file.<br>Error is: <br>{0}</html>", e2.getMessage()),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
