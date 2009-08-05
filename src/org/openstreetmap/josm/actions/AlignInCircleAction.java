@@ -112,11 +112,11 @@ public final class AlignInCircleAction extends JosmAction {
             // When one more node, part of the way, is selected, set the radius equal to the
             // distance between two nodes.
             if (nodes.size() > 0) {
-                if (nodes.size() == 1 && way.getNodes().contains(nodes.get(0))) {
+                if (nodes.size() == 1 && way.containsNode(nodes.get(0))) {
                     regular = true;
                 } else {
 
-                    center = nodes.get(way.getNodes().contains(nodes.get(0)) ? 1 : 0).getEastNorth();
+                    center = nodes.get(way.containsNode(nodes.get(0)) ? 1 : 0).getEastNorth();
                     if (nodes.size() == 2) {
                         radius = distance(nodes.get(0).getEastNorth(), nodes.get(1).getEastNorth());
                     }

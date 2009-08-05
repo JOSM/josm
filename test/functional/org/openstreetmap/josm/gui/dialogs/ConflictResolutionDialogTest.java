@@ -19,14 +19,14 @@ public class ConflictResolutionDialogTest extends JFrame {
     }
     protected void populate() {
         Way w1 = new Way(1);
-          w1.addNode(new Node(10));
-          w1.addNode(new Node(11));
+        w1.addNode(new Node(10));
+        w1.addNode(new Node(11));
 
         Way w2 = new Way(1);
-          w2.addNode(new Node(10));
-          w2.addNode(new Node(11));
+        w2.addNode(new Node(10));
+        w2.addNode(new Node(11));
 
-       dialog.getConflictResolver().populate(w1, w2);
+        dialog.getConflictResolver().populate(w1, w2);
     }
 
     public void showDialog() {

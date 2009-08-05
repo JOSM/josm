@@ -69,7 +69,7 @@ public class UnGlueAction extends JosmAction {
                 if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                     continue;
                 }
-                if (!w.getNodes().contains(selectedNode)) {
+                if (!w.containsNode(selectedNode)) {
                     continue;
                 }
                 count++;
@@ -94,7 +94,7 @@ public class UnGlueAction extends JosmAction {
                     if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                         continue;
                     }
-                    if (!w.getNodes().contains(n)) {
+                    if (!w.containsNode(n)) {
                         continue;
                     }
                     count++;
@@ -190,7 +190,7 @@ public class UnGlueAction extends JosmAction {
             return false;
         boolean isPartOfWay = false;
         for(Way w : getCurrentDataSet().ways) {
-            if(w.getNodes().contains(n)) {
+            if(w.containsNode((Node)n)) {
                 isPartOfWay = true;
                 break;
             }
@@ -231,11 +231,11 @@ public class UnGlueAction extends JosmAction {
             if (p instanceof Node) {
                 selectedNode = (Node) p;
                 if (size == 1 || selectedWay != null)
-                    return size == 1 || selectedWay.getNodes().contains(selectedNode);
+                    return size == 1 || selectedWay.containsNode(selectedNode);
             } else if (p instanceof Way) {
                 selectedWay = (Way) p;
                 if (size == 2 && selectedNode != null)
-                    return selectedWay.getNodes().contains(selectedNode);
+                    return selectedWay.containsNode(selectedNode);
             }
         }
 
@@ -275,7 +275,7 @@ public class UnGlueAction extends JosmAction {
         for (OsmPrimitive p : selection) {
             if (p instanceof Node) {
                 Node n = (Node) p;
-                if (!selectedWay.getNodes().contains(n))
+                if (!selectedWay.containsNode(n))
                     return false;
                 selectedNodes.add(n);
             }
@@ -371,7 +371,7 @@ public class UnGlueAction extends JosmAction {
                 if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
                     continue;
                 }
-                if (!w.getNodes().contains(selectedNode)) {
+                if (!w.containsNode(selectedNode)) {
                     continue;
                 }
                 if (!firstway) {

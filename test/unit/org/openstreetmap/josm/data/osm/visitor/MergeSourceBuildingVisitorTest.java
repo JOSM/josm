@@ -1,13 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collection;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -16,6 +12,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+
+import static org.junit.Assert.*;
 
 public class MergeSourceBuildingVisitorTest {
 
@@ -185,11 +183,11 @@ public class MergeSourceBuildingVisitorTest {
         assertEquals(2, w.getNodesCount());
         Node n = (Node)hull.getPrimitiveById(21);
         assertNotNull(n);
-        assertTrue(w.getNodes().contains(n));
+        assertTrue(w.containsNode(n));
 
         n = (Node)hull.getPrimitiveById(22);
         assertNotNull(n);
-        assertTrue(w.getNodes().contains(n));
+        assertTrue(w.containsNode(n));
 
         Relation r = (Relation)hull.getPrimitiveById(40);
         assertNotNull(r);
@@ -309,11 +307,11 @@ public class MergeSourceBuildingVisitorTest {
 
         Node n = (Node)lookupByName(hull.nodes, "n21");
         assertNotNull(n);
-        assertTrue(w.getNodes().contains(n));
+        assertTrue(w.containsNode(n));
 
         n = (Node)lookupByName(hull.nodes, "n22");
         assertNotNull(n);
-        assertTrue(w.getNodes().contains(n));
+        assertTrue(w.containsNode(n));
 
         Relation r = (Relation)lookupByName(hull.relations, "r40");
         assertNotNull(r);

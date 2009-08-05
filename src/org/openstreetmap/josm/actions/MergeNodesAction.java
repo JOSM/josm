@@ -224,7 +224,7 @@ public class MergeNodesAction extends JosmAction {
                 if (sn == dest) {
                     continue;
                 }
-                if (w.getNodes().contains(sn)) {
+                if (w.containsNode(sn)) {
                     modify = true;
                 }
             }

@@ -127,15 +127,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     if(!(Main.map.mapMode instanceof DrawAction))
                         return;
                     switch(c) {
-                    case way:
-                        Main.map.mapView.setCursor(cursorJoinWay);
+                        case way:
+                            Main.map.mapView.setCursor(cursorJoinWay);
+                            break;
+                        case node:
+                            Main.map.mapView.setCursor(cursorJoinNode);
+                            break;
+                        default:
+                            Main.map.mapView.setCursor(cursorCrosshair);
                         break;
-                    case node:
-                        Main.map.mapView.setCursor(cursorJoinNode);
-                        break;
-                    default:
-                        Main.map.mapView.setCursor(cursorCrosshair);
-                    break;
                     }
                 }
             });
@@ -502,7 +502,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 // Connected to a node that's already in the way
-                if(way.getNodes().contains(n)) {
+                if(way.containsNode(n)) {
                     wayIsFinished = true;
                     selection.clear();
                 }
@@ -809,56 +809,56 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private static void adjustNode(Collection<Pair<Node,Node>> segs, Node n) {
 
         switch (segs.size()) {
-        case 0:
-            return;
-        case 2:
-            // This computes the intersection between
-            // the two segments and adjusts the node position.
-            Iterator<Pair<Node,Node>> i = segs.iterator();
-            Pair<Node,Node> seg = i.next();
-            EastNorth A = seg.a.getEastNorth();
-            EastNorth B = seg.b.getEastNorth();
-            seg = i.next();
-            EastNorth C = seg.a.getEastNorth();
-            EastNorth D = seg.b.getEastNorth();
-
-            double u=det(B.east() - A.east(), B.north() - A.north(), C.east() - D.east(), C.north() - D.north());
-
-            // Check for parallel segments and do nothing if they are
-            // In practice this will probably only happen when a way has been duplicated
-
-            if (u == 0) return;
-
-            // q is a number between 0 and 1
-            // It is the point in the segment where the intersection occurs
-            // if the segment is scaled to lenght 1
-
-            double q = det(B.north() - C.north(), B.east() - C.east(), D.north() - C.north(), D.east() - C.east()) / u;
-            EastNorth intersection = new EastNorth(
-                    B.east() + q * (A.east() - B.east()),
-                    B.north() + q * (A.north() - B.north()));
-
-            int snapToIntersectionThreshold
-            = Main.pref.getInteger("edit.snap-intersection-threshold",10);
-
-            // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
-            // fall through to default action.
-            // (for semi-parallel lines, intersection might be miles away!)
-            if (Main.map.mapView.getPoint(n).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
-                n.setEastNorth(intersection);
+            case 0:
                 return;
-            }
+            case 2:
+                // This computes the intersection between
+                // the two segments and adjusts the node position.
+                Iterator<Pair<Node,Node>> i = segs.iterator();
+                Pair<Node,Node> seg = i.next();
+                EastNorth A = seg.a.getEastNorth();
+                EastNorth B = seg.b.getEastNorth();
+                seg = i.next();
+                EastNorth C = seg.a.getEastNorth();
+                EastNorth D = seg.b.getEastNorth();
 
-        default:
-            EastNorth P = n.getEastNorth();
-        seg = segs.iterator().next();
-        A = seg.a.getEastNorth();
-        B = seg.b.getEastNorth();
-        double a = P.distanceSq(B);
-        double b = P.distanceSq(A);
-        double c = A.distanceSq(B);
-        q = (a - b + c) / (2*c);
-        n.setEastNorth(new EastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north())));
+                double u=det(B.east() - A.east(), B.north() - A.north(), C.east() - D.east(), C.north() - D.north());
+
+                // Check for parallel segments and do nothing if they are
+                // In practice this will probably only happen when a way has been duplicated
+
+                if (u == 0) return;
+
+                // q is a number between 0 and 1
+                // It is the point in the segment where the intersection occurs
+                // if the segment is scaled to lenght 1
+
+                double q = det(B.north() - C.north(), B.east() - C.east(), D.north() - C.north(), D.east() - C.east()) / u;
+                EastNorth intersection = new EastNorth(
+                        B.east() + q * (A.east() - B.east()),
+                        B.north() + q * (A.north() - B.north()));
+
+                int snapToIntersectionThreshold
+                = Main.pref.getInteger("edit.snap-intersection-threshold",10);
+
+                // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
+                // fall through to default action.
+                // (for semi-parallel lines, intersection might be miles away!)
+                if (Main.map.mapView.getPoint(n).distance(Main.map.mapView.getPoint(intersection)) < snapToIntersectionThreshold) {
+                    n.setEastNorth(intersection);
+                    return;
+                }
+
+            default:
+                EastNorth P = n.getEastNorth();
+            seg = segs.iterator().next();
+            A = seg.a.getEastNorth();
+            B = seg.b.getEastNorth();
+            double a = P.distanceSq(B);
+            double b = P.distanceSq(A);
+            double c = A.distanceSq(B);
+            q = (a - b + c) / (2*c);
+            n.setEastNorth(new EastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north())));
         }
     }
 
