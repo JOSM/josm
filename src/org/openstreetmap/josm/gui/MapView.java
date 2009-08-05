@@ -304,15 +304,16 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         tempG.setColor(Main.pref.getColor("background", Color.BLACK));
         tempG.fillRect(0, 0, getWidth(), getHeight());
 
+        Layer activeLayer = getActiveLayer();
         for (int i = layers.size()-1; i >= 0; --i) {
             Layer l = layers.get(i);
-            if (l.isVisible()/* && l != getActiveLayer()*/) {
+            if (l.isVisible() && l != getActiveLayer()) {
                 l.paint(tempG, this);
             }
         }
-
-        /*if (getActiveLayer() != null && getActiveLayer().visible)
-            getActiveLayer().paint(tempG, this);*/
+        if (activeLayer != null) {
+            activeLayer.paint(tempG, this);
+        }
 
         for (MapViewPaintable mvp : temporaryLayers) {
             mvp.paint(tempG, this);
@@ -391,6 +392,26 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     public List<Layer> getAllLayersAsList() {
         return Collections.unmodifiableList(layers);
+    }
+
+    /**
+     * Replies an unmodifiable list of layers of a certain type.
+     * 
+     * Example:
+     * <pre>
+     *     List<WMSLayer> wmsLayers = getLayersOfType(WMSLayer.class);
+     * </pre>
+     * 
+     * @return an unmodifiable list of layers of a certain type.
+     */
+    public <T> List<T>  getLayersOfType(Class<T> ofType) {
+        ArrayList<T> ret = new ArrayList<T>();
+        for (Layer layer : getAllLayersAsList()) {
+            if (ofType.isInstance(layer)) {
+                ret.add(ofType.cast(layer));
+            }
+        }
+        return ret;
     }
 
     /**
