@@ -53,6 +53,7 @@ public class CombineWayAction extends JosmAction {
                 Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.GROUP_EDIT), true);
     }
 
+    @SuppressWarnings("unchecked")
     public void actionPerformed(ActionEvent event) {
         if (getCurrentDataSet() == null)
             return;

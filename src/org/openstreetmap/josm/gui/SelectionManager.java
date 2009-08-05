@@ -144,8 +144,9 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      * If the correct button, from the "drawing rectangle" mode
      */
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1)
+        if (e.getButton() == MouseEvent.BUTTON1) {
             mousePosStart = mousePos = e.getPoint();
+        }
     }
 
     /**
@@ -156,8 +157,9 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 
 
         if (buttonPressed != 0) {
-            if (mousePosStart == null)
+            if (mousePosStart == null) {
                 mousePosStart = mousePos = e.getPoint();
+            }
             paintRect();
         }
 
@@ -190,8 +192,9 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         boolean shift = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0;
         boolean alt = (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0;
         boolean ctrl = (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0;
-        if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == 0)
+        if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == 0) {
             selectionEndedListener.selectionEnded(r, alt, shift, ctrl);
+        }
     }
 
 
@@ -234,13 +237,15 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             double aspectRatio = (double)nc.getWidth()/nc.getHeight();
             if ((double)w/h < aspectRatio) {
                 int neww = (int)(h*aspectRatio);
-                if (mousePos.x < mousePosStart.x)
+                if (mousePos.x < mousePosStart.x) {
                     x += w - neww;
+                }
                 w = neww;
             } else {
                 int newh = (int)(w/aspectRatio);
-                if (mousePos.y < mousePosStart.y)
+                if (mousePos.y < mousePosStart.y) {
                     y += h - newh;
+                }
                 h = newh;
             }
         }
@@ -274,19 +279,22 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 
         if (clicked) {
             OsmPrimitive osm = nc.getNearest(center);
-            if (osm != null)
+            if (osm != null) {
                 selection.add(osm);
+            }
         } else {
             // nodes
             for (Node n : nc.getCurrentDataSet().nodes) {
-                if (!n.deleted && !n.incomplete && r.contains(nc.getPoint(n)))
+                if (!n.deleted && !n.incomplete && r.contains(nc.getPoint(n))) {
                     selection.add(n);
+                }
             }
 
             // ways
             for (Way w : nc.getCurrentDataSet().ways) {
-                if (w.deleted || w.getNodesCount() == 0 || w.incomplete)
-                        continue;
+                if (w.deleted || w.getNodesCount() == 0 || w.incomplete) {
+                    continue;
+                }
                 if (alt) {
                     for (Node n : w.getNodes()) {
                         if (!n.incomplete && r.contains(nc.getPoint(n))) {
@@ -302,7 +310,9 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                             break;
                         }
                     }
-                    if (allIn) selection.add(w);
+                    if (allIn) {
+                        selection.add(w);
+                    }
                 }
             }
         }

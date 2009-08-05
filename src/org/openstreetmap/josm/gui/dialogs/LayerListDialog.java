@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -313,15 +312,15 @@ public class LayerListDialog extends ToggleDialog {
                     options[0]
             );
             switch(ret) {
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return DeleteDecision.deleteAll;
-            case JOptionPane.CLOSED_OPTION: return DeleteDecision.cancel;
-            case 0: return DeleteDecision.deleteCurrent;
-            case 1: return DeleteDecision.dontDeleteCurrent;
-            case 2: return DeleteDecision.deleteAll;
-            case 3: return DeleteDecision.cancel;
-            default:
-                // shouldn't happen. This is the safest option.
-                return DeleteDecision.cancel;
+                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return DeleteDecision.deleteAll;
+                case JOptionPane.CLOSED_OPTION: return DeleteDecision.cancel;
+                case 0: return DeleteDecision.deleteCurrent;
+                case 1: return DeleteDecision.dontDeleteCurrent;
+                case 2: return DeleteDecision.deleteAll;
+                case 3: return DeleteDecision.cancel;
+                default:
+                    // shouldn't happen. This is the safest option.
+                    return DeleteDecision.cancel;
             }
         }
 
@@ -359,10 +358,10 @@ public class LayerListDialog extends ToggleDialog {
                 if (doAskConfirmation) {
                     DeleteDecision decision = confirmDeleteMultipleLayer(layer, i, layers.size());
                     switch(decision) {
-                    case deleteCurrent: /* do nothing */ break;
-                    case deleteAll: doAskConfirmation = false; break;
-                    case dontDeleteCurrent: continue;
-                    case cancel: return;
+                        case deleteCurrent: /* do nothing */ break;
+                        case deleteAll: doAskConfirmation = false; break;
+                        case dontDeleteCurrent: continue;
+                        case cancel: return;
                     }
                 }
                 // model and view are going to be updated via LayerChangeListener
@@ -673,15 +672,25 @@ public class LayerListDialog extends ToggleDialog {
      */
     public class LayerListModel extends DefaultListModel implements LayerChangeListener, PropertyChangeListener{
 
-        //private ArrayList<Layer> layers;
+        /** manages list selection state*/
         private DefaultListSelectionModel selectionModel;
         private CopyOnWriteArrayList<LayerListModelListener> listeners;
 
+        /**
+         * constructor
+         * 
+         * @param selectionModel the list selection model
+         */
         private LayerListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
             listeners = new CopyOnWriteArrayList<LayerListModelListener>();
         }
 
+        /**
+         * Adds a listener to this model
+         * 
+         * @param listener the listener
+         */
         public void addLayerListModelListener(LayerListModelListener listener) {
             synchronized(listeners) {
                 if (listener != null && !listeners.contains(listener)) {
@@ -690,6 +699,11 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
+        /**
+         * removes a listener from  this model
+         * @param listener the listener
+         * 
+         */
         public void removeLayerListModelListener(LayerListModelListener listener) {
             synchronized(listeners) {
                 if (listener != null && listeners.contains(listener)) {
@@ -698,32 +712,53 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
+        /**
+         * Fires a make visible event to listeners
+         * 
+         * @param index the index of the row to make visible
+         * @param layer the layer at this index
+         * @see LayerListModelListener#makeVisible(int, Layer)
+         */
         protected void fireMakeVisible(int index, Layer layer) {
             for (LayerListModelListener listener : listeners) {
                 listener.makeVisible(index, layer);
             }
         }
 
+        /**
+         * Fires a refresh event to listeners of this model
+         * 
+         * @see LayerListModelListener#refresh()
+         */
         protected void fireRefresh() {
             for (LayerListModelListener listener : listeners) {
                 listener.refresh();
             }
         }
 
+        /**
+         * Populates the model with the current layers managed by
+         * {@see MapView}.
+         * 
+         */
         public void populate() {
-            if (getLayers() != null) {
-                for (Layer layer: getLayers()) {
-                    // make sure the model is registered exactly once
-                    //
-                    layer.removePropertyChangeListener(this);
-                    layer.addPropertyChangeListener(this);
-                }
+            for (Layer layer: getLayers()) {
+                // make sure the model is registered exactly once
+                //
+                layer.removePropertyChangeListener(this);
+                layer.addPropertyChangeListener(this);
             }
             fireContentsChanged(this, 0, getSize());
         }
 
+        /**
+         * Marks <code>layer</code> as selected layer. Ignored, if
+         * layer is null.
+         * 
+         * @param layer the layer.
+         */
         public void setSelectedLayer(Layer layer) {
-            if (layer == null || getLayers() == null)
+            if (layer == null)
                 return;
             int idx = getLayers().indexOf(layer);
             if (idx >= 0) {
@@ -733,9 +768,15 @@ public class LayerListDialog extends ToggleDialog {
             ensureSelectedIsVisible();
         }
 
+        /**
+         * Replies the list of currently selected layers. Never null, but may
+         * be empty.
+         * 
+         * @return the list of currently selected layers. Never null, but may
+         * be empty.
+         */
         public List<Layer> getSelectedLayers() {
             ArrayList<Layer> selected = new ArrayList<Layer>();
-            if (getLayers() == null) return selected;
             for (int i=0; i<getLayers().size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(getLayers().get(i));
@@ -744,9 +785,15 @@ public class LayerListDialog extends ToggleDialog {
             return selected;
         }
 
+        /**
+         * Replies a the list of indices of the selected rows. Never null,
+         * but may be empty.
+         * 
+         * @return  the list of indices of the selected rows. Never null,
+         * but may be empty.
+         */
         public List<Integer> getSelectedRows() {
             ArrayList<Integer> selected = new ArrayList<Integer>();
-            if (getLayers() == null) return selected;
             for (int i=0; i<getLayers().size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(i);
@@ -755,35 +802,73 @@ public class LayerListDialog extends ToggleDialog {
             return selected;
         }
 
-        protected void removeLayer(Layer layer) {
+        /**
+         * Invoked if a layer managed by {@see MapView} is removed
+         * 
+         * @param layer the layer which is removed
+         */
+        protected void onRemoveLayer(Layer layer) {
             if (layer == null)
                 return;
+            int size = getSize();
+            List<Integer> rows = getSelectedRows();
+            if (rows.isEmpty() && size > 0) {
+                selectionModel.setSelectionInterval(size-1, size-1);
+            }
             fireRefresh();
             ensureSelectedIsVisible();
         }
 
-        protected void addLayer(Layer layer) {
+        /**
+         * Invoked when a layer managed by {@see MapView} is added
+         * 
+         * @param layer the layer
+         */
+        protected void onAddLayer(Layer layer) {
             if (layer == null) return;
             layer.addPropertyChangeListener(this);
             fireContentsChanged(this, 0, getSize());
         }
 
+        /**
+         * Replies the first layer. Null if no layers are present
+         * 
+         * @return the first layer. Null if no layers are present
+         */
         public Layer getFirstLayer() {
             if (getSize() == 0) return null;
             return getLayers().get(0);
         }
 
+        /**
+         * Replies the layer at position <code>index</code>
+         * 
+         * @param index the index
+         * @return the layer at position <code>index</code>. Null,
+         * if index is out of range.
+         */
         public Layer getLayer(int index) {
             if (index < 0 || index >= getSize())
                 return null;
             return getLayers().get(index);
         }
 
+        /**
+         * Replies true if the the currently selected layers can move up
+         * by one position
+         * 
+         * @return true if the the currently selected layers can move up
+         * by one position
+         */
         public boolean canMoveUp() {
             List<Integer> sel = getSelectedRows();
             return !sel.isEmpty() && sel.get(0) > 0;
         }
 
+        /**
+         * Move up the currently selected layers by one position
+         * 
+         */
         public void moveUp() {
             if (!canMoveUp()) return;
             List<Integer> sel = getSelectedRows();
@@ -801,11 +886,22 @@ public class LayerListDialog extends ToggleDialog {
             ensureSelectedIsVisible();
         }
 
+        /**
+         * Replies true if the currently selected layers can move down
+         * by one position
+         * 
+         * @return true if the currently selected layers can move down
+         * by one position
+         */
         public boolean canMoveDown() {
             List<Integer> sel = getSelectedRows();
             return !sel.isEmpty() && sel.get(sel.size()-1) < getLayers().size()-1;
         }
 
+        /**
+         * Move down the currently selected layers by one position
+         * 
+         */
         public void moveDown() {
             if (!canMoveDown()) return;
             List<Integer> sel = getSelectedRows();
@@ -824,31 +920,50 @@ public class LayerListDialog extends ToggleDialog {
             ensureSelectedIsVisible();
         }
 
+        /**
+         * Make sure the first of the selected layers is visible in the
+         * views of this model.
+         * 
+         */
         protected void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
             if (index <0 )return;
-            if (getLayers() == null) return;
             if (index >= getLayers().size()) return;
             Layer layer = getLayers().get(index);
             fireMakeVisible(index, layer);
         }
 
-        public List<Layer> getPossibleMergeTargets(Layer layer) {
+        /**
+         * Replies a list of layers which are possible merge targets
+         * for <code>source</code>
+         * 
+         * @param source the source layer
+         * @return a list of layers which are possible merge targets
+         * for <code>source</code>. Never null, but can be empty.
+         */
+        public List<Layer> getPossibleMergeTargets(Layer source) {
             ArrayList<Layer> targets = new ArrayList<Layer>();
-            if (layer == null)
+            if (source == null)
                 return targets;
             for(Layer target: getLayers()) {
-                if (layer == target) {
+                if (source == target) {
                     continue;
                 }
-                if (target.isMergable(layer)) {
+                if (target.isMergable(source)) {
                     targets.add(target);
                 }
             }
             return targets;
         }
 
+        /**
+         * Activates the layer <code>layer</code>
+         * 
+         * @param layer the layer
+         */
         public void activateLayer(Layer layer) {
+            if (layer == null)
+                return;
             Main.map.mapView.moveLayer(layer,0);
             Main.map.mapView.setActiveLayer(layer);
             layer.setVisible(true);
@@ -856,9 +971,16 @@ public class LayerListDialog extends ToggleDialog {
             ensureSelectedIsVisible();
         }
 
+        /**
+         * Replies the list of layers currently managed by {@see MapView}.
+         * Never null, but can be empty.
+         * 
+         * @return the list of layers currently managed by {@see MapView}.
+         * Never null, but can be empty.
+         */
         protected List<Layer> getLayers() {
-            if (Main.map == null) return null;
-            if (Main.map.mapView == null) return null;
+            if (Main.map == null || Main.map.mapView == null)
+                return Collections.<Layer>emptyList();
             return Main.map.mapView.getAllLayersAsList();
         }
 
@@ -897,19 +1019,12 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         public void layerAdded(Layer newLayer) {
-            addLayer(newLayer);
+            onAddLayer(newLayer);
         }
 
         public void layerRemoved(final Layer oldLayer) {
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            removeLayer(oldLayer);
-                        }
-                    }
-            );
+            onRemoveLayer(oldLayer);
         }
-
 
         /* ------------------------------------------------------------------------------ */
         /* Interface PropertyChangeListener                                               */

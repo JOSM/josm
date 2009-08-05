@@ -72,6 +72,20 @@ public final class Way extends OsmPrimitive {
         return nodes.get(index);
     }
 
+    /**
+     * Replies true if this way contains the node <code>node</code>, false
+     * otherwise. Replies false if  <code>node</code> is null.
+     * 
+     * @param node the node. May be null.
+     * @return true if this way contains the node <code>node</code>, false
+     * otherwise
+     * @since 1909
+     */
+    public boolean containsNode(Node node) {
+        if (node == null) return false;
+        return nodes.contains(node);
+    }
+
     /* mappaint data */
     public boolean isMappaintArea = false;
     public Integer mappaintDrawnAreaCode = 0;

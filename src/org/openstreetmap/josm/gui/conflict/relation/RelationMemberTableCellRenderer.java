@@ -197,25 +197,25 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         renderBackground(getModel(table), member, row, column, isSelected);
         renderForeground(getModel(table), member, row, column, isSelected);
         switch(column) {
-        case 0:
-            renderRowId(row);
-            break;
-        case 1:
-            if (member == null) {
-                renderEmptyRow();
-            } else {
-                renderRole(member);
-            }
-            break;
-        case 2:
-            if (member == null) {
-                renderEmptyRow();
-            } else {
-                renderPrimitive(member);
-            }
-            break;
-        default:
-            // should not happen
+            case 0:
+                renderRowId(row);
+                break;
+            case 1:
+                if (member == null) {
+                    renderEmptyRow();
+                } else {
+                    renderRole(member);
+                }
+                break;
+            case 2:
+                if (member == null) {
+                    renderEmptyRow();
+                } else {
+                    renderPrimitive(member);
+                }
+                break;
+            default:
+                // should not happen
         }
         return this;
     }
@@ -225,6 +225,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
      * @param table  the table
      * @return the table model
      */
+    @SuppressWarnings("unchecked")
     protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
         return (ListMergeModel.EntriesTableModel)table.getModel();
     }

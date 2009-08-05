@@ -69,10 +69,11 @@ public class Marker implements ActionListener {
     private CachedLatLon coor;
 
     public final void setCoor(LatLon coor) {
-        if(this.coor == null)
+        if(this.coor == null) {
             this.coor = new CachedLatLon(coor);
-        else
+        } else {
             this.coor.setCoor(coor);
+        }
     }
 
     public final LatLon getCoor() {
@@ -97,6 +98,7 @@ public class Marker implements ActionListener {
     // Add one Maker specifying the default behaviour.
     static {
         Marker.markerProducers.add(new MarkerProducers() {
+            @SuppressWarnings("unchecked")
             public Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
                 String uri = null;
                 // cheapest way to check whether "link" object exists and is a non-empty
@@ -109,8 +111,9 @@ public class Marker implements ActionListener {
                 } catch (Exception ex) {}
 
                 // Try a relative file:// url, if the link is not in an URL-compatible form
-                if (relativePath != null && uri != null && !isWellFormedAddress(uri))
+                if (relativePath != null && uri != null && !isWellFormedAddress(uri)) {
                     uri = new File(relativePath.getParentFile(), uri).toURI().toString();
+                }
 
                 String name_desc = "";
                 if (wpt.attr.containsKey("name")) {
@@ -146,10 +149,12 @@ public class Marker implements ActionListener {
         this.offset = offset;
         this.time = time;
         Icon symbol = ImageProvider.getIfAvailable("markers",iconName);
-        if (symbol == null)
+        if (symbol == null) {
             symbol = ImageProvider.getIfAvailable("symbols",iconName);
-        if (symbol == null)
+        }
+        if (symbol == null) {
             symbol = ImageProvider.getIfAvailable("nodes",iconName);
+        }
         this.symbol = symbol;
         this.parentLayer = parentLayer;
     }
@@ -189,8 +194,9 @@ public class Marker implements ActionListener {
             g.drawLine(screen.x+2, screen.y-2, screen.x-2, screen.y+2);
         }
 
-        if ((text != null) && (show.equalsIgnoreCase("show")))
+        if ((text != null) && (show.equalsIgnoreCase("show"))) {
             g.drawString(text, screen.x+4, screen.y+2);
+        }
     }
 
     /**

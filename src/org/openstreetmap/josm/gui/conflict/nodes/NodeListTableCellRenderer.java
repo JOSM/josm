@@ -166,19 +166,19 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         Node node = (Node)value;
         reset();
         switch(column) {
-        case 0:
-            renderRowId(getModel(table),row, isSelected);
-            break;
-        case 1:
-            if (node == null) {
-                renderEmptyRow();
-            } else {
-                renderNode(getModel(table), node, row, isSelected);
-            }
-            break;
-        default:
-            // should not happen
-            throw new RuntimeException(tr("unexpected column index. Got {0}", column));
+            case 0:
+                renderRowId(getModel(table),row, isSelected);
+                break;
+            case 1:
+                if (node == null) {
+                    renderEmptyRow();
+                } else {
+                    renderNode(getModel(table), node, row, isSelected);
+                }
+                break;
+            default:
+                // should not happen
+                throw new RuntimeException(tr("unexpected column index. Got {0}", column));
         }
         return this;
     }
@@ -188,6 +188,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
      * @param table  the table
      * @return the table model
      */
+    @SuppressWarnings("unchecked")
     protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
         return (ListMergeModel.EntriesTableModel)table.getModel();
     }

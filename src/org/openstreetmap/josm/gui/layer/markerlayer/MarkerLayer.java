@@ -62,6 +62,7 @@ public class MarkerLayer extends Layer {
     private boolean mousePressed = false;
     public GpxLayer fromLayer = null;
 
+    @SuppressWarnings("unchecked")
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
 
         super(name);

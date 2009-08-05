@@ -50,6 +50,7 @@ public class  Conflict<T extends OsmPrimitive> {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -58,7 +59,7 @@ public class  Conflict<T extends OsmPrimitive> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Conflict<T> other = (Conflict) obj;
+        Conflict<T> other = (Conflict<T>) obj;
         if (my != other.my)
             return false;
         if(their != other.their)

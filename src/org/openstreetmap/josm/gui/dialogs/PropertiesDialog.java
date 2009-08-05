@@ -132,6 +132,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * Edit the value in the properties table row
      * @param row The row of the table from which the value is edited.
      */
+    @SuppressWarnings("unchecked")
     void propertyEdit(int row) {
         Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
@@ -487,18 +488,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (c instanceof JLabel) {
                     String str = null;
                     switch (column) {
-                    case 0:
-                        str = (String) value;
-                        break;
-                    case 1:
-                        Map<String, Integer> v = (Map<String,Integer>) value;
-                        if (v.size()!=1) {
-                            str=tr("<different>");
-                            c.setFont(c.getFont().deriveFont(Font.ITALIC));
-                        } else {
-                            str=v.entrySet().iterator().next().getKey();
-                        }
-                        break;
+                        case 0:
+                            str = (String) value;
+                            break;
+                        case 1:
+                            Map<String, Integer> v = (Map<String,Integer>) value;
+                            if (v.size()!=1) {
+                                str=tr("<different>");
+                                c.setFont(c.getFont().deriveFont(Font.ITALIC));
+                            } else {
+                                str=v.entrySet().iterator().next().getKey();
+                            }
+                            break;
                     }
                     ((JLabel)c).setText(str);
                 }
@@ -523,6 +524,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
 
         membershipTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+            @SuppressWarnings("unchecked")
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);

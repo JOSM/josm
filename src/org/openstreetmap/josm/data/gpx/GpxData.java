@@ -39,6 +39,7 @@ public class GpxData extends WithAttributes {
     public Collection<GpxRoute> routes = new LinkedList<GpxRoute>();
     public Collection<WayPoint> waypoints = new LinkedList<WayPoint>();
 
+    @SuppressWarnings("unchecked")
     public void mergeFrom(GpxData other) {
         if (storageFile == null && other.storageFile != null) {
             storageFile = other.storageFile;
@@ -50,7 +51,7 @@ public class GpxData extends WithAttributes {
             String k = ent.getKey();
             if (k.equals(META_LINKS) && attr.containsKey(META_LINKS)) {
                 ((Collection<GpxLink>) attr.get(META_LINKS)).addAll(
-                    (Collection<GpxLink>) ent.getValue());
+                        (Collection<GpxLink>) ent.getValue());
             } else {
                 attr.put(k, ent.getValue());
             }
