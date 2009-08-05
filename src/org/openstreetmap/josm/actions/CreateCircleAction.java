@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -133,25 +134,18 @@ public final class CreateCircleAction extends JosmAction {
             if (a1 < a2) { double at = a1; Node nt = n1; a1 = a2; n1 = n2; a2 = at; n2 = nt; }
 
             // build a way for the circle
-            Way wayToAdd;
-            if (existingWay == null) {
-                wayToAdd = new Way();
-            } else {
-                // re-use existing way if it was selected
-                wayToAdd = new Way(existingWay);
-                wayToAdd.nodes.clear();
-            }
+            List<Node> wayToAdd = new ArrayList<Node>();
 
             for (int i = 1; i <= numberOfNodesInCircle; i++) {
                 double a = a2 + 2*Math.PI*(1.0 - i/(double)numberOfNodesInCircle); // "1-" to get it clock-wise
 
                 // insert existing nodes if they fit before this new node (999 means "already added this node")
                 if ((a1 < 999) && (a1 > a - 1E-9) && (a1 < a + 1E-9)) {
-                    wayToAdd.nodes.add(n1);
+                    wayToAdd.add(n1);
                     a1 = 999;
                 }
                 else if ((a2 < 999) && (a2 > a - 1E-9) && (a2 < a + 1E-9)) {
-                    wayToAdd.nodes.add(n2);
+                    wayToAdd.add(n2);
                     a2 = 999;
                 }
                 else {
@@ -159,15 +153,19 @@ public final class CreateCircleAction extends JosmAction {
                     double x = xc + r*Math.cos(a);
                     double y = yc + r*Math.sin(a);
                     Node n = new Node(Main.proj.eastNorth2latlon(new EastNorth(x,y)));
-                    wayToAdd.nodes.add(n);
+                    wayToAdd.add(n);
                     cmds.add(new AddCommand(n));
                 }
             }
-            wayToAdd.nodes.add(wayToAdd.nodes.get(0)); // close the circle
+            wayToAdd.add(wayToAdd.get(0)); // close the circle
             if (existingWay == null) {
-                cmds.add(new AddCommand(wayToAdd));
+                Way newWay = new Way();
+                newWay.setNodes(wayToAdd);
+                cmds.add(new AddCommand(newWay));
             } else {
-                cmds.add(new ChangeCommand(existingWay, wayToAdd));
+                Way newWay = new Way(existingWay);
+                newWay.setNodes(wayToAdd);
+                cmds.add(new ChangeCommand(existingWay, newWay));
             }
 
             // the first node may be unused/abandoned if createcircle.nodecount is odd
@@ -228,41 +226,38 @@ public final class CreateCircleAction extends JosmAction {
             if (a1 < a2) { double at = a1; Node nt = n1; a1 = a2; n1 = n2; a2 = at; n2 = nt; }
 
             // build a way for the circle
-            Way wayToAdd;
-            if (existingWay == null) {
-                wayToAdd = new Way();
-            } else {
-                // re-use existing way if it was selected
-                wayToAdd = new Way(existingWay);
-                wayToAdd.nodes.clear();
-            }
+            List<Node> wayToAdd = new ArrayList<Node>();
             for (int i = 1; i <= numberOfNodesInCircle; i++) {
                 double a = 2*Math.PI*(1.0 - i/(double)numberOfNodesInCircle); // "1-" to get it clock-wise
                 // insert existing nodes if they fit before this new node (999 means "already added this node")
                 if (a1 < 999 && a1 > a) {
-                    wayToAdd.nodes.add(n1);
+                    wayToAdd.add(n1);
                     a1 = 999;
                 }
                 if (a2 < 999 && a2 > a) {
-                    wayToAdd.nodes.add(n2);
+                    wayToAdd.add(n2);
                     a2 = 999;
                 }
                 if (a3 < 999 && a3 > a) {
-                    wayToAdd.nodes.add(n3);
+                    wayToAdd.add(n3);
                     a3 = 999;
                 }
                 // get the position of the new node and insert it
                 double x = xc + r*Math.cos(a);
                 double y = yc + r*Math.sin(a);
                 Node n = new Node(Main.proj.eastNorth2latlon(new EastNorth(x,y)));
-                wayToAdd.nodes.add(n);
+                wayToAdd.add(n);
                 cmds.add(new AddCommand(n));
             }
-            wayToAdd.nodes.add(wayToAdd.nodes.get(0)); // close the circle
+            wayToAdd.add(wayToAdd.get(0)); // close the circle
             if (existingWay == null) {
-                cmds.add(new AddCommand(wayToAdd));
+                Way newWay = new Way();
+                newWay.setNodes(wayToAdd);
+                cmds.add(new AddCommand(newWay));
             } else {
-                cmds.add(new ChangeCommand(existingWay, wayToAdd));
+                Way newWay = new Way(existingWay);
+                newWay.setNodes(wayToAdd);
+                cmds.add(new ChangeCommand(existingWay, newWay));
             }
 
         } else {

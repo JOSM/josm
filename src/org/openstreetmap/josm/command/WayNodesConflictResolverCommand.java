@@ -36,7 +36,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
 
 
     /**
-     * 
+     *
      * @param my my may
      * @param their their way
      * @param mergedNodeList  the list of merged nodes
@@ -67,14 +67,12 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         // replace the list of nodes of 'my' way by the list of merged
         // nodes
         //
-        conflict.getMy().nodes.clear();
-        for (int i=0; i<mergedNodeList.size();i++) {
-            Node n = mergedNodeList.get(i);
-            conflict.getMy().nodes.add(n);
+        for (Node n:mergedNodeList) {
             if (! getLayer().data.nodes.contains(n)) {
                 logger.warning(tr("Main dataset does not include node {0}", n.toString()));
             }
         }
+        conflict.getMy().setNodes(mergedNodeList);
         rememberConflict(conflict);
         return true;
     }

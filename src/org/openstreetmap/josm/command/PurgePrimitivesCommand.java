@@ -185,7 +185,9 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
             if (pair.getParent() instanceof Way) {
                 Way w = (Way)pair.getParent();
                 System.out.println(tr("removing reference from way {0}",w.id));
-                w.nodes.remove(primitive);
+                List<Node> wayNodes = w.getNodes();
+                wayNodes.remove(primitive);
+                w.setNodes(wayNodes);
                 // if a way ends up with less than two node we
                 // remember it on the "hive"
                 //

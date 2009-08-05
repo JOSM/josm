@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
@@ -329,6 +330,7 @@ public class OsmReader {
         for (Entry<OsmPrimitiveData, Collection<Long>> e : ways.entrySet()) {
             Way w = new Way(e.getKey().id);
             boolean incomplete = false;
+            List<Node> wayNodes = new ArrayList<Node>();
             for (long id : e.getValue()) {
                 Node n = findNode(id);
                 if (n == null) {
@@ -336,10 +338,12 @@ public class OsmReader {
                     n.incomplete = true;
                     incomplete = true;
                 }
-                w.nodes.add(n);
+                wayNodes.add(n);
             }
+            w.setNodes(wayNodes);
             if (incomplete) {
-                logger.warning(tr("marked way {0} with {1} nodes incomplete because at least one node was missing in the loaded data and is therefore incomplete too", e.getKey().id, w.nodes.size()));
+                logger.warning(tr("marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
+                		"loaded data and is therefore incomplete too", e.getKey().id, w.getNodesCount()));
                 e.getKey().copyTo(w);
                 w.incomplete = true;
                 ds.addPrimitive(w);

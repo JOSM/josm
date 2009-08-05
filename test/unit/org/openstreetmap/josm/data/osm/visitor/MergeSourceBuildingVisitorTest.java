@@ -1,9 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -12,8 +16,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-
-import static org.junit.Assert.*;
 
 public class MergeSourceBuildingVisitorTest {
 
@@ -68,8 +70,8 @@ public class MergeSourceBuildingVisitorTest {
         Node n1 = new Node(1);
         Node n2 = new Node(2);
         Way w1 = new Way(3);
-        w1.nodes.add(n1);
-        w1.nodes.add(n2);
+        w1.addNode(n1);
+        w1.addNode(n2);
         source.nodes.add(n1);
         source.nodes.add(n2);
         source.ways.add(w1);
@@ -100,8 +102,8 @@ public class MergeSourceBuildingVisitorTest {
         Node n1 = new Node(1);
         Node n2 = new Node(2);
         Way w1 = new Way(3);
-        w1.nodes.add(n1);
-        w1.nodes.add(n2);
+        w1.addNode(n1);
+        w1.addNode(n2);
         source.nodes.add(n1);
         source.nodes.add(n2);
         source.ways.add(w1);
@@ -153,9 +155,9 @@ public class MergeSourceBuildingVisitorTest {
         r1.members.add(new RelationMember("node-20",n20));
         Way w30 = new Way(30);
         Node n21;
-        w30.nodes.add(n21 = new Node(21));
+        w30.addNode(n21 = new Node(21));
         Node n22;
-        w30.nodes.add(n22 = new Node(22));
+        w30.addNode(n22 = new Node(22));
         r1.members.add(new RelationMember("way-30",w30));
         Relation r40 = new Relation(40);
         r1.members.add(new RelationMember("relation-40", r40));
@@ -180,14 +182,14 @@ public class MergeSourceBuildingVisitorTest {
 
         Way w = (Way)hull.getPrimitiveById(30);
         assertNotNull(w);
-        assertEquals(2, w.nodes.size());
+        assertEquals(2, w.getNodesCount());
         Node n = (Node)hull.getPrimitiveById(21);
         assertNotNull(n);
-        assertTrue(w.nodes.contains(n));
+        assertTrue(w.getNodes().contains(n));
 
         n = (Node)hull.getPrimitiveById(22);
         assertNotNull(n);
-        assertTrue(w.nodes.contains(n));
+        assertTrue(w.getNodes().contains(n));
 
         Relation r = (Relation)hull.getPrimitiveById(40);
         assertNotNull(r);
@@ -211,9 +213,9 @@ public class MergeSourceBuildingVisitorTest {
         r1.members.add(new RelationMember("node-20",n20));
         Way w30 = new Way(30);
         Node n21;
-        w30.nodes.add(n21 = new Node(21));
+        w30.addNode(n21 = new Node(21));
         Node n22;
-        w30.nodes.add(n22 = new Node(22));
+        w30.addNode(n22 = new Node(22));
         r1.members.add(new RelationMember("way-30",w30));
         Relation r40 = new Relation(40);
         r1.members.add(new RelationMember("relation-40", r40));
@@ -273,10 +275,10 @@ public class MergeSourceBuildingVisitorTest {
         Way w30 = new Way();
         w30.put("name", "w30");
         Node n21;
-        w30.nodes.add(n21 = new Node(new LatLon(21.0,21.0)));
+        w30.addNode(n21 = new Node(new LatLon(21.0,21.0)));
         n21.put("name","n21");
         Node n22;
-        w30.nodes.add(n22 = new Node(new LatLon(22.0,22.0)));
+        w30.addNode(n22 = new Node(new LatLon(22.0,22.0)));
         n22.put("name","n22");
         r1.members.add(new RelationMember("way-30",w30));
         Relation r40 = new Relation();
@@ -303,15 +305,15 @@ public class MergeSourceBuildingVisitorTest {
 
         Way w = (Way)lookupByName(hull.ways, "w30");
         assertNotNull(w);
-        assertEquals(2, w.nodes.size());
+        assertEquals(2, w.getNodesCount());
 
         Node n = (Node)lookupByName(hull.nodes, "n21");
         assertNotNull(n);
-        assertTrue(w.nodes.contains(n));
+        assertTrue(w.getNodes().contains(n));
 
         n = (Node)lookupByName(hull.nodes, "n22");
         assertNotNull(n);
-        assertTrue(w.nodes.contains(n));
+        assertTrue(w.getNodes().contains(n));
 
         Relation r = (Relation)lookupByName(hull.relations, "r40");
         assertNotNull(r);

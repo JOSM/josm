@@ -488,8 +488,8 @@ public class MergeVisitorTest {
         myWay.id = 3;
         myWay.version = 1;
         myWay.put("key1", "value1");
-        myWay.nodes.add(n1);
-        myWay.nodes.add(n2);
+        myWay.addNode(n1);
+        myWay.addNode(n2);
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
@@ -510,8 +510,8 @@ public class MergeVisitorTest {
         theirWay.version = 2;
         theirWay.put("key1", "value1");
         theirWay.put("key2", "value2");
-        theirWay.nodes.add(n3);
-        theirWay.nodes.add(n4);
+        theirWay.addNode(n3);
+        theirWay.addNode(n4);
         their.addPrimitive(theirWay);
 
 
@@ -524,9 +524,9 @@ public class MergeVisitorTest {
         assertEquals("value2",merged.get("key2"));
         assertEquals(3,merged.id);
         assertEquals(2,merged.version);
-        assertEquals(2,merged.nodes.size());
-        assertEquals(1,merged.nodes.get(0).id);
-        assertEquals(2,merged.nodes.get(1).id);
+        assertEquals(2,merged.getNodesCount());
+        assertEquals(1,merged.getNode(0).id);
+        assertEquals(2,merged.getNode(1).id);
 
     }
 
@@ -556,8 +556,8 @@ public class MergeVisitorTest {
         Way myWay = new Way();
         myWay.id = 3;
         myWay.version = 1;
-        myWay.nodes.add(n1);
-        myWay.nodes.add(n2);
+        myWay.addNode(n1);
+        myWay.addNode(n2);
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
@@ -585,9 +585,9 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.id = 3;
         theirWay.version = 2;
-        theirWay.nodes.add(n3);
-        theirWay.nodes.add(n5); // insert a node
-        theirWay.nodes.add(n4); // this one is updated
+        theirWay.addNode(n3);
+        theirWay.addNode(n5); // insert a node
+        theirWay.addNode(n4); // this one is updated
         their.addPrimitive(theirWay);
 
 
@@ -598,11 +598,11 @@ public class MergeVisitorTest {
         assertEquals(0,visitor.getConflicts().size());
         assertEquals(3,merged.id);
         assertEquals(2,merged.version);
-        assertEquals(3,merged.nodes.size());
-        assertEquals(1,merged.nodes.get(0).id);
-        assertEquals(4,merged.nodes.get(1).id);
-        assertEquals(2,merged.nodes.get(2).id);
-        assertEquals("value1",merged.nodes.get(2).get("key1"));
+        assertEquals(3,merged.getNodesCount());
+        assertEquals(1,merged.getNode(0).id);
+        assertEquals(4,merged.getNode(1).id);
+        assertEquals(2,merged.getNode(2).id);
+        assertEquals("value1",merged.getNode(2).get("key1"));
     }
 
     /**
@@ -630,8 +630,8 @@ public class MergeVisitorTest {
         Way myWay = new Way();
         myWay.id = 3;
         myWay.version = 1;
-        myWay.nodes.add(n1);
-        myWay.nodes.add(n2);
+        myWay.addNode(n1);
+        myWay.addNode(n2);
         myWay.modified = true;
         myWay.put("key1", "value1");
         my.addPrimitive(myWay);
@@ -661,9 +661,9 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.id = 3;
         theirWay.version = 2;
-        theirWay.nodes.add(n3);
-        theirWay.nodes.add(n5); // insert a node
-        theirWay.nodes.add(n4); // this one is updated
+        theirWay.addNode(n3);
+        theirWay.addNode(n5); // insert a node
+        theirWay.addNode(n4); // this one is updated
         their.addPrimitive(theirWay);
 
 
@@ -674,9 +674,9 @@ public class MergeVisitorTest {
         assertEquals(1,visitor.getConflicts().size());
         assertEquals(3,merged.id);
         assertEquals(1,merged.version);
-        assertEquals(2,merged.nodes.size());
-        assertEquals(1,merged.nodes.get(0).id);
-        assertEquals(2,merged.nodes.get(1).id);
+        assertEquals(2,merged.getNodesCount());
+        assertEquals(1,merged.getNode(0).id);
+        assertEquals(2,merged.getNode(1).id);
         assertEquals("value1",merged.get("key1"));
     }
 
@@ -706,8 +706,8 @@ public class MergeVisitorTest {
         Way myWay = new Way();
         myWay.id = 3;
         myWay.version = 1;
-        myWay.nodes.add(n1);
-        myWay.nodes.add(n2);
+        myWay.addNode(n1);
+        myWay.addNode(n2);
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
@@ -756,8 +756,8 @@ public class MergeVisitorTest {
         Way myWay = new Way();
         myWay.id = 0;
         myWay.version = -1;
-        myWay.nodes.add(n1);
-        myWay.nodes.add(n2);
+        myWay.addNode(n1);
+        myWay.addNode(n2);
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
@@ -776,8 +776,8 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.id = 0;
         theirWay.version = -1;
-        theirWay.nodes.add(n3);
-        theirWay.nodes.add(n4);
+        theirWay.addNode(n3);
+        theirWay.addNode(n4);
         theirWay.user = User.get("their");
         theirWay.user.uid = "1111";
         theirWay.setTimestamp(new Date());
@@ -818,8 +818,8 @@ public class MergeVisitorTest {
         Way myWay = new Way();
         myWay.id = 0;
         myWay.version = -1;
-        myWay.nodes.add(n1);
-        myWay.nodes.add(n2);
+        myWay.addNode(n1);
+        myWay.addNode(n2);
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
@@ -838,8 +838,8 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.id = 0;
         theirWay.version = -1;
-        theirWay.nodes.add(n3);
-        theirWay.nodes.add(n4);
+        theirWay.addNode(n3);
+        theirWay.addNode(n4);
         theirWay.user = User.get("their");
         theirWay.user.uid = "1111";
         theirWay.setTimestamp(new Date());
@@ -898,9 +898,9 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.id = 4;
         theirWay.version = 1;
-        theirWay.nodes.add(n3);
-        theirWay.nodes.add(n4);
-        theirWay.nodes.add(n5);
+        theirWay.addNode(n3);
+        theirWay.addNode(n4);
+        theirWay.addNode(n5);
         theirWay.user = User.get("their");
         theirWay.user.uid = "1111";
         theirWay.setTimestamp(new Date());
@@ -912,7 +912,7 @@ public class MergeVisitorTest {
         assertEquals(0,visitor.getConflicts().size());
 
         Way myWay = (Way)my.getPrimitiveById(4);
-        assertEquals(2, myWay.nodes.size());
+        assertEquals(2, myWay.getNodesCount());
 
         Node n = (Node)my.getPrimitiveById(1);
         assertTrue(n != null);

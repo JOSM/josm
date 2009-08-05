@@ -75,7 +75,7 @@ public class MultiFetchServerObjectReaderTest {
             for (int j = 0; j < numNodesInWay;j++) {
                 int idx = (start + j) % numNodes;
                 Node n = nodes.get(idx);
-                w.nodes.add(n);
+                w.addNode(n);
             }
             w.put("name", "way-"+i);
             ds.addPrimitive(w);

@@ -23,7 +23,7 @@ public final class Way extends OsmPrimitive {
 
     /**
      * All way nodes in this way
-     * 
+     *
      * @deprecated This public field will become private or protected in the future.
      *  Use the new public API instead.
      */
@@ -42,12 +42,15 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
-     * @param nodes
+     * @param nodes New way nodes. Can be null, in that case all way nodes are removed
      * @since 1862
      */
     public void setNodes(List<Node> nodes) {
         this.nodes.clear();
-        this.nodes.addAll(nodes);
+        if (nodes != null) {
+            this.nodes.addAll(nodes);
+        }
+        clearCached();
     }
 
     /**

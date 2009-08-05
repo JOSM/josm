@@ -135,7 +135,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         if (isAlreadyRemembered(w))
             return;
         Way clone = new Way(w);
-        clone.nodes.clear();
+        clone.setNodes(null);
         clone.incomplete = true;
         mappedPrimitives.put(w, clone);
     }

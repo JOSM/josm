@@ -371,7 +371,7 @@ public class DataSet implements Cloneable {
     }
 
     protected void deleteWay(Way way) {
-        way.nodes.clear();
+        way.setNodes(null);
         way.delete(true);
     }
 
@@ -382,10 +382,12 @@ public class DataSet implements Cloneable {
      */
     public void unlinkNodeFromWays(Node node) {
         for (Way way: ways) {
-            if (way.nodes.contains(node)) {
-                way.nodes.remove(node);
-                if (way.nodes.size() < 2) {
+            List<Node> nodes = way.getNodes();
+            if (nodes.remove(node)) {
+                if (nodes.size() < 2) {
                     deleteWay(way);
+                } else {
+                    way.setNodes(nodes);
                 }
             }
         }

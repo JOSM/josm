@@ -16,7 +16,7 @@ public class NodeListMergerTest extends JFrame {
     protected void populate() {
         Way w1 = new Way();
         Node n1;
-        w1.nodes.add(n1 = new Node(1));
+        w1.addNode(n1 = new Node(1));
         for (int i=0; i < 20; i++) {
             n1.put("key" + i, "value" + i);
         }
@@ -25,13 +25,13 @@ public class NodeListMergerTest extends JFrame {
             note += " A very long text ";
         }
         n1.put("note", note);
-        w1.nodes.add(new Node(2));
-        w1.nodes.add(new Node(3));
+        w1.addNode(new Node(2));
+        w1.addNode(new Node(3));
 
         Way w2 = new Way();
-        w2.nodes.add(new Node(4));
-        w2.nodes.add(new Node(5));
-        w2.nodes.add(new Node(6));
+        w2.addNode(new Node(4));
+        w2.addNode(new Node(5));
+        w2.addNode(new Node(6));
 
         nodeListMerger.populate(w1, w2);
 
@@ -40,12 +40,12 @@ public class NodeListMergerTest extends JFrame {
     protected void populateLong() {
         Way w1 = new Way();
         for (int i = 0; i < 100; i++) {
-            w1.nodes.add(new Node(i));
+            w1.addNode(new Node(i));
         }
 
         Way w2 = new Way();
         for (int i = 1; i < 200; i+=2) {
-            w2.nodes.add(new Node(i));
+            w2.addNode(new Node(i));
         }
         nodeListMerger.populate(w1, w2);
 

@@ -13,7 +13,9 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -72,12 +74,14 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 return;
             DataSet ds = new DataSet();
             for (Collection<GpsPoint> c : data) {
-                Way w = new Way();
+                List<Node> nodes = new ArrayList<Node>();
                 for (GpsPoint p : c) {
                     Node n = new Node(p.latlon);
                     ds.nodes.add(n);
-                    w.nodes.add(n);
+                    nodes.add(n);
                 }
+                Way w = new Way();
+                w.setNodes(nodes);
                 ds.ways.add(w);
             }
             Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", RawGpsLayer.this.getName()), null));

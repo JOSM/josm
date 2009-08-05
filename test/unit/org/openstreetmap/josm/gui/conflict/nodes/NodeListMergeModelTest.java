@@ -63,8 +63,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -87,8 +87,8 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -118,8 +118,8 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -144,9 +144,9 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
-        myWay.nodes.add(new Node(4));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
+        myWay.addNode(new Node(4));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -172,8 +172,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -193,8 +193,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -219,8 +219,8 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -246,9 +246,9 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
-        myWay.nodes.add(new Node(4));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
+        myWay.addNode(new Node(4));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -278,8 +278,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -306,8 +306,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -334,8 +334,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -367,8 +367,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -395,9 +395,9 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -425,9 +425,9 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
-        myWay.nodes.add(new Node(3));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
+        myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -454,8 +454,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -487,8 +487,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -513,8 +513,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -543,8 +543,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -576,8 +576,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -602,8 +602,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);
@@ -632,8 +632,8 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.nodes.add(new Node(1));
-        myWay.nodes.add(new Node(2));
+        myWay.addNode(new Node(1));
+        myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
 
         model.populate(myWay, theirWay);

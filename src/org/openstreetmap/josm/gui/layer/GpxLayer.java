@@ -709,7 +709,7 @@ public class GpxLayer extends Layer {
             DataSet ds = new DataSet();
             for (GpxTrack trk : data.tracks) {
                 for (Collection<WayPoint> segment : trk.trackSegs) {
-                    Way w = new Way();
+                    List<Node> nodes = new ArrayList<Node>();
                     for (WayPoint p : segment) {
                         Node n = new Node(p.getCoor());
                         String timestr = p.getString("time");
@@ -717,8 +717,10 @@ public class GpxLayer extends Layer {
                             n.setTimestamp(DateUtils.fromString(timestr));
                         }
                         ds.nodes.add(n);
-                        w.nodes.add(n);
+                        nodes.add(n);
                     }
+                    Way w = new Way();
+                    w.setNodes(nodes);
                     ds.ways.add(w);
                 }
             }
@@ -740,7 +742,7 @@ public class GpxLayer extends Layer {
 
     /**
      * Action that issues a series of download requests to the API, following the GPX track.
-     * 
+     *
      * @author fred
      */
     public class DownloadAlongTrackAction extends AbstractAction {
@@ -841,7 +843,7 @@ public class GpxLayer extends Layer {
              * Area "a" now contains the hull that we would like to download data for. however we
              * can only download rectangles, so the following is an attempt at finding a number of
              * rectangles to download.
-             * 
+             *
              * The idea is simply: Start out with the full bounding box. If it is too large, then
              * split it in half and repeat recursively for each half until you arrive at something
              * small enough to download. The algorithm is improved by always using the intersection
@@ -1140,7 +1142,7 @@ public class GpxLayer extends Layer {
     /**
      * Makes a WayPoint at the projection of point P onto the track providing P is less than
      * tolerance away from the track
-     * 
+     *
      * @param P : the point to determine the projection for
      * @param tolerance : must be no further than this from the track
      * @return the closest point on the track to P, which may be the first or last point if off the
@@ -1150,23 +1152,23 @@ public class GpxLayer extends Layer {
         /*
          * assume the coordinates of P are xp,yp, and those of a section of track between two
          * trackpoints are R=xr,yr and S=xs,ys. Let N be the projected point.
-         * 
+         *
          * The equation of RS is Ax + By + C = 0 where A = ys - yr B = xr - xs C = - Axr - Byr
-         * 
+         *
          * Also, note that the distance RS^2 is A^2 + B^2
-         * 
+         *
          * If RS^2 == 0.0 ignore the degenerate section of track
-         * 
+         *
          * PN^2 = (Axp + Byp + C)^2 / RS^2 that is the distance from P to the line
-         * 
+         *
          * so if PN^2 is less than PNmin^2 (initialized to tolerance) we can reject the line;
          * otherwise... determine if the projected poijnt lies within the bounds of the line: PR^2 -
          * PN^2 <= RS^2 and PS^2 - PN^2 <= RS^2
-         * 
+         *
          * where PR^2 = (xp - xr)^2 + (yp-yr)^2 and PS^2 = (xp - xs)^2 + (yp-ys)^2
-         * 
+         *
          * If so, calculate N as xn = xr + (RN/RS) B yn = y1 + (RN/RS) A
-         * 
+         *
          * where RN = sqrt(PR^2 - PN^2)
          */
 

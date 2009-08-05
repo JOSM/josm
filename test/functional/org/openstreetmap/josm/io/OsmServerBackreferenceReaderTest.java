@@ -73,7 +73,7 @@ public class OsmServerBackreferenceReaderTest {
             Way w = new Way(0);
             w.incomplete = false;
             for (int j = 0; j < 10;j++) {
-                w.nodes.add(lookupNode(ds, i+j));
+                w.addNode(lookupNode(ds, i+j));
             }
             w.put("name", "way-"+i);
             ds.addPrimitive(w);
