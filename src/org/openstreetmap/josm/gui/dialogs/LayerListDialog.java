@@ -964,10 +964,10 @@ public class LayerListDialog extends ToggleDialog {
         public void activateLayer(Layer layer) {
             if (layer == null)
                 return;
-            Main.map.mapView.moveLayer(layer,0);
             Main.map.mapView.setActiveLayer(layer);
             layer.setVisible(true);
-            selectionModel.setSelectionInterval(0,0);
+            int idx = getLayers().indexOf(layer);
+            selectionModel.setSelectionInterval(idx,idx);
             ensureSelectedIsVisible();
         }
 
