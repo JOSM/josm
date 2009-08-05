@@ -18,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -76,13 +77,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         //
         displaylist.setCellRenderer(new OsmPrimitivRenderer());
         displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        displaylist.addMouseListener(new MouseAdapter(){
-            @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
-                }
-            }
-        });
+        displaylist.addMouseListener(new DoubleClickAdapter());
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
         // create the panel with buttons
@@ -100,6 +95,12 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         editAction = new EditAction();
         displaylist.addListSelectionListener(editAction);
         buttonPanel.add(new SideButton(editAction), GBC.std());
+
+        // the edit action
+        //
+        DuplicateAction duplicateAction = new DuplicateAction();
+        displaylist.addListSelectionListener(duplicateAction);
+        buttonPanel.add(new SideButton(duplicateAction), GBC.std());
 
         // the delete action
         //
@@ -234,11 +235,31 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
+    class DoubleClickAdapter extends MouseAdapter {
+        protected void setCurrentRelationAsSelection() {
+            Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
+        }
+
+        protected void editCurrentRelation() {
+            new EditAction().launchEditor(getSelected());
+        }
+
+        @Override public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+                if (e.isControlDown()) {
+                    editCurrentRelation();
+                } else {
+                    setCurrentRelationAsSelection();
+                }
+            }
+        }
+    }
+
     /**
      * The edit action
      *
      */
-    class EditAction extends AbstractAction implements ListSelectionListener, Runnable{
+    class EditAction extends AbstractAction implements ListSelectionListener{
         public EditAction() {
             putValue(SHORT_DESCRIPTION,tr( "Open an editor for the selected relation"));
             putValue(NAME, tr("Edit"));
@@ -256,16 +277,16 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             return members;
         }
 
-        public void run() {
-            if (!isEnabled()) return;
-            Relation toEdit = getSelected();
+        public void launchEditor(Relation toEdit) {
             if (toEdit == null)
                 return;
             RelationEditor.getEditor(Main.map.mapView.getEditLayer(),toEdit, getMembersForCurrentSelection(toEdit)).setVisible(true);
         }
 
         public void actionPerformed(ActionEvent e) {
-            run();
+            if (!isEnabled())
+                return;
+            launchEditor(getSelected());
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -340,6 +361,47 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public void layerRemoved(Layer oldLayer) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * Creates a new relation with a copy of the current editor state
+     * 
+     */
+    class DuplicateAction extends AbstractAction implements ListSelectionListener {
+        public DuplicateAction() {
+            putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
+            // FIXME provide an icon
+            putValue(SMALL_ICON, ImageProvider.get("duplicate"));
+            putValue(NAME, tr("Duplicate"));
+            updateEnabledState();
+        }
+
+        public void launchEditorForDuplicate(Relation original) {
+            Relation copy = new Relation();
+            copy.cloneFrom(original);
+            copy.id = 0;
+            copy.modified = true;
+            RelationEditor editor = RelationEditor.getEditor(
+                    Main.main.getEditLayer(),
+                    copy,
+                    null /* no selected members */
+            );
+            editor.setVisible(true);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+            launchEditorForDuplicate(getSelected());
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length == 1);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
     }

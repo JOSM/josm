@@ -16,13 +16,17 @@ import javax.swing.text.PlainDocument;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 
 /**
- * TagFieldEditor is an editor for tag names or tag values. It supports auto completion
- * from a list of auto completion items.
+ * AutoCompletingTextField is an text field with autocompletion behaviour. It
+ * can be used as table cell editor in {@see JTable}s.
+ * 
+ * Autocompletion is controlled by a list of {@see AutoCompletionListItem}s
+ * managed in a {@see AutoCompletionList}.
+ * 
  *
  */
-public class TagFieldEditor extends JTextField  {
+public class AutoCompletingTextField extends JTextField  {
 
-    static private Logger logger = Logger.getLogger(TagFieldEditor.class.getName());
+    static private Logger logger = Logger.getLogger(AutoCompletingTextField.class.getName());
 
     /**
      * The document model for the editor
@@ -88,11 +92,7 @@ public class TagFieldEditor extends JTextField  {
         return new AutoCompletionDocument();
     }
 
-    /**
-     * constructor
-     */
-    public TagFieldEditor() {
-
+    protected void init() {
         addFocusListener(
                 new FocusAdapter() {
                     @Override public void focusGained(FocusEvent e) {
@@ -113,6 +113,18 @@ public class TagFieldEditor extends JTextField  {
                     }
                 }
         );
+    }
+
+    /**
+     * constructor
+     */
+    public AutoCompletingTextField() {
+        init();
+    }
+
+    public AutoCompletingTextField(int columns) {
+        super(columns);
+        init();
     }
 
     protected void applyFilter(String filter) {

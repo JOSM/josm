@@ -2,10 +2,14 @@ package org.openstreetmap.josm.gui.dialogs.relation.ac;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -28,8 +32,10 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
  *
  */
 public class AutoCompletionCache {
+    static private final Logger logger = Logger.getLogger(AutoCompletionCache.class.getName());
 
     private static HashMap<OsmDataLayer, AutoCompletionCache> caches;
+
     static {
         caches = new HashMap<OsmDataLayer, AutoCompletionCache>();
         Layer.listeners.add(new LayerChangeListener() {
@@ -62,6 +68,7 @@ public class AutoCompletionCache {
 
     /** the cache */
     private HashMap<String, ArrayList<String>> cache;
+    private  ArrayList<String> roleCache;
     private OsmDataLayer layer;
 
     /**
@@ -69,6 +76,7 @@ public class AutoCompletionCache {
      */
     public AutoCompletionCache(OsmDataLayer layer) {
         cache = new HashMap<String, ArrayList<String>>();
+        roleCache = new ArrayList<String>();
         this.layer = layer;
     }
 
@@ -117,6 +125,22 @@ public class AutoCompletionCache {
     }
 
     /**
+     * Caches all member roles of the relation <code>relation</code>
+     * 
+     * @param relation the relation
+     */
+    protected void cacheRelationMemberRoles(Relation relation){
+        for (RelationMember m: relation.members) {
+            if (m.role == null || m.role.trim().equals("")) {
+                continue;
+            }
+            if (!roleCache.contains(m.role)) {
+                roleCache.add(m.role);
+            }
+        }
+    }
+
+    /**
      * initializes the cache from the primitives in the dataset of
      * {@see #layer}
      * 
@@ -128,6 +152,13 @@ public class AutoCompletionCache {
         Collection<OsmPrimitive> ds = layer.data.allNonDeletedPrimitives();
         for (OsmPrimitive primitive : ds) {
             cachePrimitive(primitive);
+        }
+        for (Relation relation : layer.data.relations) {
+            if (relation.incomplete || relation.deleted) {
+                continue;
+            }
+            cacheRelationMemberRoles(relation);
+            Collections.sort(roleCache);
         }
     }
 
@@ -150,7 +181,28 @@ public class AutoCompletionCache {
     public List<String> getValues(String key) {
         if (!cache.containsKey(key))
             return new ArrayList<String>();
-        else
-            return cache.get(key);
+        return cache.get(key);
+    }
+
+    /**
+     * Replies the list of member roles
+     * 
+     * @return the list of member roles
+     */
+    public List<String> getMemberRoles() {
+        return roleCache;
+    }
+
+    /**
+     * Populates the an {@see AutoCompletionList} with the currently cached
+     * member roles.
+     * 
+     * @param list the list to populate
+     */
+    public void populateWithMemberRoles(AutoCompletionList list) {
+        list.clear();
+        for (String role: roleCache) {
+            list.add(new AutoCompletionListItem(role, AutoCompletionItemPritority.IS_IN_DATASET));
+        }
     }
 }

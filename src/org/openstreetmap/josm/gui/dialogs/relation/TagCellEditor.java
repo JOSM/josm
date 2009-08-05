@@ -23,7 +23,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
     /** the logger object */
     static private Logger logger = Logger.getLogger(TagCellEditor.class.getName());
 
-    private TagFieldEditor editor = null;
+    private AutoCompletingTextField editor = null;
     private TagModel currentTag = null;
     private TagEditorModel tagEditorModel = null;
     private int currentColumn = 0;
@@ -38,7 +38,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      * constructor
      */
     public TagCellEditor() {
-        editor = new TagFieldEditor();
+        editor = new AutoCompletingTextField();
         acCache = new AutoCompletionCache();
     }
 
@@ -58,7 +58,6 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
             logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
             return;
         }
-
         autoCompletionList.clear();
 
         // add the list of keys in the current data set
@@ -89,13 +88,11 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      * @param forKey the key
      */
     protected void initAutoCompletionListForValues(String forKey) {
-
         if (autoCompletionList == null) {
             logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
             return;
         }
         autoCompletionList.clear();
-
         for (String value : acCache.getValues(forKey)) {
             autoCompletionList.add(
                     new AutoCompletionListItem(value, AutoCompletionItemPritority.IS_IN_DATASET)
@@ -192,7 +189,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
         editor.requestFocus();
     }
 
-    public TagFieldEditor getEditor() {
+    public AutoCompletingTextField getEditor() {
         return editor;
     }
 

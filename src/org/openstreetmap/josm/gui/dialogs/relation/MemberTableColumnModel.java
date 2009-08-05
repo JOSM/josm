@@ -16,7 +16,7 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("Role"));
         col.setResizable(true);
         col.setCellRenderer(new MemberTableRoleCellRenderer());
-
+        col.setCellEditor(new MemberRoleCellEditor());
         addColumn(col);
 
         // column 1 - the member

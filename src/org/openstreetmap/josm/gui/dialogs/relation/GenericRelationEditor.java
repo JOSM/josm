@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -105,7 +106,7 @@ public class GenericRelationEditor extends RelationEditor {
     /** the model for the selection table */
     private SelectionTableModel selectionTableModel;
 
-    private JTextField tfRole;
+    private AutoCompletingTextField tfRole;
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
@@ -123,13 +124,14 @@ public class GenericRelationEditor extends RelationEditor {
 
         // initialize the autocompletion infrastructure
         //
-        acCache = AutoCompletionCache.getCacheForLayer(Main.map.mapView.getEditLayer());
+        acCache = AutoCompletionCache.getCacheForLayer(getLayer());
+        acCache.initFromJOSMDataset();
         acList = new AutoCompletionList();
 
         // init the various models
         //
         tagEditorModel = new TagEditorModel();
-        memberTableModel = new MemberTableModel();
+        memberTableModel = new MemberTableModel(getLayer());
         selectionTableModel = new SelectionTableModel(getLayer());
         referrerModel = new ReferringRelationsBrowserModel(relation);
 
@@ -197,6 +199,7 @@ public class GenericRelationEditor extends RelationEditor {
         );
 
         memberTableModel.setSelectedMembers(selectedMembers);
+        DataSet.selListeners.add(memberTableModel);
     }
 
     /**
@@ -265,7 +268,6 @@ public class GenericRelationEditor extends RelationEditor {
         // setting up the tag table
         //
         tagTable = new TagTable(tagEditorModel);
-        acCache.initFromJOSMDataset();
         TagCellEditor editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor());
         editor.setAutoCompletionCache(acCache);
         editor.setAutoCompletionList(acList);
@@ -329,6 +331,9 @@ public class GenericRelationEditor extends RelationEditor {
         pnl.setLayout(new GridBagLayout());
         // setting up the member table
         memberTable = new MemberTable(getLayer(),memberTableModel);
+        MemberRoleCellEditor editor = ((MemberRoleCellEditor) memberTable.getColumnModel().getColumn(0).getCellEditor());
+        editor.setAutoCompletionCache(acCache);
+        editor.setAutoCompletionList(acList);
 
         memberTable.getSelectionModel().addListSelectionListener(new SelectionSynchronizer());
         memberTable.addMouseListener(new MemberTableDblClickAdapter());
@@ -591,13 +596,23 @@ public class GenericRelationEditor extends RelationEditor {
 
         // --- role editing
         buttonPanel.add(new JLabel(tr("Role:")));
-        tfRole = new JTextField(10);
+        tfRole = new AutoCompletingTextField(10);
         tfRole.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 tfRole.selectAll();
             }
         });
+        tfRole.setAutoCompletionList(acList);
+        tfRole.addFocusListener(
+                new FocusAdapter() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        acCache.populateWithMemberRoles(acList);
+                    }
+                }
+        );
+
         buttonPanel.add(tfRole);
         SetRoleAction setRoleAction = new SetRoleAction();
         memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
@@ -625,6 +640,7 @@ public class GenericRelationEditor extends RelationEditor {
     @Override
     public void dispose() {
         selectionTableModel.unregister();
+        DataSet.selListeners.remove(memberTableModel);
         super.dispose();
     }
 
@@ -1431,23 +1447,28 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
+    /**
+     * Updates the selection in the current data set with the selected referers in
+     * in the member table.
+     *
+     */
     class SelectionSynchronizer implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent e) {
-            ArrayList<OsmPrimitive> sel;
-            int cnt = memberTable.getSelectedRowCount();
-            if (cnt <= 0)
+            if (e.getValueIsAdjusting())
                 return;
-            sel = new ArrayList<OsmPrimitive>(cnt);
-            for (int i : memberTable.getSelectedRows()) {
-                sel.add(memberTableModel.getReferredPrimitive(i));
+
+            // Avoid endless loops. memberTableModel is registered as SelectionChangeListener
+            // too. Only update the selection if it is not in sync with what is already
+            // selected.
+            //
+            if (!memberTableModel.selectionsAreInSync()) {
+                getLayer().data.setSelected(memberTableModel.getSelectedReferers());
             }
-            getLayer().data.setSelected(sel);
         }
     }
 
     /**
      * The asynchronous task for downloading relation members.
-     * 
      * 
      */
     class DownloadTask extends PleaseWaitRunnable {

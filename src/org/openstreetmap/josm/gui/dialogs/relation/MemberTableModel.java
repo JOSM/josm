@@ -1,4 +1,3 @@
-// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -16,25 +16,30 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public class MemberTableModel extends AbstractTableModel {
+public class MemberTableModel extends AbstractTableModel implements SelectionChangedListener{
 
     private ArrayList<RelationMember> members;
     private DefaultListSelectionModel listSelectionModel;
     private CopyOnWriteArrayList<IMemberModelListener> listeners;
+    private OsmDataLayer layer;
 
     /**
      * constructor
      */
-    public MemberTableModel() {
+    public MemberTableModel(OsmDataLayer layer) {
         members = new ArrayList<RelationMember>();
         listeners = new CopyOnWriteArrayList<IMemberModelListener>();
+        this.layer = layer;
     }
 
     public void addMemberModelListener(IMemberModelListener listener) {
@@ -81,12 +86,12 @@ public class MemberTableModel extends AbstractTableModel {
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-        case 0:
-            return members.get(rowIndex).role;
-        case 1:
-            return members.get(rowIndex).member;
-        case 2:
-            return linked(rowIndex);
+            case 0:
+                return members.get(rowIndex).role;
+            case 1:
+                return members.get(rowIndex).member;
+            case 2:
+                return linked(rowIndex);
         }
         // should not happen
         return null;
@@ -118,12 +123,13 @@ public class MemberTableModel extends AbstractTableModel {
             members.set(row - 1, member1);
         }
         fireTableDataChanged();
-        getSelectionModel();
-        listSelectionModel.clearSelection();
+        getSelectionModel().setValueIsAdjusting(true);
+        getSelectionModel().clearSelection();
         for (int row : selectedRows) {
             row--;
-            listSelectionModel.addSelectionInterval(row, row);
+            getSelectionModel().addSelectionInterval(row, row);
         }
+        getSelectionModel().setValueIsAdjusting(false);
         fireMakeMemberVisible(selectedRows[0] - 1);
     }
 
@@ -140,11 +146,13 @@ public class MemberTableModel extends AbstractTableModel {
         }
         fireTableDataChanged();
         getSelectionModel();
-        listSelectionModel.clearSelection();
+        getSelectionModel().setValueIsAdjusting(true);
+        getSelectionModel().clearSelection();
         for (int row : selectedRows) {
             row++;
-            listSelectionModel.addSelectionInterval(row, row);
+            getSelectionModel().addSelectionInterval(row, row);
         }
+        getSelectionModel().setValueIsAdjusting(false);
         fireMakeMemberVisible(selectedRows[0] + 1);
     }
 
@@ -289,10 +297,12 @@ public class MemberTableModel extends AbstractTableModel {
             members.add(idx, member);
         }
         fireTableDataChanged();
+        getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
         for (int i = 0; i < primitives.size(); i++) {
             getSelectionModel().addSelectionInterval(idx + i, idx + i);
         }
+        getSelectionModel().setValueIsAdjusting(false);
         fireMakeMemberVisible(idx);
     }
 
@@ -306,10 +316,12 @@ public class MemberTableModel extends AbstractTableModel {
             j++;
         }
         fireTableDataChanged();
+        getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
         for (int i = 0; i < primitives.size(); i++) {
             getSelectionModel().addSelectionInterval(idx + 1 + i, idx + 1 + i);
         }
+        getSelectionModel().setValueIsAdjusting(false);
         fireMakeMemberVisible(idx + 1);
     }
 
@@ -361,6 +373,31 @@ public class MemberTableModel extends AbstractTableModel {
     }
 
     /**
+     * Replies the set of selected referers. Never null, but may be empty.
+     * 
+     * @return the set of selected referers
+     */
+    public Set<OsmPrimitive> getSelectedReferers() {
+        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        for (RelationMember m: getSelectedMembers()) {
+            ret.add(m.member);
+        }
+        return ret;
+    }
+
+    /**
+     * Replies true, if the selected {@see OsmPrimitive}s in the layer belonging
+     * to this model are in sync with the selected referers in this model.
+     * 
+     * @return
+     */
+    public boolean selectionsAreInSync() {
+        HashSet<OsmPrimitive> s1 = new HashSet<OsmPrimitive>(getSelectedReferers());
+        if (s1.size() > layer.data.getSelected().size()) return false;
+        s1.removeAll(layer.data.getSelected());
+        return s1.isEmpty();
+    }
+    /**
      * Selects the members in the collection selectedMembers
      * 
      * @param selectedMembers the collection of selected members
@@ -385,10 +422,12 @@ public class MemberTableModel extends AbstractTableModel {
         // select the members
         //
         Collections.sort(selectedIndices);
+        getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
         for (int row : selectedIndices) {
             getSelectionModel().addSelectionInterval(row, row);
         }
+        getSelectionModel().setValueIsAdjusting(false);
 
         // make the first selected member visible
         //
@@ -440,6 +479,51 @@ public class MemberTableModel extends AbstractTableModel {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Selects all mebers which refer to {@see OsmPrimitive}s in the collections
+     * <code>primitmives</code>. Does nothing is primitives is null.
+     * 
+     * @param primitives the collection of primitives
+     */
+    public void selectMembersReferringTo(Collection<? extends OsmPrimitive> primitives) {
+        if (primitives == null || primitives.isEmpty()) return;
+        getSelectionModel().setValueIsAdjusting(true);
+        getSelectionModel().clearSelection();
+        for (int i=0; i< members.size();i++) {
+            RelationMember m = members.get(i);
+            if (primitives.contains(m.member)) {
+                this.getSelectionModel().addSelectionInterval(i,i);
+            }
+        }
+        getSelectionModel().setValueIsAdjusting(false);
+        if (getSelectedIndices().size() > 0) {
+            fireMakeMemberVisible(getSelectedIndices().get(0));
+        }
+    }
+
+    /**
+     * Replies true if the layer this model belongs to is equal to the active
+     * layer
+     * 
+     * @return true if the layer this model belongs to is equal to the active
+     * layer
+     */
+    protected boolean isActiveLayer() {
+        if (Main.map == null || Main.map.mapView == null) return false;
+        return Main.map.mapView.getActiveLayer() == layer;
+    }
+
+
+    /* ------------------------------------------------------------------------- */
+    /* Interface SelectionChangedListener                                        */
+    /* ------------------------------------------------------------------------- */
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        // ignore selection change events if they happen for a dataset in another
+        // layer
+        if (!isActiveLayer()) return;
+        selectMembersReferringTo(newSelection);
     }
 
     /**
