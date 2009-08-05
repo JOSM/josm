@@ -38,7 +38,12 @@ public final class Way extends OsmPrimitive {
      * @since 1862
      */
     public List<Node> getNodes() {
-        return new CopyList<Node>(nodes.toArray(new Node[nodes.size()]));
+        //return new CopyList<Node>(nodes.toArray(new Node[nodes.size()]));
+        // FIXME: temporary switch back to classic ArrayList due to #3194
+        //
+        ArrayList<Node> ret = new ArrayList<Node>();
+        ret.addAll(nodes);
+        return ret;
     }
 
     /**
