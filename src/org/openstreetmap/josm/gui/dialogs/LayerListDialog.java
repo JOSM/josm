@@ -24,11 +24,13 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
@@ -128,6 +130,10 @@ public class LayerListDialog extends ToggleDialog {
 
         //-- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
+        layerList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"deleteLayer"
+        );
+        layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
         buttonPanel.add(new SideButton(deleteLayerAction, "delete"));
 
@@ -135,7 +141,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Create an layerlist and attach it to the given mapView.
+     * Create an layer list and attach it to the given mapView.
      */
     protected LayerListDialog(MapFrame mapFrame) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
@@ -185,6 +191,14 @@ public class LayerListDialog extends ToggleDialog {
         void updateEnabledState();
     }
 
+    /**
+     * Wires <code>listener</code> to <code>listSelectionModel</code> in such a way, that
+     * <code>listener</code> receives a {@see IEnabledStateUpdating#updateEnabledState()}
+     * on every {@see ListSelectionEvent}.
+     * 
+     * @param listener  the listener
+     * @param listSelectionModel  the source emitting {@see ListSelectionEvent}s
+     */
     protected void adaptTo(final IEnabledStateUpdating listener, ListSelectionModel listSelectionModel) {
         listSelectionModel.addListSelectionListener(
                 new ListSelectionListener() {
@@ -195,6 +209,14 @@ public class LayerListDialog extends ToggleDialog {
         );
     }
 
+    /**
+     * Wires <code>listener</code> to <code>listModel</code> in such a way, that
+     * <code>listener</code> receives a {@see IEnabledStateUpdating#updateEnabledState()}
+     * on every {@see ListDataEvent}.
+     * 
+     * @param listener  the listener
+     * @param listSelectionModel  the source emitting {@see ListDataEvent}s
+     */
     protected void adaptTo(final IEnabledStateUpdating listener, ListModel listModel) {
         listModel.addListDataListener(
                 new ListDataListener() {
@@ -212,7 +234,13 @@ public class LayerListDialog extends ToggleDialog {
                 }
         );
     }
-
+    /**
+     * Wires <code>listener</code> to {@see MapView} in such a way, that
+     * <code>listener</code> receives a {@see IEnabledStateUpdating#updateEnabledState()}
+     * on every {@see LayerChangeListener}-event emitted by {@see MapView}.
+     * 
+     * @param listener  the listener
+     */
     protected void adaptToLayerChanges(final IEnabledStateUpdating listener) {
         Layer.listeners.add(
                 new LayerChangeListener() {
@@ -373,6 +401,8 @@ public class LayerListDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             if (this.layer == null) {
                 List<Layer> selectedLayers = getModel().getSelectedLayers();
+                if (selectedLayers.isEmpty())
+                    return;
                 if (selectedLayers.size() == 1) {
                     deleteSingleLayer(selectedLayers.get(0));
                 } else {
@@ -472,7 +502,10 @@ public class LayerListDialog extends ToggleDialog {
             } else {
                 toActivate = model.getSelectedLayers().get(0);
             }
-            getModel().activateLayer(toActivate);
+            // model is  going to be updated via LayerChangeListener
+            // and PropertyChangeEvents
+            Main.map.mapView.setActiveLayer(toActivate);
+            toActivate.setVisible(true);
         }
 
         protected boolean isActiveLayer(Layer layer) {
@@ -661,7 +694,7 @@ public class LayerListDialog extends ToggleDialog {
 
     /**
      * The layer list model. The model manages a list of layers and provides methods for
-     * moving layers up and down, for toggling their visibiliy, for activating a layer.
+     * moving layers up and down, for toggling their visibility, and for activating a layer.
      * 
      * The model is a {@see ListModel} and it provides a {@see ListSelectionModel}. It expectes
      * to be configured with a {@see DefaultListSelectionModel}. The selection model is used
@@ -669,6 +702,9 @@ public class LayerListDialog extends ToggleDialog {
      * 
      * The model manages a list of {@see LayerListModelListener} which are mainly notified if
      * the model requires views to make a specific list entry visible.
+     * 
+     * It also listens to {@see PropertyChangeEvent}s of every {@see Layer} it manages, in particular to
+     * the properties {@see Layer#VISIBLE_PROP} and {@see Layer#NAME_PROP}.
      */
     public class LayerListModel extends DefaultListModel implements LayerChangeListener, PropertyChangeListener{
 
@@ -810,6 +846,7 @@ public class LayerListDialog extends ToggleDialog {
         protected void onRemoveLayer(Layer layer) {
             if (layer == null)
                 return;
+            layer.removePropertyChangeListener(this);
             int size = getSize();
             List<Integer> rows = getSelectedRows();
             if (rows.isEmpty() && size > 0) {
@@ -828,6 +865,9 @@ public class LayerListDialog extends ToggleDialog {
             if (layer == null) return;
             layer.addPropertyChangeListener(this);
             fireContentsChanged(this, 0, getSize());
+            int idx = getLayers().indexOf(layer);
+            selectionModel.setSelectionInterval(idx, idx);
+            ensureSelectedIsVisible();
         }
 
         /**
@@ -957,21 +997,6 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Activates the layer <code>layer</code>
-         * 
-         * @param layer the layer
-         */
-        public void activateLayer(Layer layer) {
-            if (layer == null)
-                return;
-            Main.map.mapView.setActiveLayer(layer);
-            layer.setVisible(true);
-            int idx = getLayers().indexOf(layer);
-            selectionModel.setSelectionInterval(idx,idx);
-            ensureSelectedIsVisible();
-        }
-
-        /**
          * Replies the list of layers currently managed by {@see MapView}.
          * Never null, but can be empty.
          * 
@@ -982,6 +1007,36 @@ public class LayerListDialog extends ToggleDialog {
             if (Main.map == null || Main.map.mapView == null)
                 return Collections.<Layer>emptyList();
             return Main.map.mapView.getAllLayersAsList();
+        }
+
+        /**
+         * Ensures that at least one layer is selected in the layer dialog
+         * 
+         */
+        protected void ensureActiveSelected() {
+            if (getLayers().size() == 0) return;
+            if (getActiveLayer() != null) {
+                // there's an active layer - select it and make it
+                // visible
+                int idx = getLayers().indexOf(getActiveLayer());
+                selectionModel.setSelectionInterval(idx, idx);
+                ensureSelectedIsVisible();
+            } else {
+                // no active layer - select the first one and make
+                // it visible
+                selectionModel.setSelectionInterval(0, 0);
+                ensureSelectedIsVisible();
+            }
+        }
+
+        /**
+         * Replies the active layer. null, if no active layer is available
+         * 
+         * @return the active layer. null, if no active layer is available
+         */
+        protected Layer getActiveLayer() {
+            if (Main.map == null || Main.map.mapView == null) return null;
+            return Main.map.mapView.getActiveLayer();
         }
 
         /* ------------------------------------------------------------------------------ */
@@ -1016,6 +1071,7 @@ public class LayerListDialog extends ToggleDialog {
                     fireContentsChanged(this, idx,idx);
                 }
             }
+            ensureActiveSelected();
         }
 
         public void layerAdded(Layer newLayer) {
@@ -1057,18 +1113,46 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
+    /**
+     * Creates a {@see ShowHideLayerAction} for <code>layer</code> in the
+     * context of this {@see LayerListDialog}.
+     * 
+     * @param layer the layer
+     * @return the action
+     */
     public ShowHideLayerAction createShowHideLayerAction(Layer layer) {
         return new ShowHideLayerAction(layer);
     }
 
+    /**
+     * Creates a {@see DeleteLayerAction} for <code>layer</code> in the
+     * context of this {@see LayerListDialog}.
+     * 
+     * @param layer the layer
+     * @return the action
+     */
     public DeleteLayerAction createDeleteLayerAction(Layer layer) {
         return new DeleteLayerAction(layer);
     }
 
+    /**
+     * Creates a {@see ActivateLayerAction} for <code>layer</code> in the
+     * context of this {@see LayerListDialog}.
+     * 
+     * @param layer the layer
+     * @return the action
+     */
     public ActivateLayerAction createActivateLayerAction(Layer layer) {
         return new ActivateLayerAction(layer);
     }
 
+    /**
+     * Creates a {@see MergeLayerAction} for <code>layer</code> in the
+     * context of this {@see LayerListDialog}.
+     * 
+     * @param layer the layer
+     * @return the action
+     */
     public MergeAction createMergeLayerAction(Layer layer) {
         return new MergeAction(layer);
     }
