@@ -1456,12 +1456,16 @@ public class GenericRelationEditor extends RelationEditor {
      */
     class SelectionSynchronizer implements ListSelectionListener, SelectionChangedListener{
         public void valueChanged(ListSelectionEvent e) {
+            // as long as the model is computing the final selection it emits selection
+            // change events with getValueIsAdjusting() true. Ignore these events, only
+            // handle the final selection update. Otherwise, infinite loops of property
+            // change events occur.
+            //
             if (e.getValueIsAdjusting())
                 return;
 
-            // Avoid endless loops. memberTableModel is registered as SelectionChangeListener
-            // too. Only update the selection if it is not in sync with what is already
-            // selected.
+            // Avoid infinite loop.  Only update the selection if it is not in sync with what
+            // is already selected. Avoids infinite loops of property change events.
             //
             if (!memberTableModel.selectionsAreInSync()) {
                 getLayer().data.setSelected(memberTableModel.getSelectedReferers());

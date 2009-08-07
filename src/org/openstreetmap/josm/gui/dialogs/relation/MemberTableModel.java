@@ -393,7 +393,7 @@ public class MemberTableModel extends AbstractTableModel {
      */
     public boolean selectionsAreInSync() {
         HashSet<OsmPrimitive> s1 = new HashSet<OsmPrimitive>(getSelectedReferers());
-        if (s1.size() > layer.data.getSelected().size()) return false;
+        if (s1.size() != layer.data.getSelected().size()) return false;
         s1.removeAll(layer.data.getSelected());
         return s1.isEmpty();
     }
@@ -488,7 +488,7 @@ public class MemberTableModel extends AbstractTableModel {
      * @param primitives the collection of primitives
      */
     public void selectMembersReferringTo(Collection<? extends OsmPrimitive> primitives) {
-        if (primitives == null || primitives.isEmpty()) return;
+        if (primitives == null) return;
         getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
         for (int i=0; i< members.size();i++) {
