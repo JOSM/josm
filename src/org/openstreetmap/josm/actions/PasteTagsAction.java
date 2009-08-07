@@ -38,12 +38,8 @@ public final class PasteTagsAction extends JosmAction {
 
         for (Iterator<? extends OsmPrimitive> it = pasteBufferSubset.iterator(); it.hasNext();) {
             OsmPrimitive osm = it.next();
-            Map<String, String> m = osm.keys;
-            if(m == null) {
-                continue;
-            }
 
-            for (String key : m.keySet()) {
+            for (String key : osm.keySet()) {
                 clist.add(new ChangePropertyCommand(selectionSubset, key, osm.get(key)));
             }
         }

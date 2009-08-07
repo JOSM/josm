@@ -58,7 +58,7 @@ public class JoinNodeWayAction extends JosmAction {
         Collection<Command> cmds = new LinkedList<Command>();
         for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
             Way w = insertPoint.getKey();
-            List<Node> nodesToAdd = new ArrayList<Node>(w.getNodes());
+            List<Node> nodesToAdd = w.getNodes();
             List<Integer> is = insertPoint.getValue();
             pruneSuccsAndReverse(is);
             for (int i : is) {

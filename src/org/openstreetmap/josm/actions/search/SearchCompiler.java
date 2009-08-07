@@ -235,7 +235,7 @@ public class SearchCompiler {
             case ANY_VALUE:
                 return osm.get(key) != null;
             case ANY_KEY:
-                for (String v:osm.keys.values()) {
+                for (String v:osm.getKeys().values()) {
                     if (v.equals(value))
                         return true;
                 }
@@ -243,7 +243,7 @@ public class SearchCompiler {
             case EXACT:
                 return value.equals(osm.get(key));
             case ANY_KEY_REGEXP:
-                for (String v:osm.keys.values()) {
+                for (String v:osm.getKeys().values()) {
                     if (valuePattern.matcher(v).matches())
                         return true;
                 }

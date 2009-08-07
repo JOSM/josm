@@ -84,7 +84,7 @@ public class OsmReader {
 
         public void copyTo(OsmPrimitive osm) {
             osm.id = id;
-            osm.keys = keys;
+            osm.setKeys(keys);
             osm.modified = modified;
             osm.setSelected(selected);
             osm.deleted = deleted;

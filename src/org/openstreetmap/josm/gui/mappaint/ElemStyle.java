@@ -1,7 +1,6 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -30,13 +29,13 @@ abstract public class ElemStyle
         }
         return code;
     }
-    public boolean check(Map<String, String> keys)
+    public boolean check(OsmPrimitive primitive)
     {
         if(rules == null)
             return true;
         for(Rule r : rules)
         {
-            String k = keys.get(r.key);
+            String k = primitive.get(r.key);
             String bv = OsmUtils.getNamedOsmBoolean(r.boolValue);
             if(k == null || (r.value != null && !k.equals(r.value))
             || (bv != null && !bv.equals(OsmUtils.getNamedOsmBoolean(k))))

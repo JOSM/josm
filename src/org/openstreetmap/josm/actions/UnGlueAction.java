@@ -151,7 +151,7 @@ public class UnGlueAction extends JosmAction {
         LinkedList<Command> cmds = new LinkedList<Command>();
 
         Node c = new Node(selectedNode);
-        c.keys = null;
+        c.removeAll();
         c.setSelected(false);
         cmds.add(new ChangeCommand(selectedNode, c));
 

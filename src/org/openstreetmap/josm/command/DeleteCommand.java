@@ -393,9 +393,7 @@ public class DeleteCommand extends Command {
             cmds.add(new ChangeCommand(ws.way, wnew));
 
             Way wnew2 = new Way();
-            if (wnew.keys != null) {
-                wnew2.keys = new HashMap<String, String>(wnew.keys);
-            }
+            wnew2.setKeys(wnew.getKeys());
             wnew2.setNodes(n2);
             cmds.add(new AddCommand(wnew2));
 

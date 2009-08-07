@@ -235,8 +235,33 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     /**
      * The key/value list for this primitive.
+     * @deprecated This field will became private or protected in future, use api instead
      */
+    @Deprecated
     public Map<String, String> keys;
+
+    /**
+     *
+     * @return Keys of this primitive. Changes made in returned map are not mapped
+     * back to the primitive, use setKeys() to modify the keys
+     * @since 1924
+     */
+    public Map<String, String> getKeys() {
+        // TODO More effective map
+        return new HashMap<String, String>(keys);
+    }
+
+    /**
+     *
+     * @since 1924
+     */
+    public void setKeys(Map<String, String> keys) {
+        if (keys == null) {
+            this.keys = null;
+        } else {
+            this.keys = new HashMap<String, String>(keys);
+        }
+    }
 
     /**
      * Set the given value to the given key
@@ -268,8 +293,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     * Added in revision 1843
-     * Please do not use in plug-ins until this version becomes JOSM tested
+     *
+     * @since 1843
      */
     public final void removeAll() {
         keys = null;
@@ -293,8 +318,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     * Added in revision 1843
-     * Please do not use in plug-ins until this version becomes JOSM tested
+     *
+     * @since 1843
      */
     public final boolean hasKeys() {
         return keys != null && !keys.isEmpty();

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -36,14 +36,12 @@ public class ElemStyles
             modifiersList = new LinkedList<LineElemStyle>();
             areasList = new LinkedList<AreaElemStyle>();
         }
-        private IconElemStyle getNode(Map<String, String> keys)
+        private IconElemStyle getNode(OsmPrimitive primitive)
         {
             IconElemStyle ret = null;
-            Iterator<String> iterator = keys.keySet().iterator();
-            while(iterator.hasNext())
-            {
-                String key = iterator.next();
-                String val = keys.get(key);
+            for (Entry<String, String> entry:primitive.entrySet()) {
+                String key = entry.getKey();
+                String val = entry.getValue();
                 IconElemStyle style;
                 if((style = icons.get("n" + key + "=" + val)) != null)
                 {
@@ -63,22 +61,20 @@ public class ElemStyles
             }
             for(IconElemStyle s : iconsList)
             {
-                if((ret == null || s.priority > ret.priority) && s.check(keys))
+                if((ret == null || s.priority > ret.priority) && s.check(primitive))
                     ret = s;
             }
             return ret;
         }
-        private ElemStyle get(Map<String, String> keys, boolean noclosed)
+        private ElemStyle get(OsmPrimitive primitive, boolean noclosed)
         {
             AreaElemStyle retArea = null;
             LineElemStyle retLine = null;
             String linestring = null;
             HashMap<String, LineElemStyle> over = new HashMap<String, LineElemStyle>();
-            Iterator<String> iterator = keys.keySet().iterator();
-            while(iterator.hasNext())
-            {
-                String key = iterator.next();
-                String val = keys.get(key);
+            for (Entry<String, String> entry:primitive.entrySet()) {
+                String key = entry.getKey();
+                String val = entry.getValue();
                 AreaElemStyle styleArea;
                 LineElemStyle styleLine;
                 String idx = "n" + key + "=" + val;
@@ -124,18 +120,18 @@ public class ElemStyles
             for(AreaElemStyle s : areasList)
             {
                 if((retArea == null || s.priority > retArea.priority)
-                && (!noclosed || !s.closed) && s.check(keys))
+                && (!noclosed || !s.closed) && s.check(primitive))
                     retArea = s;
             }
             for(LineElemStyle s : linesList)
             {
                 if((retLine == null || s.priority > retLine.priority)
-                && s.check(keys))
+                && s.check(primitive))
                     retLine = s;
             }
             for(LineElemStyle s : modifiersList)
             {
-                if(s.check(keys))
+                if(s.check(primitive))
                     over.put(s.getCode(), s);
             }
             over.remove(linestring);
@@ -157,17 +153,17 @@ public class ElemStyles
 
         public ElemStyle get(OsmPrimitive osm)
         {
-            return (osm.keys == null) ? null :
-            ((osm instanceof Node) ? getNode(osm.keys) : get(osm.keys,
+            return (!osm.hasKeys()) ? null :
+            ((osm instanceof Node) ? getNode(osm) : get(osm,
             osm instanceof Way && !((Way)osm).isClosed()));
         }
 
         public ElemStyle getArea(Way osm)
         {
-            if(osm.keys != null)
+            if(osm.hasKeys())
             {
                 /* force area mode also for unclosed ways */
-                ElemStyle style = get(osm.keys, false);
+                ElemStyle style = get(osm, false);
                 if(style != null && style instanceof AreaElemStyle)
                     return style;
             }
@@ -176,12 +172,12 @@ public class ElemStyles
 
         public IconElemStyle getIcon(OsmPrimitive osm)
         {
-            return (osm.keys == null) ? null : getNode(osm.keys);
+            return osm.hasKeys() ? getNode(osm): null;
         }
 
         public boolean isArea(OsmPrimitive o)
         {
-            if(o.keys != null && !(o instanceof Node))
+            if(o.hasKeys() && !(o instanceof Node))
             {
                 boolean noclosed = o instanceof Way && !((Way)o).isClosed();
                 Iterator<String> iterator = o.keySet().iterator();
@@ -199,7 +195,7 @@ public class ElemStyles
                 }
                 for(AreaElemStyle s : areasList)
                 {
-                    if(!(s.closed && noclosed) && s.check(o.keys))
+                    if(!(s.closed && noclosed) && s.check(o))
                         return true;
                 }
             }
