@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -56,6 +57,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ConflictAddCommand;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -199,7 +201,6 @@ public class GenericRelationEditor extends RelationEditor {
         );
 
         memberTableModel.setSelectedMembers(selectedMembers);
-        DataSet.selListeners.add(memberTableModel);
     }
 
     /**
@@ -335,7 +336,9 @@ public class GenericRelationEditor extends RelationEditor {
         editor.setAutoCompletionCache(acCache);
         editor.setAutoCompletionList(acList);
 
-        memberTable.getSelectionModel().addListSelectionListener(new SelectionSynchronizer());
+        SelectionSynchronizer synchronizer = new SelectionSynchronizer();
+        memberTable.getSelectionModel().addListSelectionListener(synchronizer);
+        DataSet.selListeners.add(synchronizer);
         memberTable.addMouseListener(new MemberTableDblClickAdapter());
         memberTableModel.addMemberModelListener(memberTable);
 
@@ -1450,9 +1453,8 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * Updates the selection in the current data set with the selected referers in
      * in the member table.
-     *
      */
-    class SelectionSynchronizer implements ListSelectionListener {
+    class SelectionSynchronizer implements ListSelectionListener, SelectionChangedListener{
         public void valueChanged(ListSelectionEvent e) {
             if (e.getValueIsAdjusting())
                 return;
@@ -1463,6 +1465,15 @@ public class GenericRelationEditor extends RelationEditor {
             //
             if (!memberTableModel.selectionsAreInSync()) {
                 getLayer().data.setSelected(memberTableModel.getSelectedReferers());
+            }
+        }
+
+        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+            // ignore selection change events if they happen for a dataset in another
+            // layer
+            if (!memberTableModel.isActiveLayer()) return;
+            if (!memberTableModel.selectionsAreInSync()) {
+                memberTableModel.selectMembersReferringTo(newSelection);
             }
         }
     }
@@ -1549,6 +1560,4 @@ public class GenericRelationEditor extends RelationEditor {
             }
         }
     }
-
-
 }

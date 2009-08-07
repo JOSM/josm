@@ -26,7 +26,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public class MemberTableModel extends AbstractTableModel implements SelectionChangedListener{
+public class MemberTableModel extends AbstractTableModel {
 
     private ArrayList<RelationMember> members;
     private DefaultListSelectionModel listSelectionModel;
@@ -513,17 +513,6 @@ public class MemberTableModel extends AbstractTableModel implements SelectionCha
     protected boolean isActiveLayer() {
         if (Main.map == null || Main.map.mapView == null) return false;
         return Main.map.mapView.getActiveLayer() == layer;
-    }
-
-
-    /* ------------------------------------------------------------------------- */
-    /* Interface SelectionChangedListener                                        */
-    /* ------------------------------------------------------------------------- */
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        // ignore selection change events if they happen for a dataset in another
-        // layer
-        if (!isActiveLayer()) return;
-        selectMembersReferringTo(newSelection);
     }
 
     /**
