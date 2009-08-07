@@ -130,10 +130,12 @@ public class LayerListDialog extends ToggleDialog {
 
         //-- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
-        layerList.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"deleteLayer"
-        );
-        layerList.getActionMap().put("deleteLayer", deleteLayerAction);
+        // #3203: grabs DELETE even for primitives on the map
+        // FIXME: disabling for now, don't understand yet what's going on
+        //        layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        //                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"deleteLayer"
+        //        );
+        //        layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
         buttonPanel.add(new SideButton(deleteLayerAction, "delete"));
 
