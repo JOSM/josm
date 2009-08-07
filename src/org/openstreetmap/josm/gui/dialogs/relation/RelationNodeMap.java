@@ -29,9 +29,13 @@ public class RelationNodeMap {
         for (i = 0; i < members.size(); ++i) {
             RelationMember m = members.get(i);
             if (m.member.incomplete)
-                // throw an exception?
-                return;
-            add(i, m);
+            {
+                remaining.add(Integer.valueOf(i));
+            }
+            else
+            {
+                add(i, m);
+            }
         }
     }
 
