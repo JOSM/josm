@@ -311,7 +311,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 l.paint(tempG, this);
             }
         }
-        if (activeLayer != null) {
+        if (activeLayer != null && activeLayer.isVisible()) {
             activeLayer.paint(tempG, this);
         }
 
