@@ -13,6 +13,28 @@ public class RelationMember {
     public OsmPrimitive member;
 
     /**
+     *
+     * @return Role name or "". Never returns null
+     * @since 1930
+     */
+    public String getRole() {
+        if (role == null) {
+            return "";
+        } else {
+            return role;
+        }
+    }
+
+    /**
+     *
+     * @return True if role is set
+     * @since 1930
+     */
+    public boolean hasRole() {
+        return role != null && !"".equals(role);
+    }
+
+    /**
      * Default constructor. Does nothing.
      * @deprecated Use other constructors because RelationMember class will became immutable
      * in the future

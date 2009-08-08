@@ -133,7 +133,7 @@ public class MergeNodesAction extends JosmAction {
                 if (rm.member instanceof Node) {
                     for (Node n : allNodes) {
                         if (rm.member == n) {
-                            Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.role);
+                            Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.getRole());
                             HashSet<Node> nodelinks = new HashSet<Node>();
                             if (backlinks.containsKey(pair)) {
                                 nodelinks = backlinks.get(pair);
@@ -281,7 +281,7 @@ public class MergeNodesAction extends JosmAction {
                 // Don't copy the member if it points to one of our nodes,
                 // just keep a note to re-add it later on.
                 if (allNodes.contains(rm.member)) {
-                    rolesToReAdd.add(rm.role);
+                    rolesToReAdd.add(rm.getRole());
                 } else {
                     newRel.members.add(rm);
                 }

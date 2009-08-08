@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the {@see TableCellRenderer} used in the tables of {@see RelationMemberMerger}.
- * 
+ *
  */
 public  class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
     private final static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
@@ -47,7 +47,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
 
     /**
      * Load the image icon for an OSM primitive of type node
-     * 
+     *
      * @return the icon; null, if not found
      */
     protected void loadIcons() {
@@ -152,8 +152,8 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     }
 
     protected void renderRole(RelationMember member) {
-        setText(member.role == null ? "" : member.role);
-        setToolTipText(member.role == null ? "" : member.role);
+        setText(member.getRole());
+        setToolTipText(member.getRole());
     }
 
     protected void renderPrimitive(RelationMember member) {

@@ -47,7 +47,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
             return false;
         }
 
-        oldRole = relation.getMember(position).role;
+        oldRole = relation.getMember(position).getRole();
         relation.getMember(position).role = newRole;
 
         oldModified = relation.modified;

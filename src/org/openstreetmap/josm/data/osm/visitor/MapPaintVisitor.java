@@ -555,31 +555,31 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         r.putError(tr("Way ''{0}'' with less than two points.",
                         w.getName()), true);
                     }
-                    else if("from".equals(m.role)) {
+                    else if("from".equals(m.getRole())) {
                         if(fromWay != null)
                             r.putError(tr("More than one \"from\" way found."), true);
                         else {
                             fromWay = w;
                         }
-                    } else if("to".equals(m.role)) {
+                    } else if("to".equals(m.getRole())) {
                         if(toWay != null)
                             r.putError(tr("More than one \"to\" way found."), true);
                         else {
                             toWay = w;
                         }
-                    } else if("via".equals(m.role)) {
+                    } else if("via".equals(m.getRole())) {
                         if(via != null)
                             r.putError(tr("More than one \"via\" found."), true);
                         else
                             via = w;
                     }
                     else
-                        r.putError(tr("Unknown role ''{0}''.", m.role), true);
+                        r.putError(tr("Unknown role ''{0}''.", m.getRole()), true);
                 }
                 else if(m.member instanceof Node)
                 {
                     Node n = (Node) m.member;
-                    if("via".equals(m.role))
+                    if("via".equals(m.getRole()))
                     {
                         if(via != null)
                             r.putError(tr("More than one \"via\" found."), true);
@@ -587,7 +587,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                             via = n;
                     }
                     else
-                        r.putError(tr("Unknown role ''{0}''.", m.role), true);
+                        r.putError(tr("Unknown role ''{0}''.", m.getRole()), true);
                 }
                 else
                     r.putError(tr("Unknown member type for ''{0}''.", m.member.getName()), true);
@@ -800,15 +800,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         r.putError(tr("Way ''{0}'' with less than two points.",
                         w.getName()), true);
                     }
-                    else if("inner".equals(m.role))
+                    else if("inner".equals(m.getRole()))
                         inner.add(w);
-                    else if("outer".equals(m.role))
+                    else if("outer".equals(m.getRole()))
                         outer.add(w);
                     else
                     {
                         r.putError(tr("No useful role ''{0}'' for Way ''{1}''.",
-                        m.role == null ? "" : m.role, w.getName()), true);
-                        if(m.role == null || m.role.length() == 0)
+                          m.getRole(), w.getName()), true);
+                        if(!m.hasRole())
                             outer.add(w);
                         else if(r.isSelected())
                             drawSelectedMember(m.member, styles != null

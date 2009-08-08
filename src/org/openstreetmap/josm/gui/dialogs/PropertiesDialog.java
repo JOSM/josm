@@ -534,9 +534,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     String text = null;
                     for (RelationMember r : col) {
                         if (text == null) {
-                            text = r.role;
+                            text = r.getRole();
                         }
-                        else if (!text.equals(r.role)) {
+                        else if (!text.equals(r.getRole())) {
                             text = tr("<different>");
                             break;
                         }
@@ -594,8 +594,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                 for (OsmPrimitive osm : sel) {
                                     if (rm.member == osm)
                                     {
-                                        RelationMember mem = new RelationMember(rm.role, rm.member);
-                                        rel.members.remove(mem);
+                                        rel.members.remove(rm);
                                         break;
                                     }
                                 }

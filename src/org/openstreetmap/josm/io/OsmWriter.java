@@ -134,7 +134,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
                 out.print("    <member type='");
                 out.print(OsmPrimitiveType.from(em.member).getAPIName());
                 out.println("' ref='"+getUsedId(em.member)+"' role='" +
-                        XmlWriter.encode(em.role == null ? "" : em.role) + "' />");
+                        XmlWriter.encode(em.getRole()) + "' />");
             }
             addTags(e, "relation", false);
         }

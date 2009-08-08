@@ -118,7 +118,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             int position = 0;
             for (RelationMember member : relation.getMembers()) {
                 if (!member.member.hasEqualSemanticAttributes(oldway)
-                        || member.role.length() == 0) {
+                        || !member.hasRole()) {
                     position++;
                     continue;
                 }
@@ -126,8 +126,8 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 boolean found = false;
                 String newRole = null;
                 for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
-                    newRole = prefixSuffixSwitcher.apply(member.role);
-                    if (!newRole.equals(member.role)) {
+                    newRole = prefixSuffixSwitcher.apply(member.getRole());
+                    if (!newRole.equals(member.getRole())) {
                         found = true;
                         break;
                     }

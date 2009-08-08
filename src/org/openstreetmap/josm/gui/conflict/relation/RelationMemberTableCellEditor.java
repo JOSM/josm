@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 
 /**
  * {@see TableCellEditor} for the the role column in a table for {@see RelationMember}s.
- * 
+ *
  */
 public class RelationMemberTableCellEditor extends AbstractCellEditor implements TableCellEditor{
 
@@ -36,7 +36,7 @@ public class RelationMemberTableCellEditor extends AbstractCellEditor implements
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         RelationMember member = (RelationMember)value;
 
-        editor.setText(member.role == null ? "" : member.role);
+        editor.setText(member.getRole());
         editor.selectAll();
         return editor;
     }

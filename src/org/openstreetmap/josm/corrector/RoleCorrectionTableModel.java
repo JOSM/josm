@@ -41,7 +41,7 @@ CorrectionTableModel<RoleCorrection> {
         case 0:
             return NAME_FORMATTER.getName(roleCorrection.relation);
         case 1:
-            return roleCorrection.member.role;
+            return roleCorrection.member.getRole();
         case 2:
             return roleCorrection.newRole;
         }

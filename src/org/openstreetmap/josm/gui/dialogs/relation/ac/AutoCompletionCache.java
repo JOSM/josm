@@ -131,11 +131,8 @@ public class AutoCompletionCache {
      */
     protected void cacheRelationMemberRoles(Relation relation){
         for (RelationMember m: relation.getMembers()) {
-            if (m.role == null || m.role.trim().equals("")) {
-                continue;
-            }
-            if (!roleCache.contains(m.role)) {
-                roleCache.add(m.role);
+            if (m.hasRole() && !roleCache.contains(m.getRole())) {
+                roleCache.add(m.getRole());
             }
         }
     }

@@ -165,7 +165,7 @@ public class DeleteCommand extends Command {
         String role = new String();
         for (RelationMember m : ref.getMembers()) {
             if (m.member == osm) {
-                role = m.role;
+                role = m.getRole();
                 break;
             }
         }

@@ -315,11 +315,11 @@ public class SplitWayAction extends JosmAction {
                         }
 
                         int j = i;
-                        boolean backwards = "backward".equals(rm.role);
+                        boolean backwards = "backward".equals(rm.getRole());
                         for(Way wayToAdd : newWays)
                         {
-                            RelationMember em = new RelationMember(rm.role, wayToAdd);
-                            if(em.role != null && em.role.length() > 0 && !("multipolygon".equals(type))) {
+                            RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
+                            if(em.hasRole() && !("multipolygon".equals(type))) {
                                 warnmerole = true;
                             }
 

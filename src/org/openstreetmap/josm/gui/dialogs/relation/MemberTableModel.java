@@ -86,7 +86,7 @@ public class MemberTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return members.get(rowIndex).role;
+                return members.get(rowIndex).getRole();
             case 1:
                 return members.get(rowIndex).member;
             case 2:
@@ -385,7 +385,7 @@ public class MemberTableModel extends AbstractTableModel {
 
     /**
      * Replies the set of selected referers. Never null, but may be empty.
-     * 
+     *
      * @return the set of selected referers
      */
     public Set<OsmPrimitive> getChildPrimitives(Collection<? extends OsmPrimitive> referenceSet) {

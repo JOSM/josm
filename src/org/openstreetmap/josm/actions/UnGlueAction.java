@@ -334,7 +334,7 @@ public class UnGlueAction extends JosmAction {
                             newRel.members.clear();
                             rolesToReAdd = new HashSet<String>();
                         }
-                        rolesToReAdd.add(rm.role);
+                        rolesToReAdd.add(rm.getRole());
                     }
                 }
             }

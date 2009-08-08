@@ -23,10 +23,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
-        boolean ret =
-            (    (e1.role == null && e2.role == null)
-                    || (e1.role != null && e1.role.equals(e2.role))
-            );
+        boolean ret = e1.getRole().equals(e2.getRole());
         if (e1.member.id > 0 ) {
             ret = ret && (e1.member.id == e2.member.id);
         } else {
@@ -99,7 +96,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     protected RelationMember cloneEntryForMergedList(RelationMember entry) {
-        return new RelationMember(entry.role, entry.member);
+        return new RelationMember(entry);
     }
 
     /**
