@@ -114,7 +114,7 @@ public class MoveCommand extends Command {
     }
 
     @Override public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(new JLabel(tr("Move")+" "+nodes.size()+" "+trn("node","nodes",nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(trn("Move {0} node", "Move {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
     }
 
     public Collection<Node> getMovedNodes() {

@@ -139,7 +139,7 @@ public class RotateCommand extends Command {
     }
 
     @Override public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(new JLabel(tr("Rotate {0} {1}",nodes.size(),trn("node","nodes",nodes.size())), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+        return new DefaultMutableTreeNode(new JLabel(trn("Rotate {0} node", "Rotate {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
     }
 
     public Collection<Node> getRotatedNodes() {
