@@ -94,20 +94,14 @@ public class MultiFetchServerObjectReaderTest {
             for (int j = 0; j < numNodesInRelation;j++) {
                 int idx = (start + j) % 500;
                 Node n = nodes.get(idx);
-                RelationMember member = new RelationMember();
-                member.member = n;
-                member.role = "role-" + j;
-                r.members.add(member);
+                r.members.add(new RelationMember("role-" + j, n));
             }
             int numWaysInRelation = (int)Math.round(Math.random() * 10);
             start = (int)Math.round(Math.random() * numWays);
             for (int j = 0; j < numWaysInRelation;j++) {
                 int idx = (start + j) % 500;
                 Way w = ways.get(idx);
-                RelationMember member = new RelationMember();
-                member.member = w;
-                member.role = "role-" + j;
-                r.members.add(member);
+                r.members.add(new RelationMember("role-" + j, w));
             }
             ds.addPrimitive(r);
         }

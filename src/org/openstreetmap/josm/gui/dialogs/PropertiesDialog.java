@@ -594,9 +594,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                 for (OsmPrimitive osm : sel) {
                                     if (rm.member == osm)
                                     {
-                                        RelationMember mem = new RelationMember();
-                                        mem.role = rm.role;
-                                        mem.member = rm.member;
+                                        RelationMember mem = new RelationMember(rm.role, rm.member);
                                         rel.members.remove(mem);
                                         break;
                                     }

@@ -99,10 +99,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     protected RelationMember cloneEntryForMergedList(RelationMember entry) {
-        RelationMember member = new RelationMember();
-        member.role = entry.role;
-        member.member = entry.member;
-        return member;
+        return new RelationMember(entry.role, entry.member);
     }
 
     /**

@@ -121,7 +121,7 @@ public class OsmReader {
     private static class RelationMemberData {
         public String type;
         public long id;
-        public RelationMember relationMember;
+        public String role;
     }
 
     /**
@@ -203,7 +203,6 @@ public class OsmReader {
                     if (list == null)
                         throw new SAXException(tr("Found <member> element in non-relation."));
                     RelationMemberData emd = new RelationMemberData();
-                    emd.relationMember = new RelationMember();
                     String value = atts.getValue("ref");
                     if (value == null)
                         throw new SAXException(tr("Missing attribute \"ref\" on member in relation {0}",current.id));
@@ -219,7 +218,7 @@ public class OsmReader {
                         throw new SAXException(tr("Unexpected \"type\" on member {0} in relation {1}, got {2}.", Long.toString(emd.id), Long.toString(current.id), value));
                     emd.type= value;
                     value = atts.getValue("role");
-                    emd.relationMember.role = value;
+                    emd.role = value;
 
                     if (emd.id == 0)
                         throw new SAXException(tr("Incomplete <member> specification with ref=0"));
@@ -392,7 +391,7 @@ public class OsmReader {
      * before it is referenced. So we have to create all relations first,
      * and populate them later.
      */
-    private void createRelations() {
+    private void createRelations() throws SAXException {
 
         // pass 1 - create all relations
         for (Entry<OsmPrimitiveData, Collection<RelationMemberData>> e : relations.entrySet()) {
@@ -413,32 +412,32 @@ public class OsmReader {
             if (en == null) throw new Error("Failed to create relation " + e.getKey().id);
 
             for (RelationMemberData emd : e.getValue()) {
-                RelationMember em = emd.relationMember;
+                OsmPrimitive member;
                 if (emd.type.equals("node")) {
-                    em.member = findNode(emd.id);
-                    if (em.member == null) {
-                        em.member = new Node(emd.id);
-                        ds.addPrimitive(em.member);
+                    member = findNode(emd.id);
+                    if (member == null) {
+                        member = new Node(emd.id);
+                        ds.addPrimitive(member);
                     }
                 } else if (emd.type.equals("way")) {
-                    em.member = hm.get(emd.id);
-                    if (em.member == null) {
-                        em.member = findWay(emd.id);
+                    member = hm.get(emd.id);
+                    if (member == null) {
+                        member = findWay(emd.id);
                     }
-                    if (em.member == null) {
-                        em.member = new Way(emd.id);
-                        ds.addPrimitive(em.member);
+                    if (member == null) {
+                        member = new Way(emd.id);
+                        ds.addPrimitive(member);
                     }
                 } else if (emd.type.equals("relation")) {
-                    em.member = findRelation(emd.id);
-                    if (em.member == null) {
-                        em.member = new Relation(emd.id);
-                        ds.addPrimitive(em.member);
+                    member = findRelation(emd.id);
+                    if (member == null) {
+                        member = new Relation(emd.id);
+                        ds.addPrimitive(member);
                     }
                 } else {
-                    // this is an error.
+                    throw new SAXException(tr("Unknown relation member type {0}", emd.type));
                 }
-                en.members.add(em);
+                en.members.add(new RelationMember(emd.role, member));
             }
         }
         hm = null;

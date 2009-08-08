@@ -14,7 +14,10 @@ public class RelationMember {
 
     /**
      * Default constructor. Does nothing.
+     * @deprecated Use other constructors because RelationMember class will became immutable
+     * in the future
      */
+    @Deprecated
     public RelationMember() { }
 
     public RelationMember(String role, OsmPrimitive member) {
@@ -37,7 +40,7 @@ public class RelationMember {
 
     /**
      * Replies true, if this relation member refers to the primitive
-     * 
+     *
      * @param primitive  the primitive to check
      * @return true, if this relation member refers to the primitive
      */
