@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.projection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.ProjectionBounds;
 
 /**
  * Classes implementing this are able to convert lat/lon values to
@@ -24,10 +23,14 @@ public interface Projection {
     public static Projection[] allProjections = new Projection[]{
         new Epsg4326(),
         new Mercator(),
-        new Lambert(),
         new LambertEST(),
+        new Lambert(),
         new SwissGrid(),
-        new UTM()
+        new UTM(),
+        new UTM_20N_Guadeloupe_Ste_Anne(),
+        new UTM_20N_Guadeloupe_Fort_Marigot(),
+        new UTM_20N_Martinique_Fort_Desaix(),
+        new GaussLaborde_Reunion()
     };
 
     /**
