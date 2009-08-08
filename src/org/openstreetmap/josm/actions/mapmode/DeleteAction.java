@@ -101,6 +101,11 @@ public class DeleteAction extends MapMode {
             return;
         if(!Main.map.mapView.isActiveLayerVisible())
             return;
+
+        // request focus in order to enable the expected keyboard shortcuts
+        //
+        Main.map.mapView.requestFocus();
+
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
         boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;

@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -130,12 +133,10 @@ public class LayerListDialog extends ToggleDialog {
 
         //-- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
-        // #3203: grabs DELETE even for primitives on the map
-        // FIXME: disabling for now, don't understand yet what's going on
-        //        layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-        //                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"deleteLayer"
-        //        );
-        //        layerList.getActionMap().put("deleteLayer", deleteLayerAction);
+        layerList.getInputMap(JComponent.WHEN_FOCUSED).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"deleteLayer"
+        );
+        layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
         buttonPanel.add(new SideButton(deleteLayerAction, "delete"));
 

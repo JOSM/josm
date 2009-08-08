@@ -350,6 +350,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mousePressed(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerVisible())
             return;
+        // request focus in order to enable the expected keyboard shortcuts
+        //
+        Main.map.mapView.requestFocus();
 
         cancelDrawMode = false;
         if (! (Boolean)this.getValue("active")) return;

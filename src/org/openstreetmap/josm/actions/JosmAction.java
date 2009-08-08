@@ -55,15 +55,15 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      *
      * Use this super constructor to setup your action. It takes 5 parameters:
      *
-     * name - the action's text as displayed on the menu (if it is added to a menu)
-     * iconName - the filename of the icon to use
-     * tooltip - a longer description of the action that will be displayed in the tooltip. Please note
-     *           that html is not supported for menu action on some platforms
-     * shortcut - a ready-created shortcut object or null if you don't want a shortcut. But you always
-     *            do want a shortcut, remember you can alway register it with group=none, so you
-     *            won't be assigned a shurtcut unless the user configures one. If you pass null here,
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can always register it with group=none, so you
+     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
      *            the user CANNOT configure a shortcut for your action.
-     * register - register this action for the toolbar preferences?
+     * @param register register this action for the toolbar preferences?
      */
     public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
         super(name, iconName == null ? null : ImageProvider.get(iconName));

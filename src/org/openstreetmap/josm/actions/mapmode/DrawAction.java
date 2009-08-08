@@ -306,6 +306,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         if(!Main.map.mapView.isActiveLayerDrawable())
             return;
+        // request focus in order to enable the expected keyboard shortcuts
+        //
+        Main.map.mapView.requestFocus();
 
         if(e.getClickCount() > 1 && mousePos != null && mousePos.equals(oldMousePos)) {
             // A double click equals "user clicked last node again, finish way"
