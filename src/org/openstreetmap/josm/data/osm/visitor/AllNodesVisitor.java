@@ -43,7 +43,7 @@ public class AllNodesVisitor extends AbstractVisitor {
      */
     public void visit(Relation e) {
         for (RelationMember m : e.getMembers())
-            if (m.member instanceof Node) visit((Node)m.member);
+            if (m.isNode()) visit(m.getNode());
     }
     /**
      * @return All nodes the given primitive has.

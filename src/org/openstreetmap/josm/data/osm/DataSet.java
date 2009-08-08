@@ -403,7 +403,7 @@ public class DataSet implements Cloneable {
             Iterator<RelationMember> it = relation.getMembers().iterator();
             while(it.hasNext()) {
                 RelationMember member = it.next();
-                if (member.member.equals(primitive)) {
+                if (member.getMember().equals(primitive)) {
                     it.remove();
                 }
             }

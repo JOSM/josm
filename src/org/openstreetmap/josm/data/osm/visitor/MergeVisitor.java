@@ -192,13 +192,12 @@ public class MergeVisitor extends AbstractVisitor {
         boolean replacedSomething = false;
         LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
         for (RelationMember myMember : r.getMembers()) {
-            OsmPrimitive mergedMember = merged.get(myMember.member);
+            OsmPrimitive mergedMember = merged.get(myMember.getMember());
             if (mergedMember == null) {
                 newMembers.add(myMember);
             } else {
                 if (! mergedMember.deleted) {
-                    RelationMember newMember = new RelationMember(myMember);
-                    newMember.member = mergedMember;
+                    RelationMember newMember = new RelationMember(myMember.getRole(), mergedMember);
                     newMembers.add(newMember);
                 }
                 replacedSomething = true;

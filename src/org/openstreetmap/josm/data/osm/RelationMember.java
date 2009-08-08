@@ -35,6 +35,70 @@ public class RelationMember {
     }
 
     /**
+     *
+     * @return True if member is relation
+     * @since 1937
+     */
+    public boolean isRelation() {
+        return member instanceof Relation;
+    }
+
+    /**
+    *
+    * @return True if member is way
+    * @since 1937
+    */
+    public boolean isWay() {
+        return member instanceof Way;
+    }
+
+    /**
+    *
+    * @return True if member is node
+    * @since 1937
+    */
+    public boolean isNode() {
+        return member instanceof Node;
+    }
+
+    /**
+     *
+     * @return Member as relation
+     * @since 1937
+     */
+    public Relation getRelation() {
+        return (Relation)member;
+    }
+
+    /**
+    *
+    * @return Member as way
+    * @since 1937
+    */
+    public Way getWay() {
+        return (Way)member;
+    }
+
+    /**
+    *
+    * @return Member as node
+    * @since 1937
+    */
+    public Node getNode() {
+        return (Node)member;
+    }
+
+    /**
+    *
+    * @return Member
+    * @since 1937
+    */
+    public OsmPrimitive getMember() {
+        return member;
+    }
+
+
+    /**
      * Default constructor. Does nothing.
      * @deprecated Use other constructors because RelationMember class will became immutable
      * in the future

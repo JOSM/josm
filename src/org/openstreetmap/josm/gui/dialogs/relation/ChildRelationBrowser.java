@@ -365,8 +365,8 @@ public class ChildRelationBrowser extends JPanel {
         protected void rememberChildRelationsToDownload(Relation parent) {
             downloadedRelationIds.add(parent.id);
             for (RelationMember member: parent.getMembers()) {
-                if (member.member instanceof Relation) {
-                    Relation child = (Relation)member.member;
+                if (member.isRelation()) {
+                    Relation child = member.getRelation();
                     if (!downloadedRelationIds.contains(child)) {
                         relationsToDownload.push(child);
                     }

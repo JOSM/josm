@@ -33,8 +33,8 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void visit(Relation e) {
         // only use direct members
         for (RelationMember m : e.getMembers()) {
-            if (!(m.member instanceof Relation)) {
-                m.member.visit(this);
+            if (!m.isRelation()) {
+                m.getMember().visit(this);
             }
         }
     }

@@ -91,8 +91,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         }
         clone.members.clear();
         for (RelationMember member: r.getMembers()) {
-            RelationMember cloneMember = new RelationMember(member);
-            cloneMember.member = mappedPrimitives.get(member.member);
+            RelationMember cloneMember = new RelationMember(member.getRole(), mappedPrimitives.get(member.getMember()));
             clone.members.add(cloneMember);
         }
         if (! mappedPrimitives.keySet().contains(r)) {
@@ -189,13 +188,13 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         //
         rememberRelationPartial(r);
         for (RelationMember member: r.getMembers()) {
-            if (isAlreadyRemembered(member.member)) {
+            if (isAlreadyRemembered(member.getMember())) {
                 // referred primitive already remembered
                 //
                 continue;
             }
-            if (member.member instanceof Node) {
-                Node node = (Node)member.member;
+            if (member.isNode()) {
+                Node node = member.getNode();
                 if (isInSelectionBase(node)) {
                     rememberNode(node);
                 } else if (isNew(node)) {
@@ -203,8 +202,8 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
                 } else  {
                     rememberNodeIncomplete(node);
                 }
-            } else if (member.member instanceof Way) {
-                Way way = (Way)member.member;
+            } else if (member.isWay()) {
+                Way way = member.getWay();
                 if (isInSelectionBase(way)) {
                     way.visit(this);
                 } else if (isNew(way)) {
@@ -212,9 +211,9 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
                 } else {
                     rememberWayIncomplete(way);
                 }
-            } else if (member.member instanceof Relation) {
-                Relation relation = (Relation)member.member;
-                if (isInSelectionBase(member.member)) {
+            } else if (member.isRelation()) {
+                Relation relation = member.getRelation();
+                if (isInSelectionBase(member.getMember())) {
                     relation.visit(this);
                 } else if (isNew(relation)) {
                     relation.visit(this);

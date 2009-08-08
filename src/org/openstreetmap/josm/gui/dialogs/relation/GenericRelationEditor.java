@@ -54,7 +54,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ConflictAddCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -932,7 +931,7 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * Selects  members in the relation editor which refer to primitives in the current
      * selection of the context layer.
-     * 
+     *
      */
     class SelectedMembersForSelectionAction extends AbstractAction implements TableModelListener {
         public SelectedMembersForSelectionAction() {
@@ -966,7 +965,7 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * Selects primitives in the layer this editor belongs to. The selected primitives are
      * equal to the set of primitives the currently selected relation members refer to.
-     * 
+     *
      */
     class SelectPrimitivesForSelectedMembersAction extends AbstractAction implements ListSelectionListener {
         public SelectPrimitivesForSelectedMembersAction() {
@@ -1479,7 +1478,7 @@ public class GenericRelationEditor extends RelationEditor {
             Collection<RelationMember> members = new HashSet<RelationMember>();
             Collection<OsmPrimitive> selection = getLayer().data.getSelected();
             for (RelationMember member: r.getMembers()) {
-                if (selection.contains(member.member)) {
+                if (selection.contains(member.getMember())) {
                     members.add(member);
                 }
             }

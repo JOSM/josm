@@ -486,10 +486,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             for (RelationMember m : r.getMembers())
             {
-                if (m.member != null && !m.member.incomplete && !m.member.deleted
-                && m.member instanceof Node)
+                if (m.isNode() && !m.getMember().incomplete && !m.getMember().deleted)
                 {
-                    drawSelectedMember(m.member, styles != null ? getPrimitiveStyle(m.member) : null, true, true);
+                    drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember()) : null, true, true);
                 }
             }
             return;
@@ -508,10 +507,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             for (RelationMember m : r.getMembers())
             {
-                if (m.member != null && !m.member.incomplete && !m.member.deleted
-                && m.member instanceof Way) /* nodes drawn on second call */
+                if (m.isWay() && !m.getMember().incomplete && !m.getMember().deleted) /* nodes drawn on second call */
                 {
-                    drawSelectedMember(m.member, styles != null ? getPrimitiveStyle(m.member)
+                    drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember())
                     : null, true, true);
                 }
             }
@@ -536,20 +534,21 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //if(restrictionDebug)
             //    System.out.println("member " + m.member + " selected " + r.selected);
 
-            if(m.member == null)
+            if(m.getMember() == null)
+                // TODO Nullable member will not be allowed after RelationMember.member is encalupsed
                 r.putError(tr("Empty member in relation."), true);
-            else if(m.member.deleted)
+            else if(m.getMember().deleted)
                 r.putError(tr("Deleted member ''{0}'' in relation.",
-                m.member.getName()), true);
-            else if(m.member.incomplete)
+                m.getMember().getName()), true);
+            else if(m.getMember().incomplete)
             {
                 return;
             }
             else
             {
-                if(m.member instanceof Way)
+                if(m.isWay())
                 {
-                    Way w = (Way) m.member;
+                    Way w = m.getWay();
                     if(w.getNodesCount() < 2)
                     {
                         r.putError(tr("Way ''{0}'' with less than two points.",
@@ -576,9 +575,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     else
                         r.putError(tr("Unknown role ''{0}''.", m.getRole()), true);
                 }
-                else if(m.member instanceof Node)
+                else if(m.isNode())
                 {
-                    Node n = (Node) m.member;
+                    Node n = m.getNode();
                     if("via".equals(m.getRole()))
                     {
                         if(via != null)
@@ -590,7 +589,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         r.putError(tr("Unknown role ''{0}''.", m.getRole()), true);
                 }
                 else
-                    r.putError(tr("Unknown member type for ''{0}''.", m.member.getName()), true);
+                    r.putError(tr("Unknown member type for ''{0}''.", m.getMember().getName()), true);
             }
         }
 
@@ -783,18 +782,19 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (RelationMember m : r.getMembers())
         {
-            if(m.member == null)
+            if(m.getMember() == null)
+                //TODO Remove useless nullcheck when RelationMember.member is encalupsed
                 r.putError(tr("Empty member in relation."), true);
-            else if(m.member.deleted)
+            else if(m.getMember().deleted)
                 r.putError(tr("Deleted member ''{0}'' in relation.",
-                m.member.getName()), true);
-            else if(m.member.incomplete)
+                m.getMember().getName()), true);
+            else if(m.getMember().incomplete)
                 incomplete = true;
             else
             {
-                if(m.member instanceof Way)
+                if(m.isWay())
                 {
-                    Way w = (Way) m.member;
+                    Way w = m.getWay();
                     if(w.getNodesCount() < 2)
                     {
                         r.putError(tr("Way ''{0}'' with less than two points.",
@@ -811,14 +811,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         if(!m.hasRole())
                             outer.add(w);
                         else if(r.isSelected())
-                            drawSelectedMember(m.member, styles != null
-                            ? getPrimitiveStyle(m.member) : null, true, true);
+                            drawSelectedMember(m.getMember(), styles != null
+                            ? getPrimitiveStyle(m.getMember()) : null, true, true);
                     }
                 }
                 else
                 {
                     r.putError(tr("Non-Way ''{0}'' in multipolygon.",
-                    m.member.getName()), true);
+                    m.getMember().getName()), true);
                 }
             }
         }

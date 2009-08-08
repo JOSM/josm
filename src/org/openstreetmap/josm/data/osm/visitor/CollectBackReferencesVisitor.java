@@ -73,7 +73,7 @@ public class CollectBackReferencesVisitor extends AbstractVisitor {
         for (Relation r : ds.relations) {
             if (r.incomplete || r.deleted) continue;
             for (RelationMember m : r.getMembers()) {
-                if (m.member == p) {
+                if (m.getMember() == p) {
                     if (!data.contains(r)) {
                         data.add(r);
                         if (indirectRefs) {

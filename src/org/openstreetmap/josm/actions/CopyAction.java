@@ -96,11 +96,10 @@ public final class CopyAction extends JosmAction {
                 Relation enew = new Relation(e);
                 List<RelationMember> members = new ArrayList<RelationMember>();
                 for (RelationMember m : e.getMembers()) {
-                    if (! map.containsKey(m.member)) {
-                        m.member.visit(this);
+                    if (! map.containsKey(m.getMember())) {
+                        m.getMember().visit(this);
                     }
-                    RelationMember mnew = new RelationMember(m);
-                    mnew.member = map.get(m.member);
+                    RelationMember mnew = new RelationMember(m.getRole(), map.get(m.getMember()));
                     members.add(mnew);
                 }
                 enew.members.addAll(members);

@@ -88,7 +88,7 @@ public class MemberTableModel extends AbstractTableModel {
             case 0:
                 return members.get(rowIndex).getRole();
             case 1:
-                return members.get(rowIndex).member;
+                return members.get(rowIndex).getMember();
             case 2:
                 return linked(rowIndex);
         }
@@ -108,7 +108,7 @@ public class MemberTableModel extends AbstractTableModel {
     }
 
     public OsmPrimitive getReferredPrimitive(int idx) {
-        return members.get(idx).member;
+        return members.get(idx).getMember();
     }
 
     public void moveUp(int[] selectedRows) {
@@ -197,10 +197,10 @@ public class MemberTableModel extends AbstractTableModel {
 
     public void updateMemberReferences(DataSet ds) {
         for (RelationMember member : members) {
-            if (member.member.id == 0) {
+            if (member.getMember().id == 0) {
                 continue;
             }
-            OsmPrimitive primitive = ds.getPrimitiveById(member.member.id);
+            OsmPrimitive primitive = ds.getPrimitiveById(member.getMember().id);
             if (primitive != null) {
                 member.member = primitive;
             }
@@ -214,7 +214,7 @@ public class MemberTableModel extends AbstractTableModel {
         Iterator<RelationMember> it = members.iterator();
         while (it.hasNext()) {
             RelationMember member = it.next();
-            if (primitives.contains(member.member)) {
+            if (primitives.contains(member.getMember())) {
                 it.remove();
             }
         }
@@ -239,7 +239,7 @@ public class MemberTableModel extends AbstractTableModel {
 
     public boolean hasIncompleteMembers() {
         for (RelationMember member : members) {
-            if (member.member.incomplete)
+            if (member.getMember().incomplete)
                 return true;
         }
         return false;
@@ -332,7 +332,7 @@ public class MemberTableModel extends AbstractTableModel {
     public int getNumMembersWithPrimitive(OsmPrimitive primitive) {
         int count = 0;
         for (RelationMember member : members) {
-            if (member.member.equals(primitive)) {
+            if (member.getMember().equals(primitive)) {
                 count++;
             }
         }
@@ -378,7 +378,7 @@ public class MemberTableModel extends AbstractTableModel {
     public Set<OsmPrimitive> getSelectedChildPrimitives() {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (RelationMember m: getSelectedMembers()) {
-            ret.add(m.member);
+            ret.add(m.getMember());
         }
         return ret;
     }
@@ -392,8 +392,8 @@ public class MemberTableModel extends AbstractTableModel {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         if (referenceSet == null) return null;
         for (RelationMember m: members) {
-            if (referenceSet.contains(m.member)) {
-                ret.add(m.member);
+            if (referenceSet.contains(m.getMember())) {
+                ret.add(m.getMember());
             }
         }
         return ret;
@@ -465,9 +465,9 @@ public class MemberTableModel extends AbstractTableModel {
         if (index < 0 || index >= members.size())
             return false;
         RelationMember member = members.get(index);
-        if (!(member.member instanceof Relation))
+        if (!member.isRelation())
             return false;
-        Relation r = (Relation) member.member;
+        Relation r = member.getRelation();
         return !r.incomplete;
     }
 
@@ -485,7 +485,7 @@ public class MemberTableModel extends AbstractTableModel {
             return false;
         HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
         for(RelationMember member : members) {
-            referrers.add(member.member);
+            referrers.add(member.getMember());
         }
         Iterator<OsmPrimitive> it = primitives.iterator();
         while(it.hasNext()) {
@@ -508,7 +508,7 @@ public class MemberTableModel extends AbstractTableModel {
         getSelectionModel().clearSelection();
         for (int i=0; i< members.size();i++) {
             RelationMember m = members.get(i);
-            if (primitives.contains(m.member)) {
+            if (primitives.contains(m.getMember())) {
                 this.getSelectionModel().addSelectionInterval(i,i);
             }
         }
@@ -540,25 +540,25 @@ public class MemberTableModel extends AbstractTableModel {
     {
         Node    result = null;
 
-        if (element.member instanceof Way) {
-            Way w = (Way) element.member;
-            if (linked_element.member instanceof Way) {
-                Way x = (Way) linked_element.member;
+        if (element.isWay()) {
+            Way w = element.getWay();
+            if (linked_element.isWay()) {
+                Way x = linked_element.getWay();
                 if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode())) {
                     result = w.lastNode();
                 } else {
                     result = w.firstNode();
                 }
-            } else if (linked_element.member instanceof Node) {
-                Node m = (Node) linked_element.member;
+            } else if (linked_element.isNode()) {
+                Node m = linked_element.getNode();
                 if (w.firstNode() == m) {
                     result = w.lastNode();
                 } else {
                     result = w.firstNode();
                 }
             }
-        } else if (element.member instanceof Node) {
-            Node n = (Node) element.member;
+        } else if (element.isNode()) {
+            Node n = element.getNode();
             result = n;
         }
 
@@ -608,15 +608,15 @@ public class MemberTableModel extends AbstractTableModel {
                 if (segment.size() == 1) {
                     // only one element in segment, so try to link against each linkable node of element
                     RelationMember m = members.get(segment.getFirst());
-                    if (m.member instanceof Way) {
-                        Way w = (Way) m.member;
+                    if (m.isWay()) {
+                        Way w = m.getWay();
                         endSearchNode = w.lastNode();
                         if (w.lastNode() != w.firstNode())
                         {
                             startSearchNode = w.firstNode();
                         }
-                    } else if (m.member instanceof Node) {
-                        Node n = (Node) m.member;
+                    } else if (m.isNode()) {
+                        Node n = m.getNode();
                         endSearchNode = n;
                     }
                 } else {
@@ -686,11 +686,11 @@ public class MemberTableModel extends AbstractTableModel {
         Way way1 = null;
         Way way2 = null;
 
-        if (m1.member instanceof Way) {
-            way1 = (Way) m1.member;
+        if (m1.isWay()) {
+            way1 = m1.getWay();
         }
-        if (m2.member instanceof Way) {
-            way2 = (Way) m2.member;
+        if (m2.isWay()) {
+            way2 = m2.getWay();
         }
         if ((way1 != null) && (way2 != null)) {
             Node way1first = way1.firstNode();

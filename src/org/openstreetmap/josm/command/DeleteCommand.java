@@ -164,7 +164,7 @@ public class DeleteCommand extends Command {
         PrimitiveNameFormatter formatter = new PrimitiveNameFormatter();
         String role = new String();
         for (RelationMember m : ref.getMembers()) {
-            if (m.member == osm) {
+            if (m.getMember() == osm) {
                 role = m.getRole();
                 break;
             }
