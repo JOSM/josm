@@ -54,8 +54,9 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
-     *
-     * @return
+     * Replies the number of nodes in this ways.
+     * 
+     * @return the number of nodes in this ways.
      * @since 1862
      */
     public int getNodesCount() {
@@ -63,9 +64,12 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
-     *
-     * @param index
-     * @return
+     * Replies the node at position <code>index</code>.
+     * 
+     * @param index the position
+     * @return  the node at position <code>index</code>
+     * @exception IndexOutOfBoundsException thrown if <code>index</code> < 0
+     * or <code>index</code> >= {@see #getNodesCount()}
      * @since 1862
      */
     public Node getNode(int index) {
@@ -128,10 +132,12 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
-     * Create an identical clone of the argument (including the id)
+     * Create an identical clone of the argument (including the id).
+     * 
+     * @param original  the original way. Must not be null.
      */
-    public Way(Way clone) {
-        cloneFrom(clone);
+    public Way(Way original) {
+        cloneFrom(original);
     }
 
     /**
@@ -142,9 +148,13 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
-     * Create an incomplete Way.
+     * Create an incomplete Way with a given id.
+     * 
+     * @param id  the id. id > 0 required.
      */
     public Way(long id) {
+        // FIXME: shouldn't we check for id > 0?
+        //
         this.id = id;
         incomplete = true;
     }
