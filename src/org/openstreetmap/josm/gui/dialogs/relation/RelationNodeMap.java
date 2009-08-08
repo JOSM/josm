@@ -8,9 +8,9 @@ import org.openstreetmap.josm.data.osm.Way;
 
 /**
  * A mapping from Node positions to elements in a Relation (currently Nodes and Ways only)
- * 
+ *
  * @author Christiaan Welvaart <cjw@time4t.net>
- * 
+ *
  */
 public class RelationNodeMap {
     private java.util.HashMap<Node, java.util.TreeSet<Integer>> points;
@@ -28,7 +28,7 @@ public class RelationNodeMap {
 
         for (i = 0; i < members.size(); ++i) {
             RelationMember m = members.get(i);
-            if (m.member.incomplete)
+            if (m.getMember().incomplete)
             {
                 remaining.add(Integer.valueOf(i));
             }
@@ -46,7 +46,7 @@ public class RelationNodeMap {
             result = nodes.get(node);
             if (result == null) {
                 result = points.get(node).first();
-                if (members.get(current).member == members.get(result).member) {
+                if (members.get(current).getMember() == members.get(result).getMember()) {
                     result = points.get(node).last();
                 }
             }
@@ -58,8 +58,8 @@ public class RelationNodeMap {
     }
 
     void add(int n, RelationMember m) {
-        if (m.member instanceof Way) {
-            Way w = (Way) m.member;
+        if (m.isWay()) {
+            Way w = m.getWay();
             if (w.lastNode() == w.firstNode())
             {
                 nodes.put(w.firstNode(), Integer.valueOf(n));
@@ -76,8 +76,8 @@ public class RelationNodeMap {
                 }
                 points.get(w.lastNode()).add(Integer.valueOf(n));
             }
-        } else if (m.member instanceof Node) {
-            Node node = (Node) m.member;
+        } else if (m.isNode()) {
+            Node node = m.getNode();
             nodes.put(node, Integer.valueOf(n));
         } else {
             remaining.add(Integer.valueOf(n));
@@ -86,8 +86,8 @@ public class RelationNodeMap {
 
     boolean remove(int n, RelationMember a) {
         boolean result;
-        if (a.member instanceof Way) {
-            Way w = (Way) a.member;
+        if (a.isWay()) {
+            Way w = a.getWay();
             if (w.firstNode() == w.lastNode())
             {
                 result = (nodes.remove(w.firstNode()) != null);
@@ -98,7 +98,7 @@ public class RelationNodeMap {
                 result &= points.get(w.lastNode()).remove(n);
             }
         } else {
-            result = (nodes.remove(a.member) != null);
+            result = (nodes.remove(a.getMember()) != null);
         }
         return result;
     }
@@ -134,7 +134,7 @@ public class RelationNodeMap {
             for (java.util.TreeSet<Integer> set : points.values()) {
                 if (!set.isEmpty()) {
                     result = set.first();
-                    Way w = (Way) members.get(result).member;
+                    Way w = members.get(result).getWay();
                     points.get(w.firstNode()).remove(result);
                     points.get(w.lastNode()).remove(result);
                     break;

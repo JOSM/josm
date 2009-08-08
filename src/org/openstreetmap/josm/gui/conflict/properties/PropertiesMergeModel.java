@@ -570,8 +570,8 @@ public class PropertiesMergeModel extends Observable {
 
         HashMap<Long,OsmPrimitive> candidates = new HashMap<Long, OsmPrimitive>();
         for (RelationMember m : r.getMembers()) {
-            if (m.member.id > 0 && !candidates.values().contains(m.member)) {
-                candidates.put(m.member.id,m.member);
+            if (m.getMember().id > 0 && !candidates.values().contains(m.getMember())) {
+                candidates.put(m.getMember().id, m.getMember());
             }
         }
 

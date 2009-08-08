@@ -348,19 +348,19 @@ public class SimplePaintVisitor extends AbstractVisitor {
         g.setColor(col);
 
         for (RelationMember m : r.getMembers()) {
-            if (m.member.incomplete || m.member.deleted) continue;
+            if (m.getMember().incomplete || m.getMember().deleted) continue;
 
-            if (m.member instanceof Node) {
-                Point p = nc.getPoint((Node) m.member);
+            if (m.isNode()) {
+                Point p = nc.getPoint(m.getNode());
                 if (p.x < 0 || p.y < 0
                     || p.x > nc.getWidth() || p.y > nc.getHeight()) continue;
 
                 g.drawOval(p.x-3, p.y-3, 6, 6);
-            } else if (m.member instanceof Way) {
+            } else if (m.isWay()) {
                 GeneralPath path = new GeneralPath();
 
                 boolean first = true;
-                for (Node n : ((Way) m.member).getNodes()) {
+                for (Node n : m.getWay().getNodes()) {
                     if (n.incomplete || n.deleted) continue;
                     Point p = nc.getPoint(n);
                     if (first) {

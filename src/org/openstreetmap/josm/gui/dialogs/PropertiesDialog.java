@@ -592,7 +592,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
                             for (RelationMember rm : cur.getMembers()) {
                                 for (OsmPrimitive osm : sel) {
-                                    if (rm.member == osm)
+                                    if (rm.getMember() == osm)
                                     {
                                         rel.members.remove(rm);
                                         break;
@@ -799,7 +799,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             for (Relation r : Main.main.getCurrentDataSet().relations) {
                 if (!r.deleted && !r.incomplete) {
                     for (RelationMember m : r.getMembers()) {
-                        if (newSelection.contains(m.member)) {
+                        if (newSelection.contains(m.getMember())) {
                             Collection<RelationMember> value = roles.get(r);
                             if (value == null) {
                                 value = new HashSet<RelationMember>();

@@ -304,8 +304,8 @@ public class SplitWayAction extends JosmAction {
             int i = 0;
 
             for (RelationMember rm : r.getMembers()) {
-                if (rm.member instanceof Way) {
-                    if (rm.member == selectedWay)
+                if (rm.isWay()) {
+                    if (rm.getMember() == selectedWay)
                     {
                         if(!("route".equals(type)) && !("multipolygon".equals(type))) {
                             warnme = true;

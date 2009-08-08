@@ -47,8 +47,8 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
     protected boolean isReferringRelation(Relation parent) {
         if (parent == null) return false;
         for (RelationMember m: parent.getMembers()) {
-            if (m.member instanceof Relation) {
-                Relation child = (Relation)m.member;
+            if (m.isRelation()) {
+                Relation child = m.getRelation();
                 if (child.equals(relation)) return true;
             }
         }

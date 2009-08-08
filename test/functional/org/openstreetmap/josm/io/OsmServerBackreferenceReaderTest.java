@@ -376,23 +376,23 @@ public class OsmServerBackreferenceReaderTest {
         //
         Set<Long> expectedWayIds = new HashSet<Long>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
         for (RelationMember m : lookupRelation(ds, 7).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
         for (RelationMember m : lookupRelation(ds, 8).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
         for (RelationMember m : lookupRelation(ds, 9).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
 
@@ -420,12 +420,12 @@ public class OsmServerBackreferenceReaderTest {
         HashSet<Long> ret = new HashSet<Long>();
         if (r == null) return ret;
         for (RelationMember m: r.getMembers()) {
-            if (m.member instanceof Node) {
-                ret.add(m.member.id);
-            } else if (m.member instanceof Way) {
-                ret.addAll(getNodeIdsInWay((Way)m.member));
-            } else if (m.member instanceof Relation) {
-                ret.addAll(getNodeIdsInRelation((Relation)m.member));
+            if (m.isNode()) {
+                ret.add(m.getMember().id);
+            } else if (m.isWay()) {
+                ret.addAll(getNodeIdsInWay(m.getWay()));
+            } else if (m.isRelation()) {
+                ret.addAll(getNodeIdsInRelation(m.getRelation()));
             }
         }
         return ret;
@@ -472,23 +472,23 @@ public class OsmServerBackreferenceReaderTest {
         //
         Set<Long> expectedWayIds = new HashSet<Long>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
         for (RelationMember m : lookupRelation(ds, 7).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
         for (RelationMember m : lookupRelation(ds, 8).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
         for (RelationMember m : lookupRelation(ds, 9).getMembers()) {
-            if (m.member instanceof Way) {
-                expectedWayIds.add(m.member.id);
+            if (m.isWay()) {
+                expectedWayIds.add(m.getMember().id);
             }
         }
         for (long id : expectedWayIds) {

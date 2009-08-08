@@ -117,7 +117,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         for (Relation relation : Main.main.getCurrentDataSet().relations) {
             int position = 0;
             for (RelationMember member : relation.getMembers()) {
-                if (!member.member.hasEqualSemanticAttributes(oldway)
+                if (!member.getMember().hasEqualSemanticAttributes(oldway)
                         || !member.hasRole()) {
                     position++;
                     continue;

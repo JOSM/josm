@@ -445,8 +445,9 @@ public class SearchCompiler {
                 }
             } else if (osm instanceof Relation) {
                 for (RelationMember member : ((Relation)osm).getMembers()) {
-                    if (member.member != null) {
-                        isParent |= child.match(member.member);
+                    if (member.getMember() != null) {
+                        // TODO Nullable member will not be allowed
+                        isParent |= child.match(member.getMember());
                     }
                 }
             }

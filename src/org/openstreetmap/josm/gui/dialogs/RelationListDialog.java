@@ -270,7 +270,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             Collection<RelationMember> members = new HashSet<RelationMember>();
             Collection<OsmPrimitive> selection = Main.map.mapView.getEditLayer().data.getSelected();
             for (RelationMember member: r.getMembers()) {
-                if (selection.contains(member.member)) {
+                if (selection.contains(member.getMember())) {
                     members.add(member);
                 }
             }

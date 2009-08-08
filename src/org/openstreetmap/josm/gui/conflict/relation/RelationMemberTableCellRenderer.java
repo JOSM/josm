@@ -16,9 +16,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -157,14 +155,14 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     }
 
     protected void renderPrimitive(RelationMember member) {
-        String displayName = member.member.getName();
+        String displayName = member.getMember().getName();
         setText(displayName);
-        setToolTipText(buildToolTipText(member.member));
-        if (member.member instanceof Node) {
+        setToolTipText(buildToolTipText(member.getMember()));
+        if (member.isNode()) {
             setIcon(nodeIcon);
-        } else if (member.member instanceof Way) {
+        } else if (member.isWay()) {
             setIcon(wayIcon);
-        } else if (member.member instanceof Relation) {
+        } else if (member.isRelation()) {
             setIcon(relationIcon);
         } else {
             // should not happen
