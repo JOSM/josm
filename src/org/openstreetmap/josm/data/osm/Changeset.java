@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Represents a single changeset in JOSM. For now its only used during
@@ -21,12 +22,18 @@ public final class Changeset extends OsmPrimitive {
      */
     public String start_timestamp = null;
 
+    @Override
     public void visit(Visitor v) {
         v.visit(this);
     }
 
-    public int compareTo(OsmPrimitive arg0) {
-        if (arg0 instanceof Changeset) return Long.valueOf(id).compareTo(arg0.id);
+    public int compareTo(OsmPrimitive other) {
+        if (other instanceof Changeset) return Long.valueOf(id).compareTo(other.id);
         return 1;
+    }
+
+    @Override
+    public String getName() {
+        return tr("Changeset {0}",id);
     }
 }

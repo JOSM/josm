@@ -358,14 +358,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         return keys != null && !keys.isEmpty();
     }
 
-
-
-
-
-
-    public String getName() {
-        return null;
-    }
+    /**
+     * Replies the name of this primitive.
+     * 
+     * @return the name of this primitive
+     */
+    public abstract String getName();
 
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so
