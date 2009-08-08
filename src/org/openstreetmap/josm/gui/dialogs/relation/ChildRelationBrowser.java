@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 /**
  * ChildRelationBrowser is a UI component which provides a tree-like view on the hierarchical
  * structure of relations
- * 
+ *
  *
  */
 public class ChildRelationBrowser extends JPanel {
@@ -66,7 +66,7 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * Replies the {@see OsmDataLayer} this editor is related to
-     * 
+     *
      * @return the osm data layer
      */
     protected OsmDataLayer getLayer() {
@@ -87,7 +87,7 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * builds the panel with the command buttons
-     * 
+     *
      * @return the button panel
      */
     protected JPanel buildButtonPanel() {
@@ -113,7 +113,7 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * constructor
-     * 
+     *
      * @param layer the {@see OsmDataLayer} this browser is related to. Must not be null.
      * @exception IllegalArgumentException thrown, if layer is null
      */
@@ -127,7 +127,7 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * constructor
-     * 
+     *
      * @param layer the {@see OsmDataLayer} this browser is related to. Must not be null.
      * @param root the root relation
      * @exception IllegalArgumentException thrown, if layer is null
@@ -139,7 +139,7 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * populates the browser with a relation
-     * 
+     *
      * @param r the relation
      */
     public void populate(Relation r) {
@@ -148,7 +148,7 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * populates the browser with a list of relation members
-     * 
+     *
      * @param members the list of relation members
      */
 
@@ -158,7 +158,7 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * replies the parent dialog this browser is embedded in
-     * 
+     *
      * @return the parent dialog; null, if there is no {@see Dialog} as parent dialog
      */
     protected Dialog getParentDialog() {
@@ -171,8 +171,8 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * Action for editing the currently selected relation
-     * 
-     * 
+     *
+     *
      */
     class EditAction extends AbstractAction implements TreeSelectionListener {
         public EditAction() {
@@ -277,8 +277,8 @@ public class ChildRelationBrowser extends JPanel {
 
     /**
      * The asynchronous task for downloading relation members.
-     * 
-     * 
+     *
+     *
      */
     class DownloadAllChildrenTask extends PleaseWaitRunnable {
         private boolean cancelled;
@@ -337,7 +337,7 @@ public class ChildRelationBrowser extends JPanel {
         /**
          * warns the user if a relation couldn't be loaded because it was deleted on
          * the server (the server replied a HTTP code 410)
-         * 
+         *
          * @param r the relation
          */
         protected void warnBecauseOfDeletedRelation(Relation r) {
@@ -359,12 +359,12 @@ public class ChildRelationBrowser extends JPanel {
 
         /**
          * Remembers the child relations to download
-         * 
+         *
          * @param parent the parent relation
          */
         protected void rememberChildRelationsToDownload(Relation parent) {
             downloadedRelationIds.add(parent.id);
-            for (RelationMember member: parent.members) {
+            for (RelationMember member: parent.getMembers()) {
                 if (member.member instanceof Relation) {
                     Relation child = (Relation)member.member;
                     if (!downloadedRelationIds.contains(child)) {
@@ -377,7 +377,7 @@ public class ChildRelationBrowser extends JPanel {
         /**
          * Merges the primitives in <code>ds</code> to the dataset of the
          * edit layer
-         * 
+         *
          * @param ds the data set
          */
         protected void mergeDataSet(DataSet ds) {

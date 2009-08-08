@@ -68,10 +68,10 @@ public class MemberTableModel extends AbstractTableModel {
 
     public void populate(Relation relation) {
         members.clear();
-        if (relation != null && relation.members != null) {
+        if (relation != null) {
             // make sure we work with clones of the relation members
             // in the model.
-            members.addAll(new Relation(relation).members);
+            members.addAll(new Relation(relation).getMembers());
         }
         fireTableDataChanged();
     }
@@ -327,7 +327,7 @@ public class MemberTableModel extends AbstractTableModel {
 
     /**
      * Replies the number of members which refer to a particular primitive
-     * 
+     *
      * @param primitive the primitive
      * @return the number of members which refer to a particular primitive
      */
@@ -343,7 +343,7 @@ public class MemberTableModel extends AbstractTableModel {
 
     /**
      * updates the role of the members given by the indices in <code>idx</code>
-     * 
+     *
      * @param idx the array of indices
      * @param role the new role
      */
@@ -361,7 +361,7 @@ public class MemberTableModel extends AbstractTableModel {
 
     /**
      * Get the currently selected relation members
-     * 
+     *
      * @return a collection with the currently selected relation members
      */
     public Collection<RelationMember> getSelectedMembers() {
@@ -374,7 +374,7 @@ public class MemberTableModel extends AbstractTableModel {
 
     /**
      * Replies the set of selected referers. Never null, but may be empty.
-     * 
+     *
      * @return the set of selected referers
      */
     public Set<OsmPrimitive> getSelectedReferers() {
@@ -388,7 +388,7 @@ public class MemberTableModel extends AbstractTableModel {
     /**
      * Replies true, if the selected {@see OsmPrimitive}s in the layer belonging
      * to this model are in sync with the selected referers in this model.
-     * 
+     *
      * @return
      */
     public boolean selectionsAreInSync() {
@@ -399,7 +399,7 @@ public class MemberTableModel extends AbstractTableModel {
     }
     /**
      * Selects the members in the collection selectedMembers
-     * 
+     *
      * @param selectedMembers the collection of selected members
      */
     public void setSelectedMembers(Collection<RelationMember> selectedMembers) {
@@ -440,7 +440,7 @@ public class MemberTableModel extends AbstractTableModel {
      * Replies true if the index-th relation members referrs
      * to an editable relation, i.e. a relation which is not
      * incomplete.
-     * 
+     *
      * @param index the index
      * @return true, if the index-th relation members referrs
      * to an editable relation, i.e. a relation which is not
@@ -459,7 +459,7 @@ public class MemberTableModel extends AbstractTableModel {
     /**
      * Replies true if there is at least one relation member in this model
      * which refers to at least on the primitives in <code>primitives</code>.
-     * 
+     *
      * @param primitives the collection of primitives
      * @return true if there is at least one relation member in this model
      * which refers to at least on the primitives in <code>primitives</code>; false
@@ -484,7 +484,7 @@ public class MemberTableModel extends AbstractTableModel {
     /**
      * Selects all mebers which refer to {@see OsmPrimitive}s in the collections
      * <code>primitmives</code>. Does nothing is primitives is null.
-     * 
+     *
      * @param primitives the collection of primitives
      */
     public void selectMembersReferringTo(Collection<? extends OsmPrimitive> primitives) {
@@ -506,7 +506,7 @@ public class MemberTableModel extends AbstractTableModel {
     /**
      * Replies true if the layer this model belongs to is equal to the active
      * layer
-     * 
+     *
      * @return true if the layer this model belongs to is equal to the active
      * layer
      */

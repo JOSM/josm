@@ -163,7 +163,7 @@ public class DeleteCommand extends Command {
     private static int testRelation(Relation ref, OsmPrimitive osm) {
         PrimitiveNameFormatter formatter = new PrimitiveNameFormatter();
         String role = new String();
-        for (RelationMember m : ref.members) {
+        for (RelationMember m : ref.getMembers()) {
             if (m.member == osm) {
                 role = m.role;
                 break;

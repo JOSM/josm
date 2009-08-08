@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.conflict.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.ListRole;
 /**
  * The model for merging two lists of relation members
- * 
+ *
  *
  */
 public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>{
@@ -62,10 +62,10 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     /**
      * populates the model with the relation members in relation my and their
-     * 
+     *
      * @param my my relation. Must not be null.
      * @param their their relation. Must not be null.
-     * 
+     *
      * @throws IllegalArgumentException if my is null
      * @throws IllegalArgumentException if their is null
      */
@@ -79,10 +79,10 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
         getMyEntries().clear();
         getTheirEntries().clear();
 
-        for (RelationMember n : my.members) {
+        for (RelationMember n : my.getMembers()) {
             getMyEntries().add(n);
         }
-        for (RelationMember n : their.members) {
+        for (RelationMember n : their.getMembers()) {
             getTheirEntries().add(n);
         }
         if (myAndTheirEntriesEqual()) {
@@ -107,7 +107,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     /**
      * Builds the command to resolve conflicts in the node list of a way
-     * 
+     *
      * @param my  my relation. Must not be null.
      * @param their  their relation. Must not be null
      * @return the command

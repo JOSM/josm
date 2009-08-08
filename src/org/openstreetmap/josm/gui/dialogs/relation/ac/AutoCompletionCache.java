@@ -17,14 +17,14 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 /**
  * AutoCompletionCache temporarily holds a cache of keys with a list of
  * possible auto completion values for each key.
- * 
+ *
  * The cache can initialize itself from the current JOSM data set such that
  * <ol>
  *   <li>any key used in a tag in the data set is part of the key list in the cache</li>
  *   <li>any value used in a tag for a specific key is part of the autocompletion list of
  *     this key</li>
  * </ol>
- * 
+ *
  * Building up auto completion lists should not
  * slow down tabbing from input field to input field. Looping through the complete
  * data set in order to build up the auto completion list for a specific input
@@ -86,7 +86,7 @@ public class AutoCompletionCache {
 
     /**
      * make sure, <code>key</code> is in the cache
-     * 
+     *
      * @param key  the key
      */
     protected void cacheKey(String key) {
@@ -99,7 +99,7 @@ public class AutoCompletionCache {
 
     /**
      * make sure, value is one of the auto completion values allowed for key
-     * 
+     *
      * @param key the key
      * @param value the value
      */
@@ -114,7 +114,7 @@ public class AutoCompletionCache {
     /**
      * make sure, the keys and values of all tags held by primitive are
      * in the auto completion cache
-     * 
+     *
      * @param primitive an OSM primitive
      */
     protected void cachePrimitive(OsmPrimitive primitive) {
@@ -126,11 +126,11 @@ public class AutoCompletionCache {
 
     /**
      * Caches all member roles of the relation <code>relation</code>
-     * 
+     *
      * @param relation the relation
      */
     protected void cacheRelationMemberRoles(Relation relation){
-        for (RelationMember m: relation.members) {
+        for (RelationMember m: relation.getMembers()) {
             if (m.role == null || m.role.trim().equals("")) {
                 continue;
             }
@@ -143,7 +143,7 @@ public class AutoCompletionCache {
     /**
      * initializes the cache from the primitives in the dataset of
      * {@see #layer}
-     * 
+     *
      */
     public void initFromJOSMDataset() {
         cache = new HashMap<String, ArrayList<String>>();
@@ -164,7 +164,7 @@ public class AutoCompletionCache {
 
     /**
      * replies the keys held by the cache
-     * 
+     *
      * @return the list of keys held by the cache
      */
     public List<String> getKeys() {
@@ -174,7 +174,7 @@ public class AutoCompletionCache {
     /**
      * replies the auto completion values allowed for a specific key. Replies
      * an empty list if key is null or if key is not in {@link #getKeys()}.
-     * 
+     *
      * @param key
      * @return the list of auto completion values
      */
@@ -186,7 +186,7 @@ public class AutoCompletionCache {
 
     /**
      * Replies the list of member roles
-     * 
+     *
      * @return the list of member roles
      */
     public List<String> getMemberRoles() {
@@ -196,7 +196,7 @@ public class AutoCompletionCache {
     /**
      * Populates the an {@see AutoCompletionList} with the currently cached
      * member roles.
-     * 
+     *
      * @param list the list to populate
      */
     public void populateWithMemberRoles(AutoCompletionList list) {

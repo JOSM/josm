@@ -118,7 +118,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
                 }
             } else if (parent instanceof Relation) {
                 Relation r = (Relation)parent;
-                for (RelationMember member : r.members) {
+                for (RelationMember member : r.getMembers()) {
                     if (member.member == child) {
                         OsmParentChildPair pair = new OsmParentChildPair(parent, member.member);
                         if (! pairs.contains(pair)) {

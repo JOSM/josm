@@ -444,7 +444,7 @@ public class SearchCompiler {
                     isParent |= child.match(n);
                 }
             } else if (osm instanceof Relation) {
-                for (RelationMember member : ((Relation)osm).members) {
+                for (RelationMember member : ((Relation)osm).getMembers()) {
                     if (member.member != null) {
                         isParent |= child.match(member.member);
                     }

@@ -380,22 +380,22 @@ public class OsmServerBackreferenceReaderTest {
         // ways are incomplete after reading.
         //
         Set<Long> expectedWayIds = new HashSet<Long>();
-        for (RelationMember m : lookupRelation(ds, 6).members) {
+        for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }
         }
-        for (RelationMember m : lookupRelation(ds, 7).members) {
+        for (RelationMember m : lookupRelation(ds, 7).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }
         }
-        for (RelationMember m : lookupRelation(ds, 8).members) {
+        for (RelationMember m : lookupRelation(ds, 8).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }
         }
-        for (RelationMember m : lookupRelation(ds, 9).members) {
+        for (RelationMember m : lookupRelation(ds, 9).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }
@@ -424,7 +424,7 @@ public class OsmServerBackreferenceReaderTest {
     protected Set<Long> getNodeIdsInRelation(Relation r) {
         HashSet<Long> ret = new HashSet<Long>();
         if (r == null) return ret;
-        for (RelationMember m: r.members) {
+        for (RelationMember m: r.getMembers()) {
             if (m.member instanceof Node) {
                 ret.add(m.member.id);
             } else if (m.member instanceof Way) {
@@ -476,22 +476,22 @@ public class OsmServerBackreferenceReaderTest {
         // ways are completely read after reading the relations
         //
         Set<Long> expectedWayIds = new HashSet<Long>();
-        for (RelationMember m : lookupRelation(ds, 6).members) {
+        for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }
         }
-        for (RelationMember m : lookupRelation(ds, 7).members) {
+        for (RelationMember m : lookupRelation(ds, 7).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }
         }
-        for (RelationMember m : lookupRelation(ds, 8).members) {
+        for (RelationMember m : lookupRelation(ds, 8).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }
         }
-        for (RelationMember m : lookupRelation(ds, 9).members) {
+        for (RelationMember m : lookupRelation(ds, 9).getMembers()) {
             if (m.member instanceof Way) {
                 expectedWayIds.add(m.member.id);
             }

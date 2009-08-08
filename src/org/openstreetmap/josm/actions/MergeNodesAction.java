@@ -129,7 +129,7 @@ public class MergeNodesAction extends JosmAction {
             if (r.deleted || r.incomplete) {
                 continue;
             }
-            for (RelationMember rm : r.members) {
+            for (RelationMember rm : r.getMembers()) {
                 if (rm.member instanceof Node) {
                     for (Node n : allNodes) {
                         if (rm.member == n) {
@@ -277,7 +277,7 @@ public class MergeNodesAction extends JosmAction {
             Relation newRel = new Relation(r);
             newRel.members.clear();
             HashSet<String> rolesToReAdd = new HashSet<String>();
-            for (RelationMember rm : r.members) {
+            for (RelationMember rm : r.getMembers()) {
                 // Don't copy the member if it points to one of our nodes,
                 // just keep a note to re-add it later on.
                 if (allNodes.contains(rm.member)) {

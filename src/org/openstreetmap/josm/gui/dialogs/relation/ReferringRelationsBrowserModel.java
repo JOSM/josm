@@ -46,7 +46,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
 
     protected boolean isReferringRelation(Relation parent) {
         if (parent == null) return false;
-        for (RelationMember m: parent.members) {
+        for (RelationMember m: parent.getMembers()) {
             if (m.member instanceof Relation) {
                 Relation child = (Relation)m.member;
                 if (child.equals(relation)) return true;
@@ -69,7 +69,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
 
     /**
      * Populates the browser with the list of referring relations in the {@see DataSet} ds.
-     * 
+     *
      * @param ds the data set
      */
     public void populate(DataSet ds) {

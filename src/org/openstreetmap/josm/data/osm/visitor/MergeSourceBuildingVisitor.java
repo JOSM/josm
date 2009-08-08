@@ -90,7 +90,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
             clone = new Relation(r);
         }
         clone.members.clear();
-        for (RelationMember member: r.members) {
+        for (RelationMember member: r.getMembers()) {
             RelationMember cloneMember = new RelationMember(member);
             cloneMember.member = mappedPrimitives.get(member.member);
             clone.members.add(cloneMember);
@@ -188,7 +188,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         // below)
         //
         rememberRelationPartial(r);
-        for (RelationMember member: r.members) {
+        for (RelationMember member: r.getMembers()) {
             if (isAlreadyRemembered(member.member)) {
                 // referred primitive already remembered
                 //

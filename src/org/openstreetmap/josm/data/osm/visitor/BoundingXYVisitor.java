@@ -4,8 +4,8 @@ package org.openstreetmap.josm.data.osm.visitor;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -32,7 +32,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
 
     public void visit(Relation e) {
         // only use direct members
-        for (RelationMember m : e.members) {
+        for (RelationMember m : e.getMembers()) {
             if (!(m.member instanceof Relation)) {
                 m.member.visit(this);
             }

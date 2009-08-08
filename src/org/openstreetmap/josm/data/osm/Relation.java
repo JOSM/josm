@@ -3,13 +3,14 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.tools.CopyList;
 
 /**
  * An relation, having a set of tags and any number (0...n) of members.
@@ -23,6 +24,25 @@ public final class Relation extends OsmPrimitive {
      * makeBackReferences and/or removeBackReferences should be called.
      */
     public final List<RelationMember> members = new ArrayList<RelationMember>();
+
+    /**
+     * @return Members of the relation. Changes made in returned list are not mapped
+     * back to the primitive, use setMembers() to modify the members
+     * @since 1925
+     */
+    public List<RelationMember> getMembers() {
+        return new CopyList<RelationMember>(members.toArray(new RelationMember[members.size()]));
+    }
+
+    /**
+     *
+     * @param members
+     * @since 1925
+     */
+    public void setMembers(List<RelationMember> members) {
+        this.members.clear();
+        this.members.addAll(members);
+    }
 
     final static String[] defnames = {"name", "ref", "restriction", "note"};
     static Collection<String> names = null;
@@ -58,7 +78,7 @@ public final class Relation extends OsmPrimitive {
         members.clear();
         // we must not add the members themselves, but instead
         // add clones of the members
-        for (RelationMember em : ((Relation)osm).members) {
+        for (RelationMember em : ((Relation)osm).getMembers()) {
             members.add(new RelationMember(em));
         }
     }

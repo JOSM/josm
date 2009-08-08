@@ -347,7 +347,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         }
         g.setColor(col);
 
-        for (RelationMember m : r.members) {
+        for (RelationMember m : r.getMembers()) {
             if (m.member.incomplete || m.member.deleted) continue;
 
             if (m.member instanceof Node) {

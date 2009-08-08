@@ -95,7 +95,7 @@ public final class CopyAction extends JosmAction {
                     return;
                 Relation enew = new Relation(e);
                 List<RelationMember> members = new ArrayList<RelationMember>();
-                for (RelationMember m : e.members) {
+                for (RelationMember m : e.getMembers()) {
                     if (! map.containsKey(m.member)) {
                         m.member.visit(this);
                     }

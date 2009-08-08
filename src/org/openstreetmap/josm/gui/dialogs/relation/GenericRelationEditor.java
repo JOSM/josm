@@ -26,12 +26,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -41,7 +39,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -86,7 +83,7 @@ import org.xml.sax.SAXException;
 
 /**
  * This dialog is for editing relations.
- * 
+ *
  */
 public class GenericRelationEditor extends RelationEditor {
 
@@ -113,9 +110,9 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
      * selects "ok" in the editor.
-     * 
+     *
      * If no relation is given, will create an editor for a new relation.
-     * 
+     *
      * @param layer the {@see OsmDataLayer} the new or edited relation belongs to
      * @param relation relation to edit, or null to create a new one.
      * @param selectedMembers a collection of members which shall be selected initially
@@ -205,7 +202,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel with the OK and the Cancel button
-     * 
+     *
      * @return the panel with the OK and the Cancel button
      */
     protected JPanel buildOkCancelButtonPanel() {
@@ -220,7 +217,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * build the panel with the buttons on the left
-     * 
+     *
      * @return
      */
     protected JPanel buildTagEditorControlPanel() {
@@ -259,7 +256,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel with the tag editor
-     * 
+     *
      * @return the panel with the tag editor
      */
     protected JPanel buildTagEditorPanel() {
@@ -324,7 +321,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel for the relation member editor
-     * 
+     *
      * @return the panel for the relation member editor
      */
     protected JPanel buildMemberEditorPanel() {
@@ -438,7 +435,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the panel with the table displaying the currently selected primitives
-     * 
+     *
      * @return
      */
     protected JPanel buildSelectionTablePanel() {
@@ -453,7 +450,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * builds the {@see JSplitPane} which divides the editor in an upper and a lower half
-     * 
+     *
      * @return the split panel
      */
     protected JSplitPane buildSplitPane() {
@@ -474,7 +471,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * build the panel with the buttons on the left
-     * 
+     *
      * @return
      */
     protected JPanel buildLeftButtonPanel() {
@@ -529,7 +526,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * build the panel with the buttons for adding or removing the current selection
-     * 
+     *
      * @return
      */
     protected JPanel buildSelectionControlButtonPanel() {
@@ -658,7 +655,7 @@ public class GenericRelationEditor extends RelationEditor {
     /**
      * checks whether the current relation has members referring to itself. If so,
      * warns the users and provides an option for removing these members.
-     * 
+     *
      */
     protected void cleanSelfReferences() {
         ArrayList<OsmPrimitive> toCheck = new ArrayList<OsmPrimitive>();
@@ -1046,7 +1043,7 @@ public class GenericRelationEditor extends RelationEditor {
         /**
          * Apply the updates for an existing relation which has not been changed
          * outside of the relation editor.
-         * 
+         *
          */
         protected void applyExistingConflictingRelation() {
             Relation editedRelation = new Relation(getRelation());
@@ -1059,7 +1056,7 @@ public class GenericRelationEditor extends RelationEditor {
         /**
          * Apply the updates for an existing relation which has been changed
          * outside of the relation editor.
-         * 
+         *
          */
         protected void applyExistingNonConflictingRelation() {
             Relation editedRelation = new Relation(getRelation());
@@ -1366,7 +1363,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * Creates a new relation with a copy of the current editor state
-     * 
+     *
      */
     class DuplicateRelationAction extends AbstractAction {
         public DuplicateRelationAction() {
@@ -1388,8 +1385,8 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * Action for editing the currently selected relation
-     * 
-     * 
+     *
+     *
      */
     class EditAction extends AbstractAction implements ListSelectionListener {
         public EditAction() {
@@ -1407,7 +1404,7 @@ public class GenericRelationEditor extends RelationEditor {
         protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
             Collection<RelationMember> members = new HashSet<RelationMember>();
             Collection<OsmPrimitive> selection = getLayer().data.getSelected();
-            for (RelationMember member: r.members) {
+            for (RelationMember member: r.getMembers()) {
                 if (selection.contains(member.member)) {
                     members.add(member);
                 }
@@ -1484,7 +1481,7 @@ public class GenericRelationEditor extends RelationEditor {
 
     /**
      * The asynchronous task for downloading relation members.
-     * 
+     *
      */
     class DownloadTask extends PleaseWaitRunnable {
         private boolean cancelled;

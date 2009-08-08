@@ -4,10 +4,10 @@ package org.openstreetmap.josm.data.osm.visitor;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
@@ -42,7 +42,7 @@ public class AllNodesVisitor extends AbstractVisitor {
      * if so, use AutomatchVisitor!
      */
     public void visit(Relation e) {
-        for (RelationMember m : e.members)
+        for (RelationMember m : e.getMembers())
             if (m.member instanceof Node) visit((Node)m.member);
     }
     /**

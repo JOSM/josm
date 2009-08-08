@@ -569,7 +569,7 @@ public class PropertiesMergeModel extends Observable {
     protected UndeletePrimitivesCommand createUndeleteRelationCommand(final Relation r) throws OsmTransferException {
 
         HashMap<Long,OsmPrimitive> candidates = new HashMap<Long, OsmPrimitive>();
-        for (RelationMember m : r.members) {
+        for (RelationMember m : r.getMembers()) {
             if (m.member.id > 0 && !candidates.values().contains(m.member)) {
                 candidates.put(m.member.id,m.member);
             }

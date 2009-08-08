@@ -16,10 +16,10 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 /**
  * This is a {@see TreeModel} which provides the hierarchical structure of {@see Relation}s
  * to a  {@see JTree}.
- * 
+ *
  * The model is initialized with a root relation or with a list of {@see RelationMember}s, see
  * {@see #populate(Relation)} and {@see #populate(List)} respectively.
- * 
+ *
  *
  */
 public class RelationTreeModel implements TreeModel {
@@ -50,7 +50,7 @@ public class RelationTreeModel implements TreeModel {
 
     /**
      * constructor
-     * 
+     *
      * @param members a list of members
      */
     public RelationTreeModel(List<RelationMember> members) {
@@ -64,15 +64,14 @@ public class RelationTreeModel implements TreeModel {
     /**
      * Replies the number of children of type relation for a particular
      * relation <code>parent</code>
-     * 
+     *
      * @param parent the parent relation
      * @return the number of children of type relation
      */
     protected int getNumRelationChildren(Relation parent) {
         if (parent == null) return 0;
-        if (parent.members == null) return 0;
         int count = 0;
-        for(RelationMember member : parent.members) {
+        for(RelationMember member : parent.getMembers()) {
             if (member.member instanceof Relation) {
                 count++;
             }
@@ -83,7 +82,7 @@ public class RelationTreeModel implements TreeModel {
     /**
      * Replies the i-th child of type relation for a particular relation
      * <code>parent</code>.
-     * 
+     *
      * @param parent the parent relation
      * @param idx the index
      * @return the i-th child of type relation for a particular relation
@@ -92,7 +91,7 @@ public class RelationTreeModel implements TreeModel {
     protected Relation getRelationChildByIdx(Relation parent, int idx) {
         if (parent == null) return null;
         int count=0;
-        for (RelationMember member : parent.members) {
+        for (RelationMember member : parent.getMembers()) {
             if (!(member.member instanceof Relation)) {
                 continue;
             }
@@ -106,18 +105,18 @@ public class RelationTreeModel implements TreeModel {
     /**
      * Replies the index of a particular <code>child</code> with respect to its
      * <code>parent</code>.
-     * 
+     *
      * @param parent  the parent relation
      * @param child the child relation
      * @return the index of a particular <code>child</code> with respect to its
      * <code>parent</code>; -1 if either parent or child are null or if <code>child</code>
      * isn't a child of <code>parent</code>.
-     * 
+     *
      */
     protected int getIndexForRelationChild(Relation parent, Relation child) {
         if (parent == null || child == null) return -1;
         int idx = 0;
-        for (RelationMember member : parent.members) {
+        for (RelationMember member : parent.getMembers()) {
             if (!(member.member instanceof Relation)) {
                 continue;
             }
@@ -129,10 +128,10 @@ public class RelationTreeModel implements TreeModel {
 
     /**
      * Populates the model with a root relation
-     * 
+     *
      * @param root the root relation
      * @see #populate(List)
-     * 
+     *
      */
     public void populate(Relation root) {
         if (root == null) {
@@ -144,7 +143,7 @@ public class RelationTreeModel implements TreeModel {
 
     /**
      * Populates the model with a list of relation members
-     * 
+     *
      * @param members the relation members
      */
     public void populate(List<RelationMember> members) {
@@ -169,7 +168,7 @@ public class RelationTreeModel implements TreeModel {
     /**
      * Notifies tree model listeners about an update of the
      * trees nodes.
-     * 
+     *
      * @param path the tree path to the node
      */
     protected void fireRefreshNode(TreePath path) {
@@ -182,7 +181,7 @@ public class RelationTreeModel implements TreeModel {
 
     /**
      * Invoke to notify all listeners about an update of a particular node
-     * 
+     *
      * @param pathToNode the tree path to the node
      */
     public void refreshNode(TreePath pathToNode) {

@@ -189,7 +189,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
                 }
             }
             public void visit(Relation e) {
-                for (RelationMember em : e.members) {
+                for (RelationMember em : e.getMembers()) {
                     em.member.visit(this);
                 }
             }

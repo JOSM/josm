@@ -269,7 +269,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
             Collection<RelationMember> members = new HashSet<RelationMember>();
             Collection<OsmPrimitive> selection = Main.map.mapView.getEditLayer().data.getSelected();
-            for (RelationMember member: r.members) {
+            for (RelationMember member: r.getMembers()) {
                 if (selection.contains(member.member)) {
                     members.add(member);
                 }
@@ -367,7 +367,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     /**
      * Creates a new relation with a copy of the current editor state
-     * 
+     *
      */
     class DuplicateAction extends AbstractAction implements ListSelectionListener {
         public DuplicateAction() {

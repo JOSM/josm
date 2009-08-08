@@ -484,7 +484,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(selectedCall)
         {
-            for (RelationMember m : r.members)
+            for (RelationMember m : r.getMembers())
             {
                 if (m.member != null && !m.member.incomplete && !m.member.deleted
                 && m.member instanceof Node)
@@ -506,7 +506,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(r.isSelected()) /* draw ways*/
         {
-            for (RelationMember m : r.members)
+            for (RelationMember m : r.getMembers())
             {
                 if (m.member != null && !m.member.incomplete && !m.member.deleted
                 && m.member instanceof Way) /* nodes drawn on second call */
@@ -531,7 +531,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         OsmPrimitive via = null;
 
         /* find the "from", "via" and "to" elements */
-        for (RelationMember m : r.members)
+        for (RelationMember m : r.getMembers())
         {
             //if(restrictionDebug)
             //    System.out.println("member " + m.member + " selected " + r.selected);
@@ -781,7 +781,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         r.clearErrors();
 
-        for (RelationMember m : r.members)
+        for (RelationMember m : r.getMembers())
         {
             if(m.member == null)
                 r.putError(tr("Empty member in relation."), true);

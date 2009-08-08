@@ -303,7 +303,7 @@ public class SplitWayAction extends JosmAction {
             }
             int i = 0;
 
-            for (RelationMember rm : r.members) {
+            for (RelationMember rm : r.getMembers()) {
                 if (rm.member instanceof Way) {
                     if (rm.member == selectedWay)
                     {

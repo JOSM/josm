@@ -400,7 +400,7 @@ public class DataSet implements Cloneable {
      */
     public void unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
         for (Relation relation : relations) {
-            Iterator<RelationMember> it = relation.members.iterator();
+            Iterator<RelationMember> it = relation.getMembers().iterator();
             while(it.hasNext()) {
                 RelationMember member = it.next();
                 if (member.member.equals(primitive)) {
@@ -441,7 +441,7 @@ public class DataSet implements Cloneable {
             if (parent == child) {
                 continue;
             }
-            for (RelationMember member: parent.members) {
+            for (RelationMember member: parent.getMembers()) {
                 if (member.refersTo(child)) {
                     parents.add(parent);
                     break;

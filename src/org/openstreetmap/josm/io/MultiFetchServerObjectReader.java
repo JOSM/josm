@@ -202,7 +202,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (relation == null) return this;
         if (relation.id == 0) return this;
         remember(relation.id, OsmPrimitiveType.RELATION);
-        for (RelationMember member : relation.members) {
+        for (RelationMember member : relation.getMembers()) {
             appendGeneric(member.member);
         }
         return this;

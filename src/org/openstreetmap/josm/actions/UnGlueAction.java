@@ -326,7 +326,7 @@ public class UnGlueAction extends JosmAction {
             }
             newRel = null;
             rolesToReAdd = null;
-            for (RelationMember rm : r.members) {
+            for (RelationMember rm : r.getMembers()) {
                 if (rm.member instanceof Node) {
                     if (rm.member == originalNode) {
                         if (newRel == null) {
@@ -339,7 +339,7 @@ public class UnGlueAction extends JosmAction {
                 }
             }
             if (newRel != null) {
-                for (RelationMember rm : r.members) {
+                for (RelationMember rm : r.getMembers()) {
                     //if (rm.member != selectedNode) {
                     newRel.members.add(rm);
                     //}

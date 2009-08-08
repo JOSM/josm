@@ -92,7 +92,7 @@ public class CombineWayAction extends JosmAction {
             if (r.deleted || r.incomplete) {
                 continue;
             }
-            for (RelationMember rm : r.members) {
+            for (RelationMember rm : r.getMembers()) {
                 if (rm.member instanceof Way) {
                     for(Way w : selectedWays) {
                         if (rm.member == w) {
@@ -227,7 +227,7 @@ public class CombineWayAction extends JosmAction {
             Relation newRel = new Relation(r);
             newRel.members.clear();
             HashSet<String> rolesToReAdd = new HashSet<String>();
-            for (RelationMember rm : r.members) {
+            for (RelationMember rm : r.getMembers()) {
                 // Don't copy the member if it to one of our ways, just keep a
                 // note to re-add it later on.
                 if (selectedWays.contains(rm.member)) {

@@ -191,7 +191,7 @@ public class MergeVisitor extends AbstractVisitor {
     private void fixRelation(Relation r) {
         boolean replacedSomething = false;
         LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
-        for (RelationMember myMember : r.members) {
+        for (RelationMember myMember : r.getMembers()) {
             OsmPrimitive mergedMember = merged.get(myMember.member);
             if (mergedMember == null) {
                 newMembers.add(myMember);
