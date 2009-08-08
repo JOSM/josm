@@ -333,9 +333,6 @@ public class GenericRelationEditor extends RelationEditor {
         editor.setAutoCompletionCache(acCache);
         editor.setAutoCompletionList(acList);
 
-        SelectionSynchronizer synchronizer = new SelectionSynchronizer();
-        memberTable.getSelectionModel().addListSelectionListener(synchronizer);
-        DataSet.selListeners.add(synchronizer);
         memberTable.addMouseListener(new MemberTableDblClickAdapter());
         memberTableModel.addMemberModelListener(memberTable);
 
@@ -488,6 +485,9 @@ public class GenericRelationEditor extends RelationEditor {
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
+
+        // -----
+        gc.gridy = 0;
         MoveUpAction moveUpAction = new MoveUpAction();
         memberTableModel.getSelectionModel().addListSelectionListener(moveUpAction);
         pnl.add(new JButton(moveUpAction), gc);
@@ -510,14 +510,21 @@ public class GenericRelationEditor extends RelationEditor {
         memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
         pnl.add(new JButton(removeSelectedAction), gc);
 
+
         // ------
         gc.gridy = 4;
+        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction();
+        memberTable.getSelectionModel().addListSelectionListener(selectAction);
+        pnl.add(new JButton(selectAction), gc);
+
+        // ------
+        gc.gridy = 5;
         SortAction sortAction = new SortAction();
         pnl.add(new JButton(sortAction), gc);
 
         // ------
         // just grab the remaining space
-        gc.gridy = 5;
+        gc.gridy = 6;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         pnl.add(new JPanel(), gc);
@@ -549,33 +556,40 @@ public class GenericRelationEditor extends RelationEditor {
 
         // -----
         gc.gridy = 1;
+        SelectedMembersForSelectionAction selectMembersForSelectionAction = new SelectedMembersForSelectionAction();
+        selectionTableModel.addTableModelListener(selectMembersForSelectionAction);
+        memberTableModel.addTableModelListener(selectMembersForSelectionAction);
+        pnl.add(new JButton(selectMembersForSelectionAction), gc);
+
+        // -----
+        gc.gridy = 2;
         RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction();
         selectionTableModel.addTableModelListener(removeSelectedAction);
         pnl.add(new JButton(removeSelectedAction), gc);
 
         // ------
         // just grab the remaining space
-        gc.gridy = 2;
+        gc.gridy = 3;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         pnl.add(new JPanel(), gc);
 
         // -----
-        gc.gridy = 3;
+        gc.gridy = 4;
         gc.weighty = 0.0;
         AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction();
         selectionTableModel.addTableModelListener(addSelectionAction);
         pnl.add(new JButton(addSelectionAction), gc);
 
         // -----
-        gc.gridy = 4;
+        gc.gridy = 5;
         AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection();
         selectionTableModel.addTableModelListener(addSelectedBeforeSelectionAction);
         memberTableModel.getSelectionModel().addListSelectionListener(addSelectedBeforeSelectionAction);
         pnl.add(new JButton(addSelectedBeforeSelectionAction), gc);
 
         // -----
-        gc.gridy = 5;
+        gc.gridy = 6;
         AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection();
         selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
         memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
@@ -886,7 +900,7 @@ public class GenericRelationEditor extends RelationEditor {
     class RemoveSelectedAction extends AbstractAction implements TableModelListener {
         public RemoveSelectedAction() {
             putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected primitives"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "removeselected"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "deletemembers"));
             // putValue(NAME, tr("Remove Selected"));
             Shortcut.registerShortcut("relationeditor:removeselected", tr("Relation Editor: Remove Selected"),
                     KeyEvent.VK_S, Shortcut.GROUP_MNEMONIC);
@@ -911,6 +925,66 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * Selects  members in the relation editor which refer to primitives in the current
+     * selection of the context layer.
+     * 
+     */
+    class SelectedMembersForSelectionAction extends AbstractAction implements TableModelListener {
+        public SelectedMembersForSelectionAction() {
+            putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to primitives in the current selection"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectmembers"));
+            updateEnabledState();
+        }
+
+        protected void updateEnabledState() {
+            boolean enabled = selectionTableModel.getRowCount() > 0
+            &&  !memberTableModel.getChildPrimitives(getLayer().data.getSelected()).isEmpty();
+
+            if (enabled) {
+                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} primitives in the current selection",memberTableModel.getChildPrimitives(getLayer().data.getSelected()).size()));
+            } else {
+                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to primitives in the current selection"));
+            }
+            setEnabled(enabled);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.selectMembersReferringTo(getLayer().data.getSelected());
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
+
+        }
+    }
+
+    /**
+     * Selects primitives in the layer this editor belongs to. The selected primitives are
+     * equal to the set of primitives the currently selected relation members refer to.
+     * 
+     */
+    class SelectPrimitivesForSelectedMembersAction extends AbstractAction implements ListSelectionListener {
+        public SelectPrimitivesForSelectedMembersAction() {
+            putValue(SHORT_DESCRIPTION, tr("Select primitives for selected relation members"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectprimitives"));
+            updateEnabledState();
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(memberTable.getSelectedRowCount() > 0);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            getLayer().data.setSelected(memberTableModel.getSelectedChildPrimitives());
+            DataSet.fireSelectionChanged(getLayer().data.getSelected());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
     }
@@ -1443,38 +1517,6 @@ public class GenericRelationEditor extends RelationEditor {
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                 new EditAction().run();
-            }
-        }
-    }
-
-    /**
-     * Updates the selection in the current data set with the selected referers in
-     * in the member table.
-     */
-    class SelectionSynchronizer implements ListSelectionListener, SelectionChangedListener{
-        public void valueChanged(ListSelectionEvent e) {
-            // as long as the model is computing the final selection it emits selection
-            // change events with getValueIsAdjusting() true. Ignore these events, only
-            // handle the final selection update. Otherwise, infinite loops of property
-            // change events occur.
-            //
-            if (e.getValueIsAdjusting())
-                return;
-
-            // Avoid infinite loop.  Only update the selection if it is not in sync with what
-            // is already selected. Avoids infinite loops of property change events.
-            //
-            if (!memberTableModel.selectionsAreInSync()) {
-                getLayer().data.setSelected(memberTableModel.getSelectedReferers());
-            }
-        }
-
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            // ignore selection change events if they happen for a dataset in another
-            // layer
-            if (!memberTableModel.isActiveLayer()) return;
-            if (!memberTableModel.selectionsAreInSync()) {
-                memberTableModel.selectMembersReferringTo(newSelection);
             }
         }
     }

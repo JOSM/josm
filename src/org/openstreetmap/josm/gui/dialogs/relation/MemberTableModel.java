@@ -375,7 +375,7 @@ public class MemberTableModel extends AbstractTableModel {
      *
      * @return the set of selected referers
      */
-    public Set<OsmPrimitive> getSelectedReferers() {
+    public Set<OsmPrimitive> getSelectedChildPrimitives() {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (RelationMember m: getSelectedMembers()) {
             ret.add(m.member);
@@ -384,13 +384,30 @@ public class MemberTableModel extends AbstractTableModel {
     }
 
     /**
+     * Replies the set of selected referers. Never null, but may be empty.
+     * 
+     * @return the set of selected referers
+     */
+    public Set<OsmPrimitive> getChildPrimitives(Collection<? extends OsmPrimitive> referenceSet) {
+        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        if (referenceSet == null) return null;
+        for (RelationMember m: members) {
+            if (referenceSet.contains(m.member)) {
+                ret.add(m.member);
+            }
+        }
+        return ret;
+    }
+
+
+    /**
      * Replies true, if the selected {@see OsmPrimitive}s in the layer belonging
      * to this model are in sync with the selected referers in this model.
      *
      * @return
      */
     public boolean selectionsAreInSync() {
-        HashSet<OsmPrimitive> s1 = new HashSet<OsmPrimitive>(getSelectedReferers());
+        HashSet<OsmPrimitive> s1 = new HashSet<OsmPrimitive>(getSelectedChildPrimitives());
         if (s1.size() != layer.data.getSelected().size()) return false;
         s1.removeAll(layer.data.getSelected());
         return s1.isEmpty();
