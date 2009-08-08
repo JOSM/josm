@@ -103,14 +103,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public volatile boolean selected = false;
 
     /**
-     *
+     * Sets whether this primitive is selected or not.
+     * 
+     * @param selected  true, if this primitive is selected; false, otherwise
      * @since 1899
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
     /**
-     *
+     * Replies true, if this primitive is selected.
+     * 
+     * @return true, if this primitive is selected
      * @since 1899
      */
     public boolean isSelected() {
@@ -241,18 +245,26 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public Map<String, String> keys;
 
     /**
-     *
+     * Replies the map of key/value pairs. Never replies null. The map can be empty, though.
+     * 
      * @return Keys of this primitive. Changes made in returned map are not mapped
      * back to the primitive, use setKeys() to modify the keys
      * @since 1924
      */
     public Map<String, String> getKeys() {
         // TODO More effective map
-        return new HashMap<String, String>(keys);
+        // fix for #3218
+        if (keys == null)
+            return new HashMap<String, String>();
+        else
+            return new HashMap<String, String>(keys);
     }
 
     /**
-     *
+     * Sets the keys of this primitives to the key/value pairs in <code>keys</code>.
+     * If <code>keys</code> is null removes all existing key/value pairs.
+     * 
+     * @param keys the key/value pairs to set. If null, removes all existing key/value pairs.
      * @since 1924
      */
     public void setKeys(Map<String, String> keys) {
@@ -264,12 +276,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     * Set the given value to the given key
-     * @param key The key, for which the value is to be set.
-     * @param value The value for the key.
+     * Set the given value to the given key. If key is null, does nothing. If value is null,
+     * removes the key and behaves like {@see #remove(String)}.
+     * 
+     * @param key  The key, for which the value is to be set. Can be null, does nothing in this case.
+     * @param value The value for the key. If null, removes the respective key/value pair.
+     * 
+     * @see #remove(String)
      */
     public final void put(String key, String value) {
-        if (value == null) {
+        if (key == null)
+            return;
+        else if (value == null) {
             remove(key);
         } else {
             if (keys == null) {
@@ -280,7 +298,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         mappaintStyle = null;
     }
     /**
-     * Remove the given key from the list.
+     * Remove the given key from the list
+     * 
+     * @param key  the key to be removed. Ignored, if key is null.
      */
     public final void remove(String key) {
         if (keys != null) {
@@ -293,7 +313,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     *
+     * Removes all keys from this primitive.
+     * 
      * @since 1843
      */
     public final void removeAll() {
@@ -301,7 +322,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
         mappaintStyle = null;
     }
 
+    /**
+     * Replies the value for key <code>key</code>. Replies null, if <code>key</code> is null.
+     * Replies null, if there is no value for the given key.
+     * 
+     * @param key the key. Can be null, replies null in this case.
+     * @return the value for key <code>key</code>.
+     */
     public final String get(String key) {
+        if (key == null) return null;
         return keys == null ? null : keys.get(key);
     }
 
@@ -318,7 +347,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     *
+     * Replies true, if the map of key/value pairs of this primitive is not empty.
+     * 
+     * @return true, if the map of key/value pairs of this primitive is not empty; false
+     *   otherwise
+     * 
      * @since 1843
      */
     public final boolean hasKeys() {
