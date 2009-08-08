@@ -17,7 +17,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -223,8 +222,7 @@ public class MemberTableModel extends AbstractTableModel {
     }
 
     public void applyToRelation(Relation relation) {
-        relation.members.clear();
-        relation.members.addAll(members);
+        relation.setMembers(members);
     }
 
     public boolean hasSameMembersAs(Relation relation) {

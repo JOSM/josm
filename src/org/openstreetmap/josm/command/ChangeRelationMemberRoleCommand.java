@@ -42,13 +42,13 @@ public class ChangeRelationMemberRoleCommand extends Command {
     }
 
     @Override public boolean executeCommand() {
-        if (position < 0 || position >= relation.members.size()) {
+        if (position < 0 || position >= relation.getMembersCount()) {
             Main.debug("error changing the role");
             return false;
         }
 
-        oldRole = relation.members.get(position).role;
-        relation.members.get(position).role = newRole;
+        oldRole = relation.getMember(position).role;
+        relation.getMember(position).role = newRole;
 
         oldModified = relation.modified;
         relation.modified = true;
@@ -56,7 +56,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
     }
 
     @Override public void undoCommand() {
-        relation.members.get(position).role = oldRole;
+        relation.getMember(position).role = oldRole;
         relation.modified = oldModified;
     }
 

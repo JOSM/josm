@@ -971,7 +971,7 @@ public class MergeVisitorTest {
         assertEquals(0,visitor.getConflicts().size());
 
         Relation r = (Relation)my.getPrimitiveById(4);
-        assertEquals(2, r.members.size());
+        assertEquals(2, r.getMembersCount());
 
         Node n = (Node)my.getPrimitiveById(1);
         assertTrue(n != null);

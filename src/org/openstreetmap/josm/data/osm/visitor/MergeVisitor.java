@@ -205,8 +205,7 @@ public class MergeVisitor extends AbstractVisitor {
             }
         }
         if (replacedSomething) {
-            r.members.clear();
-            r.members.addAll(newMembers);
+            r.setMembers(newMembers);
         }
     }
 

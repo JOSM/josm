@@ -36,12 +36,32 @@ public final class Relation extends OsmPrimitive {
 
     /**
      *
-     * @param members
+     * @param members Can be null, in that case all members are removed
      * @since 1925
      */
     public void setMembers(List<RelationMember> members) {
         this.members.clear();
-        this.members.addAll(members);
+        if (members != null) {
+            this.members.addAll(members);
+        }
+    }
+
+    /**
+     *
+     * @since 1926
+     */
+    public int getMembersCount() {
+        return members.size();
+    }
+
+    /**
+     *
+     * @param index
+     * @return
+     * @since 1926
+     */
+    public RelationMember getMember(int index) {
+        return members.get(index);
     }
 
     final static String[] defnames = {"name", "ref", "restriction", "note"};

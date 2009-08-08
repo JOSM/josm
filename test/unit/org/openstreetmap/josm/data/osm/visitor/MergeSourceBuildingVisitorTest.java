@@ -1,9 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -12,8 +16,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-
-import static org.junit.Assert.*;
 
 public class MergeSourceBuildingVisitorTest {
 
@@ -194,7 +196,7 @@ public class MergeSourceBuildingVisitorTest {
 
         r = (Relation)hull.getPrimitiveById(1);
         assertNotNull(r);
-        assertEquals(3, r.members.size());
+        assertEquals(3, r.getMembersCount());
         RelationMember m = new RelationMember("node-20", hull.getPrimitiveById(20));
         assertTrue(r.members.contains(m));
         m = new RelationMember("way-30", hull.getPrimitiveById(30));
@@ -253,7 +255,7 @@ public class MergeSourceBuildingVisitorTest {
 
         r = (Relation)hull.getPrimitiveById(1);
         assertNotNull(r);
-        assertEquals(3, r.members.size());
+        assertEquals(3, r.getMembersCount());
         RelationMember m = new RelationMember("node-20", hull.getPrimitiveById(20));
         assertTrue(r.members.contains(m));
         m = new RelationMember("way-30", hull.getPrimitiveById(30));
@@ -318,7 +320,7 @@ public class MergeSourceBuildingVisitorTest {
 
         r = (Relation)lookupByName(hull.relations, "r1");
         assertNotNull(r);
-        assertEquals(3, r.members.size());
+        assertEquals(3, r.getMembersCount());
         RelationMember m = new RelationMember("node-20", lookupByName(hull.nodes, "n20"));
         assertTrue(r.members.contains(m));
         m = new RelationMember("way-30", lookupByName(hull.ways, "w30"));
@@ -342,7 +344,7 @@ public class MergeSourceBuildingVisitorTest {
 
         Relation r = (Relation)hull.getPrimitiveById(1);
         assertNotNull(r);
-        assertEquals(1, r.members.size());
+        assertEquals(1, r.getMembersCount());
         assertTrue(r.members.contains(new RelationMember("relation-1",r)));
     }
 
@@ -362,7 +364,7 @@ public class MergeSourceBuildingVisitorTest {
 
         Relation r = (Relation)lookupByName(hull.relations, "r1");
         assertNotNull(r);
-        assertEquals(1, r.members.size());
+        assertEquals(1, r.getMembersCount());
         assertTrue(r.members.contains(new RelationMember("relation-1",r)));
     }
 
@@ -386,9 +388,9 @@ public class MergeSourceBuildingVisitorTest {
         assertNotNull(r1);
         r2 = (Relation)hull.getPrimitiveById(2);
         assertNotNull(r2);
-        assertEquals(1, r1.members.size());
+        assertEquals(1, r1.getMembersCount());
         assertTrue(r1.members.contains(new RelationMember("relation-2",r2)));
-        assertEquals(1, r2.members.size());
+        assertEquals(1, r2.getMembersCount());
         assertTrue(r2.members.contains(new RelationMember("relation-1",r1)));
     }
 }

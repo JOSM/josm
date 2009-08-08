@@ -99,8 +99,7 @@ public final class PasteAction extends JosmAction {
                     members.add(mnew);
                 }
             }
-            rnew.members.clear();
-            rnew.members.addAll(members);
+            rnew.setMembers(members);
             map.put(r, rnew);
         }
 
