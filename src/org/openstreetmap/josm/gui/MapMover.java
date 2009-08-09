@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -14,10 +16,11 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import org.openstreetmap.josm.tools.Shortcut;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.tools.PlatformHookOsx;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Enables moving of the map by holding down the right mouse button and drag
@@ -134,16 +137,23 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      */
     @Override public void mousePressed(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
-        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0)
+        int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0) {
             startMovement(e);
+        } else if (isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
+            startMovement(e);
+        }
     }
 
     /**
      * Change the cursor back to it's pre-move cursor.
      */
     @Override public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3)
+        if (e.getButton() == MouseEvent.BUTTON3) {
             endMovement();
+        } else if (isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
+            endMovement();
+        }
     }
 
     /**
@@ -184,7 +194,35 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     }
 
     /**
-     * Does nothing. Only to satisfy MouseMotionListener
+     * Emulates dragging on Mac OSX
      */
-    public void mouseMoved(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {
+        if (!movementInPlace)
+            return;
+        // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
+        // Is only the selected mouse button pressed?
+        if (isPlatformOsx()) {
+            if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK) {
+                if (mousePosMove == null) {
+                    startMovement(e);
+                }
+                EastNorth center = nc.getCenter();
+                EastNorth mouseCenter = nc.getEastNorth(e.getX(), e.getY());
+                nc.zoomTo(new EastNorth(mousePosMove.east() + center.east() - mouseCenter.east(), mousePosMove.north()
+                        + center.north() - mouseCenter.north()));
+            } else {
+                endMovement();
+            }
+        }
+    }
+
+    /**
+     * Replies true if we are currently running on OSX
+     *
+     * @return true if we are currently running on OSX
+     */
+    public static boolean isPlatformOsx() {
+        return Main.platform != null && Main.platform instanceof PlatformHookOsx;
+    }
+
 }
