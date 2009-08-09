@@ -66,6 +66,7 @@
 		<javac srcdir="src" classpathref="classpath" destdir="build"
 				target="1.5" source="1.5" debug="on" encoding="UTF-8">
 			<compilerarg value="-Xlint:deprecation"/>
+			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
 	</target>
 
@@ -102,6 +103,7 @@
 		<javac srcdir="${src.dir}:${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
 				target="1.5" source="1.5" debug="on" encoding="UTF-8">
 			<compilerarg value="-Xlint:deprecation"/>
+			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
 	</target>
 

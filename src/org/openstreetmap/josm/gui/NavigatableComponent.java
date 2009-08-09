@@ -291,7 +291,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public final Node getNearestNode(Point p) {
         double minDistanceSq = snapDistance;
         Node minPrimitive = null;
-        for (Node n : getCurrentDataSet().nodes) {
+        DataSet ds = getCurrentDataSet();
+        if(ds == null)
+            return null;
+        for (Node n : ds.nodes) {
             if (n.deleted || n.incomplete) {
                 continue;
             }
@@ -319,7 +322,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<WaySegment> getNearestWaySegments(Point p) {
         TreeMap<Double, List<WaySegment>> nearest = new TreeMap<Double, List<WaySegment>>();
-        for (Way w : getCurrentDataSet().ways) {
+        DataSet ds = getCurrentDataSet();
+        if(ds == null)
+            return null;
+        for (Way w : ds.ways) {
             if (w.deleted || w.incomplete) {
                 continue;
             }
@@ -375,6 +381,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final WaySegment getNearestWaySegment(Point p, Collection<WaySegment> ignore) {
         List<WaySegment> nearest = getNearestWaySegments(p);
+        if(nearest == null)
+            return null;
         if (ignore != null) {
             nearest.removeAll(ignore);
         }
@@ -438,7 +446,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public Collection<OsmPrimitive> getAllNearest(Point p) {
         Collection<OsmPrimitive> nearest = new HashSet<OsmPrimitive>();
-        for (Way w : getCurrentDataSet().ways) {
+        DataSet ds = getCurrentDataSet();
+        if(ds == null)
+            return null;
+        for (Way w : ds.ways) {
             if (w.deleted || w.incomplete) {
                 continue;
             }
@@ -464,7 +475,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 lastN = n;
             }
         }
-        for (Node n : getCurrentDataSet().nodes) {
+        for (Node n : ds.nodes) {
             if (!n.deleted && !n.incomplete
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
@@ -483,7 +494,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public Collection<Node> getNearestNodes(Point p) {
         Collection<Node> nearest = new HashSet<Node>();
-        for (Node n : getCurrentDataSet().nodes) {
+        DataSet ds = getCurrentDataSet();
+        if(ds == null)
+            return null;
+        for (Node n : ds.nodes) {
             if (!n.deleted && !n.incomplete
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
