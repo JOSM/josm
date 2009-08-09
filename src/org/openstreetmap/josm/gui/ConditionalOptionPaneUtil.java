@@ -127,7 +127,7 @@ public class ConditionalOptionPaneUtil {
         if (!getDialogShowingEnabled(preferenceKey))
             return true;
         MessagePanel pnl = new MessagePanel(preferenceKey, message);
-        boolean ret = OptionPaneUtil.showConfirmationDialog(parent, message, title, optionType, messageType, trueOption);
+        boolean ret = OptionPaneUtil.showConfirmationDialog(parent, pnl, title, optionType, messageType, trueOption);
         pnl.remeberDialogShowingEnabled();
         return ret;
     }
