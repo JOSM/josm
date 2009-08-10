@@ -100,13 +100,6 @@ public final class Way extends OsmPrimitive {
         mappaintDrawnAreaCode = 0;
     }
 
-    public void visitNodes(Visitor v) {
-        if (incomplete) return;
-        for (Node n : this.nodes) {
-            v.visit(n);
-        }
-    }
-
     public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
         ArrayList<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
         if (incomplete) return chunkSet;

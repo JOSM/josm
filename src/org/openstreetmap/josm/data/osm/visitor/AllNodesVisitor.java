@@ -33,7 +33,9 @@ public class AllNodesVisitor extends AbstractVisitor {
      * Ways have their way nodes.
      */
     public void visit(Way w) {
-        w.visitNodes(this);
+        if (w.incomplete) return;
+        for (Node n : w.getNodes())
+            visit(n);
     }
 
     /**
