@@ -7,10 +7,15 @@ import java.util.Arrays;
 
 import javax.swing.filechooser.FileFilter;
 
+import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.io.FileImporter;
+import org.openstreetmap.josm.io.GpxExporter;
 import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.NMEAImporter;
+import org.openstreetmap.josm.io.OsmBzip2Exporter;
 import org.openstreetmap.josm.io.OsmBzip2Importer;
+import org.openstreetmap.josm.io.OsmExporter;
+import org.openstreetmap.josm.io.OsmGzipExporter;
 import org.openstreetmap.josm.io.OsmGzipImporter;
 import org.openstreetmap.josm.io.OsmImporter;
 
@@ -27,6 +32,10 @@ public class ExtensionFileFilter extends FileFilter {
 
     public static ArrayList<FileImporter> importers = new ArrayList<FileImporter>(Arrays.asList(new OsmImporter(),
             new OsmGzipImporter(), new OsmBzip2Importer(), new GpxImporter(), new NMEAImporter()));
+
+    // list of supported export formats
+    public static ArrayList<FileExporter> exporters = new ArrayList<FileExporter>(Arrays.asList(new GpxExporter(),
+            new OsmExporter(), new OsmGzipExporter(), new OsmBzip2Exporter()));
 
     /**
      * Construct an extension file filter by giving the extension to check after.
