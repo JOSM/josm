@@ -228,10 +228,10 @@ public class MemberTableModel extends AbstractTableModel {
     public boolean hasSameMembersAs(Relation relation) {
         if (relation == null)
             return false;
-        if (relation.members.size() != members.size())
+        if (relation.getMembersCount() != members.size())
             return false;
-        for (int i = 0; i < relation.members.size(); i++) {
-            if (!relation.members.get(i).equals(members.get(i)))
+        for (int i = 0; i < relation.getMembersCount(); i++) {
+            if (!relation.getMember(i).equals(members.get(i)))
                 return false;
         }
         return true;

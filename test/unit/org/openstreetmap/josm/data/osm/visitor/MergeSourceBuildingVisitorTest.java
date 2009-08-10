@@ -152,15 +152,15 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1);
         Node n20 = new Node(20);
-        r1.members.add(new RelationMember("node-20",n20));
+        r1.addMember(new RelationMember("node-20",n20));
         Way w30 = new Way(30);
         Node n21;
         w30.addNode(n21 = new Node(21));
         Node n22;
         w30.addNode(n22 = new Node(22));
-        r1.members.add(new RelationMember("way-30",w30));
+        r1.addMember(new RelationMember("way-30",w30));
         Relation r40 = new Relation(40);
-        r1.members.add(new RelationMember("relation-40", r40));
+        r1.addMember(new RelationMember("relation-40", r40));
         source.nodes.add(n20);
         source.nodes.add(n21);
         source.nodes.add(n22);
@@ -198,11 +198,11 @@ public class MergeSourceBuildingVisitorTest {
         assertNotNull(r);
         assertEquals(3, r.getMembersCount());
         RelationMember m = new RelationMember("node-20", hull.getPrimitiveById(20));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
         m = new RelationMember("way-30", hull.getPrimitiveById(30));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
         m = new RelationMember("relation-40", hull.getPrimitiveById(40));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
     }
 
     @Test
@@ -210,15 +210,15 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1);
         Node n20 = new Node(20);
-        r1.members.add(new RelationMember("node-20",n20));
+        r1.addMember(new RelationMember("node-20",n20));
         Way w30 = new Way(30);
         Node n21;
         w30.addNode(n21 = new Node(21));
         Node n22;
         w30.addNode(n22 = new Node(22));
-        r1.members.add(new RelationMember("way-30",w30));
+        r1.addMember(new RelationMember("way-30",w30));
         Relation r40 = new Relation(40);
-        r1.members.add(new RelationMember("relation-40", r40));
+        r1.addMember(new RelationMember("relation-40", r40));
         source.nodes.add(n20);
         source.nodes.add(n21);
         source.nodes.add(n22);
@@ -257,11 +257,11 @@ public class MergeSourceBuildingVisitorTest {
         assertNotNull(r);
         assertEquals(3, r.getMembersCount());
         RelationMember m = new RelationMember("node-20", hull.getPrimitiveById(20));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
         m = new RelationMember("way-30", hull.getPrimitiveById(30));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
         m = new RelationMember("relation-40", hull.getPrimitiveById(40));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
     }
 
     @Test
@@ -271,7 +271,7 @@ public class MergeSourceBuildingVisitorTest {
         r1.put("name", "r1");
         Node n20 = new Node(new LatLon(20.0,20.0));
         n20.put("name", "n20");
-        r1.members.add(new RelationMember("node-20",n20));
+        r1.getMembers().add(new RelationMember("node-20",n20));
         Way w30 = new Way();
         w30.put("name", "w30");
         Node n21;
@@ -280,10 +280,10 @@ public class MergeSourceBuildingVisitorTest {
         Node n22;
         w30.addNode(n22 = new Node(new LatLon(22.0,22.0)));
         n22.put("name","n22");
-        r1.members.add(new RelationMember("way-30",w30));
+        r1.addMember(new RelationMember("way-30",w30));
         Relation r40 = new Relation();
         r40.put("name", "r40");
-        r1.members.add(new RelationMember("relation-40", r40));
+        r1.addMember(new RelationMember("relation-40", r40));
         source.nodes.add(n20);
         source.nodes.add(n21);
         source.nodes.add(n22);
@@ -322,18 +322,18 @@ public class MergeSourceBuildingVisitorTest {
         assertNotNull(r);
         assertEquals(3, r.getMembersCount());
         RelationMember m = new RelationMember("node-20", lookupByName(hull.nodes, "n20"));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
         m = new RelationMember("way-30", lookupByName(hull.ways, "w30"));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
         m = new RelationMember("relation-40", lookupByName(hull.relations, "r40"));
-        assertTrue(r.members.contains(m));
+        assertTrue(r.getMembers().contains(m));
     }
 
     @Test
     public void test_OneRelation_Existing_Recursive() {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1);
-        r1.members.add(new RelationMember("relation-1",r1));
+        r1.addMember(new RelationMember("relation-1",r1));
         source.relations.add(r1);
         source.setSelected(r1);
 
@@ -345,7 +345,7 @@ public class MergeSourceBuildingVisitorTest {
         Relation r = (Relation)hull.getPrimitiveById(1);
         assertNotNull(r);
         assertEquals(1, r.getMembersCount());
-        assertTrue(r.members.contains(new RelationMember("relation-1",r)));
+        assertTrue(r.getMembers().contains(new RelationMember("relation-1",r)));
     }
 
     @Test
@@ -353,7 +353,7 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Relation r1 = new Relation();
         r1.put("name", "r1");
-        r1.members.add(new RelationMember("relation-1",r1));
+        r1.addMember(new RelationMember("relation-1",r1));
         source.relations.add(r1);
         source.setSelected(r1);
 
@@ -365,7 +365,7 @@ public class MergeSourceBuildingVisitorTest {
         Relation r = (Relation)lookupByName(hull.relations, "r1");
         assertNotNull(r);
         assertEquals(1, r.getMembersCount());
-        assertTrue(r.members.contains(new RelationMember("relation-1",r)));
+        assertTrue(r.getMembers().contains(new RelationMember("relation-1",r)));
     }
 
     @Test
@@ -373,8 +373,8 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1);
         Relation r2 = new Relation(2);
-        r1.members.add(new RelationMember("relation-2",r2));
-        r2.members.add(new RelationMember("relation-1",r1));
+        r1.addMember(new RelationMember("relation-2",r2));
+        r2.addMember(new RelationMember("relation-1",r1));
         source.relations.add(r1);
         source.relations.add(r2);
         source.setSelected(r1,r2);
@@ -389,8 +389,8 @@ public class MergeSourceBuildingVisitorTest {
         r2 = (Relation)hull.getPrimitiveById(2);
         assertNotNull(r2);
         assertEquals(1, r1.getMembersCount());
-        assertTrue(r1.members.contains(new RelationMember("relation-2",r2)));
+        assertTrue(r1.getMembers().contains(new RelationMember("relation-2",r2)));
         assertEquals(1, r2.getMembersCount());
-        assertTrue(r2.members.contains(new RelationMember("relation-1",r1)));
+        assertTrue(r2.getMembers().contains(new RelationMember("relation-1",r1)));
     }
 }

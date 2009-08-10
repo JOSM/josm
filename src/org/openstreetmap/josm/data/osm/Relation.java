@@ -64,6 +64,46 @@ public final class Relation extends OsmPrimitive {
         return members.get(index);
     }
 
+    /**
+     *
+     * @param member
+     * @since 1951
+     */
+    public void addMember(RelationMember member) {
+        members.add(member);
+    }
+
+    /**
+     *
+     * @param index
+     * @param member
+     * @since 1951
+     */
+    public void addMember(int index, RelationMember member) {
+        members.add(index, member);
+    }
+
+    /**
+     * Replace member at position specified by index.
+     * @param index
+     * @param member
+     * @return Member that was at the position
+     * @since 1951
+     */
+    public RelationMember setMember(int index, RelationMember member) {
+        return members.set(index, member);
+    }
+
+    /**
+     * Removes member at specified position.
+     * @param index
+     * @return Member that was at the position
+     * @since 1951
+     */
+    public RelationMember removeMember(int index) {
+        return members.remove(index);
+    }
+
     final static String[] defnames = {"name", "ref", "restriction", "note"};
     static Collection<String> names = null;
 

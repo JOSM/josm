@@ -39,7 +39,7 @@ public class RelationMemberConflictResolverCommand extends Command {
     private OsmDataLayer layer;
 
     /**
-     * 
+     *
      * @param my my relation
      * @param their their relation
      * @param mergedNodeList  the list of merged relation members
@@ -71,14 +71,10 @@ public class RelationMemberConflictResolverCommand extends Command {
         // replace the list of nodes of 'my' way by the list of merged
         // nodes
         //
-        my.members.clear();
-        for (int i=0; i<mergedMembers.size();i++) {
-            RelationMember n = mergedMembers.get(i);
-            my.members.add(n);
-        }
+        my.setMembers(mergedMembers);
 
         // remember the layer
-        layer = Main.main.map.mapView.getEditLayer();
+        layer = Main.map.mapView.getEditLayer();
         return true;
     }
 

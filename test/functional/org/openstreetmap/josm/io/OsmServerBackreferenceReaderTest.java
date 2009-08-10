@@ -87,17 +87,17 @@ public class OsmServerBackreferenceReaderTest {
             r.put("name", "relation-" +i);
             for (int j =0; j < 10; j++) {
                 RelationMember member = new RelationMember("node-" + j, lookupNode(ds, i + j));
-                r.members.add(member);
+                r.addMember(member);
             }
             for (int j =0; j < 5; j++) {
                 RelationMember member = new RelationMember("way-" + j, lookupWay(ds, i + j));
-                r.members.add(member);
+                r.addMember(member);
             }
             if (i > 5) {
                 for (int j =0; j < 3; j++) {
                     RelationMember member = new RelationMember("relation-" + j, lookupRelation(ds, j));
                     logger.info(MessageFormat.format("adding relation {0} to relation {1}", j, i));
-                    r.members.add(member);
+                    r.addMember(member);
                 }
             }
             ds.relations.add(r);

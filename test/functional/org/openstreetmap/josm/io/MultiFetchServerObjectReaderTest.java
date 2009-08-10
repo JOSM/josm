@@ -94,14 +94,14 @@ public class MultiFetchServerObjectReaderTest {
             for (int j = 0; j < numNodesInRelation;j++) {
                 int idx = (start + j) % 500;
                 Node n = nodes.get(idx);
-                r.members.add(new RelationMember("role-" + j, n));
+                r.addMember(new RelationMember("role-" + j, n));
             }
             int numWaysInRelation = (int)Math.round(Math.random() * 10);
             start = (int)Math.round(Math.random() * numWays);
             for (int j = 0; j < numWaysInRelation;j++) {
                 int idx = (start + j) % 500;
                 Way w = ways.get(idx);
-                r.members.add(new RelationMember("role-" + j, w));
+                r.addMember(new RelationMember("role-" + j, w));
             }
             ds.addPrimitive(r);
         }
@@ -287,7 +287,7 @@ public class MultiFetchServerObjectReaderTest {
             Relation r1 = it.next();
             Relation r2 = (Relation)ds.getPrimitiveById(r1.id);
             assertNotNull(r2);
-            assertEquals(r2.members.size(), r1.members.size());
+            assertEquals(r2.getMembersCount(), r1.getMembersCount());
             assertEquals(r2.get("name"),r2.get("name"));
         }
         assertTrue(reader.getMissingPrimitives().isEmpty());

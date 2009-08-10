@@ -325,9 +325,9 @@ public class SplitWayAction extends JosmAction {
 
                             j++;
                             if (backwards) {
-                                c.members.add(i, em);
+                                c.addMember(i, em);
                             } else {
-                                c.members.add(j, em);
+                                c.addMember(j, em);
                             }
                         }
                         i = j;

@@ -56,7 +56,7 @@ public class RelationTreeModel implements TreeModel {
     public RelationTreeModel(List<RelationMember> members) {
         if (members == null) return;
         Relation root = new Relation();
-        root.members.addAll(members);
+        root.setMembers(members);
         this.root = root;
         listeners = new CopyOnWriteArrayList<TreeModelListener>();
     }
@@ -149,7 +149,7 @@ public class RelationTreeModel implements TreeModel {
     public void populate(List<RelationMember> members) {
         if (members == null) return;
         Relation r = new Relation();
-        r.members.addAll(members);
+        r.setMembers(members);
         this.root = r;
         fireRootReplacedEvent();
     }

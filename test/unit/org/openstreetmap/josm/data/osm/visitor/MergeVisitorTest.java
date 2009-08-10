@@ -964,9 +964,9 @@ public class MergeVisitorTest {
         Relation theirRelation = new Relation();
         theirRelation.id = 4;
         theirRelation.version = 1;
-        theirRelation.members.add(new RelationMember("", n3));
-        theirRelation.members.add(new RelationMember("", n4));
-        theirRelation.members.add(new RelationMember("", n5));
+        theirRelation.addMember(new RelationMember("", n3));
+        theirRelation.addMember(new RelationMember("", n4));
+        theirRelation.addMember(new RelationMember("", n5));
         their.addPrimitive(theirRelation);
 
         MergeVisitor visitor = new MergeVisitor(my,their);

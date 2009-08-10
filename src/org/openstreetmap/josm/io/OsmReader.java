@@ -411,6 +411,8 @@ public class OsmReader {
             Relation en = findRelation(e.getKey().id);
             if (en == null) throw new Error("Failed to create relation " + e.getKey().id);
 
+            List<RelationMember> relationMembers = new ArrayList<RelationMember>();
+
             for (RelationMemberData emd : e.getValue()) {
                 OsmPrimitive member;
                 if (emd.type.equals("node")) {
@@ -437,8 +439,9 @@ public class OsmReader {
                 } else {
                     throw new SAXException(tr("Unknown relation member type {0}", emd.type));
                 }
-                en.members.add(new RelationMember(emd.role, member));
+                relationMembers.add(new RelationMember(emd.role, member));
             }
+            en.setMembers(relationMembers);
         }
         hm = null;
     }

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -224,8 +225,7 @@ public class CombineWayAction extends JosmAction {
 
         // modify all relations containing the now-deleted ways
         for (Relation r : relationsUsingWays) {
-            Relation newRel = new Relation(r);
-            newRel.members.clear();
+            List<RelationMember> newMembers = new ArrayList<RelationMember>();
             HashSet<String> rolesToReAdd = new HashSet<String>();
             for (RelationMember rm : r.getMembers()) {
                 // Don't copy the member if it to one of our ways, just keep a
@@ -233,12 +233,14 @@ public class CombineWayAction extends JosmAction {
                 if (selectedWays.contains(rm.getMember())) {
                     rolesToReAdd.add(rm.getRole());
                 } else {
-                    newRel.members.add(rm);
+                    newMembers.add(rm);
                 }
             }
             for (String role : rolesToReAdd) {
-                newRel.members.add(new RelationMember(role, modifyWay));
+                newMembers.add(new RelationMember(role, modifyWay));
             }
+            Relation newRel = new Relation(r);
+            newRel.setMembers(newMembers);
             cmds.add(new ChangeCommand(r, newRel));
         }
         Main.main.undoRedo.add(new SequenceCommand(tr("Combine {0} ways", selectedWays.size()), cmds));

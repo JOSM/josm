@@ -43,20 +43,20 @@ public class RemoveRelationMemberCommand extends Command {
 
     @Override public boolean executeCommand() {
         super.executeCommand();
-        int removed_at = relation.members.indexOf(member);
-        relation.members.remove(member);
-        if ((location != -1) && (removed_at != location)) {
-            relation.members.add(removed_at, member);
+        int removeIndex = relation.getMembers().indexOf(member);
+        if ((location != -1) && (removeIndex != location)) {
             Main.debug("error removing relation member");
             return false;
+        } else {
+            relation.removeMember(removeIndex);
+            relation.modified = true;
+            return true;
         }
-        relation.modified = true;
-        return true;
     }
 
     @Override public void undoCommand() {
         super.undoCommand();
-        relation.members.add(member);
+        relation.addMember(member);
         relation.modified = this.getOrig(relation).modified;
     }
 

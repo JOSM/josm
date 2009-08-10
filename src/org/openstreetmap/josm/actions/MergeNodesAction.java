@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -274,8 +275,7 @@ public class MergeNodesAction extends JosmAction {
 
         // modify all relations containing the now-deleted nodes
         for (Relation r : relationsUsingNodes) {
-            Relation newRel = new Relation(r);
-            newRel.members.clear();
+            List<RelationMember> newMembers = new ArrayList<RelationMember>();
             HashSet<String> rolesToReAdd = new HashSet<String>();
             for (RelationMember rm : r.getMembers()) {
                 // Don't copy the member if it points to one of our nodes,
@@ -283,12 +283,14 @@ public class MergeNodesAction extends JosmAction {
                 if (allNodes.contains(rm.getMember())) {
                     rolesToReAdd.add(rm.getRole());
                 } else {
-                    newRel.members.add(rm);
+                    newMembers.add(rm);
                 }
             }
             for (String role : rolesToReAdd) {
-                newRel.members.add(new RelationMember(role, dest));
+                newMembers.add(new RelationMember(role, dest));
             }
+            Relation newRel = new Relation(r);
+            newRel.setMembers(newMembers);
             cmds.add(new ChangeCommand(r, newRel));
         }
 

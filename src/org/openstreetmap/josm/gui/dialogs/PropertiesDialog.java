@@ -853,14 +853,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
             Relation rel = new Relation(cur);
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            int index = 0;
             for (RelationMember rm : cur.getMembers()) {
                 for (OsmPrimitive osm : sel) {
                     if (rm.getMember() == osm)
                     {
-                        rel.members.remove(rm);
+                        rel.removeMember(index);
                         break;
                     }
                 }
+                index++;
             }
             Main.main.undoRedo.add(new ChangeCommand(cur, rel));
             DataSet.fireSelectionChanged(sel);

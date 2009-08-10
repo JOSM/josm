@@ -89,11 +89,15 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         } else {
             clone = new Relation(r);
         }
-        clone.members.clear();
+
+        List<RelationMember> newMembers = new ArrayList<RelationMember>();
         for (RelationMember member: r.getMembers()) {
-            RelationMember cloneMember = new RelationMember(member.getRole(), mappedPrimitives.get(member.getMember()));
-            clone.members.add(cloneMember);
+            newMembers.add(
+                new RelationMember(member.getRole(), mappedPrimitives.get(member.getMember())));
+
         }
+        clone.setMembers(newMembers);
+
         if (! mappedPrimitives.keySet().contains(r)) {
             mappedPrimitives.put(r, clone);
         }
@@ -103,7 +107,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         if (isAlreadyRemembered(r))
             return;
         Relation clone = new Relation(r);
-        clone.members.clear();
+        clone.setMembers(null);
         mappedPrimitives.put(r, clone);
     }
 
@@ -147,7 +151,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         } else {
             clone = new Relation(r);
         }
-        clone.members.clear();
+        clone.setMembers(null);
         clone.incomplete = true;
         if (! isAlreadyRemembered(r)) {
             mappedPrimitives.put(r, clone);
