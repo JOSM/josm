@@ -32,9 +32,11 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.Map.Entry;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -42,7 +44,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
@@ -71,6 +76,7 @@ import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.AutoCompleteComboBox;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -412,21 +418,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * Delete the keys from the given row.
-     * @param row   The row, which key gets deleted from the dataset.
-     */
-    private void delete(int row) {
-        String key = propertyData.getValueAt(row, 0).toString();
-        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-        Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
-        DataSet.fireSelectionChanged(sel);
-        selectionChanged(sel); // update table
-
-        int rowCount = propertyTable.getRowCount();
-        propertyTable.changeSelection((row < rowCount ? row : (rowCount-1)), 0, false, false);
-    }
-
-    /**
      * The property data.
      */
     private final DefaultTableModel propertyData = new DefaultTableModel() {
@@ -578,32 +569,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 {
                     if (e.getActionCommand().equals("Edit")) {
                         membershipEdit(row);
-                    } else if (e.getActionCommand().equals("Delete")) {
-                        Relation cur = (Relation)membershipData.getValueAt(row, 0);
-                        int result = new ExtendedDialog(Main.parent,
-                                tr("Change relation"),
-                                tr("Really delete selection from relation {0}?", NAME_FORMATTER.getName(cur)),
-                                new String[] {tr("Delete from relation"), tr("Cancel")},
-                                new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
-
-                        if(result == 1)
-                        {
-                            Relation rel = new Relation(cur);
-                            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-                            for (RelationMember rm : cur.getMembers()) {
-                                for (OsmPrimitive osm : sel) {
-                                    if (rm.getMember() == osm)
-                                    {
-                                        rel.members.remove(rm);
-                                        break;
-                                    }
-                                }
-                            }
-                            Main.main.undoRedo.add(new ChangeCommand(cur, rel));
-                            DataSet.fireSelectionChanged(sel);
-                            selectionChanged(sel); // update whole table
-                        }
-
                     }
                 }
                 else
@@ -613,8 +578,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     // than just displaying an error message (which always "fails").
                     if (e.getActionCommand().equals("Edit")) {
                         propertyEdit(sel >= 0 ? sel : 0);
-                    } else if (e.getActionCommand().equals("Delete")) {
-                        delete(sel >= 0 ? sel : 0);
                     }
                 }
             }
@@ -632,10 +595,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 tr("Edit the value of the selected key for all objects"), s, buttonAction);
         buttonPanel.add(this.btnEdit);
 
-        s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_Q,
-                Shortcut.GROUP_MNEMONIC);
-        this.btnDel = new SideButton(marktr("Delete"),"delete","Properties",
-                tr("Delete the selected key in all objects"), s, buttonAction);
+        // -- delete action
+        DeleteAction deleteAction = new DeleteAction();
+        this.btnDel = new SideButton(deleteAction);
+        membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
+        propertyTable.getSelectionModel().addListSelectionListener(deleteAction);
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"delete"
+        );
+        getActionMap().put("delete", deleteAction);
         buttonPanel.add(this.btnDel);
         add(buttonPanel, BorderLayout.SOUTH);
 
@@ -858,5 +826,77 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         // do nothing
     }
 
+
+    class DeleteAction extends AbstractAction implements ListSelectionListener {
+
+        protected void deleteProperty(int row){
+            String key = propertyData.getValueAt(row, 0).toString();
+            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
+            DataSet.fireSelectionChanged(sel);
+            selectionChanged(sel); // update table
+
+            int rowCount = propertyTable.getRowCount();
+            propertyTable.changeSelection((row < rowCount ? row : (rowCount-1)), 0, false, false);
+        }
+
+        protected void deleteFromRelation(int row) {
+            Relation cur = (Relation)membershipData.getValueAt(row, 0);
+            int result = new ExtendedDialog(Main.parent,
+                    tr("Change relation"),
+                    tr("Really delete selection from relation {0}?", NAME_FORMATTER.getName(cur)),
+                    new String[] {tr("Delete from relation"), tr("Cancel")},
+                    new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+
+            if(result != 1)
+                return;
+
+            Relation rel = new Relation(cur);
+            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            for (RelationMember rm : cur.getMembers()) {
+                for (OsmPrimitive osm : sel) {
+                    if (rm.getMember() == osm)
+                    {
+                        rel.members.remove(rm);
+                        break;
+                    }
+                }
+            }
+            Main.main.undoRedo.add(new ChangeCommand(cur, rel));
+            DataSet.fireSelectionChanged(sel);
+            selectionChanged(sel); // update whole table
+        }
+
+        public DeleteAction() {
+            putValue(NAME, tr("Delete"));
+            putValue(SHORT_DESCRIPTION, tr("Delete the selected key in all objects"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            Shortcut s = Shortcut.registerShortcut("properties:delete", tr("Delete Properties"), KeyEvent.VK_Q,
+                    Shortcut.GROUP_MNEMONIC);
+            putValue(MNEMONIC_KEY, (int) KeyEvent.getKeyText(s.getAssignedKey()).charAt(0));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (propertyTable.getSelectedRowCount() >0 ) {
+                int row = propertyTable.getSelectedRow();
+                deleteProperty(row);
+            } else if (membershipTable.getSelectedRowCount() > 0) {
+                int row = membershipTable.getSelectedRow();
+                deleteFromRelation(row);
+            }
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(
+                    PropertiesDialog.this.propertyTable.getSelectedRowCount() >0
+                    || PropertiesDialog.this.membershipTable.getSelectedRowCount() > 0
+            );
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
 
 }
