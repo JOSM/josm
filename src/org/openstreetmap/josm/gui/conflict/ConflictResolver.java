@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -47,8 +46,22 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * 
  */
 public class ConflictResolver extends JPanel implements PropertyChangeListener  {
+
+    /* -------------------------------------------------------------------------------------- */
+    /* Property names                                                                         */
+    /* -------------------------------------------------------------------------------------- */
+    /** name of the property indicating whether all conflicts are resolved,
+     *  {@see #isResolvedCompletely()}
+     */
     static public final String RESOLVED_COMPLETELY_PROP = ConflictResolver.class.getName() + ".resolvedCompletely";
+    /**
+     * name of the property for the {@see OsmPrimitive} in the role "my"
+     */
     static public final String MY_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".myPrimitive";
+
+    /**
+     * name of the property for the {@see OsmPrimitive} in the role "my"
+     */
     static public final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
 
 
@@ -65,17 +78,20 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     private ImageIcon mergeComplete;
     private ImageIcon mergeIncomplete;
 
-    /** the property change listeners */
-    private PropertyChangeSupport listeners;
-
     /** indicates whether the current conflict is resolved completely */
     private boolean resolvedCompletely;
 
+    /**
+     * loads the required icons
+     */
     protected void loadIcons() {
         mergeComplete = ImageProvider.get("dialogs/conflict","mergecomplete.png" );
         mergeIncomplete = ImageProvider.get("dialogs/conflict","mergeincomplete.png" );
     }
 
+    /**
+     * builds the UI
+     */
     protected void build() {
         tabbedPane = new JTabbedPane();
 
@@ -103,67 +119,44 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         add(tabbedPane, BorderLayout.CENTER);
     }
 
-
+    /**
+     * constructor
+     */
     public ConflictResolver() {
-        listeners = new PropertyChangeSupport(this);
         resolvedCompletely = false;
         build();
         loadIcons();
     }
 
-
+    /**
+     * Sets the {@see OsmPrimitive} in the role "my"
+     * 
+     * @param my the primitive in the role "my"
+     */
     protected void setMy(OsmPrimitive my) {
         OsmPrimitive old = this.my;
         this.my = my;
         if (old != this.my) {
-            fireMyPrimitive(old, this.my);
+            firePropertyChange(MY_PRIMITIVE_PROP, old, this.my);
         }
     }
 
+    /**
+     * Sets the {@see OsmPrimitive} in the role "their".
+     * 
+     * @param their the primitive in the role "their"
+     */
     protected void setTheir(OsmPrimitive their) {
         OsmPrimitive old = this.their;
         this.their = their;
         if (old != this.their) {
-            fireTheirPrimitive(old, this.their);
+            firePropertyChange(THEIR_PRIMITIVE_PROP, old, this.their);
         }
     }
 
-    protected void fireResolvedCompletely(boolean oldValue,boolean newValue) {
-        if (listeners == null) return;
-        listeners.firePropertyChange(RESOLVED_COMPLETELY_PROP, oldValue, newValue);
-    }
-
-    protected void fireMyPrimitive(OsmPrimitive oldValue,OsmPrimitive newValue) {
-        if (listeners == null) return;
-        listeners.firePropertyChange(MY_PRIMITIVE_PROP, oldValue, newValue);
-    }
-
-    protected void fireTheirPrimitive(OsmPrimitive oldValue,OsmPrimitive newValue) {
-        if (listeners == null) return;
-        listeners.firePropertyChange(THEIR_PRIMITIVE_PROP, oldValue, newValue);
-    }
-
     /**
-     * Adds a property change listener
-     * 
-     *  @param listener the listener
+     * handles property change events
      */
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        listeners.addPropertyChangeListener(listener);
-    }
-
-    /**
-     * Removes a property change listener
-     * 
-     *  @param listener the listener
-     */
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        listeners.removePropertyChangeListener(listener);
-    }
-
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(TagMergeModel.PROP_NUM_UNDECIDED_TAGS)) {
             int newValue = (Integer)evt.getNewValue();
@@ -212,7 +205,6 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             updateResolvedCompletely();
         }
     }
-
 
     /**
      * populates the conflict resolver with the conflicts between my and their
@@ -287,6 +279,10 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         return new SequenceCommand(tr("Conflict Resolution"), commands);
     }
 
+    /**
+     * Updates the state of the property {@see #RESOLVED_COMPLETELY_PROP}
+     * 
+     */
     protected void updateResolvedCompletely() {
         boolean oldValueResolvedCompletely = resolvedCompletely;
         if (my instanceof Node) {
@@ -316,7 +312,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 && relationMemberMerger.getModel().isFrozen();
         }
         if (this.resolvedCompletely != oldValueResolvedCompletely) {
-            fireResolvedCompletely(oldValueResolvedCompletely, this.resolvedCompletely);
+            firePropertyChange(RESOLVED_COMPLETELY_PROP, oldValueResolvedCompletely, this.resolvedCompletely);
         }
     }
 
