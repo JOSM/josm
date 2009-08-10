@@ -29,6 +29,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Matthew Newton
  * @author Petr Dlouhý
+ * @author Teemu Koskinen
  */
 public final class AlignInCircleAction extends JosmAction {
 
@@ -141,12 +142,50 @@ public final class AlignInCircleAction extends JosmAction {
             return;
         }
 
+        // Reorder the nodes if they didn't come from a single way
+        if (ways.size() != 1) {
+            // First calculate the average point
+
+            BigDecimal east = new BigDecimal(0);
+            BigDecimal north = new BigDecimal(0);
+
+            for (Node n : nodes) {
+                BigDecimal x = new BigDecimal(n.getEastNorth().east());
+                BigDecimal y = new BigDecimal(n.getEastNorth().north());
+                east = east.add(x, MathContext.DECIMAL128);
+                north = north.add(y, MathContext.DECIMAL128);
+            }
+            BigDecimal nodesSize = new BigDecimal(nodes.size());
+            east = east.divide(nodesSize, MathContext.DECIMAL128);
+            north = north.divide(nodesSize, MathContext.DECIMAL128);
+
+            EastNorth average = new EastNorth(east.doubleValue(), north.doubleValue());
+            List<Node> newNodes = new LinkedList<Node>();
+
+            // Then reorder them based on heading from the average point
+            while (!nodes.isEmpty()) {
+                double maxHeading = -1.0;
+                Node maxNode = null;
+                for (Node n : nodes) {
+                    double heading = average.heading(n.getEastNorth());
+                    if (heading > maxHeading) {
+                        maxHeading = heading;
+                        maxNode = n;
+                    }
+                }
+                newNodes.add(maxNode);
+                nodes.remove(maxNode);
+            }
+
+            nodes = newNodes;
+        }
+
         if (center == null) {
             // Compute the centroid of nodes
 
-            BigDecimal area = new BigDecimal("0");
-            BigDecimal north = new BigDecimal("0");
-            BigDecimal east = new BigDecimal("0");
+            BigDecimal area = new BigDecimal(0);
+            BigDecimal north = new BigDecimal(0);
+            BigDecimal east = new BigDecimal(0);
 
             // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
             for (int i = 0; i < nodes.size(); i++) {
@@ -166,11 +205,10 @@ public final class AlignInCircleAction extends JosmAction {
 
             }
 
-            BigDecimal d = new BigDecimal("2");
-            area  = area.divide(d, MathContext.DECIMAL128);
-            d = new BigDecimal("6");
-            north = north.divide(d.multiply(area, MathContext.DECIMAL128), MathContext.DECIMAL128);
-            east = east.divide(d.multiply(area, MathContext.DECIMAL128), MathContext.DECIMAL128);
+            BigDecimal d = new BigDecimal(3, MathContext.DECIMAL128); // 1/2 * 6 = 3
+            area  = area.multiply(d, MathContext.DECIMAL128);
+            north = north.divide(area, MathContext.DECIMAL128);
+            east = east.divide(area, MathContext.DECIMAL128);
 
             center = new EastNorth(east.doubleValue(), north.doubleValue());
 

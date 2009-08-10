@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -234,10 +236,10 @@ public class GpxWriter extends XmlWriter {
             type = "trkpt";
             break;
         default:
-            throw new RuntimeException("Bug detected. Please report this!");
+            throw new RuntimeException(tr("Unknown mode {0}.", mode));
         }
         if (pnt != null) {
-            LatLon c =pnt.getCoor();
+            LatLon c = pnt.getCoor();
             openAtt(type, "lat=\"" + c.lat() + "\" lon=\"" + c.lon() + "\"");
             writeAttr(pnt.attr);
             closeln(type);
