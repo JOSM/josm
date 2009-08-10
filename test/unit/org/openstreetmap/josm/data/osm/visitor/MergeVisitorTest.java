@@ -2,12 +2,15 @@
 package org.openstreetmap.josm.data.osm.visitor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
@@ -20,6 +23,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
@@ -977,7 +981,122 @@ public class MergeVisitorTest {
         assertTrue(n != null);
     }
 
+    /**
+     * Merge an incomplete way with two incomplete nodes into an empty dataset.
+     * 
+     * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456
+     */
+    @Test
+    public void newIncompleteWay() {
+        DataSet their = new DataSet();
+        their.version = "0.6";
 
+        Node n1 = new Node(1);
+        n1.version = 1;
+        n1.incomplete = true;
+        their.addPrimitive(n1);
 
+        Node n2 = new Node(2);
+        n2.version = 1;
+        n2.incomplete = true;
+        their.addPrimitive(n2);
 
+        Way w3 = new Way(3);
+        w3.incomplete = true;
+        w3.setNodes(Arrays.asList(n1,n2));
+        their.addPrimitive(w3);
+
+        DataSet my = new DataSet();
+        their.version = "0.6";
+
+        MergeVisitor visitor = new MergeVisitor(my,their);
+        visitor.merge();
+
+        assertEquals(0,visitor.getConflicts().size());
+
+        OsmPrimitive p= my.getPrimitiveById(1);
+        assertNotNull(p);
+        assertTrue(p.incomplete);
+        p= my.getPrimitiveById(2);
+        assertNotNull(p);
+        assertTrue(p.incomplete);
+        p= my.getPrimitiveById(3);
+        assertNotNull(p);
+        assertTrue(p.incomplete);
+
+        Way w = (Way)my.getPrimitiveById(3);
+        assertNotNull(w);
+        assertTrue(p.incomplete);
+        assertEquals(2, w.getNodesCount());
+        assertTrue(w.getNode(0).incomplete);
+        assertTrue(w.getNode(1).incomplete);
+    }
+
+    /**
+     * Merge an incomplete way with two incomplete nodes into a dataset where the way already exists as complete way.
+     * 
+     * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456 after a "Update selection " of this way
+     */
+    @Test
+    public void incompleteWayOntoCompleteWay() {
+        DataSet their = new DataSet();
+        their.version = "0.6";
+
+        Node n1 = new Node(1);
+        n1.version = 1;
+        n1.incomplete = true;
+        their.addPrimitive(n1);
+
+        Node n2 = new Node(2);
+        n2.version = 1;
+        n2.incomplete = true;
+        their.addPrimitive(n2);
+
+        Way w3 = new Way(3);
+        w3.incomplete = true;
+        w3.setNodes(Arrays.asList(n1,n2));
+        their.addPrimitive(w3);
+
+        DataSet my = new DataSet();
+        their.version = "0.6";
+
+        Node n4 = new Node(new LatLon(0,0));
+        n4.id = 1;
+        n4.version = 1;
+        n4.incomplete = false;
+        my.addPrimitive(n4);
+
+        Node n5 = new Node(new LatLon(1,1));
+        n5.id = 2;
+        n5.version = 1;
+        n5.incomplete = false;
+        my.addPrimitive(n5);
+
+        Way w6 = new Way(3);
+        w6.incomplete = false;
+        w6.setNodes(Arrays.asList(n4,n5));
+        my.addPrimitive(w6);
+
+        MergeVisitor visitor = new MergeVisitor(my,their);
+        visitor.merge();
+
+        assertEquals(0,visitor.getConflicts().size());
+
+        OsmPrimitive p= my.getPrimitiveById(1);
+        assertNotNull(p);
+        assertTrue(!p.incomplete);
+        p= my.getPrimitiveById(2);
+        assertNotNull(p);
+        assertTrue(!p.incomplete);
+        p= my.getPrimitiveById(3);
+        assertNotNull(p);
+        assertTrue(!p.incomplete);
+
+        Way w = (Way)my.getPrimitiveById(3);
+        assertNotNull(w);
+        assertTrue(!p.incomplete);
+        assertEquals(2, w.getNodesCount());
+        assertTrue(!w.getNode(0).incomplete);
+        assertTrue(!w.getNode(1).incomplete);
+    }
 }

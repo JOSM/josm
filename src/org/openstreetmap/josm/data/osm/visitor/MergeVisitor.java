@@ -149,6 +149,15 @@ public class MergeVisitor extends AbstractVisitor {
         mergePrimitive(other, myDataSet.relations, theirDataSet.relations, relshash);
     }
 
+    protected void fixIncomplete(Way w) {
+        if (!w.incomplete)return;
+        if (w.incomplete && w.getNodesCount() == 0) return;
+        for (Node n: w.getNodes()) {
+            if (n.incomplete) return;
+        }
+        w.incomplete = false;
+    }
+
     /**
      * Postprocess the dataset and fix all merged references to point to the actual
      * data.
@@ -156,6 +165,7 @@ public class MergeVisitor extends AbstractVisitor {
     public void fixReferences() {
         for (Way w : myDataSet.ways) {
             fixWay(w);
+            fixIncomplete(w);
         }
         for (Relation r : myDataSet.relations) {
             fixRelation(r);
@@ -242,12 +252,22 @@ public class MergeVisitor extends AbstractVisitor {
                     // because it was deleted on the server.
                     //
                     conflicts.add(my,other);
-                } else if (my.incomplete) {
+                } else if (my.incomplete && !other.incomplete) {
                     // my is incomplete, other completes it
                     // => merge other onto my
                     //
                     my.incomplete = false;
                     my.cloneFrom(other);
+                    merged.put(other, my);
+                } else if (!my.incomplete && other.incomplete) {
+                    // my is complete and the other is incomplete
+                    // => keep mine, we have more information already
+                    //
+                    merged.put(other, my);
+                } else if (my.incomplete && other.incomplete) {
+                    // my and other are incomplete. Doesn't matter which one to
+                    // take. We take mine.
+                    //
                     merged.put(other, my);
                 } else if (my.deleted && ! other.deleted && my.version == other.version) {
                     // same version, but my is deleted. Assume mine takes precedence
