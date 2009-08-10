@@ -19,6 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -258,7 +259,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     /**
-     * Moves the layer to the given new position. No event is fired.
+     * Moves the layer to the given new position. No event is fired, but repaints
+     * according to the new Z-Order of the layers.
+     * 
      * @param layer     The layer to move
      * @param pos       The new position of the layer
      */
@@ -275,6 +278,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             layers.add(pos, layer);
         }
         AudioPlayer.reset();
+        repaint();
     }
 
 
@@ -283,6 +287,41 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (curLayerPos == -1)
             throw new IllegalArgumentException(tr("layer not in list."));
         return curLayerPos;
+    }
+
+    /**
+     * Creates a list of the visible layers in Z-Order, the layer with the lowest Z-Order
+     * first, layer with the highest Z-Order last.
+     * 
+     * @return a list of the visible in Z-Order, the layer with the lowest Z-Order
+     * first, layer with the highest Z-Order last.
+     */
+    protected List<Layer> getVisibleLayersInZOrder() {
+        ArrayList<Layer> ret = new ArrayList<Layer>();
+        for (Layer l: layers) {
+            if (l.isVisible()) {
+                ret.add(l);
+            }
+        }
+        // sort according to position in the list of layers, with one exception:
+        // an active data layer always becomes a higher Z-Order than all other
+        // data layers
+        //
+        Collections.sort(
+                ret,
+                new Comparator<Layer>() {
+                    public int compare(Layer l1, Layer l2) {
+                        if (l1 instanceof OsmDataLayer && l2 instanceof OsmDataLayer) {
+                            if (l1 == getActiveLayer()) return -1;
+                            if (l2 == getActiveLayer()) return 1;
+                            return new Integer(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
+                        } else
+                            return new Integer(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
+                    }
+                }
+        );
+        Collections.reverse(ret);
+        return ret;
     }
 
     /**
@@ -304,17 +343,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         tempG.setColor(Main.pref.getColor("background", Color.BLACK));
         tempG.fillRect(0, 0, getWidth(), getHeight());
 
-        Layer activeLayer = getActiveLayer();
-        for (int i = layers.size()-1; i >= 0; --i) {
-            Layer l = layers.get(i);
-            if (l.isVisible() && l != getActiveLayer()) {
-                l.paint(tempG, this);
-            }
+        for (Layer l: getVisibleLayersInZOrder()) {
+            l.paint(tempG, this);
         }
-        if (activeLayer != null && activeLayer.isVisible()) {
-            activeLayer.paint(tempG, this);
-        }
-
         for (MapViewPaintable mvp : temporaryLayers) {
             mvp.paint(tempG, this);
         }
