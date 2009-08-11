@@ -6,9 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -419,6 +421,8 @@ public class GpxLayer extends Layer {
         // draw direction arrows on the lines
         boolean direction = Main.pref.getBoolean("draw.rawgps.direction");
         // don't draw lines if longer than x meters
+        int lineWidth = Main.pref.getInteger("draw.rawgps.linewidth",0);
+
         int maxLineLength;
         if (this.isLocalFile) {
             maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", -1);
@@ -447,6 +451,13 @@ public class GpxLayer extends Layer {
         int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
         // allows to tweak line coloring for different speed levels.
         int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
+
+        if(lineWidth != 0)
+        {
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+        }
+
         /****************************************************************
          ********** STEP 2a - CHECK CACHE VALIDITY **********************
          ****************************************************************/
