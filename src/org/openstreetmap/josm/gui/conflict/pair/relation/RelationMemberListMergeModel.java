@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.relation;
+package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -10,8 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.command.RelationMemberConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.conflict.ListMergeModel;
-import org.openstreetmap.josm.gui.conflict.ListRole;
+import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 /**
  * The model for merging two lists of relation members
  *

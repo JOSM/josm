@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMerger;
 
 public class NodeListMergerTest extends JFrame {
 

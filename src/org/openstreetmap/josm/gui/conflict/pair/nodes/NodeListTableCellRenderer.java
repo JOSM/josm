@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.nodes;
+package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -19,7 +19,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.conflict.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**

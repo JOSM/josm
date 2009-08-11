@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.tags;
+package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 /**
  * TagMergeItem represents an individual merge action for a specific pair of key/value.

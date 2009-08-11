@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.gui.conflict.nodes;
+package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
 import java.util.logging.Logger;
 
@@ -7,7 +7,7 @@ import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.ListMerger;
+import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the node lists of two {@see Way}s.

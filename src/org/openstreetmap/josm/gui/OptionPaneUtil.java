@@ -9,7 +9,6 @@ import java.awt.HeadlessException;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 

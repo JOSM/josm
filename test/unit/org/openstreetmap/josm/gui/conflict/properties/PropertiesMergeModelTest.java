@@ -16,7 +16,8 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Epsg4326;
-import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
 
 public class PropertiesMergeModelTest {
 

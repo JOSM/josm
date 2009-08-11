@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict;
+package org.openstreetmap.josm.gui.conflict.pair;
 
-import static org.openstreetmap.josm.gui.conflict.ComparePairType.MY_WITH_MERGED;
-import static org.openstreetmap.josm.gui.conflict.ComparePairType.MY_WITH_THEIR;
-import static org.openstreetmap.josm.gui.conflict.ComparePairType.THEIR_WITH_MERGED;
-import static org.openstreetmap.josm.gui.conflict.ListRole.MERGED_ENTRIES;
-import static org.openstreetmap.josm.gui.conflict.ListRole.MY_ENTRIES;
-import static org.openstreetmap.josm.gui.conflict.ListRole.THEIR_ENTRIES;
+import static org.openstreetmap.josm.gui.conflict.pair.ComparePairType.MY_WITH_MERGED;
+import static org.openstreetmap.josm.gui.conflict.pair.ComparePairType.MY_WITH_THEIR;
+import static org.openstreetmap.josm.gui.conflict.pair.ComparePairType.THEIR_WITH_MERGED;
+import static org.openstreetmap.josm.gui.conflict.pair.ListRole.MERGED_ENTRIES;
+import static org.openstreetmap.josm.gui.conflict.pair.ListRole.MY_ENTRIES;
+import static org.openstreetmap.josm.gui.conflict.pair.ListRole.THEIR_ENTRIES;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeEvent;

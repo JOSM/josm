@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.properties;
+package org.openstreetmap.josm.gui.conflict.pair.properties;
 
-import static org.openstreetmap.josm.gui.conflict.MergeDecisionType.UNDECIDED;
+import static org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType.UNDECIDED;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeListener;
@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
-import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;

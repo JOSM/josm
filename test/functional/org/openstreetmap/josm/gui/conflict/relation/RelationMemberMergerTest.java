@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberMerger;
 
 public class RelationMemberMergerTest extends JFrame {
 

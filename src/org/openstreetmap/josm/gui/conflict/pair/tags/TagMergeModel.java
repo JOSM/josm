@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.tags;
+package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.TagConflictResolveCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 /**
  * This is the {@see TableModel} used in the tables of the {@see TagMerger}.

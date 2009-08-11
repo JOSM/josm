@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.relation;
+package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import java.util.logging.Logger;
 
@@ -8,7 +8,7 @@ import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.conflict.ListMerger;
+import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the member lists of two {@see Relation}

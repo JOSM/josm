@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.nodes;
+package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -11,8 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.command.WayNodesConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.ListMergeModel;
-import org.openstreetmap.josm.gui.conflict.ListRole;
+import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 
 public class NodeListMergeModel extends ListMergeModel<Node>{
 

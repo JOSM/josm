@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.tags;
+package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -25,7 +25,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * UI component for resolving conflicts in the tag sets of two {@see OsmPrimitive}s.

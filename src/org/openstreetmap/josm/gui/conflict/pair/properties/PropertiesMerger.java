@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.properties;
+package org.openstreetmap.josm.gui.conflict.pair.properties;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -25,7 +25,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
-import org.openstreetmap.josm.gui.conflict.MergeDecisionType;
+import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**

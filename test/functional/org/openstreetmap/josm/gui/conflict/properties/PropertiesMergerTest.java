@@ -9,6 +9,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Epsg4326;
+import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMerger;
 
 public class PropertiesMergerTest extends JFrame{
 

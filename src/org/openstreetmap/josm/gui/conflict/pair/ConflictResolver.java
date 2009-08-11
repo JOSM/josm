@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict;
+package org.openstreetmap.josm.gui.conflict.pair;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -20,15 +20,15 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.nodes.NodeListMergeModel;
-import org.openstreetmap.josm.gui.conflict.nodes.NodeListMerger;
-import org.openstreetmap.josm.gui.conflict.properties.OperationCancelledException;
-import org.openstreetmap.josm.gui.conflict.properties.PropertiesMergeModel;
-import org.openstreetmap.josm.gui.conflict.properties.PropertiesMerger;
-import org.openstreetmap.josm.gui.conflict.relation.RelationMemberListMergeModel;
-import org.openstreetmap.josm.gui.conflict.relation.RelationMemberMerger;
-import org.openstreetmap.josm.gui.conflict.tags.TagMergeModel;
-import org.openstreetmap.josm.gui.conflict.tags.TagMerger;
+import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMerger;
+import org.openstreetmap.josm.gui.conflict.pair.properties.OperationCancelledException;
+import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMerger;
+import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberMerger;
+import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.tags.TagMerger;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**

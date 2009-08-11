@@ -8,8 +8,6 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,7 +20,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -272,9 +269,6 @@ public class LayerListDialog extends ToggleDialog {
      * The action to delete the currently selected layer
      */
     public final  class DeleteLayerAction extends AbstractAction implements IEnabledStateUpdating {
-
-
-
         private  Layer layer;
 
         /**

@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict;
-import static org.openstreetmap.josm.gui.conflict.ListRole.MERGED_ENTRIES;
-import static org.openstreetmap.josm.gui.conflict.ListRole.MY_ENTRIES;
-import static org.openstreetmap.josm.gui.conflict.ListRole.THEIR_ENTRIES;
+package org.openstreetmap.josm.gui.conflict.pair;
+import static org.openstreetmap.josm.gui.conflict.pair.ListRole.MERGED_ENTRIES;
+import static org.openstreetmap.josm.gui.conflict.pair.ListRole.MY_ENTRIES;
+import static org.openstreetmap.josm.gui.conflict.pair.ListRole.THEIR_ENTRIES;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**

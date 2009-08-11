@@ -5,8 +5,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import org.openstreetmap.josm.gui.conflict.tags.TagMergeItem;
-import org.openstreetmap.josm.gui.conflict.tags.TagMerger;
+import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
+import org.openstreetmap.josm.gui.conflict.pair.tags.TagMerger;
 
 public class TagMergerTest extends JFrame {
 
