@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -80,6 +82,20 @@ public class AutoScaleAction extends JosmAction {
         }
     }
 
+    /**
+     * Replies the first selected layer in the layer list dialog. null, if no
+     * such layer exists, either because the layer list dialog is not yet created
+     * or because no layer is selected.
+     * 
+     * @return the first selected layer in the layer list dialog
+     */
+    protected Layer getFirstSelectedLayer() {
+        if (LayerListDialog.getInstance() == null) return null;
+        List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
+        if (layers.isEmpty()) return null;
+        return layers.get(0);
+    }
+
     private BoundingXYVisitor getBoundingBox() {
         BoundingXYVisitor v = new BoundingXYVisitor();
         if (mode.equals("data")) {
@@ -89,7 +105,11 @@ public class AutoScaleAction extends JosmAction {
         } else if (mode.equals("layer")) {
             if (getActiveLayer() == null)
                 return null;
-            getActiveLayer().visitBoundingBox(v);
+            // try to zoom to the first selected layer
+            //
+            Layer l = getFirstSelectedLayer();
+            if (l == null) return null;
+            l.visitBoundingBox(v);
         } else if (mode.equals("selection") || mode.equals("conflict")) {
             Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
             if (mode.equals("selection")) {
@@ -141,7 +161,12 @@ public class AutoScaleAction extends JosmAction {
         if ("selection".equals(mode)) {
             setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
         }  else if ("layer".equals(mode)) {
-            setEnabled(getActiveLayer() != null);
+            if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getAllLayersAsList().isEmpty()) {
+                setEnabled(false);
+            } else {
+                // FIXME: should also check for whether a layer is selected in the layer list dialog
+                setEnabled(true);
+            }
         } else {
             setEnabled(
                     Main.map != null
