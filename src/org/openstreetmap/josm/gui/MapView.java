@@ -217,6 +217,30 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     /**
+     * Determines the next active data layer according to the following
+     * rules:
+     * <ul>
+     *   <li>if there is at least one {@see OsmDataLayer} the first one
+     *     becomes active</li>
+     *   <li>otherwise, the top most layer of any type becomes active</li>
+     * </ul>
+     * 
+     * @return the next active data layer
+     */
+    protected Layer determineNextActiveLayer() {
+        if (layers.isEmpty()) return null;
+        // if possible, activate the first data layer
+        //
+        List<OsmDataLayer> dataLayers = getLayersOfType(OsmDataLayer.class);
+        if (!dataLayers.isEmpty())
+            return dataLayers.get(0);
+
+        // else the first layer of any type
+        //
+        return layers.get(0);
+    }
+
+    /**
      * Remove the layer from the mapview. If the layer was in the list before,
      * an LayerChange event is fired.
      */
@@ -236,12 +260,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         layer.removePropertyChangeListener(this);
         layer.destroy();
         AudioPlayer.reset();
-        if (layer instanceof OsmDataLayer && deletedLayerWasActiveLayer) {
-            for (Layer l : layers) {
-                if (l instanceof OsmDataLayer) {
-                    activeLayer = l;
-                    fireActiveLayerChanged(null, activeLayer);
-                }
+        if (deletedLayerWasActiveLayer) {
+            Layer l = determineNextActiveLayer();
+            if (l != null) {
+                activeLayer = l;
+                fireActiveLayerChanged(null, l);
             }
         }
         repaint();
