@@ -1012,6 +1012,15 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <check key="foot" text="Foot" default="on" delete_if_empty="true" />
             <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
         </item> <!-- stile -->
+        <item name="Turnstile" icon="presets/empty.png" type="node">
+            <label text="Edit Turnstile" />
+            <space />
+            <key key="barrier" value="turnstile" />
+            <label text="Allowed traffic:" />
+            <space />
+            <check key="foot" text="Foot" default="on" delete_if_empty="true" />
+            <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
+        </item> <!-- turnstile -->
         <item name="Sally Port" icon="presets/empty.png" type="node">
             <label text="Edit Sally Port" />
             <space />
