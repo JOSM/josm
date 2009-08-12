@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -815,6 +816,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if (newLayer instanceof OsmDataLayer) {
             OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
             selectionChanged(dataLayer.data.getSelected());
+        } else {
+            List<OsmPrimitive> selection = Collections.emptyList();
+            selectionChanged(selection);
         }
     }
 

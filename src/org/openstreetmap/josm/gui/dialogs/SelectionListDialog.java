@@ -15,7 +15,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.swing.BorderFactory;
@@ -376,18 +378,17 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         if (newLayer instanceof OsmDataLayer) {
             OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
             selectionChanged(dataLayer.data.getSelected());
-
+        } else {
+            List<OsmPrimitive> selection = Collections.emptyList();
+            selectionChanged(selection);
         }
-
     }
 
     public void layerAdded(Layer newLayer) {
         // do nothing
-
     }
 
     public void layerRemoved(Layer oldLayer) {
         // do nothing
-
     }
 }
