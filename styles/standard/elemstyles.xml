@@ -42,8 +42,16 @@ connected with it. They need not have the same key/value pair.
 The colours can consist of the two components - name and hex code (e.g. water#0000ff).
 If both are given, the color name is introduced in preferences with that value. If only
 code is given (e.g. #0000ff), it is used directly. If only name is given, either user
-modified preferences or previous value is used. The 6 hex digit color code can also 
-be appended by a hex value of the alpha channel (thus havin 8 hex digits instead of 6).
+modified preferences or previous value is used. The 6 hex digit color code can also
+be appended by a hex value of the alpha channel (thus having 8 hex digits instead of 6).
+
+Linemod's are drawn over or under the line they are associated with and modify the
+appearance. There can be multiple linemod's for one way (contrary to line styles,
+where only one applies). When drawn over a way either a very small width must be choosen
+or an alpha value must be used for the colour field (otherwise the original way is
+not visible). When the mod is under the way, then it must be wide enough to be visible
+on the sides of the way or the waystyles itself must use alpha channel (which may
+look strange).
 
 If a key/value pair matches more than one rule, the "rule that wins" is unpredicted
 in case they have same priority! Using priority settings helps to solve conflicts.
