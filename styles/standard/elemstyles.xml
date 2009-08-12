@@ -2819,7 +2819,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="tourism" v="alpine_hut"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="accommodation/alpine_hut.png"/>
 		<area colour="hotel#e1a0a2"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
