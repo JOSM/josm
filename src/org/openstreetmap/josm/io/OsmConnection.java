@@ -24,7 +24,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.io.CredentialsManager.CMException;
 
 /**
  * Base class that handles common things like authentication for the reader and writer
@@ -114,7 +113,7 @@ public class OsmConnection {
             synchronized (credentialsManager) {
                 auth = credentialsManager.lookupUsername() + ":" + credentialsManager.lookupPassword();
             }
-        } catch (CMException e) {
+        } catch (CredentialsManager.CMException e) {
             auth = ":";
         }
         ByteBuffer bytes = encoder.encode(CharBuffer.wrap(auth));
@@ -236,17 +235,19 @@ public class OsmConnection {
                     JLabel warning = new JLabel(tr("<html>" +
                             "WARNING: The password is stored in plain text in the preferences file.<br>" +
                             "The password is transferred in plain text to the server, encoded in the URL.<br>" +
-                            "<b>Do not use a valuable Password.</b></html>"));
+                    "<b>Do not use a valuable Password.</b></html>"));
                     warning.setFont(warning.getFont().deriveFont(Font.ITALIC));
                     panel.add(warning, GBC.eop().fill(GBC.HORIZONTAL));
                 }
                 public void preferencesChanged() {
                     String newUsername = osmDataUsername.getText();
                     String newPassword = String.valueOf(osmDataPassword.getPassword());
-                    if (!oldUsername.equals(newUsername))
+                    if (!oldUsername.equals(newUsername)) {
                         storeUsername(newUsername);
-                    if (!oldPassword.equals(newPassword))
+                    }
+                    if (!oldPassword.equals(newPassword)) {
                         storePassword(newPassword);
+                    }
                 }
             };
         }
