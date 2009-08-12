@@ -10,6 +10,8 @@
 item:
   name: the text to display
   icon: the icon to display
+  - relative to the icon path
+  - URL's are also supported to allow remote icons (are cached locally)
   type: the data types - way,node,relation,closedway (separated by comma)
 
 link: link to the relating map features website
