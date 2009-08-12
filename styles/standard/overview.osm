@@ -3613,8 +3613,8 @@
     <tag k="name" v="telephone"/>
   </way>
   <node id="-163800" user="overview-creator" visible="true" lat="-0.00190" lon="0.00240">
-    <tag k="amenity" v="emergency_phone"/>
-    <tag k="name" v="emergency_phone"/>
+    <tag k="amenity" v="clock"/>
+    <tag k="name" v="clock"/>
   </node>
   <node id="-163801" user="overview-creator" visible="true" lat="-0.00186" lon="0.00236"/>
   <node id="-163802" user="overview-creator" visible="true" lat="-0.00186" lon="0.00264"/>
@@ -3626,12 +3626,12 @@
     <nd ref="-163803"/>
     <nd ref="-163804"/>
     <nd ref="-163801"/>
-    <tag k="amenity" v="emergency_phone"/>
-    <tag k="name" v="emergency_phone"/>
+    <tag k="amenity" v="clock"/>
+    <tag k="name" v="clock"/>
   </way>
   <node id="-164000" user="overview-creator" visible="true" lat="-0.00200" lon="0.00240">
-    <tag k="amenity" v="toilets"/>
-    <tag k="name" v="toilets"/>
+    <tag k="amenity" v="emergency_phone"/>
+    <tag k="name" v="emergency_phone"/>
   </node>
   <node id="-164001" user="overview-creator" visible="true" lat="-0.00196" lon="0.00236"/>
   <node id="-164002" user="overview-creator" visible="true" lat="-0.00196" lon="0.00264"/>
@@ -3643,12 +3643,12 @@
     <nd ref="-164003"/>
     <nd ref="-164004"/>
     <nd ref="-164001"/>
-    <tag k="amenity" v="toilets"/>
-    <tag k="name" v="toilets"/>
+    <tag k="amenity" v="emergency_phone"/>
+    <tag k="name" v="emergency_phone"/>
   </way>
   <node id="-164200" user="overview-creator" visible="true" lat="-0.00210" lon="0.00240">
-    <tag k="amenity" v="recycling"/>
-    <tag k="name" v="recycling"/>
+    <tag k="amenity" v="toilets"/>
+    <tag k="name" v="toilets"/>
   </node>
   <node id="-164201" user="overview-creator" visible="true" lat="-0.00206" lon="0.00236"/>
   <node id="-164202" user="overview-creator" visible="true" lat="-0.00206" lon="0.00264"/>
@@ -3660,12 +3660,12 @@
     <nd ref="-164203"/>
     <nd ref="-164204"/>
     <nd ref="-164201"/>
-    <tag k="amenity" v="recycling"/>
-    <tag k="name" v="recycling"/>
+    <tag k="amenity" v="toilets"/>
+    <tag k="name" v="toilets"/>
   </way>
   <node id="-164400" user="overview-creator" visible="true" lat="-0.00220" lon="0.00240">
-    <tag k="amenity" v="public_building"/>
-    <tag k="name" v="public_building"/>
+    <tag k="amenity" v="recycling"/>
+    <tag k="name" v="recycling"/>
   </node>
   <node id="-164401" user="overview-creator" visible="true" lat="-0.00216" lon="0.00236"/>
   <node id="-164402" user="overview-creator" visible="true" lat="-0.00216" lon="0.00264"/>
@@ -3677,12 +3677,12 @@
     <nd ref="-164403"/>
     <nd ref="-164404"/>
     <nd ref="-164401"/>
-    <tag k="amenity" v="public_building"/>
-    <tag k="name" v="public_building"/>
+    <tag k="amenity" v="recycling"/>
+    <tag k="name" v="recycling"/>
   </way>
   <node id="-164600" user="overview-creator" visible="true" lat="-0.00230" lon="0.00240">
-    <tag k="amenity" v="embassy"/>
-    <tag k="name" v="embassy"/>
+    <tag k="amenity" v="public_building"/>
+    <tag k="name" v="public_building"/>
   </node>
   <node id="-164601" user="overview-creator" visible="true" lat="-0.00226" lon="0.00236"/>
   <node id="-164602" user="overview-creator" visible="true" lat="-0.00226" lon="0.00264"/>
@@ -3694,12 +3694,12 @@
     <nd ref="-164603"/>
     <nd ref="-164604"/>
     <nd ref="-164601"/>
-    <tag k="amenity" v="embassy"/>
-    <tag k="name" v="embassy"/>
+    <tag k="amenity" v="public_building"/>
+    <tag k="name" v="public_building"/>
   </way>
   <node id="-164800" user="overview-creator" visible="true" lat="-0.00240" lon="0.00240">
-    <tag k="amenity" v="townhall"/>
-    <tag k="name" v="townhall"/>
+    <tag k="amenity" v="embassy"/>
+    <tag k="name" v="embassy"/>
   </node>
   <node id="-164801" user="overview-creator" visible="true" lat="-0.00236" lon="0.00236"/>
   <node id="-164802" user="overview-creator" visible="true" lat="-0.00236" lon="0.00264"/>
@@ -3711,12 +3711,12 @@
     <nd ref="-164803"/>
     <nd ref="-164804"/>
     <nd ref="-164801"/>
-    <tag k="amenity" v="townhall"/>
-    <tag k="name" v="townhall"/>
+    <tag k="amenity" v="embassy"/>
+    <tag k="name" v="embassy"/>
   </way>
   <node id="-165000" user="overview-creator" visible="true" lat="-0.00250" lon="0.00240">
-    <tag k="amenity" v="community_centre"/>
-    <tag k="name" v="community_centre"/>
+    <tag k="amenity" v="townhall"/>
+    <tag k="name" v="townhall"/>
   </node>
   <node id="-165001" user="overview-creator" visible="true" lat="-0.00246" lon="0.00236"/>
   <node id="-165002" user="overview-creator" visible="true" lat="-0.00246" lon="0.00264"/>
@@ -3728,12 +3728,12 @@
     <nd ref="-165003"/>
     <nd ref="-165004"/>
     <nd ref="-165001"/>
-    <tag k="amenity" v="community_centre"/>
-    <tag k="name" v="community_centre"/>
+    <tag k="amenity" v="townhall"/>
+    <tag k="name" v="townhall"/>
   </way>
   <node id="-165200" user="overview-creator" visible="true" lat="-0.00260" lon="0.00240">
-    <tag k="amenity" v="drinking_water"/>
-    <tag k="name" v="drinking_water"/>
+    <tag k="amenity" v="community_centre"/>
+    <tag k="name" v="community_centre"/>
   </node>
   <node id="-165201" user="overview-creator" visible="true" lat="-0.00256" lon="0.00236"/>
   <node id="-165202" user="overview-creator" visible="true" lat="-0.00256" lon="0.00264"/>
@@ -3745,12 +3745,12 @@
     <nd ref="-165203"/>
     <nd ref="-165204"/>
     <nd ref="-165201"/>
-    <tag k="amenity" v="drinking_water"/>
-    <tag k="name" v="drinking_water"/>
+    <tag k="amenity" v="community_centre"/>
+    <tag k="name" v="community_centre"/>
   </way>
   <node id="-165400" user="overview-creator" visible="true" lat="-0.00270" lon="0.00240">
-    <tag k="amenity" v="fountain"/>
-    <tag k="name" v="fountain"/>
+    <tag k="amenity" v="drinking_water"/>
+    <tag k="name" v="drinking_water"/>
   </node>
   <node id="-165401" user="overview-creator" visible="true" lat="-0.00266" lon="0.00236"/>
   <node id="-165402" user="overview-creator" visible="true" lat="-0.00266" lon="0.00264"/>
@@ -3762,12 +3762,12 @@
     <nd ref="-165403"/>
     <nd ref="-165404"/>
     <nd ref="-165401"/>
-    <tag k="amenity" v="fountain"/>
-    <tag k="name" v="fountain"/>
+    <tag k="amenity" v="drinking_water"/>
+    <tag k="name" v="drinking_water"/>
   </way>
   <node id="-165600" user="overview-creator" visible="true" lat="-0.00280" lon="0.00240">
-    <tag k="amenity" v="place_of_worship"/>
-    <tag k="name" v="place_of_worship"/>
+    <tag k="amenity" v="fountain"/>
+    <tag k="name" v="fountain"/>
   </node>
   <node id="-165601" user="overview-creator" visible="true" lat="-0.00276" lon="0.00236"/>
   <node id="-165602" user="overview-creator" visible="true" lat="-0.00276" lon="0.00264"/>
@@ -3779,12 +3779,12 @@
     <nd ref="-165603"/>
     <nd ref="-165604"/>
     <nd ref="-165601"/>
-    <tag k="amenity" v="place_of_worship"/>
-    <tag k="name" v="place_of_worship"/>
+    <tag k="amenity" v="fountain"/>
+    <tag k="name" v="fountain"/>
   </way>
   <node id="-165800" user="overview-creator" visible="true" lat="-0.00290" lon="0.00240">
-    <tag k="amenity" v="grave_yard"/>
-    <tag k="name" v="grave_yard"/>
+    <tag k="amenity" v="place_of_worship"/>
+    <tag k="name" v="place_of_worship"/>
   </node>
   <node id="-165801" user="overview-creator" visible="true" lat="-0.00286" lon="0.00236"/>
   <node id="-165802" user="overview-creator" visible="true" lat="-0.00286" lon="0.00264"/>
@@ -3796,12 +3796,12 @@
     <nd ref="-165803"/>
     <nd ref="-165804"/>
     <nd ref="-165801"/>
-    <tag k="amenity" v="grave_yard"/>
-    <tag k="name" v="grave_yard"/>
+    <tag k="amenity" v="place_of_worship"/>
+    <tag k="name" v="place_of_worship"/>
   </way>
   <node id="-166000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00240">
-    <tag k="amenity" v="crematorium"/>
-    <tag k="name" v="crematorium"/>
+    <tag k="amenity" v="grave_yard"/>
+    <tag k="name" v="grave_yard"/>
   </node>
   <node id="-166001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00236"/>
   <node id="-166002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00264"/>
@@ -3813,12 +3813,12 @@
     <nd ref="-166003"/>
     <nd ref="-166004"/>
     <nd ref="-166001"/>
-    <tag k="amenity" v="crematorium"/>
-    <tag k="name" v="crematorium"/>
+    <tag k="amenity" v="grave_yard"/>
+    <tag k="name" v="grave_yard"/>
   </way>
   <node id="-166200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00240">
-    <tag k="amenity" v="post_office"/>
-    <tag k="name" v="post_office"/>
+    <tag k="amenity" v="crematorium"/>
+    <tag k="name" v="crematorium"/>
   </node>
   <node id="-166201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00236"/>
   <node id="-166202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00264"/>
@@ -3830,12 +3830,12 @@
     <nd ref="-166203"/>
     <nd ref="-166204"/>
     <nd ref="-166201"/>
-    <tag k="amenity" v="post_office"/>
-    <tag k="name" v="post_office"/>
+    <tag k="amenity" v="crematorium"/>
+    <tag k="name" v="crematorium"/>
   </way>
   <node id="-166400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00240">
-    <tag k="amenity" v="post_box"/>
-    <tag k="name" v="post_box"/>
+    <tag k="amenity" v="post_office"/>
+    <tag k="name" v="post_office"/>
   </node>
   <node id="-166401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00236"/>
   <node id="-166402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00264"/>
@@ -3847,12 +3847,12 @@
     <nd ref="-166403"/>
     <nd ref="-166404"/>
     <nd ref="-166401"/>
-    <tag k="amenity" v="post_box"/>
-    <tag k="name" v="post_box"/>
+    <tag k="amenity" v="post_office"/>
+    <tag k="name" v="post_office"/>
   </way>
   <node id="-166600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00240">
-    <tag k="amenity" v="school"/>
-    <tag k="name" v="school"/>
+    <tag k="amenity" v="post_box"/>
+    <tag k="name" v="post_box"/>
   </node>
   <node id="-166601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00236"/>
   <node id="-166602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00264"/>
@@ -3864,12 +3864,12 @@
     <nd ref="-166603"/>
     <nd ref="-166604"/>
     <nd ref="-166601"/>
-    <tag k="amenity" v="school"/>
-    <tag k="name" v="school"/>
+    <tag k="amenity" v="post_box"/>
+    <tag k="name" v="post_box"/>
   </way>
   <node id="-166800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00240">
-    <tag k="amenity" v="university"/>
-    <tag k="name" v="university"/>
+    <tag k="amenity" v="school"/>
+    <tag k="name" v="school"/>
   </node>
   <node id="-166801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00236"/>
   <node id="-166802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00264"/>
@@ -3881,12 +3881,12 @@
     <nd ref="-166803"/>
     <nd ref="-166804"/>
     <nd ref="-166801"/>
-    <tag k="amenity" v="university"/>
-    <tag k="name" v="university"/>
+    <tag k="amenity" v="school"/>
+    <tag k="name" v="school"/>
   </way>
   <node id="-167000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00240">
-    <tag k="amenity" v="college"/>
-    <tag k="name" v="college"/>
+    <tag k="amenity" v="university"/>
+    <tag k="name" v="university"/>
   </node>
   <node id="-167001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00236"/>
   <node id="-167002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00264"/>
@@ -3898,12 +3898,12 @@
     <nd ref="-167003"/>
     <nd ref="-167004"/>
     <nd ref="-167001"/>
-    <tag k="amenity" v="college"/>
-    <tag k="name" v="college"/>
+    <tag k="amenity" v="university"/>
+    <tag k="name" v="university"/>
   </way>
   <node id="-167200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00240">
-    <tag k="amenity" v="kindergarten"/>
-    <tag k="name" v="kindergarten"/>
+    <tag k="amenity" v="college"/>
+    <tag k="name" v="college"/>
   </node>
   <node id="-167201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00236"/>
   <node id="-167202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00264"/>
@@ -3915,12 +3915,12 @@
     <nd ref="-167203"/>
     <nd ref="-167204"/>
     <nd ref="-167201"/>
-    <tag k="amenity" v="kindergarten"/>
-    <tag k="name" v="kindergarten"/>
+    <tag k="amenity" v="college"/>
+    <tag k="name" v="college"/>
   </way>
   <node id="-167400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00240">
-    <tag k="amenity" v="driving_school"/>
-    <tag k="name" v="driving_school"/>
+    <tag k="amenity" v="kindergarten"/>
+    <tag k="name" v="kindergarten"/>
   </node>
   <node id="-167401" user="overview-creator" visible="true" lat="-0.00366" lon="0.00236"/>
   <node id="-167402" user="overview-creator" visible="true" lat="-0.00366" lon="0.00264"/>
@@ -3932,12 +3932,12 @@
     <nd ref="-167403"/>
     <nd ref="-167404"/>
     <nd ref="-167401"/>
-    <tag k="amenity" v="driving_school"/>
-    <tag k="name" v="driving_school"/>
+    <tag k="amenity" v="kindergarten"/>
+    <tag k="name" v="kindergarten"/>
   </way>
   <node id="-167600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00240">
-    <tag k="amenity" v="pharmacy"/>
-    <tag k="name" v="pharmacy"/>
+    <tag k="amenity" v="driving_school"/>
+    <tag k="name" v="driving_school"/>
   </node>
   <node id="-167601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00236"/>
   <node id="-167602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00264"/>
@@ -3949,12 +3949,12 @@
     <nd ref="-167603"/>
     <nd ref="-167604"/>
     <nd ref="-167601"/>
-    <tag k="amenity" v="pharmacy"/>
-    <tag k="name" v="pharmacy"/>
+    <tag k="amenity" v="driving_school"/>
+    <tag k="name" v="driving_school"/>
   </way>
   <node id="-167800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00240">
-    <tag k="amenity" v="hospital"/>
-    <tag k="name" v="hospital"/>
+    <tag k="amenity" v="pharmacy"/>
+    <tag k="name" v="pharmacy"/>
   </node>
   <node id="-167801" user="overview-creator" visible="true" lat="-0.00386" lon="0.00236"/>
   <node id="-167802" user="overview-creator" visible="true" lat="-0.00386" lon="0.00264"/>
@@ -3966,12 +3966,12 @@
     <nd ref="-167803"/>
     <nd ref="-167804"/>
     <nd ref="-167801"/>
-    <tag k="amenity" v="hospital"/>
-    <tag k="name" v="hospital"/>
+    <tag k="amenity" v="pharmacy"/>
+    <tag k="name" v="pharmacy"/>
   </way>
   <node id="-168000" user="overview-creator" visible="true" lat="-0.00400" lon="0.00240">
-    <tag k="amenity" v="nursery"/>
-    <tag k="name" v="nursery"/>
+    <tag k="amenity" v="hospital"/>
+    <tag k="name" v="hospital"/>
   </node>
   <node id="-168001" user="overview-creator" visible="true" lat="-0.00396" lon="0.00236"/>
   <node id="-168002" user="overview-creator" visible="true" lat="-0.00396" lon="0.00264"/>
@@ -3983,12 +3983,12 @@
     <nd ref="-168003"/>
     <nd ref="-168004"/>
     <nd ref="-168001"/>
-    <tag k="amenity" v="nursery"/>
-    <tag k="name" v="nursery"/>
+    <tag k="amenity" v="hospital"/>
+    <tag k="name" v="hospital"/>
   </way>
   <node id="-168200" user="overview-creator" visible="true" lat="-0.00410" lon="0.00240">
-    <tag k="amenity" v="baby_hatch"/>
-    <tag k="name" v="baby_hatch"/>
+    <tag k="amenity" v="nursery"/>
+    <tag k="name" v="nursery"/>
   </node>
   <node id="-168201" user="overview-creator" visible="true" lat="-0.00406" lon="0.00236"/>
   <node id="-168202" user="overview-creator" visible="true" lat="-0.00406" lon="0.00264"/>
@@ -4000,12 +4000,12 @@
     <nd ref="-168203"/>
     <nd ref="-168204"/>
     <nd ref="-168201"/>
-    <tag k="amenity" v="baby_hatch"/>
-    <tag k="name" v="baby_hatch"/>
+    <tag k="amenity" v="nursery"/>
+    <tag k="name" v="nursery"/>
   </way>
   <node id="-185800" user="overview-creator" visible="true" lat="-0.00290" lon="0.00270">
-    <tag k="amenity" v="doctors"/>
-    <tag k="name" v="doctors"/>
+    <tag k="amenity" v="baby_hatch"/>
+    <tag k="name" v="baby_hatch"/>
   </node>
   <node id="-185801" user="overview-creator" visible="true" lat="-0.00286" lon="0.00266"/>
   <node id="-185802" user="overview-creator" visible="true" lat="-0.00286" lon="0.00294"/>
@@ -4017,12 +4017,12 @@
     <nd ref="-185803"/>
     <nd ref="-185804"/>
     <nd ref="-185801"/>
-    <tag k="amenity" v="doctors"/>
-    <tag k="name" v="doctors"/>
+    <tag k="amenity" v="baby_hatch"/>
+    <tag k="name" v="baby_hatch"/>
   </way>
   <node id="-186000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00270">
-    <tag k="amenity" v="dentist"/>
-    <tag k="name" v="dentist"/>
+    <tag k="amenity" v="doctors"/>
+    <tag k="name" v="doctors"/>
   </node>
   <node id="-186001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00266"/>
   <node id="-186002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00294"/>
@@ -4034,12 +4034,12 @@
     <nd ref="-186003"/>
     <nd ref="-186004"/>
     <nd ref="-186001"/>
-    <tag k="amenity" v="dentist"/>
-    <tag k="name" v="dentist"/>
+    <tag k="amenity" v="doctors"/>
+    <tag k="name" v="doctors"/>
   </way>
   <node id="-186200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00270">
-    <tag k="amenity" v="veterinary"/>
-    <tag k="name" v="veterinary"/>
+    <tag k="amenity" v="dentist"/>
+    <tag k="name" v="dentist"/>
   </node>
   <node id="-186201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00266"/>
   <node id="-186202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00294"/>
@@ -4051,12 +4051,12 @@
     <nd ref="-186203"/>
     <nd ref="-186204"/>
     <nd ref="-186201"/>
-    <tag k="amenity" v="veterinary"/>
-    <tag k="name" v="veterinary"/>
+    <tag k="amenity" v="dentist"/>
+    <tag k="name" v="dentist"/>
   </way>
   <node id="-186400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00270">
-    <tag k="amenity" v="library"/>
-    <tag k="name" v="library"/>
+    <tag k="amenity" v="veterinary"/>
+    <tag k="name" v="veterinary"/>
   </node>
   <node id="-186401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00266"/>
   <node id="-186402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00294"/>
@@ -4068,12 +4068,12 @@
     <nd ref="-186403"/>
     <nd ref="-186404"/>
     <nd ref="-186401"/>
-    <tag k="amenity" v="library"/>
-    <tag k="name" v="library"/>
+    <tag k="amenity" v="veterinary"/>
+    <tag k="name" v="veterinary"/>
   </way>
   <node id="-186600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00270">
-    <tag k="amenity" v="police"/>
-    <tag k="name" v="police"/>
+    <tag k="amenity" v="library"/>
+    <tag k="name" v="library"/>
   </node>
   <node id="-186601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00266"/>
   <node id="-186602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00294"/>
@@ -4085,12 +4085,12 @@
     <nd ref="-186603"/>
     <nd ref="-186604"/>
     <nd ref="-186601"/>
-    <tag k="amenity" v="police"/>
-    <tag k="name" v="police"/>
+    <tag k="amenity" v="library"/>
+    <tag k="name" v="library"/>
   </way>
   <node id="-186800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00270">
-    <tag k="amenity" v="fire_station"/>
-    <tag k="name" v="fire_station"/>
+    <tag k="amenity" v="police"/>
+    <tag k="name" v="police"/>
   </node>
   <node id="-186801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00266"/>
   <node id="-186802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00294"/>
@@ -4102,12 +4102,12 @@
     <nd ref="-186803"/>
     <nd ref="-186804"/>
     <nd ref="-186801"/>
-    <tag k="amenity" v="fire_station"/>
-    <tag k="name" v="fire_station"/>
+    <tag k="amenity" v="police"/>
+    <tag k="name" v="police"/>
   </way>
   <node id="-187000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00270">
-    <tag k="amenity" v="bus_station"/>
-    <tag k="name" v="bus_station"/>
+    <tag k="amenity" v="fire_station"/>
+    <tag k="name" v="fire_station"/>
   </node>
   <node id="-187001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00266"/>
   <node id="-187002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00294"/>
@@ -4119,12 +4119,12 @@
     <nd ref="-187003"/>
     <nd ref="-187004"/>
     <nd ref="-187001"/>
-    <tag k="amenity" v="bus_station"/>
-    <tag k="name" v="bus_station"/>
+    <tag k="amenity" v="fire_station"/>
+    <tag k="name" v="fire_station"/>
   </way>
   <node id="-187200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00270">
-    <tag k="amenity" v="ferry_terminal"/>
-    <tag k="name" v="ferry_terminal"/>
+    <tag k="amenity" v="bus_station"/>
+    <tag k="name" v="bus_station"/>
   </node>
   <node id="-187201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00266"/>
   <node id="-187202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00294"/>
@@ -4136,12 +4136,12 @@
     <nd ref="-187203"/>
     <nd ref="-187204"/>
     <nd ref="-187201"/>
-    <tag k="amenity" v="ferry_terminal"/>
-    <tag k="name" v="ferry_terminal"/>
+    <tag k="amenity" v="bus_station"/>
+    <tag k="name" v="bus_station"/>
   </way>
   <node id="-187400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00270">
-    <tag k="amenity" v="theatre"/>
-    <tag k="name" v="theatre"/>
+    <tag k="amenity" v="ferry_terminal"/>
+    <tag k="name" v="ferry_terminal"/>
   </node>
   <node id="-187401" user="overview-creator" visible="true" lat="-0.00366" lon="0.00266"/>
   <node id="-187402" user="overview-creator" visible="true" lat="-0.00366" lon="0.00294"/>
@@ -4153,12 +4153,12 @@
     <nd ref="-187403"/>
     <nd ref="-187404"/>
     <nd ref="-187401"/>
-    <tag k="amenity" v="theatre"/>
-    <tag k="name" v="theatre"/>
+    <tag k="amenity" v="ferry_terminal"/>
+    <tag k="name" v="ferry_terminal"/>
   </way>
   <node id="-187600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00270">
-    <tag k="amenity" v="cinema"/>
-    <tag k="name" v="cinema"/>
+    <tag k="amenity" v="theatre"/>
+    <tag k="name" v="theatre"/>
   </node>
   <node id="-187601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00266"/>
   <node id="-187602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00294"/>
@@ -4170,12 +4170,12 @@
     <nd ref="-187603"/>
     <nd ref="-187604"/>
     <nd ref="-187601"/>
-    <tag k="amenity" v="cinema"/>
-    <tag k="name" v="cinema"/>
+    <tag k="amenity" v="theatre"/>
+    <tag k="name" v="theatre"/>
   </way>
   <node id="-187800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00270">
-    <tag k="amenity" v="arts_centre"/>
-    <tag k="name" v="arts_centre"/>
+    <tag k="amenity" v="cinema"/>
+    <tag k="name" v="cinema"/>
   </node>
   <node id="-187801" user="overview-creator" visible="true" lat="-0.00386" lon="0.00266"/>
   <node id="-187802" user="overview-creator" visible="true" lat="-0.00386" lon="0.00294"/>
@@ -4187,12 +4187,12 @@
     <nd ref="-187803"/>
     <nd ref="-187804"/>
     <nd ref="-187801"/>
-    <tag k="amenity" v="arts_centre"/>
-    <tag k="name" v="arts_centre"/>
+    <tag k="amenity" v="cinema"/>
+    <tag k="name" v="cinema"/>
   </way>
   <node id="-188000" user="overview-creator" visible="true" lat="-0.00400" lon="0.00270">
-    <tag k="amenity" v="courthouse"/>
-    <tag k="name" v="courthouse"/>
+    <tag k="amenity" v="arts_centre"/>
+    <tag k="name" v="arts_centre"/>
   </node>
   <node id="-188001" user="overview-creator" visible="true" lat="-0.00396" lon="0.00266"/>
   <node id="-188002" user="overview-creator" visible="true" lat="-0.00396" lon="0.00294"/>
@@ -4204,12 +4204,12 @@
     <nd ref="-188003"/>
     <nd ref="-188004"/>
     <nd ref="-188001"/>
-    <tag k="amenity" v="courthouse"/>
-    <tag k="name" v="courthouse"/>
+    <tag k="amenity" v="arts_centre"/>
+    <tag k="name" v="arts_centre"/>
   </way>
   <node id="-188200" user="overview-creator" visible="true" lat="-0.00410" lon="0.00270">
-    <tag k="amenity" v="prison"/>
-    <tag k="name" v="prison"/>
+    <tag k="amenity" v="courthouse"/>
+    <tag k="name" v="courthouse"/>
   </node>
   <node id="-188201" user="overview-creator" visible="true" lat="-0.00406" lon="0.00266"/>
   <node id="-188202" user="overview-creator" visible="true" lat="-0.00406" lon="0.00294"/>
@@ -4221,12 +4221,12 @@
     <nd ref="-188203"/>
     <nd ref="-188204"/>
     <nd ref="-188201"/>
-    <tag k="amenity" v="prison"/>
-    <tag k="name" v="prison"/>
+    <tag k="amenity" v="courthouse"/>
+    <tag k="name" v="courthouse"/>
   </way>
   <node id="-205800" user="overview-creator" visible="true" lat="-0.00290" lon="0.00300">
-    <tag k="amenity" v="bank"/>
-    <tag k="name" v="bank"/>
+    <tag k="amenity" v="prison"/>
+    <tag k="name" v="prison"/>
   </node>
   <node id="-205801" user="overview-creator" visible="true" lat="-0.00286" lon="0.00296"/>
   <node id="-205802" user="overview-creator" visible="true" lat="-0.00286" lon="0.00324"/>
@@ -4238,12 +4238,12 @@
     <nd ref="-205803"/>
     <nd ref="-205804"/>
     <nd ref="-205801"/>
-    <tag k="amenity" v="bank"/>
-    <tag k="name" v="bank"/>
+    <tag k="amenity" v="prison"/>
+    <tag k="name" v="prison"/>
   </way>
   <node id="-206000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00300">
-    <tag k="amenity" v="bureau_de_change"/>
-    <tag k="name" v="bureau_de_change"/>
+    <tag k="amenity" v="bank"/>
+    <tag k="name" v="bank"/>
   </node>
   <node id="-206001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00296"/>
   <node id="-206002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00324"/>
@@ -4255,12 +4255,12 @@
     <nd ref="-206003"/>
     <nd ref="-206004"/>
     <nd ref="-206001"/>
-    <tag k="amenity" v="bureau_de_change"/>
-    <tag k="name" v="bureau_de_change"/>
+    <tag k="amenity" v="bank"/>
+    <tag k="name" v="bank"/>
   </way>
   <node id="-206200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00300">
-    <tag k="amenity" v="atm"/>
-    <tag k="name" v="atm"/>
+    <tag k="amenity" v="bureau_de_change"/>
+    <tag k="name" v="bureau_de_change"/>
   </node>
   <node id="-206201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00296"/>
   <node id="-206202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00324"/>
@@ -4272,12 +4272,12 @@
     <nd ref="-206203"/>
     <nd ref="-206204"/>
     <nd ref="-206201"/>
-    <tag k="amenity" v="atm"/>
-    <tag k="name" v="atm"/>
+    <tag k="amenity" v="bureau_de_change"/>
+    <tag k="name" v="bureau_de_change"/>
   </way>
   <node id="-206400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00300">
-    <tag k="amenity" v="bench"/>
-    <tag k="name" v="bench"/>
+    <tag k="amenity" v="atm"/>
+    <tag k="name" v="atm"/>
   </node>
   <node id="-206401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00296"/>
   <node id="-206402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00324"/>
@@ -4289,12 +4289,12 @@
     <nd ref="-206403"/>
     <nd ref="-206404"/>
     <nd ref="-206401"/>
-    <tag k="amenity" v="bench"/>
-    <tag k="name" v="bench"/>
+    <tag k="amenity" v="atm"/>
+    <tag k="name" v="atm"/>
   </way>
   <node id="-206600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00300">
-    <tag k="amenity" v="shelter"/>
-    <tag k="name" v="shelter"/>
+    <tag k="amenity" v="bench"/>
+    <tag k="name" v="bench"/>
   </node>
   <node id="-206601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00296"/>
   <node id="-206602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00324"/>
@@ -4306,12 +4306,12 @@
     <nd ref="-206603"/>
     <nd ref="-206604"/>
     <nd ref="-206601"/>
-    <tag k="amenity" v="shelter"/>
-    <tag k="name" v="shelter"/>
+    <tag k="amenity" v="bench"/>
+    <tag k="name" v="bench"/>
   </way>
   <node id="-206800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00300">
-    <tag k="amenity" v="hunting_stand"/>
-    <tag k="name" v="hunting_stand"/>
+    <tag k="amenity" v="shelter"/>
+    <tag k="name" v="shelter"/>
   </node>
   <node id="-206801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00296"/>
   <node id="-206802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00324"/>
@@ -4323,12 +4323,12 @@
     <nd ref="-206803"/>
     <nd ref="-206804"/>
     <nd ref="-206801"/>
-    <tag k="amenity" v="hunting_stand"/>
-    <tag k="name" v="hunting_stand"/>
+    <tag k="amenity" v="shelter"/>
+    <tag k="name" v="shelter"/>
   </way>
   <node id="-207000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00300">
-    <tag k="amenity" v="wlan"/>
-    <tag k="name" v="wlan"/>
+    <tag k="amenity" v="hunting_stand"/>
+    <tag k="name" v="hunting_stand"/>
   </node>
   <node id="-207001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00296"/>
   <node id="-207002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00324"/>
@@ -4340,12 +4340,12 @@
     <nd ref="-207003"/>
     <nd ref="-207004"/>
     <nd ref="-207001"/>
-    <tag k="amenity" v="wlan"/>
-    <tag k="name" v="wlan"/>
+    <tag k="amenity" v="hunting_stand"/>
+    <tag k="name" v="hunting_stand"/>
   </way>
   <node id="-207200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00300">
-    <tag k="amenity" v="vending_machine"/>
-    <tag k="name" v="vending_machine"/>
+    <tag k="amenity" v="wlan"/>
+    <tag k="name" v="wlan"/>
   </node>
   <node id="-207201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00296"/>
   <node id="-207202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00324"/>
@@ -4357,12 +4357,12 @@
     <nd ref="-207203"/>
     <nd ref="-207204"/>
     <nd ref="-207201"/>
-    <tag k="amenity" v="vending_machine"/>
-    <tag k="name" v="vending_machine"/>
+    <tag k="amenity" v="wlan"/>
+    <tag k="name" v="wlan"/>
   </way>
   <node id="-207400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00300">
-    <tag k="amenity" v="signpost"/>
-    <tag k="name" v="signpost"/>
+    <tag k="amenity" v="vending_machine"/>
+    <tag k="name" v="vending_machine"/>
   </node>
   <node id="-207401" user="overview-creator" visible="true" lat="-0.00366" lon="0.00296"/>
   <node id="-207402" user="overview-creator" visible="true" lat="-0.00366" lon="0.00324"/>
@@ -4374,12 +4374,12 @@
     <nd ref="-207403"/>
     <nd ref="-207404"/>
     <nd ref="-207401"/>
-    <tag k="amenity" v="signpost"/>
-    <tag k="name" v="signpost"/>
+    <tag k="amenity" v="vending_machine"/>
+    <tag k="name" v="vending_machine"/>
   </way>
   <node id="-207600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00300">
-    <tag k="amenity" v="park_bench"/>
-    <tag k="name" v="park_bench"/>
+    <tag k="amenity" v="signpost"/>
+    <tag k="name" v="signpost"/>
   </node>
   <node id="-207601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00296"/>
   <node id="-207602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00324"/>
@@ -4391,6 +4391,23 @@
     <nd ref="-207603"/>
     <nd ref="-207604"/>
     <nd ref="-207601"/>
+    <tag k="amenity" v="signpost"/>
+    <tag k="name" v="signpost"/>
+  </way>
+  <node id="-207800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00300">
+    <tag k="amenity" v="park_bench"/>
+    <tag k="name" v="park_bench"/>
+  </node>
+  <node id="-207801" user="overview-creator" visible="true" lat="-0.00386" lon="0.00296"/>
+  <node id="-207802" user="overview-creator" visible="true" lat="-0.00386" lon="0.00324"/>
+  <node id="-207803" user="overview-creator" visible="true" lat="-0.00394" lon="0.00324"/>
+  <node id="-207804" user="overview-creator" visible="true" lat="-0.00394" lon="0.00296"/>
+  <way id="-207804" user="overview-creator" visible="true">
+    <nd ref="-207801"/>
+    <nd ref="-207802"/>
+    <nd ref="-207803"/>
+    <nd ref="-207804"/>
+    <nd ref="-207801"/>
     <tag k="amenity" v="park_bench"/>
     <tag k="name" v="park_bench"/>
   </way>
@@ -5625,30 +5642,13 @@
     <tag k="power" v="generator"/>
     <tag k="name" v="generator"/>
   </way>
-  <node id="-226000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00330">
+  <node id="-226200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00330">
     <tag k="tourism" v="information"/>
     <tag k="name" v="power_source"/>
   </node>
-  <node id="-226200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00330">
-    <tag k="power_source" v="wind"/>
-    <tag k="name" v="wind"/>
-  </node>
-  <node id="-226201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00326"/>
-  <node id="-226202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00354"/>
-  <node id="-226203" user="overview-creator" visible="true" lat="-0.00314" lon="0.00354"/>
-  <node id="-226204" user="overview-creator" visible="true" lat="-0.00314" lon="0.00326"/>
-  <way id="-226204" user="overview-creator" visible="true">
-    <nd ref="-226201"/>
-    <nd ref="-226202"/>
-    <nd ref="-226203"/>
-    <nd ref="-226204"/>
-    <nd ref="-226201"/>
-    <tag k="power_source" v="wind"/>
-    <tag k="name" v="wind"/>
-  </way>
   <node id="-226400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00330">
-    <tag k="power_source" v="hydro"/>
-    <tag k="name" v="hydro"/>
+    <tag k="power_source" v="wind"/>
+    <tag k="name" v="wind"/>
   </node>
   <node id="-226401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00326"/>
   <node id="-226402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00354"/>
@@ -5660,12 +5660,12 @@
     <nd ref="-226403"/>
     <nd ref="-226404"/>
     <nd ref="-226401"/>
-    <tag k="power_source" v="hydro"/>
-    <tag k="name" v="hydro"/>
+    <tag k="power_source" v="wind"/>
+    <tag k="name" v="wind"/>
   </way>
   <node id="-226600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00330">
-    <tag k="power_source" v="fossil"/>
-    <tag k="name" v="fossil"/>
+    <tag k="power_source" v="hydro"/>
+    <tag k="name" v="hydro"/>
   </node>
   <node id="-226601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00326"/>
   <node id="-226602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00354"/>
@@ -5677,12 +5677,12 @@
     <nd ref="-226603"/>
     <nd ref="-226604"/>
     <nd ref="-226601"/>
-    <tag k="power_source" v="fossil"/>
-    <tag k="name" v="fossil"/>
+    <tag k="power_source" v="hydro"/>
+    <tag k="name" v="hydro"/>
   </way>
   <node id="-226800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00330">
-    <tag k="power_source" v="coal"/>
-    <tag k="name" v="coal"/>
+    <tag k="power_source" v="fossil"/>
+    <tag k="name" v="fossil"/>
   </node>
   <node id="-226801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00326"/>
   <node id="-226802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00354"/>
@@ -5694,12 +5694,12 @@
     <nd ref="-226803"/>
     <nd ref="-226804"/>
     <nd ref="-226801"/>
-    <tag k="power_source" v="coal"/>
-    <tag k="name" v="coal"/>
+    <tag k="power_source" v="fossil"/>
+    <tag k="name" v="fossil"/>
   </way>
   <node id="-227000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00330">
-    <tag k="power_source" v="gas"/>
-    <tag k="name" v="gas"/>
+    <tag k="power_source" v="coal"/>
+    <tag k="name" v="coal"/>
   </node>
   <node id="-227001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00326"/>
   <node id="-227002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00354"/>
@@ -5711,12 +5711,12 @@
     <nd ref="-227003"/>
     <nd ref="-227004"/>
     <nd ref="-227001"/>
-    <tag k="power_source" v="gas"/>
-    <tag k="name" v="gas"/>
+    <tag k="power_source" v="coal"/>
+    <tag k="name" v="coal"/>
   </way>
   <node id="-227200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00330">
-    <tag k="power_source" v="photovoltaic"/>
-    <tag k="name" v="photovoltaic"/>
+    <tag k="power_source" v="gas"/>
+    <tag k="name" v="gas"/>
   </node>
   <node id="-227201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00326"/>
   <node id="-227202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00354"/>
@@ -5728,12 +5728,12 @@
     <nd ref="-227203"/>
     <nd ref="-227204"/>
     <nd ref="-227201"/>
-    <tag k="power_source" v="photovoltaic"/>
-    <tag k="name" v="photovoltaic"/>
+    <tag k="power_source" v="gas"/>
+    <tag k="name" v="gas"/>
   </way>
   <node id="-227400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00330">
-    <tag k="power_source" v="nuclear"/>
-    <tag k="name" v="nuclear"/>
+    <tag k="power_source" v="photovoltaic"/>
+    <tag k="name" v="photovoltaic"/>
   </node>
   <node id="-227401" user="overview-creator" visible="true" lat="-0.00366" lon="0.00326"/>
   <node id="-227402" user="overview-creator" visible="true" lat="-0.00366" lon="0.00354"/>
@@ -5745,8 +5745,46 @@
     <nd ref="-227403"/>
     <nd ref="-227404"/>
     <nd ref="-227401"/>
+    <tag k="power_source" v="photovoltaic"/>
+    <tag k="name" v="photovoltaic"/>
+  </way>
+  <node id="-227600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00330">
     <tag k="power_source" v="nuclear"/>
     <tag k="name" v="nuclear"/>
+  </node>
+  <node id="-227601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00326"/>
+  <node id="-227602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00354"/>
+  <node id="-227603" user="overview-creator" visible="true" lat="-0.00384" lon="0.00354"/>
+  <node id="-227604" user="overview-creator" visible="true" lat="-0.00384" lon="0.00326"/>
+  <way id="-227604" user="overview-creator" visible="true">
+    <nd ref="-227601"/>
+    <nd ref="-227602"/>
+    <nd ref="-227603"/>
+    <nd ref="-227604"/>
+    <nd ref="-227601"/>
+    <tag k="power_source" v="nuclear"/>
+    <tag k="name" v="nuclear"/>
+  </way>
+  <node id="-227800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00330">
+    <tag k="tourism" v="information"/>
+    <tag k="name" v="vending"/>
+  </node>
+  <node id="-228000" user="overview-creator" visible="true" lat="-0.00400" lon="0.00330">
+    <tag k="vending" v="excrement_bags"/>
+    <tag k="name" v="excrement_bags"/>
+  </node>
+  <node id="-228001" user="overview-creator" visible="true" lat="-0.00396" lon="0.00326"/>
+  <node id="-228002" user="overview-creator" visible="true" lat="-0.00396" lon="0.00354"/>
+  <node id="-228003" user="overview-creator" visible="true" lat="-0.00404" lon="0.00354"/>
+  <node id="-228004" user="overview-creator" visible="true" lat="-0.00404" lon="0.00326"/>
+  <way id="-228004" user="overview-creator" visible="true">
+    <nd ref="-228001"/>
+    <nd ref="-228002"/>
+    <nd ref="-228003"/>
+    <nd ref="-228004"/>
+    <nd ref="-228001"/>
+    <tag k="vending" v="excrement_bags"/>
+    <tag k="name" v="excrement_bags"/>
   </way>
   <node id="-240200" user="overview-creator" visible="true" lat="-0.00010" lon="0.00360">
     <tag k="tourism" v="information"/>

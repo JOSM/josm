@@ -1963,6 +1963,13 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="clock"/>
+		<icon annotate="true" src="service/clock.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="emergency_phone"/>
 		<icon annotate="true" src="vehicle/emergency_phone.png"/>
 		<area colour="amenity_light#f7efb7"/>
@@ -2398,8 +2405,15 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="vending" v="excrement_bags"/>
+		<icon annotate="true" src="service/excrement_bags.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="vending_machine"/>
-		<icon src="transport/ticket-machine.png"/>
+		<icon src="transport/ticket-machine.png" priority="-10"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>

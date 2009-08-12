@@ -580,9 +580,14 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'power_source'"/>
 		<xsl:with-param name="column" select="11"/>
-		<xsl:with-param name="row" select="30"/>
-    </xsl:call-template>	
-	
+		<xsl:with-param name="row" select="31"/>
+    </xsl:call-template>
+    <xsl:call-template name="topic">
+		<xsl:with-param name="key" select="'vending'"/>
+		<xsl:with-param name="column" select="11"/>
+		<xsl:with-param name="row" select="39"/>
+    </xsl:call-template>
+
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'shop'"/>
 		<xsl:with-param name="column" select="12"/>
