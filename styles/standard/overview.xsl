@@ -17,6 +17,8 @@
 <xsl:variable name="xscale">10</xsl:variable>
 <xsl:variable name="yscale">10</xsl:variable>
 <xsl:variable name="areaoffset">4</xsl:variable>
+<xsl:variable name="ymax">41</xsl:variable>
+<xsl:variable name="ynextcol">29</xsl:variable>
 
 
 <xsl:template name="node-attributes">
@@ -252,7 +254,7 @@
 		</xsl:call-template>
 
 		<xsl:choose>
-			<xsl:when test="$ypos &lt; 41">
+			<xsl:when test="$ypos &lt; $ymax">
 				<!-- recursive call - increasing index and output counters -->
 			    <xsl:call-template name="posed_rules">
 					<xsl:with-param name="key" select="$key"/>
@@ -267,7 +269,7 @@
 					<xsl:with-param name="key" select="$key"/>
 					<xsl:with-param name="index" select="$index + 1"/>
 					<xsl:with-param name="xpos" select="$xpos + 1"/>
-					<xsl:with-param name="ypos" select="30"/>
+					<xsl:with-param name="ypos" select="$ynextcol"/>
 			    </xsl:call-template>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -330,7 +332,7 @@
 
 	<xsl:comment>DO NOT EDIT! THIS FILE IS GENERATED!!!</xsl:comment>
 	<xsl:element name="osm">
-	<xsl:attribute name="version">0.5</xsl:attribute>
+	<xsl:attribute name="version">0.6</xsl:attribute>
 	<xsl:attribute name="generator">overview-creator.xslt</xsl:attribute>
 	
 	
@@ -379,7 +381,7 @@
 	<xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'barrier'"/>
 		<xsl:with-param name="column" select="3"/>
-		<xsl:with-param name="row" select="29"/>
+		<xsl:with-param name="row" select="28"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'access'"/>
