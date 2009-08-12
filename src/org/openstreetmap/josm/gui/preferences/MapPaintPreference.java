@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.preferences;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.util.Collection;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -34,18 +36,18 @@ public class MapPaintPreference implements PreferenceSetting {
         enableIconDefault = new JCheckBox(tr("Enable built-in icon defaults"),
                 Main.pref.getBoolean("mappaint.icon.enable-defaults", true));
 
-        styleCombo.addItem("standard");
-
         sources = new StyleSources("mappaint.style.sources", "mappaint.icon.sources",
         "http://josm.openstreetmap.de/styles", false, tr("Map Paint Styles"));
 
-        String style = Main.pref.get("mappaint.style", "standard");
-        if(!style.equals("standard"))
+        Collection<String> styles = new TreeSet<String>(MapPaintStyles.getStyles().getStyleNames());
+        String defstyle = Main.pref.get("mappaint.style", "standard");
+        styles.add(defstyle);
+        for(String style : styles)
             styleCombo.addItem(style);
 
         styleCombo.setEditable(true);
         for (int i = 0; i < styleCombo.getItemCount(); ++i) {
-            if (((String)styleCombo.getItemAt(i)).equals(style)) {
+            if (((String)styleCombo.getItemAt(i)).equals(defstyle)) {
                 styleCombo.setSelectedIndex(i);
                 break;
             }

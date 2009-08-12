@@ -293,4 +293,9 @@ public class ElemStyles
     {
         return getStyleSet(null, false);
     }
+
+    public Collection<String> getStyleNames()
+    {
+        return styleSet.keySet();
+    }
 }
