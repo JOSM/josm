@@ -91,7 +91,7 @@ public class ExceptionDialogUtil {
 
     /**
      * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
-     * This is most likely happening when user tries to access the OSM API from whitin an
+     * This is most likely happening when user tries to access the OSM API from within an
      * applet which wasn't loaded from the API server.
      * 
      * @param e the exception
@@ -121,9 +121,9 @@ public class ExceptionDialogUtil {
     }
 
     /**
-     * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
-     * This is most likely happening when user tries to access the OSM API from whitin an
-     * applet which wasn't loaded from the API server.
+     * Explains a {@see SocketException} which has caused an {@see OsmTransferException}.
+     * This is most likely because there's not connection to the Internet or because
+     * the remote server is not reachable.
      * 
      * @param e the exception
      */
@@ -145,9 +145,9 @@ public class ExceptionDialogUtil {
     }
 
     /**
-     * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
-     * This is most likely happening when user tries to access the OSM API from whitin an
-     * applet which wasn't loaded from the API server.
+     * Explains a {@see IOException} which has caused an {@see OsmTransferException}.
+     * This is most likely happening when the communication with the remote server is
+     * interrupted for any reason.
      * 
      * @param e the exception
      */
@@ -171,9 +171,9 @@ public class ExceptionDialogUtil {
     }
 
     /**
-     * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
-     * This is most likely happening when user tries to access the OSM API from whitin an
-     * applet which wasn't loaded from the API server.
+     * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
+     * This is most likely happening when there is an error in the API URL or when
+     * local DNS services are not working.
      * 
      * @param e the exception
      */
