@@ -686,8 +686,8 @@
     <tag k="name" v="turning_circle"/>
   </way>
   <node id="-45800" user="overview-creator" visible="true" lat="-0.00290" lon="0.00060">
-    <tag k="highway" v="construction"/>
-    <tag k="name" v="construction"/>
+    <tag k="highway" v="passing_place"/>
+    <tag k="name" v="passing_place"/>
   </node>
   <node id="-45801" user="overview-creator" visible="true" lat="-0.00286" lon="0.00056"/>
   <node id="-45802" user="overview-creator" visible="true" lat="-0.00286" lon="0.00084"/>
@@ -699,12 +699,12 @@
     <nd ref="-45803"/>
     <nd ref="-45804"/>
     <nd ref="-45801"/>
-    <tag k="highway" v="construction"/>
-    <tag k="name" v="construction"/>
+    <tag k="highway" v="passing_place"/>
+    <tag k="name" v="passing_place"/>
   </way>
   <node id="-46000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00060">
-    <tag k="highway" v="emergency_access_point"/>
-    <tag k="name" v="emergency_access_point"/>
+    <tag k="highway" v="construction"/>
+    <tag k="name" v="construction"/>
   </node>
   <node id="-46001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00056"/>
   <node id="-46002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00084"/>
@@ -716,12 +716,12 @@
     <nd ref="-46003"/>
     <nd ref="-46004"/>
     <nd ref="-46001"/>
-    <tag k="highway" v="emergency_access_point"/>
-    <tag k="name" v="emergency_access_point"/>
+    <tag k="highway" v="construction"/>
+    <tag k="name" v="construction"/>
   </way>
   <node id="-46200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00060">
-    <tag k="highway" v="minor"/>
-    <tag k="name" v="minor"/>
+    <tag k="highway" v="emergency_access_point"/>
+    <tag k="name" v="emergency_access_point"/>
   </node>
   <node id="-46201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00056"/>
   <node id="-46202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00084"/>
@@ -733,12 +733,12 @@
     <nd ref="-46203"/>
     <nd ref="-46204"/>
     <nd ref="-46201"/>
-    <tag k="highway" v="minor"/>
-    <tag k="name" v="minor"/>
+    <tag k="highway" v="emergency_access_point"/>
+    <tag k="name" v="emergency_access_point"/>
   </way>
   <node id="-46400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00060">
-    <tag k="highway" v="stile"/>
-    <tag k="name" v="stile"/>
+    <tag k="highway" v="minor"/>
+    <tag k="name" v="minor"/>
   </node>
   <node id="-46401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00056"/>
   <node id="-46402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00084"/>
@@ -750,6 +750,23 @@
     <nd ref="-46403"/>
     <nd ref="-46404"/>
     <nd ref="-46401"/>
+    <tag k="highway" v="minor"/>
+    <tag k="name" v="minor"/>
+  </way>
+  <node id="-46600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00060">
+    <tag k="highway" v="stile"/>
+    <tag k="name" v="stile"/>
+  </node>
+  <node id="-46601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00056"/>
+  <node id="-46602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00084"/>
+  <node id="-46603" user="overview-creator" visible="true" lat="-0.00334" lon="0.00084"/>
+  <node id="-46604" user="overview-creator" visible="true" lat="-0.00334" lon="0.00056"/>
+  <way id="-46604" user="overview-creator" visible="true">
+    <nd ref="-46601"/>
+    <nd ref="-46602"/>
+    <nd ref="-46603"/>
+    <nd ref="-46604"/>
+    <nd ref="-46601"/>
     <tag k="highway" v="stile"/>
     <tag k="name" v="stile"/>
   </way>
@@ -2442,8 +2459,8 @@
     <tag k="name" v="turntable"/>
   </way>
   <node id="-104000" user="overview-creator" visible="true" lat="-0.00200" lon="0.00150">
-    <tag k="railway" v="platform"/>
-    <tag k="name" v="platform"/>
+    <tag k="railway" v="buffer_stop"/>
+    <tag k="name" v="buffer_stop"/>
   </node>
   <node id="-104001" user="overview-creator" visible="true" lat="-0.00196" lon="0.00146"/>
   <node id="-104002" user="overview-creator" visible="true" lat="-0.00196" lon="0.00174"/>
@@ -2455,6 +2472,23 @@
     <nd ref="-104003"/>
     <nd ref="-104004"/>
     <nd ref="-104001"/>
+    <tag k="railway" v="buffer_stop"/>
+    <tag k="name" v="buffer_stop"/>
+  </way>
+  <node id="-104200" user="overview-creator" visible="true" lat="-0.00210" lon="0.00150">
+    <tag k="railway" v="platform"/>
+    <tag k="name" v="platform"/>
+  </node>
+  <node id="-104201" user="overview-creator" visible="true" lat="-0.00206" lon="0.00146"/>
+  <node id="-104202" user="overview-creator" visible="true" lat="-0.00206" lon="0.00174"/>
+  <node id="-104203" user="overview-creator" visible="true" lat="-0.00214" lon="0.00174"/>
+  <node id="-104204" user="overview-creator" visible="true" lat="-0.00214" lon="0.00146"/>
+  <way id="-104204" user="overview-creator" visible="true">
+    <nd ref="-104201"/>
+    <nd ref="-104202"/>
+    <nd ref="-104203"/>
+    <nd ref="-104204"/>
+    <nd ref="-104201"/>
     <tag k="railway" v="platform"/>
     <tag k="name" v="platform"/>
   </way>
@@ -2847,6 +2881,23 @@
     <nd ref="-121401"/>
     <tag k="aeroway" v="apron"/>
     <tag k="name" v="apron"/>
+  </way>
+  <node id="-121600" user="overview-creator" visible="true" lat="-0.00080" lon="0.00180">
+    <tag k="aeroway" v="windsock"/>
+    <tag k="name" v="windsock"/>
+  </node>
+  <node id="-121601" user="overview-creator" visible="true" lat="-0.00076" lon="0.00176"/>
+  <node id="-121602" user="overview-creator" visible="true" lat="-0.00076" lon="0.00204"/>
+  <node id="-121603" user="overview-creator" visible="true" lat="-0.00084" lon="0.00204"/>
+  <node id="-121604" user="overview-creator" visible="true" lat="-0.00084" lon="0.00176"/>
+  <way id="-121604" user="overview-creator" visible="true">
+    <nd ref="-121601"/>
+    <nd ref="-121602"/>
+    <nd ref="-121603"/>
+    <nd ref="-121604"/>
+    <nd ref="-121601"/>
+    <tag k="aeroway" v="windsock"/>
+    <tag k="name" v="windsock"/>
   </way>
   <node id="-122000" user="overview-creator" visible="true" lat="-0.00100" lon="0.00180">
     <tag k="tourism" v="information"/>
@@ -4327,8 +4378,8 @@
     <tag k="name" v="bench"/>
   </way>
   <node id="-207000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00300">
-    <tag k="amenity" v="shelter"/>
-    <tag k="name" v="shelter"/>
+    <tag k="amenity" v="bbq"/>
+    <tag k="name" v="bbq"/>
   </node>
   <node id="-207001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00296"/>
   <node id="-207002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00324"/>
@@ -4340,12 +4391,12 @@
     <nd ref="-207003"/>
     <nd ref="-207004"/>
     <nd ref="-207001"/>
-    <tag k="amenity" v="shelter"/>
-    <tag k="name" v="shelter"/>
+    <tag k="amenity" v="bbq"/>
+    <tag k="name" v="bbq"/>
   </way>
   <node id="-207200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00300">
-    <tag k="amenity" v="hunting_stand"/>
-    <tag k="name" v="hunting_stand"/>
+    <tag k="amenity" v="shelter"/>
+    <tag k="name" v="shelter"/>
   </node>
   <node id="-207201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00296"/>
   <node id="-207202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00324"/>
@@ -4357,12 +4408,12 @@
     <nd ref="-207203"/>
     <nd ref="-207204"/>
     <nd ref="-207201"/>
-    <tag k="amenity" v="hunting_stand"/>
-    <tag k="name" v="hunting_stand"/>
+    <tag k="amenity" v="shelter"/>
+    <tag k="name" v="shelter"/>
   </way>
   <node id="-207400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00300">
-    <tag k="amenity" v="wlan"/>
-    <tag k="name" v="wlan"/>
+    <tag k="amenity" v="hunting_stand"/>
+    <tag k="name" v="hunting_stand"/>
   </node>
   <node id="-207401" user="overview-creator" visible="true" lat="-0.00366" lon="0.00296"/>
   <node id="-207402" user="overview-creator" visible="true" lat="-0.00366" lon="0.00324"/>
@@ -4374,12 +4425,12 @@
     <nd ref="-207403"/>
     <nd ref="-207404"/>
     <nd ref="-207401"/>
-    <tag k="amenity" v="wlan"/>
-    <tag k="name" v="wlan"/>
+    <tag k="amenity" v="hunting_stand"/>
+    <tag k="name" v="hunting_stand"/>
   </way>
   <node id="-207600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00300">
-    <tag k="amenity" v="vending_machine"/>
-    <tag k="name" v="vending_machine"/>
+    <tag k="amenity" v="wlan"/>
+    <tag k="name" v="wlan"/>
   </node>
   <node id="-207601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00296"/>
   <node id="-207602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00324"/>
@@ -4391,12 +4442,12 @@
     <nd ref="-207603"/>
     <nd ref="-207604"/>
     <nd ref="-207601"/>
-    <tag k="amenity" v="vending_machine"/>
-    <tag k="name" v="vending_machine"/>
+    <tag k="amenity" v="wlan"/>
+    <tag k="name" v="wlan"/>
   </way>
   <node id="-207800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00300">
-    <tag k="amenity" v="signpost"/>
-    <tag k="name" v="signpost"/>
+    <tag k="amenity" v="vending_machine"/>
+    <tag k="name" v="vending_machine"/>
   </node>
   <node id="-207801" user="overview-creator" visible="true" lat="-0.00386" lon="0.00296"/>
   <node id="-207802" user="overview-creator" visible="true" lat="-0.00386" lon="0.00324"/>
@@ -4408,12 +4459,12 @@
     <nd ref="-207803"/>
     <nd ref="-207804"/>
     <nd ref="-207801"/>
-    <tag k="amenity" v="signpost"/>
-    <tag k="name" v="signpost"/>
+    <tag k="amenity" v="vending_machine"/>
+    <tag k="name" v="vending_machine"/>
   </way>
   <node id="-208000" user="overview-creator" visible="true" lat="-0.00400" lon="0.00300">
-    <tag k="amenity" v="park_bench"/>
-    <tag k="name" v="park_bench"/>
+    <tag k="amenity" v="signpost"/>
+    <tag k="name" v="signpost"/>
   </node>
   <node id="-208001" user="overview-creator" visible="true" lat="-0.00396" lon="0.00296"/>
   <node id="-208002" user="overview-creator" visible="true" lat="-0.00396" lon="0.00324"/>
@@ -4425,6 +4476,23 @@
     <nd ref="-208003"/>
     <nd ref="-208004"/>
     <nd ref="-208001"/>
+    <tag k="amenity" v="signpost"/>
+    <tag k="name" v="signpost"/>
+  </way>
+  <node id="-208200" user="overview-creator" visible="true" lat="-0.00410" lon="0.00300">
+    <tag k="amenity" v="park_bench"/>
+    <tag k="name" v="park_bench"/>
+  </node>
+  <node id="-208201" user="overview-creator" visible="true" lat="-0.00406" lon="0.00296"/>
+  <node id="-208202" user="overview-creator" visible="true" lat="-0.00406" lon="0.00324"/>
+  <node id="-208203" user="overview-creator" visible="true" lat="-0.00414" lon="0.00324"/>
+  <node id="-208204" user="overview-creator" visible="true" lat="-0.00414" lon="0.00296"/>
+  <way id="-208204" user="overview-creator" visible="true">
+    <nd ref="-208201"/>
+    <nd ref="-208202"/>
+    <nd ref="-208203"/>
+    <nd ref="-208204"/>
+    <nd ref="-208201"/>
     <tag k="amenity" v="park_bench"/>
     <tag k="name" v="park_bench"/>
   </way>
@@ -7218,8 +7286,8 @@
     <tag k="name" v="canoe"/>
   </way>
   <node id="-282200" user="overview-creator" visible="true" lat="-0.00110" lon="0.00420">
-    <tag k="sport" v="climbing"/>
-    <tag k="name" v="climbing"/>
+    <tag k="sport" v="chess"/>
+    <tag k="name" v="chess"/>
   </node>
   <node id="-282201" user="overview-creator" visible="true" lat="-0.00106" lon="0.00416"/>
   <node id="-282202" user="overview-creator" visible="true" lat="-0.00106" lon="0.00444"/>
@@ -7231,12 +7299,12 @@
     <nd ref="-282203"/>
     <nd ref="-282204"/>
     <nd ref="-282201"/>
-    <tag k="sport" v="climbing"/>
-    <tag k="name" v="climbing"/>
+    <tag k="sport" v="chess"/>
+    <tag k="name" v="chess"/>
   </way>
   <node id="-282400" user="overview-creator" visible="true" lat="-0.00120" lon="0.00420">
-    <tag k="sport" v="cricket"/>
-    <tag k="name" v="cricket"/>
+    <tag k="sport" v="climbing"/>
+    <tag k="name" v="climbing"/>
   </node>
   <node id="-282401" user="overview-creator" visible="true" lat="-0.00116" lon="0.00416"/>
   <node id="-282402" user="overview-creator" visible="true" lat="-0.00116" lon="0.00444"/>
@@ -7248,12 +7316,12 @@
     <nd ref="-282403"/>
     <nd ref="-282404"/>
     <nd ref="-282401"/>
-    <tag k="sport" v="cricket"/>
-    <tag k="name" v="cricket"/>
+    <tag k="sport" v="climbing"/>
+    <tag k="name" v="climbing"/>
   </way>
   <node id="-282600" user="overview-creator" visible="true" lat="-0.00130" lon="0.00420">
-    <tag k="sport" v="cricket_nets"/>
-    <tag k="name" v="cricket_nets"/>
+    <tag k="sport" v="cricket"/>
+    <tag k="name" v="cricket"/>
   </node>
   <node id="-282601" user="overview-creator" visible="true" lat="-0.00126" lon="0.00416"/>
   <node id="-282602" user="overview-creator" visible="true" lat="-0.00126" lon="0.00444"/>
@@ -7265,12 +7333,12 @@
     <nd ref="-282603"/>
     <nd ref="-282604"/>
     <nd ref="-282601"/>
-    <tag k="sport" v="cricket_nets"/>
-    <tag k="name" v="cricket_nets"/>
+    <tag k="sport" v="cricket"/>
+    <tag k="name" v="cricket"/>
   </way>
   <node id="-282800" user="overview-creator" visible="true" lat="-0.00140" lon="0.00420">
-    <tag k="sport" v="croquet"/>
-    <tag k="name" v="croquet"/>
+    <tag k="sport" v="cricket_nets"/>
+    <tag k="name" v="cricket_nets"/>
   </node>
   <node id="-282801" user="overview-creator" visible="true" lat="-0.00136" lon="0.00416"/>
   <node id="-282802" user="overview-creator" visible="true" lat="-0.00136" lon="0.00444"/>
@@ -7282,12 +7350,12 @@
     <nd ref="-282803"/>
     <nd ref="-282804"/>
     <nd ref="-282801"/>
-    <tag k="sport" v="croquet"/>
-    <tag k="name" v="croquet"/>
+    <tag k="sport" v="cricket_nets"/>
+    <tag k="name" v="cricket_nets"/>
   </way>
   <node id="-283000" user="overview-creator" visible="true" lat="-0.00150" lon="0.00420">
-    <tag k="sport" v="cycling"/>
-    <tag k="name" v="cycling"/>
+    <tag k="sport" v="croquet"/>
+    <tag k="name" v="croquet"/>
   </node>
   <node id="-283001" user="overview-creator" visible="true" lat="-0.00146" lon="0.00416"/>
   <node id="-283002" user="overview-creator" visible="true" lat="-0.00146" lon="0.00444"/>
@@ -7299,12 +7367,12 @@
     <nd ref="-283003"/>
     <nd ref="-283004"/>
     <nd ref="-283001"/>
-    <tag k="sport" v="cycling"/>
-    <tag k="name" v="cycling"/>
+    <tag k="sport" v="croquet"/>
+    <tag k="name" v="croquet"/>
   </way>
   <node id="-283200" user="overview-creator" visible="true" lat="-0.00160" lon="0.00420">
-    <tag k="sport" v="dog_racing"/>
-    <tag k="name" v="dog_racing"/>
+    <tag k="sport" v="cycling"/>
+    <tag k="name" v="cycling"/>
   </node>
   <node id="-283201" user="overview-creator" visible="true" lat="-0.00156" lon="0.00416"/>
   <node id="-283202" user="overview-creator" visible="true" lat="-0.00156" lon="0.00444"/>
@@ -7316,12 +7384,12 @@
     <nd ref="-283203"/>
     <nd ref="-283204"/>
     <nd ref="-283201"/>
-    <tag k="sport" v="dog_racing"/>
-    <tag k="name" v="dog_racing"/>
+    <tag k="sport" v="cycling"/>
+    <tag k="name" v="cycling"/>
   </way>
   <node id="-283400" user="overview-creator" visible="true" lat="-0.00170" lon="0.00420">
-    <tag k="sport" v="equestrian"/>
-    <tag k="name" v="equestrian"/>
+    <tag k="sport" v="dog_racing"/>
+    <tag k="name" v="dog_racing"/>
   </node>
   <node id="-283401" user="overview-creator" visible="true" lat="-0.00166" lon="0.00416"/>
   <node id="-283402" user="overview-creator" visible="true" lat="-0.00166" lon="0.00444"/>
@@ -7333,12 +7401,12 @@
     <nd ref="-283403"/>
     <nd ref="-283404"/>
     <nd ref="-283401"/>
-    <tag k="sport" v="equestrian"/>
-    <tag k="name" v="equestrian"/>
+    <tag k="sport" v="dog_racing"/>
+    <tag k="name" v="dog_racing"/>
   </way>
   <node id="-283600" user="overview-creator" visible="true" lat="-0.00180" lon="0.00420">
-    <tag k="sport" v="football"/>
-    <tag k="name" v="football"/>
+    <tag k="sport" v="equestrian"/>
+    <tag k="name" v="equestrian"/>
   </node>
   <node id="-283601" user="overview-creator" visible="true" lat="-0.00176" lon="0.00416"/>
   <node id="-283602" user="overview-creator" visible="true" lat="-0.00176" lon="0.00444"/>
@@ -7350,12 +7418,12 @@
     <nd ref="-283603"/>
     <nd ref="-283604"/>
     <nd ref="-283601"/>
-    <tag k="sport" v="football"/>
-    <tag k="name" v="football"/>
+    <tag k="sport" v="equestrian"/>
+    <tag k="name" v="equestrian"/>
   </way>
   <node id="-283800" user="overview-creator" visible="true" lat="-0.00190" lon="0.00420">
-    <tag k="sport" v="golf"/>
-    <tag k="name" v="golf"/>
+    <tag k="sport" v="football"/>
+    <tag k="name" v="football"/>
   </node>
   <node id="-283801" user="overview-creator" visible="true" lat="-0.00186" lon="0.00416"/>
   <node id="-283802" user="overview-creator" visible="true" lat="-0.00186" lon="0.00444"/>
@@ -7367,12 +7435,12 @@
     <nd ref="-283803"/>
     <nd ref="-283804"/>
     <nd ref="-283801"/>
-    <tag k="sport" v="golf"/>
-    <tag k="name" v="golf"/>
+    <tag k="sport" v="football"/>
+    <tag k="name" v="football"/>
   </way>
   <node id="-284000" user="overview-creator" visible="true" lat="-0.00200" lon="0.00420">
-    <tag k="sport" v="gymnastics"/>
-    <tag k="name" v="gymnastics"/>
+    <tag k="sport" v="golf"/>
+    <tag k="name" v="golf"/>
   </node>
   <node id="-284001" user="overview-creator" visible="true" lat="-0.00196" lon="0.00416"/>
   <node id="-284002" user="overview-creator" visible="true" lat="-0.00196" lon="0.00444"/>
@@ -7384,12 +7452,12 @@
     <nd ref="-284003"/>
     <nd ref="-284004"/>
     <nd ref="-284001"/>
-    <tag k="sport" v="gymnastics"/>
-    <tag k="name" v="gymnastics"/>
+    <tag k="sport" v="golf"/>
+    <tag k="name" v="golf"/>
   </way>
   <node id="-284200" user="overview-creator" visible="true" lat="-0.00210" lon="0.00420">
-    <tag k="sport" v="hockey"/>
-    <tag k="name" v="hockey"/>
+    <tag k="sport" v="gymnastics"/>
+    <tag k="name" v="gymnastics"/>
   </node>
   <node id="-284201" user="overview-creator" visible="true" lat="-0.00206" lon="0.00416"/>
   <node id="-284202" user="overview-creator" visible="true" lat="-0.00206" lon="0.00444"/>
@@ -7401,12 +7469,12 @@
     <nd ref="-284203"/>
     <nd ref="-284204"/>
     <nd ref="-284201"/>
-    <tag k="sport" v="hockey"/>
-    <tag k="name" v="hockey"/>
+    <tag k="sport" v="gymnastics"/>
+    <tag k="name" v="gymnastics"/>
   </way>
   <node id="-284400" user="overview-creator" visible="true" lat="-0.00220" lon="0.00420">
-    <tag k="sport" v="horse_racing"/>
-    <tag k="name" v="horse_racing"/>
+    <tag k="sport" v="hockey"/>
+    <tag k="name" v="hockey"/>
   </node>
   <node id="-284401" user="overview-creator" visible="true" lat="-0.00216" lon="0.00416"/>
   <node id="-284402" user="overview-creator" visible="true" lat="-0.00216" lon="0.00444"/>
@@ -7418,12 +7486,12 @@
     <nd ref="-284403"/>
     <nd ref="-284404"/>
     <nd ref="-284401"/>
-    <tag k="sport" v="horse_racing"/>
-    <tag k="name" v="horse_racing"/>
+    <tag k="sport" v="hockey"/>
+    <tag k="name" v="hockey"/>
   </way>
   <node id="-284600" user="overview-creator" visible="true" lat="-0.00230" lon="0.00420">
-    <tag k="sport" v="motor"/>
-    <tag k="name" v="motor"/>
+    <tag k="sport" v="horse_racing"/>
+    <tag k="name" v="horse_racing"/>
   </node>
   <node id="-284601" user="overview-creator" visible="true" lat="-0.00226" lon="0.00416"/>
   <node id="-284602" user="overview-creator" visible="true" lat="-0.00226" lon="0.00444"/>
@@ -7435,12 +7503,12 @@
     <nd ref="-284603"/>
     <nd ref="-284604"/>
     <nd ref="-284601"/>
-    <tag k="sport" v="motor"/>
-    <tag k="name" v="motor"/>
+    <tag k="sport" v="horse_racing"/>
+    <tag k="name" v="horse_racing"/>
   </way>
   <node id="-284800" user="overview-creator" visible="true" lat="-0.00240" lon="0.00420">
-    <tag k="sport" v="multi"/>
-    <tag k="name" v="multi"/>
+    <tag k="sport" v="motor"/>
+    <tag k="name" v="motor"/>
   </node>
   <node id="-284801" user="overview-creator" visible="true" lat="-0.00236" lon="0.00416"/>
   <node id="-284802" user="overview-creator" visible="true" lat="-0.00236" lon="0.00444"/>
@@ -7452,12 +7520,12 @@
     <nd ref="-284803"/>
     <nd ref="-284804"/>
     <nd ref="-284801"/>
-    <tag k="sport" v="multi"/>
-    <tag k="name" v="multi"/>
+    <tag k="sport" v="motor"/>
+    <tag k="name" v="motor"/>
   </way>
   <node id="-285000" user="overview-creator" visible="true" lat="-0.00250" lon="0.00420">
-    <tag k="sport" v="pelota"/>
-    <tag k="name" v="pelota"/>
+    <tag k="sport" v="multi"/>
+    <tag k="name" v="multi"/>
   </node>
   <node id="-285001" user="overview-creator" visible="true" lat="-0.00246" lon="0.00416"/>
   <node id="-285002" user="overview-creator" visible="true" lat="-0.00246" lon="0.00444"/>
@@ -7469,12 +7537,12 @@
     <nd ref="-285003"/>
     <nd ref="-285004"/>
     <nd ref="-285001"/>
-    <tag k="sport" v="pelota"/>
-    <tag k="name" v="pelota"/>
+    <tag k="sport" v="multi"/>
+    <tag k="name" v="multi"/>
   </way>
   <node id="-285200" user="overview-creator" visible="true" lat="-0.00260" lon="0.00420">
-    <tag k="sport" v="racquet"/>
-    <tag k="name" v="racquet"/>
+    <tag k="sport" v="pelota"/>
+    <tag k="name" v="pelota"/>
   </node>
   <node id="-285201" user="overview-creator" visible="true" lat="-0.00256" lon="0.00416"/>
   <node id="-285202" user="overview-creator" visible="true" lat="-0.00256" lon="0.00444"/>
@@ -7486,12 +7554,12 @@
     <nd ref="-285203"/>
     <nd ref="-285204"/>
     <nd ref="-285201"/>
-    <tag k="sport" v="racquet"/>
-    <tag k="name" v="racquet"/>
+    <tag k="sport" v="pelota"/>
+    <tag k="name" v="pelota"/>
   </way>
   <node id="-285400" user="overview-creator" visible="true" lat="-0.00270" lon="0.00420">
-    <tag k="sport" v="rugby"/>
-    <tag k="name" v="rugby"/>
+    <tag k="sport" v="racquet"/>
+    <tag k="name" v="racquet"/>
   </node>
   <node id="-285401" user="overview-creator" visible="true" lat="-0.00266" lon="0.00416"/>
   <node id="-285402" user="overview-creator" visible="true" lat="-0.00266" lon="0.00444"/>
@@ -7503,12 +7571,12 @@
     <nd ref="-285403"/>
     <nd ref="-285404"/>
     <nd ref="-285401"/>
-    <tag k="sport" v="rugby"/>
-    <tag k="name" v="rugby"/>
+    <tag k="sport" v="racquet"/>
+    <tag k="name" v="racquet"/>
   </way>
   <node id="-285600" user="overview-creator" visible="true" lat="-0.00280" lon="0.00420">
-    <tag k="sport" v="skating"/>
-    <tag k="name" v="skating"/>
+    <tag k="sport" v="rugby"/>
+    <tag k="name" v="rugby"/>
   </node>
   <node id="-285601" user="overview-creator" visible="true" lat="-0.00276" lon="0.00416"/>
   <node id="-285602" user="overview-creator" visible="true" lat="-0.00276" lon="0.00444"/>
@@ -7520,12 +7588,12 @@
     <nd ref="-285603"/>
     <nd ref="-285604"/>
     <nd ref="-285601"/>
-    <tag k="sport" v="skating"/>
-    <tag k="name" v="skating"/>
+    <tag k="sport" v="rugby"/>
+    <tag k="name" v="rugby"/>
   </way>
   <node id="-285800" user="overview-creator" visible="true" lat="-0.00290" lon="0.00420">
-    <tag k="sport" v="skateboard"/>
-    <tag k="name" v="skateboard"/>
+    <tag k="sport" v="skating"/>
+    <tag k="name" v="skating"/>
   </node>
   <node id="-285801" user="overview-creator" visible="true" lat="-0.00286" lon="0.00416"/>
   <node id="-285802" user="overview-creator" visible="true" lat="-0.00286" lon="0.00444"/>
@@ -7537,12 +7605,12 @@
     <nd ref="-285803"/>
     <nd ref="-285804"/>
     <nd ref="-285801"/>
-    <tag k="sport" v="skateboard"/>
-    <tag k="name" v="skateboard"/>
+    <tag k="sport" v="skating"/>
+    <tag k="name" v="skating"/>
   </way>
   <node id="-286000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00420">
-    <tag k="sport" v="soccer"/>
-    <tag k="name" v="soccer"/>
+    <tag k="sport" v="skateboard"/>
+    <tag k="name" v="skateboard"/>
   </node>
   <node id="-286001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00416"/>
   <node id="-286002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00444"/>
@@ -7554,12 +7622,12 @@
     <nd ref="-286003"/>
     <nd ref="-286004"/>
     <nd ref="-286001"/>
-    <tag k="sport" v="soccer"/>
-    <tag k="name" v="soccer"/>
+    <tag k="sport" v="skateboard"/>
+    <tag k="name" v="skateboard"/>
   </way>
   <node id="-286200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00420">
-    <tag k="sport" v="swimming"/>
-    <tag k="name" v="swimming"/>
+    <tag k="sport" v="soccer"/>
+    <tag k="name" v="soccer"/>
   </node>
   <node id="-286201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00416"/>
   <node id="-286202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00444"/>
@@ -7571,12 +7639,12 @@
     <nd ref="-286203"/>
     <nd ref="-286204"/>
     <nd ref="-286201"/>
-    <tag k="sport" v="swimming"/>
-    <tag k="name" v="swimming"/>
+    <tag k="sport" v="soccer"/>
+    <tag k="name" v="soccer"/>
   </way>
   <node id="-286400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00420">
-    <tag k="sport" v="skiing"/>
-    <tag k="name" v="skiing"/>
+    <tag k="sport" v="swimming"/>
+    <tag k="name" v="swimming"/>
   </node>
   <node id="-286401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00416"/>
   <node id="-286402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00444"/>
@@ -7588,12 +7656,12 @@
     <nd ref="-286403"/>
     <nd ref="-286404"/>
     <nd ref="-286401"/>
-    <tag k="sport" v="skiing"/>
-    <tag k="name" v="skiing"/>
+    <tag k="sport" v="swimming"/>
+    <tag k="name" v="swimming"/>
   </way>
   <node id="-286600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00420">
-    <tag k="sport" v="table_tennis"/>
-    <tag k="name" v="table_tennis"/>
+    <tag k="sport" v="skiing"/>
+    <tag k="name" v="skiing"/>
   </node>
   <node id="-286601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00416"/>
   <node id="-286602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00444"/>
@@ -7605,12 +7673,12 @@
     <nd ref="-286603"/>
     <nd ref="-286604"/>
     <nd ref="-286601"/>
-    <tag k="sport" v="table_tennis"/>
-    <tag k="name" v="table_tennis"/>
+    <tag k="sport" v="skiing"/>
+    <tag k="name" v="skiing"/>
   </way>
   <node id="-286800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00420">
-    <tag k="sport" v="tennis"/>
-    <tag k="name" v="tennis"/>
+    <tag k="sport" v="table_tennis"/>
+    <tag k="name" v="table_tennis"/>
   </node>
   <node id="-286801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00416"/>
   <node id="-286802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00444"/>
@@ -7622,12 +7690,12 @@
     <nd ref="-286803"/>
     <nd ref="-286804"/>
     <nd ref="-286801"/>
-    <tag k="sport" v="tennis"/>
-    <tag k="name" v="tennis"/>
+    <tag k="sport" v="table_tennis"/>
+    <tag k="name" v="table_tennis"/>
   </way>
   <node id="-287000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00420">
-    <tag k="sport" v="paintball"/>
-    <tag k="name" v="paintball"/>
+    <tag k="sport" v="tennis"/>
+    <tag k="name" v="tennis"/>
   </node>
   <node id="-287001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00416"/>
   <node id="-287002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00444"/>
@@ -7639,12 +7707,12 @@
     <nd ref="-287003"/>
     <nd ref="-287004"/>
     <nd ref="-287001"/>
-    <tag k="sport" v="paintball"/>
-    <tag k="name" v="paintball"/>
+    <tag k="sport" v="tennis"/>
+    <tag k="name" v="tennis"/>
   </way>
   <node id="-287200" user="overview-creator" visible="true" lat="-0.00360" lon="0.00420">
-    <tag k="sport" v="squash"/>
-    <tag k="name" v="squash"/>
+    <tag k="sport" v="paintball"/>
+    <tag k="name" v="paintball"/>
   </node>
   <node id="-287201" user="overview-creator" visible="true" lat="-0.00356" lon="0.00416"/>
   <node id="-287202" user="overview-creator" visible="true" lat="-0.00356" lon="0.00444"/>
@@ -7656,12 +7724,12 @@
     <nd ref="-287203"/>
     <nd ref="-287204"/>
     <nd ref="-287201"/>
-    <tag k="sport" v="squash"/>
-    <tag k="name" v="squash"/>
+    <tag k="sport" v="paintball"/>
+    <tag k="name" v="paintball"/>
   </way>
   <node id="-287400" user="overview-creator" visible="true" lat="-0.00370" lon="0.00420">
-    <tag k="sport" v="shooting"/>
-    <tag k="name" v="shooting"/>
+    <tag k="sport" v="squash"/>
+    <tag k="name" v="squash"/>
   </node>
   <node id="-287401" user="overview-creator" visible="true" lat="-0.00366" lon="0.00416"/>
   <node id="-287402" user="overview-creator" visible="true" lat="-0.00366" lon="0.00444"/>
@@ -7673,12 +7741,12 @@
     <nd ref="-287403"/>
     <nd ref="-287404"/>
     <nd ref="-287401"/>
-    <tag k="sport" v="shooting"/>
-    <tag k="name" v="shooting"/>
+    <tag k="sport" v="squash"/>
+    <tag k="name" v="squash"/>
   </way>
   <node id="-287600" user="overview-creator" visible="true" lat="-0.00380" lon="0.00420">
-    <tag k="sport" v="volleyball"/>
-    <tag k="name" v="volleyball"/>
+    <tag k="sport" v="shooting"/>
+    <tag k="name" v="shooting"/>
   </node>
   <node id="-287601" user="overview-creator" visible="true" lat="-0.00376" lon="0.00416"/>
   <node id="-287602" user="overview-creator" visible="true" lat="-0.00376" lon="0.00444"/>
@@ -7690,12 +7758,12 @@
     <nd ref="-287603"/>
     <nd ref="-287604"/>
     <nd ref="-287601"/>
-    <tag k="sport" v="volleyball"/>
-    <tag k="name" v="volleyball"/>
+    <tag k="sport" v="shooting"/>
+    <tag k="name" v="shooting"/>
   </way>
   <node id="-287800" user="overview-creator" visible="true" lat="-0.00390" lon="0.00420">
-    <tag k="sport" v="beachvolleyball"/>
-    <tag k="name" v="beachvolleyball"/>
+    <tag k="sport" v="volleyball"/>
+    <tag k="name" v="volleyball"/>
   </node>
   <node id="-287801" user="overview-creator" visible="true" lat="-0.00386" lon="0.00416"/>
   <node id="-287802" user="overview-creator" visible="true" lat="-0.00386" lon="0.00444"/>
@@ -7707,12 +7775,12 @@
     <nd ref="-287803"/>
     <nd ref="-287804"/>
     <nd ref="-287801"/>
-    <tag k="sport" v="beachvolleyball"/>
-    <tag k="name" v="beachvolleyball"/>
+    <tag k="sport" v="volleyball"/>
+    <tag k="name" v="volleyball"/>
   </way>
   <node id="-288000" user="overview-creator" visible="true" lat="-0.00400" lon="0.00420">
-    <tag k="sport" v="bowling"/>
-    <tag k="name" v="bowling"/>
+    <tag k="sport" v="beachvolleyball"/>
+    <tag k="name" v="beachvolleyball"/>
   </node>
   <node id="-288001" user="overview-creator" visible="true" lat="-0.00396" lon="0.00416"/>
   <node id="-288002" user="overview-creator" visible="true" lat="-0.00396" lon="0.00444"/>
@@ -7724,12 +7792,12 @@
     <nd ref="-288003"/>
     <nd ref="-288004"/>
     <nd ref="-288001"/>
-    <tag k="sport" v="bowling"/>
-    <tag k="name" v="bowling"/>
+    <tag k="sport" v="beachvolleyball"/>
+    <tag k="name" v="beachvolleyball"/>
   </way>
   <node id="-288200" user="overview-creator" visible="true" lat="-0.00410" lon="0.00420">
-    <tag k="sport" v="handball"/>
-    <tag k="name" v="handball"/>
+    <tag k="sport" v="bowling"/>
+    <tag k="name" v="bowling"/>
   </node>
   <node id="-288201" user="overview-creator" visible="true" lat="-0.00406" lon="0.00416"/>
   <node id="-288202" user="overview-creator" visible="true" lat="-0.00406" lon="0.00444"/>
@@ -7741,12 +7809,12 @@
     <nd ref="-288203"/>
     <nd ref="-288204"/>
     <nd ref="-288201"/>
-    <tag k="sport" v="handball"/>
-    <tag k="name" v="handball"/>
+    <tag k="sport" v="bowling"/>
+    <tag k="name" v="bowling"/>
   </way>
   <node id="-305800" user="overview-creator" visible="true" lat="-0.00290" lon="0.00450">
-    <tag k="sport" v="rowing"/>
-    <tag k="name" v="rowing"/>
+    <tag k="sport" v="handball"/>
+    <tag k="name" v="handball"/>
   </node>
   <node id="-305801" user="overview-creator" visible="true" lat="-0.00286" lon="0.00446"/>
   <node id="-305802" user="overview-creator" visible="true" lat="-0.00286" lon="0.00474"/>
@@ -7758,12 +7826,12 @@
     <nd ref="-305803"/>
     <nd ref="-305804"/>
     <nd ref="-305801"/>
-    <tag k="sport" v="rowing"/>
-    <tag k="name" v="rowing"/>
+    <tag k="sport" v="handball"/>
+    <tag k="name" v="handball"/>
   </way>
   <node id="-306000" user="overview-creator" visible="true" lat="-0.00300" lon="0.00450">
-    <tag k="sport" v="sailing"/>
-    <tag k="name" v="sailing"/>
+    <tag k="sport" v="rowing"/>
+    <tag k="name" v="rowing"/>
   </node>
   <node id="-306001" user="overview-creator" visible="true" lat="-0.00296" lon="0.00446"/>
   <node id="-306002" user="overview-creator" visible="true" lat="-0.00296" lon="0.00474"/>
@@ -7775,12 +7843,12 @@
     <nd ref="-306003"/>
     <nd ref="-306004"/>
     <nd ref="-306001"/>
-    <tag k="sport" v="sailing"/>
-    <tag k="name" v="sailing"/>
+    <tag k="sport" v="rowing"/>
+    <tag k="name" v="rowing"/>
   </way>
   <node id="-306200" user="overview-creator" visible="true" lat="-0.00310" lon="0.00450">
-    <tag k="sport" v="diving"/>
-    <tag k="name" v="diving"/>
+    <tag k="sport" v="sailing"/>
+    <tag k="name" v="sailing"/>
   </node>
   <node id="-306201" user="overview-creator" visible="true" lat="-0.00306" lon="0.00446"/>
   <node id="-306202" user="overview-creator" visible="true" lat="-0.00306" lon="0.00474"/>
@@ -7792,12 +7860,12 @@
     <nd ref="-306203"/>
     <nd ref="-306204"/>
     <nd ref="-306201"/>
-    <tag k="sport" v="diving"/>
-    <tag k="name" v="diving"/>
+    <tag k="sport" v="sailing"/>
+    <tag k="name" v="sailing"/>
   </way>
   <node id="-306400" user="overview-creator" visible="true" lat="-0.00320" lon="0.00450">
-    <tag k="sport" v="badminton"/>
-    <tag k="name" v="badminton"/>
+    <tag k="sport" v="diving"/>
+    <tag k="name" v="diving"/>
   </node>
   <node id="-306401" user="overview-creator" visible="true" lat="-0.00316" lon="0.00446"/>
   <node id="-306402" user="overview-creator" visible="true" lat="-0.00316" lon="0.00474"/>
@@ -7809,12 +7877,12 @@
     <nd ref="-306403"/>
     <nd ref="-306404"/>
     <nd ref="-306401"/>
-    <tag k="sport" v="badminton"/>
-    <tag k="name" v="badminton"/>
+    <tag k="sport" v="diving"/>
+    <tag k="name" v="diving"/>
   </way>
   <node id="-306600" user="overview-creator" visible="true" lat="-0.00330" lon="0.00450">
-    <tag k="sport" v="archery"/>
-    <tag k="name" v="archery"/>
+    <tag k="sport" v="badminton"/>
+    <tag k="name" v="badminton"/>
   </node>
   <node id="-306601" user="overview-creator" visible="true" lat="-0.00326" lon="0.00446"/>
   <node id="-306602" user="overview-creator" visible="true" lat="-0.00326" lon="0.00474"/>
@@ -7826,12 +7894,12 @@
     <nd ref="-306603"/>
     <nd ref="-306604"/>
     <nd ref="-306601"/>
-    <tag k="sport" v="archery"/>
-    <tag k="name" v="archery"/>
+    <tag k="sport" v="badminton"/>
+    <tag k="name" v="badminton"/>
   </way>
   <node id="-306800" user="overview-creator" visible="true" lat="-0.00340" lon="0.00450">
-    <tag k="sport" v="fishing"/>
-    <tag k="name" v="fishing"/>
+    <tag k="sport" v="archery"/>
+    <tag k="name" v="archery"/>
   </node>
   <node id="-306801" user="overview-creator" visible="true" lat="-0.00336" lon="0.00446"/>
   <node id="-306802" user="overview-creator" visible="true" lat="-0.00336" lon="0.00474"/>
@@ -7843,6 +7911,23 @@
     <nd ref="-306803"/>
     <nd ref="-306804"/>
     <nd ref="-306801"/>
+    <tag k="sport" v="archery"/>
+    <tag k="name" v="archery"/>
+  </way>
+  <node id="-307000" user="overview-creator" visible="true" lat="-0.00350" lon="0.00450">
+    <tag k="sport" v="fishing"/>
+    <tag k="name" v="fishing"/>
+  </node>
+  <node id="-307001" user="overview-creator" visible="true" lat="-0.00346" lon="0.00446"/>
+  <node id="-307002" user="overview-creator" visible="true" lat="-0.00346" lon="0.00474"/>
+  <node id="-307003" user="overview-creator" visible="true" lat="-0.00354" lon="0.00474"/>
+  <node id="-307004" user="overview-creator" visible="true" lat="-0.00354" lon="0.00446"/>
+  <way id="-307004" user="overview-creator" visible="true">
+    <nd ref="-307001"/>
+    <nd ref="-307002"/>
+    <nd ref="-307003"/>
+    <nd ref="-307004"/>
+    <nd ref="-307001"/>
     <tag k="sport" v="fishing"/>
     <tag k="name" v="fishing"/>
   </way>

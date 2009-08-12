@@ -405,7 +405,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="turnstile"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="vehicle/turnstile.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -419,13 +419,13 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="cycle_barrier"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="vehicle/cycle_barrier.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="barrier" v="lift_gate"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="vehicle/lift_gate.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -460,7 +460,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="entrance"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="vehicle/entrance.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -500,7 +500,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="sally_port"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="vehicle/sally_port.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -861,6 +861,13 @@ For external files the <rules> should have following elements:
 		<condition k="highway" v="turning_circle"/>
 		<area colour="turningcircle#c0c0c0"/>
 		<icon annotate="true" src="vehicle/turning_circle.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="passing_place"/>
+		<icon annotate="true" src="vehicle/passing_place.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1257,6 +1264,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="railway" v="buffer_stop"/>
+		<icon annotate="true" src="transport/buffer_stop.png"/>
+		<area colour="rail#404040"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="railway" v="platform"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="2" colour="rail#404040"/>
@@ -1333,6 +1348,13 @@ For external files the <rules> should have following elements:
 		<condition k="aeroway" v="apron"/>
 		<area colour="aeroway_light#990000"/>
 		<icon annotate="true" src="transport/airport.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="aeroway" v="windsock"/>
+		<icon annotate="true" src="transport/airport/windsock.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1447,7 +1469,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="power" v="pole"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/landmark/power/pole.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1641,7 +1663,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="man_made" v="watermill"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/landmark/watermill.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2392,6 +2414,14 @@ For external files the <rules> should have following elements:
 		<condition k="amenity" v="bench"/>
 		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="leisure/bench.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="bbq"/>
+		<area colour="amenity_light#f7efb7"/>
+		<icon annotate="true" src="leisure/bbq.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3645,7 +3675,15 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="canoe"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/canoe.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="chess"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/chess.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3653,7 +3691,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="climbing"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/climbing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3797,7 +3835,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="skateboard"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/skateboard.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3901,7 +3939,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="rowing"/>
 		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="sport/rowing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
