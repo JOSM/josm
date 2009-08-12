@@ -866,7 +866,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="emergency_access_point"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="service/emergency_access_point.png"/>
 		<area colour="emergency_access_point#c0c0c0"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
