@@ -395,6 +395,12 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
+		<condition k="barrier" v="turnstile"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
 		<condition k="barrier" v="fence"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="3" colour="barrier#F0F050"/>
@@ -965,7 +971,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="waterway" v="river"/>
-		<line width="2" realwidth="10" colour="water#0000ff"/>
+		<line width="2" realwidth="5" colour="water#0000ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>200000000</scale_max>
@@ -1431,7 +1437,22 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="power" v="pole"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="power" v="line"/>
+		<line width="1" colour="power#eeeeee"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="power" v="minor_line"/>
 		<line width="1" colour="power#eeeeee"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
