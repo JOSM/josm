@@ -1195,7 +1195,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="railway" v="preserved"/>
-		<line width="1" colour="oldrail#202020" dashed="true"/>
+		<line width="1" colour="oldrail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1205,8 +1205,8 @@ For external files the <rules> should have following elements:
     <!-- -> normal display with line, linemod for combinations -->
 	<rule>
 		<condition k="railway" v="disused"/>
-		<line width="1" colour="oldrail#202020" dashed="true" priority="-10000"/>
-		<linemod mode="over" width="1" colour="oldrail#202020" dashed="true"/>
+		<line width="1" colour="oldrail#404040" dashed="true" priority="-10000"/>
+		<linemod mode="over" width="1" colour="oldrail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1216,8 +1216,8 @@ For external files the <rules> should have following elements:
     <!-- -> normal display with line, linemod for combinations -->
 	<rule>
 		<condition k="railway" v="abandoned"/>
-		<line width="1" colour="oldrail#202020" dashed="true" priority="-10000"/>
-		<linemod mode="over" width="1" colour="oldrail#202020" dashed="true"/>
+		<line width="1" colour="oldrail#404040" dashed="true" priority="-10000"/>
+		<linemod mode="over" width="1" colour="oldrail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
