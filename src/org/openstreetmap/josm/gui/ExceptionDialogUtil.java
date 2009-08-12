@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
@@ -151,6 +152,32 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
 
+    public static void explainNestedIOException(OsmTransferException e) {
+        IOException ioe = getNestedException(e, IOException.class);
+        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String message = tr("<html>Failed to upload data to or download data from<br>"
+                + "''{0}''<br>"
+                + "due to a problem with transferring data.<br>"
+                + "Details(untranslated): {1}</html>",
+                apiUrl, ioe.getMessage()
+        );
+        e.printStackTrace();
+        OptionPaneUtil.showMessageDialog(
+                Main.parent,
+                message,
+                tr("IO Exception"),
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    /**
+     * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
+     * This is most likely happening when user tries to access the OSM API from whitin an
+     * applet which wasn't loaded from the API server.
+     * 
+     * @param e the exception
+     */
+
     public static void explainNestedUnkonwnHostException(OsmTransferException e) {
         String apiUrl = OsmApi.getOsmApi().getBaseUrl();
         String host = tr("unknown");
@@ -175,48 +202,27 @@ public class ExceptionDialogUtil {
         );
     }
 
-    protected static <T> T getNestedException(Exception e, Class<T> nested) {
+    /**
+     * Replies the first nested exception of type <code>nestedClass</code> (including
+     * the root exception <code>e</code>) or null, if no such exception is found.
+     * 
+     * @param <T>
+     * @param e the root exception
+     * @param nestedClass the type of the nested exception
+     * @return the first nested exception of type <code>nestedClass</code> (including
+     * the root exception <code>e</code>) or null, if no such exception is found.
+     */
+    protected static <T> T getNestedException(Exception e, Class<T> nestedClass) {
         Throwable t = e;
-        while (t != null && !(t.getClass().isAssignableFrom(nested))) {
+        while (t != null && !(nestedClass.isInstance(t))) {
             t = t.getCause();
         }
-        return nested.cast(t);
+        if (t== null)
+            return null;
+        else if (nestedClass.isInstance(t))
+            return nestedClass.cast(t);
+        return null;
     }
-
-    /**
-     * Replies the first {@see SecurityException} in a chain of nested exceptions.
-     * null, if no {@see SecurityException} is in this chain.
-     * 
-     * @param e the root exception
-     * @return the first {@see SecurityException} in a chain of nested exceptions
-     */
-    protected static SecurityException getNestedSecurityException(Exception e) {
-        return getNestedException(e, SecurityException.class);
-    }
-
-
-    /**
-     * Replies the first {@see SocketException} in a chain of nested exceptions.
-     * null, if no {@see SocketException} is in this chain.
-     * 
-     * @param e the root exception
-     * @return the first {@see SocketException} in a chain of nested exceptions
-     */
-    protected static SocketException getNestedSocketException(Exception e) {
-        return getNestedException(e, SocketException.class);
-    }
-
-    /**
-     * Replies the first {@see UnknownHostException} in a chain of nested exceptions.
-     * null, if no {@see UnknownHostException} is in this chain.
-     * 
-     * @param e the root exception
-     * @return the first {@see UnknownHostException} in a chain of nested exceptions
-     */
-    protected static UnknownHostException getNestedUnknownHostException(Exception e) {
-        return getNestedException(e, UnknownHostException.class);
-    }
-
 
     /**
      * Explains an {@see OsmTransferException} to the user.
@@ -224,16 +230,20 @@ public class ExceptionDialogUtil {
      * @param e the {@see OsmTransferException}
      */
     public static void explainOsmTransferException(OsmTransferException e) {
-        if (getNestedSecurityException(e) != null) {
+        if (getNestedException(e, SecurityException.class) != null) {
             explainSecurityException(e);
             return;
         }
-        if (getNestedSocketException(e) != null) {
+        if (getNestedException(e, SocketException.class) != null) {
             explainNestedSocketException(e);
             return;
         }
-        if (getNestedUnknownHostException(e) != null) {
+        if (getNestedException(e, UnknownHostException.class) != null) {
             explainNestedUnkonwnHostException(e);
+            return;
+        }
+        if (getNestedException(e, IOException.class) != null) {
+            explainNestedIOException(e);
             return;
         }
         if (e instanceof OsmApiInitializationException){
@@ -251,7 +261,6 @@ public class ExceptionDialogUtil {
                 return;
             }
         }
-
         explainGeneric(e);
     }
 
