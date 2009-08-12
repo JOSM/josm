@@ -2003,6 +2003,13 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="waste_basket"/>
+		<icon annotate="true" src="service/recycling/trash-bin.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="public_building"/>
 		<icon annotate="true" src="service.png"/>
 		<area colour="amenity_light#f7efb7"/>
@@ -3570,6 +3577,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 <!--sport tags -->
+
+	<rule>
+		<condition k="sport" v="9pin"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/10pin.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
 
 	<rule>
 		<condition k="sport" v="10pin"/>
