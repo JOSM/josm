@@ -4,11 +4,14 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
+
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.io.FileImporter;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Helper class for all actions that access the disk
@@ -30,11 +33,20 @@ abstract public class DiskAccessAction extends JosmAction {
         }
 
         fc.setMultiSelectionEnabled(multiple);
+        fc.setAcceptAllFileFilterUsed(false);
+        FileFilter defaultFilter = null;
         for (FileImporter imExporter: ExtensionFileFilter.importers) {
             fc.addChoosableFileFilter(imExporter.filter);
+            if (imExporter.filter.defaultExtension.endsWith("osm")) {
+                defaultFilter = imExporter.filter;
+            }
+
         }
 
-        fc.setAcceptAllFileFilterUsed(true);
+        if (defaultFilter != null) {
+            fc.setFileFilter(defaultFilter);
+        }
+
 
         int answer = open ? fc.showOpenDialog(Main.parent) : fc.showSaveDialog(Main.parent);
         if (answer != JFileChooser.APPROVE_OPTION)
