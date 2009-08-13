@@ -23,7 +23,7 @@ public class UTM_20N_Guadeloupe_Ste_Anne extends UTM_20N_France_DOM implements P
 
     public Bounds getWorldBoundsLatLon() {
         return new Bounds(
-                new LatLon(15.8,-61.8),
+                new LatLon(15.8,-61.9),
                 new LatLon(16.6,-60.9));
     }
 
