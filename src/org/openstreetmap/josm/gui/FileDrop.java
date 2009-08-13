@@ -338,13 +338,11 @@ public class FileDrop
                     log( out, "FileDrop: file list accepted." );
 
                     // Get a useful list
-                    java.util.List<Object> fileList = (java.util.List<Object>)
+                    java.util.List fileList = (java.util.List)
                     tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
 
                     // Convert list to array
-                    java.io.File[] filesTemp = new java.io.File[ fileList.size() ];
-                    fileList.toArray( filesTemp );
-                    final java.io.File[] files = filesTemp;
+                    final java.io.File[] files = (File[]) fileList.toArray();;
 
                     // Alert listener to drop.
                     if( listener != null ) {

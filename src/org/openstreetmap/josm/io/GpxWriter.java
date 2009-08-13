@@ -66,8 +66,8 @@ public class GpxWriter extends XmlWriter {
         for (Map.Entry<String, Object> ent : attr.entrySet()) {
             String k = ent.getKey();
             if (k.equals(GpxData.META_LINKS)) {
-                for (GpxLink link : (Collection<GpxLink>) ent.getValue()) {
-                    gpxLink(link);
+                for (Object link : (Collection) ent.getValue()) {
+                    gpxLink((GpxLink) link);
                 }
             } else {
                 simpleTag(k, ent.getValue().toString());
@@ -115,8 +115,8 @@ public class GpxWriter extends XmlWriter {
 
         // write links
         if(attr.containsKey(GpxData.META_LINKS)) {
-            for (GpxLink link : (Collection<GpxLink>) attr.get(GpxData.META_LINKS)) {
-                gpxLink(link);
+            for (Object link : (Collection) attr.get(GpxData.META_LINKS)) {
+                gpxLink((GpxLink) link);
             }
         }
 
