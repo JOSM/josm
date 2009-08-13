@@ -123,12 +123,15 @@ public class DownloadOsmTaskList implements Runnable {
                     return;
             }
         }
-        Set<Long> myPrimitiveIds = Main.map.mapView.getEditLayer().data.getCompletePrimitiveIds();
-        Set<Long> downloadedIds = getDownloadedIds();
-        myPrimitiveIds.removeAll(downloadedIds);
-        myPrimitiveIds.remove(new Long(0)); // ignore new primitives
-        if (! myPrimitiveIds.isEmpty()) {
-            handlePotentiallyDeletedPrimitives(myPrimitiveIds);
+        final OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
+        if (editLayer != null) {
+            Set<Long> myPrimitiveIds = editLayer.data.getCompletePrimitiveIds();
+            Set<Long> downloadedIds = getDownloadedIds();
+            myPrimitiveIds.removeAll(downloadedIds);
+            myPrimitiveIds.remove(new Long(0)); // ignore new primitives
+            if (! myPrimitiveIds.isEmpty()) {
+                handlePotentiallyDeletedPrimitives(myPrimitiveIds);
+            }
         }
     }
 
