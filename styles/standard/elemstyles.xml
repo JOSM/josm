@@ -2968,57 +2968,8 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="information" v="bicyclemap"/>
-		<icon annotate="true" src="misc/information/map_bicycle.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="information" v="hikingmap"/>
-		<icon annotate="true" src="misc/information/map_hiking.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="information" v="pistemap"/>
-		<icon annotate="true" src="misc/information/map_skiing.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="information" v="citymap"/>
-		<icon annotate="true" src="misc/information/map_city.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="information" v="board"/>
 		<icon annotate="true" src="misc/information/board.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="information" v="nature"/>
-		<icon annotate="true" src="misc/information/board_nature.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="information" v="history"/>
-		<icon annotate="true" src="misc/information/board_history.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="information" v="wildlife"/>
-		<icon annotate="true" src="misc/information/board_wildlife.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
