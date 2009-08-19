@@ -2399,6 +2399,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="shop" value="supermarket" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Chemist" icon="presets/chemist.png" type="node,closedway">
+            <label text="Edit Chemist" />
+            <key key="shop" value="chemist" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Convenience Store" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=convenience" />
             <label text="Edit Convenience Store" />
@@ -2409,6 +2414,16 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kiosk" />
             <label text="Edit Kiosk" />
             <key key="shop" value="kiosk" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Book Store" icon="presets/books.png" type="node,closedway">
+            <label text="Edit Book Store" />
+            <key key="shop" value="books" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Travel Agency" icon="presets/travel.png" type="node,closedway">
+            <label text="Edit Travel Agency" />
+            <key key="shop" value="travel_agency" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Vending machine" icon="presets/vending_machine.png" type="node">
