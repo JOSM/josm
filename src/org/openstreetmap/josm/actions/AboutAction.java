@@ -57,14 +57,13 @@ public class AboutAction extends JosmAction {
         boolean manifest = false;
         URL u = Main.class.getResource("/REVISION");
         if(u == null) {
-            //            try {
-            manifest = true;
-            //                u = new URL("jar:" + Main.class.getProtectionDomain().getCodeSource().getLocation().toString()
-            //                        + "!/META-INF/MANIFEST.MF");
-            u = Main.class.getResource("/META-INF/MANIFEST.MF");
-            //            } catch (MalformedURLException e) {
-            //                e.printStackTrace();
-            //            }
+            try {
+                manifest = true;
+                u = new URL("jar:" + Main.class.getProtectionDomain().getCodeSource().getLocation().toString()
+                    + "!/META-INF/MANIFEST.MF");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
         revision = loadFile(u, manifest);
 
