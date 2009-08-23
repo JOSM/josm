@@ -33,10 +33,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -341,12 +341,10 @@ public class ChildRelationBrowser extends JPanel {
          * @param r the relation
          */
         protected void warnBecauseOfDeletedRelation(Relation r) {
-            PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
-
             String message = tr("<html>The child relation<br>"
                     + "{0}<br>"
                     + "is deleted on the server. It can't be loaded",
-                    nameFormatter.getName(r)
+                    r.getDisplayName(DefaultNameFormatter.getInstance())
             );
 
             OptionPaneUtil.showMessageDialog(
@@ -403,14 +401,13 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
                 while(! relationsToDownload.isEmpty() && !cancelled) {
                     Relation r = relationsToDownload.pop();
                     if (r.id == 0) {
                         continue;
                     }
                     rememberChildRelationsToDownload(r);
-                    progressMonitor.setCustomText(tr("Downloading relation {0}", nameFormatter.getName(r)));
+                    progressMonitor.setCustomText(tr("Downloading relation {0}", r.getDisplayName(DefaultNameFormatter.getInstance())));
                     OsmServerObjectReader reader = new OsmServerObjectReader(r.id, OsmPrimitiveType.RELATION,
                             true);
                     DataSet dataSet = null;
@@ -514,14 +511,13 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
                 Iterator<Relation> it = relations.iterator();
                 while(it.hasNext() && !cancelled) {
                     Relation r = it.next();
                     if (r.id == 0) {
                         continue;
                     }
-                    progressMonitor.setCustomText(tr("Downloading relation {0}", nameFormatter.getName(r)));
+                    progressMonitor.setCustomText(tr("Downloading relation {0}", r.getDisplayName(DefaultNameFormatter.getInstance())));
                     OsmServerObjectReader reader = new OsmServerObjectReader(r.id, OsmPrimitiveType.RELATION,
                             true);
                     DataSet dataSet = reader.parseOsm(progressMonitor

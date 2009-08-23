@@ -24,8 +24,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author Frederik Ramm <frederik@remote.org>
  */
 public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer {
-    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
-
     /**
      * Default list cell renderer - delegate for ListCellRenderer operation
      */
@@ -61,7 +59,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
      */
     private Component renderer(Component def, OsmPrimitive value) {
         if (def != null && value != null && def instanceof JLabel) {
-            ((JLabel)def).setText(NAME_FORMATTER.getName(value));
+            ((JLabel)def).setText(value.getDisplayName(DefaultNameFormatter.getInstance()));
             ((JLabel)def).setIcon(ImageProvider.get(OsmPrimitiveType.from(value)));
         }
         return def;

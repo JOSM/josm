@@ -36,9 +36,8 @@ import javax.swing.PopupFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
+import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.GBC;
@@ -58,7 +57,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class MapStatus extends JPanel implements Helpful {
-    private static final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     /**
      * The MapView this status belongs to.
@@ -162,7 +160,7 @@ public class MapStatus extends JPanel implements Helpful {
                     // Set the text label in the bottom status bar
                     osmNearest = mv.getNearest(ms.mousePos);
                     if (osmNearest != null) {
-                        nameText.setText(NAME_FORMATTER.getName(osmNearest));
+                        nameText.setText(osmNearest.getDisplayName(DefaultNameFormatter.getInstance()));
                     } else {
                         nameText.setText(tr("(no object)"));
                     }
@@ -194,9 +192,9 @@ public class MapStatus extends JPanel implements Helpful {
                         JPanel c = new JPanel(new GridBagLayout());
                         for (final OsmPrimitive osm : osms) {
                             final StringBuilder text = new StringBuilder();
-                            String name = NAME_FORMATTER.getName(osm);
+                            String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
                             if (osm.id == 0 || osm.modified) {
-                                name = "<i><b>"+ new PrimitiveNameFormatter().getName(osm)+"*</b></i>";
+                                name = "<i><b>"+ osm.getDisplayName(DefaultNameFormatter.getInstance())+"*</b></i>";
                             }
                             text.append(name);
                             if (osm.id != 0) {
@@ -282,7 +280,7 @@ public class MapStatus extends JPanel implements Helpful {
                     return;
                 // Do not update the view if ctrl is pressed.
                 if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
-                    CoordinateFormat mCord = Node.getCoordinateFormat();
+                    CoordinateFormat mCord = CoordinateFormat.getDefaultFormat();
                     LatLon p = mv.getLatLon(e.getX(),e.getY());
                     latText.setText(p.latToString(mCord));
                     lonText.setText(p.lonToString(mCord));

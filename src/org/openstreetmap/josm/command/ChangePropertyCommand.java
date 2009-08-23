@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -94,10 +94,8 @@ public class ChangePropertyCommand extends Command {
 
     @Override public MutableTreeNode description() {
         String text;
-        PrimitiveNameFormatter formatter = new PrimitiveNameFormatter();
         if (objects.size() == 1) {
             OsmPrimitive primitive = objects.iterator().next();
-            String name = formatter.getName(primitive);
             String msg = "";
             if (value == null) {
                 switch(OsmPrimitiveType.from(primitive)) {
@@ -105,14 +103,14 @@ public class ChangePropertyCommand extends Command {
                 case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
                 case RELATION: msg = marktr("Remove \"{0}\" for relation ''{1}''"); break;
                 }
-                text = tr(msg, key, name);
+                text = tr(msg, key, primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             } else {
                 switch(OsmPrimitiveType.from(primitive)) {
                 case NODE: msg = marktr("Set {0}={1} for node ''{2}''"); break;
                 case WAY: msg = marktr("Set {0}={1} for way ''{2}''"); break;
                 case RELATION: msg = marktr("Set {0}={1} for relation ''{2}''"); break;
                 }
-                text = tr(msg, key, value, name);
+                text = tr(msg, key, value, primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             }
         }
         else
@@ -127,7 +125,7 @@ public class ChangePropertyCommand extends Command {
         for (OsmPrimitive osm : objects) {
             root.add(new DefaultMutableTreeNode(
                     new JLabel(
-                            formatter.getName(osm),
+                            osm.getDisplayName(DefaultNameFormatter.getInstance()),
                             ImageProvider.get(OsmPrimitiveType.from(osm)),
                             JLabel.HORIZONTAL)
             )

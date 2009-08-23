@@ -33,6 +33,7 @@ import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -328,6 +329,16 @@ abstract public class Main {
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
         UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
+
+        // init default coordinate format
+        //
+        try {
+            CoordinateFormat format = CoordinateFormat.valueOf(Main.pref.get("coordinates"));
+            CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
+        } catch (IllegalArgumentException iae) {
+            CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
+        }
+
 
         Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
         String geometry = Main.pref.get("gui.geometry");

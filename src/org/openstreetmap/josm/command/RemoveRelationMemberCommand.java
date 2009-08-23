@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 
@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -73,9 +73,9 @@ public class RemoveRelationMemberCommand extends Command {
         return new DefaultMutableTreeNode(
                 new JLabel(
                         tr(msg,
-                                new PrimitiveNameFormatter().getName(member.member),
+                                member.member.getDisplayName(DefaultNameFormatter.getInstance()),
                                 relation.getMembers().indexOf(member),
-                                new PrimitiveNameFormatter().getName(relation)
+                                relation.getDisplayName(DefaultNameFormatter.getInstance())
                         ),
                         ImageProvider.get(OsmPrimitiveType.from(relation)),
                         JLabel.HORIZONTAL

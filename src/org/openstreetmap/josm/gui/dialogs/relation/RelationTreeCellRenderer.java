@@ -10,7 +10,7 @@ import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -19,7 +19,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer {
-    private static final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
 
     /** the relation icon */
@@ -46,7 +45,7 @@ public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer
      * @param relation the relation
      */
     protected void renderValue(Relation relation) {
-        setText(NAME_FORMATTER.getName(relation));
+        setText(relation.getDisplayName(DefaultNameFormatter.getInstance()));
     }
 
     /**

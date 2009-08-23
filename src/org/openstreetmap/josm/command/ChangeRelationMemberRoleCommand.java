@@ -13,7 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -69,7 +69,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
                 new JLabel(
                         tr("Change relation member role for {0} {1}",
                                 OsmPrimitiveType.from(relation),
-                                new PrimitiveNameFormatter().getName(relation)
+                                relation.getDisplayName(DefaultNameFormatter.getInstance())
                         ),
                         ImageProvider.get(OsmPrimitiveType.from(relation)),
                         JLabel.HORIZONTAL)

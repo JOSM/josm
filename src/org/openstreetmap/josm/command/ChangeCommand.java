@@ -12,7 +12,7 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -52,8 +52,8 @@ public class ChangeCommand extends Command {
         }
         return new DefaultMutableTreeNode(
                 new JLabel(tr(msg,
-                        new PrimitiveNameFormatter().getName(osm)),
+                        osm.getDisplayName(DefaultNameFormatter.getInstance()),
                         ImageProvider.get(OsmPrimitiveType.from(osm)),
-                        JLabel.HORIZONTAL));
+                        JLabel.HORIZONTAL)));
     }
 }

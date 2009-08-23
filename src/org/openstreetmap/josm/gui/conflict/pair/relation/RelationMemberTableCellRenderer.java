@@ -17,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -155,7 +156,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     }
 
     protected void renderPrimitive(RelationMember member) {
-        String displayName = member.getMember().getName();
+        String displayName = member.getMember().getDisplayName(DefaultNameFormatter.getInstance());
         setText(displayName);
         setToolTipText(buildToolTipText(member.getMember()));
         if (member.isNode()) {
@@ -195,25 +196,25 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         renderBackground(getModel(table), member, row, column, isSelected);
         renderForeground(getModel(table), member, row, column, isSelected);
         switch(column) {
-            case 0:
-                renderRowId(row);
-                break;
-            case 1:
-                if (member == null) {
-                    renderEmptyRow();
-                } else {
-                    renderRole(member);
-                }
-                break;
-            case 2:
-                if (member == null) {
-                    renderEmptyRow();
-                } else {
-                    renderPrimitive(member);
-                }
-                break;
-            default:
-                // should not happen
+        case 0:
+            renderRowId(row);
+            break;
+        case 1:
+            if (member == null) {
+                renderEmptyRow();
+            } else {
+                renderRole(member);
+            }
+            break;
+        case 2:
+            if (member == null) {
+                renderEmptyRow();
+            } else {
+                renderPrimitive(member);
+            }
+            break;
+        default:
+            // should not happen
         }
         return this;
     }

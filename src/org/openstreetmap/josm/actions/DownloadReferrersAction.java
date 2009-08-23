@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -146,7 +147,7 @@ public class DownloadReferrersAction extends JosmAction{
                 for (OsmPrimitive primitive: primitives) {
                     if (cancelled)
                         return;
-                    progressMonitor.subTask(tr("({0}/{1}) Loading parents of primitive {2}", i+1,primitives.size(), primitive.getName()));
+                    progressMonitor.subTask(tr("({0}/{1}) Loading parents of primitive {2}", i+1,primitives.size(), primitive.getDisplayName(DefaultNameFormatter.getInstance())));
                     downloadParents(primitive, progressMonitor.createSubTaskMonitor(1, false));
                     i++;
                 }

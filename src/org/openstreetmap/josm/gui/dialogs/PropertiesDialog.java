@@ -65,9 +65,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -98,8 +98,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
-    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
-
     /**
      * Watches for double clicks and from editing or new property, depending on the
      * location, the click was.
@@ -497,7 +495,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
-                    ((JLabel)c).setText(NAME_FORMATTER.getName((Relation)value));
+                    ((JLabel)c).setText(((Relation)value).getDisplayName(DefaultNameFormatter.getInstance()));
                 }
                 return c;
             }
@@ -836,7 +834,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             Relation cur = (Relation)membershipData.getValueAt(row, 0);
             int result = new ExtendedDialog(Main.parent,
                     tr("Change relation"),
-                    tr("Really delete selection from relation {0}?", NAME_FORMATTER.getName(cur)),
+                    tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())),
                     new String[] {tr("Delete from relation"), tr("Cancel")},
                     new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 

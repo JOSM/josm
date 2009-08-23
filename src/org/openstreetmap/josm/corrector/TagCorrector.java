@@ -27,14 +27,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public abstract class TagCorrector<P extends OsmPrimitive> {
-    private static final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     public abstract Collection<Command> execute(P primitive, P oldprimitive)
     throws UserCancelException;
@@ -100,7 +99,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 p.add(propertiesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(
-                        NAME_FORMATTER.getName(primitive) + ":",
+                        primitive.getDisplayName(DefaultNameFormatter.getInstance()) + ":",
                         ImageProvider.get(OsmPrimitiveType.from(primitive)),
                         JLabel.LEFT
                 );
@@ -126,7 +125,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 p.add(rolesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(
-                        NAME_FORMATTER.getName(primitive),
+                        primitive.getDisplayName(DefaultNameFormatter.getInstance()),
                         ImageProvider.get(OsmPrimitiveType.from(primitive)),
                         JLabel.LEFT
                 );

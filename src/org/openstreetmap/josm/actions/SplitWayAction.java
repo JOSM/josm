@@ -30,8 +30,8 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -356,7 +356,8 @@ public class SplitWayAction extends JosmAction {
 
         Main.main.undoRedo.add(
                 new SequenceCommand(tr("Split way {0} into {1} parts",
-                        new PrimitiveNameFormatter().getName(selectedWay), wayChunks.size()),
+                        selectedWay.getDisplayName(DefaultNameFormatter.getInstance()),
+                        wayChunks.size()),
                         commandList));
         getCurrentDataSet().setSelected(newSelection);
     }

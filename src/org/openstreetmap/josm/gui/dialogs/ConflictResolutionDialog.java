@@ -24,8 +24,8 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.properties.OperationCancelledException;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -240,8 +240,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         if (my == null) {
             setTitle(tr("Resolve conflicts"));
         } else {
-            PrimitiveNameFormatter formatter = new PrimitiveNameFormatter();
-            setTitle(tr("Resolve conflicts for ''{0}''", formatter.getName(my)));
+            setTitle(tr("Resolve conflicts for ''{0}''", my.getDisplayName(DefaultNameFormatter.getInstance())));
         }
     }
 

@@ -1,11 +1,10 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,7 +14,6 @@ import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
@@ -26,7 +24,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * deleted. - All remaining objects with modified flag set are updated.
  */
 public class OsmServerWriter {
-    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
     static private final Logger logger = Logger.getLogger(OsmServerWriter.class.getName());
 
     /**
@@ -107,7 +104,7 @@ public class OsmServerWriter {
                                 progress,
                                 primitives.size(),
                                 time_left_str,
-                                NAME_FORMATTER.getName(osm),
+                                osm.getLocalName(),
                                 osm.id));
                 makeApiRequest(osm,progressMonitor);
                 processed.add(osm);

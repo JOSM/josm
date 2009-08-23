@@ -28,7 +28,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
@@ -48,7 +47,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataChangeListener {
     private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
-    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     /**
      * The selection's list data.

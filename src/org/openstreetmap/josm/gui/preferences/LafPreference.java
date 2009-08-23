@@ -37,6 +37,7 @@ public class LafPreference implements PreferenceSetting {
     public JPanel panel;
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
+    private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
     private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
 
@@ -49,7 +50,7 @@ public class LafPreference implements PreferenceSetting {
             Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
             // no exception? Then Go!
             lafCombo.addItem(
-                new UIManager.LookAndFeelInfo(((javax.swing.LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
+                    new UIManager.LookAndFeelInfo(((javax.swing.LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
             );
         } catch (Exception ex) {
             // just ignore, Quaqua may not even be installed...
@@ -84,6 +85,11 @@ public class LafPreference implements PreferenceSetting {
         showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
         panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
 
+        // Show localized names
+        showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
+        showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
+        panel.add(showLocalizedName, GBC.eop().insets(20, 0, 0, 0));
+
         drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
         drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
         panel.add(drawHelperLine, GBC.eop().insets(20, 0, 0, 0));
@@ -106,9 +112,9 @@ public class LafPreference implements PreferenceSetting {
     public boolean ok() {
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
         Main.pref.put("osm-primitives.showid", showID.isSelected());
+        Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
         Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
         Main.pref.put("modeless", modeless.isSelected());
         return Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
     }
-
 }

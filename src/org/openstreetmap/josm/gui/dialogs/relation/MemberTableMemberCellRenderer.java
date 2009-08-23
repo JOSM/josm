@@ -9,12 +9,11 @@ import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
     private HashMap<OsmPrimitiveType, ImageIcon> icons;
-    static private final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     public MemberTableMemberCellRenderer() {
         super();
@@ -35,7 +34,7 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
 
     protected void renderPrimitive(OsmPrimitive primitive) {
         setIcon(icons.get(OsmPrimitiveType.from(primitive)));
-        setText(NAME_FORMATTER.getName(primitive));
+        setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));
         setToolTipText(buildToolTipText(primitive));
     }
 

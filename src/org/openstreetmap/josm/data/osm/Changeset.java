@@ -1,8 +1,9 @@
 // License: GPL. Copyright 2007 by Martijn van Oosterhout and others
 package org.openstreetmap.josm.data.osm;
 
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
 /**
  * Represents a single changeset in JOSM. For now its only used during
@@ -34,6 +35,17 @@ public final class Changeset extends OsmPrimitive {
 
     @Override
     public String getName() {
+        // no translation
+        return "changeset " + id;
+    }
+
+    @Override
+    public String getLocalName(){
         return tr("Changeset {0}",id);
+    }
+
+    @Override
+    public String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
     }
 }

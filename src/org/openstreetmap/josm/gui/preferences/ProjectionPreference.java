@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -66,11 +66,13 @@ public class ProjectionPreference implements PreferenceSetting {
 
     public boolean ok() {
         String projname = projectionCombo.getSelectedItem().getClass().getName();
-        if(Main.pref.put("projection", projname))
+        if(Main.pref.put("projection", projname)) {
             Main.setProjection(projname);
+        }
         if(Main.pref.put("coordinates",
-        ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name()))
-            Node.setCoordinateFormat();
+                ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
+            CoordinateFormat.setCoordinateFormat((CoordinateFormat)coordinatesCombo.getSelectedItem());
+        }
         return false;
     }
 }

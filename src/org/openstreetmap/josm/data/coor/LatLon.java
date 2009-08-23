@@ -24,13 +24,6 @@ public class LatLon extends Coordinate {
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static DecimalFormat cDdFormatter = new DecimalFormat("###0.0000");
 
-    /**
-     * Possible ways to display coordinates
-     */
-    public enum CoordinateFormat {
-        DECIMAL_DEGREES {public String toString() {return tr("Decimal Degrees");}},
-        DEGREES_MINUTES_SECONDS {public String toString() {return tr("Degrees Minutes Seconds");}};
-    }
 
     public static String dms(double pCoordinate) {
 
@@ -41,7 +34,7 @@ public class LatLon extends Coordinate {
         double tSeconds = (tTmpMinutes - tMinutes) * 60;
 
         return tDegree + "\u00B0" + cDmsMinuteFormatter.format(tMinutes) + "\'"
-            + cDmsSecondFormatter.format(tSeconds) + "\"";
+        + cDmsSecondFormatter.format(tSeconds) + "\"";
     }
 
     public LatLon(double lat, double lon) {
@@ -93,7 +86,7 @@ public class LatLon extends Coordinate {
     public boolean isOutSideWorld() {
         Bounds b = Main.proj.getWorldBoundsLatLon();
         return lat() < b.min.lat() || lat() > b.max.lat() ||
-            lon() < b.min.lon() || lon() > b.max.lon();
+        lon() < b.min.lon() || lon() > b.max.lon();
     }
 
     /**
@@ -111,9 +104,9 @@ public class LatLon extends Coordinate {
      */
     public double greatCircleDistance(LatLon other) {
         return (Math.acos(
-            Math.sin(Math.toRadians(lat())) * Math.sin(Math.toRadians(other.lat())) +
-            Math.cos(Math.toRadians(lat()))*Math.cos(Math.toRadians(other.lat())) *
-                          Math.cos(Math.toRadians(other.lon()-lon()))) * 6378135);
+                Math.sin(Math.toRadians(lat())) * Math.sin(Math.toRadians(other.lat())) +
+                Math.cos(Math.toRadians(lat()))*Math.cos(Math.toRadians(other.lat())) *
+                Math.cos(Math.toRadians(other.lon()-lon()))) * 6378135);
     }
 
     /**
@@ -129,8 +122,12 @@ public class LatLon extends Coordinate {
             rv = (other.lon()>lon() ? Math.PI / 2 : Math.PI * 3 / 2);
         } else {
             rv = Math.atan((other.lon()-lon())/(other.lat()-lat()));
-            if (rv < 0) rv += Math.PI;
-            if (other.lon() < lon()) rv += Math.PI;
+            if (rv < 0) {
+                rv += Math.PI;
+            }
+            if (other.lon() < lon()) {
+                rv += Math.PI;
+            }
         }
         return rv;
     }
@@ -148,7 +145,7 @@ public class LatLon extends Coordinate {
 
     public LatLon interpolate(LatLon ll2, double proportion) {
         return new LatLon(this.lat() + proportion * (ll2.lat() - this.lat()),
-            this.lon() + proportion * (ll2.lon() - this.lon()));
+                this.lon() + proportion * (ll2.lon() - this.lon()));
     }
 
     public LatLon getCenter(LatLon ll2) {

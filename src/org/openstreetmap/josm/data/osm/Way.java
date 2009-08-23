@@ -179,34 +179,6 @@ public final class Way extends OsmPrimitive {
         return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
     }
 
-    @Override
-    public String getName() {
-        String name;
-        if (incomplete) {
-            name = tr("incomplete");
-        } else {
-            name = get("name");
-            if (name == null) {
-                name = get("ref");
-            }
-            if (name == null) {
-                name =
-                    (get("highway") != null) ? tr("highway") :
-                        (get("railway") != null) ? tr("railway") :
-                            (get("waterway") != null) ? tr("waterway") :
-                                (get("landuse") != null) ? tr("landuse") : "";
-            }
-
-            int nodesNo = new HashSet<Node>(nodes).size();
-            String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
-            name += (name.length() > 0) ? " ("+nodes+")" : nodes;
-            if(errors != null) {
-                name = "*"+name;
-            }
-        }
-        return name;
-    }
-
     public void removeNode(Node n) {
         if (incomplete) return;
         boolean closed = (lastNode() == n && firstNode() == n);
@@ -261,5 +233,27 @@ public final class Way extends OsmPrimitive {
     public boolean isFirstLastNode(Node n) {
         if (incomplete || nodes.size() == 0) return false;
         return n == firstNode() || n == lastNode();
+    }
+
+    @Override
+    public String getName() {
+        String name = super.getName();
+        if (name != null)
+            return name;
+        // no translation
+        return "way " + id;
+    }
+
+    @Override
+    public String getLocalName(){
+        String name = super.getLocalName();
+        if (name != null)
+            return name;
+        return tr("way {0}",id);
+    }
+
+    @Override
+    public String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
     }
 }

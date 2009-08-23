@@ -1,14 +1,10 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 
@@ -104,9 +100,6 @@ public final class Relation extends OsmPrimitive {
         return members.remove(index);
     }
 
-    final static String[] defnames = {"name", "ref", "restriction", "note"};
-    static Collection<String> names = null;
-
     @Override public void visit(Visitor visitor) {
         visitor.visit(this);
     }
@@ -163,41 +156,6 @@ public final class Relation extends OsmPrimitive {
         return o instanceof Relation ? Long.valueOf(id).compareTo(o.id) : -1;
     }
 
-    @Override
-    public String getName() {
-        String name;
-        if (incomplete) {
-            name = tr("incomplete");
-        } else {
-            name = get("type");
-            if (name == null) {
-                name = tr("relation");
-            }
-
-            name += " (";
-            if(names == null) {
-                names = Main.pref.getCollection("relation.nameOrder", Arrays.asList(defnames));
-            }
-            String nameTag = null;
-            for (String n : names) {
-                nameTag = get(n);
-                if (nameTag != null) {
-                    break;
-                }
-            }
-            if (nameTag != null) {
-                name += "\"" + nameTag + "\", ";
-            }
-
-            int mbno = members.size();
-            name += trn("{0} member", "{0} members", mbno, mbno) + ")";
-            if(errors != null) {
-                name = "*"+name;
-            }
-        }
-        return name;
-    }
-
     // seems to be different from member "incomplete" - FIXME
     public boolean isIncomplete() {
         for (RelationMember m : members)
@@ -231,5 +189,27 @@ public final class Relation extends OsmPrimitive {
             }
         }
         members.removeAll(todelete);
+    }
+
+    @Override
+    public String getName() {
+        String name = super.getName();
+        if (name != null)
+            return name;
+        // no translation
+        return "relation " + id;
+    }
+
+    @Override
+    public String getLocalName(){
+        String name = super.getLocalName();
+        if (name != null)
+            return name;
+        return tr("relation {0}",id);
+    }
+
+    @Override
+    public String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
     }
 }

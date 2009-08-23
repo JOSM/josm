@@ -1,14 +1,13 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import java.util.Locale;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.coor.LatLon.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * One node data, consisting of one world coordinate waypoint.
@@ -49,25 +48,7 @@ public final class Node extends OsmPrimitive {
         return coor != null ? coor.getEastNorth() : null;
     }
 
-    private static CoordinateFormat mCord;
 
-    static public CoordinateFormat getCoordinateFormat()
-    {
-        return mCord;
-    }
-
-    static public void setCoordinateFormat()
-    {
-        try {
-            mCord = LatLon.CoordinateFormat.valueOf(Main.pref.get("coordinates"));
-        } catch (IllegalArgumentException iae) {
-            mCord = LatLon.CoordinateFormat.DECIMAL_DEGREES;
-        }
-    }
-
-    static {
-        setCoordinateFormat();
-    }
 
     /**
      * Create an incomplete Node object
@@ -126,17 +107,24 @@ public final class Node extends OsmPrimitive {
     }
 
     @Override
+    public String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
+    }
+
+    @Override
     public String getName() {
-        String name;
-        if (incomplete) {
-            name = tr("incomplete");
-        } else {
-            name = get("name");
-            if (name == null) {
-                name = id == 0 ? tr("node") : ""+id;
-            }
-            name += " (" + coor.latToString(mCord) + ", " + coor.lonToString(mCord) + ")";
-        }
-        return name;
+        String name = super.getName();
+        if (name != null)
+            return name;
+        // no translation
+        return "node " + id;
+    }
+
+    @Override
+    public String getLocalName(){
+        String name = super.getLocalName();
+        if (name != null)
+            return name;
+        return tr("node {0}",id);
     }
 }

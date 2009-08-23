@@ -7,7 +7,6 @@ import java.util.Collection;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.text.html.Option;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
@@ -15,8 +14,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -35,7 +34,7 @@ public class ConflictAddCommand extends Command {
                         + "''{1}''.<br>"
                         + "This conflict can't be added.</html>",
                         getLayer().getName(),
-                        new PrimitiveNameFormatter().getName(conflict.getMy())
+                        conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
                 ),
                 tr("Double conflict"),
                 JOptionPane.ERROR_MESSAGE
@@ -55,7 +54,7 @@ public class ConflictAddCommand extends Command {
         if (! Main.map.mapView.hasLayer(getLayer())) {
             System.out.println(tr("Warning: layer ''{0}'' doesn't exist anymore. Can't remove conflict for primitmive ''{1}''",
                     getLayer().getName(),
-                    new PrimitiveNameFormatter().getName(conflict.getMy())
+                    conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
             ));
             return;
         }
@@ -70,7 +69,7 @@ public class ConflictAddCommand extends Command {
         return new DefaultMutableTreeNode(
                 new JLabel(
                         tr("Add conflict for ''{0}''",
-                                new PrimitiveNameFormatter().getName(conflict.getMy())
+                                conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
                         ),
                         ImageProvider.get(OsmPrimitiveType.from(conflict.getMy())),
                         JLabel.HORIZONTAL

@@ -5,11 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
 
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 
 public class RoleCorrectionTableModel extends
 CorrectionTableModel<RoleCorrection> {
-    private static final PrimitiveNameFormatter NAME_FORMATTER = new PrimitiveNameFormatter();
 
     public RoleCorrectionTableModel(List<RoleCorrection> roleCorrections) {
         super(roleCorrections);
@@ -39,7 +38,7 @@ CorrectionTableModel<RoleCorrection> {
 
         switch (colIndex) {
         case 0:
-            return NAME_FORMATTER.getName(roleCorrection.relation);
+            return roleCorrection.relation.getDisplayName(DefaultNameFormatter.getInstance());
         case 1:
             return roleCorrection.member.getRole();
         case 2:

@@ -32,8 +32,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -114,7 +114,7 @@ public class DeleteCommand extends Command {
             case RELATION:msg = "Delete relation {0}"; break;
             }
 
-            return new DefaultMutableTreeNode(new JLabel(tr(msg, new PrimitiveNameFormatter().getName(primitive)),
+            return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
                     ImageProvider.get(OsmPrimitiveType.from(primitive)), JLabel.HORIZONTAL));
         }
 
@@ -139,8 +139,9 @@ public class DeleteCommand extends Command {
                 new JLabel(msg, ImageProvider.get("data", apiname), JLabel.HORIZONTAL)
         );
         for (OsmPrimitive osm : toDelete) {
-            root.add(new DefaultMutableTreeNode(new JLabel(new PrimitiveNameFormatter().getName(osm), ImageProvider
-                    .get(OsmPrimitiveType.from(osm)), JLabel.HORIZONTAL)));
+            root.add(new DefaultMutableTreeNode(new JLabel(
+                    osm.getDisplayName(DefaultNameFormatter.getInstance()),
+                    ImageProvider.get(OsmPrimitiveType.from(osm)), JLabel.HORIZONTAL)));
         }
         return root;
     }
@@ -172,7 +173,6 @@ public class DeleteCommand extends Command {
     }
 
     private static int testRelation(Relation ref, OsmPrimitive osm) {
-        PrimitiveNameFormatter formatter = new PrimitiveNameFormatter();
         String role = new String();
         for (RelationMember m : ref.getMembers()) {
             if (m.getMember() == osm) {
@@ -182,13 +182,14 @@ public class DeleteCommand extends Command {
         }
         if (role.length() > 0)
             return new ExtendedDialog(Main.parent, tr("Conflicting relation"), tr(
-                    "Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?", formatter
-                    .getName(osm), formatter.getName(ref), role), new String[] { tr("Delete from relation"),
+                    "Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?",
+                    osm.getDisplayName(DefaultNameFormatter.getInstance()), ref.getDisplayName(DefaultNameFormatter.getInstance()), role), new String[] { tr("Delete from relation"),
                 tr("Cancel") }, new String[] { "dialogs/delete.png", "cancel.png" }).getValue();
         else
             return new ExtendedDialog(Main.parent, tr("Conflicting relation"), tr(
-                    "Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?", formatter.getName(osm),
-                    formatter.getName(ref)), new String[] { tr("Delete from relation"), tr("Cancel") }, new String[] {
+                    "Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?",
+                    osm.getDisplayName(DefaultNameFormatter.getInstance()),
+                    ref.getDisplayName(DefaultNameFormatter.getInstance())), new String[] { tr("Delete from relation"), tr("Cancel") }, new String[] {
                 "dialogs/delete.png", "cancel.png" }).getValue();
     }
 

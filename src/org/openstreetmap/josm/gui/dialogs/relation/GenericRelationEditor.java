@@ -63,10 +63,10 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.PrimitiveNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
@@ -696,8 +696,6 @@ public class GenericRelationEditor extends RelationEditor {
     }
 
     abstract class  AddFromSelectionAction extends AbstractAction {
-        private PrimitiveNameFormatter nameFormatter = new PrimitiveNameFormatter();
-
         protected boolean isPotentialDuplicate(OsmPrimitive primitive) {
             return memberTableModel.hasMembersReferringTo(Collections.singleton(primitive));
         }
@@ -707,7 +705,7 @@ public class GenericRelationEditor extends RelationEditor {
                     + "the primitive ''{0}''<br>"
                     + "<br>"
                     + "Do you really want to add another relation member?</html>",
-                    nameFormatter.getName(primitive)
+                    primitive.getDisplayName(DefaultNameFormatter.getInstance())
             );
             int ret = ConditionalOptionPaneUtil.showOptionDialog(
                     "add_primitive_to_relation",
@@ -735,7 +733,7 @@ public class GenericRelationEditor extends RelationEditor {
                     + "<br>"
                     + "This creates circular references and is therefore discouraged.<br>"
                     + "Skipping relation ''{0}''.</html>",
-                    this.nameFormatter.getName(primitive)
+                    primitive.getDisplayName(DefaultNameFormatter.getInstance())
             );
             OptionPaneUtil.showMessageDialog(
                     Main.parent,
@@ -1169,7 +1167,7 @@ public class GenericRelationEditor extends RelationEditor {
                             + "''{1}''.<br>"
                             + "Please resolve this conflict first, then try again.</html>",
                             getLayer().getName(),
-                            new PrimitiveNameFormatter().getName(getRelation())
+                            getRelation().getDisplayName(DefaultNameFormatter.getInstance())
                     ),
                     tr("Double conflict"),
                     JOptionPane.WARNING_MESSAGE
