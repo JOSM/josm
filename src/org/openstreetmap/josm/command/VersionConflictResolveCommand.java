@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.util.Collection;
 
@@ -35,9 +36,15 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public MutableTreeNode description() {
+        String msg = "";
+        switch(OsmPrimitiveType.from(conflict.getMy())) {
+        case NODE: msg = marktr("Resolve version conflicts for node {0}"); break;
+        case WAY: msg = marktr("Resolve version conflicts for way {0}"); break;
+        case RELATION: msg = marktr("Resolve version conflicts for relation {0}"); break;
+        }
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve version conflicts for {0} {1}",OsmPrimitiveType.from(conflict.getMy()).getLocalizedDisplayNameSingular(),conflict.getMy().id),
+                        tr(msg,conflict.getMy().id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )

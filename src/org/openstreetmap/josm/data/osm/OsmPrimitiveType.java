@@ -2,35 +2,21 @@
 package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.ImageIcon;
-
 public enum OsmPrimitiveType {
 
-    NODE ("node", tr("node"), tr("nodes")),
-    WAY  ("way", tr("way"), tr("ways")),
-    RELATION ("relation", tr("relation"), tr("relations")),
-    CHANGESET ("changeset", tr("changeset"), tr("changesets"));
+    NODE ("node"),
+    WAY  ("way"),
+    RELATION ("relation"),
+    CHANGESET ("changeset");
 
     private String apiTypeName;
-    private String localizedDisplayNameSingular;
-    private String localizedDisplayNamePlural;
 
-    OsmPrimitiveType(String apiTypeName, String localizedDisplayNameSingular, String localizedDisplayNamePlural) {
+    OsmPrimitiveType(String apiTypeName) {
         this.apiTypeName = apiTypeName;
-        this.localizedDisplayNameSingular = localizedDisplayNameSingular;
-        this.localizedDisplayNamePlural = localizedDisplayNamePlural;
     }
 
     public String getAPIName() {
         return apiTypeName;
-    }
-
-    public String getLocalizedDisplayNameSingular() {
-        return localizedDisplayNameSingular;
-    }
-
-    public String getLocalizedDisplayNamePlural() {
-        return localizedDisplayNamePlural;
     }
 
     public static OsmPrimitiveType fromApiTypeName(String typeName) {

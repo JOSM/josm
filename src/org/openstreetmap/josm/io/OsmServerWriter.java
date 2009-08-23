@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -94,11 +95,18 @@ public class OsmServerWriter {
             for (OsmPrimitive osm : primitives) {
                 int progress = progressMonitor.getTicks();
                 String time_left_str = timeLeft(progress, primitives.size());
+                String msg = "";
+                switch(OsmPrimitiveType.from(osm)) {
+                case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
+                case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
+                case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
+                }
                 progressMonitor.subTask(
-                        tr("{0}% ({1}/{2}), {3} left. Uploading {4}: {5} (id: {6})",
-                                Math.round(100.0*progress/primitives.size()), progress,
-                                primitives.size(), time_left_str,
-                                OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
+                        tr(msg,
+                                Math.round(100.0*progress/primitives.size()),
+                                progress,
+                                primitives.size(),
+                                time_left_str,
                                 NAME_FORMATTER.getName(osm),
                                 osm.id));
                 makeApiRequest(osm,progressMonitor);

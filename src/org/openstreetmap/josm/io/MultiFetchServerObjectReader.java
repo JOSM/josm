@@ -364,7 +364,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     protected void singleGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor) throws OsmTransferException {
         for (long id : pkg) {
             try {
-                progressMonitor.setCustomText(tr("Fetching {0} with id {1} from ''{2}''", type.getLocalizedDisplayNameSingular(), id, OsmApi.getOsmApi().getBaseUrl()));
+                String msg = "";
+                switch(type) {
+                case NODE: msg = tr("Fetching node with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                case WAY: msg = tr("Fetching way with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                case RELATION: msg = tr("Fetching relation with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                }
+                progressMonitor.setCustomText(msg);
                 singleGetId(type, id, progressMonitor);
             } catch(OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
@@ -396,7 +402,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @exception OsmTransferException thrown if an error occurs while communicating with the API server
      */
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{
-        progressMonitor.setCustomText(tr("Fetching a package of {0} from ''{1}''", type.getLocalizedDisplayNameSingular(), OsmApi.getOsmApi().getBaseUrl()));
+        String msg = "";
+        switch(type) {
+        case NODE: msg = tr("Fetching a package of nodes from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+        case WAY:  msg = tr("Fetching a package of ways from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+        case RELATION:  msg = tr("Fetching a package of relations from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+        }
+        progressMonitor.setCustomText(msg);
         Set<Long> toFetch = new HashSet<Long>(ids);
         toFetch.addAll(ids);
         while(! toFetch.isEmpty() && !isCanceled()) {

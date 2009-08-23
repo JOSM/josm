@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -106,27 +107,37 @@ public class DeleteCommand extends Command {
     public MutableTreeNode description() {
         if (toDelete.size() == 1) {
             OsmPrimitive primitive = toDelete.iterator().next();
-            return new DefaultMutableTreeNode(new JLabel(tr("Delete {1} {0}", new PrimitiveNameFormatter()
-            .getName(primitive), OsmPrimitiveType.from(primitive).getLocalizedDisplayNameSingular()),
-            ImageProvider.get(OsmPrimitiveType.from(primitive)), JLabel.HORIZONTAL));
+            String msg = "";
+            switch(OsmPrimitiveType.from(primitive)) {
+            case NODE: msg = "Delete node {0}"; break;
+            case WAY: msg = "Delete way {0}"; break;
+            case RELATION:msg = "Delete relation {0}"; break;
+            }
+
+            return new DefaultMutableTreeNode(new JLabel(tr(msg, new PrimitiveNameFormatter().getName(primitive)),
+                    ImageProvider.get(OsmPrimitiveType.from(primitive)), JLabel.HORIZONTAL));
         }
 
-        String cname = null;
-        String apiname = null;
-        String cnamem = null;
+        Set<OsmPrimitiveType> typesToDelete = new HashSet<OsmPrimitiveType>();
         for (OsmPrimitive osm : toDelete) {
-            if (cname == null) {
-                apiname = OsmPrimitiveType.from(osm).getAPIName();
-                cname = OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular();
-                cnamem = OsmPrimitiveType.from(osm).getLocalizedDisplayNamePlural();
-            } else if (!cname.equals(OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular())) {
-                apiname = "object";
-                cname = trn("object", "objects", 1);
-                cnamem = trn("object", "objects", 2);
+            typesToDelete.add(OsmPrimitiveType.from(osm));
+        }
+        String msg = "";
+        String apiname = "object";
+        if (typesToDelete.size() > 1) {
+            msg = trn("Delete {0} object", "Delete {0} objects", toDelete.size(), toDelete.size());
+        } else {
+            OsmPrimitiveType t = typesToDelete.iterator().next();
+            apiname = t.getAPIName();
+            switch(t) {
+            case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
+            case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
+            case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
             }
         }
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(tr("Delete {0} {1}", toDelete.size(), trn(
-                cname, cnamem, toDelete.size())), ImageProvider.get("data", apiname), JLabel.HORIZONTAL));
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(
+                new JLabel(msg, ImageProvider.get("data", apiname), JLabel.HORIZONTAL)
+        );
         for (OsmPrimitive osm : toDelete) {
             root.add(new DefaultMutableTreeNode(new JLabel(new PrimitiveNameFormatter().getName(osm), ImageProvider
                     .get(OsmPrimitiveType.from(osm)), JLabel.HORIZONTAL)));

@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
@@ -43,9 +44,14 @@ public class ChangeCommand extends Command {
     }
 
     @Override public MutableTreeNode description() {
+        String msg = "";
+        switch(OsmPrimitiveType.from(osm)) {
+        case NODE: msg = marktr("Change node {0}"); break;
+        case WAY: msg = marktr("Change way {0}"); break;
+        case RELATION: msg = marktr("Change relation {0}"); break;
+        }
         return new DefaultMutableTreeNode(
-                new JLabel(tr("Change {0} {1}",
-                        OsmPrimitiveType.from(osm).getLocalizedDisplayNameSingular(),
+                new JLabel(tr(msg,
                         new PrimitiveNameFormatter().getName(osm)),
                         ImageProvider.get(OsmPrimitiveType.from(osm)),
                         JLabel.HORIZONTAL));

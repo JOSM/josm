@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -33,12 +34,16 @@ public class HistoryBrowserDialog extends JDialog {
      * @param h the current history
      */
     protected void renderTitle(History h) {
-        String title = tr(
-                "History for {0} {1}",
-                h.getEarliest().getType().getLocalizedDisplayNameSingular(),
+        String title = "";
+        switch(h.getEarliest().getType()) {
+        case NODE:  title = marktr("History for node {0}"); break;
+        case WAY: title = marktr("History for way {0}"); break;
+        case RELATION:  title = marktr("History for relation {0}"); break;
+        }
+        setTitle(tr(
+                title,
                 Long.toString(h.getId())
-        );
-        setTitle(title);
+        ));
     }
 
     /**

@@ -77,7 +77,7 @@ public class ExceptionDialogUtil {
      */
     public static void explainGeneric(Exception e) {
         String msg = e.getMessage();
-        if (msg == null) {
+        if (msg == null || msg.trim().equals("")) {
             msg = e.toString();
         }
         e.printStackTrace();

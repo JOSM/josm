@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.util.Collection;
 
@@ -63,10 +64,17 @@ public class RemoveRelationMemberCommand extends Command {
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {}
 
     @Override public MutableTreeNode description() {
+        String msg = "";
+        switch(OsmPrimitiveType.from(member.member)) {
+        case NODE: msg = marktr("Remove node ''{0}'' at position {1} from relation ''{2}''"); break;
+        case WAY: msg = marktr("Remove way ''{0}'' at position {1} from relation ''{2}''"); break;
+        case RELATION: msg = marktr("Remove relation ''{0}'' at position {1} from relation ''{2}''"); break;
+        }
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Remove relation member {0} {1}",
-                                OsmPrimitiveType.from(relation).getLocalizedDisplayNameSingular(),
+                        tr(msg,
+                                new PrimitiveNameFormatter().getName(member.member),
+                                relation.getMembers().indexOf(member),
                                 new PrimitiveNameFormatter().getName(relation)
                         ),
                         ImageProvider.get(OsmPrimitiveType.from(relation)),

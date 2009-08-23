@@ -585,11 +585,10 @@ public class PropertiesMerger extends JPanel implements Observer {
             int ret = OptionPaneUtil.showOptionDialog(
                     null,
                     tr("<html>To keep your local version, JOSM<br>"
-                            + "has to reset the id of {0} {1} to 0.<br>"
+                            + "has to reset the id of primitive {0} to 0.<br>"
                             + "On the next upload the server will assign<br>"
                             + "it a new id.<br>"
                             + "Do yo agree?</html>",
-                            OsmPrimitiveType.from(model.getMyPrimitive()).getLocalizedDisplayNamePlural(),
                             model.getMyPrimitive().id
                     ),
                     tr("Reset id to 0"),

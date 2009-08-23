@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.history;
 
 import java.awt.Color;
+import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.util.HashMap;
 
@@ -72,7 +73,12 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         if (member == null) {
             bgColor = BGCOLOR_EMPTY_ROW;
         } else {
-            text = member.getPrimitiveType().getLocalizedDisplayNameSingular() + " " + member.getPrimitiveId();
+            text = "";
+            switch(member.getPrimitiveType()) {
+            case NODE: text = tr("Node {0}", member.getPrimitiveId()); break;
+            case WAY: text = tr("Way {0}", member.getPrimitiveId()); break;
+            case RELATION: text = tr("Relation {0}", member.getPrimitiveId()); break;
+            }
             if (model.isSameInOppositeWay(row)) {
                 bgColor = Color.WHITE;
             } else if (model.isInOppositeWay(row)) {

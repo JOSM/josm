@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -337,7 +338,13 @@ public class HistoryDialog extends ToggleDialog {
         }
 
         protected void renderText(History h) {
-            setText(h.getEarliest().getType().getLocalizedDisplayNameSingular() + " " + h.getId());
+            String msg = "";
+            switch(h.getEarliest().getType()) {
+            case NODE:  msg = marktr("Node {0}"); break;
+            case WAY: msg = marktr("Way {0}"); break;
+            case RELATION: msg = marktr("Relation {0}"); break;
+            }
+            setText(tr(msg,h.getId()));
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
@@ -411,8 +418,13 @@ public class HistoryDialog extends ToggleDialog {
                     if (primitive.id == 0) {
                         continue;
                     }
-                    progressMonitor.indeterminateSubTask(tr("Loading history for {0} with id {1}",
-                            OsmPrimitiveType.from(primitive).getLocalizedDisplayNameSingular(),
+                    String msg = "";
+                    switch(OsmPrimitiveType.from(primitive)) {
+                    case NODE: msg = marktr("Loading history for node {0}"); break;
+                    case WAY: msg = marktr("Loading history for way {0}"); break;
+                    case RELATION: msg = marktr("Loading history for relation {0}"); break;
+                    }
+                    progressMonitor.indeterminateSubTask(tr(msg,
                             Long.toString(primitive.id)));
                     OsmServerHistoryReader reader = null;
                     HistoryDataSet ds = null;

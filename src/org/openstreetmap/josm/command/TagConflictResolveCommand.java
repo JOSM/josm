@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.util.Collection;
 import java.util.List;
@@ -63,9 +64,15 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public MutableTreeNode description() {
+        String msg = "";
+        switch(OsmPrimitiveType.from(conflict.getMy())) {
+        case NODE: msg = marktr("Resolve {0} tag conflicts in node {1}"); break;
+        case WAY: msg = marktr("Resolve {0} tag conflicts in way {1}"); break;
+        case RELATION: msg = marktr("Resolve {0} tag conflicts in relation {1}"); break;
+        }
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve {0} tag conflicts in {1} {2}",getNumDecidedConflicts(), OsmPrimitiveType.from(conflict.getMy()).getLocalizedDisplayNameSingular(), conflict.getMy().id),
+                        tr(msg,getNumDecidedConflicts(), conflict.getMy().id),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
