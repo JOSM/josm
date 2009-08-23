@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -234,13 +235,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case JOptionPane.CANCEL_OPTION: return;
-            case 0: synchronizePrimitive(id); break;
-            case 1: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        case JOptionPane.CLOSED_OPTION: return;
+        case JOptionPane.CANCEL_OPTION: return;
+        case 0: synchronizePrimitive(id); break;
+        case 1: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -273,12 +274,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case 1: return;
-            case 0: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        case JOptionPane.CLOSED_OPTION: return;
+        case 1: return;
+        case 0: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -553,6 +554,8 @@ public class UploadAction extends JosmAction{
             // partially uploaded
             //
             getEditLayer().cleanupAfterUpload(writer.getProcessedPrimitives());
+            DataSet.fireSelectionChanged(getEditLayer().data.getSelected());
+            getEditLayer().fireDataChange();
             if (lastException != null) {
                 handleFailedUpload(lastException);
             }
