@@ -156,14 +156,18 @@ public class SearchAction extends JosmAction{
     }
 
     public static void search(String search, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
-        if (search.startsWith("http://") || search.startsWith("ftp://") || search.startsWith("https://")
-                || search.startsWith("file:/")) {
-            SelectionWebsiteLoader loader = new SelectionWebsiteLoader(search, mode);
-            if (loader.url != null) {
-                Main.worker.execute(loader);
-                return;
-            }
-        }
+        // FIXME: This is confusing. The GUI says nothing about loading primitives from an URL. We'd like to *search*
+        // for URLs in the current data set.
+        // Disabling until a better solution is in place
+        //
+        //        if (search.startsWith("http://") || search.startsWith("ftp://") || search.startsWith("https://")
+        //                || search.startsWith("file:/")) {
+        //            SelectionWebsiteLoader loader = new SelectionWebsiteLoader(search, mode);
+        //            if (loader.url != null && loader.url.getHost() != null) {
+        //                Main.worker.execute(loader);
+        //                return;
+        //            }
+        //        }
         try {
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
             SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive, regexSearch);
