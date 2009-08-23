@@ -135,11 +135,6 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      */
     protected void build() {
         updateTitle();
-        try {
-            setAlwaysOnTop(true);
-        } catch(SecurityException e) {
-            System.out.println(tr("Warning: couldn't setAlwaysOnTop(true) for ConflictResolution Dialog. Exception: {0}", e.toString()));
-        }
         getContentPane().setLayout(new BorderLayout());
 
         resolver = new ConflictResolver();

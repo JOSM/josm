@@ -64,12 +64,6 @@ public class RenameLayerAction extends AbstractAction {
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Rename layer"));
         dlg.setModal(true);
-        try {
-            dlg.setAlwaysOnTop(true);
-        } catch(SecurityException ex) {
-            System.out.println(tr("Warning: failed to put a dialog always on top. Exception was: {0}", ex.toString()));
-        }
-        dlg.toFront();
         dlg.setVisible(true);
 
         Object answer = optionPane.getValue();

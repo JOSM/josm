@@ -207,12 +207,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
-        try {
-            dlg.setAlwaysOnTop(true);
-        } catch(SecurityException e) {
-            System.out.println(tr("Warning: failed to put properties dialog always on top. Exception was: {0}", e.toString()));
-        }
-        dlg.toFront();
 
         values.getEditor().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -354,12 +348,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         };
         JDialog dialog = pane.createDialog(Main.parent, tr("Change values?"));
-        try {
-            dialog.setAlwaysOnTop(true);
-        } catch(SecurityException e) {
-            System.out.println(tr("Warning: failed to put dialog always on top. Exception was: {0}", e.toString()));
-        }
-        dialog.toFront();
         dialog.setVisible(true);
 
         if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
@@ -480,18 +468,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (c instanceof JLabel) {
                     String str = null;
                     switch (column) {
-                        case 0:
-                            str = (String) value;
-                            break;
-                        case 1:
-                            Map<String, Integer> v = (Map<String,Integer>) value;
-                            if (v.size()!=1) {
-                                str=tr("<different>");
-                                c.setFont(c.getFont().deriveFont(Font.ITALIC));
-                            } else {
-                                str=v.entrySet().iterator().next().getKey();
-                            }
-                            break;
+                    case 0:
+                        str = (String) value;
+                        break;
+                    case 1:
+                        Map<String, Integer> v = (Map<String,Integer>) value;
+                        if (v.size()!=1) {
+                            str=tr("<different>");
+                            c.setFont(c.getFont().deriveFont(Font.ITALIC));
+                        } else {
+                            str=v.entrySet().iterator().next().getKey();
+                        }
+                        break;
                     }
                     ((JLabel)c).setText(str);
                 }

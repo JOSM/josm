@@ -54,14 +54,6 @@ public class PleaseWaitDialog extends JDialog {
                 }
             }
         });
-        // make sure this dialog is always on top of the main JOSM window
-        // and all the other windows (relation editors, detached dialogs, etc.)
-        //
-        try {
-            setAlwaysOnTop(true);
-        } catch(SecurityException e) {
-            System.out.println(tr("Warning: failed to put ''please wait dialog'' always on top. Exception was: {0}", e.toString()));
-        }
     }
 
     public PleaseWaitDialog(Frame parent) {

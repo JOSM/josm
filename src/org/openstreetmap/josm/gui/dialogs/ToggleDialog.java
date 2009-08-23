@@ -162,10 +162,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         stickyActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 final JFrame f = new JFrame(name);
-                try {f.setAlwaysOnTop(true);}
-                catch (SecurityException e1) {
-                    System.out.println(tr("Warning: failed to put toggle dialog always on top. Exception was: {0}", e1.toString()));
-                }
                 parent.remove(ToggleDialog.this);
                 f.getContentPane().add(ToggleDialog.this);
                 f.addWindowListener((winadapter = new WindowAdapter(){

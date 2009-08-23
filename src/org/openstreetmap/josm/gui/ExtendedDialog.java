@@ -138,20 +138,6 @@ public class ExtendedDialog extends JDialog {
 
         setSize(d);
         setLocationRelativeTo(parent);
-
-        // temporary fix for "#3181 : Dialogs causes JOSM window to be set as "always on top", preventing switchiong to
-        // other windows."
-        // See also {@see OptionPaneUtil}
-        //
-        if (Main.pref.getBoolean("window-handling.option-pane-always-on-top", true)) {
-            // try to put always on top
-            //
-            try {
-                setAlwaysOnTop(true);
-            } catch(SecurityException e) {
-                System.out.println(tr("Warning: failed to bring extended dialog always on top. Exception: {0}", e.toString()));
-            }
-        }
     }
 
     /**
