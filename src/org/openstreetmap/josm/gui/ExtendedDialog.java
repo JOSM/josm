@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -20,7 +18,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -43,7 +40,7 @@ public class ExtendedDialog extends JDialog {
      * @param buttonIcons The path to the icons that will be displayed on the buttons. Path is relative to JOSM's image directory. File extensions need to be included. If a button should not have an icon pass null.
      */
     public ExtendedDialog(Component parent, String title, Component content, String[] buttonTexts, String[] buttonIcons) {
-        super(JOptionPane.getFrameForComponent(parent), title, true);
+        super(JOptionPane.getFrameForComponent(parent), title, true /* modal */);
         this.parent = parent;
         bTexts = buttonTexts;
         setupDialog(content, buttonIcons);

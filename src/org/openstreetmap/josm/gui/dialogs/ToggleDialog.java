@@ -22,8 +22,10 @@ import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 
@@ -161,7 +163,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         sticky.setBorder(BorderFactory.createEmptyBorder());
         stickyActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                final JFrame f = new JFrame(name);
+                final JDialog f = new JDialog(JOptionPane.getFrameForComponent(Main.parent),false /* not modal*/);
                 parent.remove(ToggleDialog.this);
                 f.getContentPane().add(ToggleDialog.this);
                 f.addWindowListener((winadapter = new WindowAdapter(){
