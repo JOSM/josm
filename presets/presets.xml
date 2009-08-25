@@ -446,7 +446,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-                <combo key="foot" text="Pedestrians" values="unknown,yes,no" default="" delete_if_empty="true" />
+                <combo key="foot" text="Pedestrians" values="unknown,yes,no" default="" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
@@ -466,7 +466,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-                <combo key="bicycle" text="Bikes" values="unknown,yes,no" default="" delete_if_empty="true" />
+                <combo key="bicycle" text="Bikes" values="unknown,yes,no" default="" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
@@ -1687,33 +1687,74 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
         <separator/>
         <item name="Information Office" icon="presets/informationoffice.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
-            <label text="Edit Information Office" />
+            <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
             <key key="tourism" value="information" />
             <key key="information" value="office" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
         <item name="Map" icon="presets/map.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
+            <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
             <key key="tourism" value="information" />
+            <key key="information" value="map" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="information" text="Map Type" values="map,citymap,hikingmap,bicyclemap" default="map" delete_if_empty="true" />
+            <combo key="map_type" text="Detail Grade" values="topo,street,scheme" default="" delete_if_empty="true" />
+            <combo key="map_size" text="Shown Area" values="site,city,region" default="" delete_if_empty="true" />
             <text key="description" text="Closer Description" default="" delete_if_empty="true" />
+            <space />
+            <label text="Routes shown for:" />
+            <check key="hiking" text="Hiking" default="off" delete_if_empty="true" />
+            <check key="bicycle" text="Cycling" default="off" delete_if_empty="true" />
+            <check key="mtb" text="Mountainbiking" default="off" delete_if_empty="true" />
+            <check key="ski" text="Skiing" default="off" delete_if_empty="true" />
+            <check key="horse" text="Riding" default="off" delete_if_empty="true" />
+            <label text="... other transportation modes possible" />
         </item>
         <item name="Information Board" icon="presets/board.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/information" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:information%3Dboard" />
             <key key="tourism" value="information" />
+            <key key="information" value="board" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="information" text="Board Type" values="board,history,nature,wildlife" default="board" delete_if_empty="true" />
+            <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants" default="board" delete_if_empty="true" />
             <text key="description" text="Closer Description" default="" delete_if_empty="true" />
         </item>
-        <item name="Guidepost (Hiking)" icon="presets/guidepost.png" type="node">
+        <item name="Guidepost" icon="presets/guidepost.png" type="node">
             <link href="http://wiki.openstreetmap.org/index.php/Proposed_features/Guidepost" />
             <key key="tourism" value="information" />
             <key key="information" value="guidepost" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+            <space />
+            <label text="Routes shown for:" />
+            <check key="hiking" text="Hiking" default="off" delete_if_empty="true" />
+            <check key="bicycle" text="Cycling" default="off" delete_if_empty="true" />
+            <check key="mtb" text="Mountainbiking" default="off" delete_if_empty="true" />
+            <check key="ski" text="Skiing" default="off" delete_if_empty="true" />
+            <check key="horse" text="Riding" default="off" delete_if_empty="true" />
+            <label text="... other transportation modes possible" />
+        </item>
+        <item name="Information Terminal" icon="presets/information.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
+            <key key="tourism" value="information" />
+            <key key="information" value="terminal" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="description" text="Closer description" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
+        </item>
+        <item name="Audioguide" icon="presets/information.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
+            <key key="tourism" value="information" />
+            <key key="information" value="audioguide" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="description" text="Closer description" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <label text="Audioguide via mobile phone?" />
+            <text key="phone" text="Phone number" default="" delete_if_empty="true" />
         </item>
         <item name="Other Information Points" icon="presets/information.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism%3Dinformation" />
