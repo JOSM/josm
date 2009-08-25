@@ -2401,7 +2401,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="shop" value="supermarket" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Chemist" icon="presets/chemist.png" type="node,closedway">
+        <item name="Chemist" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Chemist" />
             <key key="shop" value="chemist" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2418,7 +2418,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="shop" value="kiosk" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Book Store" icon="presets/books.png" type="node,closedway">
+        <item name="Book Store" icon="presets/book.png" type="node,closedway">
             <label text="Edit Book Store" />
             <key key="shop" value="books" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
