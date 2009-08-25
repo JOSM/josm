@@ -289,12 +289,12 @@ public class DataSet implements Cloneable {
                 if (a.getClass() == b.getClass()) {
                     String as = h.get(a);
                     if (as == null) {
-                        as = a.getName();
+                        as = a.getName() != null ? a.getName() : Long.toString(a.id);
                         h.put(a, as);
                     }
                     String bs = h.get(b);
                     if (bs == null) {
-                        bs = b.getName();
+                        bs = b.getName() != null ? b.getName() : Long.toString(b.id);
                         h.put(b, bs);
                     }
                     int res = as.compareTo(bs);

@@ -236,23 +236,6 @@ public final class Way extends OsmPrimitive {
     }
 
     @Override
-    public String getName() {
-        String name = super.getName();
-        if (name != null)
-            return name;
-        // no translation
-        return "way " + id;
-    }
-
-    @Override
-    public String getLocalName(){
-        String name = super.getLocalName();
-        if (name != null)
-            return name;
-        return tr("way {0}",id);
-    }
-
-    @Override
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }

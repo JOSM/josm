@@ -166,12 +166,16 @@ public class DefaultNameFormatter implements NameFormatter {
                     } else {
                         nameTag = relation.getName();
                     }
+                } else {
+                    nameTag =  relation.get(n);
                 }
                 if (nameTag != null) {
                     break;
                 }
             }
-            if (nameTag != null) {
+            if (nameTag == null) {
+                name += Long.toString(relation.id) + ", ";
+            } else {
                 name += "\"" + nameTag + "\", ";
             }
 
