@@ -1385,10 +1385,16 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Parking" />
             <key key="amenity" value="parking" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="capacity" text="Capacity" default="" delete_if_empty="true" />
-            <combo key="parking" text="Type" values="surface,multi-storey,underground,park_and_ride" default="surface" delete_if_empty="true" />
-            <combo key="disabled_spaces" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
-            <check key="fee" text="Fee" default="off" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <combo key="parking" text="Type" values="multi-storey,surface,underground" default="surface" delete_if_empty="true" />
+            <combo key="park_ride" text="Park and Ride" values="yes,no" default="" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
+            <space /> 
+            <text key="capacity" text="Capacity (overall)" default="" delete_if_empty="true" />
+            <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
+            <combo key="capacity:women" text="Spaces for Women" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
+            <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
+            <label text="See the Wiki for other capacity:[types]=*." />
         </item>
         <item name="Wash" icon="presets/car_wash.png" type="node,closedway">
             <label text="Edit Car Wash" />
