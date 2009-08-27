@@ -123,7 +123,9 @@ public class GpxData extends WithAttributes {
             for (Collection<WayPoint> trkseg : trk.trackSegs) {
                 for (WayPoint tpt : trkseg) {
                     if(last != null){
-                        result += last.getCoor().greatCircleDistance(tpt.getCoor());
+                        Double d = last.getCoor().greatCircleDistance(tpt.getCoor());
+                        if(!d.isNaN() && !d.isInfinite())
+                          result += d;
                     }
                     last = tpt;
                 }
