@@ -164,7 +164,9 @@ public class ToggleDialog extends JPanel implements Helpful {
         stickyActionListener = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 final JDialog f = new JDialog(JOptionPane.getFrameForComponent(Main.parent),false /* not modal*/);
-                parent.remove(ToggleDialog.this);
+                if (parent != null) {
+                    parent.remove(ToggleDialog.this);
+                }
                 f.getContentPane().add(ToggleDialog.this);
                 f.addWindowListener((winadapter = new WindowAdapter(){
                     @Override public void windowClosing(WindowEvent e) {
@@ -200,9 +202,11 @@ public class ToggleDialog extends JPanel implements Helpful {
                 f.setVisible(true);
                 titleBar.setVisible(false);
 
-                // doLayout() - workaround
-                parent.setVisible(false);
-                parent.setVisible(true);
+                if (parent != null) {
+                    // doLayout() - workaround
+                    parent.setVisible(false);
+                    parent.setVisible(true);
+                }
             }
         };
         sticky.addActionListener(stickyActionListener);
