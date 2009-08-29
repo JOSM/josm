@@ -104,8 +104,8 @@ public class OsmServerWriter {
                                 progress,
                                 primitives.size(),
                                 time_left_str,
-                                osm.getLocalName(),
-                                osm.id));
+                                osm.getName() == null ? osm.id : osm.getName(),
+                                        osm.id));
                 makeApiRequest(osm,progressMonitor);
                 processed.add(osm);
                 progressMonitor.worked(1);
