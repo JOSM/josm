@@ -203,11 +203,17 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (relation.id == 0) return this;
         remember(relation.id, OsmPrimitiveType.RELATION);
         for (RelationMember member : relation.getMembers()) {
+            if (OsmPrimitiveType.from(member.member).equals(OsmPrimitiveType.RELATION)) {
+                // avoid infinite recursion in case of cyclic dependencies in relations
+                //
+                if (relations.contains(member.member.id)) {
+                    continue;
+                }
+            }
             appendGeneric(member.getMember());
         }
         return this;
     }
-
 
     protected MultiFetchServerObjectReader appendGeneric(OsmPrimitive primitive) {
         if (OsmPrimitiveType.from(primitive).equals(OsmPrimitiveType.NODE))
