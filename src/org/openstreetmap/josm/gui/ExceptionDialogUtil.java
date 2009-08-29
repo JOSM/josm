@@ -36,7 +36,7 @@ public class ExceptionDialogUtil {
      */
     public static void explainOsmApiInitializationException(OsmApiInitializationException e) {
         e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 tr(   "Failed to initialize communication with the OSM server {0}.\n"
                         + "Check the server URL in your preferences and your internet connection.",
@@ -55,7 +55,7 @@ public class ExceptionDialogUtil {
      */
     public static void explainPreconditionFailed(OsmApiException e) {
         e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 tr("<html>Uploading to the server <strong>failed</strong> because your current<br>"
                         +"dataset violates a precondition.<br>"
@@ -81,7 +81,7 @@ public class ExceptionDialogUtil {
             msg = e.toString();
         }
         e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 msg,
                 tr("Error"),
@@ -112,7 +112,7 @@ public class ExceptionDialogUtil {
                 + "in an applet and because you didn''t load your applet from ''{1}''.</html>",
                 apiUrl, host
         );
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 message,
                 tr("Security exception"),
@@ -136,7 +136,7 @@ public class ExceptionDialogUtil {
                 apiUrl
         );
         e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 message,
                 tr("Network exception"),
@@ -162,10 +162,34 @@ public class ExceptionDialogUtil {
                 apiUrl, ioe.getMessage()
         );
         e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 message,
                 tr("IO Exception"),
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    /**
+     * Explains a {@see OsmApiException} which was thrown because of an internal server
+     * error in the OSM API server..
+     * 
+     * @param e the exception
+     */
+
+    public static void explainInternalServerError(OsmTransferException e) {
+        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String message = tr("<html>The OSM server<br>"
+                + "''{0}''<br>"
+                + "reported an internal server error.<br>"
+                + "This is most likely a temporary problem. Please try again later.</html>",
+                apiUrl
+        );
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                message,
+                tr("Internal Server Error"),
                 JOptionPane.ERROR_MESSAGE
         );
     }
@@ -194,7 +218,7 @@ public class ExceptionDialogUtil {
                 apiUrl, host
         );
         e.printStackTrace();
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 message,
                 tr("Unknown host"),
@@ -260,6 +284,10 @@ public class ExceptionDialogUtil {
                 explainGoneForUnknownPrimitive(oae);
                 return;
             }
+            if (oae.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                explainInternalServerError(oae);
+                return;
+            }
         }
         explainGeneric(e);
     }
@@ -280,7 +308,7 @@ public class ExceptionDialogUtil {
                 + "</html>",
                 e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         );
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 msg,
                 tr("Primitive already deleted"),
