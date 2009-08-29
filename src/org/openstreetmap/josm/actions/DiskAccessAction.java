@@ -37,7 +37,7 @@ abstract public class DiskAccessAction extends JosmAction {
         FileFilter defaultFilter = null;
         for (FileImporter imExporter: ExtensionFileFilter.importers) {
             fc.addChoosableFileFilter(imExporter.filter);
-            if (imExporter.filter.defaultExtension.endsWith("osm")) {
+            if (imExporter instanceof ExtensionFileFilter.AllFormatsImporter) {
                 defaultFilter = imExporter.filter;
             }
 

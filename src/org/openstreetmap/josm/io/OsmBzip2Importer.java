@@ -15,7 +15,7 @@ import org.xml.sax.SAXException;
 public class OsmBzip2Importer extends OsmImporter {
 
     public OsmBzip2Importer() {
-        super(new ExtensionFileFilter("osm.bz2, osm.bz", "osm.bz2", tr("OSM Server Files bzip2 compressed")
+        super(new ExtensionFileFilter("osm.bz2,osm.bz", "osm.bz2", tr("OSM Server Files bzip2 compressed")
                 + " (*.osm.bz2 *.osm.bz)"));
     }
 
