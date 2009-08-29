@@ -61,9 +61,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
     private void buildList() {
         if(Main.main.undoRedo.commands.size() != 0) {
-            setTitle(tr("Command Stack: {0}", Main.main.undoRedo.commands.size()), true);
+            setTitle(tr("Command Stack: {0}", Main.main.undoRedo.commands.size()));
         } else {
-            setTitle(tr("Command Stack"), false);
+            setTitle(tr("Command Stack"));
         }
         if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null)
             return;

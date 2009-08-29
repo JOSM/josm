@@ -69,8 +69,8 @@ public class MapFrame extends JPanel implements Destroyable {
      * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
      * instead of adding directly to this list.
      */
-    public JPanel toggleDialogs = new JPanel();
-    public ArrayList<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
+    private JPanel toggleDialogs = new JPanel();
+    private ArrayList<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
 
     public final ButtonGroup toolGroup = new ButtonGroup();
 
@@ -134,7 +134,7 @@ public class MapFrame extends JPanel implements Destroyable {
      */
     public void destroy() {
         for (ToggleDialog t : allDialogs) {
-            t.close();
+            t.closeDetachedDialog();
         }
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
@@ -166,9 +166,10 @@ public class MapFrame extends JPanel implements Destroyable {
     public void setVisibleDialogs() {
         for (Component c : toggleDialogs.getComponents()) {
             if (c instanceof ToggleDialog) {
-                boolean sel = Main.pref.getBoolean(((ToggleDialog)c).prefName+".visible");
-                ((ToggleDialog)c).action.button.setSelected(sel);
-                c.setVisible(sel);
+                ToggleDialog td = (ToggleDialog)c;
+                if (Main.pref.getBoolean(td.getPreferencePrefix()+".visible")) {
+                    td.showDialog();
+                }
             }
         }
     }
@@ -178,9 +179,8 @@ public class MapFrame extends JPanel implements Destroyable {
      * @param dlg The toggle dialog. It must not be in the list already.
      */
     public IconToggleButton addToggleDialog(ToggleDialog dlg) {
-        IconToggleButton button = new IconToggleButton(dlg.action);
-        dlg.action.button = button;
-        dlg.parent = toggleDialogs;
+        IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
+        dlg.setParent(toggleDialogs);
         toolBarToggle.add(button);
         toggleDialogs.add(dlg);
         allDialogs.add(dlg);

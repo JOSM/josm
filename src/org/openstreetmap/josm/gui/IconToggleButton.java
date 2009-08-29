@@ -27,8 +27,9 @@ public class IconToggleButton extends JToggleButton implements PropertyChangeLis
         setText(null);
 
         Object o = action.getValue(Action.SHORT_DESCRIPTION);
-        if (o != null)
+        if (o != null) {
             setToolTipText(o.toString());
+        }
 
         action.addPropertyChangeListener(this);
 
@@ -43,6 +44,8 @@ public class IconToggleButton extends JToggleButton implements PropertyChangeLis
         if (evt.getPropertyName().equals("active")) {
             setSelected((Boolean)evt.getNewValue());
             requestFocusInWindow();
+        } else if (evt.getPropertyName().equals("selected")) {
+            setSelected((Boolean)evt.getNewValue());
         }
     }
 }

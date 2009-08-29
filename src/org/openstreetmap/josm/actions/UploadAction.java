@@ -30,7 +30,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
@@ -112,7 +111,7 @@ public class UploadAction extends JosmAction{
         if (!isEnabled())
             return;
         if (Main.map == null) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Nothing to upload. Get some data first."),
                     tr("Warning"),
@@ -123,14 +122,13 @@ public class UploadAction extends JosmAction{
 
         ConflictCollection conflicts = Main.map.mapView.getEditLayer().getConflicts();
         if (conflicts !=null && !conflicts.isEmpty()) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("There are unresolved conflicts. You have to resolve these first."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
             );
-            Main.map.conflictDialog.action.button.setSelected(true);
-            Main.map.conflictDialog.action.actionPerformed(null);
+            Main.map.conflictDialog.showDialog();
             return;
         }
 
@@ -151,7 +149,7 @@ public class UploadAction extends JosmAction{
         }
 
         if (add.isEmpty() && update.isEmpty() && delete.isEmpty()) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("No changes to upload."),
                     tr("Warning"),
@@ -225,12 +223,13 @@ public class UploadAction extends JosmAction{
                 options[0], options[1], options[2]
         );
         int optionsType = JOptionPane.YES_NO_CANCEL_OPTION;
-        int ret = OptionPaneUtil.showOptionDialog(
+        int ret = JOptionPane.showOptionDialog(
                 null,
                 msg,
                 tr("Conflict detected"),
                 optionsType,
                 JOptionPane.ERROR_MESSAGE,
+                null,
                 options,
                 defaultOption
         );
@@ -264,12 +263,13 @@ public class UploadAction extends JosmAction{
                 options[0], options[1]
         );
         int optionsType = JOptionPane.YES_NO_OPTION;
-        int ret = OptionPaneUtil.showOptionDialog(
+        int ret = JOptionPane.showOptionDialog(
                 null,
                 msg,
                 tr("Conflict detected"),
                 optionsType,
                 JOptionPane.ERROR_MESSAGE,
+                null,
                 options,
                 defaultOption
         );
@@ -384,7 +384,7 @@ public class UploadAction extends JosmAction{
                         + "</html>",
                         ex.getDisplayMessage()
                 );
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.map,
                         msg,
                         tr("Upload to OSM API failed"),

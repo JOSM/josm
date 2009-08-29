@@ -120,9 +120,9 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         if(ucArr.length != 0) {
-            setTitle(tr("Authors: {0}", ucArr.length), true);
+            setTitle(tr("Authors: {0}", ucArr.length));
         } else {
-            setTitle(tr("Authors"), false);
+            setTitle(tr("Authors"));
         }
     }
 
