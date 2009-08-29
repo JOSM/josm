@@ -62,6 +62,7 @@ public class ExtendedDialog extends JDialog {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         lbl.setMaxWidth(Math.round(screenSize.width*2/3));
 
+        this.parent = parent;
         bTexts = buttonTexts;
         setupDialog(lbl, buttonIcons);
         setVisible(true);
@@ -76,6 +77,7 @@ public class ExtendedDialog extends JDialog {
      */
     public ExtendedDialog(Component parent, String title, String[] buttonTexts, boolean modal) {
         super(JOptionPane.getFrameForComponent(parent), title, modal);
+        this.parent = parent;
         bTexts = buttonTexts;
     }
 
