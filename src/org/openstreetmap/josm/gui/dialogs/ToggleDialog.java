@@ -293,6 +293,13 @@ public class ToggleDialog extends JPanel implements Helpful {
     }
 
     /**
+     * Replies true if this dialog is showing either as docked or as detached dialog
+     */
+    public boolean isDialogShowing() {
+        return this.isShowing;
+    }
+
+    /**
      * Shows the dialog
      */
     public void showDialog() {
