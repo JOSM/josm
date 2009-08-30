@@ -651,7 +651,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <combo key="horse" text="Horse" values="yes,designated,no" default="" delete_if_empty="true" />
             <combo key="ski" text="Ski" values="yes,designated,no" default="" delete_if_empty="true" />
             <combo key="snowmobile" text="Snowmobile" values="yes,designated,no" default="" delete_if_empty="true" />
-            <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" delete_if_empty="true" />
+            <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" delete_if_empty="true" /> -->
 
 
             <optional>
