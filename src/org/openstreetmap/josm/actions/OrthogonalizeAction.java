@@ -33,6 +33,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * 3. Rotate every edge around its center to align with main orientation or perpendicular to it
  * 4. Compute new intersection points of two adjascent edges
  * 5. Move nodes to these points
+ * 6. if there are nodes between edges then align the nodes
  */
 public final class OrthogonalizeAction extends JosmAction {
 
@@ -51,8 +52,9 @@ public final class OrthogonalizeAction extends JosmAction {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         ArrayList<Node> dirnodes = new ArrayList<Node>();
+        ArrayList<Node> alignNodes = new ArrayList<Node>();
 
-        // Check the selection if it is suitible for the orthogonalization
+        // Check the selection if it is suitable for the orthogonalisation
         for (OsmPrimitive osm : sel) {
             // Check if not more than two nodes in the selection
             if(osm instanceof Node) {
@@ -104,14 +106,16 @@ public final class OrthogonalizeAction extends JosmAction {
                     delta -= Math.PI;
                 }
                 if(delta < Math.PI/4) {
-                    OptionPaneUtil.showMessageDialog(
-                            Main.parent,
-                            tr("Please select ways with almost right angles to orthogonalize."),
-                            tr("Information"),
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                    return;
+                    // not an edge
+                    alignNodes.add(way.getNode(i2));
                 }
+            }
+
+            // first node has to be an edge so we move the node to the end of the way
+            while (alignNodes.contains(way.firstNode())) {
+                Node n = way.firstNode();
+                way.removeNode(n);
+                way.addNode(way.getNodesCount() - 2, n); // ! -2 because first node == last node in closed way
             }
         }
 
@@ -159,12 +163,20 @@ public final class OrthogonalizeAction extends JosmAction {
                 continue;
             }
 
-            Way way = (Way)osm;
+            Way oldWay = (Way) osm;
+            Way way = new Way();
+            // copy only edges into way
+            for (Node origNode : oldWay.getNodes()) {
+                if (alignNodes.contains(origNode)) {
+                    continue;
+                }
+                way.addNode(origNode);
+            }
             int nodes = way.getNodesCount();
             int sides = nodes - 1;
             // Copy necessary data into a more suitable data structure
             EastNorth en[] = new EastNorth[sides];
-            for (int i=0; i < sides; i++) {
+            for (int i = 0; i < sides; i++) {
                 en[i] = new EastNorth(way.getNode(i).getEastNorth().east(), way.getNode(i).getEastNorth().north());
             }
 
@@ -221,6 +233,12 @@ public final class OrthogonalizeAction extends JosmAction {
                 align_to_heading = normalize_angle(sum_weighted_headings/sum_weights);
             }
 
+            EastNorth aligna = null;
+            EastNorth alignb = null;
+            EastNorth align0 = null;
+            Node nodea = null;
+            Node nodeb = null;
+            Node node0 = null;
 
             for (int i=0; i < sides; i++) {
                 // Compute handy indices of three nodes to be used in one loop iteration.
@@ -276,6 +294,27 @@ public final class OrthogonalizeAction extends JosmAction {
                     double dy = intersection.north()-n.getEastNorth().north();
                     cmds.add(new MoveCommand(n, dx, dy));
                 }
+
+                // align all nodes between two edges
+                aligna = alignb;
+                alignb = intersection;
+                nodea = nodeb;
+                nodeb = n;
+                if (aligna != null) {
+
+                    MoveCommand cmd = alignSide(findNodesToAlign(oldWay, nodea, nodeb), aligna, alignb);
+                    if (cmd != null) {
+                        cmds.add(cmd);
+                    }
+
+                } else {
+                    align0 = alignb;
+                    node0 = nodeb;
+                }
+            }
+            MoveCommand cmd = alignSide(findNodesToAlign(oldWay, nodeb, node0), alignb, align0);
+            if (cmd != null) {
+                cmds.add(cmd);
             }
         }
 
@@ -283,6 +322,62 @@ public final class OrthogonalizeAction extends JosmAction {
             Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), cmds));
             Main.map.repaint();
         }
+    }
+
+    private MoveCommand alignSide(ArrayList<Node> aNodes, EastNorth aligna, EastNorth alignb) {
+
+        // Find out co-ords of A and B
+        double ax = aligna.east();
+        double ay = aligna.north();
+        double bx = alignb.east();
+        double by = alignb.north();
+
+        // OK, for each node to move, work out where to move it!
+        for (Node n1 : aNodes) {
+            // Get existing co-ords of node to move
+            double nx = n1.getEastNorth().east();
+            double ny = n1.getEastNorth().north();
+
+            if (ax == bx) {
+                // Special case if AB is vertical...
+                nx = ax;
+            } else if (ay == by) {
+                // ...or horizontal
+                ny = ay;
+            } else {
+                // Otherwise calculate position by solving y=mx+c
+                double m1 = (by - ay) / (bx - ax);
+                double c1 = ay - (ax * m1);
+                double m2 = (-1) / m1;
+                double c2 = n1.getEastNorth().north() - (n1.getEastNorth().east() * m2);
+
+                nx = (c2 - c1) / (m1 - m2);
+                ny = (m1 * nx) + c1;
+            }
+
+            // Return the command to move the node to its new position.
+            return new MoveCommand(n1, nx - n1.getEastNorth().east(), ny - n1.getEastNorth().north());
+        }
+        return null;
+    }
+
+    private ArrayList<Node> findNodesToAlign(Way w, Node from, Node to) {
+        ArrayList<Node> l = new ArrayList<Node>();
+        boolean start = false;
+        for (int i = 0; i < w.getNodesCount(); i++) {
+            Node n = w.getNode(i % w.getNodesCount());
+            if (n.equals(to)) {
+                break;
+            }
+            if (start) {
+                l.add(n);
+            }
+            if (n.equals(from)) {
+                start = true;
+            }
+
+        }
+        return l;
     }
 
     static double det(double a, double b, double c, double d)
