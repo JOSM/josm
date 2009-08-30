@@ -111,7 +111,8 @@ public class OsmConnection {
         String auth;
         try {
             synchronized (credentialsManager) {
-                auth = credentialsManager.lookupUsername() + ":" + credentialsManager.lookupPassword();
+                auth = credentialsManager.lookup(CredentialsManager.Key.USERNAME) + ":" + 
+                    credentialsManager.lookup(CredentialsManager.Key.PASSWORD);
             }
         } catch (CredentialsManager.CMException e) {
             auth = ":";
@@ -129,33 +130,28 @@ public class OsmConnection {
     public boolean isCanceled() {
         return cancel;
     }
-
+    /**
+     * Default implementation of the CredentialsManager interface.
+     * Saves passwords in plain text file.
+     */
     public static class PlainCredentialsManager implements CredentialsManager {
-        public String lookupUsername() throws CMException {
-            String username = Main.pref.get("osm-server.username", null);
-            if (username == null) throw new CredentialsManager.NoContentException();
-            return username;
+        public String lookup(CredentialsManager.Key key) throws CMException {
+            String secret = Main.pref.get("osm-server." + key.toString(), null);
+            if (secret == null) throw new CredentialsManager.NoContentException();
+            return secret;            
         }
-        public String lookupPassword() throws CMException {
-            String password = Main.pref.get("osm-server.password");
-            if (password == null) throw new CredentialsManager.NoContentException();
-            return password;
-        }
-        public void storeUsername(String username) {
-            Main.pref.put("osm-server.username", username);
-        }
-        public void storePassword(String password) {
-            Main.pref.put("osm-server.password", password);
+        public void store(CredentialsManager.Key key, String secret) {
+            Main.pref.put("osm-server." + key.toString(), secret);
         }
         public PasswordAuthentication getPasswordAuthentication(OsmAuth caller) {
             String username, password;
             try {
-                username = lookupUsername();
+                username = lookup(Key.USERNAME);
             } catch (CMException e) {
                 username = "";
             }
             try {
-                password = lookupPassword();
+                password = lookup(Key.PASSWORD);
             } catch (CMException e) {
                 password = "";
             }
@@ -174,14 +170,16 @@ public class OsmConnection {
                 warning.setFont(warning.getFont().deriveFont(Font.ITALIC));
                 p.add(warning, GBC.eop());
 
-                JCheckBox savePassword = new JCheckBox(tr("Save user and password (unencrypted)"), !username.equals("") && !password.equals(""));
+                JCheckBox savePassword = new JCheckBox(tr("Save user and password (unencrypted)"), 
+                                                       !username.equals("") && !password.equals(""));
                 p.add(savePassword, GBC.eop());
 
-                int choice = new ExtendedDialog(Main.parent,
-                        tr("Enter Password"),
-                        p,
-                        new String[] {tr("Login"), tr("Cancel")},
-                        new String[] {"ok.png", "cancel.png"}).getValue();
+                int choice = new ExtendedDialog(
+                    Main.parent,
+                    tr("Enter Password"),
+                    p,
+                    new String[] {tr("Login"), tr("Cancel")},
+                    new String[] {"ok.png", "cancel.png"}).getValue();
 
                 if (choice != 1) {
                     caller.authCancelled = true;
@@ -190,8 +188,8 @@ public class OsmConnection {
                 username = usernameField.getText();
                 password = String.valueOf(passwordField.getPassword());
                 if (savePassword.isSelected()) {
-                    storeUsername(username);
-                    storePassword(password);
+                    store(Key.USERNAME, username);
+                    store(Key.PASSWORD, password);
                 }
                 if (username.equals(""))
                     return null;
@@ -202,32 +200,47 @@ public class OsmConnection {
         public PreferenceAdditions newPreferenceAdditions() {
             return new PreferenceAdditions() {
                 /**
+                 * Editfield for the Base url to the REST API from OSM.
+                 */
+                final private JTextField osmDataServerURL = new JTextField(20);
+                /**
                  * Editfield for the username to the OSM account.
                  */
-                private JTextField osmDataUsername = new JTextField(20);
+                final private JTextField osmDataUsername = new JTextField(20);
                 /**
                  * Passwordfield for the userpassword of the REST API.
                  */
-                private JPasswordField osmDataPassword = new JPasswordField(20);
+                final private JPasswordField osmDataPassword = new JPasswordField(20);
 
+                private String oldServerURL = "";
                 private String oldUsername = "";
                 private String oldPassword = "";
 
                 public void addPreferenceOptions(JPanel panel) {
                     try {
-                        oldUsername = lookupUsername();
+                        oldServerURL = lookup(Key.OSM_SERVER_URL); // result is not null (see CredentialsManager)
+                    } catch (CMException e) {
+                        oldServerURL = "";
+                    }
+                    if (oldServerURL.equals("")) oldServerURL = "http://api.openstreetmap.org/api";
+                    try {
+                        oldUsername = lookup(Key.USERNAME);
                     } catch (CMException e) {
                         oldUsername = "";
                     }
                     try {
-                        oldPassword = lookupPassword();
+                        oldPassword = lookup(Key.PASSWORD);
                     } catch (CMException e) {
                         oldPassword = "";
                     }
+                    osmDataServerURL.setText(oldServerURL);
                     osmDataUsername.setText(oldUsername);
                     osmDataPassword.setText(oldPassword);
+                    osmDataServerURL.setToolTipText(tr("The base URL for the OSM server (REST API)"));
                     osmDataUsername.setToolTipText(tr("Login name (e-mail) to the OSM account."));
                     osmDataPassword.setToolTipText(tr("Login password to the OSM account. Leave blank to not store any password."));
+                    panel.add(new JLabel(tr("Base Server URL")), GBC.std());
+                    panel.add(osmDataServerURL, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
                     panel.add(new JLabel(tr("OSM username (e-mail)")), GBC.std());
                     panel.add(osmDataUsername, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
                     panel.add(new JLabel(tr("OSM password")), GBC.std());
@@ -240,13 +253,17 @@ public class OsmConnection {
                     panel.add(warning, GBC.eop().fill(GBC.HORIZONTAL));
                 }
                 public void preferencesChanged() {
+                    String newServerURL = osmDataServerURL.getText();
                     String newUsername = osmDataUsername.getText();
                     String newPassword = String.valueOf(osmDataPassword.getPassword());
+                    if (!oldServerURL.equals(newServerURL)) {
+                        store(Key.OSM_SERVER_URL, newServerURL); 
+                    }
                     if (!oldUsername.equals(newUsername)) {
-                        storeUsername(newUsername);
+                        store(Key.USERNAME, newUsername);
                     }
                     if (!oldPassword.equals(newPassword)) {
-                        storePassword(newPassword);
+                        store(Key.PASSWORD, newPassword);
                     }
                 }
             };

@@ -8,21 +8,28 @@ import org.openstreetmap.josm.io.OsmConnection.OsmAuth;
  * username/password-related user interaction is encapsulated here.
  */
 public interface CredentialsManager {
+    enum Key {
+        OSM_SERVER_URL("url"), 
+        USERNAME("username"), 
+        PASSWORD("password");
+        final private String pname;
+        private Key(String name) {
+            pname = name;
+        }
+        @Override public String toString() {
+            return pname;
+        }
+    };
+    
     /**
-     * lookupUsername, lookupPassword:
-     *
      * Should throw or return non-null, possibly empty String.
      */
-    public String lookupUsername() throws CMException;
-    public String lookupPassword() throws CMException;
+    public String lookup(Key key) throws CMException;
 
     /**
-     * storeUsername, storePassword:
-     *
      * May silently fail to store.
      */
-    public void storeUsername(String username) throws CMException;
-    public void storePassword(String password) throws CMException;
+    public void store(Key key, String secret) throws CMException;
 
     /**
      * If authentication using the stored credentials fails, this method is
