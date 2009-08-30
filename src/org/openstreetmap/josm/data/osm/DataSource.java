@@ -10,6 +10,9 @@ public class DataSource implements Cloneable {
     public DataSource(Bounds bounds, String origin) {
         this.bounds = bounds;
         this.origin = origin;
+        if (bounds == null) {
+            throw new NullPointerException();
+        }
     }
 
     @Override protected Object clone() throws CloneNotSupportedException {

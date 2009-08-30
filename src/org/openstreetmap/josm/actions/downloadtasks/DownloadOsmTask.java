@@ -112,6 +112,9 @@ public class DownloadOsmTask implements DownloadTask {
             }
             if (dataSet == null)
                 return; // user canceled download or error occurred
+            if (currentBounds == null) {
+                return; // no data retrieved
+            }
             if (dataSet.allPrimitives().isEmpty()) {
                 progressMonitor.setErrorMessage(tr("No data imported."));
                 // need to synthesize a download bounds lest the visual indication of downloaded
