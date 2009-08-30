@@ -54,25 +54,27 @@ public class CacheFiles {
      * @param ident
      */
     public CacheFiles(String ident) {
-       String pref = Main.pref.getPluginsDirFile().getPath();
-       boolean dir_writeable;
-       this.ident = ident;
-       String cacheDir = Main.pref.get("cache." + ident + "." + "path", pref + "/" + ident + "/cache/");
-       this.dir = new File(cacheDir);
-       try {
-           this.dir.mkdirs();
-           dir_writeable = true;
+        String pref = Main.pref.getPluginsDirFile().getPath();
+        boolean dir_writeable;
+        this.ident = ident;
+        String cacheDir = Main.pref.get("cache." + ident + "." + "path", pref + "/" + ident + "/cache/");
+        this.dir = new File(cacheDir);
+        try {
+            this.dir.mkdirs();
+            dir_writeable = true;
         } catch(Exception e) {
-           // We have no access to this directory, so don't to anything
-           dir_writeable = false;
+            // We have no access to this directory, so don't do anything
+            dir_writeable = false;
         }
         this.enabled = dir_writeable;
         this.expire = Main.pref.getLong("cache." + ident + "." + "expire", EXPIRE_DAILY);
-        if(this.expire < 0)
+        if(this.expire < 0) {
             this.expire = CacheFiles.EXPIRE_NEVER;
+        }
         this.maxsize = Main.pref.getLong("cache." + ident + "." + "maxsize", 50);
-        if(this.maxsize < 0)
+        if(this.maxsize < 0) {
             this.maxsize = -1;
+        }
     }
 
     /**
@@ -93,8 +95,9 @@ public class CacheFiles {
             }
 
             // Update last mod time so we don't expire recently used data
-            if(updateModTime)
+            if(updateModTime) {
                 data.setLastModified(new Date().getTime());
+            }
 
             byte[] bytes = new byte[(int) data.length()];
             new RandomAccessFile(data, "r").readFully(bytes);
@@ -114,8 +117,9 @@ public class CacheFiles {
         if(!enabled) return;
         try {
             File f = getPath(ident);
-            if(f.exists())
+            if(f.exists()) {
                 f.delete();
+            }
             // rws also updates the file meta-data, i.e. last mod time
             new RandomAccessFile(f, "rws").write(data);
         } catch(Exception e){
@@ -143,8 +147,9 @@ public class CacheFiles {
                 return null;
             }
             // Update last mod time so we don't expire recently used images
-            if(updateModTime)
+            if(updateModTime) {
                 img.setLastModified(new Date().getTime());
+            }
             return ImageIO.read(img);
         } catch(Exception e) {
             System.out.println(e.getMessage());
@@ -176,13 +181,12 @@ public class CacheFiles {
      * @param force will also write it to the preferences
      */
     public void setExpire(int amount, boolean force) {
-        if(amount < 0)
-            this.expire = EXPIRE_NEVER;
-        else
-            this.expire = amount;
         String key = "cache." + ident + "." + "expire";
-        if(force || !Main.pref.hasKey(key))
-            Main.pref.putLong(key, this.expire);
+        if(Main.pref.hasKey(key) && !force)
+            return;
+
+        this.expire = amount > 0 ? amount : EXPIRE_NEVER;
+        Main.pref.putLong(key, this.expire);
     }
 
     /**
@@ -191,10 +195,12 @@ public class CacheFiles {
      * @param force will also write it to the preferences
      */
     public void setMaxSize(int amount, boolean force) {
-        this.maxsize = amount > 0 ? amount : -1;
         String key = "cache." + ident + "." + "maxsize";
-        if(force || !Main.pref.hasKey(key))
-            Main.pref.putLong(key, this.maxsize);
+        if(Main.pref.hasKey(key) && !force)
+            return;
+
+        this.maxsize = amount > 0 ? amount : -1;
+        Main.pref.putLong(key, this.maxsize);
     }
 
     /**
@@ -210,8 +216,9 @@ public class CacheFiles {
      * Checks if a clean up is needed and will do so if necessary
      */
     public void checkCleanUp() {
-        if(this.writes > this.cleanUpInterval)
+        if(this.writes > this.cleanUpInterval) {
             cleanUp();
+        }
     }
 
     /**
@@ -224,9 +231,9 @@ public class CacheFiles {
         long dirsize = 0;
 
         for(File f : dir.listFiles()) {
-            if(isExpired(f))
+            if(isExpired(f)) {
                 f.delete();
-            else {
+            } else {
                 dirsize += f.length();
                 modtime.put(f.lastModified(), f);
             }
@@ -258,18 +265,20 @@ public class CacheFiles {
      */
     public void customCleanUp(int type, int size) {
         switch(type) {
-            case CLEAN_ALL:
-                for(File f : dir.listFiles())
+        case CLEAN_ALL:
+            for(File f : dir.listFiles()) {
+                f.delete();
+            }
+            break;
+        case CLEAN_SMALL_FILES:
+            for(File f: dir.listFiles())
+                if(f.length() < size) {
                     f.delete();
-                break;
-            case CLEAN_SMALL_FILES:
-                for(File f: dir.listFiles())
-                    if(f.length() < size)
-                        f.delete();
-                break;
-            case CLEAN_BY_DATE:
-                cleanUp();
-                break;
+                }
+            break;
+        case CLEAN_BY_DATE:
+            cleanUp();
+            break;
         }
     }
 
@@ -281,8 +290,9 @@ public class CacheFiles {
         if(!enabled) return -1;
         long dirsize = 0;
 
-        for(File f : this.dir.listFiles())
+        for(File f : this.dir.listFiles()) {
             dirsize += f.length();
+        }
         return dirsize;
     }
 
