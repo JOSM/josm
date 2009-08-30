@@ -50,7 +50,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -135,7 +134,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                             break;
                         default:
                             Main.map.mapView.setCursor(cursorCrosshair);
-                        break;
+                            break;
                     }
                 }
             });
@@ -339,7 +338,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         if (n != null) {
             // user clicked on node
-            if (selection.isEmpty()) {
+            if (selection.isEmpty() || wayIsFinished) {
                 // select the clicked node and do nothing else
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
@@ -354,7 +353,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // no node found in clicked area
             n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
             if (n.getCoor().isOutSideWorld()) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Cannot add a node outside of the world."),
                         tr("Warning"),
@@ -854,14 +853,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
             default:
                 EastNorth P = n.getEastNorth();
-            seg = segs.iterator().next();
-            A = seg.a.getEastNorth();
-            B = seg.b.getEastNorth();
-            double a = P.distanceSq(B);
-            double b = P.distanceSq(A);
-            double c = A.distanceSq(B);
-            q = (a - b + c) / (2*c);
-            n.setEastNorth(new EastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north())));
+                seg = segs.iterator().next();
+                A = seg.a.getEastNorth();
+                B = seg.b.getEastNorth();
+                double a = P.distanceSq(B);
+                double b = P.distanceSq(A);
+                double c = A.distanceSq(B);
+                q = (a - b + c) / (2*c);
+                n.setEastNorth(new EastNorth(B.east() + q * (A.east() - B.east()), B.north() + q * (A.north() - B.north())));
         }
     }
 
