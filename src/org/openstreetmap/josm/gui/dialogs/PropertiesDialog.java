@@ -465,19 +465,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
                     String str = null;
-                    switch (column) {
-                    case 0:
+                    if (value instanceof String) {
                         str = (String) value;
-                        break;
-                    case 1:
-                        Map<String, Integer> v = (Map<String,Integer>) value;
-                        if (v.size()!=1) {
+                    } else if (value instanceof Map) {
+                        Map v = (Map) value;
+                        if (v.size() != 1) {
                             str=tr("<different>");
                             c.setFont(c.getFont().deriveFont(Font.ITALIC));
                         } else {
-                            str=v.entrySet().iterator().next().getKey();
+                            final Map.Entry entry = (Map.Entry) v.entrySet().iterator().next(); 
+                            str = (String) entry.getKey();
                         }
-                        break;
                     }
                     ((JLabel)c).setText(str);
                 }
