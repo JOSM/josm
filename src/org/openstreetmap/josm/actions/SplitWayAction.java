@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -65,7 +64,7 @@ public class SplitWayAction extends JosmAction {
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         if (!checkSelection(selection)) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("The current selection cannot be used for splitting."),
                     tr("Warning"),
@@ -122,7 +121,7 @@ public class SplitWayAction extends JosmAction {
                 }
             }
             if (wayOccurenceCounter.isEmpty()) {
-                OptionPaneUtil.showMessageDialog(Main.parent,
+                JOptionPane.showMessageDialog(Main.parent,
                         trn("The selected node is not in the middle of any way.",
                                 "The selected nodes are not in the middle of any way.",
                                 selectedNodes.size()),
@@ -134,7 +133,7 @@ public class SplitWayAction extends JosmAction {
             for (Entry<Way, Integer> entry : wayOccurenceCounter.entrySet()) {
                 if (entry.getValue().equals(selectedNodes.size())) {
                     if (selectedWay != null) {
-                        OptionPaneUtil.showMessageDialog(Main.parent,
+                        JOptionPane.showMessageDialog(Main.parent,
                                 trn("There is more than one way using the node you selected. Please select the way also.",
                                         "There is more than one way using the nodes you selected. Please select the way also.",
                                         selectedNodes.size()),
@@ -147,7 +146,7 @@ public class SplitWayAction extends JosmAction {
             }
 
             if (selectedWay == null) {
-                OptionPaneUtil.showMessageDialog(Main.parent,
+                JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected nodes do not share the same way."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE);
@@ -162,7 +161,7 @@ public class SplitWayAction extends JosmAction {
                 nds.remove(n);
             }
             if (!nds.isEmpty()) {
-                OptionPaneUtil.showMessageDialog(Main.parent,
+                JOptionPane.showMessageDialog(Main.parent,
                         trn("The selected way does not contain the selected node.",
                                 "The selected way does not contain all the selected nodes.",
                                 selectedNodes.size()),
@@ -232,7 +231,7 @@ public class SplitWayAction extends JosmAction {
                 && wayChunks.get(0).get(0) == lastWayChunk.get(lastWayChunk.size() - 1)
                 && !nodeSet.contains(wayChunks.get(0).get(0))) {
             if (wayChunks.size() == 2) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("You must select two or more nodes to split a circular way."),
                         tr("Warning"),
@@ -247,13 +246,13 @@ public class SplitWayAction extends JosmAction {
 
         if (wayChunks.size() < 2) {
             if(wayChunks.get(0).get(0) == wayChunks.get(0).get(wayChunks.get(0).size()-1)) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("You must select two or more nodes to split a circular way."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE);
             } else {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("The way cannot be split at the selected nodes. (Hint: Select nodes in the middle of the way.)"),
                         tr("Warning"),
@@ -341,13 +340,13 @@ public class SplitWayAction extends JosmAction {
             }
         }
         if(warnmerole) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>A role based relation membership was copied to all new ways.<br>You should verify this and correct it when necessary.</html>"),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE);
         } else if(warnme) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>A relation membership was copied to all new ways.<br>You should verify this and correct it when necessary.</html>"),
                     tr("Warning"),

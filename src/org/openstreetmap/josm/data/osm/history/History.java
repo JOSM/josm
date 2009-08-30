@@ -1,13 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class History{
     private static interface FilterPredicate {

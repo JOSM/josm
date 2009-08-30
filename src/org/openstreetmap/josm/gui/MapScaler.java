@@ -12,7 +12,6 @@ import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
-import org.openstreetmap.josm.data.coor.LatLon;
 
 public class MapScaler extends JComponent implements Helpful {
 

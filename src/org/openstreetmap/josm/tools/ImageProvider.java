@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -30,7 +32,6 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.MirroredInputStream;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Helperclass to support the application with images.

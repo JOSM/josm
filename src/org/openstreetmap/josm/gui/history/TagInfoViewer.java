@@ -4,8 +4,6 @@ package org.openstreetmap.josm.gui.history;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

@@ -69,7 +69,6 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -730,7 +729,7 @@ public class GeoImageLayer extends Layer {
         try {
             exifDate = ExifReader.readTime(f);
         } catch (ParseException e) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("The date in file \"{0}\" could not be parsed.", f.getName()),
                     tr("Error"),
@@ -739,7 +738,7 @@ public class GeoImageLayer extends Layer {
             return;
         }
         if (exifDate == null) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("There is no EXIF time within the file \"{0}\".", f.getName()),
                     tr("Error"),
@@ -762,7 +761,7 @@ public class GeoImageLayer extends Layer {
         p.add(gpsTimezone, GBC.eol().fill(GBC.HORIZONTAL));
 
         while (true) {
-            int answer = OptionPaneUtil.showConfirmationDialog(
+            int answer = JOptionPane.showConfirmDialog(
                     Main.parent,
                     p,
                     tr("Synchronize Time with GPS Unit"),
@@ -786,14 +785,14 @@ public class GeoImageLayer extends Layer {
                 calculatePosition();
                 return;
             } catch (NumberFormatException x) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Time entered could not be parsed."),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
             } catch (ParseException x) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Time entered could not be parsed."),
                         tr("Error"),

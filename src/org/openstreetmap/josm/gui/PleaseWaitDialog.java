@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GridBagLayout;

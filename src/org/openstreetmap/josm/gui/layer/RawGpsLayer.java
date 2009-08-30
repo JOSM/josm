@@ -40,7 +40,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.tools.GBC;
@@ -213,7 +212,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 } else {
                     group.setSelected(r[0].getModel(), true);
                 }
-                int answer = OptionPaneUtil.showConfirmationDialog(
+                int answer = JOptionPane.showConfirmDialog(
                         Main.parent,
                         panel,
                         tr("Select line drawing options"),
@@ -236,12 +235,12 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
             public void actionPerformed(ActionEvent e) {
                 JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+getName(), Color.gray));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-                int answer = OptionPaneUtil.showOptionDialog(
+                int answer = JOptionPane.showOptionDialog(
                         Main.parent,
                         c,
                         tr("Choose a color"),
                         JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE, options, options[0]);
+                        JOptionPane.PLAIN_MESSAGE, null,options, options[0]);
                 switch (answer) {
                     case 0:
                         Main.pref.putColor("layer "+getName(), c.getColor());

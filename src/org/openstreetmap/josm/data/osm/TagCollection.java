@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * TagCollection is a collection of tags which can be used to manipulate

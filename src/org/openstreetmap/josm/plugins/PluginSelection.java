@@ -37,7 +37,6 @@ import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 public class PluginSelection {
@@ -49,14 +48,14 @@ public class PluginSelection {
     public void updateDescription(JPanel pluginPanel) {
         int count = PluginDownloader.downloadDescription();
         if (count > 0) {
-            OptionPaneUtil.showMessageDialog(Main.parent,
+            JOptionPane.showMessageDialog(Main.parent,
                     trn("Downloaded plugin information from {0} site",
                             "Downloaded plugin information from {0} sites", count, count),
                             tr("Information"),
                             JOptionPane.INFORMATION_MESSAGE
             );
         } else {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("No plugin information found."),
                     tr("Error"),
@@ -89,7 +88,7 @@ public class PluginSelection {
             }
         }
         if (toUpdate.isEmpty()) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("All installed plugins are up to date."),
                     tr("Information"),
@@ -349,7 +348,7 @@ public class PluginSelection {
                         }
                         if(err > 0)
                         {
-                            OptionPaneUtil.showMessageDialog(
+                            JOptionPane.showMessageDialog(
                                     Main.parent,
                                     tr("Error reading plugin information file: {0}", f.getName()),
                                     tr("Error"),

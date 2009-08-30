@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 

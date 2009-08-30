@@ -1,10 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.CredentialsManager;
+import org.openstreetmap.josm.io.OsmConnection;
 
 public class ServerAccessPreference implements PreferenceSetting {
 

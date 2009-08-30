@@ -12,7 +12,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -54,7 +53,7 @@ public class OpenFileAction extends DiskAccessAction {
                 }
         } catch (IOException x) {
             x.printStackTrace();
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Could not read file ''{0}\''. Error is: <br>{1}</html>", file.getName(), x.getMessage()),
                     tr("Error"),

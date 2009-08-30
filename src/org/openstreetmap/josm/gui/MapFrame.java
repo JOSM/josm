@@ -21,7 +21,6 @@ import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
-import org.openstreetmap.josm.gui.ScrollViewport;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;

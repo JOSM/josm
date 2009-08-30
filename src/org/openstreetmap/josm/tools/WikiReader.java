@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,9 +10,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.LanguageInfo;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Read a trac-wiki page.

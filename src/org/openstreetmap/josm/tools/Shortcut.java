@@ -2,18 +2,19 @@
 package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Collection;
+
 import javax.swing.AbstractButton;
-import javax.swing.KeyStroke;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+
+import org.openstreetmap.josm.Main;
 
 /**
  * Global shortcut class.
@@ -443,7 +444,7 @@ public class Shortcut {
 
     // a lengthy warning message
     private static void displayWarning(Shortcut conflictsWith, Shortcut potentialShortcut, String shortText, String longText) {
-        OptionPaneUtil.showMessageDialog(Main.parent,
+        JOptionPane.showMessageDialog(Main.parent,
                 tr("Setting the keyboard shortcut ''{0}'' for the action ''{1}'' ({2}) failed\n"+
                         "because the shortcut is already taken by the action ''{3}'' ({4}).\n\n",
                         conflictsWith.getKeyText(), longText, shortText,

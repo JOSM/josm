@@ -4,10 +4,11 @@ package org.openstreetmap.josm.tools;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Locale;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Vector;
+
 import org.openstreetmap.josm.gui.MainApplication;
 import org.xnap.commons.i18n.I18nFactory;
 

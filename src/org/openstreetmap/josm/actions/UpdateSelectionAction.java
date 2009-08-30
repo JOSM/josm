@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -115,7 +114,7 @@ public class UpdateSelectionAction extends JosmAction {
             return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
         if (selection.size() == 0) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("There are no selected primitives to update."),
                     tr("Selection empty"),

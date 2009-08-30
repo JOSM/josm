@@ -6,10 +6,9 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.ProjectionBounds;
 
 public class LambertEST implements Projection {
 

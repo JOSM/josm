@@ -4,12 +4,12 @@ package org.openstreetmap.josm.data.coor;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.Main;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.projection.Projection;
 
 /**
  * LatLon are unprojected latitude / longitude coordinates.

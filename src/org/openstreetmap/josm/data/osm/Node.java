@@ -1,13 +1,10 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
-import java.util.Locale;
-
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * One node data, consisting of one world coordinate waypoint.

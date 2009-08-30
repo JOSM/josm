@@ -35,7 +35,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -325,7 +324,7 @@ public class ChildRelationBrowser extends JPanel {
             }
 
             if (conflictsCount > 0) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("There were {0} conflicts during import.", conflictsCount),
                         tr("Conflicts in data"),
@@ -347,7 +346,7 @@ public class ChildRelationBrowser extends JPanel {
                     r.getDisplayName(DefaultNameFormatter.getInstance())
             );
 
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     message,
                     tr("Relation is deleted"),
@@ -479,7 +478,7 @@ public class ChildRelationBrowser extends JPanel {
             }
 
             if (conflictsCount > 0) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("There were {0} conflicts during import.", conflictsCount),
                         tr("Conflicts in data"),

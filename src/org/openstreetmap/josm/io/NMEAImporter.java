@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 
@@ -48,13 +47,13 @@ public class NMEAImporter extends FileImporter {
         }
         msg += tr("Zero coordinates: ") + r.getParserZeroCoordinates();
         if (success) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     msg,
                     tr("NMEA import success"),
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
-            OptionPaneUtil.showMessageDialog(Main.parent, msg, tr("NMEA import faliure!"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.parent, msg, tr("NMEA import faliure!"), JOptionPane.ERROR_MESSAGE);
         }
     }
 

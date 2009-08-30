@@ -1,13 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -24,11 +20,8 @@ public final class Way extends OsmPrimitive {
     /**
      * All way nodes in this way
      *
-     * @deprecated This public field will become private or protected in the future.
-     *  Use the new public API instead.
      */
-    @Deprecated
-    public final List<Node> nodes = new ArrayList<Node>();
+    private final List<Node> nodes = new ArrayList<Node>();
 
     /**
      *

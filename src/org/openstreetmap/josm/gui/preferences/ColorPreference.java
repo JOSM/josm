@@ -35,7 +35,6 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.gui.MapScaler;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -156,7 +155,7 @@ public class ColorPreference implements PreferenceSetting {
             public void actionPerformed(ActionEvent e) {
                 int sel = colors.getSelectedRow();
                 JColorChooser chooser = new JColorChooser((Color)colors.getValueAt(sel, 1));
-                int answer = OptionPaneUtil.showConfirmationDialog(
+                int answer = JOptionPane.showConfirmDialog(
                         gui, chooser,
                         tr("Choose a color for {0}", getName((String)colors.getValueAt(sel, 0))),
                         JOptionPane.OK_CANCEL_OPTION,

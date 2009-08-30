@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui.tagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionEvent;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -14,7 +14,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.PresetTextComparator;
 
 public class TaggingPresetMenu extends TaggingPreset {

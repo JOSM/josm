@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 
 /**
  * Represents a relation member in the the context of a historical view on

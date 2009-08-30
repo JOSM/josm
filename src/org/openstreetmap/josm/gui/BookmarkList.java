@@ -41,7 +41,7 @@ public class BookmarkList extends JList {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Could not read bookmarks.<br>{0}</html>", e.getMessage()),
                     tr("Error"),
@@ -61,7 +61,7 @@ public class BookmarkList extends JList {
             }
             Main.pref.saveBookmarks(bookmarks);
         } catch (IOException e) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Could not write bookmark.<br>{0}</html>", e.getMessage()),
                     tr("Error"),

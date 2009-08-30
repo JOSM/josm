@@ -19,7 +19,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -104,7 +103,7 @@ public class DownloadOsmTaskList implements Runnable {
         }
 
         if(! errors.equals("")) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     "<html>"+tr("The following errors occurred during mass download:{0}", errors)
                     +"</html>",
@@ -186,19 +185,20 @@ public class DownloadOsmTaskList implements Runnable {
                 potentiallyDeleted.size(), options[0], options[1]
         );
 
-        int ret =OptionPaneUtil.showOptionDialog(
+        int ret =JOptionPane.showOptionDialog(
                 Main.parent,
                 message,
                 tr("Deleted or moved primitives"),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE,
+                null,
                 options,
                 options[0]
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case JOptionPane.NO_OPTION: return;
-        case JOptionPane.YES_OPTION: updatePotentiallyDeletedPrimitives(potentiallyDeleted); break;
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.NO_OPTION: return;
+            case JOptionPane.YES_OPTION: updatePotentiallyDeletedPrimitives(potentiallyDeleted); break;
         }
     }
 

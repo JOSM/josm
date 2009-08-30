@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.util.logging.Logger;
@@ -8,8 +10,6 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * The {@see TableCellRenderer} for a list of tagsin {@see HistoryBrower}

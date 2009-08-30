@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

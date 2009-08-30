@@ -23,7 +23,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -200,7 +199,7 @@ public final class CreateCircleAction extends JosmAction {
             double sUnder = (x1 - x2)*(y3 - y1) - (y2 - y1)*(x1 - x3);
 
             if (sUnder == 0) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Those nodes are not in a circle. Aborting."),
                         tr("Warning"),
@@ -261,7 +260,7 @@ public final class CreateCircleAction extends JosmAction {
             }
 
         } else {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Please select exactly two or three nodes or one way with exactly two or three nodes."),
                     tr("Information"),

@@ -1,9 +1,8 @@
 // License: GPL. Copyright 2009 by David Earl and others
 package org.openstreetmap.josm.tools;
 
-import java.io.IOException;
-import java.net.URL;
 import java.io.File;
+import java.net.URL;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;

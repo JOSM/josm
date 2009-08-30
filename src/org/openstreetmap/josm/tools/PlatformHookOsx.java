@@ -10,7 +10,6 @@ import java.lang.reflect.Proxy;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.mapmode.SelectAction;
 
 /**
  * see PlatformHook.java

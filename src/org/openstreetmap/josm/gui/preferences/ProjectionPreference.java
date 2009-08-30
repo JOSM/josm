@@ -3,19 +3,17 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.GBC;

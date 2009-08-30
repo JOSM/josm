@@ -22,7 +22,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -47,7 +46,7 @@ public class SearchAction extends JosmAction{
         if (!isEnabled())
             return;
         if (Main.map == null) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Can't search because there is no loaded data."),
                     tr("Warning"),
@@ -199,7 +198,7 @@ public class SearchAction extends JosmAction{
                     msg = tr("Nothing removed from selection by searching for ''{0}''", search);
                 }
                 Main.map.statusLine.setHelpText(msg);
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         msg,
                         tr("Warning"),
@@ -209,7 +208,7 @@ public class SearchAction extends JosmAction{
                 Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
             }
         } catch (SearchCompiler.ParseError e) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     e.getMessage(),
                     tr("Error"),

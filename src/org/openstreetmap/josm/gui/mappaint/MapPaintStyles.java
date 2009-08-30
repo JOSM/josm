@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.InputSource;

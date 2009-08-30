@@ -22,7 +22,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class ReverseWayAction extends JosmAction {
@@ -45,7 +44,7 @@ public final class ReverseWayAction extends JosmAction {
             }
         }
         if (sel.isEmpty()) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Please select at least one way."),
                     tr("Information"),

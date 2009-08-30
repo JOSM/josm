@@ -58,7 +58,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
@@ -134,7 +133,7 @@ public class GpxLayer extends Layer {
                 } else {
                     group.setSelected(r[0].getModel(), true);
                 }
-                int answer = OptionPaneUtil.showConfirmationDialog(Main.parent, panel,
+                int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
                         tr("Select line drawing options"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (answer) {
                     case JOptionPane.CANCEL_OPTION:
@@ -158,12 +157,13 @@ public class GpxLayer extends Layer {
             public void actionPerformed(ActionEvent e) {
                 JColorChooser c = new JColorChooser(getColor(getName()));
                 Object[] options = new Object[] { tr("OK"), tr("Cancel"), tr("Default") };
-                int answer = OptionPaneUtil.showOptionDialog(
+                int answer = JOptionPane.showOptionDialog(
                         Main.parent,
                         c,
                         tr("Choose a color"),
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE,
+                        null,
                         options, options[0]
                 );
                 switch (answer) {
@@ -781,7 +781,7 @@ public class GpxLayer extends Layer {
             JList maxRect = new JList(s);
             msg.add(maxRect, GBC.eol());
 
-            int ret = OptionPaneUtil.showConfirmationDialog(
+            int ret = JOptionPane.showConfirmDialog(
                     Main.parent,
                     msg,
                     tr("Download from OSM along this track"),
@@ -879,7 +879,7 @@ public class GpxLayer extends Layer {
                                     toDownload.size())), GBC.eol());
 
             if (toDownload.size() > 1) {
-                ret = OptionPaneUtil.showConfirmationDialog(
+                ret = JOptionPane.showConfirmDialog(
                         Main.parent,
                         msg,
                         tr("Download from OSM along this track"),
@@ -969,7 +969,7 @@ public class GpxLayer extends Layer {
             }
         }
         if (firstTime < 0.0) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("No GPX track available in layer to associate audio with."),
                     tr("Error"),

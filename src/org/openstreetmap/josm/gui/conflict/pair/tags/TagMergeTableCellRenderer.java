@@ -1,13 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.tags;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 public abstract class TagMergeTableCellRenderer extends JLabel implements TableCellRenderer {
 

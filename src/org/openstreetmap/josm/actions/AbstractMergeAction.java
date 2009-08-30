@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -81,7 +80,7 @@ public abstract class AbstractMergeAction extends JosmAction {
     }
 
     protected void warnNoTargetLayersForSourceLayer(Layer sourceLayer) {
-        OptionPaneUtil.showMessageDialog(Main.parent,
+        JOptionPane.showMessageDialog(Main.parent,
                 tr("<html>There are no layers the source layer<br>''{0}''<br>could be merged to.</html>"),
                 tr("No target layers"), JOptionPane.WARNING_MESSAGE);
     }

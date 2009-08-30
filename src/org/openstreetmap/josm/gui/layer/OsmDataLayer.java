@@ -57,7 +57,6 @@ import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -295,7 +294,7 @@ public class OsmDataLayer extends Layer {
             }
         }
         if (numNewConflicts > 0) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("There were {0} conflicts during import.", numNewConflicts),
                     tr("Warning"),

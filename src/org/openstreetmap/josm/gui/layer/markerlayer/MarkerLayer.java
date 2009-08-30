@@ -34,7 +34,6 @@ import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -199,12 +198,13 @@ public class MarkerLayer extends Layer {
             public void actionPerformed(ActionEvent e) {
                 JColorChooser c = new JColorChooser(getColor(getName()));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-                int answer = OptionPaneUtil.showOptionDialog(
+                int answer = JOptionPane.showOptionDialog(
                         Main.parent,
                         c,
                         tr("Choose a color"),
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE,
+                        null,
                         options,
                         options[0]
                 );
@@ -227,7 +227,7 @@ public class MarkerLayer extends Layer {
         syncaudio.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 if (! AudioPlayer.paused()) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("You need to pause audio at the moment when you hear your synchronization cue."),
                             tr("Warning"),
@@ -237,14 +237,14 @@ public class MarkerLayer extends Layer {
                 }
                 AudioMarker recent = AudioMarker.recentlyPlayedMarker();
                 if (synchronizeAudioMarkers(recent)) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Audio synchronized at point {0}.", recent.text),
                             tr("Information"),
                             JOptionPane.INFORMATION_MESSAGE
                     );
                 } else {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Unable to synchronize in layer being played."),
                             tr("Error"),
@@ -259,7 +259,7 @@ public class MarkerLayer extends Layer {
         moveaudio.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 if (! AudioPlayer.paused()) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("You need to have paused audio at the point on the track where you want the marker."),
                             tr("Warning"),
@@ -338,7 +338,7 @@ public class MarkerLayer extends Layer {
             }
         }
         if (am == null) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("No existing audio markers in this layer to offset from."),
                     tr("Error"),

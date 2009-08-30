@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Represents an immutable OSM primitive in the context of a historical view on

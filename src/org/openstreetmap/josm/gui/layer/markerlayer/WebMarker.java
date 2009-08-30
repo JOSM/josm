@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
@@ -39,7 +38,7 @@ public class WebMarker extends ButtonMarker {
     @Override public void actionPerformed(ActionEvent ev) {
         String error = OpenBrowser.displayUrl(webUrl.toString());
         if (error != null) {
-            OptionPaneUtil.showMessageDialog(Main.parent,
+            JOptionPane.showMessageDialog(Main.parent,
                     "<html><b>" +
                     tr("There was an error while trying to display the URL for this marker") +
                     "</b><br>" + tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error,

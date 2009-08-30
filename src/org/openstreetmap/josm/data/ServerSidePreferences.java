@@ -11,9 +11,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.Base64;
@@ -83,7 +82,7 @@ public class ServerSidePreferences extends Preferences {
                 out.close();
                 con.getInputStream().close();
                 con.disconnect();
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Preferences stored on {0}", u.getHost()),
                         tr("Information"),
@@ -91,7 +90,7 @@ public class ServerSidePreferences extends Preferences {
                 );
             } catch (Exception e) {
                 e.printStackTrace();
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Could not upload preferences. Reason: {0}", e.getMessage()),
                         tr("Error"),
@@ -107,7 +106,7 @@ public class ServerSidePreferences extends Preferences {
             connection = new Connection(new URL(serverUrl+"user/preferences"));
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Could not load preferences from server."),
                     tr("Error"),

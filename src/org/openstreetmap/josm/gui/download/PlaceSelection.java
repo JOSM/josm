@@ -31,9 +31,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
-import org.openstreetmap.josm.gui.download.DownloadDialog;
-import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -166,7 +163,7 @@ public class PlaceSelection implements DownloadSelection {
                     String searchtext = searchTerm.getText();
                     if(searchtext.length()==0)
                     {
-                        OptionPaneUtil.showMessageDialog(
+                        JOptionPane.showMessageDialog(
                                 Main.parent,
                                 tr("Please enter a search string"),
                                 tr("Information"),
@@ -190,7 +187,7 @@ public class PlaceSelection implements DownloadSelection {
                 catch (Exception x)
                 {
                     x.printStackTrace();
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Cannot read place search results from server"),
                             tr("Error"),

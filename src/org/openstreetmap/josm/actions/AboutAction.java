@@ -14,9 +14,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -31,8 +31,8 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
-import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.UrlLabel;
 
 /**
  * Nice about screen. I guess every application need one these days.. *sigh*

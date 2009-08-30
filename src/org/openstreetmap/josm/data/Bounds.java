@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data;
 import java.awt.geom.Rectangle2D;
 
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projection;
 
 /**
  * This is a simple data class for "rectangular" areas of the world, given in

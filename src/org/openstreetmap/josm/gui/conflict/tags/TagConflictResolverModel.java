@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.tags;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
-import static org.openstreetmap.josm.tools.I18n.tr;
+
 import org.openstreetmap.josm.data.osm.TagCollection;
 
 public class TagConflictResolverModel extends DefaultTableModel {

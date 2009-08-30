@@ -6,11 +6,10 @@ import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.openstreetmap.josm.Main;
 
 public class ElemStyleHandler extends DefaultHandler
 {

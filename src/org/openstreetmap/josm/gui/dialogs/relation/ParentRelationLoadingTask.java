@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -133,7 +132,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
         if (msg == null) {
             msg = lastException.toString();
         }
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 msg,
                 tr("Error"),
@@ -186,7 +185,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
                 if (visitor.getConflicts().isEmpty())
                     return;
                 getLayer().getConflicts().add(visitor.getConflicts());
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("There were {0} conflicts during import.",
                                 visitor.getConflicts().size()),

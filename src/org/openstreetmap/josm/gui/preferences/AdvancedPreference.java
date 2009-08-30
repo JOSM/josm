@@ -29,7 +29,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.GBC;
 
 public class AdvancedPreference implements PreferenceSetting {
@@ -218,7 +217,7 @@ public class AdvancedPreference implements PreferenceSetting {
 
     private void editPreference(final PreferenceDialog gui, final JTable list) {
         if (list.getSelectedRowCount() != 1) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     gui,
                     tr("Please select the row to edit."),
                     tr("Warning"),
@@ -226,7 +225,7 @@ public class AdvancedPreference implements PreferenceSetting {
             );
             return;
         }
-        String v = (String) OptionPaneUtil.showInputDialog(
+        String v = (String) JOptionPane.showInputDialog(
                 Main.parent,
                 tr("New value for {0}", model.getValueAt(list.getSelectedRow(), 0)),
                 tr("New value"),
@@ -243,7 +242,7 @@ public class AdvancedPreference implements PreferenceSetting {
 
     private void removePreference(final PreferenceDialog gui, final JTable list) {
         if (list.getSelectedRowCount() == 0) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     gui,
                     tr("Please select the row to delete."),
                     tr("Warning"),
@@ -265,7 +264,7 @@ public class AdvancedPreference implements PreferenceSetting {
         p.add(key, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
         p.add(new JLabel(tr("Value")), GBC.std().insets(0,0,5,0));
         p.add(value, GBC.eol().insets(5,0,0,0).fill(GBC.HORIZONTAL));
-        int answer = OptionPaneUtil.showConfirmationDialog(
+        int answer = JOptionPane.showConfirmDialog(
                 gui, p,
                 tr("Enter a new key/value pair"),
                 JOptionPane.OK_CANCEL_OPTION,

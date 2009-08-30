@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -27,7 +26,7 @@ public class DataSetChecker {
                     if (s.contains(osm)) {
                         // FIXME: better message
                         // FIXME: translate message and title
-                        OptionPaneUtil.showMessageDialog(
+                        JOptionPane.showMessageDialog(
                                 Main.parent,
                                 "cross references",
                                 "Information",
@@ -42,7 +41,7 @@ public class DataSetChecker {
         if (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
             OsmDataLayer l = (OsmDataLayer)Main.map.mapView.getActiveLayer();
             if (l.data != Main.main.getCurrentDataSet()) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         "Main.ds / active layer mismatch",
                         "Error",
@@ -52,7 +51,7 @@ public class DataSetChecker {
             }
         }
 
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent, "working", "", JOptionPane.INFORMATION_MESSAGE);
     }
 }

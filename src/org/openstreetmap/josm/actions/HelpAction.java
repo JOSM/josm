@@ -29,7 +29,6 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -110,7 +109,7 @@ public class HelpAction extends AbstractAction {
             OpenBrowser.displayUrl(url);
         } else if (tr("Edit").equals(e.getActionCommand())) {
             if (!url.startsWith(baseurl)) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Can only edit help pages from JOSM Online Help"),
                         tr("Warning"),

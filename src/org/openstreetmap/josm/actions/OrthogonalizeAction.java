@@ -22,7 +22,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -59,7 +58,7 @@ public final class OrthogonalizeAction extends JosmAction {
             // Check if not more than two nodes in the selection
             if(osm instanceof Node) {
                 if(dirnodes.size() == 2) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Only two nodes allowed"),
                             tr("Information"),
@@ -72,7 +71,7 @@ public final class OrthogonalizeAction extends JosmAction {
             }
             // Check if selection consists now only of ways
             if (!(osm instanceof Way)) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Selection must consist only of ways."),
                         tr("Information"),
@@ -84,7 +83,7 @@ public final class OrthogonalizeAction extends JosmAction {
             // Check if every way is made of at least four segments and closed
             Way way = (Way)osm;
             if ((way.getNodesCount() < 5) || !way.isClosed()) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Please select one or more closed ways of at least four nodes."),
                         tr("Information"),
@@ -136,7 +135,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
         // Check, if selection held neither none nor two nodes
         if(dirnodes.size() == 1) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Only one node selected"),
                     tr("Warning"),

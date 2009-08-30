@@ -17,7 +17,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -79,7 +78,7 @@ public class OsmExporter extends FileExporter {
             layer.cleanupAfterSaveToDisk();
         } catch (IOException e) {
             e.printStackTrace();
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>An error occurred while saving.<br>Error is: <br>{0}</html>", e.getMessage()),
                     tr("Error"),
@@ -94,7 +93,7 @@ public class OsmExporter extends FileExporter {
                 }
             } catch (IOException e2) {
                 e2.printStackTrace();
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>An error occurred while restoring backup file.<br>Error is: <br>{0}</html>", e2.getMessage()),
                         tr("Error"),
@@ -111,7 +110,7 @@ public class OsmExporter extends FileExporter {
             srcStream = new FileInputStream(src);
             dstStream = new FileOutputStream(dst);
         } catch (FileNotFoundException e) {
-            OptionPaneUtil.showMessageDialog(Main.parent, tr("Could not back up file. Exception is: {0}", e
+            JOptionPane.showMessageDialog(Main.parent, tr("Could not back up file. Exception is: {0}", e
                     .getMessage()), tr("Error"), JOptionPane.ERROR_MESSAGE);
             return;
         }

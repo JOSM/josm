@@ -17,7 +17,6 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -60,7 +59,7 @@ public final class AlignInLineAction extends JosmAction {
                 }
         }
         if (nodes.size() < 3) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Please select at least three nodes."),
                     tr("Information"),

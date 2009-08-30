@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import java.awt.Color;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Color;
 import java.awt.Component;
 import java.util.HashMap;
 

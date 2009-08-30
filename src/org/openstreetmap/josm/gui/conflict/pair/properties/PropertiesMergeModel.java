@@ -26,7 +26,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
@@ -212,9 +211,9 @@ public class PropertiesMergeModel extends Observable {
      */
     public LatLon getMergedCoords() {
         switch(coordMergeDecision) {
-        case KEEP_MINE: return myCoords;
-        case KEEP_THEIR: return theirCoords;
-        case UNDECIDED: return null;
+            case KEEP_MINE: return myCoords;
+            case KEEP_THEIR: return theirCoords;
+            case UNDECIDED: return null;
         }
         // should not happen
         return null;
@@ -246,9 +245,9 @@ public class PropertiesMergeModel extends Observable {
 
     public Boolean getMergedDeletedState() {
         switch(deletedMergeDecision) {
-        case KEEP_MINE: return myDeletedState;
-        case KEEP_THEIR: return theirDeletedState;
-        case UNDECIDED: return null;
+            case KEEP_MINE: return myDeletedState;
+            case KEEP_THEIR: return theirDeletedState;
+            case UNDECIDED: return null;
         }
         // should not happen
         return null;
@@ -279,9 +278,9 @@ public class PropertiesMergeModel extends Observable {
      */
     public Boolean getMergedVisibleState() {
         switch(visibleMergeDecision) {
-        case KEEP_MINE: return myVisibleState;
-        case KEEP_THEIR: return theirVisibleState;
-        case UNDECIDED: return null;
+            case KEEP_MINE: return myVisibleState;
+            case KEEP_THEIR: return theirVisibleState;
+            case UNDECIDED: return null;
         }
         // should not happen
         return null;
@@ -417,7 +416,7 @@ public class PropertiesMergeModel extends Observable {
         e.printStackTrace();
         String msg = e.getMessage() != null ? e.getMessage() : e.toString();
         msg = msg.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 tr("<html>An error occurred while communicating with the server<br>"
                         + "Details: {0}</html>",
@@ -468,7 +467,7 @@ public class PropertiesMergeModel extends Observable {
                 tr("Yes, undelete them too"),
                 tr("No, cancel operation")
         };
-        int ret = OptionPaneUtil.showOptionDialog(
+        int ret = JOptionPane.showOptionDialog(
                 Main.parent,
                 tr("<html>There are {0} additional nodes used by way {1}<br>"
                         + "which are deleted on the server.<br>"
@@ -478,14 +477,15 @@ public class PropertiesMergeModel extends Observable {
                         tr("Undelete additional nodes?"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
+                        null,
                         options,
                         options[0]
         );
 
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return false;
-        case JOptionPane.YES_OPTION: return true;
-        case JOptionPane.NO_OPTION: return false;
+            case JOptionPane.CLOSED_OPTION: return false;
+            case JOptionPane.YES_OPTION: return true;
+            case JOptionPane.NO_OPTION: return false;
         }
         return false;
 
@@ -496,7 +496,7 @@ public class PropertiesMergeModel extends Observable {
                 tr("Yes, undelete them too"),
                 tr("No, cancel operation")
         };
-        int ret = OptionPaneUtil.showOptionDialog(
+        int ret = JOptionPane.showOptionDialog(
                 Main.parent,
                 tr("<html>There are {0} additional primitives referred to by relation {1}<br>"
                         + "which are deleted on the server.<br>"
@@ -506,14 +506,15 @@ public class PropertiesMergeModel extends Observable {
                         tr("Undelete dependent primitives?"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
+                        null,
                         options,
                         options[0]
         );
 
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return false;
-        case JOptionPane.YES_OPTION: return true;
-        case JOptionPane.NO_OPTION: return false;
+            case JOptionPane.CLOSED_OPTION: return false;
+            case JOptionPane.YES_OPTION: return true;
+            case JOptionPane.NO_OPTION: return false;
         }
         return false;
 

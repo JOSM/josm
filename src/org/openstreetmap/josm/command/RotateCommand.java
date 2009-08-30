@@ -1,6 +1,5 @@
 package org.openstreetmap.josm.command;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;

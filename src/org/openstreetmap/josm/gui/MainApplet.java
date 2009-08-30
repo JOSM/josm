@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.applet.AppletStub;
 import java.applet.AppletContext;
+import java.applet.AppletStub;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

@@ -3,14 +3,11 @@
 
 package org.openstreetmap.josm.data.gpx;
 
-import java.util.Date;
 import java.awt.Color;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.DateUtils;
 
 public class WayPoint extends WithAttributes implements Comparable<WayPoint>

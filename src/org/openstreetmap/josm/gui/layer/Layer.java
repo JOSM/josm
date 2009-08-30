@@ -65,11 +65,8 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     /**
      * The visibility state of the layer.
      * 
-     * @deprecated use {@see #setVisible(boolean)} and {@see #isVisible()} instead. This field
-     * is going to be private (or protected) in a future release.
      */
-    @Deprecated
-    public boolean visible = true;
+    private boolean visible = true;
 
     /**
      * The layer should be handled as a background layer in automatic handling
@@ -79,11 +76,9 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     /**
      * The name of this layer.
      * 
-     * @deprecated use {@see #getName()} and {@see #setName(String)} instead. This field
-     * is going to be private  (or protected) in the future.
      */
-    @Deprecated
-    public String name;
+    private  String name;
+
     /**
      * If a file is associated with this layer, this variable should be set to it.
      */

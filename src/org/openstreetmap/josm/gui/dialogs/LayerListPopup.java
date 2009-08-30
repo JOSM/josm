@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -28,7 +27,7 @@ public class LayerListPopup extends JPopupMenu {
             this.layer = layer;
         }
         public void actionPerformed(ActionEvent e) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     layer.getInfoComponent(),
                     tr("Information about layer"),

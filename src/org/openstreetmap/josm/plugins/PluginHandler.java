@@ -33,7 +33,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.tools.GBC;
@@ -66,7 +65,7 @@ public class PluginHandler {
             if (plugins.contains(p)) {
                 plugins.remove(p);
                 Main.pref.removeFromCollection("plugins", p);
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Loading of {0} plugin was requested. This plugin is no longer required.", p),
                         tr("Warning"),
@@ -86,7 +85,7 @@ public class PluginHandler {
                     continue;
                 }
                 if (info.mainversion > AboutAction.getVersionNumber()) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Plugin {0} requires JOSM update to version {1}.", pluginName,
                                     info.mainversion),
@@ -105,7 +104,7 @@ public class PluginHandler {
                     }
                     if(warn != null)
                     {
-                        OptionPaneUtil.showMessageDialog(Main.parent,
+                        JOptionPane.showMessageDialog(Main.parent,
                                 tr("Plugin {0} is required by plugin {1} but was not found.",
                                         warn, pluginName),
                                         tr("Error"),
@@ -119,7 +118,7 @@ public class PluginHandler {
                 }
                 p.get(info.stage).add(info);
             } else if(early) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Plugin not found: {0}.", pluginName),
                         tr("Error"),
@@ -136,7 +135,7 @@ public class PluginHandler {
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
             } else if (d > maxTime) {
-                OptionPaneUtil.showMessageDialog(Main.parent,
+                JOptionPane.showMessageDialog(Main.parent,
                         "<html>" +
                         tr("Last plugin update more than {0} days ago.", d) +
                         "<br><em>" +
@@ -216,7 +215,7 @@ public class PluginHandler {
     public static void earlyCleanup()
     {
         if (!PluginDownloader.moveUpdatedPlugins()) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Activating the updated plugins failed. Check if JOSM has the permission to overwrite the existing ones."),
                     tr("Plugins"), JOptionPane.ERROR_MESSAGE);
@@ -296,12 +295,12 @@ public class PluginHandler {
                 if (plugins.contains(plugin.info.name)) {
                     while (plugins.remove(plugin.info.name)) {}
                     Main.pref.putCollection("plugins", plugins);
-                    OptionPaneUtil.showMessageDialog(Main.parent,
+                    JOptionPane.showMessageDialog(Main.parent,
                             tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
                             tr("Information"),
                             JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("The plugin could not be removed. Probably it was already disabled"),
                             tr("Error"),
@@ -344,7 +343,7 @@ public class PluginHandler {
                     JTextArea a = new JTextArea(10,40);
                     a.setEditable(false);
                     a.setText(b.toString());
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             new JScrollPane(a),
                             tr("Plugin information"),

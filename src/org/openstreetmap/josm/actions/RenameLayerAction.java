@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -88,7 +87,7 @@ public class RenameLayerAction extends AbstractAction {
                     layer.setAssociatedFile(newFile);
                     nameText = newFile.getName();
                 } else {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Could not rename file ''{0}''", file.getPath()),
                             tr("Error"),

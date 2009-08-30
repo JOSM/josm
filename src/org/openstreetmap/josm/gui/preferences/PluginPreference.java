@@ -22,7 +22,6 @@ import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.plugins.PluginDownloader;
 import org.openstreetmap.josm.plugins.PluginSelection;
 import org.openstreetmap.josm.tools.GBC;
@@ -87,7 +86,7 @@ public class PluginPreference implements PreferenceSetting {
         JPanel buttons = new JPanel(new GridBagLayout());
         buttons.add(new JButton(new AbstractAction(tr("Add")){
             public void actionPerformed(ActionEvent e) {
-                String s = OptionPaneUtil.showInputDialog(
+                String s = JOptionPane.showInputDialog(
                         gui,
                         tr("Add JOSM Plugin description URL."),
                         tr("Enter URL"),
@@ -101,7 +100,7 @@ public class PluginPreference implements PreferenceSetting {
         buttons.add(new JButton(new AbstractAction(tr("Edit")){
             public void actionPerformed(ActionEvent e) {
                 if (list.getSelectedValue() == null) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             gui,
                             tr("Please select an entry."),
                             tr("Warning"),
@@ -109,7 +108,7 @@ public class PluginPreference implements PreferenceSetting {
                     );
                     return;
                 }
-                String s = (String)OptionPaneUtil.showInputDialog(
+                String s = (String)JOptionPane.showInputDialog(
                         Main.parent,
                         tr("Edit JOSM Plugin description URL."),
                         tr("JOSM Plugin description URL"),
@@ -124,7 +123,7 @@ public class PluginPreference implements PreferenceSetting {
         buttons.add(new JButton(new AbstractAction(tr("Delete")){
             public void actionPerformed(ActionEvent event) {
                 if (list.getSelectedValue() == null) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             gui,
                             tr("Please select an entry."),
                             tr("Warning"),
@@ -136,7 +135,7 @@ public class PluginPreference implements PreferenceSetting {
             }
         }), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(buttons, GBC.eol());
-        int answer = OptionPaneUtil.showConfirmationDialog(
+        int answer = JOptionPane.showConfirmDialog(
                 gui,
                 p,
                 tr("Configure Plugin Sites"), JOptionPane.OK_CANCEL_OPTION,

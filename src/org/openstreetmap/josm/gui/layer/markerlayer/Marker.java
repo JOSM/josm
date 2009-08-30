@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import javax.swing.Icon;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;

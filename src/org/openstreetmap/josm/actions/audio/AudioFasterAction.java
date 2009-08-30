@@ -2,9 +2,10 @@
 package org.openstreetmap.josm.actions.audio;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import org.openstreetmap.josm.tools.Shortcut;
 
 import java.awt.event.KeyEvent;
+
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioFasterAction extends AudioFastSlowAction {
 

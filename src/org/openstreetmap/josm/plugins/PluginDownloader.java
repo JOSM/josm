@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.xml.sax.SAXException;
 
@@ -50,14 +49,14 @@ public class PluginDownloader {
 
         @Override protected void finish() {
             if (errors.length() > 0) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("There were problems with the following plugins:\n\n {0}",errors),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
             } else {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         trn("{0} Plugin successfully downloaded. Please restart JOSM.", "{0} Plugins successfully downloaded. Please restart JOSM.", count, count),
                         tr("Information"),

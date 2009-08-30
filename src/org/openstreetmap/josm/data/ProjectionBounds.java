@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data;
 
-import java.awt.geom.Rectangle2D;
-
 import org.openstreetmap.josm.data.coor.EastNorth;
 
 /**

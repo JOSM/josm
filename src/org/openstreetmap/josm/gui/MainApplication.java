@@ -20,8 +20,8 @@ import javax.swing.JFrame;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Main window class application.

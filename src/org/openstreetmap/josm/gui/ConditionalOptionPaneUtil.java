@@ -88,7 +88,7 @@ public class ConditionalOptionPaneUtil {
         if (!getDialogShowingEnabled(preferenceKey))
             return DIALOG_DISABLED_OPTION;
         MessagePanel pnl = new MessagePanel(preferenceKey, message);
-        int ret = OptionPaneUtil.showOptionDialog(parent, pnl, title, optionType, messageType, options,defaultOption);
+        int ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null,options,defaultOption);
         pnl.remeberDialogShowingEnabled();
         return ret;
     }
@@ -127,9 +127,9 @@ public class ConditionalOptionPaneUtil {
         if (!getDialogShowingEnabled(preferenceKey))
             return true;
         MessagePanel pnl = new MessagePanel(preferenceKey, message);
-        boolean ret = OptionPaneUtil.showConfirmationDialog(parent, pnl, title, optionType, messageType, trueOption);
+        int ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
         pnl.remeberDialogShowingEnabled();
-        return ret;
+        return ret == trueOption;
     }
 
     /**
@@ -154,7 +154,7 @@ public class ConditionalOptionPaneUtil {
         if (!getDialogShowingEnabled(preferenceKey))
             return;
         MessagePanel pnl = new MessagePanel(preferenceKey, message);
-        OptionPaneUtil.showMessageDialog(parent, pnl, title, messageType);
+        JOptionPane.showMessageDialog(parent, pnl, title, messageType);
         pnl.remeberDialogShowingEnabled();
     }
 

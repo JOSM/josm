@@ -15,7 +15,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -66,7 +65,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 }
             }
             if (!exported) {
-                OptionPaneUtil.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
+                JOptionPane.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
                         JOptionPane.WARNING_MESSAGE);
                 return false;
             }
@@ -89,7 +88,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     public boolean checkSaveConditions(Layer layer) {
         if (layer == null) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Internal Error: cannot check conditions for no layer. Please report this as a bug."),
                     tr("Error"),
@@ -98,7 +97,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return false;
         }
         if (Main.map == null) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("No document open so nothing to save."),
                     tr("Warning"),

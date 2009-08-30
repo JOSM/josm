@@ -7,9 +7,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -22,7 +22,6 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.BookmarkList;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -78,7 +77,7 @@ public class BookmarkSelection implements DownloadSelection {
             public void actionPerformed(ActionEvent e) {
 
                 if (tempBookmark == null) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Please enter the desired coordinates first."),
                             tr("Information"),
@@ -86,7 +85,7 @@ public class BookmarkSelection implements DownloadSelection {
                     );
                     return;
                 }
-                tempBookmark.name = OptionPaneUtil.showInputDialog(
+                tempBookmark.name = JOptionPane.showInputDialog(
                         Main.parent,tr("Please enter a name for the location."),
                         tr("Name of location"),
                         JOptionPane.QUESTION_MESSAGE
@@ -103,7 +102,7 @@ public class BookmarkSelection implements DownloadSelection {
             public void actionPerformed(ActionEvent e) {
                 Object sel = bookmarks.getSelectedValue();
                 if (sel == null) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Select a bookmark first."),
                             tr("Information"),

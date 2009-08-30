@@ -20,7 +20,6 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.plugins.PluginHandler;
 
 /**
@@ -38,7 +37,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
         if (Main.parent != null) {
             if (e instanceof OutOfMemoryError) {
                 // do not translate the string, as translation may raise an exception
-                OptionPaneUtil.showMessageDialog(Main.parent, "JOSM is out of memory. " +
+                JOptionPane.showMessageDialog(Main.parent, "JOSM is out of memory. " +
                         "Strange things may happen.\nPlease restart JOSM with the -Xmx###M option,\n" +
                         "where ### is the the number of MB assigned to JOSM (e.g. 256).\n" +
                         "Currently, " + Runtime.getRuntime().maxMemory()/1024/1024 + " MB are available to JOSM.",
@@ -52,10 +51,10 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 return;
 
             Object[] options = new String[]{tr("Do nothing"), tr("Report Bug")};
-            int answer = OptionPaneUtil.showOptionDialog(Main.parent, tr("An unexpected exception occurred.\n\n" +
+            int answer = JOptionPane.showOptionDialog(Main.parent, tr("An unexpected exception occurred.\n\n" +
                     "This is always a coding error. If you are running the latest\n" +
             "version of JOSM, please consider being kind and file a bug report."),
-            tr("Unexpected Exception"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE,
+            tr("Unexpected Exception"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE,null,
             options, options[0]);
             if (answer == 1) {
                 try {
@@ -83,7 +82,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     info.setEditable(false);
                     p.add(new JScrollPane(info), GBC.eop());
 
-                    OptionPaneUtil.showMessageDialog(Main.parent, p, tr("Warning"), JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(Main.parent, p, tr("Warning"), JOptionPane.WARNING_MESSAGE);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
-import org.openstreetmap.josm.tools.Shortcut;
-
 import java.io.IOException;
 
 /**

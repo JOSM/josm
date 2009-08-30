@@ -29,8 +29,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
-import org.openstreetmap.josm.data.projection.Mercator;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -334,7 +332,7 @@ public class Preferences {
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {
             if(!prefDir.isDirectory()) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Cannot open preferences directory: {0}",Main.pref.getPreferencesDir()),
                         tr("Error"),
@@ -359,7 +357,7 @@ public class Preferences {
         } catch (final IOException e1) {
             e1.printStackTrace();
             String backup = getPreferencesDir() + "preferences.bak";
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Preferences file had errors. Making backup of old one to {0}.", backup),
                     tr("Error"),

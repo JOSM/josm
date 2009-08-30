@@ -7,9 +7,9 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**

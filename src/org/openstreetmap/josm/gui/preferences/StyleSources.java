@@ -3,12 +3,10 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -24,12 +22,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -139,7 +136,7 @@ public class StyleSources extends JPanel {
             iconadd = new JButton(tr("Add"));
             iconadd.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                    String source = OptionPaneUtil.showInputDialog(
+                    String source = JOptionPane.showInputDialog(
                             Main.parent,
                             tr("Icon paths"),
                             tr("Icon paths"),
@@ -155,14 +152,14 @@ public class StyleSources extends JPanel {
             iconedit.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
                     if (sourcesList.getSelectedIndex() == -1) {
-                        OptionPaneUtil.showMessageDialog(
+                        JOptionPane.showMessageDialog(
                                 Main.parent,
                                 tr("Please select the row to edit."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE
                         );
                     } else {
-                        String source = (String)OptionPaneUtil.showInputDialog(
+                        String source = (String)JOptionPane.showInputDialog(
                                 Main.parent,
                                 tr("Icon paths"),
                                 tr("Icon paths"),
@@ -182,7 +179,7 @@ public class StyleSources extends JPanel {
             icondelete.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
                     if (iconsList.getSelectedIndex() == -1) {
-                        OptionPaneUtil.showMessageDialog(
+                        JOptionPane.showMessageDialog(
                                 Main.parent, tr("Please select the row to delete."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE);
@@ -196,7 +193,7 @@ public class StyleSources extends JPanel {
         JButton add = new JButton(tr("Add"));
         add.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                String source = OptionPaneUtil.showInputDialog(
+                String source = JOptionPane.showInputDialog(
                         Main.parent,
                         name,
                         name,
@@ -211,11 +208,11 @@ public class StyleSources extends JPanel {
         edit.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 if (sourcesList.getSelectedIndex() == -1) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent, tr("Please select the row to edit."),
                             tr("Warning"), JOptionPane.WARNING_MESSAGE);
                 } else {
-                    String source = (String)OptionPaneUtil.showInputDialog(
+                    String source = (String)JOptionPane.showInputDialog(
                             Main.parent,
                             name,
                             name,
@@ -235,7 +232,7 @@ public class StyleSources extends JPanel {
         delete.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 if (sourcesList.getSelectedIndex() == -1) {
-                    OptionPaneUtil.showMessageDialog(Main.parent, tr("Please select the row to delete."),
+                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."),
                             tr("Warning"), JOptionPane.WARNING_MESSAGE);
                 } else {
                     ((DefaultListModel)sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
@@ -247,7 +244,7 @@ public class StyleSources extends JPanel {
         copy.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 if (sourcesDefaults.getSelectedIndex() == -1) {
-                    OptionPaneUtil.showMessageDialog(
+                    JOptionPane.showMessageDialog(
                             Main.parent, tr("Please select the row to copy."),
                             tr("Warning"), JOptionPane.WARNING_MESSAGE);
                 } else {

@@ -29,7 +29,6 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -168,7 +167,7 @@ public class GpxExporter extends FileExporter {
             fo.close();
         } catch (IOException x) {
             x.printStackTrace();
-            OptionPaneUtil.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, x.getMessage()),
+            JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, x.getMessage()),
                     tr("Error"), JOptionPane.ERROR_MESSAGE);
         }
 
@@ -248,7 +247,7 @@ public class GpxExporter extends FileExporter {
                 JList l = new JList(new String[]{"Creative Commons By-SA", "public domain", "GNU Lesser Public License (LGPL)", "BSD License (MIT/X11)"});
                 l.setVisibleRowCount(4);
                 l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-                int answer = OptionPaneUtil.showConfirmationDialog(
+                int answer = JOptionPane.showConfirmDialog(
                         Main.parent,
                         new JScrollPane(l),
                         tr("Choose a predefined license"),

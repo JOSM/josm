@@ -65,7 +65,6 @@ import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
@@ -682,12 +681,12 @@ public class GenericRelationEditor extends RelationEditor {
                             tr("Remove them, clean up relation")
             );
             switch(ret) {
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
-            case JOptionPane.CLOSED_OPTION: return;
-            case JOptionPane.NO_OPTION: return;
-            case JOptionPane.YES_OPTION:
-                memberTableModel.removeMembersReferringTo(toCheck);
-                break;
+                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
+                case JOptionPane.CLOSED_OPTION: return;
+                case JOptionPane.NO_OPTION: return;
+                case JOptionPane.YES_OPTION:
+                    memberTableModel.removeMembersReferringTo(toCheck);
+                    break;
             }
         }
     }
@@ -718,11 +717,11 @@ public class GenericRelationEditor extends RelationEditor {
                     null
             );
             switch(ret) {
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
-            case JOptionPane.YES_OPTION: return true;
-            case JOptionPane.NO_OPTION: return false;
-            case JOptionPane.CLOSED_OPTION: return false;
-            case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
+                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
+                case JOptionPane.YES_OPTION: return true;
+                case JOptionPane.NO_OPTION: return false;
+                case JOptionPane.CLOSED_OPTION: return false;
+                case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
             }
             // should not happen
             return false;
@@ -735,7 +734,7 @@ public class GenericRelationEditor extends RelationEditor {
                     + "Skipping relation ''{0}''.</html>",
                     primitive.getDisplayName(DefaultNameFormatter.getInstance())
             );
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     msg,
                     tr("Warning"),
@@ -1140,7 +1139,7 @@ public class GenericRelationEditor extends RelationEditor {
                     tr("Yes, create a conflict and close"),
                     tr("No, continue editing")
             };
-            int ret = OptionPaneUtil.showOptionDialog(
+            int ret = JOptionPane.showOptionDialog(
                     Main.parent,
                     tr("<html>This relation has been changed outside of the editor.<br>"
                             + "You can't apply your changes and continue editing.<br>"
@@ -1149,19 +1148,20 @@ public class GenericRelationEditor extends RelationEditor {
                             tr("Conflict in data"),
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.WARNING_MESSAGE,
+                            null,
                             options,
                             options[0]
             );
             switch(ret) {
-            case JOptionPane.CANCEL_OPTION: return false;
-            case JOptionPane.YES_OPTION: return true;
-            case JOptionPane.NO_OPTION: return false;
+                case JOptionPane.CANCEL_OPTION: return false;
+                case JOptionPane.YES_OPTION: return true;
+                case JOptionPane.NO_OPTION: return false;
             }
             return false;
         }
 
         protected void warnDoubleConflict() {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Layer ''{0}'' already has a conflict for primitive<br>"
                             + "''{1}''.<br>"
@@ -1394,10 +1394,10 @@ public class GenericRelationEditor extends RelationEditor {
                     options[0]
             );
             switch(ret) {
-            case JOptionPane.YES_OPTION: return true;
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return true;
-            default:
-                return false;
+                case JOptionPane.YES_OPTION: return true;
+                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return true;
+                default:
+                    return false;
             }
         }
 
@@ -1545,7 +1545,7 @@ public class GenericRelationEditor extends RelationEditor {
             }
 
             if (conflictsCount > 0) {
-                OptionPaneUtil.showMessageDialog(
+                JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("There were {0} conflicts during import.", conflictsCount),
                         tr("Warning"),

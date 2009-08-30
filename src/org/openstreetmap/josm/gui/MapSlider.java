@@ -9,9 +9,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.Main;
 
 class MapSlider extends JSlider implements PropertyChangeListener, ChangeListener, Helpful {
 

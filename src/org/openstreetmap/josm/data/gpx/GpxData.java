@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.

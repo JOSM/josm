@@ -14,7 +14,6 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 
 /**
  * Creates and controls a separate audio player thread.
@@ -339,7 +338,7 @@ public class AudioPlayer extends Thread {
     }
 
     public static void audioMalfunction(Exception ex) {
-        OptionPaneUtil.showMessageDialog(Main.parent,
+        JOptionPane.showMessageDialog(Main.parent,
                 "<html><p>" + tr(ex.getMessage()) + "</p></html>",
                 tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
     }

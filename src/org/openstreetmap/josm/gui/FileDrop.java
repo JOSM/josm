@@ -11,6 +11,8 @@ import java.io.Reader;
 
 import org.openstreetmap.josm.actions.OpenFileAction;
 
+import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
+
 /**
  * This class makes it easy to drag and drop files from the operating
  * system to a Java program. Any <tt>java.awt.Component</tt> can be

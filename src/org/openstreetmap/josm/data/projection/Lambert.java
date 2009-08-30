@@ -9,10 +9,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 
 public class Lambert implements Projection {
     /**
@@ -107,7 +106,7 @@ public class Lambert implements Projection {
                 layoutZone = currentZone;
             } else if (layoutZone != currentZone) {
                 if (farawayFromLambertZoneFrance(lt,lg)) {
-                    OptionPaneUtil.showMessageDialog(Main.parent,
+                    JOptionPane.showMessageDialog(Main.parent,
                             tr("IMPORTANT : data positioned far away from\n"
                                     + "the current Lambert zone limits.\n"
                                     + "Do not upload any data after this message.\n"

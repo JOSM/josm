@@ -240,10 +240,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     /**
      * The key/value list for this primitive.
-     * @deprecated This field will became private or protected in future, use api instead
+     *
      */
-    @Deprecated
-    public Map<String, String> keys;
+    private Map<String, String> keys;
 
     /**
      * Replies the map of key/value pairs. Never replies null. The map can be empty, though.

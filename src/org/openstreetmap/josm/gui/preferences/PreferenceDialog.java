@@ -21,7 +21,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.GBC;
@@ -100,7 +99,7 @@ public class PreferenceDialog extends JTabbedPane {
             }
         }
         if (requiresRestart) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("You have to restart JOSM for some settings to take effect."),
                     tr("Warning"),

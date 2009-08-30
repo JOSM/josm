@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -15,9 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
@@ -105,7 +105,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                     dialog.removeWindowListener(windowListener);
                     dialog.cancel.removeActionListener(cancelListener);
                     if (getErrorMessage() != null) {
-                        OptionPaneUtil.showMessageDialog(
+                        JOptionPane.showMessageDialog(
                                 Main.parent, getErrorMessage(),
                                 tr("Error"),
                                 JOptionPane.ERROR_MESSAGE);

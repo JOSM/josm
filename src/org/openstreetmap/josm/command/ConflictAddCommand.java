@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -28,7 +27,7 @@ public class ConflictAddCommand extends Command {
     }
 
     protected void warnBecauseOfDoubleConflict() {
-        OptionPaneUtil.showMessageDialog(
+        JOptionPane.showMessageDialog(
                 Main.parent,
                 tr("<html>Layer ''{0}'' already has a conflict for primitive<br>"
                         + "''{1}''.<br>"

@@ -25,7 +25,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.properties.OperationCancelledException;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -193,7 +192,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
                 Object[] options = {
                         tr("Close anyway"),
                         tr("Continue resolving")};
-                int ret = OptionPaneUtil.showOptionDialog(Main.parent,
+                int ret = JOptionPane.showOptionDialog(Main.parent,
                         tr("<html>You didn''t finish to merge the differences in this conflict.<br>"
                                 + "Conflict resolutions won't be applied unless all differences<br>"
                                 + "are resolved."
@@ -205,15 +204,16 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
                         tr("Conflict not resolved completely"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE,
+                        null,
                         options,
                         options[1]
                 );
                 switch(ret) {
-                case JOptionPane.YES_OPTION:
-                    setVisible(false);
-                    break;
-                default:
-                    return;
+                    case JOptionPane.YES_OPTION:
+                        setVisible(false);
+                        break;
+                    default:
+                        return;
                 }
             }
             try {
