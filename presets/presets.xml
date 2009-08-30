@@ -646,12 +646,14 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="highway" value="path" />
             <space />
             <label text="Type" />
-            <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="" delete_if_empty="true" />
-            <combo key="snowmobile" text="Snowmobile" values="yes,designated,no" default="" delete_if_empty="true" />
-            <combo key="horse" text="Horse" values="yes,designated,no" default="" delete_if_empty="true" />
-            <combo key="bicycle" text="Bicycle" values="yes,designated,no" default="" delete_if_empty="true" />
-            <combo key="ski" text="Ski" values="yes,designated,no" default="" delete_if_empty="true" />
             <combo key="foot" text="Foot" values="yes,designated,no" default="" delete_if_empty="true" />
+            <combo key="bicycle" text="Bicycle" values="yes,designated,no" default="" delete_if_empty="true" />
+            <combo key="horse" text="Horse" values="yes,designated,no" default="" delete_if_empty="true" />
+            <combo key="ski" text="Ski" values="yes,designated,no" default="" delete_if_empty="true" />
+            <combo key="snowmobile" text="Snowmobile" values="yes,designated,no" default="" delete_if_empty="true" />
+            <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" delete_if_empty="true" />
+
+
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
