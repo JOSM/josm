@@ -66,6 +66,7 @@ public class AboutAction extends JosmAction {
             }
         }
         revision = loadFile(u, manifest);
+        System.out.println("Revision: " + revision.getText());
 
         Pattern versionPattern = Pattern.compile(".*?(?:Revision|Main-Version): ([0-9]*(?: SVN)?).*", Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
         Matcher match = versionPattern.matcher(revision.getText());

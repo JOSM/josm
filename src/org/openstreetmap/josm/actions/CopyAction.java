@@ -16,14 +16,12 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
-import org.openstreetmap.josm.gui.OptionPaneUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class CopyAction extends JosmAction {
@@ -109,17 +107,6 @@ public final class CopyAction extends JosmAction {
                 for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
                     osm.visit(this);
                 }
-
-                // Used internally only (in PasteTagsAction), therefore no need to translate these
-                if(getCurrentDataSet().getSelectedNodes().size() > 0) {
-                    pasteBuffer.dataSources.add(new DataSource(null, "Copied Nodes"));
-                }
-                if(getCurrentDataSet().getSelectedWays().size() > 0) {
-                    pasteBuffer.dataSources.add(new DataSource(null, "Copied Ways"));
-                }
-                if(getCurrentDataSet().getSelectedRelations().size() > 0) {
-                    pasteBuffer.dataSources.add(new DataSource(null, "Copied Relations"));
-                }
             }
         }.visitAll();
 
@@ -134,7 +121,7 @@ public final class CopyAction extends JosmAction {
     private boolean isEmptySelection() {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         if (sel.isEmpty()) {
-            OptionPaneUtil.showMessageDialog(
+            JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Please select something to copy."),
                     tr("Information"),

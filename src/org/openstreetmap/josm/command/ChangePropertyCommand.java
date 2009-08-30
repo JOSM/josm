@@ -99,22 +99,20 @@ public class ChangePropertyCommand extends Command {
             String msg = "";
             if (value == null) {
                 switch(OsmPrimitiveType.from(primitive)) {
-                case NODE: msg = marktr("Remove \"{0}\" for node ''{1}''"); break;
-                case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
-                case RELATION: msg = marktr("Remove \"{0}\" for relation ''{1}''"); break;
+                    case NODE: msg = marktr("Remove \"{0}\" for node ''{1}''"); break;
+                    case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
+                    case RELATION: msg = marktr("Remove \"{0}\" for relation ''{1}''"); break;
                 }
                 text = tr(msg, key, primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             } else {
                 switch(OsmPrimitiveType.from(primitive)) {
-                case NODE: msg = marktr("Set {0}={1} for node ''{2}''"); break;
-                case WAY: msg = marktr("Set {0}={1} for way ''{2}''"); break;
-                case RELATION: msg = marktr("Set {0}={1} for relation ''{2}''"); break;
+                    case NODE: msg = marktr("Set {0}={1} for node ''{2}''"); break;
+                    case WAY: msg = marktr("Set {0}={1} for way ''{2}''"); break;
+                    case RELATION: msg = marktr("Set {0}={1} for relation ''{2}''"); break;
                 }
                 text = tr(msg, key, value, primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             }
-        }
-        else
-        {
+        } else {
             text = value == null
             ? tr("Remove \"{0}\" for {1} {2}", key, objects.size(), trn("object","objects",objects.size()))
                     : tr("Set {0}={1} for {2} {3}",key,value, objects.size(), trn("object","objects",objects.size()));
