@@ -246,4 +246,22 @@ public class MapFrame extends JPanel implements Destroyable {
             panel.add(statusLine, BorderLayout.SOUTH);
         }
     }
+
+    /**
+     * Replies the instance of a toggle dialog of type <code>type</code> managed by this
+     * map frame
+     * 
+     * @param <T>
+     * @param type the class of the toggle dialog, i.e. UserListDialog.class
+     * @return the instance of a toggle dialog of type <code>type</code> managed by this
+     * map frame; null, if no such dialog exists
+     * 
+     */
+    public <T> ToggleDialog getToggleDialog(Class<T> type) {
+        for (ToggleDialog td : allDialogs) {
+            if (type.isInstance(td))
+                return td;
+        }
+        return null;
+    }
 }
