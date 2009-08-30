@@ -257,10 +257,10 @@ public class MapFrame extends JPanel implements Destroyable {
      * map frame; null, if no such dialog exists
      * 
      */
-    public <T> ToggleDialog getToggleDialog(Class<T> type) {
+    public <T> T getToggleDialog(Class<T> type) {
         for (ToggleDialog td : allDialogs) {
             if (type.isInstance(td))
-                return td;
+                return type.cast(td);
         }
         return null;
     }
