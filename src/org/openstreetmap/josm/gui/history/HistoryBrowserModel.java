@@ -102,6 +102,7 @@ public class HistoryBrowserModel extends Observable {
     protected void fireModelChange() {
         setChanged();
         notifyObservers();
+        versionTableModel.fireTableDataChanged();
     }
 
     /**

@@ -7,23 +7,28 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
+import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is non-modal dialog, always showing on top, which displays history information
  * about a given {@see OsmPrimitive}.
  * 
  */
-public class HistoryBrowserDialog extends JDialog {
+public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListener{
 
     /** the embedded browser */
     private HistoryBrowser browser;
@@ -36,9 +41,9 @@ public class HistoryBrowserDialog extends JDialog {
     protected void renderTitle(History h) {
         String title = "";
         switch(h.getEarliest().getType()) {
-        case NODE:  title = marktr("History for node {0}"); break;
-        case WAY: title = marktr("History for way {0}"); break;
-        case RELATION:  title = marktr("History for relation {0}"); break;
+            case NODE:  title = marktr("History for node {0}"); break;
+            case WAY: title = marktr("History for way {0}"); break;
+            case RELATION:  title = marktr("History for relation {0}"); break;
         }
         setTitle(tr(
                 title,
@@ -56,9 +61,13 @@ public class HistoryBrowserDialog extends JDialog {
         add(browser, BorderLayout.CENTER);
 
         JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JButton btn = new JButton(new CloseAction());
+        SideButton btn = new SideButton(new ReloadAction());
+        btn.setName("btn.reload");
+        pnl.add(btn);
+
+        btn = new SideButton(new CloseAction());
         btn.setName("btn.close");
         pnl.add(btn);
         add(pnl, BorderLayout.SOUTH);
@@ -76,6 +85,8 @@ public class HistoryBrowserDialog extends JDialog {
         build();
         setHistory(history);
         renderTitle(history);
+        HistoryDataSet.getInstance().addHistoryDataSetListener(this);
+        addWindowListener(new WindowClosingAdapter());
     }
 
     /**
@@ -86,43 +97,46 @@ public class HistoryBrowserDialog extends JDialog {
         browser.populate(history);
     }
 
-    /**
-     * registers this dialog with the registry of history dialogs
-     * 
-     * @see HistoryDialog#registerHistoryBrowserDialog(long, HistoryBrowserDialog)
-     */
-    protected void register() {
-        HistoryDialog.registerHistoryBrowserDialog(browser.getHistory().getId(), this);
-    }
-
-    /**
-     * unregisters this dialog from the registry of history dialogs
-     * 
-     * @see HistoryDialog#unregisterHistoryBrowserDialog(long)
-     */
-    protected void unregister() {
-        HistoryDialog.unregisterHistoryBrowserDialog(browser.getHistory().getId());
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            register();
-            toFront();
-        } else {
-            unregister();
+    public void historyUpdated(HistoryDataSet source, long primitiveId) {
+        if (primitiveId == browser.getHistory().getId()) {
+            browser.populate(source.getHistory(primitiveId));
+        } else if (primitiveId == 0) {
+            browser.populate(source.getHistory(browser.getHistory().getId()));
         }
-        super.setVisible(visible);
     }
 
     class CloseAction extends AbstractAction {
         public CloseAction() {
             putValue(NAME, tr("Close"));
             putValue(SHORT_DESCRIPTION, tr("Close the dialog"));
+            putValue(SMALL_ICON, ImageProvider.get("ok"));
         }
 
         public void actionPerformed(ActionEvent e) {
-            setVisible(false);
+            HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
+            HistoryBrowserDialogManager.getInstance().hide(HistoryBrowserDialog.this);
+        }
+    }
+
+    class ReloadAction extends AbstractAction {
+        public ReloadAction() {
+            putValue(NAME, tr("Reload"));
+            putValue(SHORT_DESCRIPTION, tr("Reload the history from the server"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            HistoryLoadTask task = new HistoryLoadTask();
+            task.add(browser.getHistory());
+            Main.worker.submit(task);
+        }
+    }
+
+    class WindowClosingAdapter extends WindowAdapter {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
+            HistoryBrowserDialogManager.getInstance().hide(HistoryBrowserDialog.this);
         }
     }
 

@@ -55,7 +55,7 @@ public class VersionTable extends JTable implements Observer{
         @Override
         public void mouseClicked(MouseEvent e) {
             switch(e.getClickCount()) {
-            case 2: handleDoubleClick(e); break;
+                case 2: handleDoubleClick(e); break;
             }
         }
     }

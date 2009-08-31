@@ -43,9 +43,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
+import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialog;
+import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
+import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
@@ -66,47 +69,7 @@ import org.xml.sax.SAXException;
  *
  * @author imi
  */
-public class HistoryDialog extends ToggleDialog {
-
-    /** the registry of history browser dialogs which are currently displaying */
-    static private HashMap<Long, HistoryBrowserDialog> historyBrowserDialogs;
-
-    /**
-     * registers a {@see HistoryBrowserDialog}
-     * @param id the id of the primitive dialog shows the history for
-     * @param dialog the dialog
-     */
-    public static void registerHistoryBrowserDialog(long id, HistoryBrowserDialog dialog) {
-        if (historyBrowserDialogs == null) {
-            historyBrowserDialogs = new HashMap<Long, HistoryBrowserDialog>();
-        }
-        historyBrowserDialogs.put(id, dialog);
-    }
-
-    /**
-     * unregisters a {@see HistoryBrowserDialog}
-     * @param id the id of the primitive whose history dialog is to be unregistered
-     *
-     */
-    public static void unregisterHistoryBrowserDialog(long id) {
-        if (historyBrowserDialogs == null)
-            return;
-        historyBrowserDialogs.remove(id);
-    }
-
-    /**
-     * replies the history dialog for the primitive with id <code>id</code>; null, if
-     * no such {@see HistoryBrowserDialog} is currently showing
-     *
-     * @param id the id of the primitive
-     * @return the dialog; null, if no such dialog is showing
-     */
-    public static HistoryBrowserDialog getHistoryBrowserDialog(long id) {
-        if (historyBrowserDialogs == null)
-            return null;
-        return historyBrowserDialogs.get(id);
-    }
-
+public class HistoryDialog extends ToggleDialog implements HistoryDataSetListener {
 
     /** the table model */
     protected HistoryItemDataModel model;
@@ -196,14 +159,13 @@ public class HistoryDialog extends ToggleDialog {
                         Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
         build();
         DataSet.selListeners.add(model);
+        HistoryDataSet.getInstance().addHistoryDataSetListener(this);
     }
 
-    /**
-     * refreshes the current list of history items; reloads history information from the server
-     */
-    protected void refresh() {
-        HistoryLoadTask task = new HistoryLoadTask();
-        Main.worker.execute(task);
+
+
+    public void historyUpdated(HistoryDataSet source, long primitiveId) {
+        model.refresh();
     }
 
     /**
@@ -215,48 +177,14 @@ public class HistoryDialog extends ToggleDialog {
     protected void showHistory(History h) throws IllegalArgumentException {
         if (h == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "h"));
-        HistoryBrowserDialog dialog = getHistoryBrowserDialog(h.getId());
-        if (dialog == null) {
-            dialog = new HistoryBrowserDialog(h);
+        if (HistoryBrowserDialogManager.getInstance().existsDialog(h.getId())) {
+            HistoryBrowserDialogManager.getInstance().show(h.getId());
+        } else {
+            HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
+            HistoryBrowserDialogManager.getInstance().show(h.getId(), dialog);
         }
-        dialog.setVisible(true);
     }
 
-    /**
-     * invoked after the asynchronous {@see HistoryLoadTask} is finished.
-     *
-     * @param task the task which is calling back.
-     */
-    protected void postRefresh(HistoryLoadTask task) {
-        model.refresh();
-        if (task.isCancelled())
-            return;
-        if (task.getLastException() != null) {
-            task.getLastException().printStackTrace();
-            String msg = null;
-            if (task.getLastException() instanceof OsmApiException) {
-                msg = ((OsmApiException)task.getLastException()).getErrorBody();
-                if (msg == null) {
-                    msg = ((OsmApiException)task.getLastException()).getErrorHeader();
-                }
-            }
-            if (msg == null) {
-                msg = task.getLastException().getMessage();
-            }
-            if (msg == null) {
-                msg = task.getLastException().toString();
-            }
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr(
-                            "<html>Failed to load history from the server. Details:<br>{0}</html>",
-                            msg.replaceAll("&", "&amp;").replaceAll(">", "&gt;").replaceAll("<", "&lt;")
-                    ),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
-    }
 
     /**
      * The table model with the history items
@@ -339,9 +267,9 @@ public class HistoryDialog extends ToggleDialog {
         protected void renderText(History h) {
             String msg = "";
             switch(h.getEarliest().getType()) {
-            case NODE:  msg = marktr("Node {0}"); break;
-            case WAY: msg = marktr("Way {0}"); break;
-            case RELATION: msg = marktr("Relation {0}"); break;
+                case NODE:  msg = marktr("Node {0}"); break;
+                case WAY: msg = marktr("Way {0}"); break;
+                case RELATION: msg = marktr("Relation {0}"); break;
             }
             setText(tr(msg,h.getId()));
         }
@@ -380,79 +308,6 @@ public class HistoryDialog extends ToggleDialog {
     }
 
     /**
-     * The asynchronous task which loads history information for  the currently selected
-     * primitives from the server.
-     *
-     */
-    class HistoryLoadTask extends PleaseWaitRunnable {
-
-        private boolean cancelled = false;
-        private Exception lastException  = null;
-
-        public HistoryLoadTask() {
-            super(tr("Load history"), true);
-        }
-
-        @Override
-        protected void cancel() {
-            OsmApi.getOsmApi().cancel();
-            cancelled = true;
-        }
-
-        @Override
-        protected void finish() {
-            postRefresh(this);
-        }
-
-        @Override
-        protected void realRun() throws SAXException, IOException, OsmTransferException {
-            Collection<OsmPrimitive> selection = Main.main.getCurrentDataSet().getSelected();
-            Iterator<OsmPrimitive> it = selection.iterator();
-            try {
-                while(it.hasNext()) {
-                    OsmPrimitive primitive = it.next();
-                    if (cancelled) {
-                        break;
-                    }
-                    if (primitive.id == 0) {
-                        continue;
-                    }
-                    String msg = "";
-                    switch(OsmPrimitiveType.from(primitive)) {
-                    case NODE: msg = marktr("Loading history for node {0}"); break;
-                    case WAY: msg = marktr("Loading history for way {0}"); break;
-                    case RELATION: msg = marktr("Loading history for relation {0}"); break;
-                    }
-                    progressMonitor.indeterminateSubTask(tr(msg,
-                            Long.toString(primitive.id)));
-                    OsmServerHistoryReader reader = null;
-                    HistoryDataSet ds = null;
-                    try {
-                        reader = new OsmServerHistoryReader(OsmPrimitiveType.from(primitive), primitive.id);
-                        ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
-                    } catch(OsmTransferException e) {
-                        if (cancelled)
-                            return;
-                        throw e;
-                    }
-                    HistoryDataSet.getInstance().mergeInto(ds);
-                }
-            } catch(OsmTransferException e) {
-                lastException = e;
-                return;
-            }
-        }
-
-        public boolean isCancelled() {
-            return cancelled;
-        }
-
-        public Exception getLastException() {
-            return lastException;
-        }
-    }
-
-    /**
      * The action for reloading history information of the currently selected primitives.
      *
      */
@@ -463,7 +318,9 @@ public class HistoryDialog extends ToggleDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            refresh();
+            HistoryLoadTask task = new HistoryLoadTask();
+            task.add(Main.main.getCurrentDataSet().getSelected());
+            Main.worker.execute(task);
         }
 
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
@@ -472,7 +329,6 @@ public class HistoryDialog extends ToggleDialog {
             } else {
                 setEnabled(Main.main.getCurrentDataSet().getSelected().size() > 0);
             }
-
         }
     }
 
