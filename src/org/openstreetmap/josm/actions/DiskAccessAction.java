@@ -23,6 +23,10 @@ abstract public class DiskAccessAction extends JosmAction {
     }
 
     public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title) {
+        return createAndOpenFileChooser(open, multiple, title, null);
+    }
+
+    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, String extension) {
         String curDir = Main.pref.get("lastDirectory");
         if (curDir.equals("")) {
             curDir = ".";
@@ -37,16 +41,15 @@ abstract public class DiskAccessAction extends JosmAction {
         FileFilter defaultFilter = null;
         for (FileImporter imExporter: ExtensionFileFilter.importers) {
             fc.addChoosableFileFilter(imExporter.filter);
-            if (imExporter instanceof ExtensionFileFilter.AllFormatsImporter) {
+            if (extension != null && extension.endsWith(imExporter.filter.defaultExtension)) {
                 defaultFilter = imExporter.filter;
             }
-
         }
 
-        if (defaultFilter != null) {
-            fc.setFileFilter(defaultFilter);
+        if (defaultFilter == null) {
+            defaultFilter = new ExtensionFileFilter.AllFormatsImporter().filter;
         }
-
+        fc.setFileFilter(defaultFilter);
 
         int answer = open ? fc.showOpenDialog(Main.parent) : fc.showSaveDialog(Main.parent);
         if (answer != JFileChooser.APPROVE_OPTION)
