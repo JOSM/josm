@@ -163,12 +163,15 @@ public class MapFrame extends JPanel implements Destroyable {
      * Open all ToggleDialogs that have their preferences property set. Close all others.
      */
     public void setVisibleDialogs() {
-        for (Component c : toggleDialogs.getComponents()) {
-            if (c instanceof ToggleDialog) {
-                ToggleDialog td = (ToggleDialog)c;
-                if (Main.pref.getBoolean(td.getPreferencePrefix()+".visible")) {
-                    td.showDialog();
-                }
+        toggleDialogs.removeAll();
+        for (ToggleDialog dialog: allDialogs) {
+            dialog.setVisible(false);
+            toggleDialogs.add(dialog);
+            dialog.setParent(toggleDialogs);
+            if (Main.pref.getBoolean(dialog.getPreferencePrefix()+".visible")) {
+                dialog.showDialog();
+            } else {
+                dialog.hideDialog();
             }
         }
     }
@@ -179,9 +182,7 @@ public class MapFrame extends JPanel implements Destroyable {
      */
     public IconToggleButton addToggleDialog(ToggleDialog dlg) {
         IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
-        dlg.setParent(toggleDialogs);
         toolBarToggle.add(button);
-        toggleDialogs.add(dlg);
         allDialogs.add(dlg);
         return button;
     }

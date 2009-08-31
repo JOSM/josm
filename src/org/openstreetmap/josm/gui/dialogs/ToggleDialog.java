@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -151,21 +150,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         setBorder(BorderFactory.createEtchedBorder());
 
         docked = Main.pref.getBoolean(preferencePrefix+".docked", true);
-        if (!docked) {
-            EventQueue.invokeLater(new Runnable(){
-                public void run() {
-                    detach();
-                }
-            });
-        }
         collapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
-        if (collapsed) {
-            EventQueue.invokeLater(new Runnable(){
-                public void run() {
-                    collapse();
-                }
-            });
-        }
     }
 
     /**
@@ -202,6 +187,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * @return
      */
     protected int getDialogPosition() {
+        if (parent == null) return -1;
         for (int i=0; i< parent.getComponentCount(); i++) {
             String name = parent.getComponent(i).getName();
             if (name != null && name.equals(this.getName()))
@@ -217,6 +203,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      */
     protected void dock() {
         detachedDialog = null;
+        if (parent == null) return;
 
         // check whether the toggle dialog view contains a placeholder
         // for this toggle dialog. If so, replace it with this dialog.
@@ -224,10 +211,15 @@ public class ToggleDialog extends JPanel implements Helpful {
         int idx = getDialogPosition();
         if (idx > -1) {
             parent.remove(idx);
-            parent.add(ToggleDialog.this,idx);
+            if (idx >= parent.getComponentCount()) {
+                parent.add(ToggleDialog.this);
+            } else {
+                parent.add(ToggleDialog.this,idx);
+            }
         } else {
             parent.add(ToggleDialog.this);
         }
+        parent.validate();
 
         if(Main.pref.getBoolean(preferencePrefix+".visible")) {
             setVisible(true);
@@ -280,7 +272,6 @@ public class ToggleDialog extends JPanel implements Helpful {
      * Hides the dialog
      */
     public void hideDialog() {
-        if (!isShowing) return;
         if (detachedDialog != null) {
             detachedDialog.setVisible(false);
             detachedDialog.getContentPane().removeAll();
@@ -288,6 +279,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         }
         setVisible(false);
         isShowing = false;
+        Main.pref.put(preferencePrefix+".visible", false);
         refreshToggleDialogsView();
         toggleAction.putValue("selected", false);
     }
@@ -303,19 +295,25 @@ public class ToggleDialog extends JPanel implements Helpful {
      * Shows the dialog
      */
     public void showDialog() {
-        if (isShowing) return;
         if (!docked) {
             detach();
-        } else if (!collapsed) {
-            expand();
-            setVisible(true);
-            refreshToggleDialogsView();
         } else {
-            setVisible(true);
-            refreshToggleDialogsView();
+            dock();
+            if (!collapsed) {
+                expand();
+                setVisible(true);
+                refreshToggleDialogsView();
+            } else {
+                setVisible(true);
+                refreshToggleDialogsView();
+            }
         }
         isShowing = true;
+        // toggling the selected value in order to enforce PropertyChangeEvents
+        //
+        toggleAction.putValue("selected", false);
         toggleAction.putValue("selected", true);
+        Main.pref.put(preferencePrefix+".visible", true);
     }
 
     /**
@@ -348,6 +346,8 @@ public class ToggleDialog extends JPanel implements Helpful {
     public void closeDetachedDialog() {
         if (detachedDialog != null) {
             detachedDialog.setVisible(false);
+            detachedDialog.removeAll();
+            detachedDialog.dispose();
         }
     }
 
@@ -493,6 +493,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                 setBounds(Integer.parseInt(b[0]),Integer.parseInt(b[1]),Integer.parseInt(b[2]),Integer.parseInt(b[3]));
             } else {
                 pack();
+
             }
             setTitle(titleBar.getTitle());
         }
