@@ -1380,6 +1380,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="fuel" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Parking" icon="presets/parking.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking"
@@ -1617,6 +1618,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="restaurant" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Fast Food" icon="presets/fastfood.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fast_food" />
@@ -1624,35 +1626,41 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="fast_food" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Cafe" icon="presets/cafe.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=cafe" />
             <label text="Edit Cafe" />
             <key key="amenity" value="cafe" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Pub" icon="presets/pub.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pub" />
             <label text="Edit Pub" />
             <key key="amenity" value="pub" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Biergarten" icon="presets/biergarten.png" type="node,closedway">
             <label text="Edit Biergarten" />
             <key key="amenity" value="biergarten" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Bar" icon="presets/bar.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bar" />
             <label text="Edit Bar" />
             <key key="amenity" value="bar" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Nightclub" icon="presets/bar.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub" />
             <label text="Edit Nightclub" />
             <key key="amenity" value="nightclub" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Food+Drinks -->
     <group name="Tourism" icon="presets/State_Public.png">
@@ -1667,6 +1675,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Museum" />
             <key key="tourism" value="museum" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=zoo"
@@ -1674,6 +1683,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Zoo" />
             <key key="tourism" value="zoo" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Viewpoint" icon="presets/viewpoint.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=viewpoint" />
@@ -1686,6 +1696,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Theme Park" />
             <key key="tourism" value="theme_park" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Artwork" icon="presets/arts_centre.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=artwork" />
@@ -1699,7 +1710,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="tourism" value="information" />
             <key key="information" value="office" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Map" icon="presets/map.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
@@ -1796,6 +1807,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Ruins" />
             <key key="historic" value="ruins" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Archaeological Site" icon="presets/historic.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=archaeological_site"
@@ -1803,6 +1815,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Archaeological Site" />
             <key key="historic" value="archaeological_site" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Battlefield" icon="presets/battlefield.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=battlefield" />
@@ -1893,11 +1906,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Golf Course" />
             <key key="leisure" value="golf_course" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Miniature Golf" icon="presets/golf.png" type="node,closedway">
             <label text="Edit Miniature Golf" />
             <key key="leisure" value="miniature_golf" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
     </group>
     <group name="Sport" icon="presets/rowing.png">
@@ -2208,6 +2223,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Library" />
             <key key="amenity" value="library" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Arts Centre" icon="presets/arts_centre.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=arts_centre" />
@@ -2231,6 +2247,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" default="" delete_if_empty="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway">
@@ -2413,6 +2430,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Bench" icon="presets/bench.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bench" />
             <key key="amenity" value="bench" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="24/7" delete_if_empty="true" />
         </item>
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node">
             <label text="Edit Hunting Stand" />
@@ -2449,33 +2467,39 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Supermarket" />
             <key key="shop" value="supermarket" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Chemist" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Chemist" />
             <key key="shop" value="chemist" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Convenience Store" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=convenience" />
             <label text="Edit Convenience Store" />
             <key key="shop" value="convenience" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Kiosk" icon="presets/kiosk.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kiosk" />
             <label text="Edit Kiosk" />
             <key key="shop" value="kiosk" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Book Store" icon="presets/book.png" type="node,closedway">
             <label text="Edit Book Store" />
             <key key="shop" value="books" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Travel Agency" icon="presets/travel.png" type="node,closedway">
             <label text="Edit Travel Agency" />
             <key key="shop" value="travel_agency" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Vending machine" icon="presets/vending_machine.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine" />
@@ -2497,125 +2521,148 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Butcher" />
             <key key="shop" value="butcher" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Baker" icon="presets/baker.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bakery" />
             <label text="Edit Baker" />
             <key key="shop" value="bakery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Florist" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=florist" />
             <label text="Edit Florist" />
             <key key="shop" value="florist" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Organic" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Organic Shop" />
             <key key="shop" value="organic" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Alcohol" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=alcohol" />
             <label text="Edit Alcohol Shop" />
             <key key="shop" value="alcohol" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Beverages" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Beverages Shop" />
             <key key="shop" value="beverages" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Computer" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Computer Shop" />
             <key key="shop" value="computer" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Electronics" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Electronics Shop" />
             <key key="shop" value="electronics" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Hifi" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Hifi Shop" />
             <key key="shop" value="hifi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Furniture" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Furniture Shop" />
             <key key="shop" value="furniture" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Garden Centre" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=garden_centre" />
             <label text="Edit Garden Centre" />
             <key key="shop" value="garden_centre" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Hardware" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hardware" />
             <label text="Edit Hardware Store" />
             <key key="shop" value="hardware" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Do-it-yourself-store" icon="presets/diy_store.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=doityourself" />
             <label text="Edit Do-it-yourself-store" />
             <key key="shop" value="doityourself" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Stationery" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Stationery Shop" />
             <key key="shop" value="stationery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Hairdresser" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Hairdresser" />
             <key key="shop" value="hairdresser" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Shoes" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Shoe Shop" />
             <key key="shop" value="shoes" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Toys" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Toy Shop" />
             <key key="shop" value="toys" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Video" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Video Shop" />
             <key key="shop" value="video" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Dry Cleaning" icon="presets/laundry.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=dry_cleaning" />
             <label text="Edit Dry Cleaning" />
             <key key="shop" value="dry_cleaning" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Laundry" icon="presets/laundry.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Laundry" />
             <label text="Edit Laundry" />
             <key key="shop" value="laundry" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Outdoor" icon="presets/tent.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=outdoor" />
             <label text="Edit Outdoor Shop" />
             <key key="shop" value="outdoor" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>    
         <item name="Sports" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Sports Shop" />
             <key key="shop" value="sports" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Optician" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Optician" />
             <key key="shop" value="optician" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>    
 
     </group> <!-- Shops -->
@@ -2625,6 +2672,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Bank" />
             <key key="amenity" value="bank" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
             <check key="atm" text="Automated Teller Machine" default="on" delete_if_empty="true" />
         </item>
         <item name="Money Exchange" icon="presets/coins.png" type="node,closedway">
@@ -2632,6 +2680,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Money Exchange" />
             <key key="amenity" value="bureau_de_change" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Automated Teller Machine" icon="presets/cash.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=atm" />
@@ -2646,11 +2695,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Doctors" />
             <key key="amenity" value="doctors" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Dentist" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Dentist" />
             <key key="amenity" value="dentist" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Pharmacy" icon="presets/pharmacy.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pharmacy" />
@@ -2658,6 +2709,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="amenity" value="pharmacy" />
             <combo key="dispensing" text="Dispensing" values="yes,no" default="no" delete_if_empty="true" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Hospital" icon="presets/hospital.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=hospital" />
@@ -2684,6 +2736,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Veterinary" />
             <key key="amenity" value="veterinary" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Health -->
     <separator/>
