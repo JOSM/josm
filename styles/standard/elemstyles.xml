@@ -4084,6 +4084,14 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="place" v="islet"/>
+		<icon annotate="true" src="place/islet.png"/>
+		<area colour="place#8de3cb"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
 	<!-- special display of unreviewed tiger data (USA) -->
 	<rule>
 		<condition k="tiger:reviewed" v="no"/>
