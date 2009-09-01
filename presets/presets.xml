@@ -2819,6 +2819,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="place" value="island" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Islet" icon="presets/islet.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=islet" />
+            <label text="Edit Islet" />
+            <space />
+            <key key="place" value="islet" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <separator/>
         <item name="Cave Entrance" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance" />
