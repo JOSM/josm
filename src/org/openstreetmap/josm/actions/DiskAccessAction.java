@@ -6,11 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -38,18 +36,8 @@ abstract public class DiskAccessAction extends JosmAction {
 
         fc.setMultiSelectionEnabled(multiple);
         fc.setAcceptAllFileFilterUsed(false);
-        FileFilter defaultFilter = null;
-        for (FileImporter imExporter: ExtensionFileFilter.importers) {
-            fc.addChoosableFileFilter(imExporter.filter);
-            if (extension != null && extension.endsWith(imExporter.filter.defaultExtension)) {
-                defaultFilter = imExporter.filter;
-            }
-        }
-
-        if (defaultFilter == null) {
-            defaultFilter = new ExtensionFileFilter.AllFormatsImporter().filter;
-        }
-        fc.setFileFilter(defaultFilter);
+        System.out.println("opening fc for extension " + extension);
+        ExtensionFileFilter.applyChoosableImportFileFilters(fc, extension);
 
         int answer = open ? fc.showOpenDialog(Main.parent) : fc.showSaveDialog(Main.parent);
         if (answer != JFileChooser.APPROVE_OPTION)

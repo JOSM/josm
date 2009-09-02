@@ -111,10 +111,10 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
     public static File openFileDialog(Layer layer) {
         if (layer instanceof OsmDataLayer)
-            return createAndOpenSaveFileChooser(tr("Save OSM file"), ".osm");
+            return createAndOpenSaveFileChooser(tr("Save OSM file"), "osm");
         else if (layer instanceof GpxLayer)
-            return createAndOpenSaveFileChooser(tr("Save GPX file"), ".gpx");
-        return createAndOpenSaveFileChooser(tr("Save Layer"), ".lay");
+            return createAndOpenSaveFileChooser(tr("Save GPX file"), "gpx");
+        return createAndOpenSaveFileChooser(tr("Save Layer"), "lay");
     }
 
 
@@ -166,18 +166,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.setMultiSelectionEnabled(false);
         fc.setAcceptAllFileFilterUsed(false);
-
-        FileFilter defaultFilter = null;
-        for (FileExporter exporter : ExtensionFileFilter.exporters) {
-            fc.addChoosableFileFilter(exporter.filter);
-            if (extension.endsWith(exporter.filter.defaultExtension)) {
-                defaultFilter = exporter.filter;
-            }
-        }
-        if (defaultFilter != null) {
-            fc.setFileFilter(defaultFilter);
-        }
-
+        ExtensionFileFilter.applyChoosableExportFileFilters(fc, extension);
         int answer = fc.showSaveDialog(Main.parent);
         if (answer != JFileChooser.APPROVE_OPTION)
             return null;
@@ -193,7 +182,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             {
                 FileFilter ff = fc.getFileFilter();
                 if (ff instanceof ExtensionFileFilter) {
-                    fn += "." + ((ExtensionFileFilter)ff).defaultExtension;
+                    fn += "." + ((ExtensionFileFilter)ff).getDefaultExtension();
                 } else {
                     fn += extension;
                 }
