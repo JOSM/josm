@@ -2435,10 +2435,10 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node">
             <label text="Edit Hunting Stand" />
             <key key="amenity" value="hunting_stand" />
-            <check key="shelter" text="Shelter" default="off" delete_if_empty="true" />
-            <check key="hide" text="Hide" default="off" delete_if_empty="true" />
-            <check key="lock" text="Lock" default="off" delete_if_empty="true" />
             <combo key="height" text="Height" values="low,half,full,5,10,15,20" default="" delete_if_empty="true" />
+            <combo key="shelter" text="Shelter" values="yes,no,unknown" default="" delete_if_empty="true" />
+            <combo key="hide" text="Hide" values="yes,no,unknown" default="" delete_if_empty="true" />
+            <combo key="lock" text="Lock" values="yes,no,unknown" default="" delete_if_empty="true" />
         </item>
         <item name="Fountain" icon="presets/spring.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fountain"
