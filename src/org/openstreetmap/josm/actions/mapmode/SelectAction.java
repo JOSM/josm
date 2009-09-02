@@ -464,12 +464,19 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     }
                     if(s.size() > max)
                     {
-                        if(1 != new ExtendedDialog(Main.parent, tr("Move elements"),
-                                tr("You did move more than {0} elements. "
-                                        + "Moving a large number of elements is often an error.\n"
-                                        + "Really move them?", max),
-                                        new String[] {tr("Move them"), tr("Undo move")},
-                                        new String[] {"reorder.png", "cancel.png"}).getValue())
+                        ExtendedDialog ed = new ExtendedDialog(
+                                Main.parent,
+                                tr("Move elements"),
+                                new String[] {tr("Move them"), tr("Undo move")});
+                        ed.setButtonIcons(new String[] {"reorder.png", "cancel.png"});
+                        ed.setContent(tr("You moved more than {0} elements. "
+                                + "Moving a large number of elements is often an error.\n"
+                                + "Really move them?", max));
+                        ed.toggleEnable("movedManyElements");
+                        ed.setToggleCheckboxText(tr("Always move and don't show dialog again"));
+                        ed.showDialog();
+
+                        if(ed.getValue() != 1 && ed.getValue() != ExtendedDialog.DialogNotShown)
                         {
                             Main.main.undoRedo.undo();
                         }

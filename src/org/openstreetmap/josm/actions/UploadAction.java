@@ -486,11 +486,16 @@ public class UploadAction extends JosmAction{
             p.add(buildChangesetControlPanel(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
             while(true) {
-                int result = new ExtendedDialog(Main.parent,
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
                         tr("Upload these changes?"),
-                        p,
-                        new String[] {tr("Upload Changes"), tr("Cancel")},
-                        new String[] {"upload.png", "cancel.png"}).getValue();
+                        new String[] {tr("Upload Changes"), tr("Cancel")}
+                );
+                dialog.setButtonIcons(new String[] {"upload.png", "cancel.png"});
+                dialog.setContent(p);
+                dialog.showDialog();
+                int result = dialog.getValue();
+
 
                 // cancel pressed
                 if (result != 1) return false;
