@@ -305,7 +305,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     void membershipEdit(int row) {
         Relation relation = (Relation)membershipData.getValueAt(row, 0);
-        Main.main.map.relationListDialog.selectRelation(relation);
+        Main.map.relationListDialog.selectRelation(relation);
         RelationEditor.getEditor(
                 Main.map.mapView.getEditLayer(),
                 relation,
@@ -473,7 +473,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             str=tr("<different>");
                             c.setFont(c.getFont().deriveFont(Font.ITALIC));
                         } else {
-                            final Map.Entry entry = (Map.Entry) v.entrySet().iterator().next(); 
+                            final Map.Entry entry = (Map.Entry) v.entrySet().iterator().next();
                             str = (String) entry.getKey();
                         }
                     }
@@ -750,7 +750,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
         if (Main.main.getCurrentDataSet() != null) {
             for (Relation r : Main.main.getCurrentDataSet().relations) {
-                if (!r.deleted && !r.incomplete) {
+                if (!r.isDeleted() && !r.incomplete) {
                     for (RelationMember m : r.getMembers()) {
                         if (newSelection.contains(m.getMember())) {
                             Collection<RelationMember> value = roles.get(r);
@@ -841,16 +841,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
             Relation rel = new Relation(cur);
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            int index = 0;
-            for (RelationMember rm : cur.getMembers()) {
-                for (OsmPrimitive osm : sel) {
-                    if (rm.getMember() == osm)
-                    {
-                        rel.removeMember(index);
-                        break;
-                    }
-                }
-                index++;
+            for (OsmPrimitive primitive: sel) {
+                rel.removeMembersFor(primitive);
             }
             Main.main.undoRedo.add(new ChangeCommand(cur, rel));
             DataSet.fireSelectionChanged(sel);
