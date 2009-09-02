@@ -76,12 +76,12 @@ public class ChangePropertyCommand extends Command {
         super.executeCommand(); // save old
         if (value == null) {
             for (OsmPrimitive osm : objects) {
-                osm.modified = true;
+                osm.setModified(true);
                 osm.remove(key);
             }
         } else {
             for (OsmPrimitive osm : objects) {
-                osm.modified = true;
+                osm.setModified(true);
                 osm.put(key, value);
             }
         }

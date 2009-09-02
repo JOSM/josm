@@ -75,7 +75,7 @@ public class OsmExporter extends FileExporter {
             if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null)) {
                 tmpFile.delete();
             }
-            layer.cleanupAfterSaveToDisk();
+            layer.onPostSaveToFile();
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(

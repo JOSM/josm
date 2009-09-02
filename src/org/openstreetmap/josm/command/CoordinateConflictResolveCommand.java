@@ -44,7 +44,7 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve conflicts in coordinates in {0}",conflict.getMy().id),
+                        tr("Resolve conflicts in coordinates in {0}",conflict.getMy().getId()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )

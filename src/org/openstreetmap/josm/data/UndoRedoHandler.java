@@ -41,7 +41,6 @@ public class UndoRedoHandler implements LayerChangeListener {
         redoCommands.clear();
         if (Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
             OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-            data.setModified(true);
             data.fireDataChange();
         }
         fireCommandsChanged();
@@ -61,7 +60,6 @@ public class UndoRedoHandler implements LayerChangeListener {
         redoCommands.push(c);
         if (Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
             OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-            data.setModified(data.uploadedModified || !commands.isEmpty());
             data.fireDataChange();
         }
         fireCommandsChanged();
@@ -80,7 +78,6 @@ public class UndoRedoHandler implements LayerChangeListener {
         commands.add(c);
         if (Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
             OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-            data.setModified(true);
             data.fireDataChange();
         }
         fireCommandsChanged();

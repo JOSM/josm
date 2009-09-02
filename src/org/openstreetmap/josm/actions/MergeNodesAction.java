@@ -94,7 +94,7 @@ public class MergeNodesAction extends JosmAction {
         // (2) is not implemented yet.)  :-(
         Node useNode = null;
         for (Node n: selectedNodes) {
-            if (n.id > 0) {
+            if (n.getId() > 0) {
                 useNode = n;
                 break;
             }
@@ -126,7 +126,7 @@ public class MergeNodesAction extends JosmAction {
             new HashMap<Pair<Relation,String>, HashSet<Node>>();
         HashSet<Relation> relationsUsingNodes = new HashSet<Relation>();
         for (Relation r : getCurrentDataSet().relations) {
-            if (r.deleted || r.incomplete) {
+            if (r.isDeleted() || r.incomplete) {
                 continue;
             }
             for (RelationMember rm : r.getMembers()) {
@@ -216,7 +216,7 @@ public class MergeNodesAction extends JosmAction {
         Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>();
 
         for (Way w : getCurrentDataSet().ways) {
-            if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
+            if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
                 continue;
             }
             boolean modify = false;

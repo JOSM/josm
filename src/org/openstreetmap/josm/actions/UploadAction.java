@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -33,6 +34,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
@@ -107,6 +109,31 @@ public class UploadAction extends JosmAction{
         setEnabled(getEditLayer() != null);
     }
 
+    public boolean checkPreUploadConditions(OsmDataLayer layer) {
+        return checkPreUploadConditions(layer, new APIDataSet(layer.data));
+    }
+
+    public boolean checkPreUploadConditions(OsmDataLayer layer, APIDataSet apiData) {
+        ConflictCollection conflicts = layer.getConflicts();
+        if (conflicts !=null && !conflicts.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("<html>There are unresolved conflicts in layer ''{0}''.<br>"
+                            + "You have to resolve them first.<html>", layer.getName()),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+            );
+            return false;
+        }
+        // Call all upload hooks in sequence. The upload confirmation dialog
+        // is one of these.
+        for(UploadHook hook : uploadHooks)
+            if(!hook.checkUpload(apiData.getPrimitivesToAdd(), apiData.getPrimitivesToUpdate(), apiData.getPrimitivesToDelete()))
+                return false;
+
+        return true;
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
@@ -120,56 +147,19 @@ public class UploadAction extends JosmAction{
             return;
         }
 
-        ConflictCollection conflicts = Main.map.mapView.getEditLayer().getConflicts();
-        if (conflicts !=null && !conflicts.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("There are unresolved conflicts. You have to resolve these first."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-            Main.map.conflictDialog.showDialog();
-            return;
-        }
-
-        final LinkedList<OsmPrimitive> add = new LinkedList<OsmPrimitive>();
-        final LinkedList<OsmPrimitive> update = new LinkedList<OsmPrimitive>();
-        final LinkedList<OsmPrimitive> delete = new LinkedList<OsmPrimitive>();
-        for (OsmPrimitive osm : getCurrentDataSet().allPrimitives()) {
-            if (osm.get("josm/ignore") != null) {
-                continue;
-            }
-            if (osm.id == 0 && !osm.deleted) {
-                add.addLast(osm);
-            } else if (osm.modified && !osm.deleted) {
-                update.addLast(osm);
-            } else if (osm.deleted && osm.id != 0) {
-                delete.addFirst(osm);
-            }
-        }
-
-        if (add.isEmpty() && update.isEmpty() && delete.isEmpty()) {
+        APIDataSet apiData = new APIDataSet(Main.main.getCurrentDataSet());
+        if (apiData.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("No changes to upload."),
                     tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
+                    JOptionPane.INFORMATION_MESSAGE
             );
             return;
         }
-
-        // Call all upload hooks in sequence. The upload confirmation dialog
-        // is one of these.
-        for(UploadHook hook : uploadHooks)
-            if(!hook.checkUpload(add, update, delete))
-                return;
-
-        final Collection<OsmPrimitive> all = new LinkedList<OsmPrimitive>();
-        all.addAll(add);
-        all.addAll(update);
-        all.addAll(delete);
-
-        Main.worker.execute(new UploadDiffTask(all));
+        if (!checkPreUploadConditions(Main.map.mapView.getEditLayer(), apiData))
+            return;
+        Main.worker.execute(createUploadTask(Main.map.mapView.getEditLayer(), apiData.getPrimitives()));
     }
 
     /**
@@ -234,13 +224,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case JOptionPane.CANCEL_OPTION: return;
-        case 0: synchronizePrimitive(id); break;
-        case 1: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.CANCEL_OPTION: return;
+            case 0: synchronizePrimitive(id); break;
+            case 1: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -274,12 +264,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case 1: return;
-        case 0: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case 1: return;
+            case 0: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -521,22 +511,28 @@ public class UploadAction extends JosmAction{
         }
     }
 
+    public UploadDiffTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload) {
+        return new UploadDiffTask(layer, toUpload);
+    }
 
-    class UploadDiffTask extends  PleaseWaitRunnable {
+    public class UploadDiffTask extends  PleaseWaitRunnable {
         private boolean uploadCancelled = false;
         private Exception lastException = null;
         private Collection <OsmPrimitive> toUpload;
         private OsmServerWriter writer;
+        private OsmDataLayer layer;
 
-        public UploadDiffTask(Collection <OsmPrimitive> toUpload) {
-            super(tr("Uploading"),false /* don't ignore exceptions */);
+        private UploadDiffTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload) {
+            super(tr("Uploading data for layer ''{0}''", layer.getName()),false /* don't ignore exceptions */);
             this.toUpload = toUpload;
+            this.layer = layer;
         }
 
         @Override protected void realRun() throws SAXException, IOException {
             writer = new OsmServerWriter();
             try {
-                writer.uploadOsm(getCurrentDataSet().version, toUpload, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
+                writer.uploadOsm(layer.data.version, toUpload, monitor);
             } catch (Exception sxe) {
                 if (uploadCancelled) {
                     System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
@@ -553,11 +549,13 @@ public class UploadAction extends JosmAction{
             // we always clean the data, even in case of errors. It's possible the data was
             // partially uploaded
             //
-            getEditLayer().cleanupAfterUpload(writer.getProcessedPrimitives());
-            DataSet.fireSelectionChanged(getEditLayer().data.getSelected());
-            getEditLayer().fireDataChange();
+            layer.cleanupAfterUpload(writer.getProcessedPrimitives());
+            DataSet.fireSelectionChanged(layer.data.getSelected());
+            layer.fireDataChange();
             if (lastException != null) {
                 handleFailedUpload(lastException);
+            } else {
+                layer.onPostUploadToServer();
             }
         }
 
@@ -566,6 +564,18 @@ public class UploadAction extends JosmAction{
             if (writer != null) {
                 writer.disconnectActiveConnection();
             }
+        }
+
+        public boolean isSuccessful() {
+            return !isCancelled() && !isFailed();
+        }
+
+        public boolean isCancelled() {
+            return uploadCancelled;
+        }
+
+        public boolean isFailed() {
+            return lastException != null;
         }
     }
 }

@@ -73,7 +73,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     {
         double dist = getDist100Pixel();
         return dist >= 2000 ? Math.round(dist/100)/10 +" km" : (dist >= 1
-        ? Math.round(dist*10)/10 +" m" : "< 1 m");
+                ? Math.round(dist*10)/10 +" m" : "< 1 m");
     }
 
     public double getDist100Pixel()
@@ -111,16 +111,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 new EastNorth(
                         center.east() - getWidth()/2.0*scale,
                         center.north() - getHeight()/2.0*scale),
-                new EastNorth(
-                        center.east() + getWidth()/2.0*scale,
-                        center.north() + getHeight()/2.0*scale));
+                        new EastNorth(
+                                center.east() + getWidth()/2.0*scale,
+                                center.north() + getHeight()/2.0*scale));
     };
 
     /* FIXME: replace with better method - used by MapSlider */
     public ProjectionBounds getMaxProjectionBounds() {
         Bounds b = getProjection().getWorldBoundsLatLon();
         return new ProjectionBounds(getProjection().latlon2eastNorth(b.min),
-            getProjection().latlon2eastNorth(b.max));
+                getProjection().latlon2eastNorth(b.max));
     };
 
     /* FIXME: replace with better method - used by Main to reset Bounds when projection changes, don't use otherwise */
@@ -129,9 +129,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 getProjection().eastNorth2latlon(new EastNorth(
                         center.east() - getWidth()/2.0*scale,
                         center.north() - getHeight()/2.0*scale)),
-                getProjection().eastNorth2latlon(new EastNorth(
-                        center.east() + getWidth()/2.0*scale,
-                        center.north() + getHeight()/2.0*scale)));
+                        getProjection().eastNorth2latlon(new EastNorth(
+                                center.east() + getWidth()/2.0*scale,
+                                center.north() + getHeight()/2.0*scale)));
     };
 
     /**
@@ -188,8 +188,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         else if(lat > b.max.lat()) {changed = true; lat = b.max.lat(); }
         if(lon < b.min.lon()) {changed = true; lon = b.min.lon(); }
         else if(lon > b.max.lon()) {changed = true; lon = b.max.lon(); }
-        if(changed)
-          newCenter = new CachedLatLon(lat, lon).getEastNorth();
+        if(changed) {
+            newCenter = new CachedLatLon(lat, lon).getEastNorth();
+        }
         if (!newCenter.equals(center)) {
             EastNorth oldCenter = center;
             center = newCenter;
@@ -210,14 +211,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
             e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.min.lon()));
             e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.max.lon()));
             d = e2.east() - e1.east();
-            if(d < width*newScale)
+            if(d < width*newScale) {
                 newScale = Math.max(newScaleH, d/width);
+            }
         }
         else
         {
             d = d/(l1.greatCircleDistance(l2)*height*10);
-            if(newScale < d)
+            if(newScale < d) {
                 newScale = d;
+            }
         }
         if (scale != newScale) {
             double oldScale = scale;
@@ -295,7 +298,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Node n : ds.nodes) {
-            if (n.deleted || n.incomplete) {
+            if (n.isDeleted() || n.incomplete) {
                 continue;
             }
             Point sp = getPoint(n);
@@ -306,8 +309,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
             // when multiple nodes on one point, prefer new or selected nodes
             else if(dist == minDistanceSq && minPrimitive != null
-                    && ((n.id == 0 && n.isSelected())
-                            || (!minPrimitive.isSelected() && (n.isSelected() || n.id == 0)))) {
+                    && ((n.getId() == 0 && n.isSelected())
+                            || (!minPrimitive.isSelected() && (n.isSelected() || n.getId() == 0)))) {
                 minPrimitive = n;
             }
         }
@@ -326,14 +329,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Way w : ds.ways) {
-            if (w.deleted || w.incomplete) {
+            if (w.isDeleted() || w.incomplete) {
                 continue;
             }
             Node lastN = null;
             int i = -2;
             for (Node n : w.getNodes()) {
                 i++;
-                if (n.deleted || n.incomplete) {
+                if (n.isDeleted() || n.incomplete) {
                     continue;
                 }
                 if (lastN == null) {
@@ -450,12 +453,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Way w : ds.ways) {
-            if (w.deleted || w.incomplete) {
+            if (w.isDeleted() || w.incomplete) {
                 continue;
             }
             Node lastN = null;
             for (Node n : w.getNodes()) {
-                if (n.deleted || n.incomplete) {
+                if (n.isDeleted() || n.incomplete) {
                     continue;
                 }
                 if (lastN == null) {
@@ -476,7 +479,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
         for (Node n : ds.nodes) {
-            if (!n.deleted && !n.incomplete
+            if (!n.isDeleted() && !n.incomplete
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }
@@ -498,7 +501,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Node n : ds.nodes) {
-            if (!n.deleted && !n.incomplete
+            if (!n.isDeleted() && !n.incomplete
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }

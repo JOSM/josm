@@ -43,7 +43,6 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer.ModifiedChangedListener;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
@@ -151,15 +150,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * position.
      */
     public void addLayer(Layer layer) {
-        if (layer instanceof OsmDataLayer) {
-            OsmDataLayer editLayer = (OsmDataLayer)layer;
-            editLayer.listenerModified.add(new ModifiedChangedListener(){
-                public void modifiedChanged(boolean value, OsmDataLayer source) {
-                    JOptionPane.getFrameForComponent(Main.parent).setTitle((value?"*":"")
-                            +tr("Java OpenStreetMap Editor"));
-                }
-            });
-        }
         if (layer instanceof MarkerLayer && playHeadMarker == null) {
             playHeadMarker = PlayHeadMarker.create();
         }
@@ -509,6 +499,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 l.activeLayerChange(old, layer);
             }
         }
+        if (layer instanceof OsmDataLayer) {
+            refreshTitle((OsmDataLayer)layer);
+        }
 
         /* This only makes the buttons look disabled. Disabling the actions as well requires
          * the user to re-select the tool after i.e. moving a layer. While testing I found
@@ -599,6 +592,21 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(Layer.VISIBLE_PROP)) {
             repaint();
+        } else if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
+                || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
+            OsmDataLayer layer = (OsmDataLayer)evt.getSource();
+            if (layer == getEditLayer()) {
+                refreshTitle(layer);
+            }
+        }
+    }
+
+    protected void refreshTitle(OsmDataLayer layer) {
+        boolean dirty = layer.requiresSaveToFile() || layer.requiresUploadToServer();
+        if (dirty) {
+            JOptionPane.getFrameForComponent(Main.parent).setTitle("* " + tr("Java OpenStreetMap Editor"));
+        } else {
+            JOptionPane.getFrameForComponent(Main.parent).setTitle(tr("Java OpenStreetMap Editor"));
         }
     }
 }

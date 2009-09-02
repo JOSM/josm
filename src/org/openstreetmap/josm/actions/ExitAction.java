@@ -20,11 +20,11 @@ public class ExitAction extends JosmAction {
      */
     public ExitAction() {
         super(tr("Exit"), "exit", tr("Exit the application."),
-        Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.GROUP_MENU), true);
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (!Main.breakBecauseUnsavedChanges()) {
+        if (Main.saveUnsavedModifications()) {
             Main.saveGuiGeometry();
             System.exit(0);
         }

@@ -44,7 +44,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     static public final String NAME_PROP = Layer.class.getName() + ".name";
 
     /** keeps track of property change listeners */
-    private PropertyChangeSupport propertyChangeSupport;
+    protected PropertyChangeSupport propertyChangeSupport;
 
     /**
      * Interface to notify listeners of the change of the active layer.

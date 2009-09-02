@@ -193,12 +193,12 @@ public class MapStatus extends JPanel implements Helpful {
                         for (final OsmPrimitive osm : osms) {
                             final StringBuilder text = new StringBuilder();
                             String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
-                            if (osm.id == 0 || osm.modified) {
+                            if (osm.getId() == 0 || osm.isModified()) {
                                 name = "<i><b>"+ osm.getDisplayName(DefaultNameFormatter.getInstance())+"*</b></i>";
                             }
                             text.append(name);
-                            if (osm.id != 0) {
-                                text.append("<br>id="+osm.id);
+                            if (osm.getId() != 0) {
+                                text.append("<br>id="+osm.getId());
                             }
                             for (Entry<String, String> e : osm.entrySet()) {
                                 text.append("<br>"+e.getKey()+"="+e.getValue());

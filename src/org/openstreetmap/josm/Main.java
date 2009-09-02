@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -11,7 +12,9 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
@@ -21,6 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -44,6 +48,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
+import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
@@ -392,44 +397,70 @@ abstract public class Main {
         }
     }
 
-    public static boolean breakBecauseUnsavedChanges() {
-        Shortcut.savePrefs();
-        if (map != null) {
-            boolean modified = false;
-            boolean uploadedModified = false;
-            for (final Layer l : map.mapView.getAllLayers()) {
-                if (l instanceof OsmDataLayer && ((OsmDataLayer)l).isModified()) {
-                    modified = true;
-                    uploadedModified = ((OsmDataLayer)l).uploadedModified;
-                    break;
-                }
-            }
-            if (modified) {
-                final String msg = uploadedModified ? "\n"
-                        +tr("Hint: Some changes came from uploading new data to the server.") : "";
-                        int result = new ExtendedDialog(parent, tr("Unsaved Changes"),
-                                new javax.swing.JLabel(tr("There are unsaved changes. Discard the changes and continue?")+msg),
-                                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")},
-                                new String[] {"save.png", "exit.png", "cancel.png"}).getValue();
-
-                        // Save before exiting
-                        if(result == 1) {
-                            Boolean savefailed = false;
-                            for (final Layer l : map.mapView.getAllLayers()) {
-                                if (l instanceof OsmDataLayer && ((OsmDataLayer)l).isModified()) {
-                                    SaveAction save = new SaveAction();
-                                    if(!save.doSave(l)) {
-                                        savefailed = true;
-                                    }
-                                }
-                            }
-                            return savefailed;
-                        }
-                        else if(result != 2) // Cancel exiting unless the 2nd button was clicked
-                            return true;
+    public static boolean saveUnsavedModifications() {
+        if (map == null) return true;
+        SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
+        List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
+        for (OsmDataLayer l: Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
+            if (l.requiresSaveToFile() || l.requiresUploadToServer()) {
+                layersWithUnmodifiedChanges.add(l);
             }
         }
-        return false;
+        dialog.prepareForSavingAndUpdatingLayersBeforeExit();
+        if (!layersWithUnmodifiedChanges.isEmpty()) {
+            dialog.getModel().populate(layersWithUnmodifiedChanges);
+            dialog.setVisible(true);
+            switch(dialog.getUserAction()) {
+                case CANCEL: return false;
+                case PROCEED: return true;
+                default: return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Saves all {@see OsmDataLayer}s with an associated file and with unsaved
+     * data modifications.
+     * 
+     * @return true, if the save operation was successful; false, otherwise
+     */
+    public static boolean saveUnsavedModifications_old() {
+        Shortcut.savePrefs();
+        if (map == null)
+            return true; // nothing to save, return success
+
+        int numUnsavedLayers = 0;
+        for (final OsmDataLayer l : map.mapView.getLayersOfType(OsmDataLayer.class)) {
+            if (l.requiresSaveToFile()) {
+                numUnsavedLayers++;
+            }
+        }
+        if (numUnsavedLayers == 0)
+            return true; // nothing to save, return success
+
+        String msg = trn(
+                "There are unsaved changes in {0} layer. Discard the changes and continue?",
+                "There are unsaved changes in {0} layers. Discard the changes and continue?",
+                numUnsavedLayers,
+                numUnsavedLayers
+        );
+        int result = new ExtendedDialog(parent, tr("Unsaved Changes"),
+                new JLabel(msg),
+                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")},
+                new String[] {"save.png", "exit.png", "cancel.png"}).getValue();
+
+        switch(result) {
+            case 2: /* discard and exit */ return true;
+            case 3: /* cancel */ return false;
+        }
+        boolean savefailed = false;
+        for (OsmDataLayer l : map.mapView.getLayersOfType(OsmDataLayer.class)) {
+            if(!new SaveAction().doSave(l)) {
+                savefailed = true;
+            }
+        }
+        return !savefailed;
     }
 
     private static void downloadFromParamString(final boolean rawGps, String s) {

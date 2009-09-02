@@ -44,12 +44,12 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
     public PleaseWaitRunnable(String title, boolean ignoreException) {
-        this(title, new PleaseWaitProgressMonitor(), ignoreException);
+        this(title, new PleaseWaitProgressMonitor(title), ignoreException);
     }
 
     public PleaseWaitRunnable(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
         this.title = title;
-        this.progressMonitor = progressMonitor == null?new PleaseWaitProgressMonitor():progressMonitor;
+        this.progressMonitor = progressMonitor == null?new PleaseWaitProgressMonitor(title):progressMonitor;
         this.ignoreException = ignoreException;
         this.progressMonitor.addCancelListener(this);
     }

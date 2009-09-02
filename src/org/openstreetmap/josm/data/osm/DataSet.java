@@ -82,7 +82,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedPrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (osm.visible && !osm.deleted) {
+            if (osm.isVisible() && !osm.isDeleted()) {
                 o.add(osm);
             }
         return o;
@@ -91,7 +91,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (osm.visible && !osm.deleted && !osm.incomplete) {
+            if (osm.isVisible() && !osm.isDeleted() && !osm.incomplete) {
                 o.add(osm);
             }
         return o;
@@ -100,7 +100,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (osm.visible && !osm.deleted && !osm.incomplete && !(osm instanceof Relation)) {
+            if (osm.isVisible() && !osm.isDeleted() && !osm.incomplete && !(osm instanceof Relation)) {
                 o.add(osm);
             }
         return o;
@@ -229,7 +229,7 @@ public class DataSet implements Cloneable {
         if (list == null)
             return sel;
         for (OsmPrimitive osm : list)
-            if (osm.isSelected() && !osm.deleted) {
+            if (osm.isSelected() && !osm.isDeleted()) {
                 sel.add(osm);
             }
         return sel;
@@ -289,12 +289,12 @@ public class DataSet implements Cloneable {
                 if (a.getClass() == b.getClass()) {
                     String as = h.get(a);
                     if (as == null) {
-                        as = a.getName() != null ? a.getName() : Long.toString(a.id);
+                        as = a.getName() != null ? a.getName() : Long.toString(a.getId());
                         h.put(a, as);
                     }
                     String bs = h.get(b);
                     if (bs == null) {
-                        bs = b.getName() != null ? b.getName() : Long.toString(b.id);
+                        bs = b.getName() != null ? b.getName() : Long.toString(b.getId());
                         h.put(b, bs);
                     }
                     int res = as.compareTo(bs);
@@ -319,13 +319,13 @@ public class DataSet implements Cloneable {
         if (id <= 0)
             throw new IllegalArgumentException(tr("parameter {0} > 0 required. Got {1}.", "id", id));
         for (OsmPrimitive primitive : nodes) {
-            if (primitive.id == id) return primitive;
+            if (primitive.getId() == id) return primitive;
         }
         for (OsmPrimitive primitive : ways) {
-            if (primitive.id == id) return primitive;
+            if (primitive.getId() == id) return primitive;
         }
         for (OsmPrimitive primitive : relations) {
-            if (primitive.id == id) return primitive;
+            if (primitive.getId() == id) return primitive;
         }
         return null;
     }
@@ -333,38 +333,38 @@ public class DataSet implements Cloneable {
     public Set<Long> getPrimitiveIds() {
         HashSet<Long> ret = new HashSet<Long>();
         for (OsmPrimitive primitive : nodes) {
-            ret.add(primitive.id);
+            ret.add(primitive.getId());
         }
         for (OsmPrimitive primitive : ways) {
-            ret.add(primitive.id);
+            ret.add(primitive.getId());
         }
         for (OsmPrimitive primitive : relations) {
-            ret.add(primitive.id);
+            ret.add(primitive.getId());
         }
         return ret;
     }
 
     /**
-     * Replies the set of ids of all complete primitivies (i.e. those with
+     * Replies the set of ids of all complete primitives (i.e. those with
      * ! primitive.incomplete)
      *
-     * @return the set of ids of all complete primitivies
+     * @return the set of ids of all complete primitives
      */
     public Set<Long> getCompletePrimitiveIds() {
         HashSet<Long> ret = new HashSet<Long>();
         for (OsmPrimitive primitive : nodes) {
             if (!primitive.incomplete) {
-                ret.add(primitive.id);
+                ret.add(primitive.getId());
             }
         }
         for (OsmPrimitive primitive : ways) {
             if (! primitive.incomplete) {
-                ret.add(primitive.id);
+                ret.add(primitive.getId());
             }
         }
         for (OsmPrimitive primitive : relations) {
             if (! primitive.incomplete) {
-                ret.add(primitive.id);
+                ret.add(primitive.getId());
             }
         }
         return ret;
@@ -449,5 +449,25 @@ public class DataSet implements Cloneable {
             }
         }
         return parents;
+    }
+
+    /**
+     * Replies true if there is at least one primitive in this dataset with
+     * {@see OsmPrimitive#isModified()} == <code>true</code>.
+     * 
+     * @return true if there is at least one primitive in this dataset with
+     * {@see OsmPrimitive#isModified()} == <code>true</code>.
+     */
+    public boolean isModified() {
+        for (Node n: nodes) {
+            if (n.isModified()) return true;
+        }
+        for (Way w: ways) {
+            if (w.isModified()) return true;
+        }
+        for (Relation r: relations) {
+            if (r.isModified()) return true;
+        }
+        return false;
     }
 }

@@ -134,7 +134,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         if (getNumRelations() > 0 ) {
             int i = 0;
             for (OsmPrimitive e : DataSet.sort(Main.main.getCurrentDataSet().relations)) {
-                if (!e.deleted && !e.incomplete) {
+                if (!e.isDeleted() && !e.incomplete) {
                     list.setElementAt(e, i++);
                 }
             }
@@ -380,8 +380,10 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         public void launchEditorForDuplicate(Relation original) {
             Relation copy = new Relation();
             copy.cloneFrom(original);
+            // FIXME: id is going to be hidden. How to reset a primitive?
+            //
             copy.id = 0;
-            copy.modified = true;
+            copy.setModified(true);
             RelationEditor editor = RelationEditor.getEditor(
                     Main.main.getEditLayer(),
                     copy,

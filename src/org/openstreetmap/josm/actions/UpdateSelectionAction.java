@@ -165,12 +165,12 @@ public class UpdateSelectionAction extends JosmAction {
 
         protected void initMultiFetchReaderWithNodes(MultiFetchServerObjectReader reader) {
             for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Node && primitive.id > 0) {
+                if (primitive instanceof Node && primitive.getId() > 0) {
                     reader.append((Node)primitive);
                 } else if (primitive instanceof Way) {
                     Way way = (Way)primitive;
                     for (Node node: way.getNodes()) {
-                        if (node.id > 0) {
+                        if (node.getId() > 0) {
                             reader.append(node);
                         }
                     }
@@ -180,7 +180,7 @@ public class UpdateSelectionAction extends JosmAction {
 
         protected void initMultiFetchReaderWithWays(MultiFetchServerObjectReader reader) {
             for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Way && primitive.id > 0) {
+                if (primitive instanceof Way && primitive.getId() > 0) {
                     reader.append((Way)primitive);
                 }
             }
@@ -188,7 +188,7 @@ public class UpdateSelectionAction extends JosmAction {
 
         protected void initMultiFetchReaderWithRelations(MultiFetchServerObjectReader reader) {
             for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Relation && primitive.id > 0) {
+                if (primitive instanceof Relation && primitive.getId() > 0) {
                     reader.append((Relation)primitive);
                 }
             }

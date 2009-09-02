@@ -47,7 +47,7 @@ public class SelectionWebsiteLoader extends PleaseWaitRunnable {
             progressMonitor.subTask(tr("Downloading..."));
             Map<Long, String> ids = idReader.parseIds(in);
             for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedPrimitives()) {
-                if (ids.containsKey(osm.id) && osm.getClass().getName().toLowerCase().endsWith(ids.get(osm.id))) {
+                if (ids.containsKey(osm.getId()) && osm.getClass().getName().toLowerCase().endsWith(ids.get(osm.getId()))) {
                     if (mode == SearchAction.SearchMode.remove) {
                         sel.remove(osm);
                     } else {

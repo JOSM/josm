@@ -35,7 +35,7 @@ public class ChangeCommand extends Command {
     @Override public boolean executeCommand() {
         super.executeCommand();
         osm.cloneFrom(newOsm);
-        osm.modified = true;
+        osm.setModified(true);
         return true;
     }
 
@@ -46,9 +46,9 @@ public class ChangeCommand extends Command {
     @Override public MutableTreeNode description() {
         String msg = "";
         switch(OsmPrimitiveType.from(osm)) {
-        case NODE: msg = marktr("Change node {0}"); break;
-        case WAY: msg = marktr("Change way {0}"); break;
-        case RELATION: msg = marktr("Change relation {0}"); break;
+            case NODE: msg = marktr("Change node {0}"); break;
+            case WAY: msg = marktr("Change way {0}"); break;
+            case RELATION: msg = marktr("Change relation {0}"); break;
         }
         return new DefaultMutableTreeNode(
                 new JLabel(tr(msg,

@@ -106,7 +106,7 @@ public class ReferringRelationsBrowser extends JPanel {
                     model.getRelation(),
                     getLayer(),
                     full,
-                    new PleaseWaitProgressMonitor()
+                    new PleaseWaitProgressMonitor(tr("Loading parent relations"))
             );
             task.setContinuation(
                     new Runnable() {

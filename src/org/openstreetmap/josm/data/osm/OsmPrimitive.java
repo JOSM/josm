@@ -68,7 +68,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * More specific, it is not good to set this to 0 and think the object is now
      * new to the server! To create a new object, call the default constructor of
      * the respective class.
+     * 
+     * @deprecated use {@see #getId()}. Don't assign an id, create a primitive with
+     * the respective constructors.
      */
+    @Deprecated
     public long id = 0;
 
     /**
@@ -76,19 +80,28 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * the server. In this case, on next upload, this object will be updated.
      * Deleted objects are deleted from the server. If the objects are added (id=0),
      * the modified is ignored and the object is added to the server.
+     * 
+     * @deprecated Please use {@see #setModified()} and {@see #getModified()}
      */
+    @Deprecated
     public boolean modified = false;
 
     /**
      * <code>true</code>, if the object has been deleted.
+     * 
+     * @deprecated use {@see #delete()} and {@see #isDeleted()}
      */
+    @Deprecated
     public boolean deleted = false;
 
     /**
      * Visibility status as specified by the server. The visible attribute was
      * introduced with the 0.4 API to be able to communicate deleted objects
      * (they will have visible=false).
+     * 
+     * @deprecated use {@see #isVisible()} and {@see #setVisible(boolean)}
      */
+    @Deprecated
     public boolean visible = true;
 
     /**
@@ -99,6 +112,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     /**
      * If set to true, this object is currently selected.
+     * 
+     * @deprecated use {@see #isSelected()} and {@see #setSelected(boolean)}
      */
     @Deprecated
     public volatile boolean selected = false;
@@ -120,6 +135,71 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      */
     public boolean isSelected() {
         return selected;
+    }
+
+    /**
+     * Marks this primitive as being modified.
+     * 
+     * @param modified true, if this primitive is to be modified
+     */
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    /**
+     * Replies <code>true</code> if the object has been modified since it was loaded from
+     * the server. In this case, on next upload, this object will be updated.
+     * 
+     * @return <code>true</code> if the object has been modified since it was loaded from
+     * the server
+     */
+    public boolean isModified() {
+        return modified;
+    }
+
+    /**
+     * Replies <code>true</code>, if the object has been deleted.
+     * 
+     * @return <code>true</code>, if the object has been deleted.
+     * @see #delete(boolean)
+     */
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    /**
+     * Replies true if this primitive is either unknown to the server (i.e. its id
+     * is 0) or it is known to the server and it hasn't be deleted on the server.
+     * Replies false, if this primitive is known on the server and has been deleted
+     * on the server.
+     * 
+     * @see #setVisible(boolean)
+     */
+    public boolean isVisible() {
+        return visible;
+    }
+
+    /**
+     * Sets whether this primitive is visible, i.e. whether it is known on the server
+     * and not deleted on the server.
+     * 
+     * @see #isVisible()
+     * @throws IllegalStateException thrown if visible is set to false on an primitive with
+     * id==0
+     */
+    public void setVisible(boolean visible) throws IllegalStateException{
+        if (id == 0 && visible == false)
+            throw new IllegalStateException(tr("a primitive with id=0 can't be invisible"));
+        this.visible = visible;
+    }
+
+    /**
+     * Replies the id of this primitive.
+     * 
+     * @return the id of this primitive.
+     */
+    public long getId() {
+        return id;
     }
 
     /**
@@ -501,4 +581,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * @return the display name
      */
     public abstract String getDisplayName(NameFormatter formatter);
+
 }
+
+

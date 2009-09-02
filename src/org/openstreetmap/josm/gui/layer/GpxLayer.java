@@ -894,7 +894,7 @@ public class GpxLayer extends Layer {
                         // continue
                 }
             }
-            new DownloadOsmTaskList().download(false, toDownload, new PleaseWaitProgressMonitor());
+            new DownloadOsmTaskList().download(false, toDownload, new PleaseWaitProgressMonitor(tr("Download data")));
         }
     }
 

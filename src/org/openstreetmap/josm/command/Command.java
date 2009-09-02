@@ -88,7 +88,6 @@ abstract public class Command {
         for (Entry<OsmPrimitive, OsmPrimitive> e : cloneMap.entrySet()) {
             e.getKey().cloneFrom(e.getValue());
         }
-        getLayer().setModified(true);
     }
 
     /**
@@ -113,11 +112,11 @@ abstract public class Command {
         OsmPrimitive o = cloneMap.get(osm);
         if (o != null)
             return o;
-        Main.debug("unable to find osm with id: " + osm.id + " hashCode: " + osm.hashCode());
+        Main.debug("unable to find osm with id: " + osm.getId() + " hashCode: " + osm.hashCode());
         for (OsmPrimitive t : cloneMap.keySet()) {
             OsmPrimitive to = cloneMap.get(t);
-            Main.debug("now: " + t.id + " hashCode: " + t.hashCode());
-            Main.debug("orig: " + to.id + " hashCode: " + to.hashCode());
+            Main.debug("now: " + t.getId() + " hashCode: " + t.hashCode());
+            Main.debug("orig: " + to.getId() + " hashCode: " + to.hashCode());
         }
         return o;
     }

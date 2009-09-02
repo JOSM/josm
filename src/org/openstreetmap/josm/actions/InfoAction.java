@@ -20,6 +20,6 @@ public class InfoAction extends AbstractInfoAction {
 
     @Override
     protected  String createInfoUrl(OsmPrimitive primitive) {
-        return getBaseURL() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.id;
+        return getBaseURL() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId();
     }
 }

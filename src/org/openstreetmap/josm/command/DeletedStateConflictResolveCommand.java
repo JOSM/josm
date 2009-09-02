@@ -44,7 +44,7 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve conflicts in deleted state in {0}",conflict.getMy().id),
+                        tr("Resolve conflicts in deleted state in {0}",conflict.getMy().getId()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
@@ -61,7 +61,7 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
         OsmDataLayer layer = getLayer();
 
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
-            if (conflict.getMy().deleted) {
+            if (conflict.getMy().isDeleted()) {
                 // because my was involved in a conflict it my still be referred
                 // to from a way or a relation. Fix this now.
                 //

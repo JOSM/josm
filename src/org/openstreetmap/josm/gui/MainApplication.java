@@ -46,7 +46,7 @@ public class MainApplication extends Main {
         mainFrame.setIconImage(ImageProvider.get("logo.png").getImage());
         mainFrame.addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(final WindowEvent arg0) {
-                if (Main.breakBecauseUnsavedChanges())
+                if (!Main.saveUnsavedModifications())
                     return;
                 Main.saveGuiGeometry();
                 System.exit(0);
@@ -72,14 +72,16 @@ public class MainApplication extends Main {
         List<String> argList = Arrays.asList(argArray);
         final Map<String, Collection<String>> args = new HashMap<String, Collection<String>>();
         for (String arg : argArray) {
-            if (!arg.startsWith("--"))
+            if (!arg.startsWith("--")) {
                 arg = "--download="+arg;
+            }
             int i = arg.indexOf('=');
             String key = i == -1 ? arg.substring(2) : arg.substring(2,i);
             String value = i == -1 ? "" : arg.substring(i+1);
             Collection<String> v = args.get(key);
-            if (v == null)
+            if (v == null) {
                 v = new LinkedList<String>();
+            }
             v.add(value);
             args.put(key, v);
         }
@@ -87,10 +89,11 @@ public class MainApplication extends Main {
         Main.pref.init(args.containsKey("reset-preferences"));
 
         // Check if passed as parameter
-        if (args.containsKey("language"))
+        if (args.containsKey("language")) {
             I18n.set((String)(args.get("language").toArray()[0]));
-        else
+        } else {
             I18n.set(Main.pref.get("language", null));
+        }
 
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
             // TODO: put in a platformHook for system that have no console by default
@@ -142,9 +145,10 @@ public class MainApplication extends Main {
         splash.closeSplash();
 
         if (((!args.containsKey("no-maximize") && !args.containsKey("geometry")
-        && Main.pref.get("gui.geometry").length() == 0) || args.containsKey("maximize"))
-        && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH))
+                && Main.pref.get("gui.geometry").length() == 0) || args.containsKey("maximize"))
+                && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
             mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -160,13 +164,15 @@ public class MainApplication extends Main {
      */
     public static void removeObsoletePreferences() {
         String[] obsolete = {
-           "sample.preference.that.does.not.exist", // sample comment, expiry date should go here
-           "osm-server.version", // remove this around 10/2009
-           "osm-server.additional-versions", // remove this around 10/2009
-           null
+                "sample.preference.that.does.not.exist", // sample comment, expiry date should go here
+                "osm-server.version", // remove this around 10/2009
+                "osm-server.additional-versions", // remove this around 10/2009
+                null
         };
         for (String i : obsolete) {
-            if (i == null) continue;
+            if (i == null) {
+                continue;
+            }
             if (Main.pref.hasKey(i)) {
                 Main.pref.removeFromCollection(i, Main.pref.get(i));
                 System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", i));

@@ -70,6 +70,27 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class OsmDataLayer extends Layer {
+    static public final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
+    static public final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
+
+    private boolean requiresSaveToFile = false;
+    private boolean requiresUploadToServer = false;
+
+    protected void setRequiresSaveToFile(boolean newValue) {
+        boolean oldValue = requiresSaveToFile;
+        requiresSaveToFile = newValue;
+        if (oldValue != newValue) {
+            propertyChangeSupport.firePropertyChange(REQUIRES_SAVE_TO_DISK_PROP, oldValue, newValue);
+        }
+    }
+
+    protected void setRequiresUploadToServer(boolean newValue) {
+        boolean oldValue = requiresUploadToServer;
+        requiresUploadToServer = newValue;
+        if (oldValue != newValue) {
+            propertyChangeSupport.firePropertyChange(REQUIRES_UPLOAD_TO_SERVER_PROP, oldValue, newValue);
+        }
+    }
 
     /** the global counter for created data layers */
     static private int dataLayerCounter = 0;
@@ -95,7 +116,7 @@ public class OsmDataLayer extends Layer {
 
         private void inc(final OsmPrimitive osm, final int i) {
             normal[i]++;
-            if (osm.deleted) {
+            if (osm.isDeleted()) {
                 deleted[i]++;
             }
         }
@@ -112,9 +133,6 @@ public class OsmDataLayer extends Layer {
         }
     }
 
-    public interface ModifiedChangedListener {
-        void modifiedChanged(boolean value, OsmDataLayer source);
-    }
     public interface CommandQueueListener {
         void commandChanged(int queueSize, int redoSize);
     }
@@ -129,16 +147,6 @@ public class OsmDataLayer extends Layer {
      */
     private ConflictCollection conflicts;
 
-    /**
-     * Whether the data of this layer was modified during the session.
-     */
-    private boolean modified = false;
-    /**
-     * Whether the data was modified due an upload of the data to the server.
-     */
-    public boolean uploadedModified = false;
-
-    public final LinkedList<ModifiedChangedListener> listenerModified = new LinkedList<ModifiedChangedListener>();
     public final LinkedList<DataChangeListener> listenerDataChanged = new LinkedList<DataChangeListener>();
 
     /**
@@ -309,18 +317,9 @@ public class OsmDataLayer extends Layer {
 
     @Override public void visitBoundingBox(final BoundingXYVisitor v) {
         for (final Node n : data.nodes)
-            if (!n.deleted && !n.incomplete) {
+            if (!n.isDeleted() && !n.incomplete) {
                 v.visit(n);
             }
-    }
-
-    /**
-     * Cleanup the layer after save to disk. Just marks the layer as unmodified.
-     * Leaves the undo/redo stack unchanged.
-     *
-     */
-    public void cleanupAfterSaveToDisk() {
-        setModified(false);
     }
 
     /**
@@ -332,7 +331,6 @@ public class OsmDataLayer extends Layer {
      *         May be <code>null</code>, which means nothing has been uploaded
      */
     public void cleanupAfterUpload(final Collection<OsmPrimitive> processed) {
-
         // return immediately if an upload attempt failed
         if (processed == null || processed.isEmpty())
             return;
@@ -350,8 +348,6 @@ public class OsmDataLayer extends Layer {
         for (final Iterator<Relation> it = data.relations.iterator(); it.hasNext();) {
             cleanIterator(it, processedSet);
         }
-
-        setModified(true);
     }
 
     /**
@@ -366,22 +362,9 @@ public class OsmDataLayer extends Layer {
         final OsmPrimitive osm = it.next();
         if (!processed.remove(osm))
             return;
-        osm.modified = false;
-        if (osm.deleted) {
+        osm.setModified(false);
+        if (osm.isDeleted()) {
             it.remove();
-        }
-    }
-
-    public boolean isModified() {
-        return modified;
-    }
-
-    public void setModified(final boolean modified) {
-        if (modified == this.modified)
-            return;
-        this.modified = modified;
-        for (final ModifiedChangedListener l : listenerModified) {
-            l.modifiedChanged(modified, this);
         }
     }
 
@@ -391,7 +374,7 @@ public class OsmDataLayer extends Layer {
     private int undeletedSize(final Collection<? extends OsmPrimitive> list) {
         int size = 0;
         for (final OsmPrimitive osm : list)
-            if (!osm.deleted) {
+            if (!osm.isDeleted()) {
                 size++;
             }
         return size;
@@ -445,6 +428,8 @@ public class OsmDataLayer extends Layer {
     }
 
     public void fireDataChange() {
+        setRequiresSaveToFile(true);
+        setRequiresUploadToServer(true);
         for (DataChangeListener dcl : listenerDataChanged) {
             dcl.dataChanged(this);
         }
@@ -455,7 +440,7 @@ public class OsmDataLayer extends Layer {
         gpxData.storageFile = file;
         HashSet<Node> doneNodes = new HashSet<Node>();
         for (Way w : data.ways) {
-            if (w.incomplete || w.deleted) {
+            if (w.incomplete || w.isDeleted()) {
                 continue;
             }
             GpxTrack trk = new GpxTrack();
@@ -467,7 +452,7 @@ public class OsmDataLayer extends Layer {
 
             ArrayList<WayPoint> trkseg = null;
             for (Node n : w.getNodes()) {
-                if (n.incomplete || n.deleted) {
+                if (n.incomplete || n.isDeleted()) {
                     trkseg = null;
                     continue;
                 }
@@ -491,7 +476,7 @@ public class OsmDataLayer extends Layer {
         // what is this loop meant to do? it creates waypoints but never
         // records them?
         for (Node n : data.nodes) {
-            if (n.incomplete || n.deleted || doneNodes.contains(n)) {
+            if (n.incomplete || n.isDeleted() || doneNodes.contains(n)) {
                 continue;
             }
             WayPoint wpt = new WayPoint(n.getCoor());
@@ -544,5 +529,57 @@ public class OsmDataLayer extends Layer {
      */
     public ConflictCollection getConflicts() {
         return conflicts;
+    }
+
+    /**
+     * Replies true if the data managed by this layer needs to be uploaded to
+     * the server because it contains at least one modified primitive.
+     * 
+     * @return true if the data managed by this layer needs to be uploaded to
+     * the server because it contains at least one modified primitive; false,
+     * otherwise
+     */
+    public boolean requiresUploadToServer() {
+        return requiresUploadToServer;
+    }
+
+    /**
+     * Replies true if the data managed by this layer needs to be saved to
+     * a file. Only replies true if a file is assigned to this layer and
+     * if the data managed by this layer has been modified since the last
+     * save operation to the file.
+     * 
+     * @return true if the data managed by this layer needs to be saved to
+     * a file
+     */
+    public boolean requiresSaveToFile() {
+        return getAssociatedFile() != null && requiresSaveToFile;
+    }
+
+    /**
+     * Initializes the layer after a successful load of OSM data from a file
+     * 
+     */
+    public void onPostLoadFromFile() {
+        setRequiresSaveToFile(false);
+        setRequiresUploadToServer(data.isModified());
+    }
+
+    /**
+     * Initializes the layer after a successful save of OSM data to a file
+     * 
+     */
+    public void onPostSaveToFile() {
+        setRequiresSaveToFile(false);
+        setRequiresUploadToServer(data.isModified());
+    }
+
+    /**
+     * Initializes the layer after a successful upload to the server
+     * 
+     */
+    public void onPostUploadToServer() {
+        setRequiresUploadToServer(false);
+        // keep requiresSaveToDisk unchanged
     }
 }

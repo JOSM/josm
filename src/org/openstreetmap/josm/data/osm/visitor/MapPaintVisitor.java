@@ -528,7 +528,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             for (RelationMember m : r.getMembers())
             {
-                if (m.isNode() && !m.getMember().incomplete && !m.getMember().deleted)
+                if (m.isNode() && !m.getMember().incomplete && !m.getMember().isDeleted())
                 {
                     drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember()) : null, true, true);
                 }
@@ -549,7 +549,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             for (RelationMember m : r.getMembers())
             {
-                if (m.isWay() && !m.getMember().incomplete && !m.getMember().deleted) /* nodes drawn on second call */
+                if (m.isWay() && !m.getMember().incomplete && !m.getMember().isDeleted()) /* nodes drawn on second call */
                 {
                     drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember())
                             : null, true, true);
@@ -579,7 +579,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if(m.getMember() == null) {
                 // TODO Nullable member will not be allowed after RelationMember.member is encalupsed
                 r.putError(tr("Empty member in relation."), true);
-            } else if(m.getMember().deleted) {
+            } else if(m.getMember().isDeleted()) {
                 r.putError(tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
             } else if(m.getMember().incomplete)
@@ -833,7 +833,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if(m.getMember() == null) {
                 //TODO Remove useless nullcheck when RelationMember.member is encalupsed
                 r.putError(tr("Empty member in relation."), true);
-            } else if(m.getMember().deleted) {
+            } else if(m.getMember().isDeleted()) {
                 r.putError(tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
             } else if(m.getMember().incomplete) {
@@ -1378,7 +1378,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    profilerN = 0;
             for (final Relation osm : data.relations)
             {
-                if(!osm.deleted && !osm.incomplete && osm.mappaintVisibleCode != viewid)
+                if(!osm.isDeleted() && !osm.incomplete && osm.mappaintVisibleCode != viewid)
                 {
                     osm.visit(this);
                     //            profilerN++;
@@ -1395,7 +1395,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    profilerN = 0;
             for (final Way osm : data.ways)
             {
-                if (!osm.incomplete && !osm.deleted
+                if (!osm.incomplete && !osm.isDeleted()
                         && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
                 {
                     if(isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid)
@@ -1436,7 +1436,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** WAYS (filling disabled)  ***/
             //    profilerN = 0;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.deleted && !osm.isSelected()
+                if (!osm.incomplete && !osm.isDeleted() && !osm.isSelected()
                         && osm.mappaintVisibleCode != viewid )
                 {
                     osm.visit(this);
@@ -1455,7 +1455,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         selectedCall = true;
         //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected()) {
-            if (!osm.incomplete && !osm.deleted && !(osm instanceof Node)
+            if (!osm.incomplete && !osm.isDeleted() && !(osm instanceof Node)
                     && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);
@@ -1475,7 +1475,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /*** NODES ***/
         //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.incomplete && !osm.deleted
+            if (!osm.incomplete && !osm.isDeleted()
                     && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);
@@ -1495,7 +1495,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.deleted
+                if (!osm.incomplete && !osm.isDeleted()
                         && osm.mappaintVisibleCode != viewid )
                 {
                     /* TODO: move this into the SimplePaint code? */

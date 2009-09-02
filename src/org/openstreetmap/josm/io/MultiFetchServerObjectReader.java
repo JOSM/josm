@@ -167,8 +167,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     public MultiFetchServerObjectReader append(Node node) {
         if (node == null) return this;
-        if (node.id == 0) return this;
-        remember(node.id, OsmPrimitiveType.NODE);
+        if (node.getId() == 0) return this;
+        remember(node.getId(), OsmPrimitiveType.NODE);
         return this;
     }
 
@@ -181,13 +181,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     public MultiFetchServerObjectReader append(Way way) {
         if (way == null) return this;
-        if (way.id == 0) return this;
+        if (way.getId() == 0) return this;
         for (Node node: way.getNodes()) {
-            if (node.id > 0) {
-                remember(node.id, OsmPrimitiveType.NODE);
+            if (node.getId() > 0) {
+                remember(node.getId(), OsmPrimitiveType.NODE);
             }
         }
-        remember(way.id, OsmPrimitiveType.WAY);
+        remember(way.getId(), OsmPrimitiveType.WAY);
         return this;
     }
 
@@ -200,13 +200,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     public MultiFetchServerObjectReader append(Relation relation) {
         if (relation == null) return this;
-        if (relation.id == 0) return this;
-        remember(relation.id, OsmPrimitiveType.RELATION);
+        if (relation.getId() == 0) return this;
+        remember(relation.getId(), OsmPrimitiveType.RELATION);
         for (RelationMember member : relation.getMembers()) {
             if (OsmPrimitiveType.from(member.member).equals(OsmPrimitiveType.RELATION)) {
                 // avoid infinite recursion in case of cyclic dependencies in relations
                 //
-                if (relations.contains(member.member.id)) {
+                if (relations.contains(member.member.getId())) {
                     continue;
                 }
             }
@@ -372,9 +372,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             try {
                 String msg = "";
                 switch(type) {
-                case NODE: msg = tr("Fetching node with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
-                case WAY: msg = tr("Fetching way with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
-                case RELATION: msg = tr("Fetching relation with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                    case NODE: msg = tr("Fetching node with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                    case WAY: msg = tr("Fetching way with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                    case RELATION: msg = tr("Fetching relation with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
                 }
                 progressMonitor.setCustomText(msg);
                 singleGetId(type, id, progressMonitor);
@@ -410,9 +410,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{
         String msg = "";
         switch(type) {
-        case NODE: msg = tr("Fetching a package of nodes from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
-        case WAY:  msg = tr("Fetching a package of ways from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
-        case RELATION:  msg = tr("Fetching a package of relations from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+            case NODE: msg = tr("Fetching a package of nodes from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+            case WAY:  msg = tr("Fetching a package of ways from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+            case RELATION:  msg = tr("Fetching a package of relations from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
         }
         progressMonitor.setCustomText(msg);
         Set<Long> toFetch = new HashSet<Long>(ids);

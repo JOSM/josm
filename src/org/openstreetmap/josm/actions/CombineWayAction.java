@@ -89,7 +89,7 @@ public class CombineWayAction extends JosmAction {
             new HashMap<Pair<Relation,String>, HashSet<Way>>();
         HashSet<Relation> relationsUsingWays = new HashSet<Relation>();
         for (Relation r : getCurrentDataSet().relations) {
-            if (r.deleted || r.incomplete) {
+            if (r.isDeleted() || r.incomplete) {
                 continue;
             }
             for (RelationMember rm : r.getMembers()) {
@@ -176,7 +176,7 @@ public class CombineWayAction extends JosmAction {
         Way modifyWay = selectedWays.peek();
         for (Way w : selectedWays) {
             modifyWay = w;
-            if (w.id != 0) {
+            if (w.getId() != 0) {
                 break;
             }
         }

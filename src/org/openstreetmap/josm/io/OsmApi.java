@@ -250,15 +250,15 @@ public class OsmApi extends OsmConnection {
         initialize();
         if (version.equals("0.5")) {
             // legacy mode does not return the new object version.
-            sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.id, toXml(osm, true));
+            sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true));
         } else {
             String ret = null;
             // normal mode (0.6 and up) returns new object version.
             try {
-                ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.id, toXml(osm, true));
+                ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true));
                 osm.version = Integer.parseInt(ret.trim());
             } catch(NumberFormatException e) {
-                throw new OsmTransferException(tr("unexpected format of new version of modified primitive ''{0}'', got ''{1}''", osm.id, ret));
+                throw new OsmTransferException(tr("unexpected format of new version of modified primitive ''{0}'', got ''{1}''", osm.getId(), ret));
             }
         }
     }
@@ -302,10 +302,10 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if something goes wrong.
      */
     public void stopChangeset(ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask(tr("Closing changeset..."));
+        progressMonitor.beginTask(tr("Closing changeset {0}...", changeset.getId()));
         try {
             initialize();
-            sendRequest("PUT", "changeset" + "/" + changeset.id + "/close", null);
+            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null);
             changeset = null;
         } finally {
             progressMonitor.finishTask();
@@ -340,7 +340,7 @@ public class OsmApi extends OsmConnection {
 
             String diff = duv.getDocument();
             try {
-                String diffresult = sendRequest("POST", "changeset/" + changeset.id + "/upload", diff);
+                String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff);
                 DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(),
                         progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(OsmTransferException e) {

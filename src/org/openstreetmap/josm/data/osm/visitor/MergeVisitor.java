@@ -61,14 +61,14 @@ public class MergeVisitor extends AbstractVisitor {
         this.myDataSet = myDataSet;
         this.theirDataSet = theirDataSet;
 
-        for (Node n : myDataSet.nodes) if (n.id != 0) {
-            nodeshash.put(n.id, n);
+        for (Node n : myDataSet.nodes) if (n.getId() != 0) {
+            nodeshash.put(n.getId(), n);
         }
-        for (Way w : myDataSet.ways) if (w.id != 0) {
-            wayshash.put(w.id, w);
+        for (Way w : myDataSet.ways) if (w.getId() != 0) {
+            wayshash.put(w.getId(), w);
         }
-        for (Relation r : myDataSet.relations) if (r.id != 0) {
-            relshash.put(r.id, r);
+        for (Relation r : myDataSet.relations) if (r.getId() != 0) {
+            relshash.put(r.getId(), r);
         }
         conflicts = new ConflictCollection();
         merged = new HashMap<OsmPrimitive, OsmPrimitive>();
@@ -97,7 +97,7 @@ public class MergeVisitor extends AbstractVisitor {
             Collection<P> myPrimitives, Collection<P> otherPrimitives,
             HashMap<Long, P> primitivesWithDefinedIds) {
 
-        if (other.id > 0 ) {
+        if (other.getId() > 0 ) {
             // try to merge onto a matching primitive with the same
             // defined id
             //
@@ -108,21 +108,21 @@ public class MergeVisitor extends AbstractVisitor {
             // yet but which is equal in its semantic attributes
             //
             for (P my : myPrimitives) {
-                if (my.id >0 ) {
+                if (my.getId() >0 ) {
                     continue;
                 }
                 if (my.hasEqualSemanticAttributes(other)) {
-                    if (my.deleted != other.deleted) {
+                    if (my.isDeleted() != other.isDeleted()) {
                         // differences in deleted state have to be merged manually
                         //
                         conflicts.add(my, other);
                     } else {
                         // copy the technical attributes from other
                         // version
-                        my.visible = other.visible;
+                        my.setVisible(other.isVisible());
                         my.user = other.user;
                         my.setTimestamp(other.getTimestamp());
-                        my.modified = other.modified;
+                        my.setModified(other.isModified());
                         merged.put(other, my);
                     }
                     return;
@@ -185,7 +185,7 @@ public class MergeVisitor extends AbstractVisitor {
         for (Node myNode : w.getNodes()) {
             Node mergedNode = (Node) merged.get(myNode);
             if (mergedNode != null) {
-                if (!mergedNode.deleted) {
+                if (!mergedNode.isDeleted()) {
                     newNodes.add(mergedNode);
                 }
                 replacedSomething =  true;
@@ -206,7 +206,7 @@ public class MergeVisitor extends AbstractVisitor {
             if (mergedMember == null) {
                 newMembers.add(myMember);
             } else {
-                if (! mergedMember.deleted) {
+                if (! mergedMember.isDeleted()) {
                     RelationMember newMember = new RelationMember(myMember.getRole(), mergedMember);
                     newMembers.add(newMember);
                 }
@@ -233,19 +233,19 @@ public class MergeVisitor extends AbstractVisitor {
 
         // merge other into an existing primitive with the same id, if possible
         //
-        if (myPrimitivesWithDefinedIds.containsKey(other.id)) {
-            P my = myPrimitivesWithDefinedIds.get(other.id);
+        if (myPrimitivesWithDefinedIds.containsKey(other.getId())) {
+            P my = myPrimitivesWithDefinedIds.get(other.getId());
             if (my.version <= other.version) {
-                if (! my.visible && other.visible) {
+                if (! my.isVisible() && other.isVisible()) {
                     // should not happen
                     //
                     logger.warning(tr("My primitive with id {0} and version {1} is visible although "
                             + "their primitive with lower version {2} is not visible. "
                             + "Can't deal with this inconsistency. Keeping my primitive. ",
-                            Long.toString(my.id),Long.toString(my.version), Long.toString(other.version)
+                            Long.toString(my.getId()),Long.toString(my.version), Long.toString(other.version)
                     ));
                     merged.put(other, my);
-                } else if (my.visible && ! other.visible) {
+                } else if (my.isVisible() && ! other.isVisible()) {
                     // this is always a conflict because the user has to decide whether
                     // he wants to create a clone of its local primitive or whether he
                     // wants to purge my from the local dataset. He can't keep it unchanged
@@ -269,34 +269,34 @@ public class MergeVisitor extends AbstractVisitor {
                     // take. We take mine.
                     //
                     merged.put(other, my);
-                } else if (my.deleted && ! other.deleted && my.version == other.version) {
+                } else if (my.isDeleted() && ! other.isDeleted() && my.version == other.version) {
                     // same version, but my is deleted. Assume mine takes precedence
                     // otherwise too many conflicts when refreshing from the server
                     merged.put(other, my);
-                } else if (my.deleted != other.deleted) {
+                } else if (my.isDeleted() != other.isDeleted()) {
                     // differences in deleted state have to be resolved manually
                     //
                     conflicts.add(my,other);
-                } else if (! my.modified && other.modified) {
+                } else if (! my.isModified() && other.isModified()) {
                     // my not modified. We can assume that other is the most recent version.
                     // clone it onto my. But check first, whether other is deleted. if so,
                     // make sure that my is not references anymore in myDataSet.
                     //
-                    if (other.deleted) {
+                    if (other.isDeleted()) {
                         myDataSet.unlinkReferencesToPrimitive(my);
                     }
                     my.cloneFrom(other);
                     merged.put(other, my);
-                } else if (! my.modified && !other.modified && my.version == other.version) {
+                } else if (! my.isModified() && !other.isModified() && my.version == other.version) {
                     // both not modified. Keep mine
                     //
                     merged.put(other,my);
-                } else if (! my.modified && !other.modified && my.version < other.version) {
+                } else if (! my.isModified() && !other.isModified() && my.version < other.version) {
                     // my not modified but other is newer. clone other onto mine.
                     //
                     my.cloneFrom(other);
                     merged.put(other,my);
-                } else if (my.modified && ! other.modified && my.version == other.version) {
+                } else if (my.isModified() && ! other.isModified() && my.version == other.version) {
                     // my is same as other but mine is modified
                     // => keep mine
                     merged.put(other, my);
@@ -311,7 +311,7 @@ public class MergeVisitor extends AbstractVisitor {
                     // attributes should already be equal if we get here.
                     //
                     my.cloneFrom(other);
-                    my.modified = true;
+                    my.setModified(true);
                     merged.put(other, my);
                 }
             } else {

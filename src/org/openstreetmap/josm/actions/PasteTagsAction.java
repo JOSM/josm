@@ -125,7 +125,7 @@ public final class PasteTagsAction extends JosmAction {
 
     protected Map<OsmPrimitiveType, Integer> getSourceStatistics() {
         HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
-        for (Class type: new Class[] {Node.class, Way.class, Relation.class}) {
+        for (Class<? extends OsmPrimitive> type: new Class[] {Node.class, Way.class, Relation.class}) {
             if (!getSourceTagsByType(type).isEmpty()) {
                 ret.put(OsmPrimitiveType.from(type), getSourcePrimitivesByType(type).size());
             }
@@ -135,7 +135,7 @@ public final class PasteTagsAction extends JosmAction {
 
     protected Map<OsmPrimitiveType, Integer> getTargetStatistics() {
         HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
-        for (Class type: new Class[] {Node.class, Way.class, Relation.class}) {
+        for (Class<? extends OsmPrimitive> type: new Class[] {Node.class, Way.class, Relation.class}) {
             int count = getSubcollectionByType(getEditLayer().data.getSelected(), type).size();
             if (count > 0) {
                 ret.put(OsmPrimitiveType.from(type), count);
@@ -155,12 +155,10 @@ public final class PasteTagsAction extends JosmAction {
      */
     protected void pasteFromHomogeneousSource(Collection<? extends OsmPrimitive> targets) {
         TagCollection tc = null;
-        Class sourceType = null;
-        for (Class type : new Class[] {Node.class, Way.class, Relation.class}) {
+        for (Class<? extends OsmPrimitive> type : new Class[] {Node.class, Way.class, Relation.class}) {
             TagCollection tc1 = getSourceTagsByType(type);
             if (!tc1.isEmpty()) {
                 tc = tc1;
-                sourceType = type;
             }
         }
         if (tc == null)

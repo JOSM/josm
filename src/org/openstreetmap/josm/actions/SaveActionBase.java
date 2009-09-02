@@ -71,6 +71,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
             layer.setName(file.getName());
             layer.setAssociatedFile(file);
+            if (layer instanceof OsmDataLayer) {
+                ((OsmDataLayer) layer).onPostSaveToFile();
+            }
             Main.parent.repaint();
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,25 +90,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @return <code>true</code>, if it is safe to save.
      */
     public boolean checkSaveConditions(Layer layer) {
-        if (layer == null) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Internal Error: cannot check conditions for no layer. Please report this as a bug."),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-            return false;
-        }
-        if (Main.map == null) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("No document open so nothing to save."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return false;
-        }
-
         if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer) && 1 != new ExtendedDialog(Main.parent, tr("Empty document"), tr("The document contains no data."), new String[] {tr("Save anyway"), tr("Cancel")}, new String[] {"save.png", "cancel.png"}).getValue())
             return false;
         if (layer instanceof GpxLayer && ((GpxLayer)layer).data == null)
@@ -143,7 +127,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     private boolean isDataSetEmpty(OsmDataLayer layer) {
         for (OsmPrimitive osm : layer.data.allNonDeletedPrimitives())
-            if (!osm.deleted || osm.id > 0)
+            if (!osm.isDeleted() || osm.getId() > 0)
                 return false;
         return true;
     }

@@ -20,6 +20,6 @@ public class HistoryInfoAction extends AbstractInfoAction {
 
     @Override
     protected  String createInfoUrl(OsmPrimitive primitive) {
-        return getBaseURL() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.id + "/history";
+        return getBaseURL() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId() + "/history";
     }
 }

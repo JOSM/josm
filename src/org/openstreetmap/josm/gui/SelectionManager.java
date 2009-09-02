@@ -285,14 +285,14 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         } else {
             // nodes
             for (Node n : nc.getCurrentDataSet().nodes) {
-                if (!n.deleted && !n.incomplete && r.contains(nc.getPoint(n))) {
+                if (!n.isDeleted() && !n.incomplete && r.contains(nc.getPoint(n))) {
                     selection.add(n);
                 }
             }
 
             // ways
             for (Way w : nc.getCurrentDataSet().ways) {
-                if (w.deleted || w.getNodesCount() == 0 || w.incomplete) {
+                if (w.isDeleted() || w.getNodesCount() == 0 || w.incomplete) {
                     continue;
                 }
                 if (alt) {

@@ -55,7 +55,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
     /**
      * Preferences
-    */
+     */
     protected Color inactiveColor;
     protected Color selectedColor;
     protected Color nodeColor;
@@ -123,8 +123,8 @@ public class SimplePaintVisitor extends AbstractVisitor {
         getColors();
 
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
-            RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+                Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
+                        RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
     public void visitAll(DataSet data, Boolean virtual) {
@@ -148,10 +148,10 @@ public class SimplePaintVisitor extends AbstractVisitor {
            require changing the colour while painting... */
         //profilerN = 0;
         for (final OsmPrimitive osm : data.relations)
-            if (!osm.deleted && !osm.isSelected())
+            if (!osm.isDeleted() && !osm.isSelected())
             {
                 osm.visit(this);
-        //        profilerN++;
+                //        profilerN++;
             }
 
         //if(profiler)
@@ -162,18 +162,18 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.deleted && !osm.isSelected() && osm.isTagged())
+            if (!osm.isDeleted() && !osm.isSelected() && osm.isTagged())
             {
                 osm.visit(this);
-        //        profilerN++;
+                //        profilerN++;
             }
         displaySegments();
 
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.deleted && !osm.isSelected() && !osm.isTagged())
+            if (!osm.isDeleted() && !osm.isSelected() && !osm.isTagged())
             {
                 osm.visit(this);
-        //        profilerN++;
+                //        profilerN++;
             }
         displaySegments();
 
@@ -186,10 +186,10 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected())
-            if (!osm.deleted)
+            if (!osm.isDeleted())
             {
                 osm.visit(this);
-        //        profilerN++;
+                //        profilerN++;
             }
         displaySegments();
 
@@ -201,10 +201,10 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.deleted && !osm.isSelected())
+            if (!osm.isDeleted() && !osm.isSelected())
             {
                 osm.visit(this);
-        //        profilerN++;
+                //        profilerN++;
             }
 
         //if(profiler)
@@ -216,21 +216,21 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         if(virtualNodeSize != 0)
         {
-        //    profilerN = 0;
+            //    profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.deleted)
-                    {
-                        visitVirtual((Way)osm);
-        //                profilerN++;
-                    }
+                if (!osm.isDeleted())
+                {
+                    visitVirtual((Way)osm);
+                    //                profilerN++;
+                }
             displaySegments();
 
-        //    if(profiler)
-        //    {
-        //        System.out.format("Virtual  : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-        //        profilerLast = java.lang.System.currentTimeMillis();
-        //    }
+            //    if(profiler)
+            //    {
+            //        System.out.format("Virtual  : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
+            //        profilerLast = java.lang.System.currentTimeMillis();
+            //    }
         }
 
         //if(profiler)
@@ -248,22 +248,27 @@ public class SimplePaintVisitor extends AbstractVisitor {
     public void visit(Node n) {
         if (n.incomplete) return;
 
-        if (inactive)
+        if (inactive) {
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
-        else if (n.highlighted)
+        } else if (n.highlighted) {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        else if (n.isSelected())
+        } else if (n.isSelected()) {
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        else if(n.isTagged())
+        } else if(n.isTagged()) {
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
-        else
+        } else {
             drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
+        }
     }
 
     public static Boolean isLargeSegment(Point p1, Point p2, int space)
     {
-        int xd = p1.x-p2.x; if(xd < 0) xd = -xd;
-        int yd = p1.y-p2.y; if(yd < 0) yd = -yd;
+        int xd = p1.x-p2.x; if(xd < 0) {
+            xd = -xd;
+        }
+        int yd = p1.y-p2.y; if(yd < 0) {
+            yd = -yd;
+        }
         return (xd+yd > space);
     }
 
@@ -324,16 +329,17 @@ public class SimplePaintVisitor extends AbstractVisitor {
             for (int orderNumber = 1; it.hasNext(); orderNumber++) {
                 Point p = nc.getPoint(it.next());
                 drawSegment(lastP, p, wayColor,
-                    showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
-                if (showOrderNumber)
+                        showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
+                if (showOrderNumber) {
                     drawOrderNumber(lastP, p, orderNumber);
+                }
                 lastP = p;
             }
         }
     }
 
     private Stroke relatedWayStroke = new BasicStroke(
-        4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
+            4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
     public void visit(Relation r) {
         if (r.incomplete) return;
 
@@ -348,12 +354,16 @@ public class SimplePaintVisitor extends AbstractVisitor {
         g.setColor(col);
 
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().incomplete || m.getMember().deleted) continue;
+            if (m.getMember().incomplete || m.getMember().isDeleted()) {
+                continue;
+            }
 
             if (m.isNode()) {
                 Point p = nc.getPoint(m.getNode());
                 if (p.x < 0 || p.y < 0
-                    || p.x > nc.getWidth() || p.y > nc.getHeight()) continue;
+                        || p.x > nc.getWidth() || p.y > nc.getHeight()) {
+                    continue;
+                }
 
                 g.drawOval(p.x-3, p.y-3, 6, 6);
             } else if (m.isWay()) {
@@ -361,7 +371,9 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
                 boolean first = true;
                 for (Node n : m.getWay().getNodes()) {
-                    if (n.incomplete || n.deleted) continue;
+                    if (n.incomplete || n.isDeleted()) {
+                        continue;
+                    }
                     Point p = nc.getPoint(n);
                     if (first) {
                         path.moveTo(p.x, p.y);
@@ -417,8 +429,9 @@ public class SimplePaintVisitor extends AbstractVisitor {
             if (fill) {
                 g.fillRect(p.x - radius, p.y - radius, size, size);
                 g.drawRect(p.x - radius, p.y - radius, size, size);
-            } else
+            } else {
                 g.drawRect(p.x - radius, p.y - radius, size, size);
+            }
         }
     }
 
@@ -426,7 +439,9 @@ public class SimplePaintVisitor extends AbstractVisitor {
      * Draw a line with the given color.
      */
     protected void drawSegment(Point p1, Point p2, Color col, boolean showDirection) {
-        if (col != currentColor) displaySegments(col);
+        if (col != currentColor) {
+            displaySegments(col);
+        }
 
         if (isSegmentVisible(p1, p2)) {
             currentPath.moveTo(p1.x, p1.y);

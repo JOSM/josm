@@ -1,4 +1,3 @@
-// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -70,13 +69,13 @@ public class ApiPreconditionChecker implements UploadHook {
         for (OsmPrimitive osmPrimitive : add) {
             for (Entry<String,String> e : osmPrimitive.entrySet()) {
                 if(e.getValue().length() > 255) {
-                    if (osmPrimitive.deleted) {
+                    if (osmPrimitive.isDeleted()) {
                         // if OsmPrimitive is going to be deleted we automatically shorten the
                         // value
                         System.out.println(
                                 tr("Warning: automatically truncating value of tag ''{0}'' on deleted primitive {1}",
                                         e.getKey(),
-                                        Long.toString(osmPrimitive.id)
+                                        Long.toString(osmPrimitive.getId())
                                 )
                         );
                         osmPrimitive.put(e.getKey(), e.getValue().substring(0, 255));
@@ -84,7 +83,7 @@ public class ApiPreconditionChecker implements UploadHook {
                     }
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("Length of value for tag ''{0}'' on primitive {1} exceeds the max. allowed length {2}. Values length is {3}.",
-                                    e.getKey(), Long.toString(osmPrimitive.id), 255, e.getValue().length()
+                                    e.getKey(), Long.toString(osmPrimitive.getId()), 255, e.getValue().length()
                             ),
                             tr("Precondition Violation"),
                             JOptionPane.ERROR_MESSAGE
@@ -102,7 +101,7 @@ public class ApiPreconditionChecker implements UploadHook {
                         Main.parent,
                         tr("{0} nodes in way {1} exceed the max. allowed number of nodes {2}",
                                 ((Way)osmPrimitive).getNodesCount(),
-                                Long.toString(osmPrimitive.id),
+                                Long.toString(osmPrimitive.getId()),
                                 maxNodes
                         ),
                         tr("API Capabilities Violation"),

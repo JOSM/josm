@@ -93,7 +93,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         List<RelationMember> newMembers = new ArrayList<RelationMember>();
         for (RelationMember member: r.getMembers()) {
             newMembers.add(
-                new RelationMember(member.getRole(), mappedPrimitives.get(member.getMember())));
+                    new RelationMember(member.getRole(), mappedPrimitives.get(member.getMember())));
 
         }
         clone.setMembers(newMembers);
@@ -116,11 +116,11 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
             return;
         OsmPrimitive clone = null;
         if (primitive instanceof Node) {
-            clone = new Node(primitive.id);
+            clone = new Node(primitive.getId());
         } else if (primitive instanceof Way) {
-            clone = new Way(primitive.id);
+            clone = new Way(primitive.getId());
         } else if (primitive instanceof Relation) {
-            clone = new Relation(primitive.id);
+            clone = new Relation(primitive.getId());
         }
         clone.incomplete = true;
         mappedPrimitives.put(primitive, clone);
@@ -175,7 +175,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     }
 
     protected boolean isNew(OsmPrimitive primitive) {
-        return primitive.id == 0;
+        return primitive.getId() == 0;
     }
 
     protected boolean isInSelectionBase(OsmPrimitive primitive) {

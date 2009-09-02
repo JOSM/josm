@@ -109,9 +109,9 @@ public class DeleteCommand extends Command {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
             switch(OsmPrimitiveType.from(primitive)) {
-            case NODE: msg = "Delete node {0}"; break;
-            case WAY: msg = "Delete way {0}"; break;
-            case RELATION:msg = "Delete relation {0}"; break;
+                case NODE: msg = "Delete node {0}"; break;
+                case WAY: msg = "Delete way {0}"; break;
+                case RELATION:msg = "Delete relation {0}"; break;
             }
 
             return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
@@ -130,9 +130,9 @@ public class DeleteCommand extends Command {
             OsmPrimitiveType t = typesToDelete.iterator().next();
             apiname = t.getAPIName();
             switch(t) {
-            case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
-            case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
-            case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+                case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
+                case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
+                case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
             }
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(
@@ -354,7 +354,7 @@ public class DeleteCommand extends Command {
                 continue;
             }
             Way w = (Way) primitive;
-            if (w.id == 0) { // new ways with id == 0 are fine,
+            if (w.getId() == 0) { // new ways with id == 0 are fine,
                 continue; // process existing ways only
             }
             Way wnew = new Way(w);
@@ -362,7 +362,7 @@ public class DeleteCommand extends Command {
             // lookup new nodes which have been added to the set of deleted
             // nodes ...
             for (Node n : wnew.getNodes()) {
-                if (n.id != 0 || !primitivesToDelete.contains(n)) {
+                if (n.getId() != 0 || !primitivesToDelete.contains(n)) {
                     nodesToKeep.add(n);
                 }
             }
@@ -425,7 +425,7 @@ public class DeleteCommand extends Command {
         Area a = layer.data.getDataSourceArea();
         if (a != null) {
             for (OsmPrimitive osm : primitivesToDelete) {
-                if (osm instanceof Node && osm.id != 0) {
+                if (osm instanceof Node && osm.getId() != 0) {
                     Node n = (Node) osm;
                     if (!a.contains(n.getCoor())) {
                         JPanel msg = new JPanel(new GridBagLayout());

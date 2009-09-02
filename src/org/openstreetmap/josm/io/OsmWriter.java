@@ -84,7 +84,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     private boolean shouldWrite(OsmPrimitive osm) {
-        return osm.id != 0 || !osm.deleted;
+        return osm.getId() != 0 || !osm.isDeleted();
     }
 
     public void writeDataSources(DataSet ds) {
@@ -154,8 +154,8 @@ public class OsmWriter extends XmlWriter implements Visitor {
      * Return the id for the given osm primitive (may access the usedId map)
      */
     private long getUsedId(OsmPrimitive osm) {
-        if (osm.id != 0)
-            return osm.id;
+        if (osm.getId() != 0)
+            return osm.getId();
         if (usedNewIds.containsKey(osm))
             return usedNewIds.get(osm);
         usedNewIds.put(osm, newIdCounter);
@@ -168,9 +168,10 @@ public class OsmWriter extends XmlWriter implements Visitor {
                 out.println(">");
             }
             for (Entry<String, String> e : osm.entrySet()) {
-                if ((osm instanceof Changeset) || !("created_by".equals(e.getKey())))
+                if ((osm instanceof Changeset) || !("created_by".equals(e.getKey()))) {
                     out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
                             "' v='"+XmlWriter.encode(e.getValue())+ "' />");
+                }
             }
             out.println("  </" + tagname + ">");
         } else if (tagOpen) {
@@ -192,9 +193,9 @@ public class OsmWriter extends XmlWriter implements Visitor {
         }
         if (!osmConform) {
             String action = null;
-            if (osm.deleted) {
+            if (osm.isDeleted()) {
                 action = "delete";
-            } else if (osm.modified) {
+            } else if (osm.isModified()) {
                 action = "modify";
             }
             if (action != null) {
@@ -208,12 +209,12 @@ public class OsmWriter extends XmlWriter implements Visitor {
         if (osm.user != null) {
             out.print(" user='"+XmlWriter.encode(osm.user.name)+"'");
         }
-        out.print(" visible='"+osm.visible+"'");
+        out.print(" visible='"+osm.isVisible()+"'");
         if (osm.version != -1) {
             out.print(" version='"+osm.version+"'");
         }
-        if (this.changeset != null && this.changeset.id != 0) {
-            out.print(" changeset='"+this.changeset.id+"'" );
+        if (this.changeset != null && this.changeset.getId() != 0) {
+            out.print(" changeset='"+this.changeset.getId()+"'" );
         }
     }
 

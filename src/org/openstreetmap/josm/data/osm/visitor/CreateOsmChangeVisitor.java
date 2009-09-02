@@ -46,34 +46,34 @@ public class CreateOsmChangeVisitor extends AbstractVisitor {
     // stupid. Just have one method named "write" instead of three "visit"s.
 
     public void visit(Node n) {
-        if (n.deleted) {
+        if (n.isDeleted()) {
             switchMode("delete");
             osmwriter.setWithBody(false);
             osmwriter.visit(n);
         } else {
-            switchMode((n.id == 0) ? "create" : "modify");
+            switchMode((n.getId() == 0) ? "create" : "modify");
             osmwriter.setWithBody(true);
             osmwriter.visit(n);
         }
     }
     public void visit(Way w) {
-        if (w.deleted) {
+        if (w.isDeleted()) {
             switchMode("delete");
             osmwriter.setWithBody(false);
             osmwriter.visit(w);
         } else {
-            switchMode((w.id == 0) ? "create" : "modify");
+            switchMode((w.getId() == 0) ? "create" : "modify");
             osmwriter.setWithBody(true);
             osmwriter.visit(w);
         }
     }
     public void visit(Relation r) {
-        if (r.deleted) {
+        if (r.isDeleted()) {
             switchMode("delete");
             osmwriter.setWithBody(false);
             osmwriter.visit(r);
         } else {
-            switchMode((r.id == 0) ? "create" : "modify");
+            switchMode((r.getId() == 0) ? "create" : "modify");
             osmwriter.setWithBody(true);
             osmwriter.visit(r);
         }

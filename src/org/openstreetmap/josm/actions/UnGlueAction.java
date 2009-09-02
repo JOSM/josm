@@ -65,7 +65,7 @@ public class UnGlueAction extends JosmAction {
         if (checkSelection(selection)) {
             int count = 0;
             for (Way w : getCurrentDataSet().ways) {
-                if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
+                if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
                     continue;
                 }
                 if (!w.containsNode(selectedNode)) {
@@ -90,7 +90,7 @@ public class UnGlueAction extends JosmAction {
             for (Node n : selectedNodes) {
                 int count = 0;
                 for (Way w : getCurrentDataSet().ways) {
-                    if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
+                    if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
                         continue;
                     }
                     if (!w.containsNode(n)) {
@@ -320,7 +320,7 @@ public class UnGlueAction extends JosmAction {
         Relation newRel = null;
         HashSet<String> rolesToReAdd = null;
         for (Relation r : getCurrentDataSet().relations) {
-            if (r.deleted || r.incomplete) {
+            if (r.isDeleted() || r.incomplete) {
                 continue;
             }
             newRel = null;
@@ -367,7 +367,7 @@ public class UnGlueAction extends JosmAction {
             boolean firstway = true;
             // modify all ways containing the nodes
             for (Way w : getCurrentDataSet().ways) {
-                if (w.deleted || w.incomplete || w.getNodesCount() < 1) {
+                if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
                     continue;
                 }
                 if (!w.containsNode(selectedNode)) {

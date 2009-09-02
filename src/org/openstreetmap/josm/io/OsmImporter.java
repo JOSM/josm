@@ -49,5 +49,6 @@ public class OsmImporter extends FileImporter {
         OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
         Main.main.addLayer(layer);
         layer.fireDataChange();
+        layer.onPostLoadFromFile();
     }
 }

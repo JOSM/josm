@@ -2,6 +2,7 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -201,7 +202,7 @@ public class ExtendedDialog extends JDialog {
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (visible) {
-            toFront();
+            repaint();
         }
     }
 }

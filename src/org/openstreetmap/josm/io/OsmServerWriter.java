@@ -94,9 +94,9 @@ public class OsmServerWriter {
                 String time_left_str = timeLeft(progress, primitives.size());
                 String msg = "";
                 switch(OsmPrimitiveType.from(osm)) {
-                case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
-                case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
-                case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
+                    case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
+                    case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
+                    case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
                 }
                 progressMonitor.subTask(
                         tr(msg,
@@ -104,8 +104,8 @@ public class OsmServerWriter {
                                 progress,
                                 primitives.size(),
                                 time_left_str,
-                                osm.getName() == null ? osm.id : osm.getName(),
-                                        osm.id));
+                                osm.getName() == null ? osm.getId() : osm.getName(),
+                                        osm.getId()));
                 makeApiRequest(osm,progressMonitor);
                 processed.add(osm);
                 progressMonitor.worked(1);
@@ -116,10 +116,16 @@ public class OsmServerWriter {
             throw new OsmTransferException(e);
         } finally {
             try {
-                api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+                // starting the changeset may have failed, for instance because the user
+                // cancelled the upload task. Only close the changeset if we currently have
+                // an open changeset
+
+                if (api.getCurrentChangeset() != null && api.getCurrentChangeset().getId() > 0) {
+                    api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+                }
             } catch(Exception e) {
                 Changeset changeset = api.getCurrentChangeset();
-                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.id));
+                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.getId()));
                 logger.warning(tr("Failed to close changeset {0}, will be closed by server after timeout. Exception was: {1}",
                         changesetId, e.toString()));
             }
@@ -148,7 +154,7 @@ public class OsmServerWriter {
                 api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
             } catch (Exception ee) {
                 Changeset changeset = api.getCurrentChangeset();
-                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.id));
+                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.getId()));
                 logger.warning(tr("Failed to close changeset {0}, will be closed by server after timeout. Exception was: {1}",
                         changesetId, ee.toString()));
             }
@@ -166,8 +172,6 @@ public class OsmServerWriter {
 
         api.initialize();
 
-        progressMonitor.beginTask("");
-
         try {
             // check whether we can use changeset
             //
@@ -179,8 +183,10 @@ public class OsmServerWriter {
             }
 
             if (useChangeset) {
+                progressMonitor.beginTask(tr("Starting to upload in one request ..."));
                 uploadChangesAsDiffUpload(primitives, progressMonitor);
             } else {
+                progressMonitor.beginTask(tr("Starting to upload with one request per primitive ..."));
                 uploadChangesIndividually(primitives, progressMonitor);
             }
         } finally {
@@ -189,9 +195,9 @@ public class OsmServerWriter {
     }
 
     void makeApiRequest(OsmPrimitive osm, ProgressMonitor progressMonitor) throws OsmTransferException {
-        if (osm.deleted) {
+        if (osm.isDeleted()) {
             api.deletePrimitive(osm, progressMonitor);
-        } else if (osm.id == 0) {
+        } else if (osm.getId() == 0) {
             api.createPrimitive(osm);
         } else {
             api.modifyPrimitive(osm);

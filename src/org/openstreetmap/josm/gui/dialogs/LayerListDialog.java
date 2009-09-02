@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -298,115 +299,44 @@ public class LayerListDialog extends ToggleDialog {
             updateEnabledState();
         }
 
-        protected boolean confirmSkipSaving(OsmDataLayer layer) {
-            int result = new ExtendedDialog(Main.parent,
-                    tr("Unsaved Changes"),
-                    tr("There are unsaved changes in the layer''{0}''. Delete the layer anwyay?",layer.getName()),
-                    new String[] {tr("Delete Layer"), tr("Cancel")},
-                    new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
-
-            return result == 1;
-        }
-
-        protected boolean confirmDeleteLayer(Layer layer) {
-            return ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "delete_layer",
-                    Main.parent,
-                    tr("Do you really want to delete layer ''{0}''?", layer.getName()),
-                    tr("Confirmation"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    JOptionPane.YES_OPTION);
-        }
-
-        protected DeleteDecision confirmDeleteMultipleLayer(Layer layer, int idx, int numLayers) {
-            String options[] = new String[] {
-                    tr("Yes"),
-                    tr("No"),
-                    tr("Delete all"),
-                    tr("Cancel")
-            };
-            int ret = ConditionalOptionPaneUtil.showOptionDialog(
-                    "delete_layer",
-                    Main.parent,
-                    tr("Do you really want to delete layer ''{0}''?", layer.getName()),
-                    tr("Deleting layer {0} of {1}", idx+1, numLayers),
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    options,
-                    options[0]
-            );
-            switch(ret) {
-                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return DeleteDecision.deleteAll;
-                case JOptionPane.CLOSED_OPTION: return DeleteDecision.cancel;
-                case 0: return DeleteDecision.deleteCurrent;
-                case 1: return DeleteDecision.dontDeleteCurrent;
-                case 2: return DeleteDecision.deleteAll;
-                case 3: return DeleteDecision.cancel;
-                default:
-                    // shouldn't happen. This is the safest option.
-                    return DeleteDecision.cancel;
-            }
-        }
-
-
-        public void deleteSingleLayer(Layer layer) {
-            if (layer == null)
-                return;
-            if (layer instanceof OsmDataLayer) {
-                OsmDataLayer dataLayer = (OsmDataLayer)layer;
-                if (dataLayer.isModified()) {
-                    if (! confirmSkipSaving(dataLayer))
-                        return;
+        protected boolean enforceUploadOrSaveModifiedData(List<Layer> selectedLayers) {
+            SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
+            List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
+            for (Layer l: selectedLayers) {
+                if (! (l instanceof OsmDataLayer)) {
+                    continue;
                 }
-                else if (!confirmDeleteLayer(dataLayer))
-                    return;
-            } else {
-                if (!confirmDeleteLayer(layer))
-                    return;
-            }
-            // model and view are going to be updated via LayerChangeListener
-            //
-            Main.main.removeLayer(layer);
-        }
-
-        public void deleteMultipleLayers(List<Layer> layers) {
-            boolean doAskConfirmation = true;
-            for (int i=0; i < layers.size(); i++) {
-                Layer layer = layers.get(i);
-                if (layer instanceof OsmDataLayer) {
-                    OsmDataLayer dataLayer = (OsmDataLayer)layer;
-                    if (dataLayer.isModified() && ! confirmSkipSaving(dataLayer)) {
-                        continue;
-                    }
+                OsmDataLayer odl = (OsmDataLayer)l;
+                if (odl.requiresSaveToFile() || odl.requiresUploadToServer()) {
+                    layersWithUnmodifiedChanges.add(odl);
                 }
-                if (doAskConfirmation) {
-                    DeleteDecision decision = confirmDeleteMultipleLayer(layer, i, layers.size());
-                    switch(decision) {
-                        case deleteCurrent: /* do nothing */ break;
-                        case deleteAll: doAskConfirmation = false; break;
-                        case dontDeleteCurrent: continue;
-                        case cancel: return;
-                    }
-                }
-                // model and view are going to be updated via LayerChangeListener
-                //
-                Main.main.removeLayer(layer);
             }
+            dialog.prepareForSavingAndUpdatingLayersBeforeDelete();
+            if (!layersWithUnmodifiedChanges.isEmpty()) {
+                dialog.getModel().populate(layersWithUnmodifiedChanges);
+                dialog.setVisible(true);
+                switch(dialog.getUserAction()) {
+                    case CANCEL: return false;
+                    case PROCEED: return true;
+                    default: return false;
+                }
+            }
+            return true;
         }
 
         public void actionPerformed(ActionEvent e) {
+            List<Layer> selectedLayers;
             if (this.layer == null) {
-                List<Layer> selectedLayers = getModel().getSelectedLayers();
-                if (selectedLayers.isEmpty())
-                    return;
-                if (selectedLayers.size() == 1) {
-                    deleteSingleLayer(selectedLayers.get(0));
-                } else {
-                    deleteMultipleLayers(selectedLayers);
-                }
+                selectedLayers = getModel().getSelectedLayers();
             } else {
-                deleteSingleLayer(this.layer);
+                selectedLayers = Collections.singletonList(this.layer);
+            }
+            if (selectedLayers.isEmpty())
+                return;
+            if (! enforceUploadOrSaveModifiedData(selectedLayers))
+                return;
+            for(Layer l: selectedLayers) {
+                Main.main.removeLayer(l);
             }
         }
 

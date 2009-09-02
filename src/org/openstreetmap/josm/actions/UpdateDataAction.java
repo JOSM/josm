@@ -78,7 +78,7 @@ public class UpdateDataAction extends JosmAction{
         } else {
             // bounds defined? => use the bbox downloader
             //
-            new DownloadOsmTaskList().download(false, areas, new PleaseWaitProgressMonitor());
+            new DownloadOsmTaskList().download(false, areas, new PleaseWaitProgressMonitor(tr("Updating data")));
         }
     }
 }

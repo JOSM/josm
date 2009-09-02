@@ -50,14 +50,14 @@ public class ChangeRelationMemberRoleCommand extends Command {
         oldRole = relation.getMember(position).getRole();
         relation.getMember(position).role = newRole;
 
-        oldModified = relation.modified;
-        relation.modified = true;
+        oldModified = relation.isModified();
+        relation.setModified(true);
         return true;
     }
 
     @Override public void undoCommand() {
         relation.getMember(position).role = oldRole;
-        relation.modified = oldModified;
+        relation.setModified(oldModified);
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {

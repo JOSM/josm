@@ -68,7 +68,7 @@ public class MoveCommand extends Command {
         for (Node n : this.nodes) {
             OldState os = new OldState();
             os.latlon = new LatLon(n.getCoor());
-            os.modified = n.modified;
+            os.modified = n.isModified();
             oldState.add(os);
         }
     }
@@ -92,7 +92,7 @@ public class MoveCommand extends Command {
     @Override public boolean executeCommand() {
         for (Node n : nodes) {
             n.setEastNorth(n.getEastNorth().add(x, y));
-            n.modified = true;
+            n.setModified(true);
         }
         return true;
     }
@@ -102,7 +102,7 @@ public class MoveCommand extends Command {
         for (Node n : nodes) {
             OldState os = it.next();
             n.setCoor(os.latlon);
-            n.modified = os.modified;
+            n.setModified(os.modified);
         }
     }
 

@@ -27,9 +27,11 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     private int currentProgressValue = 0;
 
     private PleaseWaitDialog dialog;
+    private String windowTitle;
 
-    public PleaseWaitProgressMonitor() {
+    public PleaseWaitProgressMonitor(String windowTitle) {
         this(JOptionPane.getFrameForComponent(Main.map));
+        this.windowTitle = windowTitle;
     }
 
     public PleaseWaitProgressMonitor(Window dialogParent) {
@@ -85,6 +87,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                 } else
                     throw new ProgressException("PleaseWaitDialog parent must be either Frame or Dialog");
 
+                if (windowTitle != null) {
+                    dialog.setTitle(windowTitle);
+                }
                 dialog.cancel.setEnabled(true);
                 dialog.setCustomText("");
                 dialog.cancel.addActionListener(cancelListener);
