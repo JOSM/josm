@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.ScrollPane;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,7 +34,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class PreferenceDialog extends JTabbedPane {
+public class PreferenceDialog extends JTabbedPane implements MouseWheelListener {
 
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
@@ -116,6 +118,8 @@ public class PreferenceDialog extends JTabbedPane {
     public PreferenceDialog() {
         super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
 
+        super.addMouseWheelListener(this);
+
         for (PreferenceSettingFactory factory:settingsFactory) {
 
             PreferenceSetting setting = factory.createPreferenceSetting();
@@ -172,5 +176,25 @@ public class PreferenceDialog extends JTabbedPane {
 
         // always the last: advanced tab
         settingsFactory.add(new AdvancedPreference.Factory());
+    }
+
+    /**
+     * This mouse wheel listener reacts when a scroll is carried out over the
+     * tab strip and scrolls one tab/down or up, selecting it immediately.
+     */
+    public void mouseWheelMoved(MouseWheelEvent wev) {
+        // Ensure the cursor is over the tab strip
+        if(super.indexAtLocation(wev.getPoint().x, wev.getPoint().y) < 0)
+            return;
+
+        // Get currently selected tab
+        int newTab = super.getSelectedIndex() + wev.getWheelRotation();
+
+        // Ensure the new tab index is sound
+        newTab = newTab < 0 ? 0 : newTab;
+        newTab = newTab >= super.getTabCount() ? super.getTabCount() - 1 : newTab;
+
+        // select new tab
+        super.setSelectedIndex(newTab);
     }
 }
