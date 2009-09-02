@@ -42,7 +42,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class DeleteCommand extends Command {
-
     /**
      * The primitives that get deleted.
      */
@@ -156,10 +155,12 @@ public class DeleteCommand extends Command {
      *
      * If a way is deleted, only the way and no nodes are deleted.
      *
+     * @param layer
      * @param selection The list of all object to be deleted.
+     * @param simulate  Set to true if the user should not be bugged with additional dialogs
      * @return command A command to perform the deletions, or null of there is nothing to delete.
      */
-    public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {
+    public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection, boolean simulate) {
         CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data);
         for (OsmPrimitive osm : selection) {
             osm.visit(v);
@@ -167,12 +168,21 @@ public class DeleteCommand extends Command {
         v.data.addAll(selection);
         if (v.data.isEmpty())
             return null;
-        if (!checkAndConfirmOutlyingDeletes(layer,v.data))
+        if (!checkAndConfirmOutlyingDeletes(layer,v.data) && !simulate)
             return null;
         return new DeleteCommand(layer,v.data);
     }
 
-    private static int testRelation(Relation ref, OsmPrimitive osm) {
+    public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {
+        return deleteWithReferences(layer, selection, false);
+    }
+
+    private static int testRelation(Relation ref, OsmPrimitive osm, boolean simulate) {
+        // If this delete action is simulated, do not bug the user with dialogs
+        // and assume the relations should be deleted
+        if(simulate)
+            return 1;
+
         String role = new String();
         for (RelationMember m : ref.getMembers()) {
             if (m.getMember() == osm) {
@@ -194,7 +204,7 @@ public class DeleteCommand extends Command {
     }
 
     public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {
-        return delete(layer, selection, true);
+        return delete(layer, selection, true, false);
     }
 
     /**
@@ -242,9 +252,16 @@ public class DeleteCommand extends Command {
      * @param layer the {@see OsmDataLayer} in whose context a primitive the primitives are deleted
      * @param selection The objects to delete.
      * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
+     * @param simulate Set to true if the user should not be bugged with additional questions
      * @return command a command to perform the deletions, or null if there is nothing to delete.
      */
-    public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection, boolean alsoDeleteNodesInWay) {
+    public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection,
+            boolean alsoDeleteNodesInWay) {
+        return delete(layer, selection, alsoDeleteNodesInWay, false);
+    }
+
+    public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection,
+            boolean alsoDeleteNodesInWay, boolean simulate) {
         if (selection.isEmpty())
             return null;
 
@@ -259,7 +276,7 @@ public class DeleteCommand extends Command {
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!checkAndConfirmOutlyingDeletes(layer,primitivesToDelete))
+        if (!checkAndConfirmOutlyingDeletes(layer,primitivesToDelete) && !simulate)
             return null;
 
         for (OsmPrimitive osm : primitivesToDelete) {
@@ -272,7 +289,7 @@ public class DeleteCommand extends Command {
                 if (ref instanceof Way) {
                     waysToBeChanged.add((Way) ref);
                 } else if (ref instanceof Relation) {
-                    if (testRelation((Relation) ref, osm) == 1) {
+                    if (testRelation((Relation) ref, osm, simulate) == 1) {
                         Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
                         if (relset == null) {
                             relset = new HashSet<OsmPrimitive>();
@@ -313,7 +330,7 @@ public class DeleteCommand extends Command {
                             }
                         }
                         if (!found) {
-                            if (testRelation((Relation) ref, w) == 1) {
+                            if (testRelation((Relation) ref, w, simulate) == 1) {
                                 relset.add(w);
                                 relationsToBeChanged.put(ref, relset);
                             } else
