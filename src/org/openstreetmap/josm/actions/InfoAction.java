@@ -19,7 +19,8 @@ public class InfoAction extends AbstractInfoAction {
     }
 
     @Override
-    protected  String createInfoUrl(OsmPrimitive primitive) {
-        return getBaseURL() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId();
+    protected  String createInfoUrl(Object infoObject) {
+        OsmPrimitive primitive = (OsmPrimitive)infoObject;
+        return getBaseBrowseUrl() + "/" + OsmPrimitiveType.from(primitive).getAPIName() + "/" + primitive.getId();
     }
 }
