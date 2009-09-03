@@ -589,6 +589,7 @@ public class UploadAction extends JosmAction{
         private JLabel lblAdd;
         private JLabel lblUpdate;
         private JLabel lblDelete;
+        private JPanel pnlLists;
         private JCheckBox cbUseAtomicUpload;
         private SuggestingJHistoryComboBox cmt;
         private TagEditorPanel tagEditorPanel;
@@ -601,39 +602,10 @@ public class UploadAction extends JosmAction{
         private ChangesetProcessingType changesetProcessingType;
 
         protected JPanel buildListsPanel() {
-            JPanel pnl = new JPanel();
-            pnl.setLayout(new GridBagLayout());
+            pnlLists = new JPanel();
+            pnlLists.setLayout(new GridBagLayout());
 
-            GridBagConstraints gcLabel = new GridBagConstraints();
-            gcLabel.fill = GridBagConstraints.HORIZONTAL;
-            gcLabel.weightx = 1.0;
-            gcLabel.weighty = 0.0;
-            gcLabel.anchor = GridBagConstraints.FIRST_LINE_START;
-
-            GridBagConstraints gcList = new GridBagConstraints();
-            gcList.fill = GridBagConstraints.BOTH;
-            gcList.weightx = 1.0;
-            gcList.weighty = 1.0;
-            gcList.anchor = GridBagConstraints.CENTER;
-
-            gcLabel.gridy = 0;
-            pnl.add(lblAdd = new JLabel(tr("Objects to add:")), gcLabel);
-
-            gcList.gridy = 1;
-            pnl.add(new JScrollPane(lstAdd), gcList);
-
-            gcLabel.gridy = 2;
-            pnl.add(lblUpdate = new JLabel(tr("Objects to modify:")), gcLabel);
-
-            gcList.gridy = 3;
-            pnl.add(new JScrollPane(lstUpdate), gcList);
-
-            gcLabel.gridy = 4;
-            pnl.add(lblDelete = new JLabel(tr("Objects to delete:")), gcLabel);
-
-            gcList.gridy = 5;
-            pnl.add(new JScrollPane(lstDelete), gcList);
-            return pnl;
+            return pnlLists;
         }
 
         protected JPanel buildChangesetHandlingControlPanel() {
@@ -740,14 +712,47 @@ public class UploadAction extends JosmAction{
 
         public void setUploadedPrimitives(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
             lstAdd.setListData(add.toArray());
-            lstAdd.setVisible(!add.isEmpty());
-            lblAdd.setVisible(!add.isEmpty());
             lstUpdate.setListData(update.toArray());
-            lstUpdate.setVisible(!update.isEmpty());
-            lblUpdate.setVisible(!update.isEmpty());
             lstDelete.setListData(delete.toArray());
-            lstDelete.setVisible(!delete.isEmpty());
-            lblDelete.setVisible(!delete.isEmpty());
+
+
+            GridBagConstraints gcLabel = new GridBagConstraints();
+            gcLabel.fill = GridBagConstraints.HORIZONTAL;
+            gcLabel.weightx = 1.0;
+            gcLabel.weighty = 0.0;
+            gcLabel.anchor = GridBagConstraints.FIRST_LINE_START;
+
+            GridBagConstraints gcList = new GridBagConstraints();
+            gcList.fill = GridBagConstraints.BOTH;
+            gcList.weightx = 1.0;
+            gcList.weighty = 1.0;
+            gcList.anchor = GridBagConstraints.CENTER;
+            pnlLists.removeAll();
+            int y = -1;
+            if (!add.isEmpty()) {
+                y++;
+                gcLabel.gridy = y;
+                pnlLists.add(lblAdd = new JLabel(tr("Objects to add:")), gcLabel);
+                y++;
+                gcList.gridy = y;
+                pnlLists.add(new JScrollPane(lstAdd), gcList);
+            }
+            if (!update.isEmpty()) {
+                y++;
+                gcLabel.gridy = y;
+                pnlLists.add(lblUpdate = new JLabel(tr("Objects to modify:")), gcLabel);
+                y++;
+                gcList.gridy = y;
+                pnlLists.add(new JScrollPane(lstUpdate), gcList);
+            }
+            if (!delete.isEmpty()) {
+                y++;
+                gcLabel.gridy = y;
+                pnlLists.add(lblDelete = new JLabel(tr("Objects to delete:")), gcLabel);
+                y++;
+                gcList.gridy = y;
+                pnlLists.add(new JScrollPane(lstDelete), gcList);
+            }
         }
 
         public boolean hasChangesetComment() {
