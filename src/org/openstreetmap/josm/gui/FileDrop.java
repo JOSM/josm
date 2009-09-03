@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.util.List;
+
+import javax.swing.BorderFactory;
 
 import org.openstreetmap.josm.actions.OpenFileAction;
 
@@ -70,7 +73,7 @@ public class FileDrop
     {   this(
             null,  // Logging stream
             c,     // Drop target
-            javax.swing.BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
+            BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
             true, // Recursive
             new FileDrop.Listener()
             {
@@ -340,11 +343,11 @@ public class FileDrop
                     log( out, "FileDrop: file list accepted." );
 
                     // Get a useful list
-                    java.util.List fileList = (java.util.List)
+                    List fileList = (java.util.List)
                     tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
 
                     // Convert list to array
-                    final java.io.File[] files = (File[]) fileList.toArray();;
+                    final File[] files = (File[]) fileList.toArray();
 
                     // Alert listener to drop.
                     if( listener != null ) {

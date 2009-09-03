@@ -28,8 +28,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * 
  */
 public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
-    static private final Logger logger = Logger.getLogger(NodeListTableCellRenderer.class.getName());
-    private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
+    //static private final Logger logger = Logger.getLogger(NodeListTableCellRenderer.class.getName());
+    //private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
     public final static Color BGCOLOR_FROZEN = new Color(234,234,234);
@@ -66,7 +66,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         // show the id
         //
         sb.append("<strong>id</strong>=")
-        .append(primitive.id)
+        .append(primitive.getId())
         .append("<br>");
 
         // show the key/value-pairs, sorted by key
@@ -167,19 +167,19 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         Node node = (Node)value;
         reset();
         switch(column) {
-        case 0:
-            renderRowId(getModel(table),row, isSelected);
-            break;
-        case 1:
-            if (node == null) {
-                renderEmptyRow();
-            } else {
-                renderNode(getModel(table), node, row, isSelected);
-            }
-            break;
-        default:
-            // should not happen
-            throw new RuntimeException(tr("unexpected column index. Got {0}", column));
+            case 0:
+                renderRowId(getModel(table),row, isSelected);
+                break;
+            case 1:
+                if (node == null) {
+                    renderEmptyRow();
+                } else {
+                    renderNode(getModel(table), node, row, isSelected);
+                }
+                break;
+            default:
+                // should not happen
+                throw new RuntimeException(tr("unexpected column index. Got {0}", column));
         }
         return this;
     }

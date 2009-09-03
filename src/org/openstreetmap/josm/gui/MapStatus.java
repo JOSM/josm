@@ -172,7 +172,7 @@ public class MapStatus extends JPanel implements Helpful {
                         if (osms == null) {
                             continue;
                         }
-                        if (osms != null && osms.equals(osmStatus) && ms.modifiers == oldModifiers) {
+                        if (osms.equals(osmStatus) && ms.modifiers == oldModifiers) {
                             continue;
                         }
 

@@ -72,12 +72,15 @@ public final class ShowStatusReportAction extends JosmAction {
 
                 while ((line = input.readLine()) != null) {
                     // Skip potential private information
-                    if (line.trim().toLowerCase().startsWith("osm-server.username"))
+                    if (line.trim().toLowerCase().startsWith("osm-server.username")) {
                         continue;
-                    if (line.trim().toLowerCase().startsWith("osm-server.password"))
+                    }
+                    if (line.trim().toLowerCase().startsWith("osm-server.password")) {
                         continue;
-                    if (line.trim().toLowerCase().startsWith("marker.show"))
+                    }
+                    if (line.trim().toLowerCase().startsWith("marker.show")) {
                         continue;
+                    }
 
                     text.append(line);
                     text.append("\n");
@@ -96,17 +99,20 @@ public final class ShowStatusReportAction extends JosmAction {
         JScrollPane sp = new JScrollPane(ta);
         sp.setPreferredSize(new Dimension(600, 500));
 
-        int result = new ExtendedDialog(Main.parent, tr(tr("Status Report")), sp,
-                new String[] {tr("Copy to clipboard and close"), tr("Close") },
-                new String[] {"copy.png", "cancel.png" }).getValue();
+        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                tr("Status Report"),
+                new String[] {tr("Copy to clipboard and close"), tr("Close") });
+        ed.setButtonIcons(new String[] {"copy.png", "cancel.png" });
+        ed.setContent(sp);
+        ed.showDialog();
 
-        if(result != 1) return;
+        if(ed.getValue() != 1) return;
         try {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                     new StringSelection(text.toString()), new ClipboardOwner() {
                         public void lostOwnership(Clipboard clipboard, Transferable contents) {}
                     }
-             );
+            );
         }
         catch (RuntimeException x) {}
     }

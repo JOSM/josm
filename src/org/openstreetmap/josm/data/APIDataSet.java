@@ -39,8 +39,7 @@ public class APIDataSet {
         toAdd.clear();
         toUpdate.clear();
         toDelete.clear();
-        if (ds == null)
-            return;
+
         for (OsmPrimitive osm :ds.allPrimitives()) {
             if (osm.get("josm/ignore") != null) {
                 continue;

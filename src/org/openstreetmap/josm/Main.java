@@ -337,7 +337,7 @@ abstract public class Main {
         // init default coordinate format
         //
         try {
-            CoordinateFormat format = CoordinateFormat.valueOf(Main.pref.get("coordinates"));
+            //CoordinateFormat format = CoordinateFormat.valueOf(Main.pref.get("coordinates"));
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
         } catch (IllegalArgumentException iae) {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
@@ -411,9 +411,9 @@ abstract public class Main {
             dialog.getModel().populate(layersWithUnmodifiedChanges);
             dialog.setVisible(true);
             switch(dialog.getUserAction()) {
-                case CANCEL: return false;
-                case PROCEED: return true;
-                default: return false;
+            case CANCEL: return false;
+            case PROCEED: return true;
+            default: return false;
             }
         }
         return true;
@@ -445,14 +445,17 @@ abstract public class Main {
                 numUnsavedLayers,
                 numUnsavedLayers
         );
-        int result = new ExtendedDialog(parent, tr("Unsaved Changes"),
-                new JLabel(msg),
-                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")},
-                new String[] {"save.png", "exit.png", "cancel.png"}).getValue();
 
-        switch(result) {
-            case 2: /* discard and exit */ return true;
-            case 3: /* cancel */ return false;
+        ExtendedDialog ed = new ExtendedDialog(parent,
+                tr("Unsaved Changes"),
+                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")});
+        ed.setButtonIcons(new String[] {"save.png", "exit.png", "cancel.png"});
+        ed.setContent(new JLabel(msg));
+        ed.showDialog();
+
+        switch(ed.getValue()) {
+        case 2: /* discard and exit */ return true;
+        case 3: /* cancel */ return false;
         }
         boolean savefailed = false;
         for (OsmDataLayer l : map.mapView.getLayersOfType(OsmDataLayer.class)) {

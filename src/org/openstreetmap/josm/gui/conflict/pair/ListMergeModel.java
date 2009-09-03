@@ -55,7 +55,7 @@ import javax.swing.table.TableModel;
  * @see ListMerger
  */
 public abstract class ListMergeModel<T> extends Observable {
-    private static final Logger logger = Logger.getLogger(ListMergeModel.class.getName());
+    //private static final Logger logger = Logger.getLogger(ListMergeModel.class.getName());
 
     public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
 

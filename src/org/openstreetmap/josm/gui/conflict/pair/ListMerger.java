@@ -44,7 +44,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @see ListMergeModel
  */
 public abstract class ListMerger<T> extends JPanel implements PropertyChangeListener, Observer {
-    private static final Logger logger = Logger.getLogger(ListMerger.class.getName());
+    //private static final Logger logger = Logger.getLogger(ListMerger.class.getName());
 
     protected JTable myEntriesTable;
     protected JTable mergedEntriesTable;

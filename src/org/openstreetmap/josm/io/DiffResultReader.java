@@ -92,32 +92,32 @@ public class DiffResultReader extends AbstractVisitor {
     }
 
     public void visit(Node n) {
-        String key = "node:" + (newIdMap.containsKey(n) ? newIdMap.get(n) : n.id);
+        String key = "node:" + (newIdMap.containsKey(n) ? newIdMap.get(n) : n.getId());
         System.out.println("key: "+key);
         Long[] nv = versions.get(key);
         if (nv != null) {
             processed.add(n);
-            if (!n.deleted) {
+            if (!n.isDeleted()) {
                 n.id = nv[0]; n.version = nv[1].intValue();
             }
         }
     }
     public void visit(Way w) {
-        String key = "way:" + (newIdMap.containsKey(w) ? newIdMap.get(w) : w.id);
+        String key = "way:" + (newIdMap.containsKey(w) ? newIdMap.get(w) : w.getId());
         Long[] nv = versions.get(key);
         if (nv != null) {
             processed.add(w);
-            if (!w.deleted) {
+            if (!w.isDeleted()) {
                 w.id = nv[0]; w.version = nv[1].intValue();
             }
         }
     }
     public void visit(Relation r) {
-        String key = "relation:" + (newIdMap.containsKey(r) ? newIdMap.get(r) : r.id);
+        String key = "relation:" + (newIdMap.containsKey(r) ? newIdMap.get(r) : r.getId());
         Long[] nv = versions.get(key);
         if (nv != null) {
             processed.add(r);
-            if (!r.deleted) {
+            if (!r.isDeleted()) {
                 r.id = nv[0]; r.version = nv[1].intValue();
             }
         }

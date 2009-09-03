@@ -61,7 +61,7 @@ import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
  * 
  */
 public class LayerListDialog extends ToggleDialog {
-    static private final Logger logger = Logger.getLogger(LayerListDialog.class.getName());
+    //static private final Logger logger = Logger.getLogger(LayerListDialog.class.getName());
 
     /** the unique instance of the dialog */
     static private LayerListDialog instance;
@@ -316,9 +316,9 @@ public class LayerListDialog extends ToggleDialog {
                 dialog.getModel().populate(layersWithUnmodifiedChanges);
                 dialog.setVisible(true);
                 switch(dialog.getUserAction()) {
-                    case CANCEL: return false;
-                    case PROCEED: return true;
-                    default: return false;
+                case CANCEL: return false;
+                case PROCEED: return true;
+                default: return false;
                 }
             }
             return true;
