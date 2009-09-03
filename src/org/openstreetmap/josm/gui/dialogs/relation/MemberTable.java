@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -12,6 +14,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -71,27 +74,18 @@ public class MemberTable extends JTable implements IMemberModelListener {
         addMouseListener(new PopupListener());
     }
 
-    /**
-     * adjusts the width of the columns for the tag name and the tag value to the width of the
-     * scroll panes viewport.
-     *
-     * Note: {@see #getPreferredScrollableViewportSize()} did not work as expected
-     *
-     * @param scrollPaneWidth the width of the scroll panes viewport
-     */
-    public void adjustColumnWidth(int scrollPaneWidth) {
-        TableColumnModel tcm = getColumnModel();
-        int width = scrollPaneWidth;
-        width = width / 3;
-        if (width > 0) {
-            tcm.getColumn(0).setMinWidth(width);
-            tcm.getColumn(0).setMaxWidth(width);
-            tcm.getColumn(1).setMinWidth(width);
-            tcm.getColumn(1).setMaxWidth(width);
-            tcm.getColumn(2).setMinWidth(width);
-            tcm.getColumn(2).setMaxWidth(width);
-
+    @Override
+    public Dimension getPreferredSize(){
+        Container c = getParent();
+        while(c != null && ! (c instanceof JViewport)) {
+            c = c.getParent();
         }
+        if (c != null) {
+            Dimension d = super.getPreferredSize();
+            d.width = c.getSize().width;
+            return d;
+        }
+        return super.getPreferredSize();
     }
 
     public void makeMemberVisible(int index) {

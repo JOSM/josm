@@ -320,18 +320,6 @@ public class GenericRelationEditor extends RelationEditor {
         memberTableModel.addMemberModelListener(memberTable);
 
         final JScrollPane scrollPane = new JScrollPane(memberTable);
-        // this adapters ensures that the width of the tag table columns is adjusted
-        // to the width of the scroll pane viewport. Also tried to overwrite
-        // getPreferredViewportSize() in JTable, but did not work.
-        //
-        scrollPane.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                Dimension d = scrollPane.getViewport().getExtentSize();
-                memberTable.adjustColumnWidth(d.width);
-            }
-        });
 
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
