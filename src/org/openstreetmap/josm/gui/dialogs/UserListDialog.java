@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -184,7 +187,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             int num = Math.min(10, users.size());
             Iterator<User> it = users.iterator();
             while(it.hasNext() && num > 0) {
-                launchBrowser(createInfoUrl(it.next()));
+                String url = createInfoUrl(it.next());
+                if (url == null) {
+                    break;
+                }
+                launchBrowser(url);
                 num--;
             }
         }
@@ -192,7 +199,19 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         @Override
         protected String createInfoUrl(Object infoObject) {
             User user = (User)infoObject;
-            return getBaseUserUrl() + "/" + user.name;
+            try {
+                return getBaseUserUrl() + "/" + URLEncoder.encode(user.name, "UTF-8");
+            } catch(UnsupportedEncodingException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Failed to create an URL because the encoding ''{0}'' was<br>"
+                                + "was missing on this system.</html>", "UTF-8"),
+                                tr("Missing encoding"),
+                                JOptionPane.ERROR_MESSAGE
+                );
+                return null;
+            }
         }
 
         @Override
