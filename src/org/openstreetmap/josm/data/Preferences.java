@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,7 +44,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
 public class Preferences {
 
     /**
-     * Internal storage for the preferenced directory.
+     * Internal storage for the preference directory.
      * Do not access this variable directly!
      * @see #getPreferencesDirFile()
      */
@@ -290,8 +291,13 @@ public class Preferences {
         properties.put("josm.version", AboutAction.getVersionString());
         try {
             setSystemProperties();
+            String prefFile = getPreferencesDir() + "preferences";
+
+            // Backup old preferences
+            copyFile(new File(prefFile), new File(prefFile + "_backup"));
+
             final PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                    new FileOutputStream(getPreferencesDir() + "preferences"), "utf-8"), false);
+                    new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
             for (final Entry<String, String> e : properties.entrySet()) {
                 String s = defaults.get(e.getKey());
                 /* don't save default values */
@@ -300,12 +306,45 @@ public class Preferences {
                 }
             }
             out.close();
+
+            File tmpFile = new File(prefFile + "_tmp");
+            copyFile(tmpFile, new File(prefFile));
+            tmpFile.delete();
+
         } catch (final IOException e) {
             e.printStackTrace();
             // do not message anything, since this can be called from strange
             // places.
         }
     }
+
+    /**
+     * Simple file copy function that will overwrite the target file
+     * Taken from http://www.rgagnon.com/javadetails/java-0064.html (CC-NC-BY-SA)
+     * @param in
+     * @param out
+     * @throws IOException
+     */
+    public static void copyFile(File in, File out) throws IOException  {
+        FileChannel inChannel = new FileInputStream(in).getChannel();
+        FileChannel outChannel = new FileOutputStream(out).getChannel();
+        try {
+            inChannel.transferTo(0, inChannel.size(),
+                    outChannel);
+        }
+        catch (IOException e) {
+            throw e;
+        }
+        finally {
+            if (inChannel != null) {
+                inChannel.close();
+            }
+            if (outChannel != null) {
+                outChannel.close();
+            }
+        }
+    }
+
 
     public void load() throws IOException {
         properties.clear();
