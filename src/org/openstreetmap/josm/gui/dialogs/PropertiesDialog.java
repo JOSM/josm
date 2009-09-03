@@ -635,7 +635,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             public void mouseReleased(MouseEvent arg0) {}
         }
 
-        LinkedList<TaggingPreset> p = new LinkedList<TaggingPreset>();
         presets.removeAll();
         int total = nodes+ways+relations+closedways;
         if(total == 0) {
@@ -830,13 +829,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         protected void deleteFromRelation(int row) {
             Relation cur = (Relation)membershipData.getValueAt(row, 0);
-            int result = new ExtendedDialog(Main.parent,
-                    tr("Change relation"),
-                    tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())),
-                    new String[] {tr("Delete from relation"), tr("Cancel")},
-                    new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
 
-            if(result != 1)
+            ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                    tr("Change relation"),
+                    new String[] {tr("Delete from relation"), tr("Cancel")});
+            ed.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
+            ed.setContent(tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())));
+            ed.showDialog();
+
+            if(ed.getValue() != 1)
                 return;
 
             Relation rel = new Relation(cur);

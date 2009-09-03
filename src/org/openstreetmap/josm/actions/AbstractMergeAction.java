@@ -65,16 +65,21 @@ public abstract class AbstractMergeAction extends JosmAction {
         layerList.setRenderer(new LayerListCellRenderer());
         layerList.setModel(new DefaultComboBoxModel(targetLayers.toArray()));
         layerList.setSelectedIndex(0);
-    
+
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
         pnl.add(new JLabel(tr("Please select the target layer.")), GBC.eol());
         pnl.add(layerList, GBC.eol());
-    
-        int decision = new ExtendedDialog(Main.parent, tr("Select target layer"), pnl, new String[] { tr("Merge"),
-            tr("Cancel") }, new String[] { "dialogs/mergedown", "cancel" }).getValue();
-        if (decision != 1)
+
+        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                tr("Select target layer"),
+                new String[] { tr("Merge"), tr("Cancel") });
+        ed.setButtonIcons(new String[] { "dialogs/mergedown", "cancel" });
+        ed.setContent(pnl);
+        ed.showDialog();
+        if (ed.getValue() != 1)
             return null;
+
         Layer targetLayer = (Layer) layerList.getSelectedItem();
         return targetLayer;
     }

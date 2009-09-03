@@ -96,12 +96,14 @@ public class PluginSelection {
             );
             done = true;
         } else {
-            int answer = new ExtendedDialog(Main.parent,
+            ExtendedDialog ed = new ExtendedDialog(Main.parent,
                     tr("Update"),
-                    tr("Update the following plugins:\n\n{0}", toUpdateStr.toString()),
-                    new String[] {tr("Update Plugins"), tr("Cancel")},
-                    new String[] {"dialogs/refresh.png", "cancel.png"}).getValue();
-            if (answer == 1) {
+                    new String[] {tr("Update Plugins"), tr("Cancel")});
+            ed.setButtonIcons(new String[] {"dialogs/refresh.png", "cancel.png"});
+            ed.setContent(tr("Update the following plugins:\n\n{0}", toUpdateStr.toString()));
+            ed.showDialog();
+
+            if (ed.getValue() == 1) {
                 PluginDownloader.update(toUpdate);
                 done = true;
             }
@@ -132,13 +134,15 @@ public class PluginSelection {
             }
         }
         if (!toDownload.isEmpty()) {
-            int answer = new ExtendedDialog(Main.parent,
+            ExtendedDialog ed = new ExtendedDialog(Main.parent,
                     tr("Download missing plugins"),
-                    tr("Download the following plugins?\n\n{0}", msg),
-                    new String[] {tr("Download Plugins"), tr("Cancel")},
-                    new String[] {"download.png", "cancel.png"}).getValue();
+                    new String[] {tr("Download Plugins"), tr("Cancel")});
+            ed.setButtonIcons(new String[] {"download.png", "cancel.png"});
+            ed.setContent(tr("Download the following plugins?\n\n{0}", msg));
+            ed.showDialog();
+
             Collection<PluginInformation> error =
-                (answer != 1 ? toDownload : new PluginDownloader().download(toDownload));
+                (ed.getValue() != 1 ? toDownload : new PluginDownloader().download(toDownload));
             for (PluginInformation pd : error) {
                 pluginMap.put(pd.name, false);
             }
@@ -329,7 +333,8 @@ public class PluginSelection {
                                     String x[] = line.split(";");
                                     name = x[0];
                                     url = x[1];
-                                    manifest = null;
+                                    // Is null anyway
+                                    //manifest = null;
                                 }
                             }
                             if(name != null)

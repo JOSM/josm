@@ -111,9 +111,14 @@ public class GpxExporter extends FileExporter {
         JTextField keywords = new JTextField();
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
-        int answer = new ExtendedDialog(Main.parent, tr("Export options"), p, new String[] { tr("Export and Save"),
-            tr("Cancel") }, new String[] { "exportgpx.png", "cancel.png" }).getValue();
-        if (answer != 1)
+        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                tr("Export options"),
+                new String[] { tr("Export and Save"), tr("Cancel") });
+        ed.setButtonIcons(new String[] { "exportgpx.png", "cancel.png" });
+        ed.setContent(p);
+        ed.showDialog();
+
+        if (ed.getValue() != 1)
             return;
 
         Main.pref.put("lastAddAuthor", author.isSelected());

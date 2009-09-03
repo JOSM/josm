@@ -117,13 +117,16 @@ public class CombineWayAction extends JosmAction {
         // Complain to the user if the ways don't have equal memberships.
         for (HashSet<Way> waylinks : backlinks.values()) {
             if (!waylinks.containsAll(selectedWays)) {
-                int option = new ExtendedDialog(Main.parent,
+
+                ExtendedDialog ed = new ExtendedDialog(Main.parent,
                         tr("Combine ways with different memberships?"),
-                        tr("The selected ways have differing relation memberships.  "
-                                + "Do you still want to combine them?"),
-                                new String[] {tr("Combine Anyway"), tr("Cancel")},
-                                new String[] {"combineway.png", "cancel.png"}).getValue();
-                if (option == 1) {
+                        new String[] {tr("Combine Anyway"), tr("Cancel")});
+                ed.setButtonIcons(new String[] {"combineway.png", "cancel.png"});
+                ed.setContent(tr("The selected ways have differing relation memberships.  "
+                        + "Do you still want to combine them?"));
+                ed.showDialog();
+
+                if (ed.getValue() == 1) {
                     break;
                 }
 
@@ -149,13 +152,15 @@ public class CombineWayAction extends JosmAction {
         } else {
             Object secondTry = actuallyCombineWays(selectedWays, true);
             if (secondTry instanceof List<?>) {
-                int option = new ExtendedDialog(Main.parent,
+                ExtendedDialog ed = new ExtendedDialog(Main.parent,
                         tr("Change directions?"),
-                        tr("The ways can not be combined in their current directions.  "
-                                + "Do you want to reverse some of them?"),
-                                new String[] {tr("Reverse and Combine"), tr("Cancel")},
-                                new String[] {"wayflip.png", "cancel.png"}).getValue();
-                if (option != 1) return;
+                        new String[] {tr("Reverse and Combine"), tr("Cancel")});
+                ed.setButtonIcons(new String[] {"wayflip.png", "cancel.png"});
+                ed.setContent(tr("The ways can not be combined in their current directions.  "
+                        + "Do you want to reverse some of them?"));
+                ed.showDialog();
+                if (ed.getValue() != 1) return;
+
                 nodeList = (List<Node>) secondTry;
             } else {
                 JOptionPane.showMessageDialog(
@@ -204,12 +209,15 @@ public class CombineWayAction extends JosmAction {
         }
 
         if (!components.isEmpty()) {
-            int answer = new ExtendedDialog(Main.parent,
+
+            ExtendedDialog ed = new ExtendedDialog(Main.parent,
                     tr("Enter values for all conflicts."),
-                    p,
-                    new String[] {tr("Solve Conflicts"), tr("Cancel")},
-                    new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
-            if (answer != 1) return;
+                    new String[] {tr("Solve Conflicts"), tr("Cancel")});
+            ed.setButtonIcons(new String[] {"dialogs/conflict.png", "cancel.png"});
+            ed.setContent(p);
+            ed.showDialog();
+
+            if (ed.getValue() != 1) return;
 
             for (Entry<String, JComboBox> e : components.entrySet()) {
                 newWay.put(e.getKey(), e.getValue().getEditor().getItem().toString());
