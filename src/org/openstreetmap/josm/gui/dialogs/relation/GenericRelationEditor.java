@@ -72,6 +72,10 @@ import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
+import org.openstreetmap.josm.gui.tagging.TagCellEditor;
+import org.openstreetmap.josm.gui.tagging.TagEditorModel;
+import org.openstreetmap.josm.gui.tagging.TagTable;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -266,19 +270,6 @@ public class GenericRelationEditor extends RelationEditor {
         editor.setAutoCompletionList(acList);
 
         final JScrollPane scrollPane = new JScrollPane(tagTable);
-
-        // this adapters ensures that the width of the tag table columns is adjusted
-        // to the width of the scroll pane viewport. Also tried to overwrite
-        // getPreferredViewportSize() in JTable, but did not work.
-        //
-        scrollPane.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                Dimension d = scrollPane.getViewport().getExtentSize();
-                tagTable.adjustColumnWidth(d.width);
-            }
-        });
 
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
@@ -1354,7 +1345,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         protected void updateEnabledState() {
-            setEnabled(getRelation() != null && getRelation().id > 0);
+            setEnabled(getRelation() != null && getRelation().getId() > 0);
         }
     }
 
@@ -1558,7 +1549,7 @@ public class GenericRelationEditor extends RelationEditor {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 progressMonitor.indeterminateSubTask("");
-                OsmServerObjectReader reader = new OsmServerObjectReader(getRelation().id, OsmPrimitiveType.RELATION,
+                OsmServerObjectReader reader = new OsmServerObjectReader(getRelation().getId(), OsmPrimitiveType.RELATION,
                         true);
                 DataSet dataSet = reader.parseOsm(progressMonitor
                         .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));

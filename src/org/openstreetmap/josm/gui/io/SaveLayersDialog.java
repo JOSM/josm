@@ -32,6 +32,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
+import org.openstreetmap.josm.actions.UploadAction.UploadConfirmationHook;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
@@ -406,7 +407,12 @@ public class SaveLayersDialog extends JDialog {
                     continue;
                 }
 
-                currentTask = new UploadLayerTask(layerInfo.getLayer(), monitor);
+                currentTask = new UploadLayerTask(
+                        layerInfo.getLayer(),
+                        monitor,
+                        UploadAction.UploadConfirmationHook.getUploadDialogPanel().getChangeset(),
+                        UploadAction.UploadConfirmationHook.getUploadDialogPanel().getChangesetProcessingType()
+                );
                 currentFuture = worker.submit(currentTask);
                 try {
                     // wait for the asynchronous task to complete

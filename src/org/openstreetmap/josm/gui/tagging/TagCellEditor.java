@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.dialogs.relation;
+package org.openstreetmap.josm.gui.tagging;
 
 import java.awt.Component;
 import java.util.logging.Logger;
@@ -54,10 +54,9 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      */
     protected void initAutoCompletionListForKeys(TagEditorModel model, TagModel currentTag) {
 
-        if (autoCompletionList == null) {
-            logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
+        if (autoCompletionList == null)
+            //logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
             return;
-        }
         autoCompletionList.clear();
 
         // add the list of keys in the current data set

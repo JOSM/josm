@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.dialogs.relation;
+package org.openstreetmap.josm.gui.tagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTException;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -19,6 +21,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -29,6 +32,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 
@@ -334,28 +338,19 @@ public class TagTable extends JTable  {
         init();
     }
 
-
-
-    /**
-     * adjusts the width of the columns for the tag name and the tag value
-     * to the width of the scroll panes viewport.
-     *
-     * Note: {@see #getPreferredScrollableViewportSize()} did not work as expected
-     *
-     * @param scrollPaneWidth the width of the scroll panes viewport
-     */
-    public void adjustColumnWidth(int scrollPaneWidth) {
-        TableColumnModel tcm = getColumnModel();
-        int width = scrollPaneWidth;
-        width = width / 2;
-        if (width > 0) {
-            tcm.getColumn(0).setMinWidth(width);
-            tcm.getColumn(0).setMaxWidth(width);
-            tcm.getColumn(1).setMinWidth(width);
-            tcm.getColumn(1).setMaxWidth(width);
+    @Override
+    public Dimension getPreferredSize(){
+        Container c = getParent();
+        while(c != null && ! (c instanceof JViewport)) {
+            c = c.getParent();
         }
+        if (c != null) {
+            Dimension d = super.getPreferredSize();
+            d.width = c.getSize().width;
+            return d;
+        }
+        return super.getPreferredSize();
     }
-
 
     @Override protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
             int condition, boolean pressed) {

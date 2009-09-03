@@ -6,11 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 
 import org.openstreetmap.josm.data.APIDataSet;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.ChangesetProcessingType;
 import org.openstreetmap.josm.io.OsmServerWriter;
 
 /**
@@ -32,14 +34,19 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     private OsmServerWriter writer;
     private OsmDataLayer layer;
     private ProgressMonitor monitor;
+    private Changeset changeset;
+    private ChangesetProcessingType changesetProcessingType;
 
     /**
      * 
      * @param layer the layer. Must not be null.
      * @param monitor  a progress monitor. If monitor is null, uses {@see NullProgressMonitor#INSTANCE}
+     * @param changeset the changeset to be used if <code>changesetProcessingType</code> indicates that a new
+     *   changeset is to be used
+     * @param changesetProcessingType how we handle changesets
      * @throws IllegalArgumentException thrown, if layer is null
      */
-    public UploadLayerTask(OsmDataLayer layer, ProgressMonitor monitor) {
+    public UploadLayerTask(OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset, ChangesetProcessingType changesetProcessingType) {
         if (layer == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", layer));
         if (monitor == null) {
@@ -47,6 +54,8 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         }
         this.layer = layer;
         this.monitor = monitor;
+        this.changeset = changeset;
+        this.changesetProcessingType = changesetProcessingType == null ? ChangesetProcessingType.USE_NEW_AND_CLOSE : changesetProcessingType;
     }
 
     @Override
@@ -59,7 +68,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         try {
             ProgressMonitor m = monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             if (isCancelled()) return;
-            writer.uploadOsm(layer.data.version, toUpload, m);
+            writer.uploadOsm(layer.data.version, toUpload, changeset, changesetProcessingType, m);
         } catch (Exception sxe) {
             if (isCancelled()) {
                 System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());

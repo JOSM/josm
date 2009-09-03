@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -80,13 +81,16 @@ public class OsmServerWriter {
      * Uploads the changes individually. Invokes one API call per uploaded primitmive.
      * 
      * @param primitives the collection of primitives to upload
+     * @param changeset the changeset to be used if <code>changesetProcessingType</code> indicates that
+     *   a new changeset should be opened
+     * @param changesetProcessingType how we handle changesets
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
      */
-    protected void uploadChangesIndividually(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesIndividually(Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
             progressMonitor.setTicksCount(primitives.size());
-            api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
+            api.createChangeset(changeset, changesetProcessingType,progressMonitor.createSubTaskMonitor(0, false));
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
                 int progress = progressMonitor.getTicks();
@@ -120,7 +124,7 @@ public class OsmServerWriter {
                 // an open changeset
 
                 if (api.getCurrentChangeset() != null && api.getCurrentChangeset().getId() > 0) {
-                    api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+                    api.stopChangeset(changesetProcessingType, progressMonitor.createSubTaskMonitor(0, false));
                 }
             } catch(Exception e) {
                 OsmChangesetCloseException closeException = new OsmChangesetCloseException(e);
@@ -137,11 +141,11 @@ public class OsmServerWriter {
      * @param progressMonitor  the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
      */
-    protected void uploadChangesAsDiffUpload(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesAsDiffUpload(Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
         // upload everything in one changeset
         //
         try {
-            api.createChangeset(getChangesetComment(), progressMonitor.createSubTaskMonitor(0, false));
+            api.createChangeset(changeset, changesetProcessingType, progressMonitor.createSubTaskMonitor(0, false));
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
         } catch(OsmTransferException e) {
             throw e;
@@ -149,7 +153,7 @@ public class OsmServerWriter {
             throw new OsmTransferException(e);
         } finally {
             try {
-                api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
+                api.stopChangeset(changesetProcessingType, progressMonitor.createSubTaskMonitor(0, false));
             } catch (Exception ee) {
                 OsmChangesetCloseException closeException = new OsmChangesetCloseException(ee);
                 closeException.setChangeset(api.getCurrentChangeset());
@@ -164,27 +168,27 @@ public class OsmServerWriter {
      * @param apiVersion version of the data set
      * @param primitives list of objects to send
      */
-    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
         processed = new LinkedList<OsmPrimitive>();
 
         api.initialize(progressMonitor);
 
         try {
-            // check whether we can use changeset
+            // check whether we can use diff upload
             //
-            boolean canUseChangeset = api.hasChangesetSupport();
-            boolean useChangeset = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
-            if (useChangeset && ! canUseChangeset) {
-                System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use changesets, but API is not able to handle them. Ignoring changesets.", "osm-server.atomic-upload", apiVersion));
-                useChangeset = false;
+            boolean casUseDiffUploads = api.hasSupportForDiffUploads();
+            boolean useDiffUpload = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
+            if (useDiffUpload && ! casUseDiffUploads) {
+                System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use diff uploads, but API is not able to handle them. Ignoring diff upload.", "osm-server.atomic-upload", apiVersion));
+                useDiffUpload = false;
             }
 
-            if (useChangeset) {
+            if (useDiffUpload) {
                 progressMonitor.beginTask(tr("Starting to upload in one request ..."));
-                uploadChangesAsDiffUpload(primitives, progressMonitor);
+                uploadChangesAsDiffUpload(primitives,changeset, changesetProcessingType, progressMonitor);
             } else {
                 progressMonitor.beginTask(tr("Starting to upload with one request per primitive ..."));
-                uploadChangesIndividually(primitives, progressMonitor);
+                uploadChangesIndividually(primitives,changeset,changesetProcessingType,  progressMonitor);
             }
         } finally {
             progressMonitor.finishTask();

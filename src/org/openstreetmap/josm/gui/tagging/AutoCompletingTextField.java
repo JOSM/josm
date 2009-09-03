@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.dialogs.relation;
+package org.openstreetmap.josm.gui.tagging;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;

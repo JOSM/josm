@@ -12,6 +12,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionListItem;
+import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
 

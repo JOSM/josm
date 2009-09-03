@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -19,16 +18,21 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
@@ -38,6 +42,8 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
+import org.openstreetmap.josm.io.ChangesetProcessingType;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -163,7 +169,14 @@ public class UploadAction extends JosmAction{
         }
         if (!checkPreUploadConditions(Main.map.mapView.getEditLayer(), apiData))
             return;
-        Main.worker.execute(createUploadTask(Main.map.mapView.getEditLayer(), apiData.getPrimitives()));
+        Main.worker.execute(
+                createUploadTask(
+                        Main.map.mapView.getEditLayer(),
+                        apiData.getPrimitives(),
+                        UploadConfirmationHook.getUploadDialogPanel().getChangeset(),
+                        UploadConfirmationHook.getUploadDialogPanel().getChangesetProcessingType()
+                )
+        );
     }
 
     /**
@@ -438,11 +451,19 @@ public class UploadAction extends JosmAction{
     }
 
 
-    class UploadConfirmationHook implements UploadHook {
+    static public class UploadConfirmationHook implements UploadHook {
+        static private UploadDialogPanel uploadDialogPanel;
 
+        static public UploadDialogPanel getUploadDialogPanel() {
+            if (uploadDialogPanel == null) {
+                uploadDialogPanel = new UploadDialogPanel();
+            }
+            return uploadDialogPanel;
+        }
 
         public boolean checkUpload(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
-            final UploadDialogPanel panel = new UploadDialogPanel(add, update, delete);
+            final UploadDialogPanel panel = getUploadDialogPanel();
+            panel.setUploadedPrimitives(add, update, delete);
 
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
@@ -482,8 +503,8 @@ public class UploadAction extends JosmAction{
         }
     }
 
-    public UploadDiffTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload) {
-        return new UploadDiffTask(layer, toUpload);
+    public UploadDiffTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload, Changeset changeset, ChangesetProcessingType changesetProcessingType) {
+        return new UploadDiffTask(layer, toUpload, changeset, changesetProcessingType);
     }
 
     public class UploadDiffTask extends  PleaseWaitRunnable {
@@ -492,18 +513,22 @@ public class UploadAction extends JosmAction{
         private Collection <OsmPrimitive> toUpload;
         private OsmServerWriter writer;
         private OsmDataLayer layer;
+        private Changeset changeset;
+        private ChangesetProcessingType changesetProcessingType;
 
-        private UploadDiffTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload) {
+        private UploadDiffTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload, Changeset changeset, ChangesetProcessingType changesetProcessingType) {
             super(tr("Uploading data for layer ''{0}''", layer.getName()),false /* don't ignore exceptions */);
             this.toUpload = toUpload;
             this.layer = layer;
+            this.changeset = changeset;
+            this.changesetProcessingType = changesetProcessingType == null ? ChangesetProcessingType.USE_NEW_AND_CLOSE : changesetProcessingType;
         }
 
         @Override protected void realRun() throws SAXException, IOException {
             writer = new OsmServerWriter();
             try {
                 ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                writer.uploadOsm(layer.data.version, toUpload, monitor);
+                writer.uploadOsm(layer.data.version, toUpload, changeset,changesetProcessingType, monitor);
             } catch (Exception sxe) {
                 if (uploadCancelled) {
                     System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
@@ -553,30 +578,27 @@ public class UploadAction extends JosmAction{
     /**
      * The panel displaying information about primitives to upload and providing
      * UI widgets for entering the changeset comment and other configuration
-     * setttings.
+     * settings.
      * 
      */
-    static private class UploadDialogPanel extends JPanel {
+    static public class UploadDialogPanel extends JPanel {
 
         private JList lstAdd;
         private JList lstUpdate;
         private JList lstDelete;
+        private JLabel lblAdd;
+        private JLabel lblUpdate;
+        private JLabel lblDelete;
         private JCheckBox cbUseAtomicUpload;
         private SuggestingJHistoryComboBox cmt;
-
-        protected int getNumLists() {
-            int ret = 0;
-            if (lstAdd.getModel().getSize() > 0) {
-                ret++;
-            }
-            if (lstUpdate.getModel().getSize() > 0) {
-                ret++;
-            }
-            if (lstDelete.getModel().getSize() > 0) {
-                ret++;
-            }
-            return ret;
-        }
+        private TagEditorPanel tagEditorPanel;
+        private JTabbedPane southTabbedPane;
+        private ButtonGroup bgChangesetHandlingOptions;
+        private JRadioButton rbUseNewAndClose;
+        private JRadioButton rbUseNewAndLeaveOpen;
+        private JRadioButton rbUseExistingAndClose;
+        private JRadioButton rbUseExistingAndLeaveOpen;
+        private ChangesetProcessingType changesetProcessingType;
 
         protected JPanel buildListsPanel() {
             JPanel pnl = new JPanel();
@@ -591,46 +613,71 @@ public class UploadAction extends JosmAction{
             GridBagConstraints gcList = new GridBagConstraints();
             gcList.fill = GridBagConstraints.BOTH;
             gcList.weightx = 1.0;
-            gcList.weighty = 1.0 / getNumLists();
+            gcList.weighty = 1.0;
             gcList.anchor = GridBagConstraints.CENTER;
 
-            int y = -1;
+            gcLabel.gridy = 0;
+            pnl.add(lblAdd = new JLabel(tr("Objects to add:")), gcLabel);
 
-            if (lstAdd.getModel().getSize() >0) {
-                y++;
-                gcLabel.gridy = y;
-                pnl.add(new JLabel(tr("Objects to add:")), gcLabel);
-                y++;
-                gcList.gridy = y;
-                pnl.add(new JScrollPane(lstAdd), gcList);
-            }
-            if (lstUpdate.getModel().getSize() >0) {
-                y++;
-                gcLabel.gridy = y;
-                pnl.add(new JLabel(tr("Objects to modify:")), gcLabel);
-                y++;
-                gcList.gridy = y;
-                pnl.add(new JScrollPane(lstUpdate), gcList);
-            }
-            if (lstDelete.getModel().getSize() >0) {
-                y++;
-                gcLabel.gridy = y;
-                pnl.add(new JLabel(tr("Objects to delete:")), gcLabel);
-                y++;
-                gcList.gridy = y;
-                pnl.add(new JScrollPane(lstDelete), gcList);
-            }
+            gcList.gridy = 1;
+            pnl.add(new JScrollPane(lstAdd), gcList);
+
+            gcLabel.gridy = 2;
+            pnl.add(lblUpdate = new JLabel(tr("Objects to modify:")), gcLabel);
+
+            gcList.gridy = 3;
+            pnl.add(new JScrollPane(lstUpdate), gcList);
+
+            gcLabel.gridy = 4;
+            pnl.add(lblDelete = new JLabel(tr("Objects to delete:")), gcLabel);
+
+            gcList.gridy = 5;
+            pnl.add(new JScrollPane(lstDelete), gcList);
+            return pnl;
+        }
+
+        protected JPanel buildChangesetHandlingControlPanel() {
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
+            bgChangesetHandlingOptions = new ButtonGroup();
+
+            rbUseNewAndClose = new JRadioButton(tr("Use a new changeset and close it"));
+            rbUseNewAndClose.setToolTipText(tr("Select to upload the data using a new changeset and to close the changeset after the upload"));
+
+            rbUseNewAndLeaveOpen = new JRadioButton(tr("Use a new changeset and leave it open"));
+            rbUseNewAndLeaveOpen.setToolTipText(tr("Select to upload the data using a new changeset and to leave the changeset open after the upload"));
+
+            rbUseExistingAndClose = new JRadioButton();
+            rbUseExistingAndLeaveOpen = new JRadioButton();
+
+            pnl.add(new JLabel(tr("Upload to a new or to an existing changeset?")));
+            pnl.add(rbUseNewAndClose);
+            pnl.add(rbUseNewAndLeaveOpen);
+            pnl.add(rbUseExistingAndClose);
+            pnl.add(rbUseExistingAndLeaveOpen);
+
+            rbUseNewAndClose.setVisible(false);
+            rbUseNewAndLeaveOpen.setVisible(false);
+            rbUseExistingAndClose.setVisible(false);
+            rbUseExistingAndLeaveOpen.setVisible(false);
+
+            bgChangesetHandlingOptions.add(rbUseNewAndClose);
+            bgChangesetHandlingOptions.add(rbUseNewAndLeaveOpen);
+            bgChangesetHandlingOptions.add(rbUseExistingAndClose);
+            bgChangesetHandlingOptions.add(rbUseExistingAndLeaveOpen);
             return pnl;
         }
 
         protected JPanel buildChangesetControlPanel() {
             JPanel pnl = new JPanel();
-            pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
+            pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
             pnl.add(cbUseAtomicUpload = new JCheckBox(tr("upload all changes in one request")));
             cbUseAtomicUpload.setToolTipText(tr("Enable to upload all changes in one request, disable to use one request per changed primitive"));
             boolean useAtomicUpload = Main.pref.getBoolean("osm-server.atomic-upload", true);
             cbUseAtomicUpload.setSelected(useAtomicUpload);
-            cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasChangesetSupport());
+            cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasSupportForDiffUploads());
+
+            pnl.add(buildChangesetHandlingControlPanel());
             return pnl;
         }
 
@@ -650,26 +697,57 @@ public class UploadAction extends JosmAction{
         }
 
         protected void build() {
-            setLayout(new BorderLayout());
-            add(buildListsPanel(), BorderLayout.CENTER);
-            add(buildUploadControlPanel(), BorderLayout.SOUTH);
+            setLayout(new GridBagLayout());
+            GridBagConstraints gc = new GridBagConstraints();
+            gc.fill = GridBagConstraints.BOTH;
+            gc.weightx = 1.0;
+            gc.weighty = 1.0;
+            add(buildListsPanel(), gc);
+
+            southTabbedPane = new JTabbedPane();
+            southTabbedPane.add(buildUploadControlPanel());
+            tagEditorPanel = new TagEditorPanel();
+            southTabbedPane.add(tagEditorPanel);
+            southTabbedPane.setTitleAt(0, tr("Settings"));
+            southTabbedPane.setTitleAt(1, tr("Changeset Tags"));
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new BorderLayout());
+            pnl.add(southTabbedPane,BorderLayout.CENTER);
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.gridy = 1;
+            gc.weightx = 1.0;
+            gc.weighty = 0.0;
+            add(pnl, gc);
         }
 
-        public UploadDialogPanel(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
+
+        protected UploadDialogPanel() {
             OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
 
-            lstAdd = new JList(add.toArray());
+            lstAdd = new JList();
             lstAdd.setCellRenderer(renderer);
             lstAdd.setVisibleRowCount(Math.min(lstAdd.getModel().getSize(), 10));
 
-            lstUpdate = new JList(update.toArray());
+            lstUpdate = new JList();
             lstUpdate.setCellRenderer(renderer);
             lstUpdate.setVisibleRowCount(Math.min(lstUpdate.getModel().getSize(), 10));
 
-            lstDelete = new JList(update.toArray());
+            lstDelete = new JList();
             lstDelete.setCellRenderer(renderer);
             lstDelete.setVisibleRowCount(Math.min(lstDelete.getModel().getSize(), 10));
             build();
+        }
+
+        public void setUploadedPrimitives(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
+            lstAdd.setListData(add.toArray());
+            lstAdd.setVisible(!add.isEmpty());
+            lblAdd.setVisible(!add.isEmpty());
+            lstUpdate.setListData(update.toArray());
+            lstUpdate.setVisible(!update.isEmpty());
+            lblUpdate.setVisible(!update.isEmpty());
+            lstDelete.setListData(delete.toArray());
+            lstDelete.setVisible(!delete.isEmpty());
+            lblDelete.setVisible(!delete.isEmpty());
         }
 
         public boolean hasChangesetComment() {
@@ -681,11 +759,68 @@ public class UploadAction extends JosmAction{
             cmt.addCurrentItemToHistory();
             Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
             Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
+
+            if (rbUseNewAndClose.isSelected()) {
+                changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
+            } else if (rbUseNewAndLeaveOpen.isSelected()) {
+                changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_LEAVE_OPEN;
+            } else if (rbUseExistingAndClose.isSelected()) {
+                changesetProcessingType = ChangesetProcessingType.USE_EXISTING_AND_CLOSE;
+            } else if (rbUseExistingAndLeaveOpen.isSelected()) {
+                changesetProcessingType = ChangesetProcessingType.USE_EXISTING_AND_LEAVE_OPEN;
+            }
         }
 
         public void startUserInput() {
+            rbUseNewAndClose.setVisible(true);
+            rbUseNewAndLeaveOpen.setVisible(true);
+            if (OsmApi.getOsmApi().getCurrentChangeset() != null) {
+                Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
+                rbUseExistingAndClose.setVisible(true);
+                rbUseExistingAndLeaveOpen.setVisible(true);
+
+                rbUseExistingAndClose.setText(tr("Use the existing changeset {0} and close it after upload",cs.getId()));
+                rbUseExistingAndClose.setToolTipText(tr("Select to upload to the existing changeset {0} and to close the changeset after this upload",cs.getId()));
+
+                rbUseExistingAndLeaveOpen.setText(tr("Use the existing changeset {0} and leave it open",cs.getId()));
+                rbUseExistingAndLeaveOpen.setToolTipText(tr("Select to upload to the existing changeset {0} and to leave the changeset open for further uploads",cs.getId()));
+
+                if (changesetProcessingType == null) {
+                    rbUseNewAndClose.setSelected(true);
+                } else {
+                    switch(changesetProcessingType) {
+                        case USE_NEW_AND_CLOSE: rbUseNewAndClose.setSelected(true); break;
+                        case USE_NEW_AND_LEAVE_OPEN: rbUseNewAndLeaveOpen.setSelected(true); break;
+                        case USE_EXISTING_AND_CLOSE: rbUseExistingAndClose.setSelected(true); break;
+                        case USE_EXISTING_AND_LEAVE_OPEN: rbUseExistingAndLeaveOpen.setSelected(true); break;
+                    }
+                }
+            } else {
+                if (changesetProcessingType == null) {
+                    changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
+                }
+                rbUseExistingAndClose.setVisible(false);
+                rbUseExistingAndLeaveOpen.setVisible(false);
+                switch(changesetProcessingType) {
+                    case USE_NEW_AND_CLOSE: rbUseNewAndClose.setSelected(true); break;
+                    case USE_NEW_AND_LEAVE_OPEN: rbUseNewAndLeaveOpen.setSelected(true); break;
+                    default: rbUseNewAndClose.setSelected(true); break;
+                }
+            }
             cmt.getEditor().selectAll();
             cmt.requestFocus();
+        }
+
+        public ChangesetProcessingType getChangesetProcessingType() {
+            if (changesetProcessingType == null) return ChangesetProcessingType.USE_NEW_AND_CLOSE;
+            return changesetProcessingType;
+        }
+
+        public Changeset getChangeset() {
+            Changeset changeset = new Changeset();
+            tagEditorPanel.getModel().applyToPrimitive(changeset);
+            changeset.put("comment", cmt.getText());
+            return changeset;
         }
     }
 }

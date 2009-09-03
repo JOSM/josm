@@ -144,10 +144,10 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Returns true if the negotiated version supports changesets.
-     * @return true if the negotiated version supports changesets.
+     * Returns true if the negotiated version supports diff uploads.
+     * @return true if the negotiated version supports diff uploads
      */
-    public boolean hasChangesetSupport() {
+    public boolean hasSupportForDiffUploads() {
         return ((version != null) && (version.compareTo("0.6")>=0));
     }
 
@@ -279,19 +279,45 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Creates a new changeset on the server to use for subsequent calls.
-     * @param comment the "commit comment" for the new changeset
+     * Creates the changeset to be used for subsequent uploads.
+     * 
+     * If changesetProcessingType is {@see ChangesetProcessingType#USE_NEW} creates a new changeset based
+     * on <code>changeset</code>. Otherwise uses the changeset given by {@see OsmApi#getCurrentChangeset()}.
+     * If this changeset is null or has an id of value 0, a new changeset is created too.
+     * 
+     * @param changeset the changeset to be used for uploading if <code>changesetProcessingType</code> is
+     *   {@see ChangesetProcessingType#USE_NEW}
+     * @param changesetProcessingType  how to handel changesets; set to {@see ChangesetProcessingType#USE_NEW} if null
+     * @param progressMonitor the progress monitor
      * @throws OsmTransferException signifying a non-200 return code, or connection errors
      */
-    public void createChangeset(String comment, ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask((tr("Opening changeset...")));
+    public void createChangeset(Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
+        if (changesetProcessingType == null) {
+            changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
+        }
         try {
-            changeset = new Changeset();
-            Properties sysProp = System.getProperties();
-            Object ua = sysProp.get("http.agent");
-            changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
-            changeset.put("comment", comment);
-            createPrimitive(changeset, progressMonitor);
+            progressMonitor.beginTask((tr("Creating changeset...")));
+            if (changesetProcessingType.isUseNew()) {
+                Properties sysProp = System.getProperties();
+                Object ua = sysProp.get("http.agent");
+                changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
+                createPrimitive(changeset, progressMonitor);
+                this.changeset = changeset;
+                progressMonitor.setCustomText((tr("Successfully opened changeset {0}",changeset.getId())));
+            } else {
+                if (this.changeset == null || this.changeset.getId() == 0) {
+                    progressMonitor.setCustomText((tr("No currently open changeset. Opening a new changeset...")));
+                    System.out.println(tr("Warning: could not reuse an existing changeset as requested. Opening a new one."));
+                    Properties sysProp = System.getProperties();
+                    Object ua = sysProp.get("http.agent");
+                    changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
+                    createPrimitive(changeset, progressMonitor);
+                    this.changeset = changeset;
+                    progressMonitor.setCustomText((tr("Successfully opened changeset {0}",this.changeset.getId())));
+                } else {
+                    progressMonitor.setCustomText((tr("Reusing existing changeset {0}", this.changeset.getId())));
+                }
+            }
         } finally {
             progressMonitor.finishTask();
         }
@@ -300,14 +326,27 @@ public class OsmApi extends OsmConnection {
     /**
      * Closes a changeset on the server.
      *
+     * @param changesetProcessingType how changesets are currently handled
+     * @param progressMonitor the progress monitor
+     * 
      * @throws OsmTransferException if something goes wrong.
      */
-    public void stopChangeset(ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask(tr("Closing changeset {0}...", changeset.getId()));
+    public void stopChangeset(ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
+        if (changesetProcessingType == null) {
+            changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
+        }
         try {
+            progressMonitor.beginTask(tr("Closing changeset..."));
             initialize(progressMonitor);
-            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null, progressMonitor);
-            changeset = null;
+            if (changesetProcessingType.isCloseAfterUpload()) {
+                progressMonitor.setCustomText(tr("Closing changeset {0}...", changeset.getId()));
+                if (this.changeset != null && this.changeset.getId() > 0) {
+                    sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null, progressMonitor);
+                    changeset = null;
+                }
+            } else {
+                progressMonitor.setCustomText(tr("Leaving changeset {0} open...", changeset.getId()));
+            }
         } finally {
             progressMonitor.finishTask();
         }
