@@ -16,6 +16,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmTransferException;
 
 /**
@@ -38,8 +39,28 @@ public class ExceptionDialogUtil {
         e.printStackTrace();
         JOptionPane.showMessageDialog(
                 Main.parent,
-                tr(   "Failed to initialize communication with the OSM server {0}.\n"
-                        + "Check the server URL in your preferences and your internet connection.",
+                tr(   "<html>Failed to initialize communication with the OSM server {0}.<br>"
+                        + "Check the server URL in your preferences and your internet connection.</html>",
+                        Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
+                ),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    /**
+     * handles an exception caught during OSM API initialization
+     *
+     * @param e the exception
+     */
+    public static void explainOsmChangesetCloseException(OsmChangesetCloseException e) {
+        e.printStackTrace();
+        String changsetId = e.getChangeset() == null ? tr("unknown") : Long.toString(e.getChangeset().getId());
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                tr(   "<html>Failed to close changeset ''{0}'' on the OSM server ''{1}''.<br>"
+                        + "The changeset will automatically be closed by the server after a timeout.</html>",
+                        changsetId,
                         Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
                 ),
                 tr("Error"),
@@ -274,6 +295,11 @@ public class ExceptionDialogUtil {
             explainOsmApiInitializationException((OsmApiInitializationException)e);
             return;
         }
+        if (e instanceof OsmChangesetCloseException){
+            explainOsmChangesetCloseException((OsmChangesetCloseException)e);
+            return;
+        }
+
         if (e instanceof OsmApiException) {
             OsmApiException oae = (OsmApiException)e;
             if (oae.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {

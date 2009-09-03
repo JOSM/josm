@@ -124,10 +124,9 @@ public class OsmServerWriter {
                     api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
                 }
             } catch(Exception e) {
-                Changeset changeset = api.getCurrentChangeset();
-                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.getId()));
-                logger.warning(tr("Failed to close changeset {0}, will be closed by server after timeout. Exception was: {1}",
-                        changesetId, e.toString()));
+                OsmChangesetCloseException closeException = new OsmChangesetCloseException(e);
+                closeException.setChangeset(api.getCurrentChangeset());
+                throw closeException;
             }
         }
     }
@@ -153,10 +152,9 @@ public class OsmServerWriter {
             try {
                 api.stopChangeset(progressMonitor.createSubTaskMonitor(0, false));
             } catch (Exception ee) {
-                Changeset changeset = api.getCurrentChangeset();
-                String changesetId = (changeset == null ? tr("unknown") : Long.toString(changeset.getId()));
-                logger.warning(tr("Failed to close changeset {0}, will be closed by server after timeout. Exception was: {1}",
-                        changesetId, ee.toString()));
+                OsmChangesetCloseException closeException = new OsmChangesetCloseException(ee);
+                closeException.setChangeset(api.getCurrentChangeset());
+                throw closeException;
             }
         }
     }
@@ -170,7 +168,7 @@ public class OsmServerWriter {
     public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         processed = new LinkedList<OsmPrimitive>();
 
-        api.initialize();
+        api.initialize(progressMonitor);
 
         try {
             // check whether we can use changeset
@@ -198,9 +196,9 @@ public class OsmServerWriter {
         if (osm.isDeleted()) {
             api.deletePrimitive(osm, progressMonitor);
         } else if (osm.getId() == 0) {
-            api.createPrimitive(osm);
+            api.createPrimitive(osm, progressMonitor);
         } else {
-            api.modifyPrimitive(osm);
+            api.modifyPrimitive(osm,progressMonitor);
         }
     }
 

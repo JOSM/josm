@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -342,6 +343,10 @@ public class UploadAction extends JosmAction{
             return;
         }
 
+        if (e instanceof OsmChangesetCloseException) {
+            ExceptionDialogUtil.explainOsmChangesetCloseException((OsmChangesetCloseException)e);
+            return;
+        }
         if (e instanceof OsmApiException) {
             OsmApiException ex = (OsmApiException)e;
             // There was an upload conflict. Let the user decide whether
@@ -492,7 +497,7 @@ public class UploadAction extends JosmAction{
                         new String[] {tr("Upload Changes"), tr("Cancel")}
                 );
                 dialog.setButtonIcons(new String[] {"upload.png", "cancel.png"});
-                dialog.setContent(p);
+                dialog.setContent(p, false /* no scroll pane */);
                 dialog.showDialog();
                 int result = dialog.getValue();
 

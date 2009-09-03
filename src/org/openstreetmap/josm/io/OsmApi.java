@@ -156,12 +156,12 @@ public class OsmApi extends OsmConnection {
      *
      * @exception OsmApiInitializationException thrown, if an exception occurs
      */
-    public void initialize() throws OsmApiInitializationException {
+    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException {
         if (initialized)
             return;
         initAuthentication();
         try {
-            String s = sendRequest("GET", "capabilities", null);
+            String s = sendRequest("GET", "capabilities", null,monitor);
             InputSource inputSource = new InputSource(new StringReader(s));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
             if (capabilities.supportsVersion("0.6")) {
@@ -226,11 +226,11 @@ public class OsmApi extends OsmConnection {
      * @param osm the primitive
      * @throws OsmTransferException if something goes wrong
      */
-    public void createPrimitive(OsmPrimitive osm) throws OsmTransferException {
-        initialize();
+    public void createPrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
+        initialize(monitor);
         String ret = "";
         try {
-            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true));
+            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true),monitor);
             osm.id = Long.parseLong(ret.trim());
             osm.version = 1;
         } catch(NumberFormatException e){
@@ -246,16 +246,16 @@ public class OsmApi extends OsmConnection {
      * @param osm the primitive
      * @throws OsmTransferException if something goes wrong
      */
-    public void modifyPrimitive(OsmPrimitive osm) throws OsmTransferException {
-        initialize();
+    public void modifyPrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
+        initialize(monitor);
         if (version.equals("0.5")) {
             // legacy mode does not return the new object version.
-            sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true));
+            sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true),monitor);
         } else {
             String ret = null;
             // normal mode (0.6 and up) returns new object version.
             try {
-                ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true));
+                ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true), monitor);
                 osm.version = Integer.parseInt(ret.trim());
             } catch(NumberFormatException e) {
                 throw new OsmTransferException(tr("unexpected format of new version of modified primitive ''{0}'', got ''{1}''", osm.getId(), ret));
@@ -269,7 +269,7 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if something goes wrong
      */
     public void deletePrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
-        initialize();
+        initialize(monitor);
         // can't use a the individual DELETE method in the 0.6 API. Java doesn't allow
         // submitting a DELETE request with content, the 0.6 API requires it, however. Falling back
         // to diff upload.
@@ -290,7 +290,7 @@ public class OsmApi extends OsmConnection {
             Object ua = sysProp.get("http.agent");
             changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
             changeset.put("comment", comment);
-            createPrimitive(changeset);
+            createPrimitive(changeset, progressMonitor);
         } finally {
             progressMonitor.finishTask();
         }
@@ -304,8 +304,8 @@ public class OsmApi extends OsmConnection {
     public void stopChangeset(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(tr("Closing changeset {0}...", changeset.getId()));
         try {
-            initialize();
-            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null);
+            initialize(progressMonitor);
+            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null, progressMonitor);
             changeset = null;
         } finally {
             progressMonitor.finishTask();
@@ -326,7 +326,7 @@ public class OsmApi extends OsmConnection {
             if (changeset == null)
                 throw new OsmTransferException(tr("No changeset present for diff upload"));
 
-            initialize();
+            initialize(progressMonitor);
             final ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
 
             CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
@@ -340,7 +340,7 @@ public class OsmApi extends OsmConnection {
 
             String diff = duv.getDocument();
             try {
-                String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff);
+                String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff,progressMonitor);
                 DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(),
                         progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(OsmTransferException e) {
@@ -357,9 +357,12 @@ public class OsmApi extends OsmConnection {
 
 
 
-    private void sleepAndListen() throws OsmTransferCancelledException {
+    private void sleepAndListen(int retry, ProgressMonitor monitor) throws OsmTransferCancelledException {
         System.out.print(tr("Waiting 10 seconds ... "));
         for(int i=0; i < 10; i++) {
+            if (monitor != null) {
+                monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry,getMaxRetries(), 10-i));
+            }
             if (cancel || isAuthCancelled())
                 throw new OsmTransferCancelledException();
             try {
@@ -394,8 +397,7 @@ public class OsmApi extends OsmConnection {
      * @exception OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
-    private String sendRequest(String requestMethod, String urlSuffix,
-            String requestBody) throws OsmTransferException {
+    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
 
         StringBuffer responseBody = new StringBuffer();
 
@@ -435,9 +437,8 @@ public class OsmApi extends OsmConnection {
 
                 if (retCode >= 500) {
                     if (retries-- > 0) {
-                        sleepAndListen();
-                        int maxRetries = getMaxRetries();
-                        System.out.println(tr("Starting retry {0} of {1}.", maxRetries - retries,maxRetries));
+                        sleepAndListen(retries, monitor);
+                        System.out.println(tr("Starting retry {0} of {1}.", getMaxRetries() - retries,getMaxRetries()));
                         continue;
                     }
                 }

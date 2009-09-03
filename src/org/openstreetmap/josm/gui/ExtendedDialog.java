@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
@@ -39,6 +40,11 @@ public class ExtendedDialog extends JDialog {
     private Component content;
     private final String[] bTexts;
     private String[] bIcons;
+    /**
+     * set to true if the content of the extended dialog should
+     * be placed in a {@see JScrollPane}
+     */
+    private boolean placeContentInScrollPane;
 
     // For easy access when inherited
     protected Object contentConstraints = GBC.eol().anchor(GBC.CENTER).fill(GBC.HORIZONTAL).insets(5,10,5,0);
@@ -135,7 +141,22 @@ public class ExtendedDialog extends JDialog {
      * @param content Any element that can be displayed in the message dialog
      */
     public void setContent(Component content) {
+        setContent(content, true);
+    }
+
+    /**
+     * Sets the content that will be displayed in the message dialog.
+     * 
+     * Note that depending on your other settings more UI elements may appear.
+     * The content is played on top of the other elements though.
+     * 
+     * @param content Any element that can be displayed in the message dialog
+     * @param placeContentInScrollPane if  true, places  the content in a JScrollPane
+     * 
+     */
+    public void setContent(Component content, boolean placeContentInScrollPane) {
         this.content = content;
+        this.placeContentInScrollPane = placeContentInScrollPane;
     }
 
     /**
@@ -148,10 +169,8 @@ public class ExtendedDialog extends JDialog {
      * @param message The text that should be shown to the user
      */
     public void setContent(String message) {
-        setContent(string2label(message));
+        setContent(string2label(message), true);
     }
-
-
 
     /**
      * Show the dialog to the user. Call this after you have set all options
@@ -221,11 +240,13 @@ public class ExtendedDialog extends JDialog {
         }
 
         cp.add(buttonsPanel, GBC.eol().anchor(GBC.CENTER).insets(5,5,5,5));
-
-        JScrollPane pane = new JScrollPane(cp);
-        pane.setBorder(null);
-        setContentPane(pane);
-
+        if (placeContentInScrollPane) {
+            JScrollPane pane = new JScrollPane(cp);
+            pane.setBorder(null);
+            setContentPane(pane);
+        } else {
+            setContentPane(cp);
+        }
         pack();
 
         // Try to make it not larger than the parent window or at least not larger than 2/3 of the screen

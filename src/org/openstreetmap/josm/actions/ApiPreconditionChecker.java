@@ -14,6 +14,7 @@ import org.openstreetmap.josm.actions.UploadAction.UploadHook;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 
@@ -23,7 +24,7 @@ public class ApiPreconditionChecker implements UploadHook {
             Collection<OsmPrimitive> delete) {
         OsmApi api = OsmApi.getOsmApi();
         try {
-            api.initialize();
+            api.initialize(NullProgressMonitor.INSTANCE);
             long maxNodes = 0;
             if (api.getCapabilities().isDefined("waynodes", "maximum")) {
                 maxNodes = api.getCapabilities().getLong("waynodes","maximum");

@@ -39,7 +39,7 @@ public abstract class OsmServerReader extends OsmConnection {
      */
     protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
         try {
-            api.initialize();
+            api.initialize(progressMonitor);
             urlStr = api.getBaseUrl() + urlStr;
             return getInputStreamRaw(urlStr, progressMonitor);
         } finally {
