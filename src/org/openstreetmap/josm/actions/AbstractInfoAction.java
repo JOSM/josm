@@ -31,7 +31,7 @@ public abstract class AbstractInfoAction extends JosmAction {
      *
      * @return the base URL, i.e. http://api.openstreetmap.org/browse
      */
-    protected String getBaseBrowseUrl() {
+    static public String getBaseBrowseUrl() {
         String baseUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
         Pattern pattern = Pattern.compile("/api/?$");
         String ret =  pattern.matcher(baseUrl).replaceAll("/browse");
@@ -50,7 +50,7 @@ public abstract class AbstractInfoAction extends JosmAction {
      *
      * @return the base URL, i.e. http://ww.openstreetmap.org/user
      */
-    protected String getBaseUserUrl() {
+    static public String getBaseUserUrl() {
         String baseUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
         Pattern pattern = Pattern.compile("/api/?$");
         String ret =  pattern.matcher(baseUrl).replaceAll("/user");

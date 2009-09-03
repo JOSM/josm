@@ -295,6 +295,10 @@ public class HistoryBrowserModel extends Observable {
             HistoryOsmPrimitive p = history.get(row);
             return p.equals(reference);
         }
+
+        public HistoryOsmPrimitive getPrimitive(int row) {
+            return history.get(row);
+        }
     }
 
 

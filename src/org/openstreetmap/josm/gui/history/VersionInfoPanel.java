@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Observable;
 import java.util.Observer;
@@ -11,7 +13,9 @@ import java.util.Observer;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * VersionInfoPanel is an UI component which displays the basic properties of a version
@@ -41,11 +45,13 @@ public class VersionInfoPanel extends JPanel implements Observer{
         HistoryOsmPrimitive primitive = getPrimitive();
         if (primitive == null)
             return "";
+        String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
         String text = tr(
-                "<html>Version <strong>{0}</strong> created on <strong>{1}</strong> by <strong>{2}</strong></html>",
+                "<html>Version <strong>{0}</strong> created on <strong>{1}</strong> by <strong>{2}</strong> in changeset <strong>{3}</strong>",
                 Long.toString(primitive.getVersion()),
                 new SimpleDateFormat().format(primitive.getTimestamp()),
-                primitive.getUser()
+                primitive.getUser(),
+                primitive.getChangesetId()
         );
         return text;
     }
