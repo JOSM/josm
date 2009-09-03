@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.relation;
+package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import java.awt.BorderLayout;
 

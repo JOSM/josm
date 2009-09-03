@@ -126,7 +126,7 @@ public class MultiFetchServerObjectReaderTest {
         primitives.addAll(testDataSet.relations);
 
         OsmServerWriter writer = new OsmServerWriter();
-        writer.uploadOsm("0.6", primitives, NullProgressMonitor.INSTANCE);
+        writer.uploadOsm("0.6", primitives, null,null, NullProgressMonitor.INSTANCE);
     }
 
     @BeforeClass
