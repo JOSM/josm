@@ -82,7 +82,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         // blocks which can be interrupted.
         setCancelled(true);
         if (writer != null) {
-            writer.disconnectActiveConnection();
+            writer.cancel();
         }
     }
 }

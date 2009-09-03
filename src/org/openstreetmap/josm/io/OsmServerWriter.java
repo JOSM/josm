@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
-import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -202,9 +201,9 @@ public class OsmServerWriter {
         }
     }
 
-    public void disconnectActiveConnection() {
-        if (api != null && api.activeConnection != null) {
-            api.activeConnection.disconnect();
+    public void cancel() {
+        if (api != null) {
+            api.cancel();
         }
     }
 

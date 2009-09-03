@@ -3,6 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -43,6 +45,7 @@ import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.WindowGeometry;
 import org.xml.sax.SAXException;
 
 
@@ -437,84 +440,42 @@ public class UploadAction extends JosmAction{
 
     class UploadConfirmationHook implements UploadHook {
 
-        private JCheckBox cbUseAtomicUpload;
-
-        protected JPanel buildChangesetControlPanel() {
-            JPanel pnl = new JPanel();
-            pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-            pnl.add(cbUseAtomicUpload = new JCheckBox(tr("upload all changes in one request")));
-            cbUseAtomicUpload.setToolTipText(tr("Enable to upload all changes in one request, disable to use one request per changed primitive"));
-            boolean useAtomicUpload = Main.pref.getBoolean("osm-server.atomic-upload", true);
-            cbUseAtomicUpload.setSelected(useAtomicUpload);
-            cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasChangesetSupport());
-            return pnl;
-        }
 
         public boolean checkUpload(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
+            final UploadDialogPanel panel = new UploadDialogPanel(add, update, delete);
 
-            JPanel p = new JPanel(new GridBagLayout());
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Upload these changes?"),
+                    new String[] {tr("Upload Changes"), tr("Cancel")}
+            ) {
+                @Override
+                public void setVisible(boolean visible) {
+                    if (visible) {
+                        new WindowGeometry(
+                                panel.getClass().getName(),
+                                WindowGeometry.centerInWindow(JOptionPane.getFrameForComponent(Main.parent), new Dimension(400,400))
+                        ).apply(this);
+                        panel.startUserInput();
+                    } else {
+                        new WindowGeometry(this).remember(panel.getClass().getName());
+                    }
+                    super.setVisible(visible);
+                }
+            };
 
-            OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
-
-            if (!add.isEmpty()) {
-                p.add(new JLabel(tr("Objects to add:")), GBC.eol());
-                JList l = new JList(add.toArray());
-                l.setCellRenderer(renderer);
-                l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
-                p.add(new JScrollPane(l), GBC.eol().fill());
-            }
-
-            if (!update.isEmpty()) {
-                p.add(new JLabel(tr("Objects to modify:")), GBC.eol());
-                JList l = new JList(update.toArray());
-                l.setCellRenderer(renderer);
-                l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
-                p.add(new JScrollPane(l), GBC.eol().fill());
-            }
-
-            if (!delete.isEmpty()) {
-                p.add(new JLabel(tr("Objects to delete:")), GBC.eol());
-                JList l = new JList(delete.toArray());
-                l.setCellRenderer(renderer);
-                l.setVisibleRowCount(l.getModel().getSize() < 6 ? l.getModel().getSize() : 10);
-                p.add(new JScrollPane(l), GBC.eol().fill());
-            }
-
-            p.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
-            SuggestingJHistoryComboBox cmt = new SuggestingJHistoryComboBox();
-            List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
-            cmt.setHistory(cmtHistory);
-            p.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
-            //final JTextField cmt = new JTextField(lastCommitComment);
-
-            // configuration options for atomic upload
-            p.add(buildChangesetControlPanel(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-
+            dialog.setButtonIcons(new String[] {"upload.png", "cancel.png"});
+            dialog.setContent(panel, false /* no scroll pane */);
             while(true) {
-                ExtendedDialog dialog = new ExtendedDialog(
-                        Main.parent,
-                        tr("Upload these changes?"),
-                        new String[] {tr("Upload Changes"), tr("Cancel")}
-                );
-                dialog.setButtonIcons(new String[] {"upload.png", "cancel.png"});
-                dialog.setContent(p, false /* no scroll pane */);
                 dialog.showDialog();
                 int result = dialog.getValue();
-
-
                 // cancel pressed
                 if (result != 1) return false;
-
                 // don't allow empty commit message
-                if (cmt.getText().trim().length() < 3) {
+                if (! panel.hasChangesetComment()) {
                     continue;
                 }
-
-                // store the history of comments
-                cmt.addCurrentItemToHistory();
-                Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
-                Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
-
+                panel.rememberUserInput();
                 break;
             }
             return true;
@@ -572,7 +533,7 @@ public class UploadAction extends JosmAction{
         @Override protected void cancel() {
             uploadCancelled = true;
             if (writer != null) {
-                writer.disconnectActiveConnection();
+                writer.cancel();
             }
         }
 
@@ -586,6 +547,145 @@ public class UploadAction extends JosmAction{
 
         public boolean isFailed() {
             return lastException != null;
+        }
+    }
+
+    /**
+     * The panel displaying information about primitives to upload and providing
+     * UI widgets for entering the changeset comment and other configuration
+     * setttings.
+     * 
+     */
+    static private class UploadDialogPanel extends JPanel {
+
+        private JList lstAdd;
+        private JList lstUpdate;
+        private JList lstDelete;
+        private JCheckBox cbUseAtomicUpload;
+        private SuggestingJHistoryComboBox cmt;
+
+        protected int getNumLists() {
+            int ret = 0;
+            if (lstAdd.getModel().getSize() > 0) {
+                ret++;
+            }
+            if (lstUpdate.getModel().getSize() > 0) {
+                ret++;
+            }
+            if (lstDelete.getModel().getSize() > 0) {
+                ret++;
+            }
+            return ret;
+        }
+
+        protected JPanel buildListsPanel() {
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new GridBagLayout());
+
+            GridBagConstraints gcLabel = new GridBagConstraints();
+            gcLabel.fill = GridBagConstraints.HORIZONTAL;
+            gcLabel.weightx = 1.0;
+            gcLabel.weighty = 0.0;
+            gcLabel.anchor = GridBagConstraints.FIRST_LINE_START;
+
+            GridBagConstraints gcList = new GridBagConstraints();
+            gcList.fill = GridBagConstraints.BOTH;
+            gcList.weightx = 1.0;
+            gcList.weighty = 1.0 / getNumLists();
+            gcList.anchor = GridBagConstraints.CENTER;
+
+            int y = -1;
+
+            if (lstAdd.getModel().getSize() >0) {
+                y++;
+                gcLabel.gridy = y;
+                pnl.add(new JLabel(tr("Objects to add:")), gcLabel);
+                y++;
+                gcList.gridy = y;
+                pnl.add(new JScrollPane(lstAdd), gcList);
+            }
+            if (lstUpdate.getModel().getSize() >0) {
+                y++;
+                gcLabel.gridy = y;
+                pnl.add(new JLabel(tr("Objects to modify:")), gcLabel);
+                y++;
+                gcList.gridy = y;
+                pnl.add(new JScrollPane(lstUpdate), gcList);
+            }
+            if (lstDelete.getModel().getSize() >0) {
+                y++;
+                gcLabel.gridy = y;
+                pnl.add(new JLabel(tr("Objects to delete:")), gcLabel);
+                y++;
+                gcList.gridy = y;
+                pnl.add(new JScrollPane(lstDelete), gcList);
+            }
+            return pnl;
+        }
+
+        protected JPanel buildChangesetControlPanel() {
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
+            pnl.add(cbUseAtomicUpload = new JCheckBox(tr("upload all changes in one request")));
+            cbUseAtomicUpload.setToolTipText(tr("Enable to upload all changes in one request, disable to use one request per changed primitive"));
+            boolean useAtomicUpload = Main.pref.getBoolean("osm-server.atomic-upload", true);
+            cbUseAtomicUpload.setSelected(useAtomicUpload);
+            cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasChangesetSupport());
+            return pnl;
+        }
+
+        protected JPanel buildUploadControlPanel() {
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new GridBagLayout());
+            pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
+            cmt = new SuggestingJHistoryComboBox();
+            List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+            cmt.setHistory(cmtHistory);
+            pnl.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
+
+            // configuration options for atomic upload
+            //
+            pnl.add(buildChangesetControlPanel(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            return pnl;
+        }
+
+        protected void build() {
+            setLayout(new BorderLayout());
+            add(buildListsPanel(), BorderLayout.CENTER);
+            add(buildUploadControlPanel(), BorderLayout.SOUTH);
+        }
+
+        public UploadDialogPanel(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update, Collection<OsmPrimitive> delete) {
+            OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
+
+            lstAdd = new JList(add.toArray());
+            lstAdd.setCellRenderer(renderer);
+            lstAdd.setVisibleRowCount(Math.min(lstAdd.getModel().getSize(), 10));
+
+            lstUpdate = new JList(update.toArray());
+            lstUpdate.setCellRenderer(renderer);
+            lstUpdate.setVisibleRowCount(Math.min(lstUpdate.getModel().getSize(), 10));
+
+            lstDelete = new JList(update.toArray());
+            lstDelete.setCellRenderer(renderer);
+            lstDelete.setVisibleRowCount(Math.min(lstDelete.getModel().getSize(), 10));
+            build();
+        }
+
+        public boolean hasChangesetComment() {
+            return cmt.getText().trim().length() >= 3;
+        }
+
+        public void rememberUserInput() {
+            // store the history of comments
+            cmt.addCurrentItemToHistory();
+            Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
+            Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
+        }
+
+        public void startUserInput() {
+            cmt.getEditor().selectAll();
+            cmt.requestFocus();
         }
     }
 }

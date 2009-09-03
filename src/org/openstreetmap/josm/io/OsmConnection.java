@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -93,8 +94,6 @@ public class OsmConnection {
     }
 
     public void cancel() {
-        //TODO
-        //Main.pleaseWaitDlg.currentAction.setText(tr("Aborting..."));
         cancel = true;
         if (activeConnection != null) {
             activeConnection.setConnectTimeout(100);
@@ -111,8 +110,8 @@ public class OsmConnection {
         String auth;
         try {
             synchronized (credentialsManager) {
-                auth = credentialsManager.lookup(CredentialsManager.Key.USERNAME) + ":" + 
-                    credentialsManager.lookup(CredentialsManager.Key.PASSWORD);
+                auth = credentialsManager.lookup(CredentialsManager.Key.USERNAME) + ":" +
+                credentialsManager.lookup(CredentialsManager.Key.PASSWORD);
             }
         } catch (CredentialsManager.CMException e) {
             auth = ":";
@@ -138,7 +137,7 @@ public class OsmConnection {
         public String lookup(CredentialsManager.Key key) throws CMException {
             String secret = Main.pref.get("osm-server." + key.toString(), null);
             if (secret == null) throw new CredentialsManager.NoContentException();
-            return secret;            
+            return secret;
         }
         public void store(CredentialsManager.Key key, String secret) {
             Main.pref.put("osm-server." + key.toString(), secret);
@@ -170,18 +169,20 @@ public class OsmConnection {
                 warning.setFont(warning.getFont().deriveFont(Font.ITALIC));
                 p.add(warning, GBC.eop());
 
-                JCheckBox savePassword = new JCheckBox(tr("Save user and password (unencrypted)"), 
-                                                       !username.equals("") && !password.equals(""));
+                JCheckBox savePassword = new JCheckBox(tr("Save user and password (unencrypted)"),
+                        !username.equals("") && !password.equals(""));
                 p.add(savePassword, GBC.eop());
 
-                int choice = new ExtendedDialog(
-                    Main.parent,
-                    tr("Enter Password"),
-                    p,
-                    new String[] {tr("Login"), tr("Cancel")},
-                    new String[] {"ok.png", "cancel.png"}).getValue();
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
+                        tr("Enter Password"),
+                        new String[] {tr("Login"), tr("Cancel")}
+                );
+                dialog.setContent(p);
+                dialog.setButtonIcons( new String[] {"ok.png", "cancel.png"});
+                dialog.showDialog();
 
-                if (choice != 1) {
+                if (dialog.getValue() != 1) {
                     caller.authCancelled = true;
                     return null;
                 }
@@ -222,7 +223,9 @@ public class OsmConnection {
                     } catch (CMException e) {
                         oldServerURL = "";
                     }
-                    if (oldServerURL.equals("")) oldServerURL = "http://api.openstreetmap.org/api";
+                    if (oldServerURL.equals("")) {
+                        oldServerURL = "http://api.openstreetmap.org/api";
+                    }
                     try {
                         oldUsername = lookup(Key.USERNAME);
                     } catch (CMException e) {
@@ -257,7 +260,7 @@ public class OsmConnection {
                     String newUsername = osmDataUsername.getText();
                     String newPassword = String.valueOf(osmDataPassword.getPassword());
                     if (!oldServerURL.equals(newServerURL)) {
-                        store(Key.OSM_SERVER_URL, newServerURL); 
+                        store(Key.OSM_SERVER_URL, newServerURL);
                     }
                     if (!oldUsername.equals(newUsername)) {
                         store(Key.USERNAME, newUsername);

@@ -159,6 +159,7 @@ public class OsmApi extends OsmConnection {
     public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException {
         if (initialized)
             return;
+        cancel = false;
         initAuthentication();
         try {
             String s = sendRequest("GET", "capabilities", null,monitor);
