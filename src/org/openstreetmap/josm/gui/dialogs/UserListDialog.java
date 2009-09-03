@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
@@ -120,7 +121,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         if(ucArr.length != 0) {
-            setTitle(tr("Authors: {0}", ucArr.length));
+            setTitle(trn("{0} Author", "{0} Authors", ucArr.length, ucArr.length));
         } else {
             setTitle(tr("Authors"));
         }
