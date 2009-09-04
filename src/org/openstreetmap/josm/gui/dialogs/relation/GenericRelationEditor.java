@@ -65,8 +65,6 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -74,6 +72,8 @@ import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.TagCellEditor;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagTable;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -124,7 +124,7 @@ public class GenericRelationEditor extends RelationEditor {
         // initialize the autocompletion infrastructure
         //
         acCache = AutoCompletionCache.getCacheForLayer(getLayer());
-        acCache.initFromJOSMDataset();
+        acCache.initFromDataSet();
         acList = new AutoCompletionList();
 
         // init the various models

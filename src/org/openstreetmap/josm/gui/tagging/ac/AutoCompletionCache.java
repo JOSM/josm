@@ -1,10 +1,13 @@
-package org.openstreetmap.josm.gui.dialogs.relation.ac;
+package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -66,17 +69,23 @@ public class AutoCompletionCache {
     }
 
 
-    /** the cache */
-    private HashMap<String, ArrayList<String>> cache;
-    private  ArrayList<String> roleCache;
+    /** the cached tags give by a tag key and a list of values for this tag*/
+    private HashMap<String, Set<String>> tagCache;
+    /** the cached list of member roles */
+    private  Set<String> roleCache;
+    /** the cache of all tag values */
+    private  Set<String> allTagValues;
+    /**  the layer this cache is built for */
     private OsmDataLayer layer;
+
 
     /**
      * constructor
      */
     public AutoCompletionCache(OsmDataLayer layer) {
-        cache = new HashMap<String, ArrayList<String>>();
-        roleCache = new ArrayList<String>();
+        tagCache = new HashMap<String, Set<String>>();
+        roleCache = new HashSet<String>();
+        allTagValues = new HashSet<String>();
         this.layer = layer;
     }
 
@@ -90,11 +99,9 @@ public class AutoCompletionCache {
      * @param key  the key
      */
     protected void cacheKey(String key) {
-        if (cache.containsKey(key))
+        if (tagCache.containsKey(key))
             return;
-        else {
-            cache.put(key, new ArrayList<String>());
-        }
+        tagCache.put(key, new HashSet<String>());
     }
 
     /**
@@ -105,10 +112,8 @@ public class AutoCompletionCache {
      */
     protected void cacheValue(String key, String value) {
         cacheKey(key);
-        ArrayList<String> values = cache.get(key);
-        if (!values.contains(value)) {
-            values.add(value);
-        }
+        tagCache.get(key).add(value);
+        allTagValues.add(value);
     }
 
     /**
@@ -142,8 +147,8 @@ public class AutoCompletionCache {
      * {@see #layer}
      *
      */
-    public void initFromJOSMDataset() {
-        cache = new HashMap<String, ArrayList<String>>();
+    public void initFromDataSet() {
+        tagCache = new HashMap<String, Set<String>>();
         if (layer == null)
             return;
         Collection<OsmPrimitive> ds = layer.data.allNonDeletedPrimitives();
@@ -151,11 +156,10 @@ public class AutoCompletionCache {
             cachePrimitive(primitive);
         }
         for (Relation relation : layer.data.relations) {
-            if (relation.incomplete || relation.deleted) {
+            if (relation.incomplete || relation.isDeleted()) {
                 continue;
             }
             cacheRelationMemberRoles(relation);
-            Collections.sort(roleCache);
         }
     }
 
@@ -165,7 +169,7 @@ public class AutoCompletionCache {
      * @return the list of keys held by the cache
      */
     public List<String> getKeys() {
-        return new ArrayList<String>(cache.keySet());
+        return new ArrayList<String>(tagCache.keySet());
     }
 
     /**
@@ -176,9 +180,9 @@ public class AutoCompletionCache {
      * @return the list of auto completion values
      */
     public List<String> getValues(String key) {
-        if (!cache.containsKey(key))
+        if (!tagCache.containsKey(key))
             return new ArrayList<String>();
-        return cache.get(key);
+        return new ArrayList<String>(tagCache.get(key));
     }
 
     /**
@@ -187,7 +191,7 @@ public class AutoCompletionCache {
      * @return the list of member roles
      */
     public List<String> getMemberRoles() {
-        return roleCache;
+        return new ArrayList<String>(roleCache);
     }
 
     /**
@@ -198,8 +202,53 @@ public class AutoCompletionCache {
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
         list.clear();
-        for (String role: roleCache) {
-            list.add(new AutoCompletionListItem(role, AutoCompletionItemPritority.IS_IN_DATASET));
+        list.add(roleCache, AutoCompletionItemPritority.IS_IN_DATASET);
+    }
+
+    /**
+     * Populates the an {@see AutoCompletionList} with the currently cached
+     * values for a tag
+     *
+     * @param list the list to populate
+     * @param key the tag key
+     * @param append true to add the values to the list; false, to replace the values
+     * in the list by the tag values
+     */
+    public void populateWithTagValues(AutoCompletionList list, String key, boolean append) {
+        if (!append) {
+            list.clear();
         }
+        list.add(getValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
+    }
+
+    /**
+     * Populates the an {@see AutoCompletionList} with the currently cached
+     * tag keys
+     *
+     * @param list the list to populate
+     * @param append true to add the keys to the list; false, to replace the keys
+     * in the list by the keys in the cache
+     */
+    public void populateWithKeys(AutoCompletionList list, boolean append) {
+        if (!append) {
+            list.clear();
+        }
+        list.add(tagCache.keySet(), AutoCompletionItemPritority.IS_IN_DATASET);
+    }
+
+
+    /**
+     * Populates the an {@see AutoCompletionList} with the currently cached
+     * tag values
+     *
+     * @param list the list to populate
+     * @param append true to add the keys to the list; false, to replace the keys
+     * in the list by the keys in the cache
+     */
+    public void populateWithValues(AutoCompletionList list, boolean append) {
+        if (!append) {
+            list.clear();
+        }
+        list.add(this.allTagValues, AutoCompletionItemPritority.IS_IN_DATASET);
     }
 }

@@ -1,19 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
 
+import javax.swing.ComboBoxEditor;
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 /**
  * AutoCompletingTextField is an text field with autocompletion behaviour. It
@@ -24,7 +26,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
  * 
  *
  */
-public class AutoCompletingTextField extends JTextField  {
+public class AutoCompletingTextField extends JTextField implements ComboBoxEditor {
 
     static private Logger logger = Logger.getLogger(AutoCompletingTextField.class.getName());
 
@@ -53,7 +55,24 @@ public class AutoCompletingTextField extends JTextField  {
                 super.insertString(offs, str, a);
                 return;
             }
+
             String currentText = getText(0, getLength());
+            // if the text starts with a number we don't autocomplete
+            //
+            try {
+                Long.parseLong(str);
+                if (currentText.length() == 0) {
+                    // we don't autocomplete on numbers
+                    super.insertString(offs, str, a);
+                    return;
+                }
+                Long.parseLong(currentText);
+                super.insertString(offs, str, a);
+                return;
+            } catch(NumberFormatException e) {
+                // either the new text or the current text isn't a number. We continue with
+                // autocompletion
+            }
             String prefix = currentText.substring(0, offs);
             autoCompletionList.applyFilter(prefix+str);
             if (autoCompletionList.getFilteredSize()>0) {
@@ -149,4 +168,23 @@ public class AutoCompletingTextField extends JTextField  {
     public void setAutoCompletionList(AutoCompletionList autoCompletionList) {
         this.autoCompletionList = autoCompletionList;
     }
+
+    public Component getEditorComponent() {
+        return this;
+    }
+
+    public Object getItem() {
+        return getText();
+    }
+
+    public void setItem(Object anObject) {
+        if (anObject == null) {
+            setText("");
+        } else {
+            setText(anObject.toString());
+        }
+
+    }
+
+
 }

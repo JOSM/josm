@@ -33,8 +33,8 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 /**
  * This is the tabular editor component for OSM tags.

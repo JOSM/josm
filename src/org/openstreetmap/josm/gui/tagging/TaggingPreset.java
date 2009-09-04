@@ -17,11 +17,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -44,6 +43,10 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -65,6 +68,15 @@ public class TaggingPreset extends AbstractAction {
     public String locale_name;
 
     public static abstract class Item {
+        protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
+            OsmDataLayer layer = Main.main.getEditLayer();
+            if (layer == null) return;
+            AutoCompletionCache cache = AutoCompletionCache.getCacheForLayer(layer);
+            AutoCompletionList list = new AutoCompletionList();
+            cache.populateWithValues(list, false /* don't append */);
+            field.setAutoCompletionList(list);
+        }
+
         public boolean focus = false;
         abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
         abstract void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds);
@@ -72,23 +84,21 @@ public class TaggingPreset extends AbstractAction {
     }
 
     public static class Usage {
-        Set<String> values;
-        Boolean hadKeys = false;
-        Boolean hadEmpty = false;
-        public Boolean allSimilar()
-        {
+        TreeSet<String> values;
+        boolean hadKeys = false;
+        boolean hadEmpty = false;
+        public boolean hasUniqueValue() {
             return values.size() == 1 && !hadEmpty;
         }
-        public Boolean unused()
-        {
+
+        public boolean unused() {
             return values.size() == 0;
         }
-        public String getFirst()
-        {
-            return (String)(values.toArray()[0]);
+        public String getFirst() {
+            return values.first();
         }
-        public Boolean hadKeys()
-        {
+
+        public boolean hadKeys() {
             return hadKeys;
         }
     }
@@ -97,7 +107,7 @@ public class TaggingPreset extends AbstractAction {
 
     static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
-        returnValue.values = new HashSet<String>();
+        returnValue.values = new TreeSet<String>();
         for (OsmPrimitive s : sel) {
             String v = s.get(key);
             if (v != null) {
@@ -105,7 +115,7 @@ public class TaggingPreset extends AbstractAction {
             } else {
                 returnValue.hadEmpty = true;
             }
-            returnValue.hadKeys = returnValue.hadKeys | s.hasKeys();
+            returnValue.hadKeys = ! returnValue.values.isEmpty() | returnValue.hadEmpty;
         }
         return returnValue;
     }
@@ -113,7 +123,7 @@ public class TaggingPreset extends AbstractAction {
     static Usage determineBooleanUsage(Collection<OsmPrimitive> sel, String key) {
 
         Usage returnValue = new Usage();
-        returnValue.values = new HashSet<String>();
+        returnValue.values = new TreeSet<String>();
         for (OsmPrimitive s : sel) {
             returnValue.values.add(OsmUtils.getNamedOsmBoolean(s.get(key)));
         }
@@ -132,31 +142,37 @@ public class TaggingPreset extends AbstractAction {
 
         private JComponent value;
 
+
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineTextUsage(sel, key);
-            if (usage.unused())
-            {
-                value = new JTextField();
+            if (usage.unused()){
+                AutoCompletingTextField textField = new AutoCompletingTextField();
+                initAutoCompletionField(textField, key);
                 if (use_last_as_default && lastValue.containsKey(key)) {
-                    ((JTextField)value).setText(lastValue.get(key));
+                    textField.setText(lastValue.get(key));
                 } else {
-                    ((JTextField)value).setText(default_);
+                    textField.setText(default_);
                 }
+                value = textField;
                 originalValue = null;
-            } else if (usage.allSimilar()) {
+            } else if (usage.hasUniqueValue()) {
                 // all objects use the same value
-                value = new JTextField();
-                for (String s : usage.values) {
-                    ((JTextField) value).setText(s);
-                }
-                originalValue = ((JTextField)value).getText();
+                AutoCompletingTextField textField = new AutoCompletingTextField();
+                initAutoCompletionField(textField, key);
+                textField.setText(usage.getFirst());
+                value = textField;
+                originalValue = usage.getFirst();
             } else {
                 // the objects have different values
-                value = new JComboBox(usage.values.toArray());
-                ((JComboBox)value).setEditable(true);
-                ((JComboBox)value).getEditor().setItem(DIFFERENT);
+                AutoCompletingTextField textField = new AutoCompletingTextField();
+                initAutoCompletionField(textField, key);
+                JComboBox comboBox = new JComboBox(usage.values.toArray());
+                comboBox.setEditable(true);
+                comboBox.setEditor(textField);
+                comboBox.getEditor().setItem(DIFFERENT);
+                value=comboBox;
                 originalValue = DIFFERENT;
             }
             if(locale_text == null) {
@@ -299,8 +315,7 @@ public class TaggingPreset extends AbstractAction {
             }
 
             lhm = new LinkedHashMap<String,String>();
-            if (!usage.allSimilar() && !usage.unused())
-            {
+            if (!usage.hasUniqueValue() && !usage.unused()){
                 lhm.put(DIFFERENT, DIFFERENT);
             }
             for (int i=0; i<value_array.length; i++) {
@@ -308,8 +323,7 @@ public class TaggingPreset extends AbstractAction {
                         (locale_display_values == null) ?
                                 tr(display_array[i]) : display_array[i]);
             }
-            if(!usage.unused())
-            {
+            if(!usage.unused()){
                 for (String s : usage.values) {
                     if (!lhm.containsKey(s)) {
                         lhm.put(s, s);
@@ -325,24 +339,25 @@ public class TaggingPreset extends AbstractAction {
 
             combo = new JComboBox(lhm.values().toArray());
             combo.setEditable(editable);
-            if (usage.allSimilar() && !usage.unused())
-            {
+            AutoCompletingTextField tf = new AutoCompletingTextField();
+            initAutoCompletionField(tf, key);
+            tf.getAutoCompletionList().add(Arrays.asList(display_array), AutoCompletionItemPritority.IS_IN_STANDARD);
+            combo.setEditor(tf);
+
+            if (usage.hasUniqueValue() && !usage.unused()){
                 originalValue=usage.getFirst();
                 combo.setSelectedItem(lhm.get(originalValue));
             }
             // use default only in case it is a totally new entry
-            else if(default_ != null && !usage.hadKeys())
-            {
+            else if(default_ != null && !usage.hadKeys()) {
                 combo.setSelectedItem(default_);
                 originalValue=DIFFERENT;
             }
-            else if(usage.unused())
-            {
+            else if(usage.unused()){
                 combo.setSelectedItem("");
                 originalValue="";
             }
-            else
-            {
+            else{
                 combo.setSelectedItem(DIFFERENT);
                 originalValue=DIFFERENT;
             }
@@ -627,13 +642,15 @@ public class TaggingPreset extends AbstractAction {
     public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
         if (data == null)
             return null;
+        OsmDataLayer layer = Main.main.getEditLayer();
+        if (layer != null) {
+            AutoCompletionCache.getCacheForLayer(layer).initFromDataSet();
+        }
         PresetPanel p = new PresetPanel();
         LinkedList<Item> l = new LinkedList<Item>();
-        if(types != null)
-        {
+        if(types != null){
             JPanel pp = new JPanel();
-            for(String t : types)
-            {
+            for(String t : types){
                 JLabel la = new JLabel(ImageProvider.get("Mf_" + t));
                 la.setToolTipText(tr("Elements of type {0} are supported.", tr(t)));
                 pp.add(la);
@@ -641,12 +658,10 @@ public class TaggingPreset extends AbstractAction {
             p.add(pp, GBC.eol());
         }
 
-        for (Item i : data)
-        {
+        for (Item i : data){
             if(i instanceof Link) {
                 l.add(i);
-            } else
-            {
+            } else {
                 if(i.addToPanel(p, selected)) {
                     p.hasElements = true;
                 }
@@ -682,7 +697,9 @@ public class TaggingPreset extends AbstractAction {
                             new String[] { tr("Apply Preset"), tr("Cancel") },
                             true);
                     contentConstraints = GBC.eol().fill().insets(5,10,5,0);
-                    setupDialog(content, new String[] {"ok.png", "cancel.png" });
+                    setButtonIcons(new String[] {"ok.png", "cancel.png" });
+                    setContent(content);
+                    setupDialog();
                     buttons.get(0).setEnabled(!disableApply);
                     buttons.get(0).setToolTipText(title);
                     setVisible(true);

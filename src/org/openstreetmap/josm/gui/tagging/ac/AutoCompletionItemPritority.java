@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.dialogs.relation.ac;
+package org.openstreetmap.josm.gui.tagging.ac;
 
 public enum AutoCompletionItemPritority implements Comparable<AutoCompletionItemPritority> {
 

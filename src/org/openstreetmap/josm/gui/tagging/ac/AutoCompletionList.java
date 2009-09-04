@@ -1,6 +1,7 @@
-package org.openstreetmap.josm.gui.dialogs.relation.ac;
+package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -119,6 +120,27 @@ public class AutoCompletionList extends AbstractTableModel {
             throw new IllegalArgumentException("argument 'other' must not be null");
         for (AutoCompletionListItem toadd : other) {
             appendOrUpdatePriority(toadd);
+        }
+        sort();
+        filter();
+    }
+
+    /**
+     * adds a list of strings to this list. Only strings which
+     * are not null and which do not exist yet in the list are added.
+     * 
+     * @param value a list of strings to add
+     * @param priority the priority to use
+     */
+    public void add(Collection<String> values, AutoCompletionItemPritority priority) {
+        if (values == null) return;
+        for (String value: values) {
+            if (value == null) {
+                continue;
+            }
+            AutoCompletionListItem item = new AutoCompletionListItem(value,priority);
+            appendOrUpdatePriority(item);
+
         }
         sort();
         filter();

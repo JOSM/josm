@@ -8,10 +8,10 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionCache;
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionItemPritority;
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionList;
-import org.openstreetmap.josm.gui.dialogs.relation.ac.AutoCompletionListItem;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 
 /**
  * This is the table cell editor for the tag editor dialog.
