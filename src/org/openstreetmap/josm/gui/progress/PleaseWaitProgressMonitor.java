@@ -29,6 +29,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     private PleaseWaitDialog dialog;
     private String windowTitle;
 
+    public PleaseWaitProgressMonitor() {
+        this("");
+    }
+
     public PleaseWaitProgressMonitor(String windowTitle) {
         this(JOptionPane.getFrameForComponent(Main.map));
         this.windowTitle = windowTitle;
