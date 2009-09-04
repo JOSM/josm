@@ -333,8 +333,7 @@ public class PluginSelection {
                                     String x[] = line.split(";");
                                     name = x[0];
                                     url = x[1];
-                                    // Is null anyway
-                                    //manifest = null;
+                                    manifest = null;
                                 }
                             }
                             if(name != null)
