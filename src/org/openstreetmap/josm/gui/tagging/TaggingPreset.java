@@ -67,14 +67,20 @@ public class TaggingPreset extends AbstractAction {
     public String name;
     public String locale_name;
 
+    private static AutoCompletionList autoCompletionList;
+
+    public static AutoCompletionList getPresetAutocompletionList() {
+        if (autoCompletionList == null) {
+            autoCompletionList = new AutoCompletionList();
+        }
+        return autoCompletionList;
+    }
+
     public static abstract class Item {
         protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
             OsmDataLayer layer = Main.main.getEditLayer();
             if (layer == null) return;
-            AutoCompletionCache cache = AutoCompletionCache.getCacheForLayer(layer);
-            AutoCompletionList list = new AutoCompletionList();
-            cache.populateWithValues(list, false /* don't append */);
-            field.setAutoCompletionList(list);
+            field.setAutoCompletionList(getPresetAutocompletionList());
         }
 
         public boolean focus = false;
@@ -639,12 +645,24 @@ public class TaggingPreset extends AbstractAction {
         }
     }
 
+    protected void refreshAutocompletionList(final OsmDataLayer layer) {
+        Runnable task = new Runnable() {
+            public void run() {
+                System.out.print("refreshing preset auto completion list ...");
+                AutoCompletionCache.getCacheForLayer(layer).initFromDataSet();
+                AutoCompletionCache.getCacheForLayer(layer).populateWithValues( getPresetAutocompletionList(), false /* don't append */);
+                System.out.println("DONE");
+            }
+        };
+        new Thread(task).run();
+
+    }
     public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
         if (data == null)
             return null;
         OsmDataLayer layer = Main.main.getEditLayer();
         if (layer != null) {
-            AutoCompletionCache.getCacheForLayer(layer).initFromDataSet();
+            refreshAutocompletionList(layer);
         }
         PresetPanel p = new PresetPanel();
         LinkedList<Item> l = new LinkedList<Item>();
