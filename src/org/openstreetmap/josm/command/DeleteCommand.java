@@ -108,9 +108,9 @@ public class DeleteCommand extends Command {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
             switch(OsmPrimitiveType.from(primitive)) {
-                case NODE: msg = "Delete node {0}"; break;
-                case WAY: msg = "Delete way {0}"; break;
-                case RELATION:msg = "Delete relation {0}"; break;
+            case NODE: msg = "Delete node {0}"; break;
+            case WAY: msg = "Delete way {0}"; break;
+            case RELATION:msg = "Delete relation {0}"; break;
             }
 
             return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
@@ -129,9 +129,9 @@ public class DeleteCommand extends Command {
             OsmPrimitiveType t = typesToDelete.iterator().next();
             apiname = t.getAPIName();
             switch(t) {
-                case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
-                case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
-                case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+            case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
+            case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
+            case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
             }
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(
@@ -190,17 +190,34 @@ public class DeleteCommand extends Command {
                 break;
             }
         }
-        if (role.length() > 0)
-            return new ExtendedDialog(Main.parent, tr("Conflicting relation"), tr(
-                    "Selection \"{0}\" is used by relation \"{1}\" with role {2}.\nDelete from relation?",
-                    osm.getDisplayName(DefaultNameFormatter.getInstance()), ref.getDisplayName(DefaultNameFormatter.getInstance()), role), new String[] { tr("Delete from relation"),
-                tr("Cancel") }, new String[] { "dialogs/delete.png", "cancel.png" }).getValue();
-        else
-            return new ExtendedDialog(Main.parent, tr("Conflicting relation"), tr(
-                    "Selection \"{0}\" is used by relation \"{1}\".\nDelete from relation?",
-                    osm.getDisplayName(DefaultNameFormatter.getInstance()),
-                    ref.getDisplayName(DefaultNameFormatter.getInstance())), new String[] { tr("Delete from relation"), tr("Cancel") }, new String[] {
-                "dialogs/delete.png", "cancel.png" }).getValue();
+        ExtendedDialog dialog = new ExtendedDialog(
+                Main.parent,
+                tr("Conflicting relation"),
+                new String[] { tr("Delete from relation"),tr("Cancel") }
+        );
+        dialog.setButtonIcons( new String[] { "dialogs/delete.png", "cancel.png" });
+        if (role.length() > 0) {
+            dialog.setContent(
+                    tr(
+                            "<html>Selection \"{0}\" is used by relation \"{1}\" with role {2}.<br>Delete from relation?</html>",
+                            osm.getDisplayName(DefaultNameFormatter.getInstance()),
+                            ref.getDisplayName(DefaultNameFormatter.getInstance()),
+                            role
+                    )
+            );
+            dialog.showDialog();
+            return dialog.getValue();
+        } else {
+            dialog.setContent(
+                    tr(
+                            "<html>Selection \"{0}\" is used by relation \"{1}\".<br>Delete from relation?</html>",
+                            osm.getDisplayName(DefaultNameFormatter.getInstance()),
+                            ref.getDisplayName(DefaultNameFormatter.getInstance())
+                    )
+            );
+            dialog.showDialog();
+            return dialog.getValue();
+        }
     }
 
     public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {
@@ -276,7 +293,7 @@ public class DeleteCommand extends Command {
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!checkAndConfirmOutlyingDeletes(layer,primitivesToDelete) && !simulate)
+        if (!simulate && !checkAndConfirmOutlyingDeletes(layer,primitivesToDelete))
             return null;
 
         for (OsmPrimitive osm : primitivesToDelete) {
