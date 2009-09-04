@@ -8,12 +8,15 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,6 +56,8 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
 import org.xml.sax.SAXException;
+
+import com.sun.corba.se.spi.orbutil.fsm.Action;
 
 
 /**
@@ -595,11 +600,7 @@ public class UploadAction extends JosmAction{
         private TagEditorPanel tagEditorPanel;
         private JTabbedPane southTabbedPane;
         private ButtonGroup bgChangesetHandlingOptions;
-        private JRadioButton rbUseNewAndClose;
-        private JRadioButton rbUseNewAndLeaveOpen;
-        private JRadioButton rbUseExistingAndClose;
-        private JRadioButton rbUseExistingAndLeaveOpen;
-        private ChangesetProcessingType changesetProcessingType;
+        private Map<ChangesetProcessingType, JRadioButton> rbChangesetHandlingOptions;
 
         protected JPanel buildListsPanel() {
             pnlLists = new JPanel();
@@ -612,31 +613,30 @@ public class UploadAction extends JosmAction{
             JPanel pnl = new JPanel();
             pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
             bgChangesetHandlingOptions = new ButtonGroup();
+            rbChangesetHandlingOptions = new HashMap<ChangesetProcessingType, JRadioButton>();
+            ChangesetProcessingTypeChangedAction a = new ChangesetProcessingTypeChangedAction();
+            for(ChangesetProcessingType type: ChangesetProcessingType.values()) {
+                rbChangesetHandlingOptions.put(type, new JRadioButton());
+                rbChangesetHandlingOptions.get(type).addActionListener(a);
+            }
+            JRadioButton rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_CLOSE);
+            rb.setText(tr("Use a new changeset and close it"));
+            rb.setToolTipText(tr("Select to upload the data using a new changeset and to close the changeset after the upload"));
 
-            rbUseNewAndClose = new JRadioButton(tr("Use a new changeset and close it"));
-            rbUseNewAndClose.setToolTipText(tr("Select to upload the data using a new changeset and to close the changeset after the upload"));
-
-            rbUseNewAndLeaveOpen = new JRadioButton(tr("Use a new changeset and leave it open"));
-            rbUseNewAndLeaveOpen.setToolTipText(tr("Select to upload the data using a new changeset and to leave the changeset open after the upload"));
-
-            rbUseExistingAndClose = new JRadioButton();
-            rbUseExistingAndLeaveOpen = new JRadioButton();
+            rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_LEAVE_OPEN);
+            rb.setText(tr("Use a new changeset and leave it open"));
+            rb.setToolTipText(tr("Select to upload the data using a new changeset and to leave the changeset open after the upload"));
 
             pnl.add(new JLabel(tr("Upload to a new or to an existing changeset?")));
-            pnl.add(rbUseNewAndClose);
-            pnl.add(rbUseNewAndLeaveOpen);
-            pnl.add(rbUseExistingAndClose);
-            pnl.add(rbUseExistingAndLeaveOpen);
+            pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_CLOSE));
+            pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_LEAVE_OPEN));
+            pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_CLOSE));
+            pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_LEAVE_OPEN));
 
-            rbUseNewAndClose.setVisible(false);
-            rbUseNewAndLeaveOpen.setVisible(false);
-            rbUseExistingAndClose.setVisible(false);
-            rbUseExistingAndLeaveOpen.setVisible(false);
-
-            bgChangesetHandlingOptions.add(rbUseNewAndClose);
-            bgChangesetHandlingOptions.add(rbUseNewAndLeaveOpen);
-            bgChangesetHandlingOptions.add(rbUseExistingAndClose);
-            bgChangesetHandlingOptions.add(rbUseExistingAndLeaveOpen);
+            for(ChangesetProcessingType type: ChangesetProcessingType.values()) {
+                rbChangesetHandlingOptions.get(type).setVisible(false);
+                bgChangesetHandlingOptions.add(rbChangesetHandlingOptions.get(type));
+            }
             return pnl;
         }
 
@@ -681,7 +681,7 @@ public class UploadAction extends JosmAction{
             tagEditorPanel = new TagEditorPanel();
             southTabbedPane.add(tagEditorPanel);
             southTabbedPane.setTitleAt(0, tr("Settings"));
-            southTabbedPane.setTitleAt(1, tr("Changeset Tags"));
+            southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
             JPanel pnl = new JPanel();
             pnl.setLayout(new BorderLayout());
             pnl.add(southTabbedPane,BorderLayout.CENTER);
@@ -764,61 +764,26 @@ public class UploadAction extends JosmAction{
             cmt.addCurrentItemToHistory();
             Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
             Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
-
-            if (rbUseNewAndClose.isSelected()) {
-                changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
-            } else if (rbUseNewAndLeaveOpen.isSelected()) {
-                changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_LEAVE_OPEN;
-            } else if (rbUseExistingAndClose.isSelected()) {
-                changesetProcessingType = ChangesetProcessingType.USE_EXISTING_AND_CLOSE;
-            } else if (rbUseExistingAndLeaveOpen.isSelected()) {
-                changesetProcessingType = ChangesetProcessingType.USE_EXISTING_AND_LEAVE_OPEN;
-            }
         }
 
         public void startUserInput() {
-            rbUseNewAndClose.setVisible(true);
-            rbUseNewAndLeaveOpen.setVisible(true);
-            if (OsmApi.getOsmApi().getCurrentChangeset() != null) {
-                Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
-                rbUseExistingAndClose.setVisible(true);
-                rbUseExistingAndLeaveOpen.setVisible(true);
-
-                rbUseExistingAndClose.setText(tr("Use the existing changeset {0} and close it after upload",cs.getId()));
-                rbUseExistingAndClose.setToolTipText(tr("Select to upload to the existing changeset {0} and to close the changeset after this upload",cs.getId()));
-
-                rbUseExistingAndLeaveOpen.setText(tr("Use the existing changeset {0} and leave it open",cs.getId()));
-                rbUseExistingAndLeaveOpen.setToolTipText(tr("Select to upload to the existing changeset {0} and to leave the changeset open for further uploads",cs.getId()));
-
-                if (changesetProcessingType == null) {
-                    rbUseNewAndClose.setSelected(true);
-                } else {
-                    switch(changesetProcessingType) {
-                        case USE_NEW_AND_CLOSE: rbUseNewAndClose.setSelected(true); break;
-                        case USE_NEW_AND_LEAVE_OPEN: rbUseNewAndLeaveOpen.setSelected(true); break;
-                        case USE_EXISTING_AND_CLOSE: rbUseExistingAndClose.setSelected(true); break;
-                        case USE_EXISTING_AND_LEAVE_OPEN: rbUseExistingAndLeaveOpen.setSelected(true); break;
-                    }
-                }
-            } else {
-                if (changesetProcessingType == null) {
-                    changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
-                }
-                rbUseExistingAndClose.setVisible(false);
-                rbUseExistingAndLeaveOpen.setVisible(false);
-                switch(changesetProcessingType) {
-                    case USE_NEW_AND_CLOSE: rbUseNewAndClose.setSelected(true); break;
-                    case USE_NEW_AND_LEAVE_OPEN: rbUseNewAndLeaveOpen.setSelected(true); break;
-                    default: rbUseNewAndClose.setSelected(true); break;
-                }
-            }
+            tagEditorPanel.initAutoCompletion(Main.main.getEditLayer());
+            initChangesetProcessingType();
             cmt.getEditor().selectAll();
             cmt.requestFocus();
         }
 
         public ChangesetProcessingType getChangesetProcessingType() {
-            if (changesetProcessingType == null) return ChangesetProcessingType.USE_NEW_AND_CLOSE;
-            return changesetProcessingType;
+            ChangesetProcessingType changesetProcessingType = null;
+            for (ChangesetProcessingType type: ChangesetProcessingType.values()) {
+                if (rbChangesetHandlingOptions.get(type).isSelected()) {
+                    changesetProcessingType = type;
+                    break;
+                }
+            }
+            return changesetProcessingType == null ?
+                    ChangesetProcessingType.USE_NEW_AND_CLOSE :
+                        changesetProcessingType;
         }
 
         public Changeset getChangeset() {
@@ -826,6 +791,60 @@ public class UploadAction extends JosmAction{
             tagEditorPanel.getModel().applyToPrimitive(changeset);
             changeset.put("comment", cmt.getText());
             return changeset;
+        }
+
+        protected void initChangesetProcessingType() {
+            for (ChangesetProcessingType type: ChangesetProcessingType.values()) {
+                // show options for new changeset, disable others
+                //
+                rbChangesetHandlingOptions.get(type).setVisible(type.isUseNew());
+            }
+            if (OsmApi.getOsmApi().getCurrentChangeset() != null) {
+                Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
+                for (ChangesetProcessingType type: ChangesetProcessingType.values()) {
+                    // show options for using existing changeset
+                    //
+                    if (!type.isUseNew()) {
+                        rbChangesetHandlingOptions.get(type).setVisible(true);
+                    }
+                }
+                JRadioButton rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_CLOSE);
+                rb.setText(tr("Use the existing changeset {0} and close it after upload",cs.getId()));
+                rb.setToolTipText(tr("Select to upload to the existing changeset {0} and to close the changeset after this upload",cs.getId()));
+
+                rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_LEAVE_OPEN);
+                rb.setText(tr("Use the existing changeset {0} and leave it open",cs.getId()));
+                rb.setToolTipText(tr("Select to upload to the existing changeset {0} and to leave the changeset open for further uploads",cs.getId()));
+
+                rbChangesetHandlingOptions.get(getChangesetProcessingType()).setSelected(true);
+
+            } else {
+                ChangesetProcessingType type = getChangesetProcessingType();
+                if (!type.isUseNew()) {
+                    type = ChangesetProcessingType.USE_NEW_AND_CLOSE;
+                }
+                rbChangesetHandlingOptions.get(type).setSelected(true);
+            }
+        }
+
+        class ChangesetProcessingTypeChangedAction implements ActionListener {
+            public void actionPerformed(ActionEvent e) {
+                ChangesetProcessingType type = getChangesetProcessingType();
+                if (type.isUseNew()) {
+                    tagEditorPanel.setEnabled(true);
+                    southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
+                    cmt.setEnabled(true);
+                } else {
+                    tagEditorPanel.setEnabled(false);
+                    cmt.setEnabled(false);
+                    Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
+                    if (cs != null) {
+                        tagEditorPanel.getModel().initFromPrimitive(cs);
+                        southTabbedPane.setTitleAt(1, tr("Tags of changeset {0} (read-only)", cs.getId()));
+                        cmt.setText(cs.get("comment" == null ? "" : cs.get("comment")));
+                    }
+                }
+            }
         }
     }
 }
