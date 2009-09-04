@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 
+import sun.security.action.GetBooleanAction;
+
 /**
  * List class that read and save its content from the bookmark file.
  * @author imi
@@ -43,7 +45,10 @@ public class BookmarkList extends JList {
             e.printStackTrace();
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Could not read bookmarks.<br>{0}</html>", e.getMessage()),
+                    tr("<html>Could not read bookmarks from<br>''{0}''<br>Error was: {1}</html>",
+                            Main.pref.getBookmarksFile(),
+                            e.getMessage()
+                    ),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );

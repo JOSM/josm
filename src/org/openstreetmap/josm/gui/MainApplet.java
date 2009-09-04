@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +36,7 @@ public class MainApplet extends JApplet {
     public static final class UploadPreferencesAction extends JosmAction {
         public UploadPreferencesAction() {
             super(tr("Upload Preferences"), "upload-preferences", tr("Upload the current preferences to the server"),
-            Shortcut.registerShortcut("applet:uploadprefs", tr("Upload Preferences"), KeyEvent.VK_U, Shortcut.GROUP_HOTKEY), true);
+                    Shortcut.registerShortcut("applet:uploadprefs", tr("Upload Preferences"), KeyEvent.VK_U, Shortcut.GROUP_HOTKEY), true);
         }
         public void actionPerformed(ActionEvent e) {
             ((ServerSidePreferences)Main.pref).upload();
@@ -69,8 +70,9 @@ public class MainApplet extends JApplet {
     @Override public void init() {
         for (String[] s : paramInfo) {
             Collection<String> p = readParameter(s[0], args.get(s[0]));
-            if (p != null)
+            if (p != null) {
                 args.put(s[0], p);
+            }
         }
         if (!args.containsKey("geometry") && getParameter("width") != null && getParameter("height") != null) {
             args.put("geometry", Arrays.asList(new String[]{getParameter("width")+"x"+getParameter("height")}));
@@ -97,7 +99,6 @@ public class MainApplet extends JApplet {
         Main.applet = true;
         Main.pref = new ServerSidePreferences(getCodeBase());
         ((ServerSidePreferences)Main.pref).download(username, password);
-
         Main.preConstructorInit(args);
         Main.parent = this;
 
@@ -123,8 +124,9 @@ public class MainApplet extends JApplet {
     private Collection<String> readParameter(String s, Collection<String> v) {
         String param = getParameter(s);
         if (param != null) {
-            if (v == null)
+            if (v == null) {
                 v = new LinkedList<String>();
+            }
             v.addAll(Arrays.asList(param.split(";")));
         }
         return v;

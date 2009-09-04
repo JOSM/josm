@@ -118,6 +118,10 @@ public class Preferences {
         return preferencesDirFile;
     }
 
+    public File getPreferenceFile() {
+        return new File(getPreferencesDirFile(), "preferences");
+    }
+
     public File getPluginsDirFile() {
         return new File(getPreferencesDirFile(), "plugins");
     }
@@ -253,7 +257,11 @@ public class Preferences {
             } else {
                 properties.put(key, value);
             }
-            save();
+            try {
+                save();
+            } catch(IOException e){
+                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+            }
             firePreferenceChanged(key, value);
             return true;
         }
@@ -286,36 +294,32 @@ public class Preferences {
      * Called after every put. In case of a problem, do nothing but output the error
      * in log.
      */
-    public void save() {
+    public void save() throws IOException {
         /* currently unused, but may help to fix configuration issues in future */
         properties.put("josm.version", AboutAction.getVersionString());
-        try {
-            setSystemProperties();
-            String prefFile = getPreferencesDir() + "preferences";
 
-            // Backup old preferences
-            copyFile(new File(prefFile), new File(prefFile + "_backup"));
+        setSystemProperties();
+        File prefFile = new File(getPreferencesDirFile(), "preferences");
 
-            final PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                    new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
-            for (final Entry<String, String> e : properties.entrySet()) {
-                String s = defaults.get(e.getKey());
-                /* don't save default values */
-                if(s == null || !s.equals(e.getValue())) {
-                    out.println(e.getKey() + "=" + e.getValue());
-                }
-            }
-            out.close();
-
-            File tmpFile = new File(prefFile + "_tmp");
-            copyFile(tmpFile, new File(prefFile));
-            tmpFile.delete();
-
-        } catch (final IOException e) {
-            e.printStackTrace();
-            // do not message anything, since this can be called from strange
-            // places.
+        // Backup old preferences if there are old preferences
+        if(prefFile.exists()) {
+            copyFile(prefFile, new File(prefFile + "_backup"));
         }
+
+        final PrintWriter out = new PrintWriter(new OutputStreamWriter(
+                new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
+        for (final Entry<String, String> e : properties.entrySet()) {
+            String s = defaults.get(e.getKey());
+            /* don't save default values */
+            if(s == null || !s.equals(e.getValue())) {
+                out.println(e.getKey() + "=" + e.getValue());
+            }
+        }
+        out.close();
+
+        File tmpFile = new File(prefFile + "_tmp");
+        copyFile(tmpFile, prefFile);
+        tmpFile.delete();
     }
 
     /**
@@ -365,49 +369,77 @@ public class Preferences {
         setSystemProperties();
     }
 
-    public void init(Boolean reset)
-    {
+    public void init(boolean reset){
         // get the preferences.
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {
             if(!prefDir.isDirectory()) {
+                System.err.println(tr("Warning: Failed to initialize preferences. Preference directory ''{0}'' isn't a directory.", prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("Cannot open preferences directory: {0}",Main.pref.getPreferencesDir()),
+                        tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' isn't a directory.</html>", prefDir.getAbsoluteFile()),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
                 return;
             }
         } else {
-            prefDir.mkdirs();
-        }
-
-        if (!new File(getPreferencesDir()+"preferences").exists()) {
-            resetToDefault();
-        }
-
-        try {
-            if (reset) {
-                resetToDefault();
-            } else {
-                load();
+            if (! prefDir.mkdirs()) {
+                System.err.println(tr("Warning: Failed to initialize preferences. Failed to create missing preference directory: {0}", prefDir.getAbsoluteFile()));
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Failed to initialize preferences.<br>Failed to create missing preference directory: {0}</html>",prefDir.getAbsoluteFile()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
             }
-        } catch (final IOException e1) {
-            e1.printStackTrace();
-            String backup = getPreferencesDir() + "preferences.bak";
+        }
+
+        File preferenceFile = getPreferenceFile();
+        try {
+            if (!preferenceFile.exists()) {
+                System.out.println(tr("Warning: Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
+                resetToDefault();
+                save();
+            } else if (reset) {
+                System.out.println(tr("Warning: Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
+                resetToDefault();
+                save();
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("Preferences file had errors. Making backup of old one to {0}.", backup),
+                    tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",getPreferenceFile().getAbsoluteFile()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
-            new File(getPreferencesDir() + "preferences").renameTo(new File(backup));
-            save();
+            return;
+        }
+        try {
+            load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            File backupFile = new File(prefDir,"preferences.bak");
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> and creating a new default preference file.</html>", backupFile.getAbsoluteFile()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+            preferenceFile.renameTo(backupFile);
+            try {
+                resetToDefault();
+                save();
+            } catch(IOException e1) {
+                e1.printStackTrace();
+                System.err.println(tr("Warning: Failed to initialize preferences.Failed to reset preference file to default: {0}", getPreferenceFile()));
+            }
         }
     }
 
-    public final void resetToDefault() {
+    public final void resetToDefault(){
         properties.clear();
         put("layerlist.visible", true);
         put("propertiesdialog.visible", true);
@@ -418,11 +450,14 @@ public class Preferences {
         } else {
             put("laf", "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }
-        save();
+    }
+
+    public File getBookmarksFile() {
+        return new File(getPreferencesDir(),"bookmarks");
     }
 
     public Collection<Bookmark> loadBookmarks() throws IOException {
-        File bookmarkFile = new File(getPreferencesDir()+"bookmarks");
+        File bookmarkFile = getBookmarksFile();
         if (!bookmarkFile.exists()) {
             bookmarkFile.createNewFile();
         }
