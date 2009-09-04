@@ -1,0 +1,30 @@
+.Dd $Mdocdate: December 21 2008 $
+.Dt JOSM 1
+.Os
+.Sh NAME
+.Nm josm
+.Nd Map editor for the OpenStreetMap project.
+.Sh SYNOPSIS
+.Nm josm
+.Ar [file]
+.Sh DESCRIPTION
+The
+.Nm
+utility is a GUI tool to edit the free map of the world maintained at OpenStreetMap.org.
+It can edit existing map data, or it can create annotations over top of "raw" GPS tracks
+(loaded in GPX format), and upload them to the central OpenStreetMap server.
+Information on getting started can be found at
+http://wiki.openstreetmap.org/index.php/Starter_Tutorial.
+.Pp
+If you invoke
+.Nm
+with a file argument, it will be loaded,
+otherwise, load files via the GUI.
+.Sh FILES
+$HOME/.josm \-
+top level directory; has subdirectories to load plugins into, save bookmarks
+and plugins, etc.
+.Sh SEE ALSO
+.Xr gpsbabel 1 ,
+.Xr gpsd 8
+\- other GPS tools.
