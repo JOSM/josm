@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.SwingUtilities;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -46,9 +48,20 @@ public class OsmImporter extends FileImporter {
     protected void importData(InputStream in, File associatedFile) throws SAXException, IOException {
         OsmReader osm = OsmReader.parseDataSetOsm(in, NullProgressMonitor.INSTANCE);
         DataSet dataSet = osm.getDs();
-        OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
-        Main.main.addLayer(layer);
-        layer.fireDataChange();
-        layer.onPostLoadFromFile();
+        final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
+        // FIXME: remove UI stuff from IO subsystem
+        //
+        Runnable uiStuff = new Runnable() {
+            public void run() {
+                Main.main.addLayer(layer);
+                layer.fireDataChange();
+                layer.onPostLoadFromFile();
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            uiStuff.run();
+        } else {
+            SwingUtilities.invokeLater(uiStuff);
+        }
     }
 }

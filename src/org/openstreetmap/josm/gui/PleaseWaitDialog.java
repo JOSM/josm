@@ -84,15 +84,4 @@ public class PleaseWaitDialog extends JDialog {
         customText.setText(text);
         setSize(Main.pref.getInteger("progressdialog.size", 600), 120);
     }
-
-    @Override
-    public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        if (visible) {
-            // make sure this dialog is always on top of the main JOSM window
-            // and all the other windows (relation editors, detached dialogs, etc.)
-            //
-            toFront();
-        }
-    }
 }
