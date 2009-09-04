@@ -8,10 +8,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
 
 import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
@@ -69,25 +71,21 @@ public class FileDrop
 
 
     /* Constructor for JOSM file drop */
-    public FileDrop(final java.awt.Component c)
-    {   this(
-            null,  // Logging stream
-            c,     // Drop target
-            BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
-            true, // Recursive
-            new FileDrop.Listener()
-            {
-                public void filesDropped( java.io.File[] files )
-                {
-                    OpenFileAction ofa = new OpenFileAction();
-                    for( int i = 0; i < files.length; i++ )
-                    {
-                        ofa.openFile(files[i]);
-                    }   // end for: through each dropped file
-                }   // end filesDropped
-            }); // end FileDrop.Listener
+    public FileDrop(final java.awt.Component c){
+        this(
+                null,  // Logging stream
+                c,     // Drop target
+                BorderFactory.createMatteBorder( 2, 2, 2, 2, defaultBorderColor ), // Drag border
+                true, // Recursive
+                new FileDrop.Listener(){
+                    public void filesDropped( java.io.File[] files ){
+                        // start asynchronous loading of files
+                        OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(Arrays.asList(files));
+                        Main.worker.submit(task);
+                    }
+                }
+        );
     }
-
 
     /**
      * Constructs a {@link FileDrop} with a default light-blue border

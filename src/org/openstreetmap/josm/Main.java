@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
@@ -411,9 +413,9 @@ abstract public class Main {
             dialog.getModel().populate(layersWithUnmodifiedChanges);
             dialog.setVisible(true);
             switch(dialog.getUserAction()) {
-            case CANCEL: return false;
-            case PROCEED: return true;
-            default: return false;
+                case CANCEL: return false;
+                case PROCEED: return true;
+                default: return false;
             }
         }
         return true;
@@ -454,8 +456,8 @@ abstract public class Main {
         ed.showDialog();
 
         switch(ed.getValue()) {
-        case 2: /* discard and exit */ return true;
-        case 3: /* cancel */ return false;
+            case 2: /* discard and exit */ return true;
+            case 3: /* cancel */ return false;
         }
         boolean savefailed = false;
         for (OsmDataLayer l : map.mapView.getLayersOfType(OsmDataLayer.class)) {
@@ -485,14 +487,28 @@ abstract public class Main {
         }
 
         if (s.startsWith("file:")) {
+            File f = null;
             try {
-                main.menu.openFile.openFile(new File(new URI(s)));
+                f = new File(new URI(s));
             } catch (URISyntaxException e) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Ignoring malformed file URL: \"{0}\"", s),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
+                );
+            }
+            try {
+                if (f!=null) {
+                    OpenFileAction.openFile(f);
+                }
+            }catch(IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
                 );
             }
             return;
@@ -507,8 +523,18 @@ abstract public class Main {
             } catch (final NumberFormatException e) {
             }
         }
-
-        main.menu.openFile.openFile(new File(s));
+        File f = new File(s);
+        try {
+            OpenFileAction.openFile(f);
+        }catch(IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     public static void determinePlatformHook() {
