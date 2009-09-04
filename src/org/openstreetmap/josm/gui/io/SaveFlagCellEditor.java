@@ -17,7 +17,7 @@ import javax.swing.table.TableCellEditor;
  * This is {@see TableCellEditor} for a boolean flag. It is used in two table columns of
  * {@see SaveLayersTable} and renders the values of {@see SaveLayerInfo#isDoSaveToFile()}
  * and {@see SaveLayerInfo#isDoUploadToServer()}
- * 
+ *
  */
 class SaveFlagCellEditor extends JCheckBox implements TableCellEditor {
     private CopyOnWriteArrayList<CellEditorListener> listeners;
