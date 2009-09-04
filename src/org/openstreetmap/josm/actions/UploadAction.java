@@ -57,8 +57,6 @@ import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
 import org.xml.sax.SAXException;
 
-import com.sun.corba.se.spi.orbutil.fsm.Action;
-
 
 /**
  * Action that opens a connection to the osm server and uploads all changes.
@@ -756,6 +754,8 @@ public class UploadAction extends JosmAction{
         }
 
         public boolean hasChangesetComment() {
+            if (!getChangesetProcessingType().isUseNew())
+                return true;
             return cmt.getText().trim().length() >= 3;
         }
 
