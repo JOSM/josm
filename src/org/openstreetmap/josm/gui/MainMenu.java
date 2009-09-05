@@ -57,6 +57,7 @@ import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
+import org.openstreetmap.josm.actions.StopChangesetAction;
 import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
 import org.openstreetmap.josm.actions.UndoAction;
@@ -98,6 +99,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction gpxExport = new GpxExportAction();
     public final DownloadAction download = new DownloadAction();
     public final DownloadReferrersAction downloadReferrers = new DownloadReferrersAction();
+    public final StopChangesetAction stopChangesetAction = new StopChangesetAction();
     public final JosmAction update = new UpdateDataAction();
     public final JosmAction updateSelection = new UpdateSelectionAction();
     public final JosmAction upload = new UploadAction();
@@ -205,6 +207,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, upload);
         add(fileMenu, update);
         add(fileMenu, updateSelection);
+        add(fileMenu, stopChangesetAction);
         fileMenu.addSeparator();
         add(fileMenu, exit);
 

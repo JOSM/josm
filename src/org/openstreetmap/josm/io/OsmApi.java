@@ -324,6 +324,40 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
+     * Update a changeset on the server.
+     *
+     * @param changeset the changeset to update
+     * @param progressMonitor the progress monitor
+     * 
+     * @throws OsmTransferException if something goes wrong.
+     */
+    public void updateChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
+        try {
+            progressMonitor.beginTask(tr("Updating changeset..."));
+            initialize(progressMonitor);
+            if (this.changeset != null && this.changeset.getId() > 0) {
+                if (this.changeset.hasEqualSemanticAttributes(changeset)) {
+                    progressMonitor.setCustomText(tr("Changeset {0} is unchanged. Skipping update.", changeset.getId()));
+                    return;
+                }
+                changeset.id = this.changeset.getId();
+                this.changeset.cloneFrom(changeset);
+                progressMonitor.setCustomText(tr("Updating changeset {0}...", changeset.getId()));
+                sendRequest(
+                        "PUT",
+                        OsmPrimitiveType.from(changeset).getAPIName() + "/" + changeset.getId(),
+                        toXml(changeset, true),
+                        progressMonitor
+                );
+                this.changeset = changeset;
+            } else
+                throw new OsmTransferException(tr("Failed to update changeset. Either there is no current changeset or the id of the current changeset is 0"));
+        } finally {
+            progressMonitor.finishTask();
+        }
+    }
+
+    /**
      * Closes a changeset on the server.
      *
      * @param changesetProcessingType how changesets are currently handled

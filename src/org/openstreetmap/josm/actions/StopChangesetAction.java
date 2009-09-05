@@ -27,8 +27,8 @@ public class StopChangesetAction extends JosmAction{
                 Shortcut.registerShortcut(
                         "system:closechangeset",
                         tr("File: {0}", tr("Close the current changeset ...")),
-                        KeyEvent.VK_O,
-                        Shortcut.GROUP_MENU
+                        KeyEvent.VK_Q,
+                        Shortcut.GROUP_HOTKEY + Shortcut.GROUPS_ALT2
                 ),
                 true
         );
