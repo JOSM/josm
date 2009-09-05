@@ -213,7 +213,10 @@ public class MergeNodesAction extends JosmAction {
         }
 
         LinkedList<Command> cmds = new LinkedList<Command>();
-        cmds.add(new ChangeCommand(dest, newNode));
+
+	if (!newNode.getKeys().equals(dest.getKeys())) {
+            cmds.add(new ChangeCommand(dest, newNode));
+	}
 
         Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>();
 
