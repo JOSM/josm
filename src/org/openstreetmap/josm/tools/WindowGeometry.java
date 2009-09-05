@@ -150,8 +150,7 @@ public class WindowGeometry {
         try {
             initFromPreferences(preferenceKey);
         } catch(WindowGeometryException e) {
-            e.printStackTrace();
-            System.out.println(tr("Warning: failed to restore window geometry from key ''{0}''. Falling back to default geometry.", preferenceKey));
+            System.out.println(tr("Warning: failed to restore window geometry from key ''{0}''. Falling back to default geometry. Details: {1}", preferenceKey, e.getMessage()));
             initFromWindowGeometry(defaultGeometry);
         }
     }
