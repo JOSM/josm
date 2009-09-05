@@ -479,7 +479,10 @@ public class UploadAction extends JosmAction{
                     if (visible) {
                         new WindowGeometry(
                                 panel.getClass().getName(),
-                                WindowGeometry.centerInWindow(JOptionPane.getFrameForComponent(Main.parent), new Dimension(400,400))
+                                WindowGeometry.centerInWindow(
+                                        JOptionPane.getFrameForComponent(Main.parent),
+                                        new Dimension(400,600)
+                                )
                         ).apply(this);
                         panel.startUserInput();
                     } else {

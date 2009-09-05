@@ -95,23 +95,23 @@ public class WindowGeometry {
         try {
             Pattern p = Pattern.compile(field + "=(\\d+)",Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(preferenceValue);
-            if (!m.matches())
-                throw new WindowGeometryException(tr("preference with key ''{0}'' doesn't include ''{1}=ddd''. Can't resstore window geometry from preferences.", preferenceKey, field));
+            if (!m.find())
+                throw new WindowGeometryException(tr("preference with key ''{0}'' doesn''t include ''{1}''. Can''t restore window geometry from preferences.", preferenceKey, field));
             v = m.group(1);
             return Integer.parseInt(v);
         } catch(WindowGeometryException e) {
             throw e;
         } catch(NumberFormatException e) {
-            throw new WindowGeometryException(tr("preference with key ''{0}'' doesn't provide an int value for ''{1}''. Got {2}. Can't resstore window geometry from preferences.", preferenceKey, field, v));
+            throw new WindowGeometryException(tr("preference with key ''{0}'' doesn''t provide an int value for ''{1}''. Got {2}. Can''t restore window geometry from preferences.", preferenceKey, field, v));
         } catch(Exception e) {
-            throw new WindowGeometryException(tr("failed to parse field ''{1}'' in preference with key ''{0}''. Exception was: {2}. Can't resstore window geometry from preferences.", preferenceKey, field, e.toString()), e);
+            throw new WindowGeometryException(tr("failed to parse field ''{1}'' in preference with key ''{0}''. Exception was: {2}. Can''t restore window geometry from preferences.", preferenceKey, field, e.toString()), e);
         }
     }
 
     protected void initFromPreferences(String preferenceKey) throws WindowGeometryException {
         String value = Main.pref.get(preferenceKey);
         if (value == null)
-            throw new WindowGeometryException(tr("preference with key ''{0}'' doesn't exist. Can't resstore window geometry from preferences.", preferenceKey));
+            throw new WindowGeometryException(tr("preference with key ''{0}'' doesn''t exist. Can''t restore window geometry from preferences.", preferenceKey));
         topLeft = new Point();
         extent = new Dimension();
         topLeft.x = parseField(preferenceKey, value, "x");
@@ -150,6 +150,8 @@ public class WindowGeometry {
         try {
             initFromPreferences(preferenceKey);
         } catch(WindowGeometryException e) {
+            e.printStackTrace();
+            System.out.println(tr("Warning: failed to restore window geometry from key ''{0}''. Falling back to default geometry.", preferenceKey));
             initFromWindowGeometry(defaultGeometry);
         }
     }
