@@ -99,7 +99,7 @@ public class MainApplication extends Main {
             // TODO: put in a platformHook for system that have no console by default
             System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
                     tr("usage")+":\n"+
-                    "\tjava -jar josm.jar <option> <option> <option>...\n\n"+
+                    "\tjava -jar josm.jar <options>...\n\n"+
                     tr("options")+":\n"+
                     "\t--help|-?|-h                              "+tr("Show this help")+"\n"+
                     "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
@@ -111,11 +111,18 @@ public class MainApplication extends Main {
                     "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
                     "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
                     "\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
+                    tr("options provided as Java system properties")+":\n"+
+                    "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
+                    tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
+                       "      Java option to increase the maximum size of allocated memory")+":\n"+
+                    "\t-Xmx...m\n\n"+
                     tr("examples")+":\n"+
                     "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
                     "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
                     "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
-                    "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n\n"+
+                    "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
+                    "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
+                    "\tjava -Xmx400m -jar josm.jar\n\n"+
                     tr("Parameters are read in the order they are specified, so make sure you load\n"+
                     "some data before --selection")+"\n\n"+
                     tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
