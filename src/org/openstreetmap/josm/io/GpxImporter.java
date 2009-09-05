@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import javax.swing.SwingUtilities;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -22,11 +24,10 @@ public class GpxImporter extends FileImporter {
         super(new ExtensionFileFilter("gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)"));
     }
 
-    @Override public void importData(File file) throws IOException {
-        String fn = file.getName();
+    @Override public void importData(final File file) throws IOException {
+        final String fn = file.getName();
 
         try {
-            GpxReader r = null;
             InputStream is;
             if (file.getName().endsWith(".gpx.gz")) {
                 is = new GZIPInputStream(new FileInputStream(file));
@@ -43,15 +44,27 @@ public class GpxImporter extends FileImporter {
                     is = new FileInputStream(file);
                 }
             }
-            r = new GpxReader(is, file.getAbsoluteFile().getParentFile());
+            final GpxReader r = new GpxReader(is, file.getAbsoluteFile().getParentFile());
             r.data.storageFile = file;
-            GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
-            Main.main.addLayer(gpxLayer);
-            if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
-                MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
-                if (ml.data.size() > 0) {
-                    Main.main.addLayer(ml);
+            final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
+
+            // FIXME: remove UI stuff from the IO subsystem
+            //
+            Runnable task = new Runnable() {
+                public void run() {
+                    Main.main.addLayer(gpxLayer);
+                    if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+                        MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
+                        if (ml.data.size() > 0) {
+                            Main.main.addLayer(ml);
+                        }
+                    }
                 }
+            };
+            if (SwingUtilities.isEventDispatchThread()) {
+                task.run();
+            } else {
+                SwingUtilities.invokeLater(task);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
