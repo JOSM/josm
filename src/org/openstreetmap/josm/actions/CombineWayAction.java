@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -12,39 +11,34 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Map.Entry;
+import java.util.Stack;
 
-import javax.swing.Box;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.TigerUtils;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.gui.conflict.tags.CombineWaysConflictResolverDialog;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Combines multiple ways into one.
  *
- * @author Imi
  */
 public class CombineWayAction extends JosmAction {
 
@@ -53,18 +47,170 @@ public class CombineWayAction extends JosmAction {
                 Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.GROUP_EDIT), true);
     }
 
-    @SuppressWarnings("unchecked")
+    protected Set<OsmPrimitive> intersect(Set<? extends OsmPrimitive> s1, Set<? extends OsmPrimitive> s2) {
+        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>(s1);
+        ret.retainAll(s2);
+        return ret;
+    }
+
+    protected boolean confirmCombiningWithConflictsInRelationMemberships() {
+        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                tr("Combine ways with different memberships?"),
+                new String[] {tr("Combine Anyway"), tr("Cancel")});
+        ed.setButtonIcons(new String[] {"combineway.png", "cancel.png"});
+        ed.setContent(tr("The selected ways have differing relation memberships.  "
+                + "Do you still want to combine them?"));
+        ed.showDialog();
+
+        return ed.getValue() == 1;
+    }
+
+    protected boolean confirmChangeDirectionOfWays() {
+        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                tr("Change directions?"),
+                new String[] {tr("Reverse and Combine"), tr("Cancel")});
+        ed.setButtonIcons(new String[] {"wayflip.png", "cancel.png"});
+        ed.setContent(tr("The ways can not be combined in their current directions.  "
+                + "Do you want to reverse some of them?"));
+        ed.showDialog();
+        return ed.getValue() == 1;
+    }
+
+    protected void warnCombiningImpossible() {
+        String msg = tr("Could not combine ways "
+                + "(They could not be merged into a single string of nodes)");
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                msg,  //FIXME: not sure whether this fits in a dialog
+                tr("Information"),
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        return;
+    }
+
+    protected Way getTargetWay(Collection<Way> combinedWays) {
+        // init with an arbitrary way
+        Way targetWay = combinedWays.iterator().next();
+
+        // look for the first way already existing on
+        // the server
+        for (Way w : combinedWays) {
+            targetWay = w;
+            if (w.getId() != 0) {
+                break;
+            }
+        }
+        return targetWay;
+    }
+
+    protected void completeTagCollectionWithMissingTags(TagCollection tc, Collection<Way> combinedWays) {
+        for (String key: tc.getKeys()) {
+            // make sure the empty value is in the tag set such that we can delete the tag
+            // in the conflict dialog if necessary
+            //
+            tc.add(new Tag(key,""));
+            for (Way w: combinedWays) {
+                if (w.get(key) == null) {
+                    tc.add(new Tag(key)); // add a tag with key and empty value
+                }
+            }
+        }
+        // remove irrelevant tags
+        //
+        tc.removeByKey("created_by");
+    }
+
+    public void combineWays(Collection<Way> ways) {
+
+        // prepare and clean the list of ways to combine
+        //
+        if (ways == null || ways.isEmpty())
+            return;
+        ways.remove(null); // just in case -  remove all null ways from the collection
+        ways = new HashSet<Way>(ways); // remove duplicates
+
+        // build the list of relations referring to the ways to combine
+        //
+        WayReferringRelations referringRelations = new WayReferringRelations(ways);
+        referringRelations.build(getCurrentDataSet());
+
+        // build the collection of tags used by the ways to combine
+        //
+        TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
+        completeTagCollectionWithMissingTags(wayTags, ways);
+
+        // try to build a new way out of the combination of ways
+        // which are combined
+        //
+        NodeGraph graph = NodeGraph.createDirectedGraphFromWays(ways);
+        List<Node> path = graph.buildSpanningPath();
+        if (path == null) {
+            graph = NodeGraph.createUndirectedGraphFromNodeWays(ways);
+            path = graph.buildSpanningPath();
+            if (path != null) {
+                if (!confirmChangeDirectionOfWays())
+                    return;
+            } else {
+                warnCombiningImpossible();
+                return;
+            }
+        }
+
+        // create the new way and apply the new node list
+        //
+        Way targetWay = getTargetWay(ways);
+        Way modifiedTargetWay = new Way(targetWay);
+        modifiedTargetWay.setNodes(path);
+
+        CombineWaysConflictResolverDialog dialog = CombineWaysConflictResolverDialog.getInstance();
+        dialog.getTagConflictResolverModel().populate(wayTags);
+        dialog.setTargetWay(targetWay);
+        dialog.getRelationMemberConflictResolverModel().populate(
+                referringRelations.getRelations(),
+                referringRelations.getWays()
+        );
+        dialog.prepareDefaultDecisions();
+
+        // resolve tag conflicts if necessary
+        //
+        if (!wayTags.isApplicableToPrimitive() || !referringRelations.getRelations().isEmpty()) {
+            dialog.setVisible(true);
+            if (dialog.isCancelled())
+                return;
+        }
+
+
+
+        LinkedList<Command> cmds = new LinkedList<Command>();
+        LinkedList<Way> deletedWays = new LinkedList<Way>(ways);
+        deletedWays.remove(targetWay);
+
+        cmds.add(new DeleteCommand(deletedWays));
+        cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
+        cmds.addAll(dialog.buildResolutionCommands(targetWay));
+        final SequenceCommand sequenceCommand = new SequenceCommand(tr("Combine {0} ways", ways.size()), cmds);
+
+        // update gui
+        final Way selectedWay = targetWay;
+        Runnable guiTask = new Runnable() {
+            public void run() {
+                Main.main.undoRedo.add(sequenceCommand);
+                getCurrentDataSet().setSelected(selectedWay);
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            guiTask.run();
+        } else {
+            SwingUtilities.invokeLater(guiTask);
+        }
+    }
+
+
     public void actionPerformed(ActionEvent event) {
         if (getCurrentDataSet() == null)
             return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
-        LinkedList<Way> selectedWays = new LinkedList<Way>();
-
-        for (OsmPrimitive osm : selection)
-            if (osm instanceof Way) {
-                selectedWays.add((Way)osm);
-            }
-
+        Set<Way> selectedWays = OsmPrimitive.getFilteredSet(selection, Way.class);
         if (selectedWays.size() < 2) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -74,242 +220,7 @@ public class CombineWayAction extends JosmAction {
             );
             return;
         }
-
-        // Check whether all ways have identical relationship membership. More
-        // specifically: If one of the selected ways is a member of relation X
-        // in role Y, then all selected ways must be members of X in role Y.
-
-        // FIXME: In a later revision, we should display some sort of conflict
-        // dialog like we do for tags, to let the user choose which relations
-        // should be kept.
-
-        // Step 1, iterate over all relations and figure out which of our
-        // selected ways are members of a relation.
-        HashMap<Pair<Relation,String>, HashSet<Way>> backlinks =
-            new HashMap<Pair<Relation,String>, HashSet<Way>>();
-        HashSet<Relation> relationsUsingWays = new HashSet<Relation>();
-        for (Relation r : getCurrentDataSet().relations) {
-            if (r.isDeleted() || r.incomplete) {
-                continue;
-            }
-            for (RelationMember rm : r.getMembers()) {
-                if (rm.isWay()) {
-                    for(Way w : selectedWays) {
-                        if (rm.getMember() == w) {
-                            Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.getRole());
-                            HashSet<Way> waylinks = new HashSet<Way>();
-                            if (backlinks.containsKey(pair)) {
-                                waylinks = backlinks.get(pair);
-                            } else {
-                                waylinks = new HashSet<Way>();
-                                backlinks.put(pair, waylinks);
-                            }
-                            waylinks.add(w);
-
-                            // this is just a cache for later use
-                            relationsUsingWays.add(r);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Complain to the user if the ways don't have equal memberships.
-        for (HashSet<Way> waylinks : backlinks.values()) {
-            if (!waylinks.containsAll(selectedWays)) {
-
-                ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                        tr("Combine ways with different memberships?"),
-                        new String[] {tr("Combine Anyway"), tr("Cancel")});
-                ed.setButtonIcons(new String[] {"combineway.png", "cancel.png"});
-                ed.setContent(tr("The selected ways have differing relation memberships.  "
-                        + "Do you still want to combine them?"));
-                ed.showDialog();
-
-                if (ed.getValue() == 1) {
-                    break;
-                }
-
-                return;
-            }
-        }
-
-        // collect properties for later conflict resolving
-        Map<String, Set<String>> props = new TreeMap<String, Set<String>>();
-        for (Way w : selectedWays) {
-            for (Entry<String,String> e : w.entrySet()) {
-                if (!props.containsKey(e.getKey())) {
-                    props.put(e.getKey(), new TreeSet<String>());
-                }
-                props.get(e.getKey()).add(e.getValue());
-            }
-        }
-
-        List<Node> nodeList = null;
-        Object firstTry = actuallyCombineWays(selectedWays, false);
-        if (firstTry instanceof List<?>) {
-            nodeList = (List<Node>) firstTry;
-        } else {
-            Object secondTry = actuallyCombineWays(selectedWays, true);
-            if (secondTry instanceof List<?>) {
-                ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                        tr("Change directions?"),
-                        new String[] {tr("Reverse and Combine"), tr("Cancel")});
-                ed.setButtonIcons(new String[] {"wayflip.png", "cancel.png"});
-                ed.setContent(tr("The ways can not be combined in their current directions.  "
-                        + "Do you want to reverse some of them?"));
-                ed.showDialog();
-                if (ed.getValue() != 1) return;
-
-                nodeList = (List<Node>) secondTry;
-            } else {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        secondTry, // FIXME: not sure whether this fits in a dialog
-                        tr("Information"),
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-                return;
-            }
-        }
-
-        // Find the most appropriate way to modify.
-
-        // Eventually this might want to be the way with the longest
-        // history or the longest selected way but for now just attempt
-        // to reuse an existing id.
-        Way modifyWay = selectedWays.peek();
-        for (Way w : selectedWays) {
-            modifyWay = w;
-            if (w.getId() != 0) {
-                break;
-            }
-        }
-        Way newWay = new Way(modifyWay);
-
-        newWay.setNodes(nodeList);
-
-        // display conflict dialog
-        Map<String, JComboBox> components = new HashMap<String, JComboBox>();
-        JPanel p = new JPanel(new GridBagLayout());
-        for (Entry<String, Set<String>> e : props.entrySet()) {
-            if (TigerUtils.isTigerTag(e.getKey())) {
-                String combined = TigerUtils.combineTags(e.getKey(), e.getValue());
-                newWay.put(e.getKey(), combined);
-            } else if (e.getValue().size() > 1) {
-                JComboBox c = new JComboBox(e.getValue().toArray());
-                c.setEditable(true);
-                p.add(new JLabel(e.getKey()), GBC.std());
-                p.add(Box.createHorizontalStrut(10), GBC.std());
-                p.add(c, GBC.eol());
-                components.put(e.getKey(), c);
-            } else {
-                newWay.put(e.getKey(), e.getValue().iterator().next());
-            }
-        }
-
-        if (!components.isEmpty()) {
-
-            ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                    tr("Enter values for all conflicts."),
-                    new String[] {tr("Solve Conflicts"), tr("Cancel")});
-            ed.setButtonIcons(new String[] {"dialogs/conflict.png", "cancel.png"});
-            ed.setContent(p);
-            ed.showDialog();
-
-            if (ed.getValue() != 1) return;
-
-            for (Entry<String, JComboBox> e : components.entrySet()) {
-                newWay.put(e.getKey(), e.getValue().getEditor().getItem().toString());
-            }
-        }
-
-        LinkedList<Command> cmds = new LinkedList<Command>();
-        LinkedList<Way> deletedWays = new LinkedList<Way>(selectedWays);
-        deletedWays.remove(modifyWay);
-        cmds.add(new DeleteCommand(deletedWays));
-        cmds.add(new ChangeCommand(modifyWay, newWay));
-
-        // modify all relations containing the now-deleted ways
-        for (Relation r : relationsUsingWays) {
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
-            HashSet<String> rolesToReAdd = new HashSet<String>();
-            for (RelationMember rm : r.getMembers()) {
-                // Don't copy the member if it to one of our ways, just keep a
-                // note to re-add it later on.
-                if (selectedWays.contains(rm.getMember())) {
-                    rolesToReAdd.add(rm.getRole());
-                } else {
-                    newMembers.add(rm);
-                }
-            }
-            for (String role : rolesToReAdd) {
-                newMembers.add(new RelationMember(role, modifyWay));
-            }
-            Relation newRel = new Relation(r);
-            newRel.setMembers(newMembers);
-            cmds.add(new ChangeCommand(r, newRel));
-        }
-        Main.main.undoRedo.add(new SequenceCommand(tr("Combine {0} ways", selectedWays.size()), cmds));
-        getCurrentDataSet().setSelected(modifyWay);
-    }
-
-    /**
-     * @return a message if combining failed, else a list of nodes.
-     */
-    private Object actuallyCombineWays(List<Way> ways, boolean ignoreDirection) {
-        // Battle plan:
-        //  1. Split the ways into small chunks of 2 nodes and weed out
-        //     duplicates.
-        //  2. Take a chunk and see if others could be appended or prepended,
-        //     if so, do it and remove it from the list of remaining chunks.
-        //     Rather, rinse, repeat.
-        //  3. If this algorithm does not produce a single way,
-        //     complain to the user.
-        //  4. Profit!
-
-        HashSet<Pair<Node,Node>> chunkSet = new HashSet<Pair<Node,Node>>();
-        for (Way w : ways) {
-            chunkSet.addAll(w.getNodePairs(ignoreDirection));
-        }
-
-        LinkedList<Pair<Node,Node>> chunks = new LinkedList<Pair<Node,Node>>(chunkSet);
-
-        if (chunks.isEmpty())
-            return tr("All the ways were empty");
-
-        List<Node> nodeList = Pair.toArrayList(chunks.poll());
-        while (!chunks.isEmpty()) {
-            ListIterator<Pair<Node,Node>> it = chunks.listIterator();
-            boolean foundChunk = false;
-            while (it.hasNext()) {
-                Pair<Node,Node> curChunk = it.next();
-                if (curChunk.a == nodeList.get(nodeList.size() - 1)) { // append
-                    nodeList.add(curChunk.b);
-                } else if (curChunk.b == nodeList.get(0)) { // prepend
-                    nodeList.add(0, curChunk.a);
-                } else if (ignoreDirection && curChunk.b == nodeList.get(nodeList.size() - 1)) { // append
-                    nodeList.add(curChunk.a);
-                } else if (ignoreDirection && curChunk.a == nodeList.get(0)) { // prepend
-                    nodeList.add(0, curChunk.b);
-                } else {
-                    continue;
-                }
-
-                foundChunk = true;
-                it.remove();
-                break;
-            }
-            if (!foundChunk) {
-                break;
-            }
-        }
-
-        if (!chunks.isEmpty())
-            return tr("Could not combine ways "
-                    + "(They could not be merged into a single string of nodes)");
-
-        return nodeList;
+        combineWays(selectedWays);
     }
 
     @Override
@@ -326,5 +237,403 @@ public class CombineWayAction extends JosmAction {
                 numWays++;
             }
         setEnabled(numWays >= 2);
+    }
+
+    /**
+     * This is a collection of relations referring to at least one out of a set of
+     * ways.
+     * 
+     *
+     */
+    static private class WayReferringRelations {
+        /**
+         * the map references between relations and ways. The key is a ways, the value is a
+         * set of relations referring to that way.
+         */
+        private Map<Way, Set<Relation>> wayRelationMap;
+
+        /**
+         * 
+         * @param ways  a collection of ways
+         */
+        public WayReferringRelations(Collection<Way> ways) {
+            wayRelationMap = new HashMap<Way, Set<Relation>>();
+            if (ways == null) return;
+            ways.remove(null); // just in case - remove null values
+            for (Way way: ways) {
+                if (!wayRelationMap.containsKey(way)) {
+                    wayRelationMap.put(way, new HashSet<Relation>());
+                }
+            }
+        }
+
+        /**
+         * build the sets of referring relations from the relations in the dataset <code>ds</code>
+         * 
+         * @param ds the data set
+         */
+        public void build(DataSet ds) {
+            for (Relation r: ds.relations) {
+                if (r.isDeleted() || r.incomplete) {
+                    continue;
+                }
+                Set<Way> referringWays = OsmPrimitive.getFilteredSet(r.getMemberPrimitives(), Way.class);
+                for (Way w : wayRelationMap.keySet()) {
+                    if (referringWays.contains(w)) {
+                        wayRelationMap.get(w).add(r);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Replies the ways
+         * @return the ways
+         */
+        public Set<Way> getWays() {
+            return wayRelationMap.keySet();
+        }
+
+        /**
+         * Replies the set of referring relations
+         * 
+         * @return the set of referring relations
+         */
+        public Set<Relation> getRelations() {
+            HashSet<Relation> ret = new HashSet<Relation>();
+            for (Way w: wayRelationMap.keySet()) {
+                ret.addAll(wayRelationMap.get(w));
+            }
+            return ret;
+        }
+
+        /**
+         * Replies the set of referring relations for a specific way
+         * 
+         * @return the set of referring relations
+         */
+        public Set<Relation> getRelations(Way way) {
+            return wayRelationMap.get(way);
+        }
+
+        protected Command buildRelationUpdateCommand(Relation relation, Collection<Way> ways, Way targetWay) {
+            List<RelationMember> newMembers = new ArrayList<RelationMember>();
+            for (RelationMember rm : relation.getMembers()) {
+                if (ways.contains(rm.getMember())) {
+                    RelationMember newMember = new RelationMember(rm.getRole(),targetWay);
+                    newMembers.add(newMember);
+                } else {
+                    newMembers.add(rm);
+                }
+            }
+            Relation newRelation = new Relation(relation);
+            newRelation.setMembers(newMembers);
+            return new ChangeCommand(relation, newRelation);
+        }
+
+        public List<Command> buildRelationUpdateCommands(Way targetWay) {
+            Collection<Way> toRemove = getWays();
+            toRemove.remove(targetWay);
+            ArrayList<Command> cmds = new ArrayList<Command>();
+            for (Relation r : getRelations()) {
+                Command cmd = buildRelationUpdateCommand(r, toRemove, targetWay);
+                cmds.add(cmd);
+            }
+            return cmds;
+        }
+    }
+
+    static public class NodePair {
+        private Node a;
+        private Node b;
+        public NodePair(Node a, Node b) {
+            this.a =a;
+            this.b = b;
+        }
+
+        public NodePair(Pair<Node,Node> pair) {
+            this.a = pair.a;
+            this.b = pair.b;
+        }
+
+        public NodePair(NodePair other) {
+            this.a = other.a;
+            this.b = other.b;
+        }
+
+        public Node getA() {
+            return a;
+        }
+
+        public Node getB() {
+            return b;
+        }
+
+        public boolean isAdjacentToA(NodePair other) {
+            return other.getA() == a || other.getB() == a;
+        }
+
+        public boolean isAdjacentToB(NodePair other) {
+            return other.getA() == b || other.getB() == b;
+        }
+
+        public boolean isSuccessorOf(NodePair other) {
+            return other.getB() == a;
+        }
+
+        public boolean isPredecessorOf(NodePair other) {
+            return b == other.getA();
+        }
+
+        public NodePair swap() {
+            return new NodePair(b,a);
+        }
+
+        @Override
+        public String toString() {
+            return new StringBuilder()
+            .append("[")
+            .append(a.getId())
+            .append(",")
+            .append(b.getId())
+            .append("]")
+            .toString();
+        }
+
+        public boolean contains(Node n) {
+            return a == n || b == n;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((a == null) ? 0 : a.hashCode());
+            result = prime * result + ((b == null) ? 0 : b.hashCode());
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            NodePair other = (NodePair) obj;
+            if (a == null) {
+                if (other.a != null)
+                    return false;
+            } else if (!a.equals(other.a))
+                return false;
+            if (b == null) {
+                if (other.b != null)
+                    return false;
+            } else if (!b.equals(other.b))
+                return false;
+            return true;
+        }
+    }
+
+
+    static public class NodeGraph {
+        static public List<NodePair> buildNodePairs(Way way, boolean directed) {
+            ArrayList<NodePair> pairs = new ArrayList<NodePair>();
+            for (Pair<Node,Node> pair: way.getNodePairs(false /* don't sort */)) {
+                pairs.add(new NodePair(pair));
+                if (!directed) {
+                    pairs.add(new NodePair(pair).swap());
+                }
+            }
+            return pairs;
+        }
+
+        static public List<NodePair> buildNodePairs(List<Way> ways, boolean directed) {
+            ArrayList<NodePair> pairs = new ArrayList<NodePair>();
+            for (Way w: ways) {
+                pairs.addAll(buildNodePairs(w, directed));
+            }
+            return pairs;
+        }
+
+        static public List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
+            ArrayList<NodePair> cleaned = new ArrayList<NodePair>();
+            for(NodePair p: pairs) {
+                if (!cleaned.contains(p) && !cleaned.contains(p.swap())) {
+                    cleaned.add(p);
+                }
+            }
+            return cleaned;
+        }
+
+        static public NodeGraph createDirectedGraphFromNodePairs(List<NodePair> pairs) {
+            NodeGraph graph = new NodeGraph();
+            for (NodePair pair: pairs) {
+                graph.add(pair);
+            }
+            return graph;
+        }
+
+        static public NodeGraph createDirectedGraphFromWays(Collection<Way> ways) {
+            NodeGraph graph = new NodeGraph();
+            for (Way w: ways) {
+                graph.add(buildNodePairs(w, true /* directed */));
+            }
+            return graph;
+        }
+
+        static public NodeGraph createUndirectedGraphFromNodeList(List<NodePair> pairs) {
+            NodeGraph graph = new NodeGraph();
+            for (NodePair pair: pairs) {
+                graph.add(pair);
+                graph.add(pair.swap());
+            }
+            return graph;
+        }
+
+        static public NodeGraph createUndirectedGraphFromNodeWays(Collection<Way> ways) {
+            NodeGraph graph = new NodeGraph();
+            for (Way w: ways) {
+                graph.add(buildNodePairs(w, false /* undirected */));
+            }
+            return graph;
+        }
+
+        private Set<NodePair> edges;
+        private int numUndirectedEges = 0;
+
+        protected void computeNumEdges() {
+            Set<NodePair> undirectedEdges = new HashSet<NodePair>();
+            for (NodePair pair: edges) {
+                if (!undirectedEdges.contains(pair) && ! undirectedEdges.contains(pair.swap())) {
+                    undirectedEdges.add(pair);
+                }
+            }
+            numUndirectedEges = undirectedEdges.size();
+        }
+
+        public NodeGraph() {
+            edges = new HashSet<NodePair>();
+        }
+
+        public void add(NodePair pair) {
+            if (!edges.contains(pair)) {
+                edges.add(pair);
+            }
+        }
+
+        public void add(List<NodePair> pairs) {
+            for (NodePair pair: pairs) {
+                add(pair);
+            }
+        }
+
+        protected Node getStartNode() {
+            return edges.iterator().next().getA();
+        }
+
+        protected Set<Node> getNodes(Stack<NodePair> pairs) {
+            HashSet<Node> nodes = new HashSet<Node>();
+            for (NodePair pair: pairs) {
+                nodes.add(pair.getA());
+                nodes.add(pair.getB());
+            }
+            return nodes;
+        }
+
+        protected List<NodePair> getOutboundPairs(NodePair pair) {
+            LinkedList<NodePair> outbound = new LinkedList<NodePair>();
+            for (NodePair candidate:edges) {
+                if (candidate.equals(pair)) {
+                    continue;
+                }
+                if (candidate.isSuccessorOf(pair)) {
+                    outbound.add(candidate);
+                }
+            }
+            return outbound;
+        }
+
+        protected List<NodePair> getOutboundPairs(Node node) {
+            LinkedList<NodePair> outbound = new LinkedList<NodePair>();
+            for (NodePair candidate:edges) {
+                if (candidate.getA() == node) {
+                    outbound.add(candidate);
+                }
+            }
+            return outbound;
+        }
+
+        protected Set<Node> getNodes() {
+            Set<Node> nodes = new HashSet<Node>();
+            for (NodePair pair: edges) {
+                nodes.add(pair.getA());
+                nodes.add(pair.getB());
+            }
+            return nodes;
+        }
+
+        protected boolean isSpanningWay(Stack<NodePair> way) {
+            return numUndirectedEges == way.size();
+        }
+
+
+        protected boolean advance(Stack<NodePair> path) {
+            // found a spanning path ?
+            //
+            if (isSpanningWay(path))
+                return true;
+
+            // advance with one of the possible follow up nodes
+            //
+            Stack<NodePair> nextPairs = new Stack<NodePair>();
+            nextPairs.addAll(getOutboundPairs(path.peek()));
+            while(!nextPairs.isEmpty()) {
+                NodePair next = nextPairs.pop();
+                if (path.contains(next) || path.contains(next.swap())) {
+                    continue;
+                }
+                path.push(next);
+                if (advance(path)) return true;
+                path.pop();
+            }
+            return false;
+        }
+
+        protected List<Node> buildPathFromNodePairs(Stack<NodePair> path) {
+            LinkedList<Node> ret = new LinkedList<Node>();
+            for (NodePair pair: path) {
+                ret.add(pair.getA());
+            }
+            ret.add(path.peek().getB());
+            return ret;
+        }
+
+        protected List<Node> buildSpanningPath(Node startNode) {
+            if (startNode == null)
+                return null;
+            Stack<NodePair> path = new Stack<NodePair>();
+            // advance with one of the possible follow up nodes
+            //
+            Stack<NodePair> nextPairs  = new Stack<NodePair>();
+            nextPairs.addAll(getOutboundPairs(startNode));
+            while(!nextPairs.isEmpty()) {
+                path.push(nextPairs.pop());
+                if (advance(path))
+                    return buildPathFromNodePairs(path);
+                path.pop();
+            }
+            return null;
+        }
+
+        public List<Node> buildSpanningPath() {
+            computeNumEdges();
+            for (Node n : getNodes()) {
+                List<Node> path = buildSpanningPath(n);
+                if (path != null)
+                    return path;
+            }
+            return null;
+        }
     }
 }

@@ -155,7 +155,7 @@ public class UnGlueAction extends JosmAction {
         cmds.add(new ChangeCommand(selectedNode, c));
 
         Node n = new Node(selectedNode);
-        n.id = 0;
+        n.clearOsmId();
 
         // If this wasn't called from menu, place it where the cursor is/was
         if(e.getSource() instanceof JPanel) {
@@ -300,7 +300,7 @@ public class UnGlueAction extends JosmAction {
             if (originalNode == pushNode) {
                 // clone the node for all other ways
                 pushNode = new Node(pushNode);
-                pushNode.id = 0;
+                pushNode.clearOsmId();
                 newNodes.add(pushNode);
                 cmds.add(new AddCommand(pushNode));
             }
@@ -330,7 +330,7 @@ public class UnGlueAction extends JosmAction {
                     if (rm.getMember() == originalNode) {
                         if (newRel == null) {
                             newRel = new Relation(r);
-                            newRel.members.clear();
+                            newRel.setMembers(null);
                             rolesToReAdd = new HashSet<String>();
                         }
                         rolesToReAdd.add(rm.getRole());
@@ -339,13 +339,11 @@ public class UnGlueAction extends JosmAction {
             }
             if (newRel != null) {
                 for (RelationMember rm : r.getMembers()) {
-                    //if (rm.member != selectedNode) {
-                    newRel.members.add(rm);
-                    //}
+                    newRel.addMember(rm);
                 }
                 for (Node n : newNodes) {
                     for (String role : rolesToReAdd) {
-                        newRel.members.add(new RelationMember(role, n));
+                        newRel.addMember(new RelationMember(role, n));
                     }
                 }
                 cmds.add(new ChangeCommand(r, newRel));

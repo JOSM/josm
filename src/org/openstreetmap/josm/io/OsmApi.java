@@ -232,8 +232,7 @@ public class OsmApi extends OsmConnection {
         String ret = "";
         try {
             ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true),monitor);
-            osm.id = Long.parseLong(ret.trim());
-            osm.version = 1;
+            osm.setOsmId(Long.parseLong(ret.trim()), 1);
         } catch(NumberFormatException e){
             throw new OsmTransferException(tr("unexpected format of id replied by the server, got ''{0}''", ret));
         }
@@ -257,7 +256,7 @@ public class OsmApi extends OsmConnection {
             // normal mode (0.6 and up) returns new object version.
             try {
                 ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true), monitor);
-                osm.version = Integer.parseInt(ret.trim());
+                osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
             } catch(NumberFormatException e) {
                 throw new OsmTransferException(tr("unexpected format of new version of modified primitive ''{0}'', got ''{1}''", osm.getId(), ret));
             }
@@ -340,8 +339,7 @@ public class OsmApi extends OsmConnection {
                     progressMonitor.setCustomText(tr("Changeset {0} is unchanged. Skipping update.", changeset.getId()));
                     return;
                 }
-                changeset.id = this.changeset.getId();
-                this.changeset.cloneFrom(changeset);
+                this.changeset.setKeys(changeset.getKeys());
                 progressMonitor.setCustomText(tr("Updating changeset {0}...", changeset.getId()));
                 sendRequest(
                         "PUT",
@@ -472,7 +470,6 @@ public class OsmApi extends OsmConnection {
      *    been exhausted), or rewrapping a Java exception.
      */
     private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
-
         StringBuffer responseBody = new StringBuffer();
 
         int retries = getMaxRetries();

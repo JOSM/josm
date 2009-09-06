@@ -90,7 +90,7 @@ public class RelationTree extends JTree {
         public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
             TreePath path  = event.getPath();
             Relation parent = (Relation)event.getPath().getLastPathComponent();
-            if (! parent.incomplete || parent.id == 0)
+            if (! parent.incomplete || parent.getId() == 0)
                 // we don't load complete  or new relations
                 return;
             // launch the download task
@@ -153,7 +153,7 @@ public class RelationTree extends JTree {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                OsmServerObjectReader reader = new OsmServerObjectReader(relation.id, OsmPrimitiveType.from(relation), true /* full load */);
+                OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* full load */);
                 ds = reader.parseOsm(progressMonitor
                         .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {

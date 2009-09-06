@@ -90,20 +90,32 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @return <code>true</code>, if it is safe to save.
      */
     public boolean checkSaveConditions(Layer layer) {
-        if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer) && 1 != new ExtendedDialog(Main.parent, tr("Empty document"), tr("The document contains no data."), new String[] {tr("Save anyway"), tr("Cancel")}, new String[] {"save.png", "cancel.png"}).getValue())
-            return false;
+        if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer)) {
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Empty document"),
+                    new String[] {tr("Save anyway"), tr("Cancel")}
+            );
+            dialog.setContent(tr("The document contains no data."));
+            dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+            dialog.showDialog();
+            if (dialog.getValue() != 1) return false;
+        }
+
         if (layer instanceof GpxLayer && ((GpxLayer)layer).data == null)
             return false;
         if (layer instanceof OsmDataLayer)  {
             ConflictCollection conflicts = ((OsmDataLayer)layer).getConflicts();
             if (conflicts != null && !conflicts.isEmpty()) {
-                int answer = new ExtendedDialog(Main.parent,
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
                         tr("Conflicts"),
-                        tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"),
-                        new String[] {tr("Reject Conflicts and Save"), tr("Cancel")},
-                        new String[] {"save.png", "cancel.png"}).getValue();
-
-                if (answer != 1) return false;
+                        new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
+                );
+                dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
+                dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                dialog.showDialog();
+                if (dialog.getValue() != 1) return false;
             }
         }
         return true;
@@ -189,11 +201,17 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 file = new File(fn);
             }
         }
-        if(file == null || (file.exists() && 1 != new ExtendedDialog(Main.parent,
-                tr("Overwrite"), tr("File exists. Overwrite?"),
-                new String[] {tr("Overwrite"), tr("Cancel")},
-                new String[] {"save_as.png", "cancel.png"}).getValue()))
-            return null;
+        if(file == null || (file.exists())) {
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Overwrite"),
+                    new String[] {tr("Overwrite"), tr("Cancel")}
+            );
+            dialog.setContent(tr("File exists. Overwrite?"));
+            dialog.setButtonIcons(new String[] {"save_as.png", "cancel.png"});
+            dialog.showDialog();
+            if (dialog.getValue() != 1) return null;
+        }
         return file;
     }
 }

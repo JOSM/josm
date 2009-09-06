@@ -45,7 +45,9 @@ public class CollectBackReferencesVisitor extends AbstractVisitor {
 
     public void visit(Node n) {
         for (Way w : ds.ways) {
-            if (w.deleted || w.incomplete) continue;
+            if (w.isDeleted() || w.incomplete) {
+                continue;
+            }
             for (Node n2 : w.getNodes()) {
                 if (n == n2) {
                     data.add(w);
@@ -71,7 +73,9 @@ public class CollectBackReferencesVisitor extends AbstractVisitor {
         // if OSM primitives are made to hold a list of back
         // references.
         for (Relation r : ds.relations) {
-            if (r.incomplete || r.deleted) continue;
+            if (r.incomplete || r.isDeleted()) {
+                continue;
+            }
             for (RelationMember m : r.getMembers()) {
                 if (m.getMember() == p) {
                     if (!data.contains(r)) {

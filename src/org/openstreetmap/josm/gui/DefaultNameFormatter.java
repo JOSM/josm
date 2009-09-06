@@ -73,7 +73,7 @@ public class DefaultNameFormatter implements NameFormatter {
      */
     protected String decorateNameWithId(String name, OsmPrimitive primitive) {
         if (Main.pref.getBoolean("osm-primitives.showid"))
-            return name + tr(" [id: {0}]", primitive.id);
+            return name + tr(" [id: {0}]", primitive.getId());
         else
             return name;
     }
@@ -95,7 +95,7 @@ public class DefaultNameFormatter implements NameFormatter {
                 name = node.getName();
             }
             if (name == null) {
-                name = node.id == 0 ? tr("node") : ""+ node.id;
+                name = node.getId() == 0 ? tr("node") : ""+ node.getId();
             }
             name += " (" + node.getCoor().latToString(CoordinateFormat.getDefaultFormat()) + ", " + node.getCoor().lonToString(CoordinateFormat.getDefaultFormat()) + ")";
         }
@@ -174,7 +174,7 @@ public class DefaultNameFormatter implements NameFormatter {
                 }
             }
             if (nameTag == null) {
-                name += Long.toString(relation.id) + ", ";
+                name += Long.toString(relation.getId()) + ", ";
             } else {
                 name += "\"" + nameTag + "\", ";
             }
@@ -196,6 +196,6 @@ public class DefaultNameFormatter implements NameFormatter {
      * @return the name
      */
     public String format(Changeset changeset) {
-        return tr("Changeset {0}",changeset.id);
+        return tr("Changeset {0}",changeset.getId());
     }
 }

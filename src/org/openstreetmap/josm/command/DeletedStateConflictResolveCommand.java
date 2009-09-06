@@ -70,9 +70,9 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
             if (conflict.getTheir().isDeleted()) {
                 layer.data.unlinkReferencesToPrimitive(conflict.getMy());
-                conflict.getMy().delete(true);
+                conflict.getMy().setDeleted(true);
             } else {
-                conflict.getMy().delete(conflict.getTheir().isDeleted());
+                conflict.getMy().setDeleted(conflict.getTheir().isDeleted());
             }
         } else
             // should not happen

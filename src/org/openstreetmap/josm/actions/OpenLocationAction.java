@@ -30,7 +30,7 @@ public class OpenLocationAction extends JosmAction {
      */
     public OpenLocationAction() {
         super(tr("Open Location..."), "openlocation", tr("Open an URL."),
-        Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.GROUP_MENU), true);
+                Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.GROUP_MENU), true);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -42,12 +42,13 @@ public class OpenLocationAction extends JosmAction {
         JTextField urltext = new JTextField(40);
         all.add(urltext, GBC.eol());
         all.add(layer, GBC.eol());
-        int answer = new ExtendedDialog(Main.parent,
-                        tr("Download Location"),
-                        all,
-                        new String[] {tr("Download URL"), tr("Cancel")},
-                        new String[] {"download.png", "cancel.png"}).getValue();
-        if (answer != 1) return;
+        ExtendedDialog dialog = new ExtendedDialog(Main.parent,
+                tr("Download Location"),
+                new String[] {tr("Download URL"), tr("Cancel")}
+        );
+        dialog.setContent(all);
+        dialog.setButtonIcons(new String[] {"download.png", "cancel.png"});
+        if (dialog.getValue() != 1) return;
         openUrl(layer.isSelected(), urltext.getText());
     }
 

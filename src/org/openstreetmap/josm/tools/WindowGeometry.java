@@ -3,12 +3,16 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 
@@ -42,13 +46,14 @@ public class WindowGeometry {
      * @param extent the size
      * @return the geometry object
      */
-    static public WindowGeometry centerInWindow(Window parent, Dimension extent) {
+    static public WindowGeometry centerInWindow(Component parent, Dimension extent) {
+        Frame parentWindow = JOptionPane.getFrameForComponent(parent);
         Point topLeft = new Point(
-                Math.max(0, (parent.getSize().width - extent.width) /2),
-                Math.max(0, (parent.getSize().height - extent.height) /2)
+                Math.max(0, (parentWindow.getSize().width - extent.width) /2),
+                Math.max(0, (parentWindow.getSize().height - extent.height) /2)
         );
-        topLeft.x += parent.getLocation().x;
-        topLeft.y += parent.getLocation().y;
+        topLeft.x += parentWindow.getLocation().x;
+        topLeft.y += parentWindow.getLocation().y;
         return new WindowGeometry(topLeft, extent);
     }
 

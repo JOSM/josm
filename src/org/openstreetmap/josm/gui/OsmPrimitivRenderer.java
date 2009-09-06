@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
@@ -61,8 +63,56 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
         if (def != null && value != null && def instanceof JLabel) {
             ((JLabel)def).setText(value.getDisplayName(DefaultNameFormatter.getInstance()));
             ((JLabel)def).setIcon(ImageProvider.get(OsmPrimitiveType.from(value)));
+            ((JLabel)def).setToolTipText(buildToolTipText(value));
         }
         return def;
     }
 
+    /**
+     * build the tool tip text for an {@see OsmPrimitive}. It consist of the formatted
+     * key/value pairs for this primitive.
+     * 
+     * @param primitive
+     * @return the tool tip text
+     */
+    public String buildToolTipText(OsmPrimitive primitive) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<html>");
+        // show the id
+        //
+        sb.append("<strong>id</strong>=")
+        .append(primitive.getId())
+        .append("<br>");
+
+        // show the key/value-pairs, sorted by key
+        //
+        ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
+        Collections.sort(keyList);
+        for (int i = 0; i < keyList.size(); i++) {
+            if (i > 0) {
+                sb.append("<br>");
+            }
+            String key = keyList.get(i);
+            sb.append("<strong>")
+            .append(key)
+            .append("</strong>")
+            .append("=");
+            // make sure long values are split into several rows. Otherwise
+            // the tool tip window can become to wide
+            //
+            String value = primitive.get(key);
+            while(value.length() != 0) {
+                sb.append(value.substring(0,Math.min(50, value.length())));
+                if (value.length() > 50) {
+                    sb.append("<br>");
+                    value = value.substring(50);
+                } else {
+                    value = "";
+                }
+            }
+        }
+        sb.append("</html>");
+        return sb.toString();
+    }
 }

@@ -372,7 +372,7 @@ public class DataSet implements Cloneable {
 
     protected void deleteWay(Way way) {
         way.setNodes(null);
-        way.delete(true);
+        way.setDeleted(true);
     }
 
     /**
@@ -469,5 +469,28 @@ public class DataSet implements Cloneable {
             if (r.isModified()) return true;
         }
         return false;
+    }
+
+    public Set<Relation> getReferringRelations(Collection<? extends OsmPrimitive> primitives) {
+        HashSet<Relation> ret = new HashSet<Relation>();
+        if (primitives == null) return ret;
+        Set<? extends OsmPrimitive> referred;
+        if (primitives instanceof Set<?>) {
+            referred = (Set<? extends OsmPrimitive>)primitives;
+        } else {
+            referred = new HashSet<OsmPrimitive>(primitives);
+        }
+        referred.remove(null); // just in case - remove null element from primitives
+        for (Relation r: relations) {
+            if (r.isDeleted() || r.incomplete) {
+                continue;
+            }
+            Set<OsmPrimitive> memberPrimitives = r.getMemberPrimitives();
+            memberPrimitives.retainAll(referred);
+            if (!memberPrimitives.isEmpty()) {
+                ret.add(r);
+            }
+        }
+        return ret;
     }
 }

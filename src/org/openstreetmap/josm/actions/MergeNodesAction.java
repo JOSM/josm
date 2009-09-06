@@ -200,11 +200,16 @@ public class MergeNodesAction extends JosmAction {
         }
 
         if (!components.isEmpty()) {
-            int answer = new ExtendedDialog(Main.parent,
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
                     tr("Enter values for all conflicts."),
-                    p,
-                    new String[] {tr("Solve Conflicts"), tr("Cancel")},
-                    new String[] {"dialogs/conflict.png", "cancel.png"}).getValue();
+                    new String[] {tr("Solve Conflicts"), tr("Cancel")}
+            );
+            dialog.setButtonIcons(new String[] {"dialogs/conflict.png", "cancel.png"});
+            dialog.setContent(p);
+            dialog.showDialog();
+            int answer = dialog.getValue();
+
             if (answer != 1)
                 return null;
             for (Entry<String, JComboBox> e : components.entrySet()) {

@@ -121,11 +121,15 @@ public class PluginDownloader {
     private static boolean download(PluginInformation pd, File file) {
         if(pd.mainversion > AboutAction.getVersionNumber())
         {
-            int answer = new ExtendedDialog(Main.parent,
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
                     tr("Skip download"),
-                    tr("JOSM version {0} required for plugin {1}.", pd.mainversion, pd.name),
-                    new String[] {tr("Download Plugin"), tr("Skip Download")},
-                    new String[] {"download.png", "cancel.png"}).getValue();
+                    new String[] {tr("Download Plugin"), tr("Skip Download")}
+            );
+            dialog.setContent(tr("JOSM version {0} required for plugin {1}.", pd.mainversion, pd.name));
+            dialog.setButtonIcons(new String[] {"download.png", "cancel.png"});
+            dialog.showDialog();
+            int answer = dialog.getValue();
             if (answer != 1)
                 return false;
         }

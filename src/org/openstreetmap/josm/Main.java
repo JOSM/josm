@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -502,6 +503,14 @@ abstract public class Main {
                 if (f!=null) {
                     OpenFileAction.openFile(f);
                 }
+            } catch(IllegalDataException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
             }catch(IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
@@ -526,6 +535,14 @@ abstract public class Main {
         File f = new File(s);
         try {
             OpenFileAction.openFile(f);
+        }catch(IllegalDataException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
         }catch(IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(

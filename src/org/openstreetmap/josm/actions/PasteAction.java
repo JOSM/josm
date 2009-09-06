@@ -68,7 +68,7 @@ public final class PasteAction extends JosmAction {
         /* do the deep copy of the paste buffer contents, leaving the pasteBuffer unchanged */
         for (Node n : pasteBuffer.nodes) {
             Node nnew = new Node(n);
-            nnew.id = 0;
+            nnew.clearOsmId();
             if (Main.map.mapView.getEditLayer() == source) {
                 nnew.setEastNorth(nnew.getEastNorth().add(offsetEast, offsetNorth));
             }
@@ -77,7 +77,7 @@ public final class PasteAction extends JosmAction {
         for (Way w : pasteBuffer.ways) {
             Way wnew = new Way();
             wnew.cloneFrom(w);
-            wnew.id = 0;
+            wnew.clearOsmId();
             /* make sure we reference the new nodes corresponding to the old ones */
             List<Node> nodes = new ArrayList<Node>();
             for (Node n : w.getNodes()) {
@@ -88,14 +88,13 @@ public final class PasteAction extends JosmAction {
         }
         for (Relation r : pasteBuffer.relations) {
             Relation rnew = new Relation(r);
-            rnew.id = 0;
+            r.clearOsmId();
             List<RelationMember> members = new ArrayList<RelationMember>();
             for (RelationMember m : r.getMembers()) {
                 OsmPrimitive mo = map.get(m.getMember());
-                if(mo != null) /* TODO - This only prevents illegal data, but kills the relation */
+                if(mo != null) /* FIXME - This only prevents illegal data, but kills the relation */
                 {
-                    RelationMember mnew = new RelationMember(m);
-                    mnew.member = map.get(m.getMember());
+                    RelationMember mnew = new RelationMember(m.getRole(), map.get(m.getMember()));
                     members.add(mnew);
                 }
             }

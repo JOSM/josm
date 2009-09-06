@@ -59,7 +59,7 @@ public  class SelectionTableCellRenderer extends JLabel implements TableCellRend
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append("<strong>id</strong>=")
-        .append(primitive.id)
+        .append(primitive.getId())
         .append("<br>");
         ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
         Collections.sort(keyList);

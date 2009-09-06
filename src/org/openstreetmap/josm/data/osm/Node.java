@@ -16,8 +16,7 @@ public final class Node extends OsmPrimitive {
     private CachedLatLon coor;
 
     public final void setCoor(LatLon coor) {
-        if(coor != null)
-        {
+        if(coor != null){
             if(this.coor == null) {
                 this.coor = new CachedLatLon(coor);
             } else {
@@ -46,27 +45,37 @@ public final class Node extends OsmPrimitive {
     }
 
 
+    /**
+     * Create a new local node with id 0.
+     * 
+     */
+    public Node() {
+        this(0);
+    }
+
 
     /**
      * Create an incomplete Node object
      */
     public Node(long id) {
-        this.id = id;
-        incomplete = true;
+        super(id);
     }
 
     /**
      * Create an identical clone of the argument (including the id)
      */
     public Node(Node clone) {
+        super(clone.getId());
         cloneFrom(clone);
     }
 
     public Node(LatLon latlon) {
+        super(0);
         setCoor(latlon);
     }
 
     public Node(EastNorth eastNorth) {
+        super(0);
         setEastNorth(eastNorth);
     }
 
@@ -80,8 +89,8 @@ public final class Node extends OsmPrimitive {
     }
 
     @Override public String toString() {
-        if (coor == null) return "{Node id="+id+"}";
-        return "{Node id="+id+",version="+version+",lat="+coor.lat()+",lon="+coor.lon()+"}";
+        if (coor == null) return "{Node id="+getId()+"}";
+        return "{Node id="+getId()+",version="+getVersion()+",lat="+coor.lat()+",lon="+coor.lon()+"}";
     }
 
     @Override
@@ -100,7 +109,7 @@ public final class Node extends OsmPrimitive {
     }
 
     public int compareTo(OsmPrimitive o) {
-        return o instanceof Node ? Long.valueOf(id).compareTo(o.id) : 1;
+        return o instanceof Node ? Long.valueOf(getId()).compareTo(o.getId()) : 1;
     }
 
     @Override

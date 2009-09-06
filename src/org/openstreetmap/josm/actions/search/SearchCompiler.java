@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.PushbackReader;
 import java.io.StringReader;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,7 +82,7 @@ public class SearchCompiler {
         private long id;
         public Id(long id) {this.id = id;}
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.id == id;
+            return osm.getId() == id;
         }
         @Override public String toString() {return "id="+id;}
     }
@@ -328,7 +329,7 @@ public class SearchCompiler {
                 }
             }
             if (osm.user != null) {
-                String name = osm.user.name;
+                String name = osm.user.getName();
                 // is not Java 1.5
                 //String name = java.text.Normalizer.normalize(name, java.text.Normalizer.Form.NFC);
                 if (!caseSensitive) {
@@ -363,11 +364,23 @@ public class SearchCompiler {
 
     private static class UserMatch extends Match {
         private User user;
-        public UserMatch(String user) { this.user = User.get(user); }
-        @Override public boolean match(OsmPrimitive osm) {
-            return osm.user == user;
+        public UserMatch(String user) {
+            List<User> users = User.getByName(user);
+            if (!users.isEmpty()) {
+                // selecting an arbitrary user
+                this.user = users.get(0);
+            } else {
+                user = null;
+            }
         }
-        @Override public String toString() { return "user=" + user.name; }
+        @Override public boolean match(OsmPrimitive osm) {
+            if (osm.user == null && user == null) return true;
+            if (osm.user == null) return false;
+            return osm.user.equals(user);
+        }
+        @Override public String toString() {
+            return "user=" + user == null ? "" : user.getName();
+        }
     }
 
     private static class NodeCount extends Match {

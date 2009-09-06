@@ -200,7 +200,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         protected String createInfoUrl(Object infoObject) {
             User user = (User)infoObject;
             try {
-                return getBaseUserUrl() + "/" + URLEncoder.encode(user.name, "UTF-8");
+                return getBaseUserUrl() + "/" + URLEncoder.encode(user.getName(), "UTF-8");
             } catch(UnsupportedEncodingException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
@@ -250,14 +250,14 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         public int compareTo(UserInfo o) {
             if (count < o.count) return 1;
             if (count > o.count) return -1;
-            if (user== null || user.name == null) return 1;
-            if (o.user == null || o.user.name == null) return -1;
-            return user.name.compareTo(o.user.name);
+            if (user== null || user.getName() == null) return 1;
+            if (o.user == null || o.user.getName() == null) return -1;
+            return user.getName().compareTo(o.user.getName());
         }
 
         public String getName() {
             if (user == null) return null;
-            return user.name;
+            return user.getName();
         }
     }
 

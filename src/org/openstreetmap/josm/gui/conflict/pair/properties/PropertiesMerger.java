@@ -585,7 +585,7 @@ public class PropertiesMerger extends JPanel implements Observer {
                             + "On the next upload the server will assign<br>"
                             + "it a new id.<br>"
                             + "Do yo agree?</html>",
-                            model.getMyPrimitive().id
+                            model.getMyPrimitive().getId()
                     ),
                     tr("Reset id to 0"),
                     JOptionPane.YES_NO_OPTION,
@@ -624,7 +624,7 @@ public class PropertiesMerger extends JPanel implements Observer {
                     tr("<html>JOSM will have to remove your local primitive with id {0}<br>"
                             + "from the dataset.<br>"
                             + "Do you agree?</html>",
-                            model.getMyPrimitive().id
+                            model.getMyPrimitive().getId()
                     ),
                     tr("Remove from dataset"),
                     JOptionPane.YES_NO_OPTION,

@@ -5,11 +5,21 @@ package org.openstreetmap.josm.data.osm;
  * members. Since membership may be qualified by a "role", a simple
  * list is not sufficient.
  *
- * @author Frederik Ramm <frederik@remote.org>
  */
 public class RelationMember {
 
+    /**
+     * 
+     * @deprecated use {@see #getRole()} or create a clone in order to assign a new role
+     */
+    @Deprecated
     public String role;
+
+    /**
+     * 
+     * @deprecated use {@see #getMember()} or create a clone in order to assign a new member
+     */
+    @Deprecated
     public OsmPrimitive member;
 
     /**
@@ -18,11 +28,9 @@ public class RelationMember {
      * @since 1930
      */
     public String getRole() {
-        if (role == null) {
+        if (role == null)
             return "";
-        } else {
-            return role;
-        }
+        return role;
     }
 
     /**
@@ -44,19 +52,19 @@ public class RelationMember {
     }
 
     /**
-    *
-    * @return True if member is way
-    * @since 1937
-    */
+     *
+     * @return True if member is way
+     * @since 1937
+     */
     public boolean isWay() {
         return member instanceof Way;
     }
 
     /**
-    *
-    * @return True if member is node
-    * @since 1937
-    */
+     *
+     * @return True if member is node
+     * @since 1937
+     */
     public boolean isNode() {
         return member instanceof Node;
     }
@@ -71,28 +79,28 @@ public class RelationMember {
     }
 
     /**
-    *
-    * @return Member as way
-    * @since 1937
-    */
+     *
+     * @return Member as way
+     * @since 1937
+     */
     public Way getWay() {
         return (Way)member;
     }
 
     /**
-    *
-    * @return Member as node
-    * @since 1937
-    */
+     *
+     * @return Member as node
+     * @since 1937
+     */
     public Node getNode() {
         return (Node)member;
     }
 
     /**
-    *
-    * @return Member
-    * @since 1937
-    */
+     *
+     * @return Member
+     * @since 1937
+     */
     public OsmPrimitive getMember() {
         return member;
     }
@@ -100,7 +108,7 @@ public class RelationMember {
 
     /**
      * Default constructor. Does nothing.
-     * @deprecated Use other constructors because RelationMember class will became immutable
+     * @deprecated Use other constructors because RelationMember class will become immutable
      * in the future
      */
     @Deprecated

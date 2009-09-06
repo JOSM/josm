@@ -48,7 +48,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
         }
 
         oldRole = relation.getMember(position).getRole();
-        relation.getMember(position).role = newRole;
+        relation.getMember(position).getRole().equals(newRole);
 
         oldModified = relation.isModified();
         relation.setModified(true);
@@ -56,7 +56,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
     }
 
     @Override public void undoCommand() {
-        relation.getMember(position).role = oldRole;
+        relation.getMember(position).getRole().equals(oldRole);
         relation.setModified(oldModified);
     }
 

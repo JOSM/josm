@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,7 +16,6 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.xml.sax.SAXException;
 
 public class OsmImporter extends FileImporter {
 
@@ -29,25 +27,18 @@ public class OsmImporter extends FileImporter {
         super(filter);
     }
 
-    @Override public void importData(File file) throws IOException {
+    @Override public void importData(File file) throws IOException, IllegalDataException {
         try {
             FileInputStream in = new FileInputStream(file);
             importData(in, file);
-        } catch (HeadlessException e) {
-            e.printStackTrace();
-            throw new IOException(tr("Could not read \"{0}\"", file.getName()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             throw new IOException(tr("File \"{0}\" does not exist", file.getName()));
-        } catch (SAXException e) {
-            e.printStackTrace();
-            throw new IOException(tr("Parsing file \"{0}\" failed", file.getName()));
         }
     }
 
-    protected void importData(InputStream in, File associatedFile) throws SAXException, IOException {
-        OsmReader osm = OsmReader.parseDataSetOsm(in, NullProgressMonitor.INSTANCE);
-        DataSet dataSet = osm.getDs();
+    protected void importData(InputStream in, File associatedFile) throws IllegalDataException {
+        DataSet dataSet = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
         final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
         // FIXME: remove UI stuff from IO subsystem
         //

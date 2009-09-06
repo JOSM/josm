@@ -88,7 +88,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
 
 
     public boolean canReload() {
-        return relation != null && relation.id > 0;
+        return relation != null && relation.getId() > 0;
     }
 
     public Relation getRelation() {

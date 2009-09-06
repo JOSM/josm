@@ -50,7 +50,7 @@ public class RemoveRelationMemberCommand extends Command {
             return false;
         } else {
             relation.removeMember(removeIndex);
-            relation.modified = true;
+            relation.setModified(true);
             return true;
         }
     }
@@ -58,22 +58,22 @@ public class RemoveRelationMemberCommand extends Command {
     @Override public void undoCommand() {
         super.undoCommand();
         relation.addMember(member);
-        relation.modified = this.getOrig(relation).modified;
+        relation.setModified(this.getOrig(relation).isModified());
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {}
 
     @Override public MutableTreeNode description() {
         String msg = "";
-        switch(OsmPrimitiveType.from(member.member)) {
-        case NODE: msg = marktr("Remove node ''{0}'' at position {1} from relation ''{2}''"); break;
-        case WAY: msg = marktr("Remove way ''{0}'' at position {1} from relation ''{2}''"); break;
-        case RELATION: msg = marktr("Remove relation ''{0}'' at position {1} from relation ''{2}''"); break;
+        switch(OsmPrimitiveType.from(member.getMember())) {
+            case NODE: msg = marktr("Remove node ''{0}'' at position {1} from relation ''{2}''"); break;
+            case WAY: msg = marktr("Remove way ''{0}'' at position {1} from relation ''{2}''"); break;
+            case RELATION: msg = marktr("Remove relation ''{0}'' at position {1} from relation ''{2}''"); break;
         }
         return new DefaultMutableTreeNode(
                 new JLabel(
                         tr(msg,
-                                member.member.getDisplayName(DefaultNameFormatter.getInstance()),
+                                member.getMember().getDisplayName(DefaultNameFormatter.getInstance()),
                                 relation.getMembers().indexOf(member),
                                 relation.getDisplayName(DefaultNameFormatter.getInstance())
                         ),

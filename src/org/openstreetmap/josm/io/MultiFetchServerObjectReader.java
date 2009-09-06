@@ -203,10 +203,10 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (relation.getId() == 0) return this;
         remember(relation.getId(), OsmPrimitiveType.RELATION);
         for (RelationMember member : relation.getMembers()) {
-            if (OsmPrimitiveType.from(member.member).equals(OsmPrimitiveType.RELATION)) {
+            if (OsmPrimitiveType.from(member.getMember()).equals(OsmPrimitiveType.RELATION)) {
                 // avoid infinite recursion in case of cyclic dependencies in relations
                 //
-                if (relations.contains(member.member.getId())) {
+                if (relations.contains(member.getMember().getId())) {
                     continue;
                 }
             }
@@ -324,8 +324,10 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (in == null) return;
         progressMonitor.subTask(tr("Downloading OSM data..."));
         try {
-            final OsmReader osm = OsmReader.parseDataSetOsm(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            merge(osm.getDs());
+
+            merge(
+                    OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false))
+            );
         } catch(Exception e) {
             throw new OsmTransferException(e);
         }
@@ -347,8 +349,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             return;
         progressMonitor.subTask(tr("Downloading OSM data..."));
         try {
-            final OsmReader osm = OsmReader.parseDataSetOsm(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            merge(osm.getDs());
+            merge(
+                    OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false))
+            );
         } catch(Exception e) {
             throw new OsmTransferException(e);
         }

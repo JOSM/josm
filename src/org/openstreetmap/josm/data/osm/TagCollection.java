@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -570,7 +571,11 @@ public class TagCollection implements Iterable<Tag> {
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("tag collection can't be applied to a primitive because there are keys with multiple values"));
         for (Tag tag: tags) {
-            primitive.put(tag.getKey(), tag.getValue());
+            if (tag.getValue() == null || tag.getValue().equals("")) {
+                primitive.remove(tag.getKey());
+            } else {
+                primitive.put(tag.getKey(), tag.getValue());
+            }
         }
     }
 
@@ -680,5 +685,25 @@ public class TagCollection implements Iterable<Tag> {
             ret.add(new Tag(key));
         }
         return ret;
+    }
+
+    /**
+     * Replies the concatenation of all tag values (concatenated by a semicolon)
+     * 
+     * @return the concatenation of all tag values
+     */
+    public String getJoinedValues(String key) {
+        StringBuffer buffer = new StringBuffer();
+        List<String> values = new ArrayList<String>(getValues(key));
+        values.remove("");
+        Collections.sort(values);
+        Iterator<String> iter = values.iterator();
+        while (iter.hasNext()) {
+            buffer.append(iter.next());
+            if (iter.hasNext()) {
+                buffer.append(";");
+            }
+        }
+        return buffer.toString();
     }
 }

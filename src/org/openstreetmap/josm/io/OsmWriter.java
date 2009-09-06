@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -207,11 +208,17 @@ public class OsmWriter extends XmlWriter implements Visitor {
         }
         // user and visible added with 0.4 API
         if (osm.user != null) {
-            out.print(" user='"+XmlWriter.encode(osm.user.name)+"'");
+            if(osm.user.isLocalUser()) {
+                out.print(" user='"+XmlWriter.encode(osm.user.getName())+"'");
+            } else if (osm.user.isOsmUser()) {
+                // uid added with 0.6
+                out.print(" uid='"+ osm.user.getId()+"'");
+                out.print(" user='"+XmlWriter.encode(osm.user.getName())+"'");
+            }
         }
         out.print(" visible='"+osm.isVisible()+"'");
-        if (osm.version != -1) {
-            out.print(" version='"+osm.version+"'");
+        if (osm.getVersion() != 0) {
+            out.print(" version='"+osm.getVersion()+"'");
         }
         if (this.changeset != null && this.changeset.getId() != 0) {
             out.print(" changeset='"+this.changeset.getId()+"'" );

@@ -117,12 +117,16 @@ public class SearchAction extends JosmAction{
         final JPanel p = new JPanel();
         p.add(left);
         p.add(right);
-
-        int result = new ExtendedDialog(Main.parent,
+        ExtendedDialog dialog = new ExtendedDialog(
+                Main.parent,
                 tr("Search"),
-                p,
-                new String[] {tr("Start Search"), tr("Cancel")},
-                new String[] {"dialogs/search.png", "cancel.png"}).getValue();
+                new String[] {tr("Start Search"), tr("Cancel")}
+        );
+        dialog.setButtonIcons(new String[] {"dialogs/search.png", "cancel.png"});
+        dialog.setContent(p);
+        dialog.showDialog();
+        int result = dialog.getValue();
+
         if(result != 1) return;
 
         // User pressed OK - let's perform the search

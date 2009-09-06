@@ -197,10 +197,10 @@ public class MemberTableModel extends AbstractTableModel {
 
     public void updateMemberReferences(DataSet ds) {
         for (RelationMember member : members) {
-            if (member.getMember().id == 0) {
+            if (member.getMember().getId() == 0) {
                 continue;
             }
-            OsmPrimitive primitive = ds.getPrimitiveById(member.getMember().id);
+            OsmPrimitive primitive = ds.getPrimitiveById(member.getMember().getId());
             if (primitive != null) {
                 member.member = primitive;
             }

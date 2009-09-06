@@ -67,7 +67,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     public HistoryLoadTask add(OsmPrimitive primitive) {
         if (primitive == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitive"));
-        return add(primitive.id, OsmPrimitiveType.from(primitive));
+        return add(primitive.getId(), OsmPrimitiveType.from(primitive));
     }
 
     public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) {

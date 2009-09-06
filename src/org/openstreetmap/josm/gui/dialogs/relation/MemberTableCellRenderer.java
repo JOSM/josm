@@ -34,7 +34,7 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
     public String buildToolTipText(OsmPrimitive primitive) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
-        sb.append("<strong>id</strong>=").append(primitive.id).append("<br>");
+        sb.append("<strong>id</strong>=").append(primitive.getId()).append("<br>");
         ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {

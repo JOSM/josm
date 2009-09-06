@@ -49,13 +49,17 @@ abstract public class DiskAccessAction extends JosmAction {
 
         if (!open) {
             File file = fc.getSelectedFile();
-            if (file == null || (file.exists() && 1 !=
-                new ExtendedDialog(Main.parent,
+            if (file != null && file.exists()) {
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
                         tr("Overwrite"),
-                        tr("File exists. Overwrite?"),
-                        new String[] {tr("Overwrite"), tr("Cancel")},
-                        new String[] {"save_as.png", "cancel.png"}).getValue()))
-                return null;
+                        new String[] {tr("Overwrite"), tr("Cancel")}
+                );
+                dialog.setContent(tr("File exists. Overwrite?"));
+                dialog.setButtonIcons(new String[] {"save_as.png", "cancel.png"});
+                if (dialog.getValue() != 1)
+                    return null;
+            }
         }
 
         return fc;

@@ -184,7 +184,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
         for (OsmParentChildPair pair: pairs) {
             if (pair.getParent() instanceof Way) {
                 Way w = (Way)pair.getParent();
-                System.out.println(tr("removing reference from way {0}",w.id));
+                System.out.println(tr("removing reference from way {0}",w.getId()));
                 List<Node> wayNodes = w.getNodes();
                 wayNodes.remove(primitive);
                 w.setNodes(wayNodes);
@@ -193,14 +193,14 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
                 //
                 if (w.getNodesCount() < 2) {
                     System.out.println(tr("Warning: Purging way {0} because number of nodes dropped below 2. Current is {1}",
-                            w.id,w.getNodesCount()));
+                            w.getId(),w.getNodesCount()));
                     if (!hive.contains(w)) {
                         hive.add(w);
                     }
                 }
             } else if (pair.getParent() instanceof Relation) {
                 Relation r = (Relation)pair.getParent();
-                System.out.println(tr("removing reference from relation {0}",r.id));
+                System.out.println(tr("removing reference from relation {0}",r.getId()));
                 r.removeMembersFor(primitive);
             }
         }

@@ -91,7 +91,7 @@ public class DeleteCommand extends Command {
     public boolean executeCommand() {
         super.executeCommand();
         for (OsmPrimitive osm : toDelete) {
-            osm.delete(true);
+            osm.setDeleted(true);
         }
         return true;
     }

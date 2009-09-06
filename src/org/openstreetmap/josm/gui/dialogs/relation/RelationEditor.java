@@ -116,10 +116,10 @@ public abstract class RelationEditor extends ExtendedDialog {
     protected void updateTitle() {
         if (getRelation() == null) {
             setTitle(tr("Create new relation in layer ''{0}''", layer.getName()));
-        } else if (getRelation().id == 0) {
+        } else if (getRelation().getId() == 0) {
             setTitle(tr("Edit new relation in layer ''{0}''", layer.getName()));
         } else {
-            setTitle(tr("Edit relation #{0} in layer ''{1}''", relation.id, layer.getName()));
+            setTitle(tr("Edit relation #{0} in layer ''{1}''", relation.getId(), layer.getName()));
         }
     }
     /**

@@ -29,19 +29,19 @@ public final class Changeset extends OsmPrimitive {
     }
 
     public int compareTo(OsmPrimitive other) {
-        if (other instanceof Changeset) return Long.valueOf(id).compareTo(other.id);
+        if (other instanceof Changeset) return Long.valueOf(getId()).compareTo(other.getId());
         return 1;
     }
 
     @Override
     public String getName() {
         // no translation
-        return "changeset " + id;
+        return "changeset " + getId();
     }
 
     @Override
     public String getLocalName(){
-        return tr("Changeset {0}",id);
+        return tr("Changeset {0}",getId());
     }
 
     @Override

@@ -93,12 +93,11 @@ public class DiffResultReader extends AbstractVisitor {
 
     public void visit(Node n) {
         String key = "node:" + (newIdMap.containsKey(n) ? newIdMap.get(n) : n.getId());
-        System.out.println("key: "+key);
         Long[] nv = versions.get(key);
         if (nv != null) {
             processed.add(n);
             if (!n.isDeleted()) {
-                n.id = nv[0]; n.version = nv[1].intValue();
+                n.setOsmId(nv[0], nv[1].intValue());
             }
         }
     }
@@ -108,7 +107,7 @@ public class DiffResultReader extends AbstractVisitor {
         if (nv != null) {
             processed.add(w);
             if (!w.isDeleted()) {
-                w.id = nv[0]; w.version = nv[1].intValue();
+                w.setOsmId(nv[0], nv[1].intValue());
             }
         }
     }
@@ -118,7 +117,7 @@ public class DiffResultReader extends AbstractVisitor {
         if (nv != null) {
             processed.add(r);
             if (!r.isDeleted()) {
-                r.id = nv[0]; r.version = nv[1].intValue();
+                r.setOsmId(nv[0], nv[1].intValue());
             }
         }
     }

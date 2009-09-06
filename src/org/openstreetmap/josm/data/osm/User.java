@@ -1,7 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A simple class to keep a list of user names.
@@ -10,33 +12,115 @@ import java.util.HashMap;
  * a reference to an user object, and make sure that for each username there
  * is only one user object.
  *
- * @author fred
  *
  */
 public class User {
+    static private long uidCounter = 0;
+    /**
+     * the map of known users
+     */
+    private static HashMap<Long,User> userMap = new HashMap<Long,User>();
 
-    /** storage for existing User objects. */
-    private static HashMap<String,User> userMap = new HashMap<String,User>();
 
-    /** the username. */
-    public String name;
+    private static long getNextLocalUid() {
+        synchronized(User.class) {
+            uidCounter--;
+            return uidCounter;
+        }
+    }
 
-    /** the user ID (since API 0.6) */
-    public String uid;
+    /**
+     * Creates a local user with the given name
+     * 
+     * @param name the name
+     */
+    public static User createLocalUser(String name) {
+        User user = new User(getNextLocalUid(), name);
+        userMap.put(user.getId(), user);
+        return user;
+    }
+
+    /**
+     * Creates a user known to the OSM server
+     * 
+     * @param uid  the user id
+     * @param name the name
+     */
+    public static User  createOsmUser(long uid, String name) {
+        User user = new User(uid, name);
+        userMap.put(user.getId(), user);
+        return user;
+    }
+
+
+    /**
+     * Returns the user with user id <code>uid</code> or null if this user doesn't exist
+     * 
+     * @param uid the user id
+     * @return the user; null, if there is no user with  this id
+     */
+    public static User getById(long uid) {
+        return userMap.get(uid);
+    }
+
+    /**
+     * Returns the list of users with name <code>name</code> or the empty list if
+     * no such users exist
+     * 
+     * @param name the user name
+     * @return the list of users with name <code>name</code> or the empty list if
+     * no such users exist
+     */
+    public static List<User> getByName(String name) {
+        name = name == null ? "" : name;
+        List<User> ret = new ArrayList<User>();
+        for (User user: userMap.values()) {
+            if (user.getName().equals(name)) {
+                ret.add(user);
+            }
+        }
+        return ret;
+    }
+
+    /** the user name */
+    private String name;
+    /** the user id */
+    private long uid;
+
+    /**
+     * Replies the user name
+     * 
+     * @return the user name. Never null, but may be the empty string
+     */
+    public String getName() {
+        return name == null ? "" : name;
+    }
+
+    /**
+     * Replies the user id. If this user is known to the OSM server the positive user id
+     * from the server is replied. Otherwise, a negative local value is replied.
+     * 
+     * A negative local is only unique during an editing session. It is lost when the
+     * application is closed and there is no guarantee that a negative local user id is
+     * always bound to a user with the same name.
+     * 
+     */
+    public long getId() {
+        return uid;
+    }
 
     /** private constructor, only called from get method. */
-    private User(String name) {
+    private User(long uid, String name) {
+        this.uid = uid;
         this.name = name;
     }
 
-    /** returns a new or existing User object that represents the given name. */
-    public static User get(String name) {
-        User user = userMap.get(name);
-        if (user == null) {
-            user = new User(name);
-            userMap.put(name, user);
-        }
-        return user;
+    public boolean isOsmUser() {
+        return uid > 0;
+    }
+
+    public boolean isLocalUser() {
+        return uid < 0;
     }
 
     @Override
@@ -44,7 +128,7 @@ public class User {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+        result = prime * result + (int) (uid ^ (uid >>> 32));
         return result;
     }
 
@@ -62,10 +146,7 @@ public class User {
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (uid == null) {
-            if (other.uid != null)
-                return false;
-        } else if (!uid.equals(other.uid))
+        if (uid != other.uid)
             return false;
         return true;
     }

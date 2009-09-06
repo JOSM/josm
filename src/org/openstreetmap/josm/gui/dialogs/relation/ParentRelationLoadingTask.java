@@ -69,7 +69,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
      * 
      * @exception IllegalArgumentException thrown if child is null
      * @exception IllegalArgumentException thrown if layer is null
-     * @exception IllegalArgumentException thrown if child.id == 0
+     * @exception IllegalArgumentException thrown if child.getId() == 0
      */
     public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor ) {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);
@@ -77,8 +77,8 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "child"));
         if (layer == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
-        if (child.id == 0)
-            throw new IllegalArgumentException(tr("child.id >0 expected. Got {1}", child.id));
+        if (child.getId() == 0)
+            throw new IllegalArgumentException(tr("child.getId() >0 expected. Got {1}", child.getId()));
         referrers = null;
         this.layer = layer;
         parents = new ArrayList<Relation>();
@@ -149,7 +149,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
         }
         parents.clear();
         for (Relation parent : referrers.relations) {
-            parents.add((Relation)getLayer().data.getPrimitiveById(parent.id));
+            parents.add((Relation)getLayer().data.getPrimitiveById(parent.getId()));
         }
         if (continuation != null) {
             continuation.run();

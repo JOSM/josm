@@ -36,6 +36,14 @@ public final class PasteTagsAction extends JosmAction {
         copyAction.addListener(this);
     }
 
+    static private List<Class<? extends OsmPrimitive>> osmPrimitiveClasses;
+    {
+        osmPrimitiveClasses = new ArrayList<Class<? extends OsmPrimitive>>();
+        osmPrimitiveClasses.add(Node.class);
+        osmPrimitiveClasses.add(Way.class);
+        osmPrimitiveClasses.add(Relation.class);
+    }
+
     /**
      * Replies true if the source for tag pasting is heterogeneous, i.e. if it doesn't consist of
      * {@see OsmPrimitive}s of exactly one type
@@ -125,7 +133,7 @@ public final class PasteTagsAction extends JosmAction {
 
     protected Map<OsmPrimitiveType, Integer> getSourceStatistics() {
         HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
-        for (Class<? extends OsmPrimitive> type: new Class[] {Node.class, Way.class, Relation.class}) {
+        for (Class<? extends OsmPrimitive> type: osmPrimitiveClasses) {
             if (!getSourceTagsByType(type).isEmpty()) {
                 ret.put(OsmPrimitiveType.from(type), getSourcePrimitivesByType(type).size());
             }
@@ -135,7 +143,7 @@ public final class PasteTagsAction extends JosmAction {
 
     protected Map<OsmPrimitiveType, Integer> getTargetStatistics() {
         HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
-        for (Class<? extends OsmPrimitive> type: new Class[] {Node.class, Way.class, Relation.class}) {
+        for (Class<? extends OsmPrimitive> type: osmPrimitiveClasses) {
             int count = getSubcollectionByType(getEditLayer().data.getSelected(), type).size();
             if (count > 0) {
                 ret.put(OsmPrimitiveType.from(type), count);
@@ -155,7 +163,7 @@ public final class PasteTagsAction extends JosmAction {
      */
     protected void pasteFromHomogeneousSource(Collection<? extends OsmPrimitive> targets) {
         TagCollection tc = null;
-        for (Class<? extends OsmPrimitive> type : new Class[] {Node.class, Way.class, Relation.class}) {
+        for (Class<? extends OsmPrimitive> type : osmPrimitiveClasses) {
             TagCollection tc1 = getSourceTagsByType(type);
             if (!tc1.isEmpty()) {
                 tc = tc1;

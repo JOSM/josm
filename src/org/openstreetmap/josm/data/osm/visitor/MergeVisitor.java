@@ -235,14 +235,14 @@ public class MergeVisitor extends AbstractVisitor {
         //
         if (myPrimitivesWithDefinedIds.containsKey(other.getId())) {
             P my = myPrimitivesWithDefinedIds.get(other.getId());
-            if (my.version <= other.version) {
+            if (my.getVersion() <= other.getVersion()) {
                 if (! my.isVisible() && other.isVisible()) {
                     // should not happen
                     //
                     logger.warning(tr("My primitive with id {0} and version {1} is visible although "
                             + "their primitive with lower version {2} is not visible. "
                             + "Can't deal with this inconsistency. Keeping my primitive. ",
-                            Long.toString(my.getId()),Long.toString(my.version), Long.toString(other.version)
+                            Long.toString(my.getId()),Long.toString(my.getVersion()), Long.toString(other.getVersion())
                     ));
                     merged.put(other, my);
                 } else if (my.isVisible() && ! other.isVisible()) {
@@ -269,7 +269,7 @@ public class MergeVisitor extends AbstractVisitor {
                     // take. We take mine.
                     //
                     merged.put(other, my);
-                } else if (my.isDeleted() && ! other.isDeleted() && my.version == other.version) {
+                } else if (my.isDeleted() && ! other.isDeleted() && my.getVersion() == other.getVersion()) {
                     // same version, but my is deleted. Assume mine takes precedence
                     // otherwise too many conflicts when refreshing from the server
                     merged.put(other, my);
@@ -287,16 +287,16 @@ public class MergeVisitor extends AbstractVisitor {
                     }
                     my.cloneFrom(other);
                     merged.put(other, my);
-                } else if (! my.isModified() && !other.isModified() && my.version == other.version) {
+                } else if (! my.isModified() && !other.isModified() && my.getVersion() == other.getVersion()) {
                     // both not modified. Keep mine
                     //
                     merged.put(other,my);
-                } else if (! my.isModified() && !other.isModified() && my.version < other.version) {
+                } else if (! my.isModified() && !other.isModified() && my.getVersion() < other.getVersion()) {
                     // my not modified but other is newer. clone other onto mine.
                     //
                     my.cloneFrom(other);
                     merged.put(other,my);
-                } else if (my.isModified() && ! other.isModified() && my.version == other.version) {
+                } else if (my.isModified() && ! other.isModified() && my.getVersion() == other.getVersion()) {
                     // my is same as other but mine is modified
                     // => keep mine
                     merged.put(other, my);

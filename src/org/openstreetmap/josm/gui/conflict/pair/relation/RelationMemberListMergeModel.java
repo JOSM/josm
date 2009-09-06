@@ -24,8 +24,8 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
         boolean ret = e1.getRole().equals(e2.getRole());
-        if (e1.getMember().id > 0 ) {
-            ret = ret && (e1.getMember().id == e2.getMember().id);
+        if (e1.getMember().getId() > 0 ) {
+            ret = ret && (e1.getMember().getId() == e2.getMember().getId());
         } else {
             ret = ret && (e1 == e2);
         }
@@ -41,8 +41,8 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
             @Override
             public boolean isCellEditable(int row, int column) {
                 switch(column) {
-                case 1: return true;
-                default: return false;
+                    case 1: return true;
+                    default: return false;
                 }
             }
         };

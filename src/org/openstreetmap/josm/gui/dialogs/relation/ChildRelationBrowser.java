@@ -360,7 +360,7 @@ public class ChildRelationBrowser extends JPanel {
          * @param parent the parent relation
          */
         protected void rememberChildRelationsToDownload(Relation parent) {
-            downloadedRelationIds.add(parent.id);
+            downloadedRelationIds.add(parent.getId());
             for (RelationMember member: parent.getMembers()) {
                 if (member.isRelation()) {
                     Relation child = member.getRelation();
@@ -402,12 +402,12 @@ public class ChildRelationBrowser extends JPanel {
             try {
                 while(! relationsToDownload.isEmpty() && !cancelled) {
                     Relation r = relationsToDownload.pop();
-                    if (r.id == 0) {
+                    if (r.getId() == 0) {
                         continue;
                     }
                     rememberChildRelationsToDownload(r);
                     progressMonitor.setCustomText(tr("Downloading relation {0}", r.getDisplayName(DefaultNameFormatter.getInstance())));
-                    OsmServerObjectReader reader = new OsmServerObjectReader(r.id, OsmPrimitiveType.RELATION,
+                    OsmServerObjectReader reader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION,
                             true);
                     DataSet dataSet = null;
                     try {
@@ -513,11 +513,11 @@ public class ChildRelationBrowser extends JPanel {
                 Iterator<Relation> it = relations.iterator();
                 while(it.hasNext() && !cancelled) {
                     Relation r = it.next();
-                    if (r.id == 0) {
+                    if (r.getId() == 0) {
                         continue;
                     }
                     progressMonitor.setCustomText(tr("Downloading relation {0}", r.getDisplayName(DefaultNameFormatter.getInstance())));
-                    OsmServerObjectReader reader = new OsmServerObjectReader(r.id, OsmPrimitiveType.RELATION,
+                    OsmServerObjectReader reader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION,
                             true);
                     DataSet dataSet = reader.parseOsm(progressMonitor
                             .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));

@@ -118,31 +118,31 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
+     * Creates a new way with id 0.
+     * 
+     */
+    public Way(){
+    }
+
+    /**
      * Create an identical clone of the argument (including the id).
      * 
      * @param original  the original way. Must not be null.
      */
     public Way(Way original) {
+        super(original.getId());
         cloneFrom(original);
     }
 
     /**
-     * Create an empty way without id. Use this only if you set meaningful
-     * values yourself.
-     */
-    public Way() {
-    }
-
-    /**
-     * Create an incomplete Way with a given id.
+     * Creates a new way for the given id. If the id > 0, the way is marked
+     * as incomplete.
      * 
-     * @param id  the id. id > 0 required.
+     * @param id the id. > 0 required
+     * @throws IllegalArgumentException thrown if id < 0
      */
-    public Way(long id) {
-        // FIXME: shouldn't we check for id > 0?
-        //
-        this.id = id;
-        incomplete = true;
+    public Way(long id) throws IllegalArgumentException {
+        super(id);
     }
 
     @Override public void cloneFrom(OsmPrimitive osm) {
@@ -152,8 +152,8 @@ public final class Way extends OsmPrimitive {
     }
 
     @Override public String toString() {
-        if (incomplete) return "{Way id="+id+" version="+version+" (incomplete)}";
-        return "{Way id="+id+" version="+version+" nodes="+Arrays.toString(nodes.toArray())+"}";
+        if (incomplete) return "{Way id="+getId()+" version="+getVersion()+" (incomplete)}";
+        return "{Way id="+getId()+" version="+getVersion()+" nodes="+Arrays.toString(nodes.toArray())+"}";
     }
 
     @Override
@@ -169,7 +169,7 @@ public final class Way extends OsmPrimitive {
     public int compareTo(OsmPrimitive o) {
         if (o instanceof Relation)
             return 1;
-        return o instanceof Way ? Long.valueOf(id).compareTo(o.id) : -1;
+        return o instanceof Way ? Long.valueOf(getId()).compareTo(o.getId()) : -1;
     }
 
     public void removeNode(Node n) {

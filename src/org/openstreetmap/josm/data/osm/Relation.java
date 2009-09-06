@@ -1,7 +1,9 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
@@ -16,7 +18,10 @@ public final class Relation extends OsmPrimitive {
     /**
      * All members of this relation. Note that after changing this,
      * makeBackReferences and/or removeBackReferences should be called.
+     * 
+     * @deprecated use the improved API instead of accessing this list directly
      */
+    @Deprecated
     public final List<RelationMember> members = new ArrayList<RelationMember>();
 
     /**
@@ -103,26 +108,31 @@ public final class Relation extends OsmPrimitive {
     }
 
     /**
+     * Create a new relation with id 0
+     */
+    public Relation() {
+
+    }
+
+    /**
      * Create an identical clone of the argument (including the id)
      */
     public Relation(Relation clone) {
+        super(clone.getId());
         cloneFrom(clone);
     }
 
     /**
-     * Create an incomplete Relation.
+     * Creates a new relation for the given id. If the id > 0, the way is marked
+     * as incomplete.
+     * 
+     * @param id the id. > 0 required
+     * @throws IllegalArgumentException thrown if id < 0
      */
-    public Relation(long id) {
-        this.id = id;
-        incomplete = true;
+    public Relation(long id) throws IllegalArgumentException {
+        super(id);
     }
 
-    /**
-     * Create an empty Relation. Use this only if you set meaningful values
-     * afterwards.
-     */
-    public Relation() {
-    }
 
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
@@ -137,7 +147,7 @@ public final class Relation extends OsmPrimitive {
     @Override public String toString() {
         // return "{Relation id="+id+" version="+version+" members="+Arrays.toString(members.toArray())+"}";
         // adding members in string increases memory usage a lot and overflows for looped relations
-        return "{Relation id="+id+" version="+version+"}";
+        return "{Relation id="+getId()+" version="+getVersion()+"}";
     }
 
     @Override
@@ -151,13 +161,13 @@ public final class Relation extends OsmPrimitive {
     }
 
     public int compareTo(OsmPrimitive o) {
-        return o instanceof Relation ? Long.valueOf(id).compareTo(o.id) : -1;
+        return o instanceof Relation ? Long.valueOf(getId()).compareTo(o.getId()) : -1;
     }
 
     // seems to be different from member "incomplete" - FIXME
     public boolean isIncomplete() {
         for (RelationMember m : members)
-            if (m.member == null)
+            if (m.getMember() == null)
                 return true;
         return false;
     }
@@ -182,7 +192,7 @@ public final class Relation extends OsmPrimitive {
 
         ArrayList<RelationMember> todelete = new ArrayList<RelationMember>();
         for (RelationMember member: members) {
-            if (member.member == primitive) {
+            if (member.getMember() == primitive) {
                 todelete.add(member);
             }
         }
@@ -192,5 +202,22 @@ public final class Relation extends OsmPrimitive {
     @Override
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
+    }
+
+    /**
+     * Replies the set of  {@see OsmPrimitive}s referred to by at least one
+     * member of this relation
+     * 
+     * @return the set of  {@see OsmPrimitive}s referred to by at least one
+     * member of this relation
+     */
+    public Set<OsmPrimitive> getMemberPrimitives() {
+        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        for (RelationMember m: members) {
+            if (m.getMember() != null) {
+                ret.add(m.getMember());
+            }
+        }
+        return ret;
     }
 }

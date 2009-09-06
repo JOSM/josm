@@ -100,7 +100,7 @@ public final class CopyAction extends JosmAction {
                     RelationMember mnew = new RelationMember(m.getRole(), map.get(m.getMember()));
                     members.add(mnew);
                 }
-                enew.members.addAll(members);
+                enew.setMembers(members);
                 pasteBuffer.addPrimitive(enew);
             }
             public void visitAll() {

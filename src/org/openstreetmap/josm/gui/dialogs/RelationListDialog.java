@@ -378,11 +378,9 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public void launchEditorForDuplicate(Relation original) {
-            Relation copy = new Relation();
+            Relation copy = new Relation(original.getId());
             copy.cloneFrom(original);
-            // FIXME: id is going to be hidden. How to reset a primitive?
-            //
-            copy.id = 0;
+            copy.clearOsmId();
             copy.setModified(true);
             RelationEditor editor = RelationEditor.getEditor(
                     Main.main.getEditLayer(),

@@ -20,7 +20,7 @@ public abstract class FileImporter {
         return filter.acceptName(pathname.getName());
     }
 
-    public void importData(File file) throws IOException {
+    public void importData(File file) throws IOException, IllegalDataException {
         throw new IOException(tr("Could not read \"{0}\"", file.getName()));
     }
 

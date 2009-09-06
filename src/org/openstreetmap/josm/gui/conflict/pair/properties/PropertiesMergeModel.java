@@ -165,11 +165,11 @@ public class PropertiesMergeModel extends Observable {
             theirCoords = null;
         }
 
-        myDeletedState = my.deleted;
-        theirDeletedState = their.deleted;
+        myDeletedState = my.isDeleted();
+        theirDeletedState = their.isDeleted();
 
-        myVisibleState = my.visible;
-        theirVisibleState = their.visible;
+        myVisibleState = my.isVisible();
+        theirVisibleState = their.isVisible();
 
         coordMergeDecision = UNDECIDED;
         deletedMergeDecision = UNDECIDED;
@@ -473,7 +473,7 @@ public class PropertiesMergeModel extends Observable {
                         + "which are deleted on the server.<br>"
                         + "<br>"
                         + "Do you want to undelete these nodes too?</html>",
-                        Long.toString(dependent.size()), Long.toString(way.id)),
+                        Long.toString(dependent.size()), Long.toString(way.getId())),
                         tr("Undelete additional nodes?"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
@@ -502,7 +502,7 @@ public class PropertiesMergeModel extends Observable {
                         + "which are deleted on the server.<br>"
                         + "<br>"
                         + "Do you want to undelete them too?</html>",
-                        Long.toString(dependent.size()), Long.toString(r.id)),
+                        Long.toString(dependent.size()), Long.toString(r.getId())),
                         tr("Undelete dependent primitives?"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
@@ -534,8 +534,8 @@ public class PropertiesMergeModel extends Observable {
 
         HashMap<Long,OsmPrimitive> candidates = new HashMap<Long,OsmPrimitive>();
         for (Node n : way.getNodes()) {
-            if (n.id > 0 && ! candidates.values().contains(n)) {
-                candidates.put(n.id, n);
+            if (n.getId() > 0 && ! candidates.values().contains(n)) {
+                candidates.put(n.getId(), n);
             }
         }
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
@@ -544,8 +544,8 @@ public class PropertiesMergeModel extends Observable {
 
         ArrayList<OsmPrimitive> toDelete = new ArrayList<OsmPrimitive>();
         for (OsmPrimitive their : ds.allPrimitives()) {
-            if (candidates.keySet().contains(their.id) && ! their.visible) {
-                toDelete.add(candidates.get(their.id));
+            if (candidates.keySet().contains(their.getId()) && ! their.isVisible()) {
+                toDelete.add(candidates.get(their.getId()));
             }
         }
         if (!toDelete.isEmpty()) {
@@ -571,8 +571,8 @@ public class PropertiesMergeModel extends Observable {
 
         HashMap<Long,OsmPrimitive> candidates = new HashMap<Long, OsmPrimitive>();
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().id > 0 && !candidates.values().contains(m.getMember())) {
-                candidates.put(m.getMember().id, m.getMember());
+            if (m.getMember().getId() > 0 && !candidates.values().contains(m.getMember())) {
+                candidates.put(m.getMember().getId(), m.getMember());
             }
         }
 
@@ -582,8 +582,8 @@ public class PropertiesMergeModel extends Observable {
 
         ArrayList<OsmPrimitive> toDelete = new ArrayList<OsmPrimitive>();
         for (OsmPrimitive their : ds.allPrimitives()) {
-            if (candidates.keySet().contains(their.id) && ! their.visible) {
-                toDelete.add(candidates.get(their.id));
+            if (candidates.keySet().contains(their.getId()) && ! their.isVisible()) {
+                toDelete.add(candidates.get(their.getId()));
             }
         }
         if (!toDelete.isEmpty()) {

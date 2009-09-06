@@ -16,16 +16,16 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.data.osm.TagCollection;
 
 public class TagConflictResolverModel extends DefaultTableModel {
-    static public final String RESOLVED_COMPLETELY_PROP = TagConflictResolverModel.class.getName() + ".resolvedCompletely";
+    static public final String NUM_CONFLICTS_PROP = TagConflictResolverModel.class.getName() + ".numConflicts";
 
     private TagCollection tags;
     private List<String> keys;
     private HashMap<String, MultiValueResolutionDecision> decisions;
-    private boolean resolvedCompletely;
+    private int numConflicts;
     private PropertyChangeSupport support;
 
     public TagConflictResolverModel() {
-        resolvedCompletely= false;
+        numConflicts = 0;
         support = new PropertyChangeSupport(this);
     }
 
@@ -37,22 +37,23 @@ public class TagConflictResolverModel extends DefaultTableModel {
         support.removePropertyChangeListener(listener);
     }
 
-    protected void setResolvedCompletely(boolean resolvedCompletey) {
-        boolean oldValue = this.resolvedCompletely;
-        this.resolvedCompletely = resolvedCompletey;
-        if (oldValue != this.resolvedCompletely) {
-            support.firePropertyChange(RESOLVED_COMPLETELY_PROP, oldValue, this.resolvedCompletely);
+
+    protected void setNumConflicts(int numConflicts) {
+        int oldValue = this.numConflicts;
+        this.numConflicts = numConflicts;
+        if (oldValue != this.numConflicts) {
+            support.firePropertyChange(NUM_CONFLICTS_PROP, oldValue, this.numConflicts);
         }
     }
 
-    protected void refreshResolvedCompletely() {
+    protected void refreshNumConflicts() {
+        int count = 0;
         for (MultiValueResolutionDecision d : decisions.values()) {
             if (!d.isDecided()) {
-                setResolvedCompletely(false);
-                return;
+                count++;
             }
         }
-        setResolvedCompletely(true);
+        setNumConflicts(count);
     }
 
     protected void sort() {
@@ -77,7 +78,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
             MultiValueResolutionDecision decision = new MultiValueResolutionDecision(tags.getTagsFor(key));
             decisions.put(key,decision);
         }
-        refreshResolvedCompletely();
+        refreshNumConflicts();
     }
 
     public void populate(TagCollection tags) {
@@ -125,7 +126,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
             }
         }
         fireTableDataChanged();
-        refreshResolvedCompletely();
+        refreshNumConflicts();
     }
 
     /**
@@ -135,7 +136,15 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * otherwise
      */
     public boolean isResolvedCompletely() {
-        return resolvedCompletely;
+        return numConflicts == 0;
+    }
+
+    public int getNumConflicts() {
+        return numConflicts;
+    }
+
+    public int getNumDecisions() {
+        return getRowCount();
     }
 
     public TagCollection getResolution() {
@@ -144,5 +153,14 @@ public class TagConflictResolverModel extends DefaultTableModel {
             tc.add(decisions.get(key).getResolution());
         }
         return tc;
+    }
+
+    public MultiValueResolutionDecision getDecision(int row) {
+        return decisions.get(keys.get(row));
+    }
+
+    public void refresh() {
+        fireTableDataChanged();
+        refreshNumConflicts();
     }
 }

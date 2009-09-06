@@ -33,12 +33,21 @@ public class SaveAction extends SaveActionBase {
         if(f != null && ! f.exists()) {
             f=null;
         }
-        if(f != null && layer instanceof GpxLayer && 1 !=
-            new ExtendedDialog(Main.parent, tr("Overwrite"),
-                    tr("File {0} exists. Overwrite?", f.getName()),
-                    new String[] {tr("Overwrite"), tr("Cancel")},
-                    new String[] {"save_as.png", "cancel.png"}).getValue()) {
-            f = null;
+
+        // FIXME: why only for GpxLayer?
+        if(f != null && layer instanceof GpxLayer) {
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Overwrite"),
+                    new String[] {tr("Overwrite"), tr("Cancel")}
+            );
+            dialog.setButtonIcons(new String[] {"save_as.png", "cancel.png"});
+            dialog.setContent(tr("File {0} exists. Overwrite?", f.getName()));
+            dialog.showDialog();
+            int ret = dialog.getValue();
+            if (ret != 1) {
+                f = null;
+            }
         }
         return f == null ? openFileDialog(layer) : f;
     }

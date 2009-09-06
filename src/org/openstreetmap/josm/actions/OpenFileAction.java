@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.FileImporter;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
@@ -50,7 +51,7 @@ public class OpenFileAction extends DiskAccessAction {
         setEnabled(! Main.applet);
     }
 
-    static public void openFile(File f) throws IOException {
+    static public void openFile(File f) throws IOException, IllegalDataException {
         for (FileImporter importer : ExtensionFileFilter.importers)
             if (importer.acceptFile(f)) {
                 importer.importData(f);

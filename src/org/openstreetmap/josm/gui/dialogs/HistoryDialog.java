@@ -219,10 +219,10 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             if (Main.main.getCurrentDataSet() == null)
                 return;
             for (OsmPrimitive primitive: Main.main.getCurrentDataSet().getSelected()) {
-                if (primitive.id == 0) {
+                if (primitive.getId() == 0) {
                     continue;
                 }
-                History h = HistoryDataSet.getInstance().getHistory(primitive.id);
+                History h = HistoryDataSet.getInstance().getHistory(primitive.getId());
                 if (h !=null) {
                     data.add(h);
                 }

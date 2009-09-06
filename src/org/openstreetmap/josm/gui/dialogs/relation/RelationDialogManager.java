@@ -89,7 +89,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
         @Override
         public String toString() {
-            return "[Context: layer=" + layer.getName() + ",relation=" + relation.id + "]";
+            return "[Context: layer=" + layer.getName() + ",relation=" + relation.getId() + "]";
         }
     }
 
@@ -102,7 +102,6 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     public RelationDialogManager(){
         openDialogs = new HashMap<DialogContext, RelationEditor>();
     }
-
     /**
      * Register the relation editor for a relation managed by a
      * {@see OsmDataLayer}.

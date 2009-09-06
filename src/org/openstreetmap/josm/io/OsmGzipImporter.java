@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.xml.sax.SAXException;
 
 public class OsmGzipImporter extends OsmImporter {
 
@@ -18,13 +17,8 @@ public class OsmGzipImporter extends OsmImporter {
     }
 
     @Override
-    public void importData(File file) throws IOException {
+    public void importData(File file) throws IOException, IllegalDataException {
         GZIPInputStream in = new GZIPInputStream(new FileInputStream(file));
-        try {
-            importData(in, file);
-        } catch (SAXException e) {
-            e.printStackTrace();
-            throw new IOException(tr("Could not read \"{0}\"", file.getName()));
-        }
+        importData(in, file);
     }
 }

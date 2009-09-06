@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.xml.sax.SAXException;
 
 public class OsmBzip2Importer extends OsmImporter {
 
@@ -20,23 +19,15 @@ public class OsmBzip2Importer extends OsmImporter {
     }
 
     @Override
-    public void importData(File file) throws IOException {
+    public void importData(File file) throws IOException, IllegalDataException {
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         int b = bis.read();
-        if (b != 'B') {
+        if (b != 'B')
             throw new IOException(tr("Invalid bz2 file."));
-        }
         b = bis.read();
-        if (b != 'Z') {
+        if (b != 'Z')
             throw new IOException(tr("Invalid bz2 file."));
-        }
         CBZip2InputStream in = new CBZip2InputStream(bis);
-
-        try {
-            importData(in, file);
-        } catch (SAXException e) {
-            e.printStackTrace();
-            throw new IOException(tr("Could not read \"{0}\"", file.getName()));
-        }
+        importData(in, file);
     }
 }

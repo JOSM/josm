@@ -6,16 +6,25 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.ComboBoxEditor;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.table.TableCellEditor;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
 
 /**
  * AutoCompletingTextField is an text field with autocompletion behaviour. It
@@ -26,7 +35,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
  * 
  *
  */
-public class AutoCompletingTextField extends JTextField implements ComboBoxEditor {
+public class AutoCompletingTextField extends JTextField implements ComboBoxEditor, TableCellEditor {
 
     static private Logger logger = Logger.getLogger(AutoCompletingTextField.class.getName());
 
@@ -132,6 +141,7 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
                     }
                 }
         );
+        tableCellEditorSupport = new TableCellEditorSupport(this);
     }
 
     /**
@@ -186,5 +196,55 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
 
     }
 
+    /* ------------------------------------------------------------------------------------ */
+    /* TableCellEditor interface                                                            */
+    /* ------------------------------------------------------------------------------------ */
 
+    private TableCellEditorSupport tableCellEditorSupport;
+    private String originalValue;
+
+    public void addCellEditorListener(CellEditorListener l) {
+        tableCellEditorSupport.addCellEditorListener(l);
+    }
+
+    protected void rememberOriginalValue(String value) {
+        this.originalValue = value;
+    }
+
+    protected void restoreOriginalValue() {
+        setText(originalValue);
+    }
+
+    public void removeCellEditorListener(CellEditorListener l) {
+        tableCellEditorSupport.removeCellEditorListener(l);
+    }
+    public void cancelCellEditing() {
+        restoreOriginalValue();
+        tableCellEditorSupport.fireEditingCanceled();
+
+    }
+
+    public Object getCellEditorValue() {
+        return getText();
+    }
+
+    public boolean isCellEditable(EventObject anEvent) {
+        return true;
+    }
+
+
+    public boolean shouldSelectCell(EventObject anEvent) {
+        return true;
+    }
+
+    public boolean stopCellEditing() {
+        tableCellEditorSupport.fireEditingStopped();
+        return true;
+    }
+
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        setText( value == null ? "" : value.toString());
+        rememberOriginalValue(getText());
+        return this;
+    }
 }

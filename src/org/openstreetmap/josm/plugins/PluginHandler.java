@@ -170,12 +170,15 @@ public class PluginHandler {
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
-
-                    int result = new ExtendedDialog(Main.parent,
+                    ExtendedDialog dialog = new ExtendedDialog(
+                            Main.parent,
                             tr("Disable plugin"),
-                            tr("Could not load plugin {0}. Delete from preferences?", info.name),
-                            new String[] {tr("Disable plugin"), tr("Keep plugin")},
-                            new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+                            new String[] {tr("Disable plugin"), tr("Keep plugin")}
+                    );
+                    dialog.setContent(tr("Could not load plugin {0}. Delete from preferences?", info.name));
+                    dialog.setButtonIcons( new String[] {"dialogs/delete.png", "cancel.png"});
+                    dialog.showDialog();
+                    int result = dialog.getValue();
 
                     if(result == 1)
                     {
@@ -277,19 +280,28 @@ public class PluginHandler {
         }
 
         if (plugin != null) {
-            int answer = new ExtendedDialog(Main.parent,
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
                     tr("Disable plugin"),
+                    new String[] {tr("Disable plugin"), tr("Cancel")}
+            );
+            dialog.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
+            dialog.setContent(
+                    tr("<html>") +
                     tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)
-                    + "\n"
+                    + "<br>"
                     + (plugin.info.author != null
                             ? tr("According to the information within the plugin, the author is {0}.", plugin.info.author)
                                     : "")
-                                    + "\n"
+                                    + "<br>"
                                     + tr("Try updating to the newest version of this plugin before reporting a bug.")
-                                    + "\n"
-                                    + tr("Should the plugin be disabled?"),
-                                    new String[] {tr("Disable plugin"), tr("Cancel")},
-                                    new String[] {"dialogs/delete.png", "cancel.png"}).getValue();
+                                    + "<br>"
+                                    + tr("Should the plugin be disabled?")
+                                    + "</html>"
+            );
+            dialog.showDialog();
+            int answer = dialog.getValue();
+
             if (answer == 1) {
                 List<String> plugins = new ArrayList<String>(Main.pref.getCollection("plugins", Collections.<String>emptyList()));
                 if (plugins.contains(plugin.info.name)) {

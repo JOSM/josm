@@ -9,8 +9,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
@@ -29,6 +33,29 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  * @author imi
  */
 abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
+
+    static public <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
+        if (list == null) return null;
+        List<T> ret = new LinkedList<T>();
+        for(OsmPrimitive p: list) {
+            if (type.isInstance(p)) {
+                ret.add(type.cast(p));
+            }
+        }
+        return ret;
+    }
+
+    static public <T extends OsmPrimitive>  Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
+        if (set == null) return null;
+        HashSet<T> ret = new HashSet<T>();
+        for(OsmPrimitive p: set) {
+            if (type.isInstance(p)) {
+                ret.add(type.cast(p));
+            }
+        }
+        return ret;
+    }
+
 
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
@@ -69,7 +96,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * new to the server! To create a new object, call the default constructor of
      * the respective class.
      * 
-     * @deprecated use {@see #getId()}. Don't assign an id, create a primitive with
+     * @deprecated use {@see #getId()} and {@see #setId()}. Don't assign an id, create a primitive with
      * the respective constructors.
      */
     @Deprecated
@@ -119,6 +146,48 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     public volatile boolean selected = false;
 
     /**
+     * If set to true, this object is incomplete, which means only the id
+     * and type is known (type is the objects instance class)
+     */
+    public boolean incomplete = false;
+
+    /**
+     * Contains the version number as returned by the API. Needed to
+     * ensure update consistency
+     * @deprecated use {@see #getVersion()} and {@see #setVersion(long)}
+     */
+    @Deprecated
+    public int version = 0;
+
+
+    /**
+     * Creates a new primitive with id 0.
+     * 
+     */
+    public OsmPrimitive() {
+        this(0);
+    }
+
+    /**
+     * Creates a new primitive for the given id. If the id > 0, the primitive is marked
+     * as incomplete.
+     * 
+     * @param id the id. > 0 required
+     * @throws IllegalArgumentException thrown if id < 0
+     */
+    public OsmPrimitive(long id) throws IllegalArgumentException {
+        if (id < 0)
+            throw new IllegalArgumentException(tr("expected id >= 0. Got {0}", id));
+        this.id = id;
+        this.version = 0;
+        this.incomplete = id >0;
+    }
+
+    /* ------------------------------------------------------------------------------------ */
+    /* accessors                                                                            */
+    /* ------------------------------------------------------------------------------------ */
+
+    /**
      * Sets whether this primitive is selected or not.
      * 
      * @param selected  true, if this primitive is selected; false, otherwise
@@ -161,7 +230,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * Replies <code>true</code>, if the object has been deleted.
      *
      * @return <code>true</code>, if the object has been deleted.
-     * @see #delete(boolean)
+     * @see #setDeleted(boolean)
      */
     public boolean isDeleted() {
         return deleted;
@@ -204,6 +273,16 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
+     * Replies the version number as returned by the API. The version is 0 if the id is 0 or
+     * if this primitive is incomplete.
+     * 
+     * @see #setVersion(int)
+     */
+    public long getVersion() {
+        return version;
+    }
+
+    /**
      * Replies the id of this primitive.
      * 
      * @return the id of this primitive.
@@ -213,12 +292,49 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     * If set to true, this object is highlighted. Currently this is only used to
-     * show which ways/nodes will connect
+     * Sets the id and the version of this primitive if it is known to the OSM API.
+     * 
+     * Since we know the id and its version it can't be incomplete anymore. incomplete
+     * is set to false.
+     * 
+     * @param id the id. > 0 required
+     * @param version the version > 0 required
+     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if version <= 0
      */
-    public volatile boolean highlighted = false;
+    public void setOsmId(long id, int version) {
+        if (id <= 0)
+            throw new IllegalArgumentException(tr("id > 0 expected. Got {0}", id));
+        if (version <= 0)
+            throw new IllegalArgumentException(tr("version > 0 expected. Got {0}", version));
+        this.id = id;
+        this.version = version;
+        this.incomplete = false;
+    }
 
-    private int timestamp;
+    /**
+     * Clears the id and version known to the OSM API. The id and the version is set to 0.
+     * incomplete is set to false.
+     * 
+     * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@see DataSet}.
+     * Ways and relations might already refer to the primitive and clearing the OSM ID
+     * result in corrupt data.
+     * 
+     * Here's an example use case:
+     * <pre>
+     *     // create a clone of an already existing node
+     *     Node copy = new Node(otherExistingNode);
+     * 
+     *     // reset the clones OSM id
+     *     copy.clearOsmId();
+     * </pre>
+     * 
+     */
+    public void clearOsmId() {
+        this.id = 0;
+        this.version = 0;
+        this.incomplete = false;
+    }
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = (int)(timestamp.getTime() / 1000);
@@ -239,16 +355,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     }
 
     /**
-     * If set to true, this object is incomplete, which means only the id
-     * and type is known (type is the objects instance class)
+     * If set to true, this object is highlighted. Currently this is only used to
+     * show which ways/nodes will connect
      */
-    public boolean incomplete = false;
+    public volatile boolean highlighted = false;
 
-    /**
-     * Contains the version number as returned by the API. Needed to
-     * ensure update consistency
-     */
-    public int version = -1;
+    private int timestamp;
 
     private static Collection<String> uninteresting = null;
     /**
@@ -287,10 +399,17 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      */
     abstract public void visit(Visitor visitor);
 
-    public final void delete(boolean deleted) {
+    /**
+     * Sets whether this primitive is deleted or not.
+     * 
+     * Also marks this primitive as modified if deleted is true and sets selected to false.
+     * 
+     * @param deleted  true, if this primitive is deleted; false, otherwise
+     */
+    public void setDeleted(boolean deleted) {
+        this.modified = deleted;
         this.deleted = deleted;
-        setSelected(false);
-        modified = true;
+        this.selected = false;
     }
 
     /**

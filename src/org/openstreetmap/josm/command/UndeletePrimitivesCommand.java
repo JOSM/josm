@@ -79,7 +79,7 @@ public class UndeletePrimitivesCommand extends ConflictResolveCommand {
                 rememberConflict(getLayer().getConflicts().getConflictForMy(primitive));
                 getLayer().getConflicts().remove(primitive);
             }
-            primitive.id = 0;
+            primitive.clearOsmId();
         }
         return true;
     }

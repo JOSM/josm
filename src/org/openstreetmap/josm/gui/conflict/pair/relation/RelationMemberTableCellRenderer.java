@@ -70,7 +70,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append("<strong>id</strong>=")
-        .append(primitive.id)
+        .append(primitive.getId())
         .append("<br>");
         ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
         Collections.sort(keyList);
@@ -196,25 +196,25 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         renderBackground(getModel(table), member, row, column, isSelected);
         renderForeground(getModel(table), member, row, column, isSelected);
         switch(column) {
-        case 0:
-            renderRowId(row);
-            break;
-        case 1:
-            if (member == null) {
-                renderEmptyRow();
-            } else {
-                renderRole(member);
-            }
-            break;
-        case 2:
-            if (member == null) {
-                renderEmptyRow();
-            } else {
-                renderPrimitive(member);
-            }
-            break;
-        default:
-            // should not happen
+            case 0:
+                renderRowId(row);
+                break;
+            case 1:
+                if (member == null) {
+                    renderEmptyRow();
+                } else {
+                    renderRole(member);
+                }
+                break;
+            case 2:
+                if (member == null) {
+                    renderEmptyRow();
+                } else {
+                    renderPrimitive(member);
+                }
+                break;
+            default:
+                // should not happen
         }
         return this;
     }

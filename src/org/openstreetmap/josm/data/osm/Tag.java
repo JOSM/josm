@@ -1,6 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Tag represents an immutable key/value-pair. Both the key and the value may
  * be empty, but not null.
@@ -26,6 +31,7 @@ public class Tag {
      * @param key the key. If null, it is set to the empty key.
      */
     public Tag(String key) {
+        this();
         this.key = key == null ? "" : key;
     }
 

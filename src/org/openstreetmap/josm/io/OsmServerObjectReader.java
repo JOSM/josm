@@ -45,8 +45,7 @@ public class OsmServerObjectReader extends OsmServerReader {
             in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
             if (in == null)
                 return null;
-            final OsmReader osm = OsmReader.parseDataSetOsm(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            final DataSet data = osm.getDs();
+            final DataSet data = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             return data;
         } catch(OsmTransferException e) {
             if (cancel) return null;

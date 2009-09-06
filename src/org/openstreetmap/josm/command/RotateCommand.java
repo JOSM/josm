@@ -75,7 +75,7 @@ public class RotateCommand extends Command {
             OldState os = new OldState();
             os.latlon = new LatLon(n.getCoor());
             os.eastNorth = n.getEastNorth();
-            os.modified = n.modified;
+            os.modified = n.isModified();
             oldState.put(n, os);
             pivot = pivot.add(os.eastNorth.east(), os.eastNorth.north());
         }
@@ -113,7 +113,7 @@ public class RotateCommand extends Command {
             double ny = -cosPhi * x + sinPhi * y + pivot.north();
             n.setEastNorth(new EastNorth(nx, ny));
             if (setModified) {
-                n.modified = true;
+                n.setModified(true);
             }
         }
     }
@@ -127,7 +127,7 @@ public class RotateCommand extends Command {
         for (Node n : nodes) {
             OldState os = oldState.get(n);
             n.setCoor(os.latlon);
-            n.modified = os.modified;
+            n.setModified(os.modified);
         }
     }
 
