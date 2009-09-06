@@ -225,7 +225,7 @@ public class MultiFetchServerObjectReaderTest {
 
 
     @Before
-    public void setUp() throws IOException, SAXException {
+    public void setUp() throws IOException, IllegalDataException {
         File f = new File(testProperties.getProperty("test.functional.tempdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
