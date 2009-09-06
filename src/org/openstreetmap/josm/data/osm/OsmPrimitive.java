@@ -159,12 +159,22 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
 
     /**
      * Replies <code>true</code>, if the object has been deleted.
-     * 
+     *
      * @return <code>true</code>, if the object has been deleted.
      * @see #delete(boolean)
      */
     public boolean isDeleted() {
         return deleted;
+    }
+
+    /**
+     * Replies <code>true</code>, if the object is usable.
+     *
+     * @return <code>true</code>, if the object is unusable.
+     * @see #delete(boolean)
+     */
+    public boolean isUsable() {
+        return !deleted && !incomplete;
     }
 
     /**

@@ -14,8 +14,6 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 
-import sun.security.action.GetBooleanAction;
-
 /**
  * List class that read and save its content from the bookmark file.
  * @author imi
