@@ -91,7 +91,7 @@ public class OsmServerWriter {
         try {
             progressMonitor.setTicksCount(primitives.size());
             if (changesetProcessingType.isUseNew()) {
-                api.createChangeset(changeset, changesetProcessingType,progressMonitor.createSubTaskMonitor(0, false));
+                api.createChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
             } else {
                 api.updateChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
             }
@@ -101,9 +101,9 @@ public class OsmServerWriter {
                 String time_left_str = timeLeft(progress, primitives.size());
                 String msg = "";
                 switch(OsmPrimitiveType.from(osm)) {
-                case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
-                case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
-                case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
+                    case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
+                    case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
+                    case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
                 }
                 progressMonitor.subTask(
                         tr(msg,
@@ -150,7 +150,7 @@ public class OsmServerWriter {
         //
         try {
             if (changesetProcessingType.isUseNew()) {
-                api.createChangeset(changeset, changesetProcessingType,progressMonitor.createSubTaskMonitor(0, false));
+                api.createChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
             } else {
                 api.updateChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
             }

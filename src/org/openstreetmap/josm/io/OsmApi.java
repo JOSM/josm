@@ -277,77 +277,50 @@ public class OsmApi extends OsmConnection {
         uploadDiff(Collections.singleton(osm), monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
     }
 
+
     /**
-     * Creates the changeset to be used for subsequent uploads.
+     * Creates a new changeset based on the keys in <code>changeset</code>
      * 
-     * If changesetProcessingType is {@see ChangesetProcessingType#USE_NEW} creates a new changeset based
-     * on <code>changeset</code>. Otherwise uses the changeset given by {@see OsmApi#getCurrentChangeset()}.
-     * If this changeset is null or has an id of value 0, a new changeset is created too.
-     * 
-     * @param changeset the changeset to be used for uploading if <code>changesetProcessingType</code> is
-     *   {@see ChangesetProcessingType#USE_NEW}
-     * @param changesetProcessingType  how to handel changesets; set to {@see ChangesetProcessingType#USE_NEW} if null
+     * @param changeset the changeset to be used for uploading
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException signifying a non-200 return code, or connection errors
      */
-    public void createChangeset(Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
-        if (changesetProcessingType == null) {
-            changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
-        }
+    public void createChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
             progressMonitor.beginTask((tr("Creating changeset...")));
-            if (changesetProcessingType.isUseNew()) {
-                Properties sysProp = System.getProperties();
-                Object ua = sysProp.get("http.agent");
-                changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
-                createPrimitive(changeset, progressMonitor);
-                this.changeset = changeset;
-                progressMonitor.setCustomText((tr("Successfully opened changeset {0}",changeset.getId())));
-            } else {
-                if (this.changeset == null || this.changeset.getId() == 0) {
-                    progressMonitor.setCustomText((tr("No currently open changeset. Opening a new changeset...")));
-                    System.out.println(tr("Warning: could not reuse an existing changeset as requested. Opening a new one."));
-                    Properties sysProp = System.getProperties();
-                    Object ua = sysProp.get("http.agent");
-                    changeset.put("created_by", (ua == null) ? "JOSM" : ua.toString());
-                    createPrimitive(changeset, progressMonitor);
-                    this.changeset = changeset;
-                    progressMonitor.setCustomText((tr("Successfully opened changeset {0}",this.changeset.getId())));
-                } else {
-                    progressMonitor.setCustomText((tr("Reusing existing changeset {0}", this.changeset.getId())));
-                }
-            }
+            createPrimitive(changeset, progressMonitor);
+            this.changeset = changeset;
+            progressMonitor.setCustomText((tr("Successfully opened changeset {0}",this.changeset.getId())));
         } finally {
             progressMonitor.finishTask();
         }
     }
 
     /**
-     * Update a changeset on the server.
+     * Updates the current changeset with the keys in  <code>changesetUpdate</code>.
      *
-     * @param changeset the changeset to update
+     * @param changesetUpdate the changeset to update
      * @param progressMonitor the progress monitor
      * 
      * @throws OsmTransferException if something goes wrong.
      */
-    public void updateChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public void updateChangeset(Changeset changesetUpdate, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
             progressMonitor.beginTask(tr("Updating changeset..."));
             initialize(progressMonitor);
             if (this.changeset != null && this.changeset.getId() > 0) {
-                if (this.changeset.hasEqualSemanticAttributes(changeset)) {
-                    progressMonitor.setCustomText(tr("Changeset {0} is unchanged. Skipping update.", changeset.getId()));
+                if (this.changeset.hasEqualSemanticAttributes(changesetUpdate)) {
+                    progressMonitor.setCustomText(tr("Changeset {0} is unchanged. Skipping update.", changesetUpdate.getId()));
                     return;
                 }
-                this.changeset.setKeys(changeset.getKeys());
-                progressMonitor.setCustomText(tr("Updating changeset {0}...", changeset.getId()));
+                this.changeset.setKeys(changesetUpdate.getKeys());
+                progressMonitor.setCustomText(tr("Updating changeset {0}...", this.changeset.getId()));
                 sendRequest(
                         "PUT",
-                        OsmPrimitiveType.from(changeset).getAPIName() + "/" + changeset.getId(),
-                        toXml(changeset, true),
+                        OsmPrimitiveType.from(changesetUpdate).getAPIName() + "/" + this.changeset.getId(),
+                        toXml(this.changeset, true),
                         progressMonitor
                 );
-                this.changeset = changeset;
             } else
                 throw new OsmTransferException(tr("Failed to update changeset. Either there is no current changeset or the id of the current changeset is 0"));
         } finally {

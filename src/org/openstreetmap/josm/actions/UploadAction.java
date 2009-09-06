@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -245,13 +246,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case JOptionPane.CANCEL_OPTION: return;
-        case 0: synchronizePrimitive(id); break;
-        case 1: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.CANCEL_OPTION: return;
+            case 0: synchronizePrimitive(id); break;
+            case 1: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -285,12 +286,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case 1: return;
-        case 0: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case 1: return;
+            case 0: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -935,6 +936,9 @@ public class UploadAction extends JosmAction{
             if (type.isUseNew()) {
                 southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
                 Changeset cs = new Changeset();
+                Properties sysProp = System.getProperties();
+                Object ua = sysProp.get("http.agent");
+                cs.put("created_by", (ua == null) ? "JOSM" : ua.toString());
                 tagEditorPanel.getModel().initFromPrimitive(cs);
             } else {
                 Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
