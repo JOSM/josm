@@ -216,6 +216,33 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because of a bad
+     * request
+     * 
+     * @param e the exception
+     */
+    public static void explainBadRequest(OsmApiException e) {
+        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String message = tr("The OSM server ''{0}'' reported a bad request.<br>",
+                apiUrl
+        );
+        if (e.getErrorHeader() != null && e.getErrorHeader().startsWith("The maximum bbox")) {
+            message += "<br>" + tr("The area you tried to download is too big or your request was too large."
+                    + "<br>Either request a smaller area or use an export file provided by the OSM community.");
+        } else if (e.getErrorHeader() != null){
+            message += tr("<br>Error message(untranslated): {0}", e.getErrorHeader());
+        }
+        message = "<html>" + message + "</html>";
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                message,
+                tr("Bad Request"),
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    /**
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
@@ -312,6 +339,10 @@ public class ExceptionDialogUtil {
             }
             if (oae.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 explainInternalServerError(oae);
+                return;
+            }
+            if (oae.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                explainBadRequest(oae);
                 return;
             }
         }
