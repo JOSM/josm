@@ -10,7 +10,6 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Properties;
@@ -80,18 +79,16 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.version = 1;
-        n.modified = false;
+        n.setOsmId(1,1);
+        n.setModified(false);
         n.put("key1", "value1");
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
-        n1.modified = false;
+        n1.setOsmId(1,1);
+        n1.setModified(false);
         n1.put("key1", "value1");
         their.addPrimitive(n1);
 
@@ -101,9 +98,9 @@ public class MergeVisitorTest {
 
         Node n2 = (Node)my.getPrimitiveById(1);
         assertTrue(visitor.getConflicts().isEmpty());
-        assertEquals(1, n2.id);
-        assertEquals(1, n2.version);
-        assertEquals(false, n2.modified);
+        assertEquals(1, n2.getId());
+        assertEquals(1, n2.getVersion());
+        assertEquals(false, n2.isModified());
         assertEquals("value1", n2.get("key1"));
     }
 
@@ -117,18 +114,16 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.version = 1;
-        n.modified = false;
+        n.setOsmId(1,1);
+        n.setModified(false);
         n.put("key1", "value1");
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 2;
-        n1.modified = false;
+        n1.setOsmId(1,2);
+        n1.setModified(false);
         n1.put("key1", "value1-new");
         n1.put("key2", "value2");
         their.addPrimitive(n1);
@@ -139,9 +134,9 @@ public class MergeVisitorTest {
 
         Node n2 = (Node)my.getPrimitiveById(1);
         assertTrue(visitor.getConflicts().isEmpty());
-        assertEquals(1, n2.id);
-        assertEquals(2, n2.version);
-        assertEquals(false, n2.modified);
+        assertEquals(1, n2.getId());
+        assertEquals(2, n2.getVersion());
+        assertEquals(false, n2.isModified());
         assertEquals("value1-new", n2.get("key1"));
         assertEquals("value2", n2.get("key2"));
     }
@@ -158,9 +153,8 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.version = 1;
-        n.modified = true;
+        n.setOsmId(1,1);
+        n.setModified(true);
         n.put("key1", "value1");
         n.put("key2", "value2");
         my.addPrimitive(n);
@@ -168,9 +162,8 @@ public class MergeVisitorTest {
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 2;
-        n1.modified = false;
+        n1.setOsmId(1,2);
+        n1.setModified(false);
         n1.put("key1", "value1-new");
 
         their.addPrimitive(n1);
@@ -195,18 +188,18 @@ public class MergeVisitorTest {
     public void nodeSimple_DeleteConflict() {
         DataSet my = new DataSet();
         my.version = "0.6";
-        Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.delete(true);
+        Node n = new Node(1);
+        n.setCoor(new LatLon(0,0));
+        n.incomplete = false;
+        n.setDeleted(true);
         n.put("key1", "value1");
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 2;
-        n1.modified = false;
+        n1.setOsmId(1,1);
+        n1.setModified(false);
         n1.put("key1", "value1-new");
         n1.put("key2", "value2");
         their.addPrimitive(n1);
@@ -230,19 +223,18 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.version = 1;
-        n.modified = false;
-        n.visible = true;
+        n.setOsmId(1,1);
+        n.setModified(false);
+        n.setVisible(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 2;
-        n1.modified = false;
-        n1.visible = false;
+        n1.setOsmId(1,2);
+
+        n1.setModified(false);
+        n1.setVisible(false);
         their.addPrimitive(n1);
 
 
@@ -251,7 +243,7 @@ public class MergeVisitorTest {
 
         Node n2 = (Node)my.getPrimitiveById(1);
         assertEquals(1,visitor.getConflicts().size());
-        assertEquals(true, n2.visible);
+        assertEquals(true, n2.isVisible());
     }
 
     /**
@@ -264,16 +256,14 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.version = 1;
-        n.delete(true);
+        n.setOsmId(1,1);
+        n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
+        n1.setOsmId(1,1);
         their.addPrimitive(n1);
 
 
@@ -282,7 +272,7 @@ public class MergeVisitorTest {
 
         Node n2 = (Node)my.getPrimitiveById(1);
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals(true, n2.visible);
+        assertEquals(true, n2.isVisible());
     }
 
     /**
@@ -296,14 +286,12 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(1,1));
-        n.id = 0;
-        n.delete(true);
+        n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(1,1));
-        n1.id = 0;
         their.addPrimitive(n1);
 
 
@@ -324,15 +312,13 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(1,1));
-        n.id = 0;
-        n.delete(true);
+        n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(1,1));
-        n1.id = 0;
-        n1.delete(true);
+        n1.setDeleted(true);
         their.addPrimitive(n1);
 
 
@@ -352,17 +338,15 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
         Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.version = 1;
-        n.delete(true);
+        n.setOsmId(1,1);
+        n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 2;
-        n1.version = 1;
-        n1.visible = false;
+        n1.setOsmId(2,1);
+        n1.setVisible(false);
         their.addPrimitive(n1);
 
 
@@ -386,17 +370,14 @@ public class MergeVisitorTest {
     public void nodeSimple_NoIdSemanticallyEqual() {
 
         Calendar cal = GregorianCalendar.getInstance();
-        User myUser = User.get("my");
-        myUser.uid = "1111";
+        User myUser = User.createOsmUser(1111, "my");
 
-        User theirUser = User.get("their");
-        myUser.uid = "222";
+        User theirUser = User.createOsmUser(222, "their");
 
         DataSet my = new DataSet();
         my.version = "0.6";
-        Node n = new Node(new LatLon(0,0));
-        n.id = 0;
-        n.version = -1;
+        Node n = new Node();
+        n.setCoor(new LatLon(0,0));
         n.put("key1", "value1");
         n.user = myUser;
         n.setTimestamp(cal.getTime());
@@ -405,9 +386,8 @@ public class MergeVisitorTest {
 
         DataSet their = new DataSet();
         their.version = "0.6";
-        Node n1 = new Node(new LatLon(0,0));
-        n1.id = 0;
-        n1.version = -1;
+        Node n1 = new Node();
+        n1.setCoor(new LatLon(0,0));
         n1.put("key1", "value1");
         cal.add(Calendar.HOUR, 1);
         Date timestamp = cal.getTime();
@@ -437,17 +417,17 @@ public class MergeVisitorTest {
 
         DataSet my = new DataSet();
         my.version = "0.6";
-        Node n = new Node(new LatLon(0,0));
-        n.id = 1;
-        n.version = 1;
+        Node n = new Node();
+        n.setCoor(new LatLon(0,0));
+        n.setOsmId(1,1);
         n.incomplete = true;
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
         their.version = "0.6";
-        Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
+        Node n1 = new Node();
+        n1.setCoor(new LatLon(0,0));
+        n1.setOsmId(1,1);
         n1.put("key1", "value1");
         Date timestamp = new Date();
         n1.setTimestamp(timestamp);
@@ -478,19 +458,20 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         my.version = "0.6";
 
-        Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
+        Node n1 = new Node();
+        n1.setCoor(new LatLon(0,0));
+        n1.setOsmId(1,1);
         my.addPrimitive(n1);
 
-        Node n2 = new Node(new LatLon(1,1));
-        n2.id = 2;
-        n2.version = 1;
+
+        Node n2 = new Node();
+        n2.setCoor(new LatLon(0,0));
+        n2.setOsmId(2,1);
+
         my.addPrimitive(n2);
 
         Way myWay = new Way();
-        myWay.id = 3;
-        myWay.version = 1;
+        myWay.setOsmId(3,1);
         myWay.put("key1", "value1");
         myWay.addNode(n1);
         myWay.addNode(n2);
@@ -500,18 +481,15 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Node n3 = new Node(new LatLon(0,0));
-        n3.id = 1;
-        n3.version = 1;
+        n3.setOsmId(1,1);
         their.addPrimitive(n3);
 
         Node n4 = new Node(new LatLon(1,1));
-        n4.id = 2;
-        n4.version = 1;
+        n4.setOsmId(2,1);
         their.addPrimitive(n4);
 
         Way theirWay = new Way();
-        theirWay.id = 3;
-        theirWay.version = 2;
+        theirWay.setOsmId(3,2);
         theirWay.put("key1", "value1");
         theirWay.put("key2", "value2");
         theirWay.addNode(n3);
@@ -526,11 +504,11 @@ public class MergeVisitorTest {
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",merged.get("key1"));
         assertEquals("value2",merged.get("key2"));
-        assertEquals(3,merged.id);
-        assertEquals(2,merged.version);
+        assertEquals(3,merged.getId());
+        assertEquals(2,merged.getVersion());
         assertEquals(2,merged.getNodesCount());
-        assertEquals(1,merged.getNode(0).id);
-        assertEquals(2,merged.getNode(1).id);
+        assertEquals(1,merged.getNode(0).getId());
+        assertEquals(2,merged.getNode(1).getId());
 
     }
 
@@ -548,18 +526,15 @@ public class MergeVisitorTest {
         my.version = "0.6";
 
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
+        n1.setOsmId(1,1);
         my.addPrimitive(n1);
 
         Node n2 = new Node(new LatLon(1,1));
-        n2.id = 2;
-        n2.version = 1;
+        n2.setOsmId(2,1);
         my.addPrimitive(n2);
 
         Way myWay = new Way();
-        myWay.id = 3;
-        myWay.version = 1;
+        myWay.setOsmId(3,1);
         myWay.addNode(n1);
         myWay.addNode(n2);
         my.addPrimitive(myWay);
@@ -568,27 +543,24 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Node n3 = new Node(new LatLon(0,0));
-        n3.id = 1;
-        n3.version = 1;
+        n3.setOsmId(1,1);
         their.addPrimitive(n3);
 
         Node n5 = new Node(new LatLon(1,1));
-        n5.id = 4;
-        n5.version = 1;
+        n5.setOsmId(4,1);
+
         their.addPrimitive(n5);
 
         their.addPrimitive(n5);
 
         Node n4 = new Node(new LatLon(2,2));
-        n4.id = 2;
-        n4.version = 2;
+        n4.setOsmId(2,2);
         n4.put("key1", "value1");
         their.addPrimitive(n4);
 
 
         Way theirWay = new Way();
-        theirWay.id = 3;
-        theirWay.version = 2;
+        theirWay.setOsmId(3,2);
         theirWay.addNode(n3);
         theirWay.addNode(n5); // insert a node
         theirWay.addNode(n4); // this one is updated
@@ -600,12 +572,12 @@ public class MergeVisitorTest {
 
         Way merged = (Way)my.getPrimitiveById(3);
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals(3,merged.id);
-        assertEquals(2,merged.version);
+        assertEquals(3,merged.getId());
+        assertEquals(2,merged.getVersion());
         assertEquals(3,merged.getNodesCount());
-        assertEquals(1,merged.getNode(0).id);
-        assertEquals(4,merged.getNode(1).id);
-        assertEquals(2,merged.getNode(2).id);
+        assertEquals(1,merged.getNode(0).getId());
+        assertEquals(4,merged.getNode(1).getId());
+        assertEquals(2,merged.getNode(2).getId());
         assertEquals("value1",merged.getNode(2).get("key1"));
     }
 
@@ -622,21 +594,19 @@ public class MergeVisitorTest {
         my.version = "0.6";
 
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
+        n1.setOsmId(1,1);
         my.addPrimitive(n1);
 
         Node n2 = new Node(new LatLon(1,1));
-        n2.id = 2;
-        n2.version = 1;
+        n2.setOsmId(2,1);
         my.addPrimitive(n2);
 
         Way myWay = new Way();
-        myWay.id = 3;
-        myWay.version = 1;
+        myWay.setOsmId(3,1);
+
         myWay.addNode(n1);
         myWay.addNode(n2);
-        myWay.modified = true;
+        myWay.setModified(true);
         myWay.put("key1", "value1");
         my.addPrimitive(myWay);
 
@@ -644,27 +614,24 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Node n3 = new Node(new LatLon(0,0));
-        n3.id = 1;
-        n3.version = 1;
+        n3.setOsmId(1,1);
         their.addPrimitive(n3);
 
         Node n5 = new Node(new LatLon(1,1));
-        n5.id = 4;
-        n5.version = 1;
+        n5.setOsmId(4,1);
         their.addPrimitive(n5);
 
         their.addPrimitive(n5);
 
         Node n4 = new Node(new LatLon(2,2));
-        n4.id = 2;
-        n4.version = 2;
+        n4.setOsmId(2,1);
         n4.put("key1", "value1");
         their.addPrimitive(n4);
 
 
         Way theirWay = new Way();
-        theirWay.id = 3;
-        theirWay.version = 2;
+        theirWay.setOsmId(3,2);
+
         theirWay.addNode(n3);
         theirWay.addNode(n5); // insert a node
         theirWay.addNode(n4); // this one is updated
@@ -676,11 +643,11 @@ public class MergeVisitorTest {
 
         Way merged = (Way)my.getPrimitiveById(3);
         assertEquals(1,visitor.getConflicts().size());
-        assertEquals(3,merged.id);
-        assertEquals(1,merged.version);
+        assertEquals(3,merged.getId());
+        assertEquals(1,merged.getVersion());
         assertEquals(2,merged.getNodesCount());
-        assertEquals(1,merged.getNode(0).id);
-        assertEquals(2,merged.getNode(1).id);
+        assertEquals(1,merged.getNode(0).getId());
+        assertEquals(2,merged.getNode(1).getId());
         assertEquals("value1",merged.get("key1"));
     }
 
@@ -698,18 +665,15 @@ public class MergeVisitorTest {
         my.version = "0.6";
 
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
+        n1.setOsmId(1,1);
         my.addPrimitive(n1);
 
         Node n2 = new Node(new LatLon(1,1));
-        n2.id = 2;
-        n2.version = 1;
+        n2.setOsmId(2,1);
         my.addPrimitive(n2);
 
         Way myWay = new Way();
-        myWay.id = 3;
-        myWay.version = 1;
+        myWay.setOsmId(3,1);
         myWay.addNode(n1);
         myWay.addNode(n2);
         my.addPrimitive(myWay);
@@ -718,9 +682,8 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Way theirWay = new Way();
-        theirWay.id = 3;
-        theirWay.version = 2;
-        theirWay.visible = false;
+        theirWay.setOsmId(3,2);
+        theirWay.setVisible(false);
         their.addPrimitive(theirWay);
 
         MergeVisitor visitor = new MergeVisitor(my,their);
@@ -748,18 +711,14 @@ public class MergeVisitorTest {
         my.version = "0.6";
 
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
+        n1.setOsmId(1,1);
         my.addPrimitive(n1);
 
         Node n2 = new Node(new LatLon(1,1));
-        n2.id = 2;
-        n2.version = 1;
+        n2.setOsmId(2,1);
         my.addPrimitive(n2);
 
         Way myWay = new Way();
-        myWay.id = 0;
-        myWay.version = -1;
         myWay.addNode(n1);
         myWay.addNode(n2);
         my.addPrimitive(myWay);
@@ -768,22 +727,17 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Node n3 = new Node(new LatLon(0,0));
-        n3.id = 1;
-        n3.version = 1;
+        n3.setOsmId(1,1);
         their.addPrimitive(n3);
 
         Node n4 = new Node(new LatLon(1,1));
-        n4.id = 2;
-        n4.version = 1;
+        n4.setOsmId(2,1);
         their.addPrimitive(n4);
 
         Way theirWay = new Way();
-        theirWay.id = 0;
-        theirWay.version = -1;
         theirWay.addNode(n3);
         theirWay.addNode(n4);
-        theirWay.user = User.get("their");
-        theirWay.user.uid = "1111";
+        theirWay.user = User.createOsmUser(1111, "their");
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -791,9 +745,9 @@ public class MergeVisitorTest {
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals("their", myWay.user.name);
-        assertEquals("1111", myWay.user.uid);
-        assertEquals("1111", myWay.user.uid);
+        assertEquals("their", myWay.user.getName());
+        assertEquals(1111, myWay.user.getId());
+        assertEquals(1111, myWay.user.getId());
         assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
     }
 
@@ -810,18 +764,12 @@ public class MergeVisitorTest {
         my.version = "0.6";
 
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 0;
-        n1.version = -1;
         my.addPrimitive(n1);
 
         Node n2 = new Node(new LatLon(1,1));
-        n2.id = 0;
-        n2.version = -1;
         my.addPrimitive(n2);
 
         Way myWay = new Way();
-        myWay.id = 0;
-        myWay.version = -1;
         myWay.addNode(n1);
         myWay.addNode(n2);
         my.addPrimitive(myWay);
@@ -830,22 +778,15 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Node n3 = new Node(new LatLon(0,0));
-        n3.id = 0;
-        n3.version = -1;
         their.addPrimitive(n3);
 
         Node n4 = new Node(new LatLon(1,1));
-        n4.id = 0;
-        n4.version = -1;
         their.addPrimitive(n4);
 
         Way theirWay = new Way();
-        theirWay.id = 0;
-        theirWay.version = -1;
         theirWay.addNode(n3);
         theirWay.addNode(n4);
-        theirWay.user = User.get("their");
-        theirWay.user.uid = "1111";
+        theirWay.user = User.createOsmUser(1111, "their");
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -853,9 +794,9 @@ public class MergeVisitorTest {
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals("their", myWay.user.name);
-        assertEquals("1111", myWay.user.uid);
-        assertEquals("1111", myWay.user.uid);
+        assertEquals("their", myWay.user.getName());
+        assertEquals(1111, myWay.user.getId());
+        assertEquals(1111, myWay.user.getId());
         assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
     }
 
@@ -875,38 +816,32 @@ public class MergeVisitorTest {
         my.version = "0.6";
 
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
-        n1.delete(true);
+        n1.setOsmId(1,1);
+        n1.setDeleted(true);
         my.addPrimitive(n1);
 
         DataSet their = new DataSet();
         their.version = "0.6";
 
         Node n3 = new Node(new LatLon(0,0));
-        n3.id = 1;
-        n3.version = 1;
+        n3.setOsmId(1,1);
         their.addPrimitive(n3);
 
         Node n4 = new Node(new LatLon(1,1));
-        n4.id = 2;
-        n4.version = 1;
+        n4.setOsmId(2,1);
         their.addPrimitive(n4);
 
         Node n5 = new Node(new LatLon(2,2));
-        n5.id = 3;
-        n5.version = 1;
+        n5.setOsmId(3,1);
         their.addPrimitive(n5);
 
 
         Way theirWay = new Way();
-        theirWay.id = 4;
-        theirWay.version = 1;
+        theirWay.setOsmId(4,1);
         theirWay.addNode(n3);
         theirWay.addNode(n4);
         theirWay.addNode(n5);
-        theirWay.user = User.get("their");
-        theirWay.user.uid = "1111";
+        theirWay.user = User.createOsmUser(1111, "their");
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -937,33 +872,29 @@ public class MergeVisitorTest {
         my.version = "0.6";
 
         Node n1 = new Node(new LatLon(0,0));
-        n1.id = 1;
-        n1.version = 1;
-        n1.delete(true);
+        n1.setOsmId(1,1);
+        n1.setDeleted(true);
         my.addPrimitive(n1);
 
         DataSet their = new DataSet();
         their.version = "0.6";
 
         Node n3 = new Node(new LatLon(0,0));
-        n3.id = 1;
-        n3.version = 1;
+        n3.setOsmId(1,1);
         their.addPrimitive(n3);
 
         Node n4 = new Node(new LatLon(1,1));
-        n4.id = 2;
-        n4.version = 1;
+        n4.setOsmId(2,1);
         their.addPrimitive(n4);
 
         Node n5 = new Node(new LatLon(2,2));
-        n5.id = 3;
-        n5.version = 1;
+        n5.setOsmId(3,1);
         their.addPrimitive(n5);
 
 
         Relation theirRelation = new Relation();
-        theirRelation.id = 4;
-        theirRelation.version = 1;
+        theirRelation.setOsmId(4,1);
+
         theirRelation.addMember(new RelationMember("", n3));
         theirRelation.addMember(new RelationMember("", n4));
         theirRelation.addMember(new RelationMember("", n5));
@@ -992,13 +923,9 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Node n1 = new Node(1);
-        n1.version = 1;
-        n1.incomplete = true;
         their.addPrimitive(n1);
 
         Node n2 = new Node(2);
-        n2.version = 1;
-        n2.incomplete = true;
         their.addPrimitive(n2);
 
         Way w3 = new Way(3);
@@ -1042,16 +969,15 @@ public class MergeVisitorTest {
         DataSet their = new DataSet();
         their.version = "0.6";
 
+        // an incomplete node
         Node n1 = new Node(1);
-        n1.version = 1;
-        n1.incomplete = true;
         their.addPrimitive(n1);
 
+        // another incomplete node
         Node n2 = new Node(2);
-        n2.version = 1;
-        n2.incomplete = true;
         their.addPrimitive(n2);
 
+        // an incomplete way with two incomplete nodes
         Way w3 = new Way(3);
         w3.incomplete = true;
         w3.setNodes(Arrays.asList(n1,n2));
@@ -1061,15 +987,11 @@ public class MergeVisitorTest {
         their.version = "0.6";
 
         Node n4 = new Node(new LatLon(0,0));
-        n4.id = 1;
-        n4.version = 1;
-        n4.incomplete = false;
+        n4.setOsmId(1,1);
         my.addPrimitive(n4);
 
         Node n5 = new Node(new LatLon(1,1));
-        n5.id = 2;
-        n5.version = 1;
-        n5.incomplete = false;
+        n5.setOsmId(2,1);
         my.addPrimitive(n5);
 
         Way w6 = new Way(3);
