@@ -200,7 +200,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         protected String createInfoUrl(Object infoObject) {
             User user = (User)infoObject;
             try {
-                return getBaseUserUrl() + "/" + URLEncoder.encode(user.getName(), "UTF-8");
+                return getBaseUserUrl() + "/" + URLEncoder.encode(user.getName(), "UTF-8").replaceAll("\\+", "%20");
             } catch(UnsupportedEncodingException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
