@@ -137,7 +137,7 @@ public class CombineWayAction extends JosmAction {
         // build the collection of tags used by the ways to combine
         //
         TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
-        completeTagCollectionWithMissingTags(wayTags, ways);
+
 
         // try to build a new way out of the combination of ways
         // which are combined
@@ -162,8 +162,11 @@ public class CombineWayAction extends JosmAction {
         Way modifiedTargetWay = new Way(targetWay);
         modifiedTargetWay.setNodes(path);
 
+        TagCollection completeWayTags = new TagCollection(wayTags);
+        completeTagCollectionWithMissingTags(completeWayTags, ways);
+
         CombineWaysConflictResolverDialog dialog = CombineWaysConflictResolverDialog.getInstance();
-        dialog.getTagConflictResolverModel().populate(wayTags);
+        dialog.getTagConflictResolverModel().populate(completeWayTags);
         dialog.setTargetWay(targetWay);
         dialog.getRelationMemberConflictResolverModel().populate(
                 referringRelations.getRelations(),
