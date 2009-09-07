@@ -2430,7 +2430,10 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         <item name="Bench" icon="presets/bench.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bench" />
             <key key="amenity" value="bench" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="24/7" delete_if_empty="true" />
+            <combo key="backrest" text="Backrest" values="yes,no" default="" delete_if_empty="true" />
+            <combo key="material" text="Material" values="stone,metal,wood,plastic" default="" delete_if_empty="true" />
+            <combo key="colour" text="Colour" values="black,brown,green,red,blue,white" default="" delete_if_empty="true" />
+            <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" default="" delete_if_empty="true" />
         </item>
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node">
             <label text="Edit Hunting Stand" />
