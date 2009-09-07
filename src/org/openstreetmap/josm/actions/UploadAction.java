@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -190,8 +191,8 @@ public class UploadAction extends JosmAction{
      *
      * @param id the primitive ID
      */
-    protected void synchronizePrimitive(final String id) {
-        Main.worker.execute(new UpdatePrimitiveTask(Long.parseLong(id)));
+    protected void synchronizePrimitive(final OsmPrimitiveType type, final long id) {
+        Main.worker.execute(new UpdatePrimitiveTask(type, id));
     }
 
     /**
@@ -216,9 +217,9 @@ public class UploadAction extends JosmAction{
      * @param serverVersion  the version of the primitive on the server
      * @param myVersion  the version of the primitive in the local dataset
      */
-    protected void handleUploadConflictForKnownConflict(String primitiveType, String id, String serverVersion, String myVersion) {
+    protected void handleUploadConflictForKnownConflict(OsmPrimitiveType primitiveType, long id, String serverVersion, String myVersion) {
         Object[] options = new Object[] {
-                tr("Synchronize {0} {1} only", tr(primitiveType), id),
+                tr("Synchronize {0} {1} only", tr(primitiveType.getAPIName()), id),
                 tr("Synchronize entire dataset"),
                 tr("Cancel")
         };
@@ -231,7 +232,7 @@ public class UploadAction extends JosmAction{
                 + "Click <strong>{4}</strong> to synchronize the conflicting primitive only.<br>"
                 + "Click <strong>{5}</strong> to synchronize the entire local dataset with the server.<br>"
                 + "Click <strong>{6}</strong> to abort and continue editing.<br></html>",
-                tr(primitiveType), id, serverVersion, myVersion,
+                tr(primitiveType.getAPIName()), id, serverVersion, myVersion,
                 options[0], options[1], options[2]
         );
         int optionsType = JOptionPane.YES_NO_CANCEL_OPTION;
@@ -246,13 +247,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case JOptionPane.CANCEL_OPTION: return;
-            case 0: synchronizePrimitive(id); break;
-            case 1: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        case JOptionPane.CLOSED_OPTION: return;
+        case JOptionPane.CANCEL_OPTION: return;
+        case 0: synchronizePrimitive(primitiveType, id); break;
+        case 1: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -286,12 +287,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case 1: return;
-            case 0: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+        case JOptionPane.CLOSED_OPTION: return;
+        case 1: return;
+        case 0: synchronizeDataSet(); break;
+        default:
+            // should not happen
+            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -305,7 +306,7 @@ public class UploadAction extends JosmAction{
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(e.getErrorHeader());
         if (m.matches()) {
-            handleUploadConflictForKnownConflict(m.group(3), m.group(4), m.group(2),m.group(1));
+            handleUploadConflictForKnownConflict(OsmPrimitiveType.from(m.group(3)), Long.parseLong(m.group(4)), m.group(2),m.group(1));
         } else {
             logger.warning(tr("Warning: error header \"{0}\" did not match expected pattern \"{1}\"", e.getErrorHeader(),pattern));
             handleUploadConflictForUnknownConflict();
@@ -325,9 +326,9 @@ public class UploadAction extends JosmAction{
      *
      * @see UpdateSelectionAction#handlePrimitiveGoneException(long)
      */
-    protected void handleGoneForKnownPrimitive(String primitiveType, String id) {
+    protected void handleGoneForKnownPrimitive(OsmPrimitiveType primitiveType, String id) {
         UpdateSelectionAction act = new UpdateSelectionAction();
-        act.handlePrimitiveGoneException(Long.parseLong(id));
+        act.handlePrimitiveGoneException(Long.parseLong(id),primitiveType);
     }
 
     /**
@@ -343,7 +344,7 @@ public class UploadAction extends JosmAction{
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(e.getErrorHeader());
         if (m.matches()) {
-            handleGoneForKnownPrimitive(m.group(1), m.group(2));
+            handleGoneForKnownPrimitive(OsmPrimitiveType.from(m.group(1)), m.group(2));
         } else {
             logger.warning(tr("Error header \"{0}\" does not match expected pattern \"{1}\"",e.getErrorHeader(), pattern));
             ExceptionDialogUtil.explainGoneForUnknownPrimitive(e);
@@ -423,16 +424,18 @@ public class UploadAction extends JosmAction{
         private boolean uploadFailed = false;
         private Exception lastException = null;
         private long id;
+        private OsmPrimitiveType type;
 
-        public UpdatePrimitiveTask(long id) {
+        public UpdatePrimitiveTask(OsmPrimitiveType type, long id) {
             super(tr("Updating primitive"),false /* don't ignore exceptions */);
             this.id = id;
+            this.type = type;
         }
 
         @Override protected void realRun() throws SAXException, IOException {
             try {
                 UpdateSelectionAction act = new UpdateSelectionAction();
-                act.updatePrimitive(id);
+                act.updatePrimitive(type, id);
             } catch (Exception sxe) {
                 if (uploadCancelled) {
                     System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());

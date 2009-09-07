@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
@@ -38,9 +39,9 @@ public class UpdateSelectionAction extends JosmAction {
      *
      * @param id the primitive id
      */
-    protected void handlePrimitiveGoneException(long id) {
+    protected void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        reader.append(getCurrentDataSet(),id);
+        reader.append(getCurrentDataSet(),id, type);
         DataSet ds = null;
         try {
             ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
@@ -72,10 +73,10 @@ public class UpdateSelectionAction extends JosmAction {
      * @exception IllegalStateException thrown if there is no current dataset
      *
      */
-    public void updatePrimitive(long id) throws IllegalStateException{
+    public void updatePrimitive(OsmPrimitiveType type, long id) throws IllegalStateException{
         if (getEditLayer() == null)
             throw new IllegalStateException(tr("No current dataset found"));
-        OsmPrimitive primitive = getEditLayer().data.getPrimitiveById(id);
+        OsmPrimitive primitive = getEditLayer().data.getPrimitiveById(id, type);
         if (primitive == null)
             throw new IllegalStateException(tr("Didn't find a primitive with id {0} in the current dataset", id));
         updatePrimitives(Collections.singleton(primitive));

@@ -38,4 +38,13 @@ public enum OsmPrimitiveType {
         throw new IllegalArgumentException(tr("parameter ''{0}'' is not an acceptable class, got ''{1}''", "cls", cls.toString()));
     }
 
+    public static OsmPrimitiveType from(String value) {
+        if (value == null) return null;
+        for (OsmPrimitiveType type: values()){
+            if (type.getAPIName().equalsIgnoreCase(value))
+                return type;
+        }
+        return null;
+    }
+
 }

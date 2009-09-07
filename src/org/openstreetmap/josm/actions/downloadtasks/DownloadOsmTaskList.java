@@ -124,14 +124,48 @@ public class DownloadOsmTaskList implements Runnable {
         }
         final OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
         if (editLayer != null) {
-            Set<Long> myPrimitiveIds = editLayer.data.getCompletePrimitiveIds();
-            Set<Long> downloadedIds = getDownloadedIds();
-            myPrimitiveIds.removeAll(downloadedIds);
-            myPrimitiveIds.remove(new Long(0)); // ignore new primitives
-            if (! myPrimitiveIds.isEmpty()) {
-                handlePotentiallyDeletedPrimitives(myPrimitiveIds);
+            Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.data);
+            for (DownloadTask task : osmTasks) {
+                if(task instanceof DownloadOsmTask) {
+                    DataSet ds = ((DownloadOsmTask)task).getDownloadedData();
+                    if (ds != null) {
+                        myPrimitives.removeAll(ds.nodes);
+                        myPrimitives.removeAll(ds.ways);
+                        myPrimitives.removeAll(ds.relations);
+                    }
+                }
+            }
+            if (! myPrimitives.isEmpty()) {
+                handlePotentiallyDeletedPrimitives(myPrimitives);
             }
         }
+    }
+
+
+    /**
+     * Replies the set of ids of all complete primitives (i.e. those with
+     * ! primitive.incomplete)
+     *
+     * @return the set of ids of all complete primitives
+     */
+    protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
+        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        for (OsmPrimitive primitive : ds.nodes) {
+            if (!primitive.incomplete && primitive.getId() == 0) {
+                ret.add(primitive);
+            }
+        }
+        for (OsmPrimitive primitive : ds.ways) {
+            if (! primitive.incomplete && primitive.getId() == 0) {
+                ret.add(primitive);
+            }
+        }
+        for (OsmPrimitive primitive : ds.relations) {
+            if (! primitive.incomplete && primitive.getId() == 0) {
+                ret.add(primitive);;
+            }
+        }
+        return ret;
     }
 
     /**
@@ -140,11 +174,9 @@ public class DownloadOsmTaskList implements Runnable {
      *
      * @param potentiallyDeleted a set of ids to check update from the server
      */
-    protected void updatePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
-        DataSet ds =  Main.map.mapView.getEditLayer().data;
+    protected void updatePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
         final ArrayList<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
-        for (Long id : potentiallyDeleted) {
-            OsmPrimitive primitive = ds.getPrimitiveById(id);
+        for (OsmPrimitive primitive : potentiallyDeleted) {
             if (primitive != null) {
                 toSelect.add(primitive);
             }
@@ -166,7 +198,7 @@ public class DownloadOsmTaskList implements Runnable {
      *
      * @param potentiallyDeleted a set of primitives (given by their ids)
      */
-    protected void handlePotentiallyDeletedPrimitives(Set<Long> potentiallyDeleted) {
+    protected void handlePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
         String [] options = {
                 "Check on the server",
                 "Ignore"
@@ -196,43 +228,10 @@ public class DownloadOsmTaskList implements Runnable {
                 options[0]
         );
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case JOptionPane.NO_OPTION: return;
-            case JOptionPane.YES_OPTION: updatePotentiallyDeletedPrimitives(potentiallyDeleted); break;
+        case JOptionPane.CLOSED_OPTION: return;
+        case JOptionPane.NO_OPTION: return;
+        case JOptionPane.YES_OPTION: updatePotentiallyDeletedPrimitives(potentiallyDeleted); break;
         }
-    }
-
-    /**
-     * replies true, if the primitive with id <code>id</code> was downloaded into the
-     * dataset <code>ds</code>
-     *
-     * @param id the id
-     * @param ds the dataset
-     * @return true, if the primitive with id <code>id</code> was downloaded into the
-     * dataset <code>ds</code>; false otherwise
-     */
-    protected boolean wasDownloaded(long id, DataSet ds) {
-        OsmPrimitive primitive = ds.getPrimitiveById(id);
-        return primitive != null;
-    }
-
-    /**
-     * replies true, if the primitive with id <code>id</code> was downloaded into the
-     * dataset of one of the download tasks
-     *
-     * @param id the id
-     * @return true, if the primitive with id <code>id</code> was downloaded into the
-     * dataset of one of the download tasks
-     *
-     */
-    public boolean wasDownloaded(long id) {
-        for (DownloadTask task : osmTasks) {
-            if(task instanceof DownloadOsmTask) {
-                DataSet ds = ((DownloadOsmTask)task).getDownloadedData();
-                if(wasDownloaded(id,ds)) return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -240,13 +239,15 @@ public class DownloadOsmTaskList implements Runnable {
      *
      * @return the set of primitive ids which have been downloaded by this task list
      */
-    public Set<Long> getDownloadedIds() {
-        HashSet<Long> ret = new HashSet<Long>();
+    public Set<OsmPrimitive> getDownloadedPrimitives() {
+        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (DownloadTask task : osmTasks) {
             if(task instanceof DownloadOsmTask) {
                 DataSet ds = ((DownloadOsmTask)task).getDownloadedData();
                 if (ds != null) {
-                    ret.addAll(ds.getPrimitiveIds());
+                    ret.addAll(ds.nodes);
+                    ret.addAll(ds.ways);
+                    ret.addAll(ds.relations);
                 }
             }
         }

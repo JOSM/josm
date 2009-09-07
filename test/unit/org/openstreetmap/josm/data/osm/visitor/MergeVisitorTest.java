@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
@@ -96,7 +97,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = (Node)my.getPrimitiveById(1);
+        Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertTrue(visitor.getConflicts().isEmpty());
         assertEquals(1, n2.getId());
         assertEquals(1, n2.getVersion());
@@ -132,7 +133,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = (Node)my.getPrimitiveById(1);
+        Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertTrue(visitor.getConflicts().isEmpty());
         assertEquals(1, n2.getId());
         assertEquals(2, n2.getVersion());
@@ -172,7 +173,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = (Node)my.getPrimitiveById(1);
+        Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
         assertEquals(n, n2);
     }
@@ -208,7 +209,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = (Node)my.getPrimitiveById(1);
+        Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
         assertEquals(n, n2);
     }
@@ -241,7 +242,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = (Node)my.getPrimitiveById(1);
+        Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
         assertEquals(true, n2.isVisible());
     }
@@ -270,7 +271,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = (Node)my.getPrimitiveById(1);
+        Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(0,visitor.getConflicts().size());
         assertEquals(true, n2.isVisible());
     }
@@ -353,7 +354,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = (Node)my.getPrimitiveById(1);
+        Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertEquals(0,visitor.getConflicts().size());
         assertEquals(2,my.nodes.size());
         assertEquals(n,n2);
@@ -500,7 +501,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Way merged = (Way)my.getPrimitiveById(3);
+        Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",merged.get("key1"));
         assertEquals("value2",merged.get("key2"));
@@ -570,7 +571,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Way merged = (Way)my.getPrimitiveById(3);
+        Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertEquals(0,visitor.getConflicts().size());
         assertEquals(3,merged.getId());
         assertEquals(2,merged.getVersion());
@@ -641,7 +642,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Way merged = (Way)my.getPrimitiveById(3);
+        Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertEquals(1,visitor.getConflicts().size());
         assertEquals(3,merged.getId());
         assertEquals(1,merged.getVersion());
@@ -689,7 +690,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Way merged = (Way)my.getPrimitiveById(3);
+        Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertEquals(1,visitor.getConflicts().size());
         assertEquals(true, visitor.getConflicts().hasConflictForMy(myWay));
         assertEquals(true, visitor.getConflicts().hasConflictForTheir(theirWay));
@@ -850,10 +851,10 @@ public class MergeVisitorTest {
 
         assertEquals(0,visitor.getConflicts().size());
 
-        Way myWay = (Way)my.getPrimitiveById(4);
+        Way myWay = (Way)my.getPrimitiveById(4,OsmPrimitiveType.WAY);
         assertEquals(2, myWay.getNodesCount());
 
-        Node n = (Node)my.getPrimitiveById(1);
+        Node n = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertTrue(n != null);
     }
 
@@ -905,10 +906,10 @@ public class MergeVisitorTest {
 
         assertEquals(0,visitor.getConflicts().size());
 
-        Relation r = (Relation)my.getPrimitiveById(4);
+        Relation r = (Relation)my.getPrimitiveById(4,OsmPrimitiveType.RELATION);
         assertEquals(2, r.getMembersCount());
 
-        Node n = (Node)my.getPrimitiveById(1);
+        Node n = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertTrue(n != null);
     }
 
@@ -941,17 +942,17 @@ public class MergeVisitorTest {
 
         assertEquals(0,visitor.getConflicts().size());
 
-        OsmPrimitive p= my.getPrimitiveById(1);
+        OsmPrimitive p= my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertNotNull(p);
         assertTrue(p.incomplete);
-        p= my.getPrimitiveById(2);
+        p= my.getPrimitiveById(2, OsmPrimitiveType.NODE);
         assertNotNull(p);
         assertTrue(p.incomplete);
-        p= my.getPrimitiveById(3);
+        p= my.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(p);
         assertTrue(p.incomplete);
 
-        Way w = (Way)my.getPrimitiveById(3);
+        Way w = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(w);
         assertTrue(p.incomplete);
         assertEquals(2, w.getNodesCount());
@@ -1004,17 +1005,17 @@ public class MergeVisitorTest {
 
         assertEquals(0,visitor.getConflicts().size());
 
-        OsmPrimitive p= my.getPrimitiveById(1);
+        OsmPrimitive p= my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertNotNull(p);
         assertTrue(!p.incomplete);
-        p= my.getPrimitiveById(2);
+        p= my.getPrimitiveById(2, OsmPrimitiveType.NODE);
         assertNotNull(p);
         assertTrue(!p.incomplete);
-        p= my.getPrimitiveById(3);
+        p= my.getPrimitiveById(3,OsmPrimitiveType.WAY);
         assertNotNull(p);
         assertTrue(!p.incomplete);
 
-        Way w = (Way)my.getPrimitiveById(3);
+        Way w = (Way)my.getPrimitiveById(3,OsmPrimitiveType.WAY);
         assertNotNull(w);
         assertTrue(!p.incomplete);
         assertEquals(2, w.getNodesCount());

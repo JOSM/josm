@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -246,7 +247,7 @@ public class MultiFetchServerObjectReaderTest {
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
             Node n1 = it.next();
-            Node n2 = (Node)ds.getPrimitiveById(n1.id);
+            Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));
         }
@@ -265,7 +266,7 @@ public class MultiFetchServerObjectReaderTest {
         Iterator<Way> it = out.ways.iterator();
         while(it.hasNext()) {
             Way w1 = it.next();
-            Way w2 = (Way)ds.getPrimitiveById(w1.id);
+            Way w2 = (Way)ds.getPrimitiveById(w1.getId(), OsmPrimitiveType.WAY);
             assertNotNull(w2);
             assertEquals(w2.getNodesCount(), w1.getNodesCount());
             assertEquals(w2.get("name"),w1.get("name"));
@@ -285,7 +286,7 @@ public class MultiFetchServerObjectReaderTest {
         Iterator<Relation> it = out.relations.iterator();
         while(it.hasNext()) {
             Relation r1 = it.next();
-            Relation r2 = (Relation)ds.getPrimitiveById(r1.id);
+            Relation r2 = (Relation)ds.getPrimitiveById(r1.getId(), OsmPrimitiveType.RELATION);
             assertNotNull(r2);
             assertEquals(r2.getMembersCount(), r1.getMembersCount());
             assertEquals(r2.get("name"),r2.get("name"));
@@ -305,7 +306,7 @@ public class MultiFetchServerObjectReaderTest {
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
             Node n1 = it.next();
-            Node n2 = (Node)ds.getPrimitiveById(n1.id);
+            Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));
         }
@@ -326,7 +327,7 @@ public class MultiFetchServerObjectReaderTest {
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
             Node n1 = it.next();
-            Node n2 = (Node)ds.getPrimitiveById(n1.id);
+            Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));
         }

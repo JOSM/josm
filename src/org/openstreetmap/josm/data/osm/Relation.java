@@ -111,7 +111,7 @@ public final class Relation extends OsmPrimitive {
      * Create a new relation with id 0
      */
     public Relation() {
-
+        super(0);
     }
 
     /**

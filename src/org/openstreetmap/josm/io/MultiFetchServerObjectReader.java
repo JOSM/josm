@@ -109,11 +109,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @exception NoSuchElementException thrown, if ds doesn't include an {@see OsmPrimitive} with
      *   id=<code>id</code>
      */
-    protected void remember(DataSet ds, long id) throws IllegalArgumentException, NoSuchElementException{
+    protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws IllegalArgumentException, NoSuchElementException{
         if (ds == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "ds"));
         if (id <= 0) return;
-        OsmPrimitive primitive = ds.getPrimitiveById(id);
+        OsmPrimitive primitive = ds.getPrimitiveById(id, type);
         if (primitive == null)
             throw new NoSuchElementException(tr("no primitive with id {0} in local dataset. Can't infer primitive type", id));
         remember(id, OsmPrimitiveType.from(primitive));
@@ -121,39 +121,26 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * appends a list of  ids to the list of ids which will be fetched from the server. ds must
-     * include an {@see OsmPrimitive} for each id in ids.
+     * appends a {@see Node}s id to the list of ids which will be fetched from the server.
      *
-     * id is ignored if id <= 0.
-     *
-     * @param ds  the dataset
-     * @param ids  the list of ids
+     * @param node  the node (ignored, if null)
      * @return this
      *
      */
-    public MultiFetchServerObjectReader append(DataSet ds, long ... ids)  {
-        if (ids == null) return this;
-        for (int i=0; i < ids.length; i++) {
-            remember(ds, ids[i]);
-        }
-        return this;
-    }
-
-    /**
-     * appends a collection of  ids to the list of ids which will be fetched from the server. ds must
-     * include an {@see OsmPrimitive} for each id in ids.
-     *
-     * id is ignored if id <= 0.
-     *
-     * @param ds  the dataset
-     * @param ids  the collection of ids
-     * @return this
-     *
-     */
-    public MultiFetchServerObjectReader append(DataSet ds, Collection<Long> ids) {
-        if (ids == null) return null;
-        for (long id: ids) {
-            append(ds,id);
+    public MultiFetchServerObjectReader append(DataSet ds, long id, OsmPrimitiveType type) {
+        switch(type) {
+        case NODE:
+            Node n = (Node)ds.getPrimitiveById(id,type);
+            append(n);
+            break;
+        case WAY:
+            Way w= (Way)ds.getPrimitiveById(id,type);
+            append(w);
+            break;
+        case RELATION:
+            Relation r = (Relation)ds.getPrimitiveById(id,type);
+            append(r);
+            break;
         }
         return this;
     }
@@ -375,9 +362,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             try {
                 String msg = "";
                 switch(type) {
-                    case NODE: msg = tr("Fetching node with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
-                    case WAY: msg = tr("Fetching way with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
-                    case RELATION: msg = tr("Fetching relation with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                case NODE: msg = tr("Fetching node with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                case WAY: msg = tr("Fetching way with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
+                case RELATION: msg = tr("Fetching relation with id {0} from ''{1}''", id, OsmApi.getOsmApi().getBaseUrl()); break;
                 }
                 progressMonitor.setCustomText(msg);
                 singleGetId(type, id, progressMonitor);
@@ -413,9 +400,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{
         String msg = "";
         switch(type) {
-            case NODE: msg = tr("Fetching a package of nodes from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
-            case WAY:  msg = tr("Fetching a package of ways from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
-            case RELATION:  msg = tr("Fetching a package of relations from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+        case NODE: msg = tr("Fetching a package of nodes from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+        case WAY:  msg = tr("Fetching a package of ways from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
+        case RELATION:  msg = tr("Fetching a package of relations from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
         }
         progressMonitor.setCustomText(msg);
         Set<Long> toFetch = new HashSet<Long>(ids);

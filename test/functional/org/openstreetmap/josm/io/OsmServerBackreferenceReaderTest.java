@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -252,7 +253,7 @@ public class OsmServerBackreferenceReaderTest {
         assertEquals(1, referers.ways.size());
         assertEquals(0, referers.relations.size());
         for (Way way: referers.ways) {
-            assertEquals(w.id, way.id);
+            assertEquals(w.getId(), way.getId());
             assertEquals(false, way.incomplete);
         }
     }
@@ -271,7 +272,7 @@ public class OsmServerBackreferenceReaderTest {
         assertEquals(1, referers.ways.size());
         assertEquals(0, referers.relations.size());
         for (Way way: referers.ways) {
-            assertEquals(w.id, way.id);
+            assertEquals(w.getId(), way.getId());
             assertEquals(false, way.incomplete);
             assertEquals(10, w.getNodesCount());
         }
@@ -318,14 +319,14 @@ public class OsmServerBackreferenceReaderTest {
         assertEquals(2, referers.relations.size());  // two relations referring to
         Set<Long> expectedNodeIds = new HashSet<Long>();
         for (Way way: referers.ways) {
-            Way orig = (Way)ds.getPrimitiveById(way.id);
+            Way orig = (Way)ds.getPrimitiveById(way.getId(), OsmPrimitiveType.WAY);
             for(Node n: orig.getNodes()) {
-                expectedNodeIds.add(n.id);
+                expectedNodeIds.add(n.getId());
             }
         }
         assertEquals(expectedNodeIds.size(), referers.nodes.size());
         for (Node n : referers.nodes) {
-            assertEquals(true, expectedNodeIds.contains(n.id));
+            assertEquals(true, expectedNodeIds.contains(n.getId()));
         }
 
         Relation r = lookupRelation(referers, 0);
@@ -351,22 +352,22 @@ public class OsmServerBackreferenceReaderTest {
         r = lookupRelation(referers, 6);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 7);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 8);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 9);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
 
         for (Relation r1: referers.relations) {
-            if (! referringRelationsIds.contains(r1.id)) {
+            if (! referringRelationsIds.contains(r1.getId())) {
                 assertEquals(true, r1.incomplete);
             }
         }
@@ -377,28 +378,28 @@ public class OsmServerBackreferenceReaderTest {
         Set<Long> expectedWayIds = new HashSet<Long>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
         for (RelationMember m : lookupRelation(ds, 7).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
         for (RelationMember m : lookupRelation(ds, 8).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
         for (RelationMember m : lookupRelation(ds, 9).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
 
         assertEquals(expectedWayIds.size(), referers.ways.size());
         for (Way w1 : referers.ways) {
-            assertEquals(true, expectedWayIds.contains(w1.id));
+            assertEquals(true, expectedWayIds.contains(w1.getId()));
             assertEquals(true, w1.incomplete);
         }
 
@@ -411,7 +412,7 @@ public class OsmServerBackreferenceReaderTest {
         HashSet<Long> ret = new HashSet<Long>();
         if (way == null)return ret;
         for (Node n: way.getNodes()) {
-            ret.add(n.id);
+            ret.add(n.getId());
         }
         return ret;
     }
@@ -421,7 +422,7 @@ public class OsmServerBackreferenceReaderTest {
         if (r == null) return ret;
         for (RelationMember m: r.getMembers()) {
             if (m.isNode()) {
-                ret.add(m.getMember().id);
+                ret.add(m.getMember().getId());
             } else if (m.isWay()) {
                 ret.addAll(getNodeIdsInWay(m.getWay()));
             } else if (m.isRelation()) {
@@ -447,19 +448,19 @@ public class OsmServerBackreferenceReaderTest {
         r = lookupRelation(referers, 6);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 7);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 8);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 9);
         assertNotNull(r);
         assertEquals(false, r.incomplete);
-        referringRelationsIds.add(r.id);
+        referringRelationsIds.add(r.getId());
 
         // all relations are fully loaded
         //
@@ -473,26 +474,26 @@ public class OsmServerBackreferenceReaderTest {
         Set<Long> expectedWayIds = new HashSet<Long>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
         for (RelationMember m : lookupRelation(ds, 7).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
         for (RelationMember m : lookupRelation(ds, 8).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
         for (RelationMember m : lookupRelation(ds, 9).getMembers()) {
             if (m.isWay()) {
-                expectedWayIds.add(m.getMember().id);
+                expectedWayIds.add(m.getMember().getId());
             }
         }
         for (long id : expectedWayIds) {
-            Way w = (Way)referers.getPrimitiveById(id);
+            Way w = (Way)referers.getPrimitiveById(id, OsmPrimitiveType.WAY);
             assertNotNull(w);
             assertEquals(false, w.incomplete);
         }
@@ -505,7 +506,7 @@ public class OsmServerBackreferenceReaderTest {
 
         assertEquals(expectedNodeIds.size(), referers.nodes.size());
         for(Node n : referers.nodes) {
-            assertEquals(true, expectedNodeIds.contains(n.id));
+            assertEquals(true, expectedNodeIds.contains(n.getId()));
         }
     }
 }

@@ -64,6 +64,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -74,7 +75,7 @@ public class NodeListMergeModelTest {
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
 
         assertEquals(1, mergedNodes.size());
-        assertEquals(2, mergedNodes.get(0).id);
+        assertEquals(2, mergedNodes.get(0).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0);
@@ -88,6 +89,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -101,8 +103,8 @@ public class NodeListMergeModelTest {
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
-        assertEquals(2, mergedNodes.get(0).id);
-        assertEquals(1, mergedNodes.get(1).id);
+        assertEquals(2, mergedNodes.get(0).getId());
+        assertEquals(1, mergedNodes.get(1).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0);
@@ -119,9 +121,11 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
+
 
         model.populate(myWay, theirWay);
 
@@ -132,8 +136,8 @@ public class NodeListMergeModelTest {
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
-        assertEquals(3, mergedNodes.get(0).id); // my node 3 at position 0
-        assertEquals(1, mergedNodes.get(1).id); // already merged node 1 at position 1
+        assertEquals(3, mergedNodes.get(0).getId()); // my node 3 at position 0
+        assertEquals(1, mergedNodes.get(1).getId()); // already merged node 1 at position 1
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0);
@@ -145,6 +149,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         myWay.addNode(new Node(4));
@@ -159,9 +164,9 @@ public class NodeListMergeModelTest {
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(3, mergedNodes.size());
-        assertEquals(3, mergedNodes.get(0).id); // my node 3 at position 0
-        assertEquals(4, mergedNodes.get(1).id); // my node 4 at position 1
-        assertEquals(1, mergedNodes.get(2).id); // already merged node 1 at position 2
+        assertEquals(3, mergedNodes.get(0).getId()); // my node 3 at position 0
+        assertEquals(4, mergedNodes.get(1).getId()); // my node 4 at position 1
+        assertEquals(1, mergedNodes.get(2).getId()); // already merged node 1 at position 2
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0,1); // first two rows selected
@@ -173,6 +178,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -183,7 +189,7 @@ public class NodeListMergeModelTest {
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
 
         assertEquals(1, mergedNodes.size());
-        assertEquals(2, mergedNodes.get(0).id);
+        assertEquals(2, mergedNodes.get(0).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0);
@@ -194,6 +200,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -207,8 +214,8 @@ public class NodeListMergeModelTest {
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
-        assertEquals(1, mergedNodes.get(0).id); // already merged node 1 at position 0
-        assertEquals(2, mergedNodes.get(1).id); // copied node 2 at position 1
+        assertEquals(1, mergedNodes.get(0).getId()); // already merged node 1 at position 0
+        assertEquals(2, mergedNodes.get(1).getId()); // copied node 2 at position 1
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 1);
@@ -220,6 +227,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -233,8 +241,8 @@ public class NodeListMergeModelTest {
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(2, mergedNodes.size());
-        assertEquals(1, mergedNodes.get(0).id); // already merged node 1 at position 0
-        assertEquals(3, mergedNodes.get(1).id); // my node 3 at position 1
+        assertEquals(1, mergedNodes.get(0).getId()); // already merged node 1 at position 0
+        assertEquals(3, mergedNodes.get(1).getId()); // my node 3 at position 1
 
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
@@ -247,6 +255,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         myWay.addNode(new Node(4));
@@ -261,9 +270,9 @@ public class NodeListMergeModelTest {
 
         mergedNodes = inspectNodeList(model, "Merged");
         assertEquals(3, mergedNodes.size());
-        assertEquals(1, mergedNodes.get(0).id); // already merged node 1 at position 0
-        assertEquals(3, mergedNodes.get(1).id); // my node 3 at position 1
-        assertEquals(4, mergedNodes.get(2).id); // my node 4 at position 2
+        assertEquals(1, mergedNodes.get(0).getId()); // already merged node 1 at position 0
+        assertEquals(3, mergedNodes.get(1).getId()); // my node 3 at position 1
+        assertEquals(4, mergedNodes.get(2).getId()); // my node 4 at position 2
 
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
@@ -279,6 +288,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -292,10 +302,10 @@ public class NodeListMergeModelTest {
         model.copyMyBeforeCurrent(new int[]{0}, 1);
 
         assertEquals(4, mergedNodes.size());
-        assertEquals(10, mergedNodes.get(0).id); // already merged node
-        assertEquals(1, mergedNodes.get(1).id);  // copied node 1 at position 1
-        assertEquals(11, mergedNodes.get(2).id); // already merged node
-        assertEquals(12, mergedNodes.get(3).id); // already merged node
+        assertEquals(10, mergedNodes.get(0).getId()); // already merged node
+        assertEquals(1, mergedNodes.get(1).getId());  // copied node 1 at position 1
+        assertEquals(11, mergedNodes.get(2).getId()); // already merged node
+        assertEquals(12, mergedNodes.get(3).getId()); // already merged node
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 1); // position 1 selected
@@ -307,6 +317,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -320,11 +331,11 @@ public class NodeListMergeModelTest {
         model.copyMyBeforeCurrent(new int[]{0,1}, 0);
 
         assertEquals(5, mergedNodes.size());
-        assertEquals(1, mergedNodes.get(0).id);  // copied node 1 at position 0
-        assertEquals(2, mergedNodes.get(1).id);  // copied node 2 at position 1
-        assertEquals(10, mergedNodes.get(2).id); // already merged node
-        assertEquals(11, mergedNodes.get(3).id); // already merged node
-        assertEquals(12, mergedNodes.get(4).id); // already merged node
+        assertEquals(1, mergedNodes.get(0).getId());  // copied node 1 at position 0
+        assertEquals(2, mergedNodes.get(1).getId());  // copied node 2 at position 1
+        assertEquals(10, mergedNodes.get(2).getId()); // already merged node
+        assertEquals(11, mergedNodes.get(3).getId()); // already merged node
+        assertEquals(12, mergedNodes.get(4).getId()); // already merged node
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0,1); // position 0 and 1 selected
@@ -335,6 +346,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -368,6 +380,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -381,10 +394,10 @@ public class NodeListMergeModelTest {
         model.copyMyAfterCurrent(new int[]{0}, 1);
 
         assertEquals(4, mergedNodes.size());
-        assertEquals(10, mergedNodes.get(0).id); // already merged node
-        assertEquals(11, mergedNodes.get(1).id); // already merged node
-        assertEquals(1, mergedNodes.get(2).id);  // copied node 1 at position 2
-        assertEquals(12, mergedNodes.get(3).id); // already merged node
+        assertEquals(10, mergedNodes.get(0).getId()); // already merged node
+        assertEquals(11, mergedNodes.get(1).getId()); // already merged node
+        assertEquals(1, mergedNodes.get(2).getId());  // copied node 1 at position 2
+        assertEquals(12, mergedNodes.get(3).getId()); // already merged node
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 2); // position 1 selected
@@ -396,6 +409,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
@@ -410,11 +424,11 @@ public class NodeListMergeModelTest {
         model.copyMyAfterCurrent(new int[]{0,1}, 2);
 
         assertEquals(5, mergedNodes.size());
-        assertEquals(10, mergedNodes.get(0).id); // already merged node
-        assertEquals(11, mergedNodes.get(1).id); // already merged node
-        assertEquals(12, mergedNodes.get(2).id); // already merged node
-        assertEquals(1, mergedNodes.get(3).id);  // copied node 1 at position 3
-        assertEquals(2, mergedNodes.get(4).id);  // copied node 2 at position 4
+        assertEquals(10, mergedNodes.get(0).getId()); // already merged node
+        assertEquals(11, mergedNodes.get(1).getId()); // already merged node
+        assertEquals(12, mergedNodes.get(2).getId()); // already merged node
+        assertEquals(1, mergedNodes.get(3).getId());  // copied node 1 at position 3
+        assertEquals(2, mergedNodes.get(4).getId());  // copied node 2 at position 4
 
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
@@ -426,6 +440,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
@@ -440,11 +455,11 @@ public class NodeListMergeModelTest {
         model.copyMyAfterCurrent(new int[]{0,2}, 0);
 
         assertEquals(5, mergedNodes.size());
-        assertEquals(10, mergedNodes.get(0).id); // already merged node
-        assertEquals(1, mergedNodes.get(1).id);  // copied node 1 at position 1
-        assertEquals(3, mergedNodes.get(2).id);  // copied node 3 at position 2
-        assertEquals(11, mergedNodes.get(3).id); // already merged node
-        assertEquals(12, mergedNodes.get(4).id); // already merged node
+        assertEquals(10, mergedNodes.get(0).getId()); // already merged node
+        assertEquals(1, mergedNodes.get(1).getId());  // copied node 1 at position 1
+        assertEquals(3, mergedNodes.get(2).getId());  // copied node 3 at position 2
+        assertEquals(11, mergedNodes.get(3).getId()); // already merged node
+        assertEquals(12, mergedNodes.get(4).getId()); // already merged node
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 1,2); // position 1,2 selected
@@ -455,6 +470,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -488,6 +504,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -501,9 +518,9 @@ public class NodeListMergeModelTest {
         model.moveUpMerged(new int[]{1});
 
         assertEquals(3, mergedNodes.size());
-        assertEquals(11, mergedNodes.get(0).id);
-        assertEquals(10, mergedNodes.get(1).id);
-        assertEquals(12, mergedNodes.get(2).id);
+        assertEquals(11, mergedNodes.get(0).getId());
+        assertEquals(10, mergedNodes.get(1).getId());
+        assertEquals(12, mergedNodes.get(2).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0); // position 1 selecte0
@@ -514,6 +531,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -529,11 +547,11 @@ public class NodeListMergeModelTest {
         model.moveUpMerged(new int[]{1,4});
 
         assertEquals(5, mergedNodes.size());
-        assertEquals(11, mergedNodes.get(0).id);
-        assertEquals(10, mergedNodes.get(1).id);
-        assertEquals(12, mergedNodes.get(2).id);
-        assertEquals(14, mergedNodes.get(3).id);
-        assertEquals(13, mergedNodes.get(4).id);
+        assertEquals(11, mergedNodes.get(0).getId());
+        assertEquals(10, mergedNodes.get(1).getId());
+        assertEquals(12, mergedNodes.get(2).getId());
+        assertEquals(14, mergedNodes.get(3).getId());
+        assertEquals(13, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0,3); // position 0 and 3 selecte0
@@ -544,6 +562,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -559,11 +578,11 @@ public class NodeListMergeModelTest {
         model.moveUpMerged(new int[]{1,2,3,4});
 
         assertEquals(5, mergedNodes.size());
-        assertEquals(11, mergedNodes.get(0).id);
-        assertEquals(12, mergedNodes.get(1).id);
-        assertEquals(13, mergedNodes.get(2).id);
-        assertEquals(14, mergedNodes.get(3).id);
-        assertEquals(10, mergedNodes.get(4).id);
+        assertEquals(11, mergedNodes.get(0).getId());
+        assertEquals(12, mergedNodes.get(1).getId());
+        assertEquals(13, mergedNodes.get(2).getId());
+        assertEquals(14, mergedNodes.get(3).getId());
+        assertEquals(10, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 0,1,2,3);
@@ -577,6 +596,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -590,9 +610,9 @@ public class NodeListMergeModelTest {
         model.moveDownMerged(new int[]{1});
 
         assertEquals(3, mergedNodes.size());
-        assertEquals(10, mergedNodes.get(0).id);
-        assertEquals(12, mergedNodes.get(1).id);
-        assertEquals(11, mergedNodes.get(2).id);
+        assertEquals(10, mergedNodes.get(0).getId());
+        assertEquals(12, mergedNodes.get(1).getId());
+        assertEquals(11, mergedNodes.get(2).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 2);
@@ -603,6 +623,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -618,11 +639,11 @@ public class NodeListMergeModelTest {
         model.moveDownMerged(new int[]{1,3});
 
         assertEquals(5, mergedNodes.size());
-        assertEquals(10, mergedNodes.get(0).id);
-        assertEquals(12, mergedNodes.get(1).id);
-        assertEquals(11, mergedNodes.get(2).id);
-        assertEquals(14, mergedNodes.get(3).id);
-        assertEquals(13, mergedNodes.get(4).id);
+        assertEquals(10, mergedNodes.get(0).getId());
+        assertEquals(12, mergedNodes.get(1).getId());
+        assertEquals(11, mergedNodes.get(2).getId());
+        assertEquals(14, mergedNodes.get(3).getId());
+        assertEquals(13, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 2,4);
@@ -633,6 +654,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
+        myWay.incomplete = false;
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -648,11 +670,11 @@ public class NodeListMergeModelTest {
         model.moveDownMerged(new int[]{1,2,3});
 
         assertEquals(5, mergedNodes.size());
-        assertEquals(10, mergedNodes.get(0).id);
-        assertEquals(14, mergedNodes.get(1).id);
-        assertEquals(11, mergedNodes.get(2).id);
-        assertEquals(12, mergedNodes.get(3).id);
-        assertEquals(13, mergedNodes.get(4).id);
+        assertEquals(10, mergedNodes.get(0).getId());
+        assertEquals(14, mergedNodes.get(1).getId());
+        assertEquals(11, mergedNodes.get(2).getId());
+        assertEquals(12, mergedNodes.get(3).getId());
+        assertEquals(13, mergedNodes.get(4).getId());
 
         DefaultListSelectionModel mergedSelection = inspectListSelectionModel(model, "mergedEntriesSelectionModel");
         ensureSelected(mergedSelection, 2,3,4);

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * One full way, consisting of a list of way nodes.
@@ -122,6 +124,7 @@ public final class Way extends OsmPrimitive {
      * 
      */
     public Way(){
+        super(0);
     }
 
     /**
@@ -196,14 +199,35 @@ public final class Way extends OsmPrimitive {
         }
     }
 
-    public void addNode(Node n) {
+    /**
+     * Adds a node to the end of the list of nodes. Ignored, if n is null.
+     * 
+     * @param n the node. Ignored, if null.
+     * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
+     * to an incomplete way
+     */
+    public void addNode(Node n) throws IllegalStateException {
+        if (n==null) return;
+        if (incomplete)
+            throw new IllegalStateException(tr("can't add node {0} to incomplete way {1}", n.getId(), getId()));
         if (incomplete) return;
         clearCached();
         nodes.add(n);
     }
 
-    public void addNode(int offs, Node n) {
-        if (incomplete) return;
+    /**
+     * Adds a node at position offs.
+     * 
+     * @param int offs the offset
+     * @param n the node. Ignored, if null.
+     * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
+     * to an incomplete way
+     * @throws IndexOutOfBoundsException thrown if offs is out of bounds
+     */
+    public void addNode(int offs, Node n) throws IllegalStateException, IndexOutOfBoundsException {
+        if (n==null) return;
+        if (incomplete)
+            throw new IllegalStateException(tr("can't add node {0} to incomplete way {1}", n.getId(), getId()));
         clearCached();
         nodes.add(offs, n);
     }

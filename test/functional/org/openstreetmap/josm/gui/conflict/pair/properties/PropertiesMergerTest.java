@@ -25,7 +25,7 @@ public class PropertiesMergerTest extends JFrame{
     protected void populate() {
         Node my = new Node(1);
         my.setCoor(new LatLon(1,1));
-        my.deleted = true;
+        my.setDeleted(true);
 
         Node their = new Node(2);
         their.setCoor(new LatLon(10,10));

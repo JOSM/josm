@@ -312,19 +312,25 @@ public class DataSet implements Cloneable {
      * exists
      *
      * @param id  the id, > 0 required
+     * @param type the type of  the primitive. Must not be null.
      * @return the primitive
      * @exception IllegalArgumentException thrown, if id <= 0
+     * @exception IllegalArgumentException thrown, if type is null
+     * @exception IllegalArgumentException thrown, if type is neither NODE, or WAY or RELATION
      */
-    public OsmPrimitive getPrimitiveById(long id) {
+    public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
         if (id <= 0)
             throw new IllegalArgumentException(tr("parameter {0} > 0 required. Got {1}.", "id", id));
-        for (OsmPrimitive primitive : nodes) {
-            if (primitive.getId() == id) return primitive;
+        if (id <= 0)
+            throw new IllegalArgumentException(tr("paramete''{0}'' must not be null", "type"));
+        Collection<? extends OsmPrimitive> primitives = null;
+        switch(type) {
+        case NODE: primitives = nodes; break;
+        case WAY: primitives = ways; break;
+        case RELATION: primitives = relations; break;
+        case CHANGESET: throw new IllegalArgumentException(tr("unsupported value ''{0}'' or parameter ''{1}''", type, "type"));
         }
-        for (OsmPrimitive primitive : ways) {
-            if (primitive.getId() == id) return primitive;
-        }
-        for (OsmPrimitive primitive : relations) {
+        for (OsmPrimitive primitive : primitives) {
             if (primitive.getId() == id) return primitive;
         }
         return null;
@@ -340,32 +346,6 @@ public class DataSet implements Cloneable {
         }
         for (OsmPrimitive primitive : relations) {
             ret.add(primitive.getId());
-        }
-        return ret;
-    }
-
-    /**
-     * Replies the set of ids of all complete primitives (i.e. those with
-     * ! primitive.incomplete)
-     *
-     * @return the set of ids of all complete primitives
-     */
-    public Set<Long> getCompletePrimitiveIds() {
-        HashSet<Long> ret = new HashSet<Long>();
-        for (OsmPrimitive primitive : nodes) {
-            if (!primitive.incomplete) {
-                ret.add(primitive.getId());
-            }
-        }
-        for (OsmPrimitive primitive : ways) {
-            if (! primitive.incomplete) {
-                ret.add(primitive.getId());
-            }
-        }
-        for (OsmPrimitive primitive : relations) {
-            if (! primitive.incomplete) {
-                ret.add(primitive.getId());
-            }
         }
         return ret;
     }

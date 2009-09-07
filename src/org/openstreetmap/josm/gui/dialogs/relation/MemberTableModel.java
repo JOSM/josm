@@ -20,6 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -85,12 +86,12 @@ public class MemberTableModel extends AbstractTableModel {
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-            case 0:
-                return members.get(rowIndex).getRole();
-            case 1:
-                return members.get(rowIndex).getMember();
-            case 2:
-                return linked(rowIndex);
+        case 0:
+            return members.get(rowIndex).getRole();
+        case 1:
+            return members.get(rowIndex).getMember();
+        case 2:
+            return linked(rowIndex);
         }
         // should not happen
         return null;
@@ -200,7 +201,7 @@ public class MemberTableModel extends AbstractTableModel {
             if (member.getMember().getId() == 0) {
                 continue;
             }
-            OsmPrimitive primitive = ds.getPrimitiveById(member.getMember().getId());
+            OsmPrimitive primitive = ds.getPrimitiveById(member.getMember().getId(), OsmPrimitiveType.from(member.getMember()));
             if (primitive != null) {
                 member.member = primitive;
             }
