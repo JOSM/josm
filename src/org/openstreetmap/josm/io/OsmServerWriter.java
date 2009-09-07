@@ -89,6 +89,7 @@ public class OsmServerWriter {
      */
     protected void uploadChangesIndividually(Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
+            progressMonitor.beginTask(tr("Starting to upload with one request per primitive ..."));
             progressMonitor.setTicksCount(primitives.size());
             if (changesetProcessingType.isUseNew()) {
                 api.createChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
@@ -101,9 +102,9 @@ public class OsmServerWriter {
                 String time_left_str = timeLeft(progress, primitives.size());
                 String msg = "";
                 switch(OsmPrimitiveType.from(osm)) {
-                    case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
-                    case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
-                    case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
+                case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
+                case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
+                case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
                 }
                 progressMonitor.subTask(
                         tr(msg,
@@ -134,6 +135,8 @@ public class OsmServerWriter {
                 OsmChangesetCloseException closeException = new OsmChangesetCloseException(e);
                 closeException.setChangeset(api.getCurrentChangeset());
                 throw closeException;
+            } finally {
+                progressMonitor.finishTask();
             }
         }
     }
@@ -149,6 +152,7 @@ public class OsmServerWriter {
         // upload everything in one changeset
         //
         try {
+            progressMonitor.beginTask(tr("Starting to upload in one request ..."));
             if (changesetProcessingType.isUseNew()) {
                 api.createChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
             } else {
@@ -166,7 +170,10 @@ public class OsmServerWriter {
                 OsmChangesetCloseException closeException = new OsmChangesetCloseException(ee);
                 closeException.setChangeset(api.getCurrentChangeset());
                 throw closeException;
+            } finally {
+                progressMonitor.finishTask();
             }
+
         }
     }
 
@@ -178,12 +185,16 @@ public class OsmServerWriter {
      */
     public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
         processed = new LinkedList<OsmPrimitive>();
-
+        progressMonitor.beginTask(tr("Uploading data ..."));
         api.initialize(progressMonitor);
         try {
             // check whether we can use diff upload
             //
             boolean casUseDiffUploads = api.hasSupportForDiffUploads();
+            if (apiVersion == null) {
+                System.out.println(tr("WARNING: no API version defined for data to upload. Falling back to version 0.6"));
+                apiVersion = "0.6";
+            }
             boolean useDiffUpload = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
             if (useDiffUpload && ! casUseDiffUploads) {
                 System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use diff uploads, but API is not able to handle them. Ignoring diff upload.", "osm-server.atomic-upload", apiVersion));
@@ -191,11 +202,9 @@ public class OsmServerWriter {
             }
 
             if (useDiffUpload) {
-                progressMonitor.beginTask(tr("Starting to upload in one request ..."));
-                uploadChangesAsDiffUpload(primitives,changeset, changesetProcessingType, progressMonitor);
+                uploadChangesAsDiffUpload(primitives,changeset, changesetProcessingType, progressMonitor.createSubTaskMonitor(0,false));
             } else {
-                progressMonitor.beginTask(tr("Starting to upload with one request per primitive ..."));
-                uploadChangesIndividually(primitives,changeset,changesetProcessingType,  progressMonitor);
+                uploadChangesIndividually(primitives,changeset,changesetProcessingType,  progressMonitor.createSubTaskMonitor(0,false));
             }
         } finally {
             progressMonitor.finishTask();
