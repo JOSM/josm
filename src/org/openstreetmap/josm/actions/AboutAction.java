@@ -60,7 +60,7 @@ public class AboutAction extends JosmAction {
             try {
                 manifest = true;
                 u = new URL("jar:" + Main.class.getProtectionDomain().getCodeSource().getLocation().toString()
-                    + "!/META-INF/MANIFEST.MF");
+                        + "!/META-INF/MANIFEST.MF");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

@@ -8,6 +8,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -214,6 +215,23 @@ public class TagEditorModel extends AbstractTableModel {
         setDirty(true);
     }
 
+    /**
+     * Deletes all tags with name <code>name</code>
+     * 
+     * @param name the name. Ignored if null.
+     */
+    public void delete(String name) {
+        if (name == null) return;
+        Iterator<TagModel> it = tags.iterator();
+        while(it.hasNext()) {
+            TagModel tm = it.next();
+            if (tm.getName().equals(name)) {
+                it.remove();
+            }
+        }
+        fireTableDataChanged();
+        setDirty(true);
+    }
     /**
      * deletes the tags given by tagIndices
      *

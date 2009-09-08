@@ -86,14 +86,15 @@ public class MainApplication extends Main {
             args.put(key, v);
         }
 
-        Main.pref.init(args.containsKey("reset-preferences"));
-
         // Check if passed as parameter
         if (args.containsKey("language")) {
             I18n.set((String)(args.get("language").toArray()[0]));
         } else {
             I18n.set(Main.pref.get("language", null));
         }
+
+        Main.pref.init(args.containsKey("reset-preferences"));
+
 
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
             // TODO: put in a platformHook for system that have no console by default
@@ -114,7 +115,7 @@ public class MainApplication extends Main {
                     tr("options provided as Java system properties")+":\n"+
                     "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
                     tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
-                       "      Java option to increase the maximum size of allocated memory")+":\n"+
+                    "      Java option to increase the maximum size of allocated memory")+":\n"+
                     "\t-Xmx...m\n\n"+
                     tr("examples")+":\n"+
                     "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+

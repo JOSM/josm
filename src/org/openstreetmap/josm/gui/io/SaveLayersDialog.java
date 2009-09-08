@@ -298,8 +298,8 @@ public class SaveLayersDialog extends JDialog {
 
         public void cancel() {
             switch(model.getMode()) {
-                case EDITING_DATA: cancelWhenInEditingModel(); break;
-                case UPLOADING_AND_SAVING: cancelSafeAndUploadTask(); break;
+            case EDITING_DATA: cancelWhenInEditingModel(); break;
+            case UPLOADING_AND_SAVING: cancelSafeAndUploadTask(); break;
             }
         }
 
@@ -333,8 +333,8 @@ public class SaveLayersDialog extends JDialog {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 Mode mode = (Mode)evt.getNewValue();
                 switch(mode) {
-                    case EDITING_DATA: setEnabled(true); break;
-                    case UPLOADING_AND_SAVING: setEnabled(false); break;
+                case EDITING_DATA: setEnabled(true); break;
+                case UPLOADING_AND_SAVING: setEnabled(false); break;
                 }
             }
         }
@@ -367,8 +367,8 @@ public class SaveLayersDialog extends JDialog {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 SaveLayersModel.Mode mode = (SaveLayersModel.Mode)evt.getNewValue();
                 switch(mode) {
-                    case EDITING_DATA: setEnabled(true); break;
-                    case UPLOADING_AND_SAVING: setEnabled(false); break;
+                case EDITING_DATA: setEnabled(true); break;
+                case UPLOADING_AND_SAVING: setEnabled(false); break;
                 }
             }
         }
@@ -410,8 +410,8 @@ public class SaveLayersDialog extends JDialog {
                 currentTask = new UploadLayerTask(
                         layerInfo.getLayer(),
                         monitor,
-                        UploadAction.UploadConfirmationHook.getUploadDialogPanel().getChangeset(),
-                        UploadAction.UploadConfirmationHook.getUploadDialogPanel().getChangesetProcessingType()
+                        UploadAction.UploadConfirmationHook.getUploadDialog().getChangeset(),
+                        UploadAction.UploadConfirmationHook.getUploadDialog().getChangesetProcessingType()
                 );
                 currentFuture = worker.submit(currentTask);
                 try {

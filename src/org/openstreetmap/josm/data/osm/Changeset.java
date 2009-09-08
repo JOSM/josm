@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import javax.print.attribute.standard.MediaSize.Other;
+
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
 /**
@@ -22,6 +24,19 @@ public final class Changeset extends OsmPrimitive {
      * read from the server and delivered back to the server unmodified.
      */
     public String start_timestamp = null;
+
+    public Changeset() {
+        super(0);
+    }
+
+    public Changeset(long id) {
+        super(id);
+    }
+
+    public Changeset(Changeset clone){
+        super(clone.getId());
+        cloneFrom(clone);
+    }
 
     @Override
     public void visit(Visitor v) {
@@ -47,5 +62,10 @@ public final class Changeset extends OsmPrimitive {
     @Override
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
+    }
+
+
+    @Override public void cloneFrom(OsmPrimitive osm) {
+        super.cloneFrom(osm);
     }
 }

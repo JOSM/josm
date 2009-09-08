@@ -6,11 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -60,21 +58,6 @@ public class OsmServerWriter {
         }
         time_left_str += Integer.toString(seconds_left);
         return time_left_str;
-    }
-
-    /**
-     * retrieves the most recent changeset comment from the preferences
-     *
-     * @return the most recent changeset comment
-     */
-    protected String getChangesetComment() {
-        String cmt = "";
-        List<String> history = new LinkedList<String>(
-                Main.pref.getCollection(UploadAction.HISTORY_KEY, new LinkedList<String>()));
-        if(history.size() > 0) {
-            cmt = history.get(0);
-        }
-        return cmt;
     }
 
     /**

@@ -3,14 +3,14 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction.UploadHook;
+import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
@@ -20,8 +20,7 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 
 public class ApiPreconditionChecker implements UploadHook {
 
-    public boolean checkUpload(Collection<OsmPrimitive> add, Collection<OsmPrimitive> update,
-            Collection<OsmPrimitive> delete) {
+    public boolean checkUpload(APIDataSet apiData) {
         OsmApi api = OsmApi.getOsmApi();
         try {
             api.initialize(NullProgressMonitor.INSTANCE);
@@ -35,17 +34,17 @@ public class ApiPreconditionChecker implements UploadHook {
             }
 
             if (maxNodes > 0) {
-                if( !checkMaxNodes(add, maxNodes))
+                if( !checkMaxNodes(apiData.getPrimitivesToAdd(), maxNodes))
                     return false;
-                if( !checkMaxNodes(update, maxNodes))
+                if( !checkMaxNodes(apiData.getPrimitivesToUpdate(), maxNodes))
                     return false;
-                if( !checkMaxNodes(delete, maxNodes))
+                if( !checkMaxNodes(apiData.getPrimitivesToDelete(), maxNodes))
                     return false;
             }
 
             if (maxElements  > 0) {
                 int total = 0;
-                total = add.size() + update.size() + delete.size();
+                total = apiData.getPrimitivesToAdd().size() + apiData.getPrimitivesToUpdate().size() + apiData.getPrimitivesToDelete().size();
                 if(total > maxElements) {
                     JOptionPane.showMessageDialog(
                             Main.parent,
@@ -66,8 +65,8 @@ public class ApiPreconditionChecker implements UploadHook {
         return true;
     }
 
-    private boolean checkMaxNodes(Collection<OsmPrimitive> add, long maxNodes) {
-        for (OsmPrimitive osmPrimitive : add) {
+    private boolean checkMaxNodes(Collection<OsmPrimitive> primitives, long maxNodes) {
+        for (OsmPrimitive osmPrimitive : primitives) {
             for (Entry<String,String> e : osmPrimitive.entrySet()) {
                 if(e.getValue().length() > 255) {
                     if (osmPrimitive.isDeleted()) {
@@ -89,9 +88,7 @@ public class ApiPreconditionChecker implements UploadHook {
                             tr("Precondition Violation"),
                             JOptionPane.ERROR_MESSAGE
                     );
-                    List<OsmPrimitive> newNodes = new LinkedList<OsmPrimitive>();
-                    newNodes.add(osmPrimitive);
-                    Main.main.getCurrentDataSet().setSelected(newNodes);
+                    Main.main.getCurrentDataSet().setSelected(Collections.singleton(osmPrimitive));
                     return false;
                 }
             }
@@ -108,10 +105,7 @@ public class ApiPreconditionChecker implements UploadHook {
                         tr("API Capabilities Violation"),
                         JOptionPane.ERROR_MESSAGE
                 );
-                List<OsmPrimitive> newNodes = new LinkedList<OsmPrimitive>();
-                newNodes.add(osmPrimitive);
-
-                Main.main.getCurrentDataSet().setSelected(newNodes);
+                Main.main.getCurrentDataSet().setSelected(Collections.singleton(osmPrimitive));
                 return false;
             }
         }
