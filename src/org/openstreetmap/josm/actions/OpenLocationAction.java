@@ -48,6 +48,7 @@ public class OpenLocationAction extends JosmAction {
         );
         dialog.setContent(all);
         dialog.setButtonIcons(new String[] {"download.png", "cancel.png"});
+        dialog.showDialog();
         if (dialog.getValue() != 1) return;
         openUrl(layer.isSelected(), urltext.getText());
     }
