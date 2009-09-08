@@ -59,7 +59,7 @@ public class UploadAction extends JosmAction{
      * dialog is the last thing shown before upload really starts; on occasion
      * however, a plugin might also want to insert something after that.
      */
-    public static final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
+    private static final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
     static {
         /**
          * Checks server capabilities before upload.
