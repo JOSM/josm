@@ -105,7 +105,9 @@ public class MemberTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         RelationMember member = members.get(rowIndex);
-        member.role = value.toString();
+        RelationMember newMember = new RelationMember(value.toString(), member.getMember());
+        members.remove(rowIndex);
+        members.add(rowIndex, newMember);
     }
 
     public OsmPrimitive getReferredPrimitive(int idx) {
@@ -197,13 +199,16 @@ public class MemberTableModel extends AbstractTableModel {
     }
 
     public void updateMemberReferences(DataSet ds) {
-        for (RelationMember member : members) {
+        for (int i=0; i< members.size();i++) {
+            RelationMember member = members.get(i);
             if (member.getMember().getId() == 0) {
                 continue;
             }
             OsmPrimitive primitive = ds.getPrimitiveById(member.getMember().getId(), OsmPrimitiveType.from(member.getMember()));
             if (primitive != null) {
-                member.member = primitive;
+                RelationMember newMember = new RelationMember(member.getRole(), primitive);
+                members.remove(i);
+                members.add(i, newMember);
             }
         }
         fireTableDataChanged();
@@ -350,7 +355,10 @@ public class MemberTableModel extends AbstractTableModel {
         if (idx == null || idx.length == 0)
             return;
         for (int row : idx) {
-            members.get(row).role = role;
+            RelationMember oldMember = members.get(row);
+            RelationMember newMember = new RelationMember(role, oldMember.getMember());
+            members.remove(row);
+            members.add(row, newMember);
         }
         fireTableDataChanged();
         for (int row : idx) {

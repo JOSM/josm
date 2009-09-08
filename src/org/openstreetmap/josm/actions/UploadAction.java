@@ -74,14 +74,14 @@ public class UploadAction extends JosmAction{
     }
 
     /**
-     * Registers an upload hook. Adds the hook to the end of the list of upload hooks.
+     * Registers an upload hook. Adds the hook at the first position of the upload hooks.
      * 
      * @param hook the upload hook. Ignored if null.
      */
     public static void registerUploadHook(UploadHook hook) {
         if(hook == null) return;
         if (!uploadHooks.contains(hook)) {
-            uploadHooks.add(hook);
+            uploadHooks.add(0,hook);
         }
     }
 

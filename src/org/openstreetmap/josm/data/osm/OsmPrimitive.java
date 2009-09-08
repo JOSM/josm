@@ -96,11 +96,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * new to the server! To create a new object, call the default constructor of
      * the respective class.
      * 
-     * @deprecated use {@see #getId()} and {@see #setId()}. Don't assign an id, create a primitive with
-     * the respective constructors.
      */
-    @Deprecated
-    public long id = 0;
+    private long id = 0;
 
     /**
      * <code>true</code> if the object has been modified since it was loaded from
@@ -108,28 +105,22 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
      * Deleted objects are deleted from the server. If the objects are added (id=0),
      * the modified is ignored and the object is added to the server.
      * 
-     * @deprecated Please use {@see #setModified()} and {@see #getModified()}
      */
-    @Deprecated
-    public boolean modified = false;
+    private boolean modified = false;
 
     /**
      * <code>true</code>, if the object has been deleted.
      * 
-     * @deprecated use {@see #delete()} and {@see #isDeleted()}
      */
-    @Deprecated
-    public boolean deleted = false;
+    private boolean deleted = false;
 
     /**
      * Visibility status as specified by the server. The visible attribute was
      * introduced with the 0.4 API to be able to communicate deleted objects
      * (they will have visible=false).
      * 
-     * @deprecated use {@see #isVisible()} and {@see #setVisible(boolean)}
      */
-    @Deprecated
-    public boolean visible = true;
+    private boolean visible = true;
 
     /**
      * User that last modified this primitive, as specified by the server.
@@ -140,10 +131,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     /**
      * If set to true, this object is currently selected.
      * 
-     * @deprecated use {@see #isSelected()} and {@see #setSelected(boolean)}
      */
-    @Deprecated
-    public volatile boolean selected = false;
+    private volatile boolean selected = false;
 
     /**
      * If set to true, this object is incomplete, which means only the id
@@ -154,11 +143,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
     /**
      * Contains the version number as returned by the API. Needed to
      * ensure update consistency
-     * @deprecated use {@see #getVersion()} and {@see #setVersion(long)}
      */
-    @Deprecated
-    public int version = 0;
-
+    private int version = 0;
 
     /**
      * Creates a new primitive with id 0.

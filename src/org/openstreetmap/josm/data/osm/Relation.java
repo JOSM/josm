@@ -19,10 +19,8 @@ public final class Relation extends OsmPrimitive {
      * All members of this relation. Note that after changing this,
      * makeBackReferences and/or removeBackReferences should be called.
      * 
-     * @deprecated use the improved API instead of accessing this list directly
      */
-    @Deprecated
-    public final List<RelationMember> members = new ArrayList<RelationMember>();
+    private final List<RelationMember> members = new ArrayList<RelationMember>();
 
     /**
      * @return Members of the relation. Changes made in returned list are not mapped

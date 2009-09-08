@@ -10,17 +10,13 @@ public class RelationMember {
 
     /**
      * 
-     * @deprecated use {@see #getRole()} or create a clone in order to assign a new role
      */
-    @Deprecated
-    public String role;
+    private String role;
 
     /**
      * 
-     * @deprecated use {@see #getMember()} or create a clone in order to assign a new member
      */
-    @Deprecated
-    public OsmPrimitive member;
+    private OsmPrimitive member;
 
     /**
      *
@@ -104,15 +100,6 @@ public class RelationMember {
     public OsmPrimitive getMember() {
         return member;
     }
-
-
-    /**
-     * Default constructor. Does nothing.
-     * @deprecated Use other constructors because RelationMember class will become immutable
-     * in the future
-     */
-    @Deprecated
-    public RelationMember() { }
 
     public RelationMember(String role, OsmPrimitive member) {
         this.role = role;

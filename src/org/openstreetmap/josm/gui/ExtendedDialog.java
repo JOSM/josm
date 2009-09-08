@@ -87,43 +87,6 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Sets up the dialog. The first button is always the default.
-     * @param parent The parent element that will be used for position and maximum size
-     * @param title The text that will be shown in the window titlebar
-     * @param content Any component that should be show above the buttons (e.g. JLabel)
-     * @param buttonTexts The labels that will be displayed on the buttons
-     * @param buttonIcons The path to the icons that will be displayed on the buttons. Path is relative to JOSM's image directory. File extensions need to be included. If a button should not have an icon pass null.
-     */
-    @Deprecated public ExtendedDialog(Component parent, String title, Component content,
-            String[] buttonTexts, String[] buttonIcons) {
-        super(JOptionPane.getFrameForComponent(parent), title, true /* modal */);
-        this.parent = parent;
-        bTexts = buttonTexts;
-        this.content = content;
-        this.bIcons = buttonIcons;
-        setupDialog();
-        setVisible(true);
-    }
-
-    @Deprecated public ExtendedDialog(Component parent, String title, Component content,
-            String[] buttonTexts) {
-        this(parent, title, content, buttonTexts, null);
-    }
-
-    /**
-     * Sets up the dialog and displays the given message in a breakable label
-     */
-    @Deprecated public ExtendedDialog(Component parent, String title, String message,
-            String[] buttonTexts, String[] buttonIcons) {
-        this(parent, title, string2label(message), buttonTexts, buttonIcons);
-    }
-
-    @Deprecated public ExtendedDialog(Component parent, String title, String message,
-            String[] buttonTexts) {
-        this(parent, title, message, buttonTexts, null);
-    }
-
-    /**
      * Allows decorating the buttons with icons. Expects an String[] with paths
      * to images relative to JOSM/images.
      * @param buttonIcons
