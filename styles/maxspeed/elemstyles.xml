@@ -1,0 +1,361 @@
+
+<rules>
+
+	<rule>
+		<condition k="maxspeed" v="5"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="7"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="8"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="10"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="15"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="20"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="30"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="40"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+    
+	<rule>
+		<condition k="maxspeed" v="50"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+		<condition k="maxspeed" v="60"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+		<condition k="maxspeed" v="70"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+		<condition k="maxspeed" v="80"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+		<condition k="maxspeed" v="100"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+		<condition k="maxspeed" v="120"/>
+		<linemod mode="under" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+        <!-- electronic traffic signs -->
+		<condition k="maxspeed" v="variable"/>
+		<linemod mode="under" dashed="yes" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+		<condition k="maxspeed" v="walk"/>
+		<linemod mode="under" dashed="yes" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+		<condition k="maxspeed" v="default"/>
+		<linemod mode="under" dashed="yes" width="+4" colour="#40ff40" priority="10000" />
+		<icon src="vehicle/restrictions/speed.png" priority="10000" />
+	</rule>
+
+	<rule>
+        <!-- default for unknown maxspeed -->
+		<condition k="maxspeed"/>
+		<line width="20" colour="#ffd0d0" priority="8000" />
+		<icon src="vehicle/restrictions/speed.png" priority="8000" />
+	</rule>
+
+    
+    
+	<rule>
+		<condition k="highway" v="motorway" />
+		<line width="3" colour="motorway#809bc0" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+	<rule>
+		<condition k="highway" v="motorway_link" />
+		<line width="3" colour="motorway#809bc0" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="trunk" />
+		<line width="3" colour="trunk#7fc97f" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+	<rule>
+		<condition k="highway" v="trunk_link" />
+		<line width="3" colour="trunk#7fc97f" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="primary" />
+		<line width="3" realwidth="8" colour="primary#fb805f" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+	<rule>
+		<condition k="highway" v="primary_link" />
+		<line width="3" realwidth="8" colour="primary#fb805f" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="secondary" />
+		<line width="3" realwidth="6" colour="secondary#fdbf6f" priority="9000"/>
+		<icon annotate="false" priority="-9000" />
+	</rule>
+	<rule>
+		<condition k="highway" v="secondary_link" />
+		<line width="3" realwidth="6" colour="secondary#fdbf6f" priority="9000"/>
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="tertiary" />
+		<line width="2" realwidth="5" colour="tertiary#f7f496" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="residential" />
+		<line width="2" realwidth="5" colour="street#c0c0c0" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="unclassified" />
+		<line width="2" realwidth="5" colour="street#c0c0c0" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="road" />
+		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="service" />
+		<line width="1" realwidth="3" colour="service#809bc0" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="turning_circle" />
+		<line width="3" colour="#d0d0d0" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="track" />
+		<line width="1" realwidth="3" colour="track#006600" priority="9000"/>
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="living_street" />
+		<line width="1" realwidth="3" colour="street#c0c0c0" priority="9000"/>
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+    
+    <!-- highway not suitable for maxspeed? -->
+	<rule>
+		<condition k="highway" v="pedestrian" />
+		<line width="0" colour="#303030" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="footway" />
+		<line width="0" colour="#303030" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="bridleway" />
+		<line width="0" colour="#303030" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="path" />
+		<line width="0" colour="#303030" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="steps" />
+		<line width="0" colour="#303030" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="cycleway" />
+		<line width="0" colour="#303030" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway" v="construction" />
+		<line width="0" colour="#303030" priority="9000" />
+		<icon annotate="false" priority="-9000" />
+	</rule>
+    
+	<rule>
+		<condition k="highway"/>
+		<line width="20" colour="#d0d0d0" priority="-100" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+    
+    
+	<rule>
+		<condition k="amenity"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="shop"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="place"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="tourism"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="railway"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="natural"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="historic"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="man_made"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="leisure"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="sport"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="aeroway"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="power"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="landuse"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="cemetery" v="grave"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="building"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="barrier"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="waterway"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="boundary"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+	<rule>
+		<condition k="addr:housenumber"/>
+		<line width="0" colour="#252525" priority="-10000" />
+		<icon annotate="false" priority="-10000" />
+	</rule>
+
+
+	<rule>
+		<condition k="highway" v="speed_camera"/>
+		<icon annotate="true" src="vehicle/restrictions/speed_trap.png"/>
+	</rule>
+
+</rules>
