@@ -196,28 +196,28 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="access" b="no"/>
-		<icon src="vehicle/restriction/access.png"/>
+		<icon src="vehicle/restriction/access.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="access" v="permissive"/>
 		<linemod mode="under" width="+2" colour="permissive#80ff80" dashed="2"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="access" v="private"/>
 		<linemod mode="under" width="+2" colour="private#ff8080" dashed="2"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="access" v="destination"/>
 		<linemod mode="under" width="+2" colour="destination#8080ff" dashed="2"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
@@ -3682,7 +3682,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="dog_racing"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="leisure/dog.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3714,7 +3714,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="gymnastics"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/multi.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
