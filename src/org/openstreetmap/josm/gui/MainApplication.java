@@ -86,15 +86,14 @@ public class MainApplication extends Main {
             args.put(key, v);
         }
 
+        Main.pref.init(args.containsKey("reset-preferences"));
+
         // Check if passed as parameter
         if (args.containsKey("language")) {
             I18n.set((String)(args.get("language").toArray()[0]));
         } else {
             I18n.set(Main.pref.get("language", null));
         }
-
-        Main.pref.init(args.containsKey("reset-preferences"));
-
 
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
             // TODO: put in a platformHook for system that have no console by default
