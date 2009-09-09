@@ -2,10 +2,8 @@ package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -73,8 +71,6 @@ public class AutoCompletionCache {
     private HashMap<String, Set<String>> tagCache;
     /** the cached list of member roles */
     private  Set<String> roleCache;
-    /** the cache of all tag values */
-    private  Set<String> allTagValues;
     /**  the layer this cache is built for */
     private OsmDataLayer layer;
 
@@ -85,7 +81,6 @@ public class AutoCompletionCache {
     public AutoCompletionCache(OsmDataLayer layer) {
         tagCache = new HashMap<String, Set<String>>();
         roleCache = new HashSet<String>();
-        allTagValues = new HashSet<String>();
         this.layer = layer;
     }
 
@@ -113,7 +108,6 @@ public class AutoCompletionCache {
     protected void cacheValue(String key, String value) {
         cacheKey(key);
         tagCache.get(key).add(value);
-        allTagValues.add(value);
     }
 
     /**
@@ -234,21 +228,5 @@ public class AutoCompletionCache {
             list.clear();
         }
         list.add(tagCache.keySet(), AutoCompletionItemPritority.IS_IN_DATASET);
-    }
-
-
-    /**
-     * Populates the an {@see AutoCompletionList} with the currently cached
-     * tag values
-     *
-     * @param list the list to populate
-     * @param append true to add the keys to the list; false, to replace the keys
-     * in the list by the keys in the cache
-     */
-    public void populateWithValues(AutoCompletionList list, boolean append) {
-        if (!append) {
-            list.clear();
-        }
-        list.add(this.allTagValues, AutoCompletionItemPritority.IS_IN_DATASET);
     }
 }

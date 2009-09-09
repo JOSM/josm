@@ -6,17 +6,13 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.ComboBoxEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -193,7 +189,6 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
         } else {
             setText(anObject.toString());
         }
-
     }
 
     /* ------------------------------------------------------------------------------------ */

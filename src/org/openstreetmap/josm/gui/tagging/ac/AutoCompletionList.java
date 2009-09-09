@@ -3,7 +3,9 @@ package org.openstreetmap.josm.gui.tagging.ac;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -32,6 +34,8 @@ public class AutoCompletionList extends AbstractTableModel {
     private ArrayList<AutoCompletionListItem> filtered = null;
     /** the filter expression */
     private String filter = null;
+    /** map from value to priority */
+    private Map<String,AutoCompletionListItem> valutToItemMap;
 
     /**
      * constructor
@@ -39,6 +43,7 @@ public class AutoCompletionList extends AbstractTableModel {
     public AutoCompletionList() {
         list = new ArrayList<AutoCompletionListItem>();
         filtered = new ArrayList<AutoCompletionListItem>();
+        valutToItemMap = new HashMap<String, AutoCompletionListItem>();
     }
 
 
@@ -147,11 +152,12 @@ public class AutoCompletionList extends AbstractTableModel {
     }
 
     protected void appendOrUpdatePriority(AutoCompletionListItem toadd) {
-        AutoCompletionListItem item = lookup(toadd.getValue());
+        AutoCompletionListItem item = valutToItemMap.get(toadd.getValue());
         if (item == null) {
             // new item does not exist yet. Add it to the list
             //
             list.add(toadd);
+            valutToItemMap.put(toadd.getValue(), toadd);
         } else {
             // new item already exists. Update priority if necessary
             //
@@ -190,23 +196,6 @@ public class AutoCompletionList extends AbstractTableModel {
         }
         return false;
     }
-
-    /**
-     * 
-     * @param value a specific value
-     * @return  the auto completion item for this value; null, if there is no
-     *   such auto completion item
-     */
-    public AutoCompletionListItem lookup(String value) {
-        if (value == null)
-            return null;
-        for (AutoCompletionListItem item : list) {
-            if (item.getValue().equals(value))
-                return item;
-        }
-        return null;
-    }
-
 
     /**
      * removes the auto completion item with key <code>key</code>

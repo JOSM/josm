@@ -67,20 +67,14 @@ public class TaggingPreset extends AbstractAction {
     public String name;
     public String locale_name;
 
-    private static AutoCompletionList autoCompletionList;
-
-    public static AutoCompletionList getPresetAutocompletionList() {
-        if (autoCompletionList == null) {
-            autoCompletionList = new AutoCompletionList();
-        }
-        return autoCompletionList;
-    }
-
     public static abstract class Item {
         protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
             OsmDataLayer layer = Main.main.getEditLayer();
             if (layer == null) return;
-            field.setAutoCompletionList(getPresetAutocompletionList());
+            AutoCompletionList list  = new AutoCompletionList();
+            List<String> values = AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).getValues(key);
+            list.add(values,AutoCompletionItemPritority.IS_IN_DATASET);
+            field.setAutoCompletionList(list);
         }
 
         public boolean focus = false;
@@ -153,9 +147,9 @@ public class TaggingPreset extends AbstractAction {
 
             // find out if our key is already used in the selection.
             Usage usage = determineTextUsage(sel, key);
+            AutoCompletingTextField textField = new AutoCompletingTextField();
+            initAutoCompletionField(textField, key);
             if (usage.unused()){
-                AutoCompletingTextField textField = new AutoCompletingTextField();
-                initAutoCompletionField(textField, key);
                 if (use_last_as_default && lastValue.containsKey(key)) {
                     textField.setText(lastValue.get(key));
                 } else {
@@ -165,15 +159,11 @@ public class TaggingPreset extends AbstractAction {
                 originalValue = null;
             } else if (usage.hasUniqueValue()) {
                 // all objects use the same value
-                AutoCompletingTextField textField = new AutoCompletingTextField();
-                initAutoCompletionField(textField, key);
                 textField.setText(usage.getFirst());
                 value = textField;
                 originalValue = usage.getFirst();
             } else {
                 // the objects have different values
-                AutoCompletingTextField textField = new AutoCompletingTextField();
-                initAutoCompletionField(textField, key);
                 JComboBox comboBox = new JComboBox(usage.values.toArray());
                 comboBox.setEditable(true);
                 comboBox.setEditor(textField);
@@ -645,24 +635,12 @@ public class TaggingPreset extends AbstractAction {
         }
     }
 
-    protected void refreshAutocompletionList(final OsmDataLayer layer) {
-        Runnable task = new Runnable() {
-            public void run() {
-                System.out.print("refreshing preset auto completion list ...");
-                AutoCompletionCache.getCacheForLayer(layer).initFromDataSet();
-                AutoCompletionCache.getCacheForLayer(layer).populateWithValues( getPresetAutocompletionList(), false /* don't append */);
-                System.out.println("DONE");
-            }
-        };
-        new Thread(task).run();
-
-    }
     public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
         if (data == null)
             return null;
         OsmDataLayer layer = Main.main.getEditLayer();
         if (layer != null) {
-            refreshAutocompletionList(layer);
+            AutoCompletionCache.getCacheForLayer(layer).initFromDataSet();
         }
         PresetPanel p = new PresetPanel();
         LinkedList<Item> l = new LinkedList<Item>();
