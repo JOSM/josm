@@ -125,7 +125,10 @@ public class TaggingPreset extends AbstractAction {
         Usage returnValue = new Usage();
         returnValue.values = new TreeSet<String>();
         for (OsmPrimitive s : sel) {
-            returnValue.values.add(OsmUtils.getNamedOsmBoolean(s.get(key)));
+            String booleanValue = OsmUtils.getNamedOsmBoolean(s.get(key));
+            if (booleanValue != null) {
+                returnValue.values.add(booleanValue);
+            }
         }
         return returnValue;
     }
