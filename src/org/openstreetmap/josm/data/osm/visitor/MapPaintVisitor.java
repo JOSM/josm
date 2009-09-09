@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -665,10 +666,25 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             Way viaWay = (Way) via;
             Node firstNode = viaWay.firstNode();
             Node lastNode = viaWay.lastNode();
+            Boolean onewayvia = false;
+
+            String onewayviastr = viaWay.get("oneway");
+            if(onewayviastr != null)
+            {
+                if("-1".equals(onewayviastr)) {
+                    onewayvia = true;
+                    Node t = firstNode;
+                    firstNode = lastNode;
+                    lastNode = firstNode;
+                }
+                else
+                    onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
+            }
+
             if(fromWay.isFirstLastNode(firstNode)) {
                 viaNode = firstNode;
-            } else if(fromWay.isFirstLastNode(lastNode)) {
-                viaNode = firstNode;
+            } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
+                viaNode = lastNode;
             } else {
                 r.putError(tr("The \"from\" way doesn't start or end at the \"via\" way."), true);
                 return;
