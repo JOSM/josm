@@ -394,8 +394,11 @@ public class OsmReader {
                 } catch(NumberFormatException e) {
                     throwException(tr("Illegal value for attribute ''version'' on OSM primitive with id {0}. Got {1}", Long.toString(current.id), version));
                 }
-                if (current.version <= 0) {
+                if (current.version <= 0 && current.id > 0) {
                     throwException(tr("Illegal value for attribute ''version'' on OSM primitive with id {0}. Got {1}", Long.toString(current.id), version));
+                } else if (current.version < 0 && current.id  <=0) {
+                    System.out.println(tr("WARNING: normalizing value of attribute ''version'' of element {0} to 0. Got {1}", current.id, current.version));
+                    current.version = 0;
                 }
             } else {
                 // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
