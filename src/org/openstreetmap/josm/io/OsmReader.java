@@ -338,7 +338,7 @@ public class OsmReader {
                 String value = atts.getValue("v");
                 current.rememberTag(key, value);
             } else {
-                throwException(tr("Undefined element ''{0}'' found in input stream. Aborting.", qName));
+                System.out.println(tr("Warning: Undefined element ''{0}'' found in input stream. Skipping.", qName));
             }
         }
 
