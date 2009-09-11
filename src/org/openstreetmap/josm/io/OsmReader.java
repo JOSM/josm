@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Parser for the Osm Api. Read from an input stream and construct a dataset out of it.
+ * Parser for the Osm Api. Read from an input stream and constructs a dataset out of it.
  *
  */
 public class OsmReader {
@@ -79,57 +79,6 @@ public class OsmReader {
         externalIdMap = new HashMap<String, OsmPrimitive>();
     }
 
-    private static class OsmPrimitiveData {
-        public long id = 0;
-        public boolean modified = false;
-        public boolean deleted = false;
-        public Date timestamp = new Date();
-        public User user = null;
-        public boolean visible = true;
-        public int version = 0;
-        public LatLon latlon = new LatLon(0,0);
-        private OsmPrimitive primitive;
-
-        public void copyTo(OsmPrimitive osm) {
-            osm.setModified(modified);
-            osm.setDeleted(deleted);
-            //  id < 0 possible if read from a file
-            if (id <= 0) {
-                osm.clearOsmId();
-            } else {
-                osm.setOsmId(id, version);
-            }
-            osm.setTimestamp(timestamp);
-            osm.user = user;
-            osm.setVisible(visible);
-            osm.mappaintStyle = null;
-        }
-
-        public Node createNode() {
-            Node node = new Node();
-            node.setCoor(latlon);
-            copyTo(node);
-            primitive = node;
-            return node;
-        }
-
-        public Way createWay() {
-            Way way = new Way();
-            copyTo(way);
-            primitive = way;
-            return way;
-        }
-        public Relation createRelation() {
-            Relation relation= new Relation();
-            copyTo(relation);
-            primitive = relation;
-            return relation;
-        }
-
-        public void rememberTag(String key, String value) {
-            primitive.put(key, value);
-        }
-    }
 
     /**
      * Used as a temporary storage for relation members, before they
@@ -151,53 +100,6 @@ public class OsmReader {
      */
     private Map<Long, Collection<RelationMemberData>> relations = new HashMap<Long, Collection<RelationMemberData>>();
 
-    static public class OsmDataParsingException extends SAXException {
-        private int columnNumber;
-        private int lineNumber;
-
-        public OsmDataParsingException() {
-            super();
-        }
-
-        public OsmDataParsingException(Exception e) {
-            super(e);
-        }
-
-        public OsmDataParsingException(String message, Exception e) {
-            super(message, e);
-        }
-
-        public OsmDataParsingException(String message) {
-            super(message);
-        }
-
-        public OsmDataParsingException rememberLocation(Locator locator) {
-            if (locator == null) return this;
-            this.columnNumber = locator.getColumnNumber();
-            this.lineNumber = locator.getLineNumber();
-            return this;
-        }
-
-        @Override
-        public String getMessage() {
-            String msg = super.getMessage();
-            if (lineNumber == 0 && columnNumber == 0)
-                return msg;
-            if (msg == null) {
-                msg = getClass().getName();
-            }
-            msg = msg + " " + tr("(at line {0}, column {1})", lineNumber, columnNumber);
-            return msg;
-        }
-
-        public int getColumnNumber() {
-            return columnNumber;
-        }
-
-        public int getLineNumber() {
-            return lineNumber;
-        }
-    }
 
     private class Parser extends DefaultHandler {
         private Locator locator;
@@ -598,6 +500,62 @@ public class OsmReader {
             throw new IllegalDataException(e);
         } finally {
             progressMonitor.finishTask();
+        }
+    }
+
+    /**
+     * Temporarily holds data for a parsed {@see OsmPrimitive} and provides
+     * methods for creating an {@see OsmPrimitive} based on this data.
+     */
+    private static class OsmPrimitiveData {
+        public long id = 0;
+        public boolean modified = false;
+        public boolean deleted = false;
+        public Date timestamp = new Date();
+        public User user = null;
+        public boolean visible = true;
+        public int version = 0;
+        public LatLon latlon = new LatLon(0,0);
+        private OsmPrimitive primitive;
+
+        public void copyTo(OsmPrimitive osm) {
+            //  id < 0 possible if read from a file
+            if (id <= 0) {
+                osm.clearOsmId();
+            } else {
+                osm.setOsmId(id, version);
+            }
+            osm.setDeleted(deleted);
+            osm.setModified(modified);
+            osm.setTimestamp(timestamp);
+            osm.user = user;
+            osm.setVisible(visible);
+            osm.mappaintStyle = null;
+        }
+
+        public Node createNode() {
+            Node node = new Node();
+            node.setCoor(latlon);
+            copyTo(node);
+            primitive = node;
+            return node;
+        }
+
+        public Way createWay() {
+            Way way = new Way();
+            copyTo(way);
+            primitive = way;
+            return way;
+        }
+        public Relation createRelation() {
+            Relation relation= new Relation();
+            copyTo(relation);
+            primitive = relation;
+            return relation;
+        }
+
+        public void rememberTag(String key, String value) {
+            primitive.put(key, value);
         }
     }
 }
