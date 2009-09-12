@@ -124,7 +124,6 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @param primitive the child primitive
      */
     protected void populate(Relation relation, OsmPrimitive primitive) {
-        decisions.clear();
         for (int i =0; i<relation.getMembersCount();i++) {
             if (relation.getMember(i).refersTo(primitive)) {
                 decisions.add(new RelationMemberConflictDecision(relation, i));
