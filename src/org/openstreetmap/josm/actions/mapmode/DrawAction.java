@@ -733,13 +733,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // find out the distance, in metres, between the base point and the mouse cursor
         LatLon mouseLatLon = mv.getProjection().eastNorth2latlon(currentMouseEastNorth);
         distance = currentBaseNode.getCoor().greatCircleDistance(mouseLatLon);
-        double hdg = Math.toDegrees(currentBaseNode.getCoor().heading(mouseLatLon));
+
+        double hdg = Math.toDegrees(currentBaseNode.getEastNorth()
+                .heading(currentMouseEastNorth));
         if (previousNode != null) {
-            angle = hdg - Math.toDegrees(previousNode.getCoor().heading(currentBaseNode.getCoor()));
-            if (angle < 0) {
-                angle += 360;
-            }
+            angle = hdg - Math.toDegrees(previousNode.getEastNorth()
+                    .heading(currentBaseNode.getEastNorth()));
+            angle += angle < 0 ? 360 : 0;
         }
+
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.setHeading(hdg);
         Main.map.statusLine.setDist(distance);
