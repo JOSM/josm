@@ -16,7 +16,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.xml.sax.SAXException;
 
 
@@ -106,15 +106,14 @@ public class DownloadOsmTask implements DownloadTask {
             if (canceled)
                 return;
             if (lastException != null) {
-                ExceptionDialogUtil.explainException(lastException);
+                getProgressMonitor().setErrorMessage(ExceptionUtil.explainException(lastException));
                 DownloadOsmTask.this.setFailed(true);
                 return;
             }
             if (dataSet == null)
                 return; // user canceled download or error occurred
-            if (currentBounds == null) {
+            if (currentBounds == null)
                 return; // no data retrieved
-            }
             if (dataSet.allPrimitives().isEmpty()) {
                 progressMonitor.setErrorMessage(tr("No data imported."));
                 // need to synthesize a download bounds lest the visual indication of downloaded

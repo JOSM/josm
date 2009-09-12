@@ -5,19 +5,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.SocketException;
-import java.net.URL;
 import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 
 /**
  * This utility class provides static methods which explain various exceptions to the user.
@@ -28,7 +26,8 @@ public class ExceptionDialogUtil {
     /**
      * just static utility functions. no constructor
      */
-    private ExceptionDialogUtil() {}
+    private ExceptionDialogUtil() {
+    }
 
     /**
      * handles an exception caught during OSM API initialization
@@ -36,16 +35,8 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainOsmApiInitializationException(OsmApiInitializationException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                tr(   "<html>Failed to initialize communication with the OSM server {0}.<br>"
-                        + "Check the server URL in your preferences and your internet connection.</html>",
-                        Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
-                ),
-                tr("Error"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainOsmApiInitializationException(e), tr("Error"),
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -54,20 +45,9 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainOsmChangesetCloseException(OsmChangesetCloseException e) {
-        e.printStackTrace();
-        String changsetId = e.getChangeset() == null ? tr("unknown") : Long.toString(e.getChangeset().getId());
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                tr(   "<html>Failed to close changeset ''{0}'' on the OSM server ''{1}''.<br>"
-                        + "The changeset will automatically be closed by the server after a timeout.</html>",
-                        changsetId,
-                        Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
-                ),
-                tr("Error"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainOsmChangesetCloseException(e), tr("Error"),
+                JOptionPane.ERROR_MESSAGE);
     }
-
 
     /**
      * Explains an upload error due to a violated precondition, i.e. a HTTP return code 412
@@ -75,21 +55,9 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainPreconditionFailed(OsmApiException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                tr("<html>Uploading to the server <strong>failed</strong> because your current<br>"
-                        +"dataset violates a precondition.<br>"
-                        +"The error message is:<br>"
-                        + "{0}"
-                        + "</html>",
-                        e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                ),
-                tr("Precondition violation"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainPreconditionFailed(e),
+                tr("Precondition violation"), JOptionPane.ERROR_MESSAGE);
     }
-
 
     /**
      * Explains an exception with a generic message dialog
@@ -97,17 +65,8 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGeneric(Exception e) {
-        String msg = e.getMessage();
-        if (msg == null || msg.trim().equals("")) {
-            msg = e.toString();
-        }
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                msg,
-                tr("Error"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainGeneric(e), tr("Error"),
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -119,26 +78,8 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainSecurityException(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String host = tr("unknown");
-        try {
-            host = new URL(apiUrl).getHost();
-        } catch(MalformedURLException ex) {
-            // shouldn't happen
-        }
-
-        String message = tr("<html>Failed to open a connection to the remote server<br>"
-                + "''{0}''<br>"
-                + "for security reasons. This is most likely because you are running<br>"
-                + "in an applet and because you didn''t load your applet from ''{1}''.</html>",
-                apiUrl, host
-        );
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                message,
-                tr("Security exception"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainSecurityException(e), tr("Security exception"),
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -150,19 +91,8 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainNestedSocketException(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String message = tr("<html>Failed to open a connection to the remote server<br>"
-                + "''{0}''.<br>"
-                + "Please check your internet connection.</html>",
-                apiUrl
-        );
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                message,
-                tr("Network exception"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNestedSocketException(e),
+                tr("Network exception"), JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -174,21 +104,8 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainNestedIOException(OsmTransferException e) {
-        IOException ioe = getNestedException(e, IOException.class);
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String message = tr("<html>Failed to upload data to or download data from<br>"
-                + "''{0}''<br>"
-                + "due to a problem with transferring data.<br>"
-                + "Details(untranslated): {1}</html>",
-                apiUrl, ioe.getMessage()
-        );
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                message,
-                tr("IO Exception"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNestedIOException(e), tr("IO Exception"),
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -199,20 +116,8 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainInternalServerError(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String message = tr("<html>The OSM server<br>"
-                + "''{0}''<br>"
-                + "reported an internal server error.<br>"
-                + "This is most likely a temporary problem. Please try again later.</html>",
-                apiUrl
-        );
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                message,
-                tr("Internal Server Error"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainInternalServerError(e),
+                tr("Internal Server Error"), JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -222,24 +127,8 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainBadRequest(OsmApiException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String message = tr("The OSM server ''{0}'' reported a bad request.<br>",
-                apiUrl
-        );
-        if (e.getErrorHeader() != null && e.getErrorHeader().startsWith("The maximum bbox")) {
-            message += "<br>" + tr("The area you tried to download is too big or your request was too large."
-                    + "<br>Either request a smaller area or use an export file provided by the OSM community.");
-        } else if (e.getErrorHeader() != null){
-            message += tr("<br>Error message(untranslated): {0}", e.getErrorHeader());
-        }
-        message = "<html>" + message + "</html>";
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                message,
-                tr("Bad Request"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainBadRequest(e), tr("Bad Request"),
+                JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -251,27 +140,8 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainNestedUnkonwnHostException(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String host = tr("unknown");
-        try {
-            host = new URL(apiUrl).getHost();
-        } catch(MalformedURLException ex) {
-            // shouldn't happen
-        }
-
-        String message = tr("<html>Failed to open a connection to the remote server<br>"
-                + "''{0}''.<br>"
-                + "Host name ''{1}'' couldn''t be resolved. <br>"
-                + "Please check the API URL in your preferences and your internet connection.</html>",
-                apiUrl, host
-        );
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                message,
-                tr("Unknown host"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNestedUnkonwnHostException(e),
+                tr("Unknown host"), JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -289,7 +159,7 @@ public class ExceptionDialogUtil {
         while (t != null && !(nestedClass.isInstance(t))) {
             t = t.getCause();
         }
-        if (t== null)
+        if (t == null)
             return null;
         else if (nestedClass.isInstance(t))
             return nestedClass.cast(t);
@@ -318,17 +188,17 @@ public class ExceptionDialogUtil {
             explainNestedIOException(e);
             return;
         }
-        if (e instanceof OsmApiInitializationException){
-            explainOsmApiInitializationException((OsmApiInitializationException)e);
+        if (e instanceof OsmApiInitializationException) {
+            explainOsmApiInitializationException((OsmApiInitializationException) e);
             return;
         }
-        if (e instanceof OsmChangesetCloseException){
-            explainOsmChangesetCloseException((OsmChangesetCloseException)e);
+        if (e instanceof OsmChangesetCloseException) {
+            explainOsmChangesetCloseException((OsmChangesetCloseException) e);
             return;
         }
 
         if (e instanceof OsmApiException) {
-            OsmApiException oae = (OsmApiException)e;
+            OsmApiException oae = (OsmApiException) e;
             if (oae.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
                 explainPreconditionFailed(oae);
                 return;
@@ -357,20 +227,8 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGoneForUnknownPrimitive(OsmApiException e) {
-        String msg =  tr("<html>Uploading <strong>failed</strong> because a primitive you tried to<br>"
-                + "delete on the server is already deleted.<br>"
-                + "<br>"
-                + "The error message is:<br>"
-                + "{0}"
-                + "</html>",
-                e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        );
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                msg,
-                tr("Primitive already deleted"),
-                JOptionPane.ERROR_MESSAGE
-        );
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainGoneForUnknownPrimitive(e),
+                tr("Primitive already deleted"), JOptionPane.ERROR_MESSAGE);
 
     }
 
@@ -381,7 +239,7 @@ public class ExceptionDialogUtil {
      */
     public static void explainException(Exception e) {
         if (e instanceof OsmTransferException) {
-            explainOsmTransferException((OsmTransferException)e);
+            explainOsmTransferException((OsmTransferException) e);
             return;
         }
         explainGeneric(e);

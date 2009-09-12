@@ -94,11 +94,14 @@ public class DownloadOsmTaskList implements Runnable {
         progressMonitor.finishTask();
         String errors = "";
 
+        LinkedList<Integer> shown = new LinkedList<Integer>();
         for(DownloadTask dt : osmTasks) {
             String err = dt.getErrorMessage();
-            if(err.equals("")) {
+            // avoid display of identical messages
+            if (err.equals("") || shown.contains(err.hashCode())) {
                 continue;
             }
+            shown.add(err.hashCode());
             errors += "<br>* " + err;
         }
 
