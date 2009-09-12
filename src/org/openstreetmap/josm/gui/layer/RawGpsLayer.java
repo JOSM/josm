@@ -60,7 +60,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         }
         public void actionPerformed(ActionEvent e) {
             JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel(tr("<html>Upload of unprocessed GPS data as map data is considered harmful.<br>If you want to upload traces, look here:")), GBC.eol());
+            msg.add(new JLabel(tr("<html>Upload of unprocessed GPS data as map data is considered harmful.<br>If you want to upload traces, look here:</html>")), GBC.eol());
             msg.add(new UrlLabel(tr("http://www.openstreetmap.org/traces")), GBC.eop());
             if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                     "convert_to_data",

@@ -131,7 +131,7 @@ public class UploadAction extends JosmAction{
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>There are unresolved conflicts in layer ''{0}''.<br>"
-                            + "You have to resolve them first.<html>", layer.getName()),
+                            + "You have to resolve them first.</html>", layer.getName()),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
             );

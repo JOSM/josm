@@ -203,7 +203,7 @@ public class SaveLayersDialog extends JDialog {
         JOptionPane.showConfirmDialog(
                 Main.parent,
                 new LayerListWarningMessagePanel(msg, infos),
-                tr("Unsafed data and conflicts"),
+                tr("Unsaved data and conflicts"),
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );
@@ -221,7 +221,7 @@ public class SaveLayersDialog extends JDialog {
         JOptionPane.showConfirmDialog(
                 Main.parent,
                 new LayerListWarningMessagePanel(msg, infos),
-                tr("Unsafed data and missing associated file"),
+                tr("Unsaved data and missing associated file"),
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );
@@ -241,7 +241,7 @@ public class SaveLayersDialog extends JDialog {
         JOptionPane.showConfirmDialog(
                 Main.parent,
                 new LayerListWarningMessagePanel(msg, infos),
-                tr("Unsafed data non-writable files"),
+                tr("Unsaved data non-writable files"),
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );

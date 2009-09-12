@@ -47,7 +47,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
             return "";
         String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
         String text = tr(
-                "<html>Version <strong>{0}</strong> created on <strong>{1}</strong> by <strong>{2}</strong> in changeset <strong>{3}</strong>",
+                "<html>Version <strong>{0}</strong> created on <strong>{1}</strong> by <strong>{2}</strong> in changeset <strong>{3}</strong></html>",
                 Long.toString(primitive.getVersion()),
                 new SimpleDateFormat().format(primitive.getTimestamp()),
                 primitive.getUser(),
