@@ -35,10 +35,13 @@ public class UndoRedoHandler implements LayerChangeListener {
     /**
      * Execute the command and add it to the intern command queue.
      */
-    public void add(final Command c) {
+    public void addNoRedraw(final Command c) {
         c.executeCommand();
         commands.add(c);
         redoCommands.clear();
+    }
+
+    public void afterAdd() {
         if (Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
             OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
             data.fireDataChange();
@@ -47,6 +50,14 @@ public class UndoRedoHandler implements LayerChangeListener {
 
         // the command may have changed the selection so tell the listeners about the current situation
         DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
+    }
+
+    /**
+     * Execute the command and add it to the intern command queue.
+     */
+    public void add(final Command c) {
+        addNoRedraw(c);
+        afterAdd();
     }
 
     /**

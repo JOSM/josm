@@ -65,7 +65,7 @@ public class MergeNodesAction extends JosmAction {
         }
     }
 
-    protected void completeTagCollectionWithMissingTags(TagCollection tc, Collection<Node> mergedNodes) {
+    protected static void completeTagCollectionWithMissingTags(TagCollection tc, Collection<Node> mergedNodes) {
         for (String key: tc.getKeys()) {
             // make sure the empty value is in the tag set if a tag is not present
             // on all merged nodes
@@ -81,7 +81,7 @@ public class MergeNodesAction extends JosmAction {
         tc.removeByKey("created_by");
     }
 
-    protected void completeTagCollectionForEditing(TagCollection tc) {
+    protected static void completeTagCollectionForEditing(TagCollection tc) {
         for (String key: tc.getKeys()) {
             // make sure the empty value is in the tag set such that we can delete the tag
             // in the conflict dialog if necessary
@@ -97,7 +97,7 @@ public class MergeNodesAction extends JosmAction {
      * @param candidates the collection of candidate nodes
      * @return the selected target node
      */
-    public Node selectTargetNode(Collection<Node> candidates) {
+    public static Node selectTargetNode(Collection<Node> candidates) {
         // Find which node to merge into (i.e. which one will be left)
         // - this should be combined from two things:
         //   1. It will be the first node in the list that has a
@@ -123,7 +123,6 @@ public class MergeNodesAction extends JosmAction {
         return targetNode;
     }
 
-
     /**
      * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
      * managed by <code>layer</code> as reference.
@@ -135,7 +134,7 @@ public class MergeNodesAction extends JosmAction {
      * @throws IllegalArgumentException thrown if targetNode is null
      * 
      */
-    public Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) throws IllegalArgumentException{
+    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) throws IllegalArgumentException{
         if (layer == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "nodes"));
         if (targetNode == null)
@@ -162,7 +161,7 @@ public class MergeNodesAction extends JosmAction {
      * @throw IllegalArgumentException thrown if layer is null
      * @throw IllegalArgumentException thrown if  backreferences.getSource() != layer.data
      */
-    public Command mergeNodes(OsmDataLayer layer, BackreferencedDataSet backreferences, Collection<Node> nodes, Node targetNode) {
+    public static Command mergeNodes(OsmDataLayer layer, BackreferencedDataSet backreferences, Collection<Node> nodes, Node targetNode) {
         if (layer == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "nodes"));
         if (targetNode == null)
