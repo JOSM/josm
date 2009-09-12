@@ -178,8 +178,6 @@ public class CombineWayAction extends JosmAction {
         CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
         dialog.getTagConflictResolverModel().populate(tagsToEdit);
         dialog.setTargetPrimitive(targetWay);
-        System.out.println("Referring relations: " + referringRelations.getRelations().size());
-        System.out.println("Referring relations/ways: " + referringRelations.getWays().size());
         dialog.getRelationMemberConflictResolverModel().populate(
                 referringRelations.getRelations(),
                 referringRelations.getWays()
