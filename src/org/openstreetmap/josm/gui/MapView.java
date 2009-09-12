@@ -8,10 +8,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
@@ -365,14 +367,15 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         // draw world borders
         tempG.setColor(Color.WHITE);
-        GeneralPath path = new GeneralPath();
         Bounds b = getProjection().getWorldBoundsLatLon();
         double lat = b.min.lat();
         double lon = b.min.lon();
 
         Point p = getPoint(b.min);
-        path.moveTo(p.x, p.y);
 
+        GeneralPath path = new GeneralPath();
+
+        path.moveTo(p.x, p.y);
         double max = b.max.lat();
         for(; lat <= max; lat += 1.0)
         {
@@ -398,10 +401,20 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             path.lineTo(p.x, p.y);
         }
 
+        int w = offscreenBuffer.getWidth();
+        int h = offscreenBuffer.getHeight();
+
+        // Work around OpenJDK having problems when drawing out of bounds
+        final Area border = new Area(path);
+        // Make the viewport 1px larger in every direction to prevent an
+        // additional 1px border when zooming in
+        final Area viewport = new Area(new Rectangle(-1, -1, w + 2, h + 2));
+        border.intersect(viewport);
+        tempG.draw(border);
+
         if (playHeadMarker != null) {
             playHeadMarker.paint(tempG, this);
         }
-        tempG.draw(path);
 
         g.drawImage(offscreenBuffer, 0, 0, null);
         super.paint(g);
