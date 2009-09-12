@@ -210,6 +210,8 @@ public class MergeNodesAction extends JosmAction {
             for (Node n: w.getNodes()) {
                 if (! nodesToDelete.contains(n)) {
                     newNodes.add(n);
+                } else {
+                    newNodes.add(targetNode);
                 }
             }
             if (newNodes.size() < 2) {
