@@ -27,6 +27,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -187,6 +188,9 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         if (getTagConflictResolverModel().getNumDecisions() >0) {
             TagCollection tc = getTagConflictResolverModel().getResolution();
             cmds.addAll(buildTagChangeCommand(targetPrimitive, tc));
+        }
+        if (targetPrimitive.get("created_by") != null) {
+            cmds.add(new ChangePropertyCommand(targetPrimitive, "created_by", null));
         }
 
         if (getRelationMemberConflictResolverModel().getNumDecisions() >0) {
