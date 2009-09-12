@@ -439,6 +439,7 @@ public class GpxLayer extends Layer {
         }
         // paint large dots for points
         boolean large = Main.pref.getBoolean("draw.rawgps.large");
+        boolean hdopcircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", true);
         // color the lines
         colorModes colored = colorModes.none;
         try {
@@ -631,10 +632,11 @@ public class GpxLayer extends Layer {
             } // end for trk
         } // end if lines
 
+
         /****************************************************************
-         ********** STEP 3d - DRAW LARGE POINTS *************************
+         ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
          ****************************************************************/
-        if (large) {
+        if (large || hdopcircle) {
             g.setColor(neutralColor);
             for (GpxTrack trk : data.tracks) {
                 for (Collection<WayPoint> segment : trk.trackSegs) {
@@ -645,11 +647,23 @@ public class GpxLayer extends Layer {
                         }
                         Point screen = mv.getPoint(trkPnt.getEastNorth());
                         g.setColor(trkPnt.customColoring);
-                        g.fillRect(screen.x - 1, screen.y - 1, 3, 3);
+                        if (hdopcircle && trkPnt.attr.get("hdop") != null) {
+                            // hdop value
+                            float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
+                            if (hdop < 0) {
+                                hdop = 0;
+                            }
+                            // hdop pixels
+                            int hdopp = mv.getPoint(new LatLon(trkPnt.getCoor().lat(), trkPnt.getCoor().lon() + 2*6*hdop*360/40000000)).x - screen.x;
+                            g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
+                        }
+                        if (large) {
+                            g.fillRect(screen.x-1, screen.y-1, 3, 3);
+                        }
                     } // end for trkpnt
                 } // end for segment
             } // end for trk
-        } // end if large
+        } // end if large || hdopcircle 
 
         /****************************************************************
          ********** STEP 3e - DRAW SMALL POINTS FOR LINES ***************

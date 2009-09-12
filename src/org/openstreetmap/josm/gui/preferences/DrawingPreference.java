@@ -41,6 +41,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JTextField drawRawGpsMaxLineLengthLocal = new JTextField(8);
     private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported."));
     private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points."));
+    private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle form HDOP value."));
     private ButtonGroup colorGroup;
     private JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
     private JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
@@ -142,6 +143,11 @@ public class DrawingPreference implements PreferenceSetting {
         drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
         panel.add(new JLabel(tr("Minimum distance (pixels)")), GBC.std().insets(60,0,0,0));
         panel.add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+
+        // hdopCircleGpsPoints
+        hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle", true));
+        hdopCircleGpsPoints.setToolTipText(tr("Draw a circle form HDOP value."));
+        panel.add(hdopCircleGpsPoints, GBC.eop().insets(20,0,0,0));
 
         // largeGpsPoints
         largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large", false));
@@ -275,6 +281,7 @@ public class DrawingPreference implements PreferenceSetting {
             Main.pref.putInteger("draw.rawgps.colors", 0);
         int ccti=colorTypeVelocityTune.getSelectedIndex();
         Main.pref.putInteger("draw.rawgps.colorTracksTune", ccti==2 ? 10 : (ccti==1 ? 20 : 45));
+        Main.pref.put("draw.rawgps.hdopcircle", hdopCircleGpsPoints.isSelected());
         Main.pref.put("draw.rawgps.large", largeGpsPoints.isSelected());
         Main.pref.put("draw.segment.direction", directionHint.isSelected());
         Main.pref.put("draw.segment.relevant_directions_only", interestingDirections.isSelected());
