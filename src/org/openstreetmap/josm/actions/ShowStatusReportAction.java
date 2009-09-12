@@ -97,13 +97,13 @@ public final class ShowStatusReportAction extends JosmAction {
         ta.setLineWrap(true);
         ta.setEditable(false);
         JScrollPane sp = new JScrollPane(ta);
-        sp.setPreferredSize(new Dimension(600, 500));
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Status Report"),
                 new String[] {tr("Copy to clipboard and close"), tr("Close") });
         ed.setButtonIcons(new String[] {"copy.png", "cancel.png" });
-        ed.setContent(sp);
+        ed.setContent(sp, false);
+        ed.setMinimumSize(new Dimension(500, 0));
         ed.showDialog();
 
         if(ed.getValue() != 1) return;
