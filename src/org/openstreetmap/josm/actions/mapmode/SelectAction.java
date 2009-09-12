@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog.MergeAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -488,14 +490,12 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);
                     if (nn != null) {
                         Node n = nn.iterator().next();
-                        LinkedList<Node> selNodes = new LinkedList<Node>();
-                        for (OsmPrimitive osm : selection)
-                            if (osm instanceof Node) {
-                                selNodes.add((Node)osm);
-                            }
-                        if (selNodes.size() > 0) {
-                            selNodes.add(n);
-                            new MergeNodesAction().mergeNodes(selNodes, n);
+                        Set<Node> selectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
+                        if (!selectedNodes.isEmpty()) {
+                            selectedNodes.add(n);
+                            MergeNodesAction mergeAction = new MergeNodesAction();
+                            Node targetNode = mergeAction.selectTargetNode(selectedNodes);
+                            mergeAction.mergeNodes(Main.main.getEditLayer(),selectedNodes, targetNode);
                         }
                     }
                 }

@@ -3,51 +3,36 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Map.Entry;
 
-import javax.swing.Box;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.TigerUtils;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
+import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 
 /**
- * Merge two or more nodes into one node.
- * (based on Combine ways)
- *
- * @author Matthew Newton
- *
+ * Merges a collection of nodes into one node.
+ * 
  */
 public class MergeNodesAction extends JosmAction {
 
@@ -59,18 +44,8 @@ public class MergeNodesAction extends JosmAction {
     public void actionPerformed(ActionEvent event) {
         if (!isEnabled())
             return;
-
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
-        LinkedList<Node> selectedNodes = new LinkedList<Node>();
-
-        // the selection check should stop this procedure starting if
-        // nothing but node are selected - otherwise we don't care
-        // anyway as long as we have at least two nodes
-        for (OsmPrimitive osm : selection)
-            if (osm instanceof Node) {
-                selectedNodes.add((Node)osm);
-            }
-
+        Set<Node> selectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
         if (selectedNodes.size() < 2) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -81,6 +56,48 @@ public class MergeNodesAction extends JosmAction {
             return;
         }
 
+
+        Node targetNode = selectTargetNode(selectedNodes);
+        Command cmd = mergeNodes(Main.main.getEditLayer(), selectedNodes, targetNode);
+        if (cmd != null) {
+            Main.main.undoRedo.add(cmd);
+            Main.main.getEditLayer().data.setSelected(targetNode);
+        }
+    }
+
+    protected void completeTagCollectionWithMissingTags(TagCollection tc, Collection<Node> mergedNodes) {
+        for (String key: tc.getKeys()) {
+            // make sure the empty value is in the tag set if a tag is not present
+            // on all merged nodes
+            //
+            for (Node n: mergedNodes) {
+                if (n.get(key) == null) {
+                    tc.add(new Tag(key)); // add a tag with key and empty value
+                }
+            }
+        }
+        // remove irrelevant tags
+        //
+        tc.removeByKey("created_by");
+    }
+
+    protected void completeTagCollectionForEditing(TagCollection tc) {
+        for (String key: tc.getKeys()) {
+            // make sure the empty value is in the tag set such that we can delete the tag
+            // in the conflict dialog if necessary
+            //
+            tc.add(new Tag(key,""));
+        }
+    }
+
+    /**
+     * Selects a node out of a collection of candidate nodes. The selected
+     * node will become the target node the remaining nodes are merged to.
+     * 
+     * @param candidates the collection of candidate nodes
+     * @return the selected target node
+     */
+    public Node selectTargetNode(Collection<Node> candidates) {
         // Find which node to merge into (i.e. which one will be left)
         // - this should be combined from two things:
         //   1. It will be the first node in the list that has a
@@ -92,172 +109,114 @@ public class MergeNodesAction extends JosmAction {
         // _not_ in the order that the nodes were clicked on, meaning
         // that the user doesn't know which node will be chosen (so
         // (2) is not implemented yet.)  :-(
-        Node useNode = null;
-        for (Node n: selectedNodes) {
+        Node targetNode = null;
+        for (Node n: candidates) {
             if (n.getId() > 0) {
-                useNode = n;
+                targetNode = n;
                 break;
             }
         }
-        if (useNode == null) {
-            useNode = selectedNodes.iterator().next();
+        if (targetNode == null) {
+            // an arbitrary node
+            targetNode = candidates.iterator().next();
         }
+        return targetNode;
+    }
 
-        mergeNodes(selectedNodes, useNode);
+
+    /**
+     * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
+     * managed by <code>layer</code> as reference.
+     * 
+     * @param layer the reference data layer. Must not be null.
+     * @param nodes the collection of nodes. Ignored if null.
+     * @param targetNode the target node the collection of nodes is merged to. Must not be null.
+     * @throws IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException thrown if targetNode is null
+     * 
+     */
+    public Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) throws IllegalArgumentException{
+        if (layer == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "nodes"));
+        if (targetNode == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "targetNode"));
+
+        if (nodes == null)
+            return null;
+        nodes.remove(null); // just in case
+        BackreferencedDataSet backreferences = new BackreferencedDataSet(layer.data);
+        backreferences.build();
+        return mergeNodes(layer,backreferences, nodes, targetNode);
     }
 
     /**
-     * really do the merging - returns the node that is left
+     * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
+     * managed by <code>layer</code> as reference. <code>backreferences</code> is precomputed
+     * collection of all parent/child references in the dataset.
+     *
+     * @param layer layer the reference data layer. Must not be null.
+     * @param backreferences if null, backreferneces are first computed from layer.data; otherwise
+     *    backreferences.getSource() == layer.data must hold
+     * @param nodes the collection of nodes. Ignored if null.
+     * @param targetNode the target node the collection of nodes is merged to. Must not be null.
+     * @throw IllegalArgumentException thrown if layer is null
+     * @throw IllegalArgumentException thrown if  backreferences.getSource() != layer.data
      */
-    public Node mergeNodes(LinkedList<Node> allNodes, Node dest) {
-        Node newNode = new Node(dest);
-
-        // Check whether all ways have identical relationship membership. More
-        // specifically: If one of the selected ways is a member of relation X
-        // in role Y, then all selected ways must be members of X in role Y.
-
-        // FIXME: In a later revision, we should display some sort of conflict
-        // dialog like we do for tags, to let the user choose which relations
-        // should be kept.
-
-        // Step 1, iterate over all relations and figure out which of our
-        // selected ways are members of a relation.
-        HashMap<Pair<Relation,String>, HashSet<Node>> backlinks =
-            new HashMap<Pair<Relation,String>, HashSet<Node>>();
-        HashSet<Relation> relationsUsingNodes = new HashSet<Relation>();
-        for (Relation r : getCurrentDataSet().relations) {
-            if (r.isDeleted() || r.incomplete) {
-                continue;
-            }
-            for (RelationMember rm : r.getMembers()) {
-                if (rm.isNode()) {
-                    for (Node n : allNodes) {
-                        if (rm.getMember() == n) {
-                            Pair<Relation,String> pair = new Pair<Relation,String>(r, rm.getRole());
-                            HashSet<Node> nodelinks = new HashSet<Node>();
-                            if (backlinks.containsKey(pair)) {
-                                nodelinks = backlinks.get(pair);
-                            } else {
-                                nodelinks = new HashSet<Node>();
-                                backlinks.put(pair, nodelinks);
-                            }
-                            nodelinks.add(n);
-
-                            // this is just a cache for later use
-                            relationsUsingNodes.add(r);
-                        }
-                    }
-                }
-            }
+    public Command mergeNodes(OsmDataLayer layer, BackreferencedDataSet backreferences, Collection<Node> nodes, Node targetNode) {
+        if (layer == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "nodes"));
+        if (targetNode == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "targetNode"));
+        if (nodes == null)
+            return null;
+        if (backreferences == null) {
+            backreferences = new BackreferencedDataSet(layer.data);
+            backreferences.build();
         }
 
-        // Complain to the user if the ways don't have equal memberships.
-        for (HashSet<Node> nodelinks : backlinks.values()) {
-            if (!nodelinks.containsAll(allNodes)) {
-                ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                        tr("Merge nodes with different memberships?"),
-                        new String[] {tr("Merge Anyway"), tr("Cancel")});
-                ed.setButtonIcons(new String[] {"mergenodes.png", "cancel.png"});
-                ed.setContent(tr("The selected nodes have differing relation memberships.  "
-                        + "Do you still want to merge them?"));
-                ed.showDialog();
+        Set<RelationToChildReference> relationToNodeReferences = backreferences.getRelationToChildReferences(nodes);
 
-                if (ed.getValue() == 1) {
-                    break;
-                }
+        // build the tag collection
+        //
+        TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
+        completeTagCollectionWithMissingTags(nodeTags, nodes);
+        TagCollection nodeTagsToEdit = new TagCollection(nodeTags);
+        completeTagCollectionForEditing(nodeTagsToEdit);
+
+        // launch a conflict resolution dialog, if necessary
+        //
+        CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
+        dialog.getTagConflictResolverModel().populate(nodeTagsToEdit);
+        dialog.getRelationMemberConflictResolverModel().populate(relationToNodeReferences);
+        dialog.setTargetPrimitive(targetNode);
+        dialog.prepareDefaultDecisions();
+        if (! nodeTags.isApplicableToPrimitive() || relationToNodeReferences.size() > 1) {
+            dialog.setVisible(true);
+            if (dialog.isCancelled())
                 return null;
-            }
         }
-
-        // collect properties for later conflict resolving
-        Map<String, Set<String>> props = new TreeMap<String, Set<String>>();
-        for (Node n : allNodes) {
-            for (Entry<String,String> e : n.entrySet()) {
-                if (!props.containsKey(e.getKey())) {
-                    props.put(e.getKey(), new TreeSet<String>());
-                }
-                props.get(e.getKey()).add(e.getValue());
-            }
-        }
-
-        // display conflict dialog
-        Map<String, JComboBox> components = new HashMap<String, JComboBox>();
-        JPanel p = new JPanel(new GridBagLayout());
-        for (Entry<String, Set<String>> e : props.entrySet()) {
-            if (TigerUtils.isTigerTag(e.getKey())) {
-                String combined = TigerUtils.combineTags(e.getKey(), e.getValue());
-                newNode.put(e.getKey(), combined);
-            } else if (e.getValue().size() > 1) {
-                JComboBox c = new JComboBox(e.getValue().toArray());
-                c.setEditable(true);
-                p.add(new JLabel(e.getKey()), GBC.std());
-                p.add(Box.createHorizontalStrut(10), GBC.std());
-                p.add(c, GBC.eol());
-                components.put(e.getKey(), c);
-            } else {
-                newNode.put(e.getKey(), e.getValue().iterator().next());
-            }
-        }
-
-        if (!components.isEmpty()) {
-            ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
-                    tr("Enter values for all conflicts."),
-                    new String[] {tr("Solve Conflicts"), tr("Cancel")}
-            );
-            dialog.setButtonIcons(new String[] {"dialogs/conflict.png", "cancel.png"});
-            dialog.setContent(p);
-            dialog.showDialog();
-            int answer = dialog.getValue();
-
-            if (answer != 1)
-                return null;
-            for (Entry<String, JComboBox> e : components.entrySet()) {
-                newNode.put(e.getKey(), e.getValue().getEditor().getItem().toString());
-            }
-        }
-
         LinkedList<Command> cmds = new LinkedList<Command>();
 
-	if (!newNode.getKeys().equals(dest.getKeys())) {
-            cmds.add(new ChangeCommand(dest, newNode));
-	}
+        // the nodes we will have to delete
+        //
+        Collection<OsmPrimitive> nodesToDelete = new HashSet<OsmPrimitive>(nodes);
+        nodesToDelete.remove(targetNode);
 
-        Collection<OsmPrimitive> del = new HashSet<OsmPrimitive>();
-
-        for (Way w : getCurrentDataSet().ways) {
-            if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
-                continue;
-            }
-            boolean modify = false;
-            for (Node sn : allNodes) {
-                if (sn == dest) {
-                    continue;
-                }
-                if (w.containsNode(sn)) {
-                    modify = true;
-                }
-            }
-            if (!modify) {
-                continue;
-            }
+        // change the ways referring to at least one of the merge nodes
+        //
+        Collection<Way> waysToDelete= new HashSet<Way>();
+        for (Way w : OsmPrimitive.getFilteredList(backreferences.getParents(nodesToDelete), Way.class)) {
             // OK - this way contains one or more nodes to change
-            ArrayList<Node> nn = new ArrayList<Node>();
-            Node lastNode = null;
-            for (Node pushNode: w.getNodes()) {
-                if (allNodes.contains(pushNode)) {
-                    pushNode = dest;
+            ArrayList<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+            for (Node n: w.getNodes()) {
+                if (! nodesToDelete.contains(n)) {
+                    newNodes.add(n);
                 }
-                if (pushNode != lastNode) {
-                    nn.add(pushNode);
-                }
-                lastNode = pushNode;
             }
-            if (nn.size() < 2) {
-                CollectBackReferencesVisitor backRefs =
-                    new CollectBackReferencesVisitor(getCurrentDataSet(), false);
-                w.visit(backRefs);
-                if (!backRefs.data.isEmpty()) {
+            if (newNodes.size() < 2) {
+                if (backreferences.getParents(w).isEmpty()) {
+                    waysToDelete.add(w);
+                } else {
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Cannot merge nodes: " +
@@ -267,46 +226,26 @@ public class MergeNodesAction extends JosmAction {
                     );
                     return null;
                 }
-                del.add(w);
+            } else if(newNodes.size() < 2 && backreferences.getParents(w).isEmpty()) {
+                waysToDelete.add(w);
             } else {
                 Way newWay = new Way(w);
-                newWay.setNodes(nn);
+                newWay.setNodes(newNodes);
                 cmds.add(new ChangeCommand(w, newWay));
             }
         }
 
-        // delete any merged nodes
-        del.addAll(allNodes);
-        del.remove(dest);
-        if (!del.isEmpty()) {
-            cmds.add(new DeleteCommand(del));
+        // build the commands
+        //
+        if (!nodesToDelete.isEmpty()) {
+            cmds.add(new DeleteCommand(nodesToDelete));
         }
-
-        // modify all relations containing the now-deleted nodes
-        for (Relation r : relationsUsingNodes) {
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
-            HashSet<String> rolesToReAdd = new HashSet<String>();
-            for (RelationMember rm : r.getMembers()) {
-                // Don't copy the member if it points to one of our nodes,
-                // just keep a note to re-add it later on.
-                if (allNodes.contains(rm.getMember())) {
-                    rolesToReAdd.add(rm.getRole());
-                } else {
-                    newMembers.add(rm);
-                }
-            }
-            for (String role : rolesToReAdd) {
-                newMembers.add(new RelationMember(role, dest));
-            }
-            Relation newRel = new Relation(r);
-            newRel.setMembers(newMembers);
-            cmds.add(new ChangeCommand(r, newRel));
+        if (!waysToDelete.isEmpty()) {
+            cmds.add(new DeleteCommand(waysToDelete));
         }
-
-        Main.main.undoRedo.add(new SequenceCommand(tr("Merge {0} nodes", allNodes.size()), cmds));
-        getCurrentDataSet().setSelected(dest);
-
-        return dest;
+        cmds.addAll(dialog.buildResolutionCommands());
+        Command cmd = new SequenceCommand(tr("Merge {0} nodes", nodes.size()), cmds);
+        return cmd;
     }
 
 

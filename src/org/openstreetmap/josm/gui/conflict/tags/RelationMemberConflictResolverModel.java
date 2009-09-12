@@ -17,20 +17,42 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
 
+/**
+ * This model manages a list of conflicting relation members.
+ * 
+ * It can be used as {@see TableModel}.
+ *
+ *
+ */
 public class RelationMemberConflictResolverModel extends DefaultTableModel {
+    /** the property name for the number conflicts managed by this model */
     static public final String NUM_CONFLICTS_PROP = RelationMemberConflictResolverModel.class.getName() + ".numConflicts";
 
+    /** the list of conflict decisions */
     private List<RelationMemberConflictDecision> decisions;
+    /** the collection of relations for which we manage conflicts */
     private Collection<Relation> relations;
+    /** the number of conflicts */
     private int numConflicts;
     private PropertyChangeSupport support;
 
 
+    /**
+     * Replies the current number of conflicts
+     * 
+     * @return the current number of conflicts
+     */
     public int getNumConflicts() {
         return numConflicts;
     }
 
+    /**
+     * Updates the current number of conflicts from list of decisions and emits
+     * a property change event if necessary.
+     * 
+     */
     protected void updateNumConflicts() {
         int count = 0;
         for (RelationMemberConflictDecision decision: decisions) {
@@ -70,11 +92,11 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
         RelationMemberConflictDecision d = decisions.get(row);
         switch(column) {
-            case 0: /* relation */ return d.getRelation();
-            case 1: /* pos */ return Integer.toString(d.getPos() + 1); // position in "user space" starting at 1
-            case 2: /* role */ return d.getRole();
-            case 3: /* original */ return d.getOriginalPrimitive();
-            case 4: /* decision */ return d.getDecision();
+        case 0: /* relation */ return d.getRelation();
+        case 1: /* pos */ return Integer.toString(d.getPos() + 1); // position in "user space" starting at 1
+        case 2: /* role */ return d.getRole();
+        case 3: /* original */ return d.getOriginalPrimitive();
+        case 4: /* decision */ return d.getDecision();
         }
         return null;
     }
@@ -83,18 +105,26 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public void setValueAt(Object value, int row, int column) {
         RelationMemberConflictDecision d = decisions.get(row);
         switch(column) {
-            case 2: /* role */
-                d.setRole((String)value);
-                break;
-            case 4: /* decision */
-                d.decide((RelationMemberConflictDecisionType)value);
-                refresh();
-                break;
+        case 2: /* role */
+            d.setRole((String)value);
+            break;
+        case 4: /* decision */
+            d.decide((RelationMemberConflictDecisionType)value);
+            refresh();
+            break;
         }
         fireTableDataChanged();
     }
 
+    /**
+     * Populates the model with the members of the relation <code>relation</code>
+     * referring to <code>primitive</code>.
+     * 
+     * @param relation the parent relation
+     * @param primitive the child primitive
+     */
     protected void populate(Relation relation, OsmPrimitive primitive) {
+        decisions.clear();
         for (int i =0; i<relation.getMembersCount();i++) {
             if (relation.getMember(i).refersTo(primitive)) {
                 decisions.add(new RelationMemberConflictDecision(relation, i));
@@ -102,8 +132,17 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         }
     }
 
+    /**
+     * Populates the model with the relation members belonging to one of the relations in <code>relations</code>
+     * and referring to one of the primitives in <code>memberPrimitives</code>.
+     * 
+     * @param relations  the parent relations. Empty list assumed if null.
+     * @param memberPrimitives the child primitives. Empty list assumed if null.
+     */
     public void populate(Collection<Relation> relations, Collection<? extends OsmPrimitive> memberPrimitives) {
         decisions.clear();
+        relations = relations == null ? new LinkedList<Relation>() : relations;
+        memberPrimitives = memberPrimitives == null ? new LinkedList<OsmPrimitive>() : memberPrimitives;
         for (Relation r : relations) {
             for (OsmPrimitive p: memberPrimitives) {
                 populate(r,p);
@@ -113,19 +152,61 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         refresh();
     }
 
+    /**
+     * Populates the model with the relation members represented as a collection of
+     * {@see RelationToChildReference}s.
+     * 
+     * @param references the references. Empty list assumed if null.
+     */
+    public void populate(Collection<RelationToChildReference> references) {
+        references = references == null ? new LinkedList<RelationToChildReference>() : references;
+        if (references.isEmpty()) {
+            this.relations = new HashSet<Relation>(references.size());
+            return;
+        }
+        decisions.clear();
+        this.relations = new HashSet<Relation>(references.size());
+        for (RelationToChildReference reference: references) {
+            decisions.add(new RelationMemberConflictDecision(reference.getParent(), reference.getPosition()));
+            relations.add(reference.getParent());
+        }
+        refresh();
+    }
+
+    /**
+     * Replies the decision at position <code>row</code>
+     * 
+     * @param row
+     * @return the decision at position <code>row</code>
+     */
     public RelationMemberConflictDecision getDecision(int row) {
         return decisions.get(row);
     }
 
+    /**
+     * Replies the number of decisions managed by this model
+     * 
+     * @return the number of decisions managed by this model
+     */
     public int getNumDecisions() {
         return  getRowCount();
     }
 
+    /**
+     * Refreshes the model state. Invoke this method to trigger necessary change
+     * events after an update of the model data.
+     * 
+     */
     public void refresh() {
         updateNumConflicts();
         fireTableDataChanged();
     }
 
+    /**
+     * Apply a role to all member managed by this model.
+     * 
+     * @param role the role. Empty string assumed if null.
+     */
     public void applyRole(String role) {
         role = role == null ? "" : role;
         for (RelationMemberConflictDecision decision : decisions) {
@@ -153,18 +234,18 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 modifiedRelation.addMember(rm);
             } else {
                 switch(decision.getDecision()) {
-                    case REPLACE:
-                        rmNew = new RelationMember(decision.getRole(),newPrimitive);
-                        modifiedRelation.addMember(rmNew);
-                        isChanged |= ! rm.equals(rmNew);
-                        break;
-                    case REMOVE:
-                        isChanged = true;
-                        // do nothing
-                        break;
-                    case UNDECIDED:
-                        // FIXME: this is an error
-                        break;
+                case REPLACE:
+                    rmNew = new RelationMember(decision.getRole(),newPrimitive);
+                    modifiedRelation.addMember(rmNew);
+                    isChanged |= ! rm.equals(rmNew);
+                    break;
+                case REMOVE:
+                    isChanged = true;
+                    // do nothing
+                    break;
+                case UNDECIDED:
+                    // FIXME: this is an error
+                    break;
                 }
             }
         }
@@ -173,6 +254,13 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         return null;
     }
 
+    /**
+     * Builds a collection of commands executing the decisions made in this model.
+     * 
+     * @param newPrimitive the primitive which members shall refer to if the
+     * decision is {@see RelationMemberConflictDecisionType#REPLACE}
+     * @return a list of commands
+     */
     public List<Command> buildResolutionCommands(OsmPrimitive newPrimitive) {
         List<Command> command = new LinkedList<Command>();
         for (Relation relation : relations) {
@@ -191,19 +279,29 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 continue;
             }
             switch(decision.getDecision()) {
-                case REMOVE: return true;
-                case REPLACE:
-                    if (!relation.getMember(i).getRole().equals(decision.getRole()))
-                        return true;
-                    if (relation.getMember(i).getMember() != newPrimitive)
-                        return true;
-                case UNDECIDED:
-                    // FIXME: handle error
+            case REMOVE: return true;
+            case REPLACE:
+                if (!relation.getMember(i).getRole().equals(decision.getRole()))
+                    return true;
+                if (relation.getMember(i).getMember() != newPrimitive)
+                    return true;
+            case UNDECIDED:
+                // FIXME: handle error
             }
         }
         return false;
     }
 
+    /**
+     * Replies the set of relations which have to be modified according
+     * to the decisions managed by this model.
+     * 
+     * @param newPrimitive the primitive which members shall refer to if the
+     * decision is {@see RelationMemberConflictDecisionType#REPLACE}
+     * 
+     * @return the set of relations which have to be modified according
+     * to the decisions managed by this model
+     */
     public Set<Relation> getModifiedRelations(OsmPrimitive newPrimitive) {
         HashSet<Relation> ret = new HashSet<Relation>();
         for (Relation relation: relations) {

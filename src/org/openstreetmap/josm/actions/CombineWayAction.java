@@ -32,7 +32,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.conflict.tags.CombineWaysConflictResolverDialog;
+import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -165,9 +165,9 @@ public class CombineWayAction extends JosmAction {
         TagCollection completeWayTags = new TagCollection(wayTags);
         completeTagCollectionWithMissingTags(completeWayTags, ways);
 
-        CombineWaysConflictResolverDialog dialog = CombineWaysConflictResolverDialog.getInstance();
+        CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
         dialog.getTagConflictResolverModel().populate(completeWayTags);
-        dialog.setTargetWay(targetWay);
+        dialog.setTargetPrimitive(targetWay);
         dialog.getRelationMemberConflictResolverModel().populate(
                 referringRelations.getRelations(),
                 referringRelations.getWays()
@@ -190,7 +190,7 @@ public class CombineWayAction extends JosmAction {
 
         cmds.add(new DeleteCommand(deletedWays));
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
-        cmds.addAll(dialog.buildResolutionCommands(targetWay));
+        cmds.addAll(dialog.buildResolutionCommands());
         final SequenceCommand sequenceCommand = new SequenceCommand(tr("Combine {0} ways", ways.size()), cmds);
 
         // update gui
