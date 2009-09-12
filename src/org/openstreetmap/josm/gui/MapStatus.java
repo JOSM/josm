@@ -6,12 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
@@ -22,9 +24,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
@@ -112,13 +115,15 @@ public class MapStatus extends JPanel implements Helpful {
      */
     private final class Collector implements Runnable {
         /**
-         * The last object displayed in status line.
+         * the mouse position of the previous iteration. This is used to show
+         * the popup until the cursor is moved.
          */
-        Collection<OsmPrimitive> osmStatus;
+        private Point oldMousePos;
         /**
-         * The old modifiers that was pressed the last time this collector ran.
+         * Contains the labels that are currently shown in the information
+         * popup
          */
-        private int oldModifiers;
+        private List<JLabel> popupLabels = null;
         /**
          * The popup displayed to show additional information
          */
@@ -143,11 +148,17 @@ public class MapStatus extends JPanel implements Helpful {
                 }
                 if (parent != Main.map)
                     return; // exit, if new parent.
-                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0 || ms.mousePos == null) {
-                    continue; // freeze display when holding down ctrl
+
+                // Do nothing, if required data is missing
+                if(ms.mousePos == null || mv.center == null) {
+                    continue;
                 }
 
-                if (mv.center == null) {
+                // Freeze display when holding down CTRL
+                if ((ms.modifiers & MouseEvent.CTRL_DOWN_MASK) != 0) {
+                    // update the information popup's labels though, because
+                    // the selection might have changed from the outside
+                    popupUpdateLabels();
                     continue;
                 }
 
@@ -156,97 +167,287 @@ public class MapStatus extends JPanel implements Helpful {
                 // access to the data need to be restarted, if the main thread modifies
                 // the data.
                 try {
-                    OsmPrimitive osmNearest = null;
                     // Set the text label in the bottom status bar
-                    osmNearest = mv.getNearest(ms.mousePos);
-                    if (osmNearest != null) {
-                        nameText.setText(osmNearest.getDisplayName(DefaultNameFormatter.getInstance()));
-                    } else {
-                        nameText.setText(tr("(no object)"));
-                    }
+                    statusBarElementUpdate(ms);
+
+                    // The popup != null check is required because a left-click
+                    // produces several events as well, which would make this
+                    // variable true. Of course we only want the popup to show
+                    // if the middle mouse button has been pressed in the first
+                    // place
+                    boolean isAtOldPosition = (oldMousePos != null
+                            && oldMousePos.equals(ms.mousePos)
+                            && popup != null);
+                    boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
+
 
                     // Popup Information
-                    if ((ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0 ) {
+                    // display them if the middle mouse button is pressed and
+                    // keep them until the mouse is moved
+                    if (middleMouseDown || isAtOldPosition)
+                    {
                         Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
 
                         if (osms == null) {
                             continue;
                         }
-                        if (osms.equals(osmStatus) && ms.modifiers == oldModifiers) {
-                            continue;
-                        }
-
-                        if (popup != null) {
-                            try {
-                                EventQueue.invokeAndWait(new Runnable() {
-                                    public void run() {
-                                        popup.hide();
-                                    }
-                                });
-                            } catch (InterruptedException e) {
-                            } catch (InvocationTargetException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
 
                         JPanel c = new JPanel(new GridBagLayout());
-                        for (final OsmPrimitive osm : osms) {
-                            final StringBuilder text = new StringBuilder();
-                            String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
-                            if (osm.getId() == 0 || osm.isModified()) {
-                                name = "<i><b>"+ osm.getDisplayName(DefaultNameFormatter.getInstance())+"*</b></i>";
-                            }
-                            text.append(name);
-                            if (osm.getId() != 0) {
-                                text.append("<br>id="+osm.getId());
-                            }
-                            for (Entry<String, String> e : osm.entrySet()) {
-                                text.append("<br>"+e.getKey()+"="+e.getValue());
-                            }
-                            final JLabel l = new JLabel(
-                                    "<html>"+text.toString()+"</html>",
-                                    ImageProvider.get(OsmPrimitiveType.from(osm)),
-                                    JLabel.HORIZONTAL
-                            );
-                            l.setFont(l.getFont().deriveFont(Font.PLAIN));
-                            l.setVerticalTextPosition(JLabel.TOP);
-                            l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                            l.addMouseListener(new MouseAdapter(){
-                                @Override public void mouseEntered(MouseEvent e) {
-                                    l.setText("<html><u color='blue'>"+text.toString()+"</u></html>");
-                                }
-                                @Override public void mouseExited(MouseEvent e) {
-                                    l.setText("<html>"+text.toString()+"</html>");
-                                }
-                                @Override public void mouseClicked(MouseEvent e) {
-                                    Main.main.getCurrentDataSet().setSelected(osm);
-                                    mv.repaint();
-                                }
-                            });
-                            c.add(l, GBC.eol());
+                        c.setBorder(BorderFactory.createRaisedBevelBorder());
+                        final JLabel lbl = new JLabel(
+                                "<html>"+tr("Middle click again, to cycle through.<br>"+
+                                "Hold CTRL to select something from this list.<hr>")+"</html>",
+                                null,
+                                JLabel.HORIZONTAL
+                        );
+                        lbl.setHorizontalAlignment(JLabel.LEFT);
+                        c.add(lbl, GBC.eol().insets(2, 0, 2, 0));
+
+                        // Only cycle if the mouse has not been moved and the
+                        // middle mouse button has been pressed at least twice
+                        // (the reason for this is the popup != null check for
+                        // isAtOldPosition, see above. This is a nice side
+                        // effect though, because it does not change selection
+                        // of the first middle click)
+                        if(isAtOldPosition && middleMouseDown) {
+                            popupCycleSelection(osms);
                         }
 
-                        Point p = mv.getLocationOnScreen();
-                        popup = PopupFactory.getSharedInstance().getPopup(mv, c, p.x+ms.mousePos.x+16, p.y+ms.mousePos.y+16);
-                        final Popup staticPopup = popup;
-                        EventQueue.invokeLater(new Runnable(){
-                            public void run() {
-                                staticPopup.show();
-                            }
-                        });
-                    } else if (popup != null) {
-                        final Popup staticPopup = popup;
-                        popup = null;
-                        EventQueue.invokeLater(new Runnable(){
-                            public void run() {
-                                staticPopup.hide();
-                            }
-                        });
+                        // These labels may need to be updated from the outside
+                        // so collect them
+                        List<JLabel> lbls = new ArrayList<JLabel>();
+                        for (final OsmPrimitive osm : osms) {
+                            JLabel l = popupBuildPrimitiveLabels(osm);
+                            lbls.add(l);
+                            c.add(l, GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 2));
+                        }
+
+                        popupShowPopup(popupCreatePopup(c, ms), lbls);
+                    } else {
+                        popupHidePopup();
                     }
+
+                    oldMousePos = ms.mousePos;
                 } catch (ConcurrentModificationException x) {
+                    //x.printStackTrace();
                 } catch (NullPointerException x) {
+                    //x.printStackTrace();
                 }
             }
+        }
+
+        /**
+         * Creates a popup for the given content next to the cursor. Tries to
+         * keep the popup on screen.
+         * @param content
+         * @param ms
+         * @return popup
+         */
+        private final Popup popupCreatePopup(Component content, MouseState ms) {
+            Point p = mv.getLocationOnScreen();
+            Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
+            Dimension dim = content.getPreferredSize();
+
+            int xPos = p.x + ms.mousePos.x + 16;
+            // Display the popup to the left of the cursor if it would be cut
+            // off on its right
+            if(xPos + dim.width > scrn.width) {
+                xPos = p.x + ms.mousePos.x - 4 - dim.width;
+            }
+            int yPos = p.y + ms.mousePos.y + 16;
+            // Move the popup up if it would be cut off at its bottom
+            if(yPos + dim.height > scrn.height - 5) {
+                yPos = scrn.height - dim.height - 5;
+            }
+
+            PopupFactory pf = PopupFactory.getSharedInstance();
+            return pf.getPopup(mv, content, xPos, yPos);
+        }
+
+        /**
+         * Calls this to update the element that is shown in the statusbar
+         * @param ms
+         */
+        private final void statusBarElementUpdate(MouseState ms) {
+            final OsmPrimitive osmNearest = mv.getNearest(ms.mousePos);
+            if (osmNearest != null) {
+                nameText.setText(osmNearest.getDisplayName(DefaultNameFormatter.getInstance()));
+            } else {
+                nameText.setText(tr("(no object)"));
+            }
+        }
+
+        /**
+         * Call this with a set of primitives to cycle through them. Method
+         * will automatically select the next item and update the map
+         * @param osms
+         */
+        private final void popupCycleSelection(Collection<OsmPrimitive> osms) {
+            // Find some items that are required for cycling through
+            OsmPrimitive firstItem = null;
+            OsmPrimitive firstSelected = null;
+            OsmPrimitive nextSelected = null;
+            for (final OsmPrimitive osm : osms) {
+                if(firstItem == null) {
+                    firstItem = osm;
+                }
+                if(firstSelected != null && nextSelected == null) {
+                    nextSelected = osm;
+                }
+                if(firstSelected == null && osm.isSelected()) {
+                    firstSelected = osm;
+                }
+            }
+
+            // This will cycle through the available items.
+            if(firstSelected == null) {
+                firstItem.setSelected(true);
+            } else {
+                firstSelected.setSelected(false);
+                if(nextSelected != null) {
+                    nextSelected.setSelected(true);
+                }
+            }
+            mv.repaint();
+        }
+
+        /**
+         * Tries to hide the given popup
+         * @param popup
+         */
+        private final void popupHidePopup() {
+            popupLabels = null;
+            if(popup == null)
+                return;
+            final Popup staticPopup = popup;
+            popup = null;
+            EventQueue.invokeLater(new Runnable(){
+                public void run() { staticPopup.hide(); }});
+        }
+
+        /**
+         * Tries to show the given popup, can be hidden using popupHideOldPopup
+         * If an old popup exists, it will be automatically hidden
+         * @param popup
+         */
+        private final void popupShowPopup(Popup newPopup, List<JLabel> lbls) {
+            final Popup staticPopup = newPopup;
+            if(this.popup != null) {
+                // If an old popup exists, remove it when the new popup has been
+                // drawn to keep flickering to a minimum
+                final Popup staticOldPopup = this.popup;
+                EventQueue.invokeLater(new Runnable(){
+                    public void run() {
+                        staticPopup.show();
+                        staticOldPopup.hide();
+                    }
+                });
+            } else {
+                // There is no old popup
+                EventQueue.invokeLater(new Runnable(){
+                    public void run() { staticPopup.show(); }});
+            }
+            this.popupLabels = lbls;
+            this.popup = newPopup;
+        }
+
+        /**
+         * This method should be called if the selection may have changed from
+         * outside of this class. This is the case when CTRL is pressed and the
+         * user clicks on the map instead of the popup.
+         */
+        private final void popupUpdateLabels() {
+            if(this.popup == null || this.popupLabels == null)
+                return;
+            for(JLabel l : this.popupLabels) {
+                l.validate();
+            }
+        }
+
+        /**
+         * Sets the colors for the given label depending on the selected status of
+         * the given OsmPrimitive
+         * 
+         * @param lbl The label to color
+         * @param osm The primitive to derive the colors from
+         */
+        private final void popupSetLabelColors(JLabel lbl, OsmPrimitive osm) {
+            if(osm.isSelected()) {
+                lbl.setBackground(SystemColor.textHighlight);
+                lbl.setForeground(SystemColor.textHighlightText);
+            } else {
+                lbl.setBackground(SystemColor.control);
+                lbl.setForeground(SystemColor.controlText);
+            }
+        }
+
+        /**
+         * Builds the labels with all necessary listeners for the info popup for the
+         * given OsmPrimitive
+         * @param osm  The primitive to create the label for
+         * @return
+         */
+        private final JLabel popupBuildPrimitiveLabels(final OsmPrimitive osm) {
+            final StringBuilder text = new StringBuilder();
+            String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
+            if (osm.getId() == 0 || osm.isModified()) {
+                name = "<i><b>"+ osm.getDisplayName(DefaultNameFormatter.getInstance())+"*</b></i>";
+            }
+            text.append(name);
+            if (osm.getId() != 0) {
+                text.append("<br>id="+osm.getId());
+            }
+            for (Entry<String, String> e1 : osm.entrySet()) {
+                text.append("<br>"+e1.getKey()+"="+e1.getValue());
+            }
+
+            final JLabel l = new JLabel(
+                    "<html>"+text.toString()+"</html>",
+                    ImageProvider.get(OsmPrimitiveType.from(osm)),
+                    JLabel.HORIZONTAL
+            ) {
+                // This is necessary so the label updates its colors when the
+                // selection is changed from the outside
+                @Override public void validate() {
+                    super.validate();
+                    popupSetLabelColors(this, osm);
+                }
+            };
+            l.setOpaque(true);
+            popupSetLabelColors(l, osm);
+            l.setFont(l.getFont().deriveFont(Font.PLAIN));
+            l.setVerticalTextPosition(JLabel.TOP);
+            l.setHorizontalAlignment(JLabel.LEFT);
+            l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            l.addMouseListener(new MouseAdapter(){
+                @Override public void mouseEntered(MouseEvent e) {
+                    l.setBackground(SystemColor.info);
+                    l.setForeground(SystemColor.infoText);
+                }
+                @Override public void mouseExited(MouseEvent e) {
+                    popupSetLabelColors(l, osm);
+                }
+                @Override public void mouseClicked(MouseEvent e) {
+                    // Let the user toggle the selection
+                    osm.setSelected(!osm.isSelected());
+                    mv.repaint();
+                    l.validate();
+                }
+            });
+            // Sometimes the mouseEntered event is not catched, thus the label
+            // will not be highlighted, making it confusing. The MotionListener
+            // can correct this defect.
+            l.addMouseMotionListener(new MouseMotionListener() {
+                public void mouseMoved(MouseEvent e) {
+                    l.setBackground(SystemColor.info);
+                    l.setForeground(SystemColor.infoText);
+                }
+                public void mouseDragged(MouseEvent e) {
+                    l.setBackground(SystemColor.info);
+                    l.setForeground(SystemColor.infoText);
+                }
+            });
+            return l;
         }
     }
 
