@@ -103,14 +103,13 @@ public class CombineWayAction extends JosmAction {
         return targetWay;
     }
 
-    protected void completeTagCollectionWithMissingTags(TagCollection tc, Collection<Way> combinedWays) {
+    protected static void completeTagCollectionWithMissingTags(TagCollection tc, Collection<? extends OsmPrimitive> merged) {
         for (String key: tc.getKeys()) {
-            // make sure the empty value is in the tag set such that we can delete the tag
-            // in the conflict dialog if necessary
+            // make sure the empty value is in the tag set if a tag is not present
+            // on all merged nodes
             //
-            tc.add(new Tag(key,""));
-            for (Way w: combinedWays) {
-                if (w.get(key) == null) {
+            for (OsmPrimitive p: merged) {
+                if (p.get(key) == null) {
                     tc.add(new Tag(key)); // add a tag with key and empty value
                 }
             }
@@ -118,6 +117,15 @@ public class CombineWayAction extends JosmAction {
         // remove irrelevant tags
         //
         tc.removeByKey("created_by");
+    }
+
+    protected static void completeTagCollectionForEditing(TagCollection tc) {
+        for (String key: tc.getKeys()) {
+            // make sure the empty value is in the tag set such that we can delete the tag
+            // in the conflict dialog if necessary
+            //
+            tc.add(new Tag(key,""));
+        }
     }
 
     public void combineWays(Collection<Way> ways) {
@@ -164,9 +172,11 @@ public class CombineWayAction extends JosmAction {
 
         TagCollection completeWayTags = new TagCollection(wayTags);
         completeTagCollectionWithMissingTags(completeWayTags, ways);
+        TagCollection tagsToEdit = new TagCollection(completeWayTags);
+        completeTagCollectionForEditing(tagsToEdit);
 
         CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
-        dialog.getTagConflictResolverModel().populate(completeWayTags);
+        dialog.getTagConflictResolverModel().populate(tagsToEdit);
         dialog.setTargetPrimitive(targetWay);
         dialog.getRelationMemberConflictResolverModel().populate(
                 referringRelations.getRelations(),
@@ -176,13 +186,11 @@ public class CombineWayAction extends JosmAction {
 
         // resolve tag conflicts if necessary
         //
-        if (!wayTags.isApplicableToPrimitive() || !referringRelations.getRelations().isEmpty()) {
+        if (!completeWayTags.isApplicableToPrimitive() || !referringRelations.getRelations().isEmpty()) {
             dialog.setVisible(true);
             if (dialog.isCancelled())
                 return;
         }
-
-
 
         LinkedList<Command> cmds = new LinkedList<Command>();
         LinkedList<Way> deletedWays = new LinkedList<Way>(ways);

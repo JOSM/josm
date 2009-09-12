@@ -35,13 +35,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
- * This dialog helps to resolve conflicts occuring when combining or merging primitives.
+ * This dialog helps to resolve conflicts occurring when ways are combined ore
+ * primitives are merged.
  * 
  * There is a singleton instance of this dialog which can be retrieved using
  * {@see #getInstance()}.
  * 
- * The dialog uses two model: one model for resolving tag conflicts, the other model
- * for resolving conflicts in relation membership. For both models there are accessors,
+ * The dialog uses two models: one  for resolving tag conflicts, the other
+ * for resolving conflicts in relation memberships. For both models there are accessors,
  * i.e {@see #getTagConflictResolverModel()} and {@see #getRelationMemberConflictResolverModel()}.
  * 
  * Models have to be <strong>populated</strong> before the dialog is launched. Example:
@@ -53,10 +54,10 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * </pre>
  * 
  * You should also set the target primitive which other primitives (ways or nodes) are
- * merged to. Use {@see #setTargetPrimitive(OsmPrimitive)}.
+ * merged to, see {@see #setTargetPrimitive(OsmPrimitive)}.
  * 
  * After the dialog closed use {@see #isCancelled()} to check whether the user cancelled
- * the dialog. If it wasn't cancelled you may build a collection of {@see Command} objects
+ * the dialog. If it wasn't canceled you may build a collection of {@see Command} objects
  * which reflect the conflict resolution decisions the user made in the dialog:
  * see {@see #buildResolutionCommands()}
  * 
@@ -258,6 +259,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         if (numTagDecisions > 0 &&  numRelationDecisions > 0) {
             spTagConflictTypes.setDividerLocation(0.5);
         }
+        pnlRelationMemberConflictResolver.prepareForEditing();
     }
 
     protected void setCancelled(boolean cancelled) {

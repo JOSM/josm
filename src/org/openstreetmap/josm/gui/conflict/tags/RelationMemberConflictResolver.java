@@ -7,8 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -23,10 +21,13 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class RelationMemberConflictResolver extends JPanel {
@@ -36,11 +37,12 @@ public class RelationMemberConflictResolver extends JPanel {
     private AutoCompletingTextField tfValue;
     private JCheckBox cbTagRelations;
     private RelationMemberConflictResolverModel model;
+    private RelationMemberConflictResolverTable tblResolver;
 
     protected void build() {
         setLayout(new BorderLayout());
         model=new RelationMemberConflictResolverModel();
-        add (new JScrollPane(new RelationMemberConflictResolverTable(model)), BorderLayout.CENTER);
+        add (new JScrollPane(tblResolver = new RelationMemberConflictResolverTable(model)), BorderLayout.CENTER);
         JPanel pnl = new JPanel();
         pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
         pnl.add(buildRoleEditingPanel());
@@ -109,5 +111,19 @@ public class RelationMemberConflictResolver extends JPanel {
         if (tfValue.getText().trim().equals("")) return null;
         if (primitives == null || primitives.isEmpty()) return null;
         return new ChangePropertyCommand(primitives, tfKey.getText(), tfValue.getText());
+    }
+
+    public void prepareForEditing() {
+        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).initFromDataSet();
+        AutoCompletionList acList = new AutoCompletionList();
+        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(acList);
+        tfRole.setAutoCompletionList(acList);
+        AutoCompletingTextField editor = (AutoCompletingTextField)tblResolver.getColumnModel().getColumn(2).getCellEditor();
+        if (editor != null) {
+            editor.setAutoCompletionList(acList);
+        }
+        AutoCompletionList acList2 = new AutoCompletionList();
+        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithKeys(acList2, false /* don't append */);
+        tfKey.setAutoCompletionList(acList2);
     }
 }
