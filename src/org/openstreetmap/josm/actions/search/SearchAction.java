@@ -24,13 +24,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.data.osm.Filter;
 
 public class SearchAction extends JosmAction{
 
     public static final int SEARCH_HISTORY_SIZE = 10;
 
     public static enum SearchMode {
-        replace, add, remove
+        replace, add, remove, in_selection
     }
 
     public static final LinkedList<SearchSetting> searchHistory = new LinkedList<SearchSetting>();
@@ -56,33 +57,46 @@ public class SearchAction extends JosmAction{
         }
         SearchSetting s = lastSearch;
         if (s == null) {
-            s = new SearchSetting("", false, false, SearchMode.replace);
+            s = new SearchSetting("", SearchMode.replace, false, false);
         }
-        showSearchDialog(s);
+        SearchSetting se = showSearchDialog(s);
+        if(se != null) searchWithHistory(se);
     }
 
-    public void showSearchDialog(SearchSetting initialValues) {
-        JLabel label = new JLabel(tr("Please enter a search string."));
+    public static SearchSetting showSearchDialog(SearchSetting initialValues) {
+        JLabel label = new JLabel( initialValues instanceof Filter ? tr("Please enter a filter string.") : tr("Please enter a search string."));
         final JTextField input = new JTextField(initialValues.text);
         input.selectAll();
         input.requestFocusInWindow();
         JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
         JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);
         JRadioButton remove = new JRadioButton(tr("remove from selection"), initialValues.mode == SearchMode.remove);
+        JRadioButton in_selection = new JRadioButton(tr("find in selection"), initialValues.mode == SearchMode.in_selection);
         ButtonGroup bg = new ButtonGroup();
         bg.add(replace);
         bg.add(add);
         bg.add(remove);
+        bg.add(in_selection);
 
         JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
         JCheckBox regexSearch   = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
 
         JPanel left = new JPanel(new GridBagLayout());
+
+        JTextField finput = null;
+        if(initialValues instanceof Filter){
+           JLabel fLabel = new JLabel(tr("Please enter a filter name."));
+           finput = new JTextField(((Filter)initialValues).filterName);
+           left.add(fLabel, GBC.eop());
+           left.add(finput, GBC.eop().fill(GBC.HORIZONTAL));
+        }
+
         left.add(label, GBC.eop());
         left.add(input, GBC.eop().fill(GBC.HORIZONTAL));
         left.add(replace, GBC.eol());
         left.add(add, GBC.eol());
-        left.add(remove, GBC.eop());
+        left.add(remove, GBC.eol());
+        left.add(in_selection, GBC.eop());
         left.add(caseSensitive, GBC.eol());
         left.add(regexSearch, GBC.eol());
 
@@ -119,21 +133,27 @@ public class SearchAction extends JosmAction{
         p.add(right);
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
-                tr("Search"),
-                new String[] {tr("Start Search"), tr("Cancel")}
+                initialValues instanceof Filter ? tr("Filter") : tr("Search"),
+                new String[] {
+                   initialValues instanceof Filter ? tr("Make filter") : tr("Start Search"),
+                tr("Cancel")}
         );
         dialog.setButtonIcons(new String[] {"dialogs/search.png", "cancel.png"});
         dialog.setContent(p);
         dialog.showDialog();
         int result = dialog.getValue();
 
-        if(result != 1) return;
+        if(result != 1) return null;
 
         // User pressed OK - let's perform the search
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
-                : (add.isSelected() ? SearchAction.SearchMode.add : SearchAction.SearchMode.remove);
-        SearchSetting setting = new SearchSetting(input.getText(), caseSensitive.isSelected(), regexSearch.isSelected(), mode);
-        searchWithHistory(setting);
+                : (add.isSelected() ? SearchAction.SearchMode.add
+                : (remove.isSelected() ? SearchAction.SearchMode.remove : SearchAction.SearchMode.in_selection));
+        if(initialValues instanceof Filter){
+           return new Filter(input.getText(), mode, caseSensitive.isSelected(), regexSearch.isSelected(), finput.getText());
+        } else {
+           return new SearchSetting(input.getText(), mode, caseSensitive.isSelected(), regexSearch.isSelected());
+        }
     }
 
     /**
@@ -150,15 +170,65 @@ public class SearchAction extends JosmAction{
             searchHistory.removeLast();
         }
         lastSearch = s;
-        search(s.text, s.mode, s.caseSensitive, s.regexSearch);
+        search(s);
     }
 
     public static void searchWithoutHistory(SearchSetting s) {
         lastSearch = s;
-        search(s.text, s.mode, s.caseSensitive, s.regexSearch);
+        search(s);
     }
 
+    public interface Function{
+       public Boolean isSomething(OsmPrimitive o);
+    }
+
+    public static Integer getSelection(SearchSetting s, Collection<OsmPrimitive> sel, Function f) {
+        Integer foundMatches = 0;
+        try {
+            String searchText = s.text;
+            if(s instanceof Filter){
+               searchText = ((Filter)s).inverted ? "-" : "";
+               searchText = searchText + "(" + ((Filter)s).text + ")" + (((Filter)s).applyForChildren ? ("| child (" + ((Filter)s).text + ")"): "");
+            }
+            /*System.out.println(searchText);  */
+            SearchCompiler.Match matcher = SearchCompiler.compile(searchText, s.caseSensitive, s.regexSearch);
+            foundMatches = 0;
+            for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives()) {
+                if (s.mode == SearchMode.replace) {
+                    if (matcher.match(osm)) {
+                        sel.add(osm);
+                        ++foundMatches;
+                    } else {
+                        sel.remove(osm);
+                    }
+                } else if (s.mode == SearchMode.add && !f.isSomething(osm) && matcher.match(osm)) {
+                    sel.add(osm);
+                    ++foundMatches;
+                } else if (s.mode == SearchMode.remove && f.isSomething(osm) && matcher.match(osm)) {
+                    sel.remove(osm);
+                    ++foundMatches;
+                } else if (s.mode == SearchMode.in_selection &&  f.isSomething(osm)&& !matcher.match(osm)) {
+                    sel.remove(osm);
+                    ++foundMatches;
+                }
+            }
+        } catch (SearchCompiler.ParseError e) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    e.getMessage(),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+
+            );
+        }
+        return foundMatches;
+    }
+ 
     public static void search(String search, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
+       search(new SearchSetting(search, mode, caseSensitive, regexSearch));
+    }
+
+    public static void search(SearchSetting s) {
         // FIXME: This is confusing. The GUI says nothing about loading primitives from an URL. We'd like to *search*
         // for URLs in the current data set.
         // Disabling until a better solution is in place
@@ -171,64 +241,44 @@ public class SearchAction extends JosmAction{
         //                return;
         //            }
         //        }
-        try {
-            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            SearchCompiler.Match matcher = SearchCompiler.compile(search, caseSensitive, regexSearch);
-            int foundMatches = 0;
-            for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives()) {
-                if (mode == SearchMode.replace) {
-                    if (matcher.match(osm)) {
-                        sel.add(osm);
-                        ++foundMatches;
-                    } else {
-                        sel.remove(osm);
-                    }
-                } else if (mode == SearchMode.add && !osm.isSelected() && matcher.match(osm)) {
-                    sel.add(osm);
-                    ++foundMatches;
-                } else if (mode == SearchMode.remove && osm.isSelected() && matcher.match(osm)) {
-                    sel.remove(osm);
-                    ++foundMatches;
-                }
-            }
-            Main.main.getCurrentDataSet().setSelected(sel);
-            if (foundMatches == 0) {
-                String msg = null;
-                if (mode == SearchMode.replace) {
-                    msg = tr("No match found for ''{0}''", search);
-                } else if (mode == SearchMode.add) {
-                    msg = tr("Nothing added to selection by searching for ''{0}''", search);
-                } else if (mode == SearchMode.remove) {
-                    msg = tr("Nothing removed from selection by searching for ''{0}''", search);
-                }
-                Main.map.statusLine.setHelpText(msg);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        msg,
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            } else {
-                Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
-            }
-        } catch (SearchCompiler.ParseError e) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    e.getMessage(),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-
-            );
-        }
+         
+       Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+       int foundMatches = getSelection(s, sel, new Function(){
+          public Boolean isSomething(OsmPrimitive o){
+             return o.isSelected();
+          }
+       });
+       Main.main.getCurrentDataSet().setSelected(sel);
+       if (foundMatches == 0) {
+           String msg = null;
+           if (s.mode == SearchMode.replace) {
+               msg = tr("No match found for ''{0}''", s.text);
+           } else if (s.mode == SearchMode.add) {
+               msg = tr("Nothing added to selection by searching for ''{0}''", s.text);
+           } else if (s.mode == SearchMode.remove) {
+               msg = tr("Nothing removed from selection by searching for ''{0}''", s.text);
+           } else if (s.mode == SearchMode.in_selection) {
+               msg = tr("Nothing find in selection by searching for ''{0}''", s.text);
+           }
+           Main.map.statusLine.setHelpText(msg);
+           JOptionPane.showMessageDialog(
+                   Main.parent,
+                   msg,
+                   tr("Warning"),
+                   JOptionPane.WARNING_MESSAGE
+           );
+       } else {
+           Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
+       }
     }
 
     public static class SearchSetting {
-        String text;
-        SearchMode mode;
-        boolean caseSensitive;
-        boolean regexSearch;
+        public String text;
+        public SearchMode mode;
+        public boolean caseSensitive;
+        public boolean regexSearch;
 
-        public SearchSetting(String text, boolean caseSensitive, boolean regexSearch, SearchMode mode) {
+        public SearchSetting(String text, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
             super();
             this.caseSensitive = caseSensitive;
             this.regexSearch = regexSearch;

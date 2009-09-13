@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.PropertiesDialog;
 import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
 import org.openstreetmap.josm.gui.dialogs.SelectionListDialog;
+import org.openstreetmap.josm.gui.dialogs.FilterDialog;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -103,6 +104,8 @@ public class MapFrame extends JPanel implements Destroyable {
         addToggleDialog(new PropertiesDialog(this));
         addToggleDialog(new HistoryDialog());
         addToggleDialog(new SelectionListDialog());
+        if(Main.pref.getBoolean("displayfilter", false))
+            addToggleDialog(new FilterDialog());
         addToggleDialog(new UserListDialog());
         addToggleDialog(conflictDialog = new ConflictDialog());
         addToggleDialog(new CommandStackDialog(this));
@@ -250,12 +253,12 @@ public class MapFrame extends JPanel implements Destroyable {
     /**
      * Replies the instance of a toggle dialog of type <code>type</code> managed by this
      * map frame
-     * 
+     *
      * @param <T>
      * @param type the class of the toggle dialog, i.e. UserListDialog.class
      * @return the instance of a toggle dialog of type <code>type</code> managed by this
      * map frame; null, if no such dialog exists
-     * 
+     *
      */
     public <T> T getToggleDialog(Class<T> type) {
         for (ToggleDialog td : allDialogs) {
