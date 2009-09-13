@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -149,6 +150,61 @@ public class MergeNodesAction extends JosmAction {
     }
 
     /**
+     * Fixes the parent ways referring to one of the nodes.
+     * 
+     * Replies null, if the ways could not be fixed, i.e. because a way would have to be delted
+     * which is referred to by a relation.
+     * 
+     * @param backreferences the backreference data set
+     * @param nodesToDelete the collection of nodes to be deleted
+     * @param targetNode the target node the other nodes are merged to
+     * @return a list of command; null, the ways could not be fixed
+     */
+    protected static List<Command> fixParentWays(BackreferencedDataSet backreferences, Collection<OsmPrimitive> nodesToDelete, Node targetNode) {
+        List<Command> cmds = new ArrayList<Command>();
+        Set<Way> waysToDelete = new HashSet<Way>();
+
+        for (Way w: OsmPrimitive.getFilteredList(backreferences.getParents(nodesToDelete), Way.class)) {
+            ArrayList<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+            for (Node n: w.getNodes()) {
+                if (! nodesToDelete.contains(n) && n != targetNode) {
+                    newNodes.add(n);
+                } else if (newNodes.isEmpty()) {
+                    newNodes.add(targetNode);
+                } else if (newNodes.get(newNodes.size()-1) != targetNode) {
+                    // make sure we collapse a sequence of deleted nodes
+                    // to exactly one occurrence of the merged target node
+                    //
+                    newNodes.add(targetNode);
+                } else {
+                    // drop the node
+                }
+            }
+            if (newNodes.size() < 2) {
+                if (backreferences.getParents(w).isEmpty()) {
+                    waysToDelete.add(w);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("Cannot merge nodes: " +
+                            "Would have to delete a way that is still used."),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return null;
+                }
+            } else if(newNodes.size() < 2 && backreferences.getParents(w).isEmpty()) {
+                waysToDelete.add(w);
+            } else {
+                Way newWay = new Way(w);
+                newWay.setNodes(newNodes);
+                cmds.add(new ChangeCommand(w, newWay));
+            }
+        }
+        return cmds;
+    }
+
+    /**
      * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
      * managed by <code>layer</code> as reference. <code>backreferences</code> is precomputed
      * collection of all parent/child references in the dataset.
@@ -204,36 +260,15 @@ public class MergeNodesAction extends JosmAction {
         // change the ways referring to at least one of the merge nodes
         //
         Collection<Way> waysToDelete= new HashSet<Way>();
-        for (Way w : OsmPrimitive.getFilteredList(backreferences.getParents(nodesToDelete), Way.class)) {
-            // OK - this way contains one or more nodes to change
-            ArrayList<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
-            for (Node n: w.getNodes()) {
-                if (! nodesToDelete.contains(n)) {
-                    newNodes.add(n);
-                } else {
-                    newNodes.add(targetNode);
-                }
-            }
-            if (newNodes.size() < 2) {
-                if (backreferences.getParents(w).isEmpty()) {
-                    waysToDelete.add(w);
-                } else {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Cannot merge nodes: " +
-                            "Would have to delete a way that is still used."),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                    return null;
-                }
-            } else if(newNodes.size() < 2 && backreferences.getParents(w).isEmpty()) {
-                waysToDelete.add(w);
-            } else {
-                Way newWay = new Way(w);
-                newWay.setNodes(newNodes);
-                cmds.add(new ChangeCommand(w, newWay));
-            }
+        List<Command> wayFixCommands = fixParentWays(
+                backreferences,
+                nodesToDelete,
+                targetNode
+        );
+        if (wayFixCommands == null)
+            return null;
+        else {
+            cmds.addAll(wayFixCommands);
         }
 
         // build the commands
