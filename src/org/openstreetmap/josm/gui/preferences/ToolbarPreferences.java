@@ -466,8 +466,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         rootActionsNode.add(new DefaultMutableTreeNode(null));
     }
 
-    private static final String[] deftoolbar = {"open", "save", "exportgpx", "|",
-    "download", "upload", "|", "undo", "redo", "|", "preference"};
+    private static final String[] deftoolbar = {"open", "save", "download", "upload", "|", "undo", "redo", "|", "dialogs/search", "preference", "|", "splitway", "combineway", "wayflip"};
 
     private static Collection<String> getToolString() {
         return Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
