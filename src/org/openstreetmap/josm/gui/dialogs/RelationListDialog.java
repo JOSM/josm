@@ -8,12 +8,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
+import javax.swing.AbstractListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,9 +27,11 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
@@ -48,15 +53,10 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataChangeListener {
     private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
 
-    /**
-     * The selection's list data.
-     */
-    private final DefaultListModel list = new DefaultListModel();
-
-    /**
-     * The display list.
-     */
-    private JList displaylist = new JList(list);
+    /** The display list. */
+    private JList displaylist;
+    /** the list model used */
+    private RelationListModel model;
 
     /** the edit action */
     private EditAction editAction;
@@ -73,6 +73,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         // create the list of relations
         //
+        model = new RelationListModel();
+        displaylist = new JList(model);
         displaylist.setCellRenderer(new OsmPrimitivRenderer());
         displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         displaylist.addMouseListener(new DoubleClickAdapter());
@@ -124,24 +126,44 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         return Main.main.getCurrentDataSet().relations.size();
     }
 
+    /**
+     * Replies the list of complete, non-deleted relations in the dataset <code>ds</code>,
+     * sorted by display name.
+     * 
+     * @param ds the dataset
+     * @return the list of relations
+     */
+    protected ArrayList<Relation> getDisplayedRelationsInSortOrder(DataSet ds) {
+        ArrayList<Relation> relations = new ArrayList<Relation>(ds.relations.size());
+        for (Relation r: ds.relations ){
+            if (r.isDeleted() || r.incomplete) {
+                continue;
+            }
+            relations.add(r);
+        }
+
+        Collections.sort(
+                relations,
+                new Comparator<Relation>() {
+                    NameFormatter formatter = DefaultNameFormatter.getInstance();
+                    public int compare(Relation r1, Relation r2) {
+                        return r1.getDisplayName(formatter).compareTo(r2.getDisplayName(formatter));
+                    }
+                }
+        );
+        return relations;
+    }
+
     public void updateList() {
         if (Main.main.getCurrentDataSet() == null) {
-            list.setSize(0);
+            model.setRelations(null);
             return;
         }
         Relation selected = getSelected();
-        list.setSize(getNumRelations());
-        if (getNumRelations() > 0 ) {
-            int i = 0;
-            for (OsmPrimitive e : DataSet.sort(Main.main.getCurrentDataSet().relations)) {
-                if (e.isUsable()){
-                    list.setElementAt(e, i++);
-                }
-            }
-            list.setSize(i);
-        }
-        if(getNumRelations() != 0) {
-            setTitle(tr("Relations: {0}", Main.main.getCurrentDataSet().relations.size()));
+
+        model.setRelations(getDisplayedRelationsInSortOrder(Main.main.getCurrentDataSet()));
+        if(model.getSize() > 0) {
+            setTitle(tr("Relations: {0}", model.getSize()));
         } else {
             setTitle(tr("Relations"));
         }
@@ -200,7 +222,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * @return The selected relation in the list
      */
     private Relation getSelected() {
-        if(list.size() == 1) {
+        if(model.getSize() == 1) {
             displaylist.setSelectedIndex(0);
         }
         return (Relation) displaylist.getSelectedValue();
@@ -212,25 +234,16 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * @param relation  the relation
      */
     public void selectRelation(Relation relation) {
-        if (relation == null)
-        {
+        if (relation == null){
             displaylist.clearSelection();
             return;
         }
-        int i = -1;
-        for (i=0; i < list.getSize(); i++) {
-            Relation r = (Relation)list.get(i);
-            if (r == relation) {
-                break;
-            }
-        }
-        if (i >= 0 && i < list.getSize()) {
-            displaylist.setSelectedIndex(i);
-            displaylist.ensureIndexIsVisible(i);
-        }
-        else
-        {
+        int idx = model.getIndexOfRelation(relation);
+        if (idx == -1) {
             displaylist.clearSelection();
+        } else {
+            displaylist.setSelectedIndex(idx);
+            displaylist.scrollRectToVisible(displaylist.getCellBounds(idx,idx));
         }
     }
 
@@ -404,4 +417,34 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             updateEnabledState();
         }
     }
+
+    private static  class RelationListModel extends AbstractListModel {
+        private ArrayList<Relation> relations;
+
+        public ArrayList<Relation> getRelations() {
+            return relations;
+        }
+
+        public void setRelations(ArrayList<Relation> relations) {
+            this.relations = relations;
+            fireIntervalAdded(this, 0, getSize());
+        }
+
+        public Object getElementAt(int index) {
+            if (relations == null) return null;
+            return relations.get(index);
+        }
+
+        public int getSize() {
+            if (relations == null) return 0;
+            return relations.size();
+        }
+
+        public int getIndexOfRelation(Relation relation) {
+            if (relation == null) return -1;
+            return relations.indexOf(relation);
+        }
+    }
+
+
 }
