@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -142,13 +143,29 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     public void visit(Changeset cs) {
-        addCommon(cs, "changeset");
-        out.println(">\n");
-        addTags(cs, "changeset", false);
-    }
-
-    public final void footer(PrintWriter out) {
-        out.println("</osm>");
+        out.print("  <changeset ");
+        out.print(" id='"+cs.getId()+"'");
+        if (cs.getUser() != null) {
+            out.print(" user='"+cs.getUser().getName() +"'");
+            out.print(" uid='"+cs.getUser().getId() +"'");
+        }
+        if (cs.getCreatedAt() != null) {
+            out.print(" created_at='"+DateUtils.fromDate(cs.getCreatedAt()) +"'");
+        }
+        if (cs.getClosedAt() != null) {
+            out.print(" closed_at='"+DateUtils.fromDate(cs.getClosedAt()) +"'");
+        }
+        out.print(" open='"+ (cs.isOpen() ? "true" : "false") +"'");
+        if (cs.getMin() != null) {
+            out.print(" min_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
+            out.print(" min_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
+        }
+        if (cs.getMax() != null) {
+            out.print(" max_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
+            out.print(" max_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +"'");
+        }
+        out.println(">");
+        addTags(cs, "changeset", false); // also writes closing </changeset>
     }
 
     /**
@@ -163,12 +180,12 @@ public class OsmWriter extends XmlWriter implements Visitor {
         return osmConform ? 0 : newIdCounter--;
     }
 
-    private void addTags(OsmPrimitive osm, String tagname, boolean tagOpen) {
+    private void addTags(Tagged osm, String tagname, boolean tagOpen) {
         if (osm.hasKeys()) {
             if (tagOpen) {
                 out.println(">");
             }
-            for (Entry<String, String> e : osm.entrySet()) {
+            for (Entry<String, String> e : osm.getKeys().entrySet()) {
                 if ((osm instanceof Changeset) || !("created_by".equals(e.getKey()))) {
                     out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
                             "' v='"+XmlWriter.encode(e.getValue())+ "' />");

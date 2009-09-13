@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  *
  * @author imi
  */
-abstract public class OsmPrimitive implements Comparable<OsmPrimitive> {
+abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     static public <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
         if (list == null) return null;

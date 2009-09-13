@@ -64,30 +64,22 @@ public class OsmServerWriter {
      * Uploads the changes individually. Invokes one API call per uploaded primitmive.
      * 
      * @param primitives the collection of primitives to upload
-     * @param changeset the changeset to be used if <code>changesetProcessingType</code> indicates that
-     *   a new changeset should be opened
-     * @param changesetProcessingType how we handle changesets
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
      */
-    protected void uploadChangesIndividually(Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesIndividually(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
             progressMonitor.beginTask(tr("Starting to upload with one request per primitive ..."));
             progressMonitor.setTicksCount(primitives.size());
-            if (changesetProcessingType.isUseNew()) {
-                api.createChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
-            } else {
-                api.updateChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
-            }
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
                 int progress = progressMonitor.getTicks();
                 String time_left_str = timeLeft(progress, primitives.size());
                 String msg = "";
                 switch(OsmPrimitiveType.from(osm)) {
-                case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
-                case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
-                case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
+                    case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
+                    case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
+                    case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
                 }
                 progressMonitor.subTask(
                         tr(msg,
@@ -106,21 +98,7 @@ public class OsmServerWriter {
         } catch(Exception e) {
             throw new OsmTransferException(e);
         } finally {
-            try {
-                // starting the changeset may have failed, for instance because the user
-                // cancelled the upload task. Only close the changeset if we currently have
-                // an open changeset
-
-                if (api.getCurrentChangeset() != null && api.getCurrentChangeset().getId() > 0) {
-                    api.stopChangeset(changesetProcessingType, progressMonitor.createSubTaskMonitor(0, false));
-                }
-            } catch(Exception e) {
-                OsmChangesetCloseException closeException = new OsmChangesetCloseException(e);
-                closeException.setChangeset(api.getCurrentChangeset());
-                throw closeException;
-            } finally {
-                progressMonitor.finishTask();
-            }
+            progressMonitor.finishTask();
         }
     }
 
@@ -131,32 +109,18 @@ public class OsmServerWriter {
      * @param progressMonitor  the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
      */
-    protected void uploadChangesAsDiffUpload(Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesAsDiffUpload(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         // upload everything in one changeset
         //
         try {
             progressMonitor.beginTask(tr("Starting to upload in one request ..."));
-            if (changesetProcessingType.isUseNew()) {
-                api.createChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
-            } else {
-                api.updateChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
-            }
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
         } catch(OsmTransferException e) {
             throw e;
         } catch(Exception e) {
             throw new OsmTransferException(e);
         } finally {
-            try {
-                api.stopChangeset(changesetProcessingType, progressMonitor.createSubTaskMonitor(0, false));
-            } catch (Exception ee) {
-                OsmChangesetCloseException closeException = new OsmChangesetCloseException(ee);
-                closeException.setChangeset(api.getCurrentChangeset());
-                throw closeException;
-            } finally {
-                progressMonitor.finishTask();
-            }
-
+            progressMonitor.finishTask();
         }
     }
 
@@ -166,7 +130,7 @@ public class OsmServerWriter {
      * @param apiVersion version of the data set
      * @param primitives list of objects to send
      */
-    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, Changeset changeset, ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, Changeset changeset, boolean closeChangesetAfterUpload, ProgressMonitor progressMonitor) throws OsmTransferException {
         processed = new LinkedList<OsmPrimitive>();
         progressMonitor.beginTask(tr("Uploading data ..."));
         api.initialize(progressMonitor);
@@ -183,14 +147,37 @@ public class OsmServerWriter {
                 System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use diff uploads, but API is not able to handle them. Ignoring diff upload.", "osm-server.atomic-upload", apiVersion));
                 useDiffUpload = false;
             }
-
-            if (useDiffUpload) {
-                uploadChangesAsDiffUpload(primitives,changeset, changesetProcessingType, progressMonitor.createSubTaskMonitor(0,false));
-            } else {
-                uploadChangesIndividually(primitives,changeset,changesetProcessingType,  progressMonitor.createSubTaskMonitor(0,false));
+            if (changeset == null) {
+                changeset = new Changeset();
             }
+            if (changeset.getId() == 0) {
+                api.openChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
+            } else {
+                api.updateChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
+            }
+            api.setChangeset(changeset);
+            if (useDiffUpload) {
+                uploadChangesAsDiffUpload(primitives,progressMonitor.createSubTaskMonitor(0,false));
+            } else {
+                uploadChangesIndividually(primitives,progressMonitor.createSubTaskMonitor(0,false));
+            }
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new OsmTransferException(e);
         } finally {
-            progressMonitor.finishTask();
+            try {
+                if (closeChangesetAfterUpload && api.getChangeset() != null && api.getChangeset().getId() > 0) {
+                    api.closeChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
+                    api.setChangeset(null);
+                }
+            } catch (Exception ee) {
+                OsmChangesetCloseException closeException = new OsmChangesetCloseException(ee);
+                closeException.setChangeset(api.getChangeset());
+                throw closeException;
+            } finally {
+                progressMonitor.finishTask();
+            }
         }
     }
 

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -204,6 +204,21 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
+     * Makes an XML string from an OSM primitive. Uses the OsmWriter class.
+     * @param o the OSM primitive
+     * @param addBody true to generate the full XML, false to only generate the encapsulating tag
+     * @return XML string
+     */
+    private String toXml(Changeset s) {
+        swriter.getBuffer().setLength(0);
+        osmWriter.header();
+        s.visit(osmWriter);
+        osmWriter.footer();
+        osmWriter.out.flush();
+        return swriter.toString();
+    }
+
+    /**
      * Returns the base URL for API requests, including the negotiated version number.
      * @return base URL string
      */
@@ -228,9 +243,10 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if something goes wrong
      */
     public void createPrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
-        initialize(monitor);
         String ret = "";
         try {
+            ensureValidChangeset();
+            initialize(monitor);
             ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true),monitor);
             osm.setOsmId(Long.parseLong(ret.trim()), 1);
         } catch(NumberFormatException e){
@@ -243,23 +259,24 @@ public class OsmApi extends OsmConnection {
      * the OsmPrimitive object passed in is modified by giving it the server-assigned
      * version.
      *
-     * @param osm the primitive
+     * @param osm the primitive. Must not be null
      * @throws OsmTransferException if something goes wrong
      */
     public void modifyPrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
-        initialize(monitor);
-        if (version.equals("0.5")) {
-            // legacy mode does not return the new object version.
-            sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true),monitor);
-        } else {
-            String ret = null;
-            // normal mode (0.6 and up) returns new object version.
-            try {
+        String ret = null;
+        try {
+            ensureValidChangeset();
+            initialize(monitor);
+            if (version.equals("0.5")) {
+                // legacy mode does not return the new object version.
+                sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true),monitor);
+            } else {
+                // normal mode (0.6 and up) returns new object version.
                 ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true), monitor);
                 osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
-            } catch(NumberFormatException e) {
-                throw new OsmTransferException(tr("unexpected format of new version of modified primitive ''{0}'', got ''{1}''", osm.getId(), ret));
             }
+        } catch(NumberFormatException e) {
+            throw new OsmTransferException(tr("unexpected format of new version of modified primitive ''{0}'', got ''{1}''", osm.getId(), ret));
         }
     }
 
@@ -269,6 +286,7 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if something goes wrong
      */
     public void deletePrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
+        ensureValidChangeset();
         initialize(monitor);
         // can't use a the individual DELETE method in the 0.6 API. Java doesn't allow
         // submitting a DELETE request with content, the 0.6 API requires it, however. Falling back
@@ -279,81 +297,99 @@ public class OsmApi extends OsmConnection {
 
 
     /**
-     * Creates a new changeset based on the keys in <code>changeset</code>
+     * Creates a new changeset based on the keys in <code>changeset</code>. If this
+     * method succeeds, changeset.getId() replies the id the server assigned to the new
+     * changeset
      * 
-     * @param changeset the changeset to be used for uploading
+     * The changeset must not be null, but its key/value-pairs may be empty.
+     * 
+     * @param changeset the changeset toe be created. Must not be null.
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException signifying a non-200 return code, or connection errors
+     * @throws IllegalArgumentException thrown if changeset is null
      */
-    public void createChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public void openChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
+        if (changeset == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "changeset"));
         try {
             progressMonitor.beginTask((tr("Creating changeset...")));
-            createPrimitive(changeset, progressMonitor);
-            this.changeset = changeset;
-            progressMonitor.setCustomText((tr("Successfully opened changeset {0}",this.changeset.getId())));
-        } finally {
-            progressMonitor.finishTask();
-        }
-    }
-
-    /**
-     * Updates the current changeset with the keys in  <code>changesetUpdate</code>.
-     *
-     * @param changesetUpdate the changeset to update
-     * @param progressMonitor the progress monitor
-     * 
-     * @throws OsmTransferException if something goes wrong.
-     */
-    public void updateChangeset(Changeset changesetUpdate, ProgressMonitor progressMonitor) throws OsmTransferException {
-        try {
-            progressMonitor.beginTask(tr("Updating changeset..."));
             initialize(progressMonitor);
-            if (this.changeset != null && this.changeset.getId() > 0) {
-                if (this.changeset.hasEqualSemanticAttributes(changesetUpdate)) {
-                    progressMonitor.setCustomText(tr("Changeset {0} is unchanged. Skipping update.", changesetUpdate.getId()));
-                    return;
-                }
-                this.changeset.setKeys(changesetUpdate.getKeys());
-                progressMonitor.setCustomText(tr("Updating changeset {0}...", this.changeset.getId()));
-                sendRequest(
-                        "PUT",
-                        OsmPrimitiveType.from(changesetUpdate).getAPIName() + "/" + this.changeset.getId(),
-                        toXml(this.changeset, true),
-                        progressMonitor
-                );
-            } else
-                throw new OsmTransferException(tr("Failed to update changeset. Either there is no current changeset or the id of the current changeset is 0"));
-        } finally {
-            progressMonitor.finishTask();
-        }
-    }
-
-    /**
-     * Closes a changeset on the server.
-     *
-     * @param changesetProcessingType how changesets are currently handled
-     * @param progressMonitor the progress monitor
-     * 
-     * @throws OsmTransferException if something goes wrong.
-     */
-    public void stopChangeset(ChangesetProcessingType changesetProcessingType, ProgressMonitor progressMonitor) throws OsmTransferException {
-        if (changesetProcessingType == null) {
-            changesetProcessingType = ChangesetProcessingType.USE_NEW_AND_CLOSE;
-        }
-        try {
-            progressMonitor.beginTask(tr("Closing changeset..."));
-            initialize(progressMonitor);
-            if (changesetProcessingType.isCloseAfterUpload()) {
-                progressMonitor.setCustomText(tr("Closing changeset {0}...", changeset.getId()));
-                if (this.changeset != null && this.changeset.getId() > 0) {
-                    sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null, progressMonitor);
-                    changeset = null;
-                }
-            } else {
-                progressMonitor.setCustomText(tr("Leaving changeset {0} open...", changeset.getId()));
+            String ret = "";
+            try {
+                ret = sendRequest("PUT", "changeset/create", toXml(changeset),progressMonitor);
+                changeset.setId(Long.parseLong(ret.trim()));
+                changeset.setOpen(true);
+            } catch(NumberFormatException e){
+                throw new OsmTransferException(tr("unexpected format of id replied by the server, got ''{0}''", ret));
             }
+            progressMonitor.setCustomText((tr("Successfully opened changeset {0}",changeset.getId())));
         } finally {
             progressMonitor.finishTask();
+        }
+    }
+
+    /**
+     * Updates a changeset with the keys in  <code>changesetUpdate</code>. The changeset must not
+     * be null and id > 0 must be true.
+     *
+     * @param changeset the changeset to update. Must not be null.
+     * @param monitor the progress monitor. If null, uses the {@see NullProgressMonitor#INSTANCE}.
+     * 
+     * @throws OsmTransferException if something goes wrong.
+     * @throws IllegalArgumentException if changeset is null
+     * @throws IllegalArgumentException if changeset.getId() == 0
+     * 
+     */
+    public void updateChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
+        if (changeset == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "changeset"));
+        if (monitor == null) {
+            monitor = NullProgressMonitor.INSTANCE;
+        }
+        if (changeset.getId() <= 0)
+            throw new IllegalArgumentException(tr("id of changeset > 0 required. Got {0}", changeset.getId()));
+        try {
+            monitor.beginTask(tr("Updating changeset..."));
+            initialize(monitor);
+            monitor.setCustomText(tr("Updating changeset {0}...", changeset.getId()));
+            sendRequest(
+                    "PUT",
+                    "changeset/" + this.changeset.getId(),
+                    toXml(this.changeset),
+                    monitor
+            );
+        } finally {
+            monitor.finishTask();
+        }
+    }
+
+
+    /**
+     * Closes a changeset on the server. Sets changeset.setOpen(false) if this operation
+     * succeeds.
+     *
+     * @param changeset the changeset to be closed. Must not be null. changeset.getId() > 0 required.
+     * @param monitor the progress monitor. If null, uses {@see NullProgressMonitor#INSTANCE}
+     * 
+     * @throws OsmTransferException if something goes wrong.
+     * @throws IllegalArgumentException thrown if changeset is null
+     * @throws IllegalArgumentException thrown if changeset.getId() <= 0
+     */
+    public void closeChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
+        if (changeset == null)
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "changeset"));
+        if (monitor == null) {
+            monitor = NullProgressMonitor.INSTANCE;
+        }
+        if (changeset.getId() <= 0)
+            throw new IllegalArgumentException(tr("id of changeset > 0 required. Got {0}", changeset.getId()));
+        try {
+            monitor.beginTask(tr("Closing changeset..."));
+            initialize(monitor);
+            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null, monitor);
+            changeset.setOpen(false);
+        } finally {
+            monitor.finishTask();
         }
     }
 
@@ -364,10 +400,9 @@ public class OsmApi extends OsmConnection {
      * @return list of processed primitives
      * @throws OsmTransferException if something is wrong
      */
-    public Collection<OsmPrimitive> uploadDiff(final Collection<OsmPrimitive> list, ProgressMonitor progressMonitor) throws OsmTransferException {
-
-        progressMonitor.beginTask("", list.size() * 2);
+    public Collection<OsmPrimitive> uploadDiff(Collection<OsmPrimitive> list, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
+            progressMonitor.beginTask("", list.size() * 2);
             if (changeset == null)
                 throw new OsmTransferException(tr("No changeset present for diff upload"));
 
@@ -384,17 +419,14 @@ public class OsmApi extends OsmConnection {
             progressMonitor.indeterminateSubTask(tr("Uploading..."));
 
             String diff = duv.getDocument();
-            try {
-                String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff,progressMonitor);
-                DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(),
-                        progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            } catch(OsmTransferException e) {
-                throw e;
-            } catch(Exception e) {
-                throw new OsmTransferException(e);
-            }
-
+            String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff,progressMonitor);
+            DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(),
+                    progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             return processed;
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
         }
@@ -535,8 +567,9 @@ public class OsmApi extends OsmConnection {
                     continue;
                 }
                 throw new OsmTransferException(e);
+            } catch(OsmTransferException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof OsmTransferException) throw (OsmTransferException) e;
                 throw new OsmTransferException(e);
             }
         }
@@ -551,12 +584,47 @@ public class OsmApi extends OsmConnection {
         return capabilities;
     }
 
+
     /**
-     * Replies the current changeset
+     * Ensures that the current changeset can be used for uploading data
      * 
-     * @return the current changeset
+     * @throws OsmTransferException thrown if the current changeset can't be used for
+     * uploading data
      */
-    public Changeset getCurrentChangeset() {
+    protected void ensureValidChangeset() throws OsmTransferException {
+        if (changeset == null)
+            throw new OsmTransferException(tr("current changeset is null. Can't upload data."));
+        if (changeset.getId() <= 0)
+            throw new OsmTransferException(tr("id of current changeset > required. Current id is {0}", changeset.getId()));
+    }
+    /**
+     * Replies the changeset data uploads are currently directed to
+     * 
+     * @return the changeset data uploads are currently directed to
+     */
+    public Changeset getChangeset() {
         return changeset;
     }
+
+    /**
+     * Sets the changesets to which further data uploads are directed. The changeset
+     * can be null. If it isn't null it must have been created, i.e. id > 0 is required. Furthermore,
+     * it must be open.
+     * 
+     * @param changeset the changeset
+     * @throws IllegalArgumentException thrown if changeset.getId() <= 0
+     * @throws IllegalArgumentException thrown if !changeset.isOpen()
+     */
+    public void setChangeset(Changeset changeset) {
+        if (changeset == null) {
+            this.changeset = null;
+            return;
+        }
+        if (changeset.getId() <= 0)
+            throw new IllegalArgumentException(tr("Changeset id > 0 expected. Got {0}", changeset.getId()));
+        if (!changeset.isOpen())
+            throw new IllegalArgumentException(tr("Open changeset expected. Got closed changeset with id {0}", changeset.getId()));
+        this.changeset = changeset;
+    }
+
 }

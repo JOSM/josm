@@ -35,7 +35,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     private OsmDataLayer layer;
     private ProgressMonitor monitor;
     private Changeset changeset;
-    private ChangesetProcessingType changesetProcessingType;
+    private boolean closeChangesetAfterUpload;
 
     /**
      * 
@@ -43,10 +43,10 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
      * @param monitor  a progress monitor. If monitor is null, uses {@see NullProgressMonitor#INSTANCE}
      * @param changeset the changeset to be used if <code>changesetProcessingType</code> indicates that a new
      *   changeset is to be used
-     * @param changesetProcessingType how we handle changesets
+     * @param closeChangesetAfterUpload true, if the changeset should be closed after the upload
      * @throws IllegalArgumentException thrown, if layer is null
      */
-    public UploadLayerTask(OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset, ChangesetProcessingType changesetProcessingType) {
+    public UploadLayerTask(OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset, boolean closeChangesetAfterUpload) {
         if (layer == null)
             throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", layer));
         if (monitor == null) {
@@ -55,7 +55,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         this.layer = layer;
         this.monitor = monitor;
         this.changeset = changeset;
-        this.changesetProcessingType = changesetProcessingType == null ? ChangesetProcessingType.USE_NEW_AND_CLOSE : changesetProcessingType;
+        this.closeChangesetAfterUpload = closeChangesetAfterUpload;
     }
 
     @Override
@@ -68,7 +68,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         try {
             ProgressMonitor m = monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             if (isCancelled()) return;
-            writer.uploadOsm(layer.data.version, toUpload, changeset, changesetProcessingType, m);
+            writer.uploadOsm(layer.data.version, toUpload, changeset, closeChangesetAfterUpload, m);
         } catch (Exception sxe) {
             if (isCancelled()) {
                 System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());

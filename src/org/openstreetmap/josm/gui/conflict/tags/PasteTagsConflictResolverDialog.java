@@ -79,9 +79,6 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         allPrimitivesResolver = new TagConflictResolver();
         resolvers = new HashMap<OsmPrimitiveType, TagConflictResolver>();
         for (OsmPrimitiveType type: OsmPrimitiveType.values()) {
-            if (type.equals(OsmPrimitiveType.CHANGESET)) {
-                continue;
-            }
             resolvers.put(type, new TagConflictResolver());
             resolvers.get(type).getModel().addPropertyChangeListener(this);
         }
@@ -147,9 +144,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     protected String formatStatisticsMessage(OsmPrimitiveType type, int count) {
         String msg = "";
         switch(type) {
-        case NODE: msg= trn("{0} node", "{0} nodes", count, count); break;
-        case WAY: msg= trn("{0} way", "{0} ways", count, count); break;
-        case RELATION: msg= trn("{0} relation", "{0} relations", count, count); break;
+            case NODE: msg= trn("{0} node", "{0} nodes", count, count); break;
+            case WAY: msg= trn("{0} way", "{0} ways", count, count); break;
+            case RELATION: msg= trn("{0} relation", "{0} relations", count, count); break;
         }
         return msg;
     }
@@ -445,9 +442,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 }
                 String msg = "";
                 switch(type) {
-                case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
-                case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
-                case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
+                    case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
+                    case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
+                    case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
                 }
                 text = text.equals("") ? msg : text + ", " + msg;
             }
@@ -471,9 +468,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 }
                 String msg = "";
                 switch(type) {
-                case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
-                case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
-                case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
+                    case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
+                    case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
+                    case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
                 }
                 text = text.equals("") ? msg : text + ", " + msg;
             }
@@ -490,9 +487,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 StatisticsInfo info = (StatisticsInfo) value;
 
                 switch(column) {
-                case 0: renderNumTags(info); break;
-                case 1: renderFrom(info); break;
-                case 2: renderTo(info); break;
+                    case 0: renderNumTags(info); break;
+                    case 1: renderFrom(info); break;
+                    case 2: renderTo(info); break;
                 }
             }
             return this;

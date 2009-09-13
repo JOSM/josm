@@ -6,8 +6,7 @@ public enum OsmPrimitiveType {
 
     NODE ("node"),
     WAY  ("way"),
-    RELATION ("relation"),
-    CHANGESET ("changeset");
+    RELATION ("relation");
 
     private String apiTypeName;
 
@@ -34,7 +33,6 @@ public enum OsmPrimitiveType {
         if (cls.equals(Node.class)) return NODE;
         if (cls.equals(Way.class)) return WAY;
         if (cls.equals(Relation.class)) return RELATION;
-        if (cls.equals(Changeset.class)) return CHANGESET;
         throw new IllegalArgumentException(tr("parameter ''{0}'' is not an acceptable class, got ''{1}''", "cls", cls.toString()));
     }
 

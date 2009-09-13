@@ -6,13 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-/**
- * Represents a parsing error in an OSM data file.
- * 
- * Use {@see #getColumnNumber()} and {@see #getLineNumber()} to locate
- * the position in the file where the parsing error occured.
- * 
- */
 public class OsmDataParsingException extends SAXException {
     private int columnNumber;
     private int lineNumber;

@@ -8,8 +8,10 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.swing.table.AbstractTableModel;
@@ -18,6 +20,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tagged;
 
 
 /**
@@ -82,11 +85,11 @@ public class TagEditorModel extends AbstractTableModel {
 
         TagModel tag = tags.get(rowIndex);
         switch(columnIndex) {
-        case 0:
-        case 1: return tag;
+            case 0:
+            case 1: return tag;
 
-        default:
-            throw new IndexOutOfBoundsException("unexpected columnIndex: columnIndex=" + columnIndex);
+            default:
+                throw new IndexOutOfBoundsException("unexpected columnIndex: columnIndex=" + columnIndex);
         }
     }
 
@@ -279,7 +282,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param primitive the OSM primitive
      */
-    public void initFromPrimitive(OsmPrimitive primitive) {
+    public void initFromPrimitive(Tagged primitive) {
         clear();
         for (String key : primitive.keySet()) {
             String value = primitive.get(key);
@@ -292,14 +295,43 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     /**
+     * initializes the model with the tags of an OSM primitive
+     *
+     * @param primitive the OSM primitive
+     */
+    public void initFromTags(Map<String,String> tags) {
+        clear();
+        for (String key : tags.keySet()) {
+            String value = tags.get(key);
+            add(key,value);
+        }
+        TagModel tag = new TagModel();
+        sort();
+        this.tags.add(tag);
+        setDirty(false);
+    }
+
+    /**
      * applies the current state of the tag editor model to a primitive
      *
      * @param primitive the primitive
      *
      */
-    public void applyToPrimitive(OsmPrimitive primitive) {
-        primitive.removeAll();
-        for (TagModel tag: tags) {
+    public void applyToPrimitive(Tagged primitive) {
+        Map<String,String> tags = primitive.getKeys();
+        applyToTags(tags);
+        primitive.setKeys(tags);
+    }
+
+    /**
+     * applies the current state of the tag editor model to a map of tags
+     *
+     * @param tags the map of key/value pairs
+     *
+     */
+    public void applyToTags(Map<String, String> tags) {
+        tags.clear();
+        for (TagModel tag: this.tags) {
             // tag still holds an unchanged list of different values for the same key.
             // no property change command required
             if (tag.getValueCount() > 1) {
@@ -311,8 +343,14 @@ public class TagEditorModel extends AbstractTableModel {
             if (tag.getName().trim().equals("")) {
                 continue;
             }
-            primitive.put(tag.getName(), tag.getValue());
+            tags.put(tag.getName(), tag.getValue());
         }
+    }
+
+    public Map<String,String> getTags() {
+        Map<String,String> tags = new HashMap<String, String>();
+        applyToTags(tags);
+        return tags;
     }
 
     /**

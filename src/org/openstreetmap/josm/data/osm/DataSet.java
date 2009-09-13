@@ -325,10 +325,9 @@ public class DataSet implements Cloneable {
             throw new IllegalArgumentException(tr("paramete''{0}'' must not be null", "type"));
         Collection<? extends OsmPrimitive> primitives = null;
         switch(type) {
-        case NODE: primitives = nodes; break;
-        case WAY: primitives = ways; break;
-        case RELATION: primitives = relations; break;
-        case CHANGESET: throw new IllegalArgumentException(tr("unsupported value ''{0}'' or parameter ''{1}''", type, "type"));
+            case NODE: primitives = nodes; break;
+            case WAY: primitives = ways; break;
+            case RELATION: primitives = relations; break;
         }
         for (OsmPrimitive primitive : primitives) {
             if (primitive.getId() == id) return primitive;

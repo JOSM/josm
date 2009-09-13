@@ -5,26 +5,33 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,8 +40,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -45,7 +56,6 @@ import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
-import org.openstreetmap.josm.io.ChangesetProcessingType;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -59,7 +69,23 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class UploadDialog extends JDialog {
 
+
     public static final String HISTORY_KEY = "upload.comment.history";
+
+    /**  the unique instance of the upload dialog */
+    static private UploadDialog uploadDialog;
+
+    /**
+     * Replies the unique instance of the upload dialog
+     * 
+     * @return the unique instance of the upload dialog
+     */
+    static public UploadDialog getUploadDialog() {
+        if (uploadDialog == null) {
+            uploadDialog = new UploadDialog();
+        }
+        return uploadDialog;
+    }
 
     /** the list with the added primitives */
     private PrimitiveList lstAdd;
@@ -76,17 +102,11 @@ public class UploadDialog extends JDialog {
     /** the panel containing the widgets for the lists of primitives */
     private JPanel pnlLists;
     /** checkbox for selecting whether an atomic upload is to be used  */
-    private JCheckBox cbUseAtomicUpload;
-    /** input field for changeset comment */
-    private SuggestingJHistoryComboBox cmt;
-    /** ui component for editing changeset tags */
     private TagEditorPanel tagEditorPanel;
     /** the tabbed pane used below of the list of primitives  */
     private JTabbedPane southTabbedPane;
-    /** the button group with the changeset processing types */
-    private ButtonGroup bgChangesetHandlingOptions;
-    /** radio buttons for selecting a changeset processing type */
-    private Map<ChangesetProcessingType, JRadioButton> rbChangesetHandlingOptions;
+
+    private ChangesetSelectionPanel pnlChangesetSelection;
 
     private boolean canceled = false;
 
@@ -103,95 +123,6 @@ public class UploadDialog extends JDialog {
         return pnlLists;
     }
 
-    /**
-     * builds the panel with the ui components for controlling how the changeset
-     * should be processed (opening/closing a changeset)
-     * 
-     * @return the panel with the ui components for controlling how the changeset
-     * should be processed
-     */
-    protected JPanel buildChangesetHandlingControlPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
-        bgChangesetHandlingOptions = new ButtonGroup();
-        rbChangesetHandlingOptions = new HashMap<ChangesetProcessingType, JRadioButton>();
-        ChangesetProcessingTypeChangedAction a = new ChangesetProcessingTypeChangedAction();
-        for(ChangesetProcessingType type: ChangesetProcessingType.values()) {
-            rbChangesetHandlingOptions.put(type, new JRadioButton());
-            rbChangesetHandlingOptions.get(type).addActionListener(a);
-        }
-        JRadioButton rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_CLOSE);
-        rb.setText(tr("Use a new changeset and close it"));
-        rb.setToolTipText(tr("Select to upload the data using a new changeset and to close the changeset after the upload"));
-
-        rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_LEAVE_OPEN);
-        rb.setText(tr("Use a new changeset and leave it open"));
-        rb.setToolTipText(tr("Select to upload the data using a new changeset and to leave the changeset open after the upload"));
-
-        pnl.add(new JLabel(tr("Upload to a new or to an existing changeset?")));
-        pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_CLOSE));
-        pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_NEW_AND_LEAVE_OPEN));
-        pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_CLOSE));
-        pnl.add(rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_LEAVE_OPEN));
-
-        for(ChangesetProcessingType type: ChangesetProcessingType.values()) {
-            rbChangesetHandlingOptions.get(type).setVisible(false);
-            bgChangesetHandlingOptions.add(rbChangesetHandlingOptions.get(type));
-        }
-        return pnl;
-    }
-
-    /**
-     * build the panel with the widgets for controlling how the changeset should be processed
-     * (atomic upload or not, comment, opening/closing changeset)
-     * 
-     * @return
-     */
-    protected JPanel buildChangesetControlPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
-        pnl.add(cbUseAtomicUpload = new JCheckBox(tr("upload all changes in one request")));
-        cbUseAtomicUpload.setToolTipText(tr("Enable to upload all changes in one request, disable to use one request per changed primitive"));
-        boolean useAtomicUpload = Main.pref.getBoolean("osm-server.atomic-upload", true);
-        cbUseAtomicUpload.setSelected(useAtomicUpload);
-        cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasSupportForDiffUploads());
-
-        pnl.add(buildChangesetHandlingControlPanel());
-        return pnl;
-    }
-
-    /**
-     * builds the upload control panel
-     * 
-     * @return
-     */
-    protected JPanel buildUploadControlPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
-        pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
-        cmt = new SuggestingJHistoryComboBox();
-        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
-        cmt.setHistory(cmtHistory);
-        cmt.getEditor().addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        TagModel tm = tagEditorPanel.getModel().get("comment");
-                        if (tm == null) {
-                            tagEditorPanel.getModel().add(new TagModel("comment", cmt.getText()));
-                        } else {
-                            tm.setValue(cmt.getText());
-                        }
-                        tagEditorPanel.getModel().fireTableDataChanged();
-                    }
-                }
-        );
-        pnl.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
-
-        // configuration options for atomic upload
-        //
-        pnl.add(buildChangesetControlPanel(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        return pnl;
-    }
 
     protected JPanel buildContentPanel() {
         JPanel pnl = new JPanel();
@@ -210,9 +141,10 @@ public class UploadDialog extends JDialog {
         // lower half
         //
         southTabbedPane = new JTabbedPane();
-        southTabbedPane.add(buildUploadControlPanel());
+        southTabbedPane.add(new JPanel());
         tagEditorPanel = new TagEditorPanel();
         southTabbedPane.add(tagEditorPanel);
+        southTabbedPane.setComponentAt(0, pnlChangesetSelection = new ChangesetSelectionPanel());
         southTabbedPane.setTitleAt(0, tr("Settings"));
         southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
         southTabbedPane.addChangeListener(new TabbedPaneChangeLister());
@@ -339,24 +271,10 @@ public class UploadDialog extends JDialog {
     }
 
     /**
-     * Replies true if a valid changeset comment has been entered in this dialog
-     * 
-     * @return true if a valid changeset comment has been entered in this dialog
-     */
-    public boolean hasChangesetComment() {
-        if (!getChangesetProcessingType().isUseNew())
-            return true;
-        return cmt.getText().trim().length() >= 3;
-    }
-
-    /**
      * Remembers the user input in the preference settings
      */
     public void rememberUserInput() {
-        // store the history of comments
-        cmt.addCurrentItemToHistory();
-        Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
-        Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
+        pnlChangesetSelection.rememberUserInput();
     }
 
     /**
@@ -364,27 +282,7 @@ public class UploadDialog extends JDialog {
      */
     public void startUserInput() {
         tagEditorPanel.initAutoCompletion(Main.main.getEditLayer());
-        initChangesetProcessingType();
-        cmt.getEditor().selectAll();
-        cmt.requestFocus();
-    }
-
-    /**
-     * Replies the current changeset processing type
-     * 
-     * @return the current changeset processing type
-     */
-    public ChangesetProcessingType getChangesetProcessingType() {
-        ChangesetProcessingType changesetProcessingType = null;
-        for (ChangesetProcessingType type: ChangesetProcessingType.values()) {
-            if (rbChangesetHandlingOptions.get(type).isSelected()) {
-                changesetProcessingType = type;
-                break;
-            }
-        }
-        return changesetProcessingType == null ?
-                ChangesetProcessingType.USE_NEW_AND_CLOSE :
-                    changesetProcessingType;
+        pnlChangesetSelection.startUserInput();
     }
 
     /**
@@ -393,57 +291,28 @@ public class UploadDialog extends JDialog {
      * @return the current changeset
      */
     public Changeset getChangeset() {
-        Changeset changeset = new Changeset();
-        tagEditorPanel.getModel().applyToPrimitive(changeset);
-        changeset.put("comment", cmt.getText());
-        return changeset;
+        Changeset cs = pnlChangesetSelection.getChangeset();
+        tagEditorPanel.getModel().applyToPrimitive(cs);
+        cs.put("comment", getUploadComment());
+        return cs;
     }
 
     /**
-     * initializes the panel depending on the possible changeset processing
-     * types
+     * Sets or updates the changeset cs.
+     * If cs is null, does nothing.
+     * If cs.getId() == 0 does nothing.
+     * If cs.getId() > 0 and cs is open, adds it to the list of open
+     * changesets. If it is closed, removes it from the list of open
+     * changesets.
+     * 
+     * @param cs the changeset
      */
-    protected void initChangesetProcessingType() {
-        for (ChangesetProcessingType type: ChangesetProcessingType.values()) {
-            // show options for new changeset, disable others
-            //
-            rbChangesetHandlingOptions.get(type).setVisible(type.isUseNew());
-        }
-        if (OsmApi.getOsmApi().getCurrentChangeset() != null) {
-            Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
-            for (ChangesetProcessingType type: ChangesetProcessingType.values()) {
-                // show options for using existing changeset
-                //
-                if (!type.isUseNew()) {
-                    rbChangesetHandlingOptions.get(type).setVisible(true);
-                }
-            }
-            JRadioButton rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_CLOSE);
-            rb.setText(tr("Use the existing changeset {0} and close it after upload",cs.getId()));
-            rb.setToolTipText(tr("Select to upload to the existing changeset {0} and to close the changeset after this upload",cs.getId()));
+    public void setOrUpdateChangeset(Changeset cs) {
+        pnlChangesetSelection.setOrUpdateChangeset(cs);
+    }
 
-            rb = rbChangesetHandlingOptions.get(ChangesetProcessingType.USE_EXISTING_AND_LEAVE_OPEN);
-            rb.setText(tr("Use the existing changeset {0} and leave it open",cs.getId()));
-            rb.setToolTipText(tr("Select to upload to the existing changeset {0} and to leave the changeset open for further uploads",cs.getId()));
-
-            rbChangesetHandlingOptions.get(getChangesetProcessingType()).setSelected(true);
-
-        } else {
-            ChangesetProcessingType type = getChangesetProcessingType();
-            if (!type.isUseNew()) {
-                type = ChangesetProcessingType.USE_NEW_AND_CLOSE;
-            }
-            rbChangesetHandlingOptions.get(type).setSelected(true);
-        }
-        ChangesetProcessingType type = getChangesetProcessingType();
-        if (type.isUseNew() || (! type.isUseNew() && OsmApi.getOsmApi().getCurrentChangeset() == null)) {
-            Changeset cs = new Changeset();
-            cs.put("created_by", getDefaultCreatedBy());
-            tagEditorPanel.getModel().initFromPrimitive(cs);
-        } else {
-            Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
-            tagEditorPanel.getModel().initFromPrimitive(cs);
-        }
+    public boolean isDoCloseAfterUpload() {
+        return pnlChangesetSelection.isCloseAfterUpload();
     }
 
     /**
@@ -456,40 +325,13 @@ public class UploadDialog extends JDialog {
         return(ua == null) ? "JOSM" : ua.toString();
     }
 
-    /**
-     * refreshes  the panel depending on a changeset processing type
-     * 
-     * @param type the changeset processing type
-     */
-    protected void switchToProcessingType(ChangesetProcessingType type) {
-        if (type.isUseNew()) {
-            southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
-            // init a new changeset from the currently edited tags
-            // and the comment field
-            //
-            Changeset cs = new Changeset(getChangeset());
-            if (cs.get("created_by") == null) {
-                cs.put("created_by", getDefaultCreatedBy());
-            }
-            cs.put("comment", this.cmt.getText());
-            tagEditorPanel.getModel().initFromPrimitive(cs);
-        } else {
-            Changeset cs = OsmApi.getOsmApi().getCurrentChangeset();
-            if (cs != null) {
-                cs.put("comment", this.cmt.getText());
-                cs.setKeys(getChangeset().getKeys());
-                southTabbedPane.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
-                tagEditorPanel.getModel().initFromPrimitive(cs);
-            }
-        }
-    }
-
-    public String getUploadComment() {
+    protected String getUploadComment() {
         switch(southTabbedPane.getSelectedIndex()) {
-        case 0: return cmt.getText();
-        case 1:
-            TagModel tm = tagEditorPanel.getModel().get("comment");
-            return tm == null? "" : tm.getValue();
+            case 0:
+                pnlChangesetSelection.getUploadComment();
+            case 1:
+                TagModel tm = tagEditorPanel.getModel().get("comment");
+                return tm == null? "" : tm.getValue();
         }
         return "";
     }
@@ -508,7 +350,7 @@ public class UploadDialog extends JDialog {
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
-                            JOptionPane.getFrameForComponent(Main.parent),
+                            Main.parent,
                             new Dimension(400,600)
                     )
             ).apply(this);
@@ -519,14 +361,14 @@ public class UploadDialog extends JDialog {
         super.setVisible(visible);
     }
 
-    class ChangesetProcessingTypeChangedAction implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            ChangesetProcessingType type = getChangesetProcessingType();
-            switchToProcessingType(type);
-        }
-    }
-
-
+    /**
+     * This change listener is triggered when current tab in the tabbed pane in
+     * the lower half of the dialog is changed.
+     * 
+     * It's main purpose is to keep the content in the text field for the changeset
+     * comment in sync with the changeset tag "comment".
+     *
+     */
     class TabbedPaneChangeLister implements ChangeListener {
 
         protected boolean hasCommentTag() {
@@ -559,26 +401,27 @@ public class UploadDialog extends JDialog {
         protected void refreshCommentTag() {
             TagModel tm = getOrCreateCommentTag();
             tm.setName("comment");
-            tm.setValue(cmt.getText().trim());
-            if (cmt.getText().trim().equals("")) {
+            tm.setValue(pnlChangesetSelection.getUploadComment().trim());
+            if (pnlChangesetSelection.getUploadComment().trim().equals("")) {
                 removeCommentTag();
             }
             tagEditorPanel.getModel().fireTableDataChanged();
         }
 
-
         public void stateChanged(ChangeEvent e) {
             if (southTabbedPane.getSelectedIndex() ==0) {
                 TagModel tm = tagEditorPanel.getModel().get("comment");
-                cmt.setText(tm == null ? "" : tm.getValue());
-                cmt.getEditor().selectAll();
-                cmt.requestFocus();
+                pnlChangesetSelection.initEditingOfUploadComment(tm == null ? "" : tm.getValue());
             } else if (southTabbedPane.getSelectedIndex() == 1) {
                 refreshCommentTag();
             }
         }
     }
 
+    /**
+     * Handles an upload
+     *
+     */
     class UploadAction extends AbstractAction {
         public UploadAction() {
             putValue(NAME, tr("Upload Changes"));
@@ -598,8 +441,8 @@ public class UploadDialog extends JDialog {
         public void actionPerformed(ActionEvent e) {
             if (getUploadComment().trim().length() < 3) {
                 warnIllegalUploadComment();
-                cmt.getEditor().selectAll();
-                cmt.requestFocus();
+                southTabbedPane.setSelectedIndex(0);
+                pnlChangesetSelection.initEditingOfUploadComment(getUploadComment());
                 return;
             }
             setCanceled(false);
@@ -608,6 +451,10 @@ public class UploadDialog extends JDialog {
         }
     }
 
+    /**
+     * Action for canceling the dialog
+     *
+     */
     class CancelAction extends AbstractAction {
         public CancelAction() {
             putValue(NAME, tr("Cancel"));
@@ -622,6 +469,10 @@ public class UploadDialog extends JDialog {
         }
     }
 
+    /**
+     * A simple list of OSM primitives.
+     *
+     */
     class PrimitiveList extends JList {
         public PrimitiveList() {
             super(new PrimitiveListModel());
@@ -632,6 +483,10 @@ public class UploadDialog extends JDialog {
         }
     }
 
+    /**
+     * A list model for a list of OSM primitives.
+     *
+     */
     class PrimitiveListModel extends AbstractListModel{
         private List<OsmPrimitive> primitives;
 
@@ -663,10 +518,498 @@ public class UploadDialog extends JDialog {
         }
     }
 
+    /**
+     * Listens to window closing events and processes them as cancel events
+     *
+     */
     class WindowClosingAdapter extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
             setCanceled(true);
+        }
+    }
+
+    /**
+     * The panel which provides various UI widgets for controlling how to use
+     * changesets during upload.
+     *
+     */
+    class ChangesetSelectionPanel extends JPanel implements ListDataListener{
+
+        private ButtonGroup bgUseNewOrExisting;
+        private JRadioButton rbUseNew;
+        private JRadioButton rbExisting;
+        private JComboBox cbOpenChangesets;
+        private JButton btnRefresh;
+        private JButton btnClose;
+        private JCheckBox cbCloseAfterUpload;
+        private OpenChangesetModel model;
+        private SuggestingJHistoryComboBox cmt;
+        private JCheckBox cbUseAtomicUpload;
+
+        /**
+         * build the panel with the widgets for controlling whether an atomic upload
+         * should be used or not
+         * 
+         * @return the panel
+         */
+        protected JPanel buildAtomicUploadControlPanel() {
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new GridBagLayout());
+            GridBagConstraints gc = new GridBagConstraints();
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 1.0;
+            gc.anchor = GridBagConstraints.FIRST_LINE_START;
+            pnl.add(cbUseAtomicUpload = new JCheckBox(tr("Upload all changes in one request")), gc);
+            cbUseAtomicUpload.setToolTipText(tr("Enable to upload all changes in one request, disable to use one request per changed primitive"));
+            boolean useAtomicUpload = Main.pref.getBoolean("osm-server.atomic-upload", true);
+            cbUseAtomicUpload.setSelected(useAtomicUpload);
+            cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasSupportForDiffUploads());
+            return pnl;
+        }
+
+        protected JPanel buildUploadCommentPanel() {
+            JPanel pnl = new JPanel();
+            pnl.setLayout(new GridBagLayout());
+            pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
+            cmt = new SuggestingJHistoryComboBox();
+            List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+            cmt.setHistory(cmtHistory);
+            cmt.getEditor().addActionListener(
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            TagModel tm = tagEditorPanel.getModel().get("comment");
+                            if (tm == null) {
+                                tagEditorPanel.getModel().add(new TagModel("comment", cmt.getText()));
+                            } else {
+                                tm.setValue(cmt.getText());
+                            }
+                            tagEditorPanel.getModel().fireTableDataChanged();
+                        }
+                    }
+            );
+            pnl.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
+            return pnl;
+        }
+
+        protected void build() {
+            setLayout(new GridBagLayout());
+            GridBagConstraints gc = new GridBagConstraints();
+
+            bgUseNewOrExisting = new ButtonGroup();
+
+            // -- atomic upload
+            gc.gridwidth = 4;
+            gc.gridy = 0;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 1.0;
+            gc.anchor = GridBagConstraints.FIRST_LINE_START;
+            add(buildAtomicUploadControlPanel(), gc);
+
+            // -- changeset command
+            gc.gridwidth = 4;
+            gc.gridy = 1;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 1.0;
+            gc.anchor = GridBagConstraints.FIRST_LINE_START;
+            add(buildUploadCommentPanel(), gc);
+
+            gc.gridwidth = 4;
+            gc.gridy = 2;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 0.0;
+            gc.anchor = GridBagConstraints.FIRST_LINE_START;
+            rbUseNew = new JRadioButton(tr("Open a new changeset"));
+            rbUseNew.setToolTipText(tr("Open a new changeset and use it in the next upload"));
+            bgUseNewOrExisting.add(rbUseNew);
+            add(rbUseNew, gc);
+
+            gc.gridx = 0;
+            gc.gridy = 3;
+            gc.gridwidth = 1;
+            rbExisting = new JRadioButton(tr("Use an open changeset"));
+            rbExisting.setToolTipText(tr("Upload data to an already opened changeset"));
+            bgUseNewOrExisting.add(rbExisting);
+            add(rbExisting, gc);
+
+            gc.gridx = 1;
+            gc.gridy = 3;
+            gc.gridwidth = 1;
+            gc.weightx = 1.0;
+            model = new OpenChangesetModel();
+            cbOpenChangesets = new JComboBox(model);
+            cbOpenChangesets.setToolTipText("Select an open changeset");
+            cbOpenChangesets.setRenderer(new ChangesetCellRenderer());
+            cbOpenChangesets.addItemListener(new ChangesetListItemStateListener());
+            Dimension d = cbOpenChangesets.getPreferredSize();
+            d.width = 200;
+            cbOpenChangesets.setPreferredSize(d);
+            d.width = 100;
+            cbOpenChangesets.setMinimumSize(d);
+            model.addListDataListener(this);
+            add(cbOpenChangesets, gc);
+
+            gc.gridx = 3;
+            gc.gridy = 3;
+            gc.gridwidth = 1;
+            gc.weightx = 0.0;
+            btnRefresh = new JButton(new RefreshAction());
+            add(btnRefresh, gc);
+
+            gc.gridx = 4;
+            gc.gridy = 3;
+            gc.gridwidth = 1;
+            gc.weightx = 0.0;
+            CloseChangesetAction closeChangesetAction = new CloseChangesetAction();
+            btnClose = new JButton(closeChangesetAction);
+            cbOpenChangesets.addItemListener(closeChangesetAction);
+            add(btnClose, gc);
+
+            gc.gridx = 0;
+            gc.gridy = 4;
+            gc.gridwidth = 4;
+            cbCloseAfterUpload = new JCheckBox(tr("Close changeset after upload"));
+            cbCloseAfterUpload.setToolTipText(tr("Select to close the changeset after the next upload"));
+            add(cbCloseAfterUpload, gc);
+            cbCloseAfterUpload.setSelected(true);
+
+            rbUseNew.getModel().addItemListener(new RadioButtonHandler());
+            rbExisting.getModel().addItemListener(new RadioButtonHandler());
+
+            refreshGUI();
+        }
+
+        public ChangesetSelectionPanel() {
+            build();
+        }
+
+        /**
+         * Remembers the user input in the preference settings
+         */
+        public void rememberUserInput() {
+            // store the history of comments
+            cmt.addCurrentItemToHistory();
+            Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
+            Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
+        }
+
+        /**
+         * Initializes the panel for user input
+         */
+        public void startUserInput() {
+            cmt.getEditor().selectAll();
+            cmt.requestFocus();
+        }
+
+        /**
+         * Replies the current upload comment
+         * 
+         * @return
+         */
+        public String getUploadComment() {
+            return cmt.getText();
+        }
+
+        /**
+         * Replies the current upload comment
+         * 
+         * @return
+         */
+        public void setUploadComment(String uploadComment) {
+            cmt.setText(uploadComment);
+        }
+
+        public void initEditingOfUploadComment(String comment) {
+            setUploadComment(comment);
+            cmt.getEditor().selectAll();
+            cmt.requestFocus();
+        }
+
+        protected void refreshGUI() {
+            rbExisting.setEnabled(model.getSize() > 0);
+            if (model.getSize() == 0) {
+                if (!rbUseNew.isSelected()) {
+                    rbUseNew.setSelected(true);
+                }
+            }
+            cbOpenChangesets.setEnabled(model.getSize() > 0 && rbExisting.isSelected());
+        }
+
+        public void contentsChanged(ListDataEvent e) {
+            refreshGUI();
+        }
+
+        public void intervalAdded(ListDataEvent e) {
+            refreshGUI();
+        }
+
+        public void intervalRemoved(ListDataEvent e) {
+            refreshGUI();
+        }
+
+        public Changeset getChangeset() {
+            if (rbUseNew.isSelected() || cbOpenChangesets.getSelectedItem() == null)
+                return new Changeset();
+            Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
+            if (cs == null)
+                return new Changeset();
+            return cs;
+        }
+
+        public void setOrUpdateChangeset(Changeset cs) {
+            if (cs == null) {
+                tagEditorPanel.getModel().clear();
+                tagEditorPanel.getModel().add("created_by", getDefaultCreatedBy());
+                tagEditorPanel.getModel().appendNewTag();
+                rbUseNew.setSelected(true);
+            } else if (cs.getId() == 0) {
+                if (cs.get("created_by") == null) {
+                    cs.put("created_by", getDefaultCreatedBy());
+                }
+                tagEditorPanel.getModel().initFromPrimitive(cs);
+                tagEditorPanel.getModel().appendNewTag();
+                rbUseNew.setSelected(true);
+            } else if (cs.getId() > 0 && cs.isOpen()){
+                if (cs.get("created_by") == null) {
+                    cs.put("created_by", getDefaultCreatedBy());
+                }
+                tagEditorPanel.getModel().initFromPrimitive(cs);
+                model.addOrUpdate(cs);
+                cs = model.getChangesetById(cs.getId());
+                cbOpenChangesets.setSelectedItem(cs);
+            } else if (cs.getId() > 0 && !cs.isOpen()){
+                if (cs.get("created_by") == null) {
+                    cs.put("created_by", getDefaultCreatedBy());
+                }
+                tagEditorPanel.getModel().initFromPrimitive(cs);
+                model.removeChangeset(cs);
+                if (model.getSize() == 0) {
+                    rbUseNew.setSelected(true);
+                    model.setSelectedItem(null);
+                    southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
+                }
+            }
+        }
+
+        public void setUseNew() {
+            rbUseNew.setSelected(true);
+        }
+
+        public void setUseExisting() {
+            rbExisting.setSelected(true);
+            if (cbOpenChangesets.getSelectedItem() == null && model.getSize() > 0) {
+                cbOpenChangesets.setSelectedItem(model.getElementAt(0));
+            }
+        }
+
+        public boolean isCloseAfterUpload() {
+            return cbCloseAfterUpload.isSelected();
+        }
+
+        class RadioButtonHandler implements ItemListener {
+            public void itemStateChanged(ItemEvent e) {
+                if (rbUseNew.isSelected()) {
+                    southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
+                    // init a new changeset from the currently edited tags
+                    // and the comment field
+                    //
+                    Changeset cs = new Changeset();
+                    tagEditorPanel.getModel().applyToPrimitive(cs);
+                    if (cs.get("created_by") == null) {
+                        cs.put("created_by", getDefaultCreatedBy());
+                    }
+                    cs.put("comment", cmt.getText());
+                    tagEditorPanel.getModel().initFromPrimitive(cs);
+                } else {
+                    if (cbOpenChangesets.getSelectedItem() == null) {
+                        model.selectFirstChangeset();
+                    }
+                    Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
+                    if (cs != null) {
+                        cs.put("comment", cmt.getText());
+                        southTabbedPane.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
+                        tagEditorPanel.getModel().initFromPrimitive(cs);
+                    }
+                }
+                refreshGUI();
+            }
+        }
+
+        class ChangesetListItemStateListener implements ItemListener {
+            public void itemStateChanged(ItemEvent e) {
+
+                Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
+                if (cs == null) {
+                    southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
+                    // init a new changeset from the currently edited tags
+                    // and the comment field
+                    //
+                    cs = new Changeset();
+                    tagEditorPanel.getModel().applyToPrimitive(cs);
+                    if (cs.get("created_by") == null) {
+                        cs.put("created_by", getDefaultCreatedBy());
+                    }
+                    cs.put("comment", cmt.getText());
+                    tagEditorPanel.getModel().initFromPrimitive(cs);
+                } else {
+                    southTabbedPane.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
+                    cs.put("comment", cmt.getText());
+                    southTabbedPane.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
+                    if (cs.get("created_by") == null) {
+                        cs.put("created_by", getDefaultCreatedBy());
+                    }
+                    tagEditorPanel.getModel().initFromPrimitive(cs);
+                }
+            }
+        }
+
+        class RefreshAction extends AbstractAction {
+            public RefreshAction() {
+                //putValue(NAME, tr("Reload"));
+                putValue(SHORT_DESCRIPTION, tr("Load the list of your open changesets from the server"));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(model);
+                Main.worker.submit(task);
+            }
+        }
+
+        class CloseChangesetAction extends AbstractAction implements ItemListener{
+            public CloseChangesetAction() {
+                putValue(NAME, tr("Close"));
+                putValue(SHORT_DESCRIPTION, tr("Close the currently selected open changeset"));
+                refreshEnabledState();
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
+                if (cs == null) return;
+                CloseChangesetTask task = new CloseChangesetTask(Collections.singletonList(cs));
+                Main.worker.submit(task);
+            }
+
+            protected void refreshEnabledState() {
+                setEnabled(cbOpenChangesets.getModel().getSize() > 0 && cbOpenChangesets.getSelectedItem() != null);
+            }
+
+            public void itemStateChanged(ItemEvent e) {
+                refreshEnabledState();
+            }
+        }
+    }
+
+    public class OpenChangesetModel extends DefaultComboBoxModel {
+        private List<Changeset> changesets;
+        private long uid;
+        private Changeset selectedChangeset = null;
+
+        protected Changeset getChangesetById(long id) {
+            for (Changeset cs : changesets) {
+                if (cs.getId() == id) return cs;
+            }
+            return null;
+        }
+
+        public OpenChangesetModel() {
+            this.changesets = new ArrayList<Changeset>();
+        }
+
+        protected void internalAddOrUpdate(Changeset cs) {
+            Changeset other = getChangesetById(cs.getId());
+            if (other != null) {
+                cs.cloneFrom(other);
+            } else {
+                changesets.add(cs);
+            }
+        }
+
+        public void addOrUpdate(Changeset cs) {
+            if (cs.getId() <= 0 )
+                throw new IllegalArgumentException(tr("changeset id > 0 expected. Got {1}", "id", cs.getId()));
+            internalAddOrUpdate(cs);
+            fireContentsChanged(this, 0, getSize());
+        }
+
+        public void remove(long id) {
+            Changeset cs = getChangesetById(id);
+            if (cs != null) {
+                changesets.remove(cs);
+            }
+            fireContentsChanged(this, 0, getSize());
+        }
+
+        public void addOrUpdate(Collection<Changeset> changesets) {
+            for (Changeset cs: changesets) {
+                internalAddOrUpdate(cs);
+            }
+            fireContentsChanged(this, 0, getSize());
+            if (getSelectedItem() == null && !this.changesets.isEmpty()) {
+                setSelectedItem(this.changesets.get(0));
+            } else {
+                setSelectedItem(null);
+            }
+        }
+
+        public void setUserId(long uid) {
+            this.uid = uid;
+        }
+
+        public long getUserId() {
+            return uid;
+        }
+
+        public void selectFirstChangeset() {
+            if (changesets == null || changesets.isEmpty()) return;
+            setSelectedItem(changesets.get(0));
+        }
+
+        public void removeChangeset(Changeset cs) {
+            if (cs == null) return;
+            changesets.remove(cs);
+            if (selectedChangeset == cs) {
+                selectFirstChangeset();
+            }
+            fireContentsChanged(this, 0, getSize());
+        }
+        /* ------------------------------------------------------------------------------------ */
+        /* ComboBoxModel                                                                        */
+        /* ------------------------------------------------------------------------------------ */
+        @Override
+        public Object getElementAt(int index) {
+            return changesets.get(index);
+        }
+
+        @Override
+        public int getIndexOf(Object anObject) {
+            return changesets.indexOf(anObject);
+        }
+
+        @Override
+        public int getSize() {
+            return changesets.size();
+        }
+
+        @Override
+        public Object getSelectedItem() {
+            return selectedChangeset;
+        }
+
+        @Override
+        public void setSelectedItem(Object anObject) {
+            if (anObject == null) {
+                this.selectedChangeset = null;
+                super.setSelectedItem(null);
+                return;
+            }
+            if (! (anObject instanceof Changeset)) return;
+            Changeset cs = (Changeset)anObject;
+            if (cs.getId() == 0 || ! cs.isOpen()) return;
+            Changeset candidate = getChangesetById(cs.getId());
+            if (candidate == null) return;
+            this.selectedChangeset = candidate;
+            super.setSelectedItem(selectedChangeset);
         }
     }
 }

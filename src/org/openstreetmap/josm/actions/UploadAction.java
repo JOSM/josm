@@ -27,7 +27,6 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.ChangesetProcessingType;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -175,8 +174,8 @@ public class UploadAction extends JosmAction{
                 createUploadTask(
                         Main.map.mapView.getEditLayer(),
                         apiData.getPrimitives(),
-                        UploadConfirmationHook.getUploadDialog().getChangeset(),
-                        UploadConfirmationHook.getUploadDialog().getChangesetProcessingType()
+                        UploadDialog.getUploadDialog().getChangeset(),
+                        UploadDialog.getUploadDialog().isDoCloseAfterUpload()
                 )
         );
     }
@@ -243,13 +242,13 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case JOptionPane.CANCEL_OPTION: return;
-        case 0: synchronizePrimitive(primitiveType, id); break;
-        case 1: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.CANCEL_OPTION: return;
+            case 0: synchronizePrimitive(primitiveType, id); break;
+            case 1: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -283,12 +282,12 @@ public class UploadAction extends JosmAction{
                 defaultOption
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case 1: return;
-        case 0: synchronizeDataSet(); break;
-        default:
-            // should not happen
-            throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+            case JOptionPane.CLOSED_OPTION: return;
+            case 1: return;
+            case 0: synchronizeDataSet(); break;
+            default:
+                // should not happen
+                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
         }
     }
 
@@ -456,17 +455,9 @@ public class UploadAction extends JosmAction{
 
 
     static public class UploadConfirmationHook implements UploadHook {
-        static private UploadDialog uploadDialog;
-
-        static public UploadDialog getUploadDialog() {
-            if (uploadDialog == null) {
-                uploadDialog = new UploadDialog();
-            }
-            return uploadDialog;
-        }
 
         public boolean checkUpload(APIDataSet apiData) {
-            final UploadDialog dialog = getUploadDialog();
+            final UploadDialog dialog = UploadDialog.getUploadDialog();
             dialog.setUploadedPrimitives(apiData.getPrimitivesToAdd(),apiData.getPrimitivesToUpdate(), apiData.getPrimitivesToDelete());
             dialog.setVisible(true);
             if (dialog.isCanceled())
@@ -476,10 +467,14 @@ public class UploadAction extends JosmAction{
         }
     }
 
-    public UploadDiffTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload, Changeset changeset, ChangesetProcessingType changesetProcessingType) {
-        return new UploadDiffTask(layer, toUpload, changeset, changesetProcessingType);
+    public UploadDiffTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
+        return new UploadDiffTask(layer, toUpload, changeset, closeChangesetAfterUpload);
     }
 
+    /**
+     * The task for uploading a collection of primitives
+     *
+     */
     public class UploadDiffTask extends  PleaseWaitRunnable {
         private boolean uploadCancelled = false;
         private Exception lastException = null;
@@ -487,21 +482,28 @@ public class UploadAction extends JosmAction{
         private OsmServerWriter writer;
         private OsmDataLayer layer;
         private Changeset changeset;
-        private ChangesetProcessingType changesetProcessingType;
+        private boolean closeChangesetAfterUpload;
 
-        private UploadDiffTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload, Changeset changeset, ChangesetProcessingType changesetProcessingType) {
+        /**
+         * 
+         * @param layer  the OSM data layer for which data is uploaded
+         * @param toUpload the collection of primitives to upload
+         * @param changeset the changeset to use for uploading
+         * @param closeChangesetAfterUpload true, if the changeset is to be closed after uploading
+         */
+        private UploadDiffTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
             super(tr("Uploading data for layer ''{0}''", layer.getName()),false /* don't ignore exceptions */);
             this.toUpload = toUpload;
             this.layer = layer;
             this.changeset = changeset;
-            this.changesetProcessingType = changesetProcessingType == null ? ChangesetProcessingType.USE_NEW_AND_CLOSE : changesetProcessingType;
+            this.closeChangesetAfterUpload = closeChangesetAfterUpload;
         }
 
         @Override protected void realRun() throws SAXException, IOException {
             writer = new OsmServerWriter();
             try {
                 ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                writer.uploadOsm(layer.data.version, toUpload, changeset,changesetProcessingType, monitor);
+                writer.uploadOsm(layer.data.version, toUpload, changeset,closeChangesetAfterUpload, monitor);
             } catch (Exception sxe) {
                 if (uploadCancelled) {
                     System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
@@ -524,7 +526,12 @@ public class UploadAction extends JosmAction{
             if (lastException != null) {
                 handleFailedUpload(lastException);
             } else {
+                // run post upload action on the layer
+                //
                 layer.onPostUploadToServer();
+                // refresh changeset dialog with the updated changeset
+                //
+                UploadDialog.getUploadDialog().setOrUpdateChangeset(changeset);
             }
         }
 

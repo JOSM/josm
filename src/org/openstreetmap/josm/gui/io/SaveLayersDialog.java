@@ -32,7 +32,6 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
-import org.openstreetmap.josm.actions.UploadAction.UploadConfirmationHook;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
@@ -298,8 +297,8 @@ public class SaveLayersDialog extends JDialog {
 
         public void cancel() {
             switch(model.getMode()) {
-            case EDITING_DATA: cancelWhenInEditingModel(); break;
-            case UPLOADING_AND_SAVING: cancelSafeAndUploadTask(); break;
+                case EDITING_DATA: cancelWhenInEditingModel(); break;
+                case UPLOADING_AND_SAVING: cancelSafeAndUploadTask(); break;
             }
         }
 
@@ -333,8 +332,8 @@ public class SaveLayersDialog extends JDialog {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 Mode mode = (Mode)evt.getNewValue();
                 switch(mode) {
-                case EDITING_DATA: setEnabled(true); break;
-                case UPLOADING_AND_SAVING: setEnabled(false); break;
+                    case EDITING_DATA: setEnabled(true); break;
+                    case UPLOADING_AND_SAVING: setEnabled(false); break;
                 }
             }
         }
@@ -367,8 +366,8 @@ public class SaveLayersDialog extends JDialog {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
                 SaveLayersModel.Mode mode = (SaveLayersModel.Mode)evt.getNewValue();
                 switch(mode) {
-                case EDITING_DATA: setEnabled(true); break;
-                case UPLOADING_AND_SAVING: setEnabled(false); break;
+                    case EDITING_DATA: setEnabled(true); break;
+                    case UPLOADING_AND_SAVING: setEnabled(false); break;
                 }
             }
         }
@@ -410,8 +409,8 @@ public class SaveLayersDialog extends JDialog {
                 currentTask = new UploadLayerTask(
                         layerInfo.getLayer(),
                         monitor,
-                        UploadAction.UploadConfirmationHook.getUploadDialog().getChangeset(),
-                        UploadAction.UploadConfirmationHook.getUploadDialog().getChangesetProcessingType()
+                        UploadDialog.getUploadDialog().getChangeset(),
+                        UploadDialog.getUploadDialog().isDoCloseAfterUpload()
                 );
                 currentFuture = worker.submit(currentTask);
                 try {
