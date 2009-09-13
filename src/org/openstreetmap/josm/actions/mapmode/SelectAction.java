@@ -493,9 +493,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         Set<Node> selectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
                         if (!selectedNodes.isEmpty()) {
                             selectedNodes.add(n);
-                            MergeNodesAction mergeAction = new MergeNodesAction();
-                            Node targetNode = mergeAction.selectTargetNode(selectedNodes);
-                            mergeAction.mergeNodes(Main.main.getEditLayer(),selectedNodes, targetNode);
+                            Node targetNode = MergeNodesAction.selectTargetNode(selectedNodes);
+                            Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(),selectedNodes, targetNode);
+                            Main.main.undoRedo.add(cmd);
                         }
                     }
                 }
