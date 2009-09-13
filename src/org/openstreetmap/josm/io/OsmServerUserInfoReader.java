@@ -24,6 +24,10 @@ import org.w3c.dom.NodeList;
 
 public class OsmServerUserInfoReader extends OsmServerReader {
 
+    public OsmServerUserInfoReader() {
+        setDoAuthenticate(true);
+    }
+
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         // not implemented

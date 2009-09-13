@@ -13,6 +13,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -22,7 +23,6 @@ import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -33,6 +33,7 @@ import org.openstreetmap.josm.tools.GBC;
  * @author imi
  */
 public class OsmConnection {
+    private static final Logger logger = Logger.getLogger(OsmConnection.class.getName());
 
     protected boolean cancel = false;
     protected HttpURLConnection activeConnection;

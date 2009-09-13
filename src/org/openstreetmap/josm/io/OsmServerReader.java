@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.CharacterCodingException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -29,6 +30,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public abstract class OsmServerReader extends OsmConnection {
 
     private OsmApi api = OsmApi.getOsmApi();
+    private boolean doAuthenticate = false;
 
     /**
      * Open a connection to the given url and return a reader on the input stream
@@ -65,6 +67,14 @@ public abstract class OsmServerReader extends OsmConnection {
                 return null;
             }
 
+            try {
+                if (doAuthenticate) {
+                    addAuth(activeConnection);
+                }
+            } catch(CharacterCodingException e) {
+                System.err.println(tr("Error: failed to add authentication credentials to the connection."));
+                throw new OsmTransferException(e);
+            }
             if (Main.pref.getBoolean("osm-server.use-compression", true)) {
                 activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
             }
@@ -121,4 +131,25 @@ public abstract class OsmServerReader extends OsmConnection {
 
     public abstract DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException;
 
+    /**
+     * Returns true if this reader is adding authentication credentials to the read
+     * request sent to the server.
+     * 
+     * @return true if this reader is adding authentication credentials to the read
+     * request sent to the server
+     */
+    public boolean isDoAuthenticate() {
+        return doAuthenticate;
+    }
+
+    /**
+     * Sets whether this reader adds authentication credentials to the read
+     * request sent to the server.
+     * 
+     * @param doAuthenticate  true if  this reader adds authentication credentials to the read
+     * request sent to the server
+     */
+    public void setDoAuthenticate(boolean doAuthenticate) {
+        this.doAuthenticate = doAuthenticate;
+    }
 }
