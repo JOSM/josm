@@ -54,6 +54,7 @@ For external files the <annotations> should have following elements:
 See also http://josm.openstreetmap.de/wiki/TaggingPresets.
 -->
 <annotations>
+  <group name="Highways" icon="presets/way_secondary.png">
     <group name="Streets" icon="presets/way_secondary.png">
         <item name="Motorway" icon="presets/motorway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway"
@@ -1042,7 +1043,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item> <!-- sally_port -->
         
     </group> <!-- Barriers -->
-    <separator/>
+  </group>
+  <group name="Water" icon="presets/waterway.png">
     <group name="Water" icon="presets/waterway.png">
         <item name="Spring" icon="presets/spring.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring" />
@@ -1244,7 +1246,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Waterway -->
-    <separator/>
+  </group>
+  <group name="Transport" icon="presets/railway.png">
     <group name="Railway" icon="presets/railway.png">
         <item name="Rail" icon="presets/railway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=rail" />
@@ -1560,7 +1563,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             </optional>
         </item>
     </group> <!-- Public Transport -->
-    <separator/>
+  </group>
+  <group name="Travel" icon="presets/bed.png">
     <group name="Accomodation" icon="presets/bed.png">
         <item name="Hotel" icon="presets/bed.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hotel"
@@ -1864,7 +1868,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Leisure -->
-    <separator/>
+  </group>
+  <group name="Sports" icon="presets/soccer.png">
     <group name="Sport Facilities" icon="presets/stadium.png">
         <item name="Stadium" icon="presets/stadium.png" type="node,closedway">
             <label text="Edit Stadium" />
@@ -2127,7 +2132,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
     </group>
-    <separator/>
+  </group>
+  <group name="Man-Made" icon="presets/works.png">
     <group name="Buildings" icon="presets/townhall.png">
         <item name="Building" icon="presets/empty.png" type="closedway,relation">
             <key key="building" value="yes" />
@@ -2743,7 +2749,8 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Health -->
-    <separator/>
+  </group>
+  <group name="Geography" icon="presets/places.png">
     <group name="Places" icon="presets/places.png">
         <item name="Continent" icon="presets/places.png" type="node,closedway">
             <label text="Edit Continent" />
@@ -3104,7 +3111,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Landuse -->
-    <separator/>
+  </group>
 <!-- FIXME: element role not yet supported! -->
     <group name="Relations" icon="presets/relations.png">
         <item name="Multipolygon" icon="presets/empty.png" type="relation">
