@@ -1849,6 +1849,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="historic" value="wayside_shrine" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Boundary Stone" icon="presets/wayside_shrine.png" type="node,closedway">
+            <label text="Edit Boundary Stone" />
+            <key key="historic" value="boundary_stone" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
     </group> <!-- Historic Places -->
     <group name="Leisure" icon="presets/kindergarten.png">
         <item name="Water Park" icon="presets/swimming.png" type="node,closedway">

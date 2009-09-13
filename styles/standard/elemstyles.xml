@@ -3048,6 +3048,14 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="historic" v="boundary_stone"/>
+		<icon annotate="true" src="religion/boundary_stone.png"/>
+		<area colour="historic#663300"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
 <!--landuse tags -->
 
 	<rule>
