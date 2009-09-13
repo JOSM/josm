@@ -158,6 +158,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         } else if (n.isTagged()) {
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
+        } else if (n.isDisabled()) {
+            drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
         } else {
             drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
         }
@@ -306,6 +308,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             color = highlightColor;
         } else if(w.isSelected()) {
             color = selectedColor;
+        } else if(w.isDisabled()) {
+            color = inactiveColor;
         }
 
         /* draw overlays under the way */
@@ -529,7 +533,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             for (RelationMember m : r.getMembers())
             {
-                if (m.isNode() && !m.getMember().incomplete && !m.getMember().isDeleted())
+                if (m.isNode() && !m.getMember().incomplete && !m.getMember().isDeleted() && !m.getMember().isFiltered())
                 {
                     drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember()) : null, true, true);
                 }
@@ -1394,7 +1398,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    profilerN = 0;
             for (final Relation osm : data.relations)
             {
-                if(!osm.isDeleted() && !osm.incomplete && osm.mappaintVisibleCode != viewid)
+                if(!osm.isDeleted() && !osm.isFiltered() && !osm.incomplete && osm.mappaintVisibleCode != viewid)
                 {
                     osm.visit(this);
                     //            profilerN++;
@@ -1411,7 +1415,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    profilerN = 0;
             for (final Way osm : data.ways)
             {
-                if (!osm.incomplete && !osm.isDeleted()
+                if (!osm.incomplete && !osm.isDeleted() && !osm.isFiltered()
                         && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
                 {
                     if(isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid)
@@ -1452,7 +1456,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** WAYS (filling disabled)  ***/
             //    profilerN = 0;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.isDeleted() && !osm.isSelected()
+                if (!osm.incomplete && !osm.isDeleted() && !osm.isFiltered() && !osm.isSelected()
                         && osm.mappaintVisibleCode != viewid )
                 {
                     osm.visit(this);
@@ -1491,7 +1495,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /*** NODES ***/
         //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.incomplete && !osm.isDeleted()
+            if (!osm.incomplete && !osm.isDeleted() && (osm.isSelected() || !osm.isFiltered())
                     && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);
@@ -1511,7 +1515,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.isDeleted()
+                if (osm.isUsable() && !osm.isFiltered()
                         && osm.mappaintVisibleCode != viewid )
                 {
                     /* TODO: move this into the SimplePaint code? */

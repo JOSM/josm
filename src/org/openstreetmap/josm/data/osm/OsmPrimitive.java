@@ -95,7 +95,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * More specific, it is not good to set this to 0 and think the object is now
      * new to the server! To create a new object, call the default constructor of
      * the respective class.
-     * 
+     *
      */
     private long id = 0;
 
@@ -104,13 +104,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * the server. In this case, on next upload, this object will be updated.
      * Deleted objects are deleted from the server. If the objects are added (id=0),
      * the modified is ignored and the object is added to the server.
-     * 
+     *
      */
     private boolean modified = false;
 
     /**
      * <code>true</code>, if the object has been deleted.
-     * 
+     *
      */
     private boolean deleted = false;
 
@@ -118,9 +118,21 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * Visibility status as specified by the server. The visible attribute was
      * introduced with the 0.4 API to be able to communicate deleted objects
      * (they will have visible=false).
-     * 
+     *
      */
     private boolean visible = true;
+
+    /**
+     * <code>true</code>, if the object has been set inactive
+     *
+     */
+    private boolean disabled = false;
+
+    /**
+     * <code>true</code>, if the object has been filtered out
+     *
+     */
+    private boolean filtered = false;
 
     /**
      * User that last modified this primitive, as specified by the server.
@@ -130,7 +142,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * If set to true, this object is currently selected.
-     * 
+     *
      */
     private volatile boolean selected = false;
 
@@ -148,7 +160,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Creates a new primitive with id 0.
-     * 
+     *
      */
     public OsmPrimitive() {
         this(0);
@@ -157,7 +169,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Creates a new primitive for the given id. If the id > 0, the primitive is marked
      * as incomplete.
-     * 
+     *
      * @param id the id. > 0 required
      * @throws IllegalArgumentException thrown if id < 0
      */
@@ -172,10 +184,43 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /* ------------------------------------------------------------------------------------ */
     /* accessors                                                                            */
     /* ------------------------------------------------------------------------------------ */
+    /**
+     * Sets whether this primitive is disabled or not.
+     *
+     * @param selected  true, if this primitive is disabled; false, otherwise
+     */
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    /**
+     * Replies true, if this primitive is disabled.
+     *
+     * @return true, if this primitive is disabled
+     */
+    public boolean isDisabled() {
+        return disabled;
+    }
+    /**
+     * Sets whether this primitive is filtered out or not.
+     *
+     * @param selected  true, if this primitive is filtered out; false, otherwise
+     */
+    public void setFiltered(boolean filtered) {
+        this.filtered = filtered;
+    }
+    /**
+     * Replies true, if this primitive is filtered out.
+     *
+     * @return true, if this primitive is filtered out
+     */
+    public boolean isFiltered() {
+        return filtered;
+    }
 
     /**
      * Sets whether this primitive is selected or not.
-     * 
+     *
      * @param selected  true, if this primitive is selected; false, otherwise
      * @since 1899
      */
@@ -184,7 +229,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     }
     /**
      * Replies true, if this primitive is selected.
-     * 
+     *
      * @return true, if this primitive is selected
      * @since 1899
      */
@@ -194,7 +239,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Marks this primitive as being modified.
-     * 
+     *
      * @param modified true, if this primitive is to be modified
      */
     public void setModified(boolean modified) {
@@ -204,7 +249,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Replies <code>true</code> if the object has been modified since it was loaded from
      * the server. In this case, on next upload, this object will be updated.
-     * 
+     *
      * @return <code>true</code> if the object has been modified since it was loaded from
      * the server
      */
@@ -229,7 +274,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @see #delete(boolean)
      */
     public boolean isUsable() {
-        return !deleted && !incomplete;
+        return !deleted && !incomplete && !disabled;
     }
 
     /**
@@ -237,7 +282,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * is 0) or it is known to the server and it hasn't be deleted on the server.
      * Replies false, if this primitive is known on the server and has been deleted
      * on the server.
-     * 
+     *
      * @see #setVisible(boolean)
      */
     public boolean isVisible() {
@@ -247,7 +292,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Sets whether this primitive is visible, i.e. whether it is known on the server
      * and not deleted on the server.
-     * 
+     *
      * @see #isVisible()
      * @throws IllegalStateException thrown if visible is set to false on an primitive with
      * id==0
@@ -261,7 +306,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Replies the version number as returned by the API. The version is 0 if the id is 0 or
      * if this primitive is incomplete.
-     * 
+     *
      * @see #setVersion(int)
      */
     public long getVersion() {
@@ -270,7 +315,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Replies the id of this primitive.
-     * 
+     *
      * @return the id of this primitive.
      */
     public long getId() {
@@ -279,10 +324,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Sets the id and the version of this primitive if it is known to the OSM API.
-     * 
+     *
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
-     * 
+     *
      * @param id the id. > 0 required
      * @param version the version > 0 required
      * @throws IllegalArgumentException thrown if id <= 0
@@ -301,20 +346,20 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Clears the id and version known to the OSM API. The id and the version is set to 0.
      * incomplete is set to false.
-     * 
+     *
      * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@see DataSet}.
      * Ways and relations might already refer to the primitive and clearing the OSM ID
      * result in corrupt data.
-     * 
+     *
      * Here's an example use case:
      * <pre>
      *     // create a clone of an already existing node
      *     Node copy = new Node(otherExistingNode);
-     * 
+     *
      *     // reset the clones OSM id
      *     copy.clearOsmId();
      * </pre>
-     * 
+     *
      */
     public void clearOsmId() {
         this.id = 0;
@@ -387,9 +432,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Sets whether this primitive is deleted or not.
-     * 
+     *
      * Also marks this primitive as modified if deleted is true and sets selected to false.
-     * 
+     *
      * @param deleted  true, if this primitive is deleted; false, otherwise
      */
     public void setDeleted(boolean deleted) {
@@ -441,7 +486,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Replies the map of key/value pairs. Never replies null. The map can be empty, though.
-     * 
+     *
      * @return Keys of this primitive. Changes made in returned map are not mapped
      * back to the primitive, use setKeys() to modify the keys
      * @since 1924
@@ -458,7 +503,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Sets the keys of this primitives to the key/value pairs in <code>keys</code>.
      * If <code>keys</code> is null removes all existing key/value pairs.
-     * 
+     *
      * @param keys the key/value pairs to set. If null, removes all existing key/value pairs.
      * @since 1924
      */
@@ -473,10 +518,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Set the given value to the given key. If key is null, does nothing. If value is null,
      * removes the key and behaves like {@see #remove(String)}.
-     * 
+     *
      * @param key  The key, for which the value is to be set. Can be null, does nothing in this case.
      * @param value The value for the key. If null, removes the respective key/value pair.
-     * 
+     *
      * @see #remove(String)
      */
     public final void put(String key, String value) {
@@ -494,7 +539,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     }
     /**
      * Remove the given key from the list
-     * 
+     *
      * @param key  the key to be removed. Ignored, if key is null.
      */
     public final void remove(String key) {
@@ -509,7 +554,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Removes all keys from this primitive.
-     * 
+     *
      * @since 1843
      */
     public final void removeAll() {
@@ -520,7 +565,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Replies the value for key <code>key</code>. Replies null, if <code>key</code> is null.
      * Replies null, if there is no value for the given key.
-     * 
+     *
      * @param key the key. Can be null, replies null in this case.
      * @return the value for key <code>key</code>.
      */
@@ -543,10 +588,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Replies true, if the map of key/value pairs of this primitive is not empty.
-     * 
+     *
      * @return true, if the map of key/value pairs of this primitive is not empty; false
      *   otherwise
-     * 
+     *
      * @since 1843
      */
     public final boolean hasKeys() {
@@ -655,7 +700,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Replies the name of this primitive. The default implementation replies the value
      * of the tag <tt>name</tt> or null, if this tag is not present.
-     * 
+     *
      * @return the name of this primitive
      */
     public String getName() {
@@ -672,9 +717,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      *   <li>name:lang of the current locale</li>
      *   <li>name of the current locale</li>
      * </ul>
-     * 
+     *
      * null, if no such tag exists
-     * 
+     *
      * @return the name of this primitive
      */
     public String getLocalName() {
@@ -692,7 +737,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Replies the display name of a primitive formatted by <code>formatter</code>
-     * 
+     *
      * @return the display name
      */
     public abstract String getDisplayName(NameFormatter formatter);

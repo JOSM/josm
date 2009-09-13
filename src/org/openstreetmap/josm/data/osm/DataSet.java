@@ -183,6 +183,52 @@ public class DataSet implements Cloneable {
         return getSelected(relations);
     }
 
+    public void setFiltered(Collection<? extends OsmPrimitive> selection) {
+        clearFiltered(nodes);
+        clearFiltered(ways);
+        clearFiltered(relations);
+        for (OsmPrimitive osm : selection) {
+            osm.setFiltered(true);
+        }
+    }
+
+    public void setFiltered(OsmPrimitive... osm) {
+        if (osm.length == 1 && osm[0] == null) {
+            setFiltered();
+            return;
+        }
+        clearFiltered(nodes);
+        clearFiltered(ways);
+        clearFiltered(relations);
+        for (OsmPrimitive o : osm)
+            if (o != null) {
+                o.setFiltered(true);
+            }
+    }
+
+    public void setDisabled(Collection<? extends OsmPrimitive> selection) {
+        clearDisabled(nodes);
+        clearDisabled(ways);
+        clearDisabled(relations);
+        for (OsmPrimitive osm : selection) {
+            osm.setDisabled(true);
+        }
+    }
+
+    public void setDisabled(OsmPrimitive... osm) {
+        if (osm.length == 1 && osm[0] == null) {
+            setDisabled();
+            return;
+        }
+        clearDisabled(nodes);
+        clearDisabled(ways);
+        clearDisabled(relations);
+        for (OsmPrimitive o : osm)
+            if (o != null) {
+                o.setDisabled(true);
+            }
+    }
+
     public void setSelected(Collection<? extends OsmPrimitive> selection) {
         clearSelection(nodes);
         clearSelection(ways);
@@ -206,6 +252,29 @@ public class DataSet implements Cloneable {
                 o.setSelected(true);
             }
         fireSelectionChanged(Arrays.asList(osm));
+    }
+
+    /**
+     * Remove the filtered parameter from every value in the collection.
+     * @param list The collection to remove the filtered parameter from.
+     */
+    private void clearFiltered(Collection<? extends OsmPrimitive> list) {
+        if (list == null)
+            return;
+        for (OsmPrimitive osm : list) {
+            osm.setFiltered(false);
+        }
+    }
+    /**
+     * Remove the disabled parameter from every value in the collection.
+     * @param list The collection to remove the disabled parameter from.
+     */
+    private void clearDisabled(Collection<? extends OsmPrimitive> list) {
+        if (list == null)
+            return;
+        for (OsmPrimitive osm : list) {
+            osm.setDisabled(false);
+        }
     }
 
     /**

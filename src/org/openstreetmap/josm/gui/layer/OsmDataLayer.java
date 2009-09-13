@@ -317,7 +317,7 @@ public class OsmDataLayer extends Layer {
 
     @Override public void visitBoundingBox(final BoundingXYVisitor v) {
         for (final Node n : data.nodes)
-            if (!n.isDeleted() && !n.incomplete) {
+            if (n.isUsable()) {
                 v.visit(n);
             }
     }
@@ -440,7 +440,7 @@ public class OsmDataLayer extends Layer {
         gpxData.storageFile = file;
         HashSet<Node> doneNodes = new HashSet<Node>();
         for (Way w : data.ways) {
-            if (w.incomplete || w.isDeleted()) {
+            if (!w.isUsable()) {
                 continue;
             }
             GpxTrack trk = new GpxTrack();
@@ -452,7 +452,7 @@ public class OsmDataLayer extends Layer {
 
             ArrayList<WayPoint> trkseg = null;
             for (Node n : w.getNodes()) {
-                if (n.incomplete || n.isDeleted()) {
+                if (!n.isUsable()) {
                     trkseg = null;
                     continue;
                 }

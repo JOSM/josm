@@ -148,7 +148,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
            require changing the colour while painting... */
         //profilerN = 0;
         for (final OsmPrimitive osm : data.relations)
-            if (!osm.isDeleted() && !osm.isSelected())
+            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -162,7 +162,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.isDeleted() && !osm.isSelected() && osm.isTagged())
+            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered() && osm.isTagged())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -170,7 +170,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         displaySegments();
 
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.isDeleted() && !osm.isSelected() && !osm.isTagged())
+            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered() && !osm.isTagged())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -201,7 +201,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.isDeleted() && !osm.isSelected())
+            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -219,7 +219,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
             //    profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.isDeleted())
+                if (!osm.isDeleted() && !osm.isDisabled() && !osm.isFiltered())
                 {
                     visitVirtual((Way)osm);
                     //                profilerN++;
@@ -248,7 +248,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     public void visit(Node n) {
         if (n.incomplete) return;
 
-        if (inactive) {
+        if (inactive || n.isDisabled()) {
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
         } else if (n.highlighted) {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
@@ -311,7 +311,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !w.isSelected() && showHeadArrowOnly;
         Color wayColor;
 
-        if (inactive) {
+        if (inactive || w.isDisabled()) {
             wayColor = inactiveColor;
         } else if(w.highlighted) {
             wayColor = highlightColor;
@@ -344,7 +344,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         if (r.incomplete) return;
 
         Color col;
-        if (inactive) {
+        if (inactive || r.isDisabled()) {
             col = inactiveColor;
         } else if (r.isSelected()) {
             col = selectedColor;

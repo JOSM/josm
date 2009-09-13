@@ -285,7 +285,7 @@ public class CombineWayAction extends JosmAction {
          */
         public void build(DataSet ds) {
             for (Relation r: ds.relations) {
-                if (r.isDeleted() || r.incomplete) {
+                if (!r.isUsable()) {
                     continue;
                 }
                 Set<Way> referringWays = OsmPrimitive.getFilteredSet(r.getMemberPrimitives(), Way.class);

@@ -63,8 +63,6 @@ public class GettingStarted extends JPanel {
             if (motd.length() == 0) {
                 motd = "<html>" + styles + "<body><h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                 + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
-            } else {
-                motd = motd.replace("<!-- VERSION -->", tr("- running version is {0}", AboutAction.getVersionString()));
             }
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);

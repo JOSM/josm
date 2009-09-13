@@ -65,7 +65,7 @@ public class UnGlueAction extends JosmAction {
         if (checkSelection(selection)) {
             int count = 0;
             for (Way w : getCurrentDataSet().ways) {
-                if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
+                if (!w.isUsable() || w.getNodesCount() < 1) {
                     continue;
                 }
                 if (!w.containsNode(selectedNode)) {

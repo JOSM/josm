@@ -306,7 +306,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Node n : ds.nodes) {
-            if (n.isDeleted() || n.incomplete) {
+            if (!n.isUsable()) {
                 continue;
             }
             Point sp = getPoint(n);
@@ -337,7 +337,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Way w : ds.ways) {
-            if (w.isDeleted() || w.incomplete) {
+            if (!w.isUsable()) {
                 continue;
             }
             Node lastN = null;
@@ -461,12 +461,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Way w : ds.ways) {
-            if (w.isDeleted() || w.incomplete) {
+            if (!w.isUsable()) {
                 continue;
             }
             Node lastN = null;
             for (Node n : w.getNodes()) {
-                if (n.isDeleted() || n.incomplete) {
+                if (!n.isUsable()) {
                     continue;
                 }
                 if (lastN == null) {
@@ -487,7 +487,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
         for (Node n : ds.nodes) {
-            if (!n.isDeleted() && !n.incomplete
+            if (n.isUsable()
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }
@@ -509,7 +509,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(ds == null)
             return null;
         for (Node n : ds.nodes) {
-            if (!n.isDeleted() && !n.incomplete
+            if (n.isUsable()
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
             }

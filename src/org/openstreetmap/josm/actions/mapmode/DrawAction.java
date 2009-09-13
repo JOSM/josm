@@ -766,7 +766,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     public Way getWayForNode(Node n) {
         Way way = null;
         for (Way w : getCurrentDataSet().ways) {
-            if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
+            if (!w.isUsable() || w.getNodesCount() < 1) {
                 continue;
             }
             Node firstNode = w.getNode(0);

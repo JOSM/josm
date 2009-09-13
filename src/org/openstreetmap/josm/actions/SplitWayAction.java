@@ -101,7 +101,7 @@ public class SplitWayAction extends JosmAction {
             HashMap<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
             for (Node n : selectedNodes) {
                 for (Way w : getCurrentDataSet().ways) {
-                    if (w.isDeleted() || w.incomplete) {
+                    if (!w.isUsable()) {
                         continue;
                     }
                     int last = w.getNodesCount()-1;
@@ -292,7 +292,7 @@ public class SplitWayAction extends JosmAction {
         // now copy all relations to new way also
 
         for (Relation r : getCurrentDataSet().relations) {
-            if (r.isDeleted() || r.incomplete) {
+            if (!r.isUsable()) {
                 continue;
             }
             Relation c = null;

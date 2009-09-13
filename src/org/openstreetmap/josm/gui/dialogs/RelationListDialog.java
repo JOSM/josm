@@ -134,7 +134,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         if (getNumRelations() > 0 ) {
             int i = 0;
             for (OsmPrimitive e : DataSet.sort(Main.main.getCurrentDataSet().relations)) {
-                if (!e.isDeleted() && !e.incomplete) {
+                if (e.isUsable()){
                     list.setElementAt(e, i++);
                 }
             }
