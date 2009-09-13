@@ -43,11 +43,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * every physical pixel on screen are 10 x or 10 y units in the
      * northing/easting space of the projection.
      */
-    private double scale;
+    private double scale = Main.proj.getDefaultZoomInPPD();
     /**
      * Center n/e coordinate of the desired screen center.
      */
-    protected EastNorth center = new EastNorth(0, 0);
+    protected EastNorth center = calculateDefaultCenter();
 
     public NavigatableComponent() {
         setLayout(null);
@@ -55,6 +55,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     protected DataSet getCurrentDataSet() {
         return Main.main.getCurrentDataSet();
+    }
+
+    private EastNorth calculateDefaultCenter() {
+        Bounds b = Main.proj.getWorldBoundsLatLon();
+        double lat = (b.max.lat() + b.min.lat())/2;
+        double lon = (b.max.lon() + b.min.lon())/2;
+
+        return Main.proj.latlon2eastNorth(new LatLon(lat, lon));
     }
 
     /**
@@ -114,14 +122,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         new EastNorth(
                                 center.east() + getWidth()/2.0*scale,
                                 center.north() + getHeight()/2.0*scale));
-    };
+    }
 
     /* FIXME: replace with better method - used by MapSlider */
     public ProjectionBounds getMaxProjectionBounds() {
         Bounds b = getProjection().getWorldBoundsLatLon();
         return new ProjectionBounds(getProjection().latlon2eastNorth(b.min),
                 getProjection().latlon2eastNorth(b.max));
-    };
+    }
 
     /* FIXME: replace with better method - used by Main to reset Bounds when projection changes, don't use otherwise */
     public Bounds getRealBounds() {
@@ -132,7 +140,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         getProjection().eastNorth2latlon(new EastNorth(
                                 center.east() + getWidth()/2.0*scale,
                                 center.north() + getHeight()/2.0*scale)));
-    };
+    }
 
     /**
      * @param x X-Pixelposition to get coordinate from
@@ -181,7 +189,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
         Bounds b = getProjection().getWorldBoundsLatLon();
         CachedLatLon cl = new CachedLatLon(newCenter);
-        boolean changed = false;;
+        boolean changed = false;
         double lat = cl.lat();
         double lon = cl.lon();
         if(lat < b.min.lat()) {changed = true; lat = b.min.lat(); }

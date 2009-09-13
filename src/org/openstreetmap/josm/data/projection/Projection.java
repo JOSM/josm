@@ -23,8 +23,8 @@ public interface Projection {
     public static Projection[] allProjections = new Projection[]{
         new Epsg4326(),
         new Mercator(),
-        new LambertEST(),
-        new Lambert(),
+        new LambertEST(), // Still needs proper default zoom
+        new Lambert(),    // Still needs proper default zoom
         new SwissGrid(),
         new UTM(),
         new UTM_20N_Guadeloupe_Ste_Anne(),
@@ -32,6 +32,11 @@ public interface Projection {
         new UTM_20N_Martinique_Fort_Desaix(),
         new GaussLaborde_Reunion()
     };
+
+    /**
+     * Returns the default zoom scale in pixel per degree ({@see #NavigatableComponent#scale}))
+     */
+    double getDefaultZoomInPPD();
 
     /**
      * Convert from lat/lon to northing/easting.

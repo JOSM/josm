@@ -35,4 +35,8 @@ public class UTM_20N_Guadeloupe_Ste_Anne extends UTM_20N_France_DOM implements P
         return tr("UTM20N Guadeloupe Ste-Anne 1948");
     }
 
+    public double getDefaultZoomInPPD() {
+        // this will set the map scaler to about 1000 m
+        return 10.01;
+    }
 }

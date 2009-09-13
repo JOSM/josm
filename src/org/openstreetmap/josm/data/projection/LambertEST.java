@@ -47,7 +47,7 @@ public class LambertEST implements Projection {
 
         double t = Math.tan(Math.PI / 4.0 - Math.toRadians(p.lat()) / 2.0)
         / Math.pow(( (1.0 - ee * Math.sin(Math.toRadians(p.lat()))) / (1.0
-        + ee * Math.sin(Math.toRadians(p.lat())))) ,(ee / 2.0));
+                + ee * Math.sin(Math.toRadians(p.lat())))) ,(ee / 2.0));
         double r = a * f * Math.pow(t, n);
         double theta = n * (Math.toRadians(p.lon()) - lonf);
 
@@ -63,20 +63,19 @@ public class LambertEST implements Projection {
         double a2 = 3.1415926535897931;
         double a = 1.5707963267948966;
         double b = 1.5707963267948966 - (2.0 * Math.atan(t * Math.pow((1.0
-        - (e * Math.sin(a))) / (1.0 + (e * Math.sin(a))), e / 2.0)));
+                - (e * Math.sin(a))) / (1.0 + (e * Math.sin(a))), e / 2.0)));
         while (Math.abs(a-b) > epsilon)
         {
             a = a1 + ((a2 - a1) / 2.0);
             b = 1.5707963267948966 - (2.0 * Math.atan(t * Math.pow((1.0
-            - (e * Math.sin(a))) / (1.0 + (e * Math.sin(a))), e / 2.0)));
+                    - (e * Math.sin(a))) / (1.0 + (e * Math.sin(a))), e / 2.0)));
             if (a1 == a2)
-            {
                 return 0.0;
-            }
-            if (b > a)
+            if (b > a) {
                 a1 = a;
-            else
+            } else {
                 a2 = a;
+            }
         }
         return b;
     }
@@ -84,7 +83,7 @@ public class LambertEST implements Projection {
     public LatLon eastNorth2latlon(EastNorth p)
     {
         double r = Math.sqrt(Math.pow((p.getX() - ef), 2.0) + Math.pow((rf
-        - p.getY() + nf), 2.0) ) * Math.signum(n);
+                - p.getY() + nf), 2.0) ) * Math.signum(n);
         double T = Math.pow((r / (a * f)), (1.0/ n)) ;
         double theta = Math.atan((p.getX() - ef) / (rf - p.getY() + nf));
         double y = (theta / n + lonf) ;
@@ -108,7 +107,12 @@ public class LambertEST implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-        new LatLon(-90.0, -180.0),
-        new LatLon(90.0, 180.0));
+                new LatLon(-90.0, -180.0),
+                new LatLon(90.0, 180.0));
+    }
+
+    public double getDefaultZoomInPPD() {
+        // TODO FIXME
+        return 0;
     }
 }

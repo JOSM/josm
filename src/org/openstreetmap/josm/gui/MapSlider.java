@@ -22,6 +22,8 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         this.mv = mv;
         mv.addPropertyChangeListener("scale", this);
         addChangeListener(this);
+        // Call this manually once so it gets setup correctly
+        propertyChange(null);
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -39,8 +41,9 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         while(zoom <= 150) {
             e /= 1.1;
             n /= 1.1;
-            if(e < cur_e && n < cur_n)
+            if(e < cur_e && n < cur_n) {
                 break;
+            }
             ++zoom;
         }
         preventChange=true;

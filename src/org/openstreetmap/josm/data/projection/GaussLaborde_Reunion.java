@@ -215,4 +215,8 @@ public class GaussLaborde_Reunion implements Projection {
         return tr("Gauss-Laborde R\u00E9union 1947");
     }
 
+    public double getDefaultZoomInPPD() {
+        // this will set the map scaler to about 1000 m
+        return 10.02;
+    }
 }

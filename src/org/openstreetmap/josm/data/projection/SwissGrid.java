@@ -101,7 +101,12 @@ public class SwissGrid implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-        new LatLon(45.7, 5.7),
-        new LatLon(47.9, 10.6));
+                new LatLon(45.7, 5.7),
+                new LatLon(47.9, 10.6));
+    }
+
+    public double getDefaultZoomInPPD() {
+        // This will set the scale bar to about 100 m
+        return 1.01;
     }
 }

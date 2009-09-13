@@ -35,4 +35,8 @@ public class UTM_20N_Guadeloupe_Fort_Marigot extends UTM_20N_France_DOM implemen
         return tr("UTM20N Guadeloupe Fort-Marigot 1949");
     }
 
+    public double getDefaultZoomInPPD() {
+        // this will set the map scaler to about 1000 m
+        return 10;
+    }
 }

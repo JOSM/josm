@@ -341,7 +341,7 @@ public class UTM implements Projection {
     /* TODO - support all UTM's not only zone 33 */
     public int getzone()
     {
-      return 33;
+        return 33;
     }
 
     public String toCode() {
@@ -355,7 +355,12 @@ public class UTM implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-        new LatLon(-85.0, UTMCentralMeridianDeg(getzone())-5.0),
-        new LatLon(85.0, UTMCentralMeridianDeg(getzone())+5.0));
+                new LatLon(-85.0, UTMCentralMeridianDeg(getzone())-5.0),
+                new LatLon(85.0, UTMCentralMeridianDeg(getzone())+5.0));
+    }
+
+    public double getDefaultZoomInPPD() {
+        // this will set the map scaler to about 1000 m
+        return 10;
     }
 }

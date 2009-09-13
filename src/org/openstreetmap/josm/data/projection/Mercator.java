@@ -23,14 +23,14 @@ public class Mercator implements Projection {
 
     public EastNorth latlon2eastNorth(LatLon p) {
         return new EastNorth(
-            p.lon()*Math.PI/180,
-            Math.log(Math.tan(Math.PI/4+p.lat()*Math.PI/360)));
+                p.lon()*Math.PI/180,
+                Math.log(Math.tan(Math.PI/4+p.lat()*Math.PI/360)));
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
         return new LatLon(
-            Math.atan(Math.sinh(p.north()))*180/Math.PI,
-            p.east()*180/Math.PI);
+                Math.atan(Math.sinh(p.north()))*180/Math.PI,
+                p.east()*180/Math.PI);
     }
 
     @Override public String toString() {
@@ -48,7 +48,12 @@ public class Mercator implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-        new LatLon(-85.05112877980659, -180.0),
-        new LatLon(85.05112877980659, 180.0));
+                new LatLon(-85.05112877980659, -180.0),
+                new LatLon(85.05112877980659, 180.0));
+    }
+
+    public double getDefaultZoomInPPD() {
+        // This will set the scale bar to about 100 km
+        return 0.000158;
     }
 }

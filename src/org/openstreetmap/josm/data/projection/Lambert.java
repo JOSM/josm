@@ -288,4 +288,9 @@ public class Lambert implements Projection {
                 new LatLon(45.0, -4.9074074074074059),
                 new LatLon(57.0, 10.2));*/
     }
+
+    public double getDefaultZoomInPPD() {
+        // TODO FIXME
+        return 0;
+    }
 }

@@ -34,4 +34,9 @@ public class UTM_20N_Martinique_Fort_Desaix extends UTM_20N_France_DOM implement
     @Override public String toString() {
         return tr("UTM20N Martinique Fort Desaix 1952");
     }
+
+    public double getDefaultZoomInPPD() {
+        // this will set the map scaler to about 1000 m
+        return 10.01;
+    }
 }

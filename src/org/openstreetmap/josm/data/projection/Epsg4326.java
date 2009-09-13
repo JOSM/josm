@@ -37,7 +37,12 @@ public class Epsg4326 implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-        new LatLon(-90.0, -180.0),
-        new LatLon(90.0, 180.0));
+                new LatLon(-90.0, -180.0),
+                new LatLon(90.0, 180.0));
+    }
+
+    public double getDefaultZoomInPPD() {
+        // This will set the scale bar to about 100 km
+        return 0.009;
     }
 }
