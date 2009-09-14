@@ -195,7 +195,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
             }
         };
         for (Object o : lstConflicts.getSelectedValues()) {
-            if (!conflicts.hasConflictForMy((OsmPrimitive)o)) {
+            if (conflicts == null || !conflicts.hasConflictForMy((OsmPrimitive)o)) {
                 continue;
             }
             conflicts.getConflictForMy((OsmPrimitive)o).getTheir().visit(conflictPainter);
@@ -251,7 +251,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         lstConflicts.clearSelection();
         for (OsmPrimitive osm : newSelection) {
-            if (conflicts.hasConflictForMy(osm)) {
+            if (conflicts != null && conflicts.hasConflictForMy(osm)) {
                 int pos = model.indexOf(osm);
                 if (pos >= 0) {
                     lstConflicts.addSelectionInterval(pos, pos);
