@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
@@ -193,8 +194,7 @@ public class MapStatus extends JPanel implements Helpful {
                             continue;
                         }
 
-                        JPanel c = new JPanel(new GridBagLayout());
-                        c.setBorder(BorderFactory.createRaisedBevelBorder());
+                        final JPanel c = new JPanel(new GridBagLayout());
                         final JLabel lbl = new JLabel(
                                 "<html>"+tr("Middle click again, to cycle through.<br>"+
                                 "Hold CTRL to select something from this list.<hr>")+"</html>",
@@ -239,7 +239,8 @@ public class MapStatus extends JPanel implements Helpful {
 
         /**
          * Creates a popup for the given content next to the cursor. Tries to
-         * keep the popup on screen.
+         * keep the popup on screen and shows a vertical scrollbar, if the
+         * screen is too small.
          * @param content
          * @param ms
          * @return popup
@@ -256,13 +257,25 @@ public class MapStatus extends JPanel implements Helpful {
                 xPos = p.x + ms.mousePos.x - 4 - dim.width;
             }
             int yPos = p.y + ms.mousePos.y + 16;
-            // Move the popup up if it would be cut off at its bottom
+            // Move the popup up if it would be cut off at its bottom but do not
+            // move it off screen on the top
             if(yPos + dim.height > scrn.height - 5) {
-                yPos = scrn.height - dim.height - 5;
+                yPos = Math.max(5, scrn.height - dim.height - 5);
             }
 
+            // Create a JScrollPane around the content, in case there's still
+            // not enough space
+            JScrollPane sp = new JScrollPane(content);
+            sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            sp.setBorder(BorderFactory.createRaisedBevelBorder());
+            // Implement max-size content-independent
+            Dimension prefsize = sp.getPreferredSize();
+            int w = Math.min(prefsize.width, scrn.width/2);
+            int h = Math.min(prefsize.height, scrn.height - 10);
+            sp.setPreferredSize(new Dimension(w, h));
+
             PopupFactory pf = PopupFactory.getSharedInstance();
-            return pf.getPopup(mv, content, xPos, yPos);
+            return pf.getPopup(mv, sp, xPos, yPos);
         }
 
         /**
@@ -393,18 +406,24 @@ public class MapStatus extends JPanel implements Helpful {
             final StringBuilder text = new StringBuilder();
             String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
             if (osm.getId() == 0 || osm.isModified()) {
-                name = "<i><b>"+ osm.getDisplayName(DefaultNameFormatter.getInstance())+"*</b></i>";
+                name = "<i><b>"+ name + "*</b></i>";
             }
             text.append(name);
+
             if (osm.getId() != 0) {
-                text.append("<br>id="+osm.getId());
+                text.append(" [id="+osm.getId()+"]");
             }
+
+            if(osm.user != null) {
+                text.append(" [" + tr("User:") + " " + osm.user.getName() + "]");
+            }
+
             for (Entry<String, String> e1 : osm.entrySet()) {
-                text.append("<br>"+e1.getKey()+"="+e1.getValue());
+                text.append("<br>" + e1.getKey() + "=" + e1.getValue());
             }
 
             final JLabel l = new JLabel(
-                    "<html>"+text.toString()+"</html>",
+                    "<html>" +text.toString() + "</html>",
                     ImageProvider.get(OsmPrimitiveType.from(osm)),
                     JLabel.HORIZONTAL
             ) {
