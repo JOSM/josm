@@ -41,6 +41,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.GBC;
@@ -308,6 +309,7 @@ public class MapStatus extends JPanel implements Helpful {
                     nextSelected.setSelected(true);
                 }
             }
+            DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
             mv.repaint();
         }
 
@@ -430,6 +432,7 @@ public class MapStatus extends JPanel implements Helpful {
                 @Override public void mouseClicked(MouseEvent e) {
                     // Let the user toggle the selection
                     osm.setSelected(!osm.isSelected());
+                    DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
                     mv.repaint();
                     l.validate();
                 }
