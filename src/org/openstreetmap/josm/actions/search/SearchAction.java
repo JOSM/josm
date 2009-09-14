@@ -82,15 +82,6 @@ public class SearchAction extends JosmAction{
         JCheckBox regexSearch   = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
 
         JPanel left = new JPanel(new GridBagLayout());
-
-        JTextField finput = null;
-        if(initialValues instanceof Filter){
-           JLabel fLabel = new JLabel(tr("Please enter a filter name."));
-           finput = new JTextField(((Filter)initialValues).filterName);
-           left.add(fLabel, GBC.eop());
-           left.add(finput, GBC.eop().fill(GBC.HORIZONTAL));
-        }
-
         left.add(label, GBC.eop());
         left.add(input, GBC.eop().fill(GBC.HORIZONTAL));
         left.add(replace, GBC.eol());
@@ -135,7 +126,7 @@ public class SearchAction extends JosmAction{
                 Main.parent,
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),
                 new String[] {
-                   initialValues instanceof Filter ? tr("Make filter") : tr("Start Search"),
+                   initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
                 tr("Cancel")}
         );
         dialog.setButtonIcons(new String[] {"dialogs/search.png", "cancel.png"});
@@ -150,7 +141,7 @@ public class SearchAction extends JosmAction{
                 : (add.isSelected() ? SearchAction.SearchMode.add
                 : (remove.isSelected() ? SearchAction.SearchMode.remove : SearchAction.SearchMode.in_selection));
         if(initialValues instanceof Filter){
-           return new Filter(input.getText(), mode, caseSensitive.isSelected(), regexSearch.isSelected(), finput.getText());
+           return new Filter(input.getText(), mode, caseSensitive.isSelected(), regexSearch.isSelected());
         } else {
            return new SearchSetting(input.getText(), mode, caseSensitive.isSelected(), regexSearch.isSelected());
         }

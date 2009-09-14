@@ -10,7 +10,6 @@ import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
  */
 public class Filter extends SearchSetting {
    private final String version = "1";
-   public String filterName = "";
    public Boolean filtered = false;
    public Boolean disabled = true;
    public Boolean inverted = false;
@@ -18,9 +17,8 @@ public class Filter extends SearchSetting {
    public Filter() {
        super("", SearchMode.add, false, false);
    }
-   public Filter(String text, SearchMode mode, boolean caseSensitive, boolean regexSearch, String filterName) {
+   public Filter(String text, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
        super(text, mode, caseSensitive, regexSearch);
-       this.filterName = filterName;
    }
 
    public Filter(String prefText){
@@ -35,7 +33,6 @@ public class Filter extends SearchSetting {
       if(prfs[2].equals("in_selection")) mode = SearchMode.in_selection;
       caseSensitive = Boolean.parseBoolean(prfs[3]);
       regexSearch = Boolean.parseBoolean(prfs[4]);
-      filterName = prfs[5];
       filtered = Boolean.parseBoolean(prfs[6]);
       disabled = Boolean.parseBoolean(prfs[7]);
       inverted = Boolean.parseBoolean(prfs[8]);
@@ -46,7 +43,7 @@ public class Filter extends SearchSetting {
    public String getPrefString(){
       return version + ";" + 
           text + ";" + mode + ";" + caseSensitive + ";" + regexSearch + ";" +
-          filterName + ";" + filtered + ";" + disabled + ";" + 
+          "legacy" + ";" + filtered + ";" + disabled + ";" + 
           inverted + ";" + applyForChildren;
    }
 }

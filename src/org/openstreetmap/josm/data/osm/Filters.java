@@ -133,7 +133,7 @@ public class Filters extends AbstractTableModel{
    }
 
    public String getColumnName(int column){
-      String[] names = { tr("F"), tr("D"), tr("Name"), tr("C"), tr("I"), tr("M") };
+      String[] names = { tr("F"), tr("D"), tr("Text"), tr("C"), tr("I"), tr("M") };
       return names[column];
    }
 
@@ -158,7 +158,7 @@ public class Filters extends AbstractTableModel{
                  savePref(row);
                  filter();
                  return;
-         case 2: f.filterName = (String)aValue;
+         case 2: f.text = (String)aValue;
                  savePref(row);
                  return;
          case 3: f.applyForChildren = (Boolean)aValue;
@@ -177,15 +177,15 @@ public class Filters extends AbstractTableModel{
       switch(column){
          case 0: return f.filtered;
          case 1: return f.disabled;
-         case 2: return f.filterName;
+         case 2: return f.text;
          case 3: return f.applyForChildren;
          case 4: return f.inverted;
          case 5:
                  switch(f.mode){
-                    case replace: return "∅";
-                    case add: return "∪";
-                    case remove: return "∖";
-                    case in_selection: return "∩";
+                    case replace: return tr("R");
+                    case add: return tr("A");
+                    case remove: return tr("D");
+                    case in_selection: return tr("F");
                  }
       }
       return null;
