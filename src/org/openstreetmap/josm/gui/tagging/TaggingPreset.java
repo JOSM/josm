@@ -562,8 +562,8 @@ public class TaggingPreset extends AbstractAction {
                     lastmenu = tp.group;
                 } else
                 {
-                    tp.setDisplayName();
                     tp.group = lastmenu;
+                    tp.setDisplayName();
                     lastmenu = tp;
                     all.add(tp);
                     Main.toolbar.register(tp);
