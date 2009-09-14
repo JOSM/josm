@@ -354,8 +354,8 @@ public class OsmApi extends OsmConnection {
             monitor.setCustomText(tr("Updating changeset {0}...", changeset.getId()));
             sendRequest(
                     "PUT",
-                    "changeset/" + this.changeset.getId(),
-                    toXml(this.changeset),
+                    "changeset/" + changeset.getId(),
+                    toXml(changeset),
                     monitor
             );
         } finally {

@@ -863,6 +863,10 @@ public class UploadDialog extends JDialog {
             }
         }
 
+        /**
+         * Refreshes the list of open changesets
+         * 
+         */
         class RefreshAction extends AbstractAction {
             public RefreshAction() {
                 //putValue(NAME, tr("Reload"));
@@ -940,13 +944,30 @@ public class UploadDialog extends JDialog {
             fireContentsChanged(this, 0, getSize());
         }
 
+        /**
+         * Updates the current list of open changesets with the changesets
+         * in <code>changesets</code>
+         * 
+         * @param changesets the collection of changesets. If null, removes
+         * all changesets from the current list of changesets
+         */
         public void addOrUpdate(Collection<Changeset> changesets) {
+            if (changesets == null){
+                this.changesets.clear();
+                setSelectedItem(null);
+            }
             for (Changeset cs: changesets) {
                 internalAddOrUpdate(cs);
             }
             fireContentsChanged(this, 0, getSize());
             if (getSelectedItem() == null && !this.changesets.isEmpty()) {
                 setSelectedItem(this.changesets.get(0));
+            } else if (getSelectedItem() != null) {
+                if (changesets.contains(getSelectedItem())) {
+                    setSelectedItem(getSelectedItem());
+                } else {
+                    setSelectedItem(this.changesets.get(0));
+                }
             } else {
                 setSelectedItem(null);
             }

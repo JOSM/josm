@@ -23,7 +23,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 /**
  * This is a task for downloading the open changesets of the current user
  * from the OSM server.
-
  *
  */
 public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
