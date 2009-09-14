@@ -24,6 +24,7 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 
 public class ExtendedDialog extends JDialog {
@@ -31,6 +32,8 @@ public class ExtendedDialog extends JDialog {
     public static final int DialogNotShown = -99;
     public static final int DialogClosedOtherwise = 0;
     private boolean toggleable = false;
+    private String rememberSizePref = "";
+    private WindowGeometry defaultWindowGeometry = null;
     private String togglePref = "";
     private String toggleCheckboxText = tr("Do not show again");
     private JCheckBox toggleCheckbox = null;
@@ -58,6 +61,7 @@ public class ExtendedDialog extends JDialog {
      *   <li><code>toggleEnable</code></li>
      *   <li><code>toggleDisable</code></li>
      *   <li><code>setToggleCheckboxText</code></li>
+     *   <li><code>setRememberWindowGeometry</code></li>
      * </ul>
      * 
      * When done, call <code>showDialog</code> to display it. You can receive
@@ -285,10 +289,39 @@ public class ExtendedDialog extends JDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
         if (visible) {
             repaint();
         }
+
+        // Ensure all required variables are available
+        if(!rememberSizePref.isEmpty() && defaultWindowGeometry != null) {
+            if(visible) {
+                new WindowGeometry(rememberSizePref,
+                        defaultWindowGeometry).apply(this);
+            } else {
+                new WindowGeometry(this).remember(rememberSizePref);
+            }
+        }
+        super.setVisible(visible);
+    }
+
+    /**
+     * Call this if you want the dialog to remember the size set by the user.
+     * Set the pref to <code>null</code> or to an empty string to disable again.
+     * By default, it's disabled.
+     * 
+     * Note: If you want to set the width of this dialog directly use the usual
+     * setSize, setPreferredSize, setMaxSize, setMinSize
+     * 
+     * @param pref  The preference to save the dimension to
+     * @param wg    The default window geometry that should be used if no
+     *              existing preference is found (only takes effect if
+     *              <code>pref</code> is not null or empty
+     * 
+     */
+    public void setRememberWindowGeometry(String pref, WindowGeometry wg) {
+        rememberSizePref = pref == null ? "" : pref;
+        defaultWindowGeometry = wg;
     }
 
     /**

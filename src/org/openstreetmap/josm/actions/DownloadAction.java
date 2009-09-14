@@ -45,22 +45,15 @@ public class DownloadAction extends JosmAction {
         downPanel.add(dialog, BorderLayout.CENTER);
 
         final String prefName = dialog.getClass().getName()+ ".geometry";
-        ExtendedDialog dialog = new ExtendedDialog(Main.parent, tr("Download"), new String[] {tr("OK"), tr("Cancel")}) {
-            @Override
-            public void setVisible(boolean visible) {
-                if (visible) {
-                    new WindowGeometry(
-                            prefName,
-                            WindowGeometry.centerInWindow(Main.parent, new Dimension(1000,600))
-                    ).apply(this);
-                } else {
-                    new WindowGeometry(this).remember(prefName);
-                }
-                super.setVisible(visible);
-            }
-        };
+        final WindowGeometry wg = WindowGeometry.centerInWindow(Main.parent,
+                new Dimension(1000,600));
+
+        ExtendedDialog dialog = new ExtendedDialog(Main.parent,
+                tr("Download"),
+                new String[] {tr("OK"), tr("Cancel")});
         dialog.setContent(downPanel, false /* don't use a scroll pane inside the dialog */);
         dialog.setButtonIcons(new String[] {"ok", "cancel"});
+        dialog.setRememberWindowGeometry(prefName, wg);
         return dialog;
     }
 
