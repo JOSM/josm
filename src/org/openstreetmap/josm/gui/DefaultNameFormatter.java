@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -159,15 +160,18 @@ public class DefaultNameFormatter implements NameFormatter {
 
             name += " (";
             String nameTag = null;
-            for (String n : getNamingtagsForRelations()) {
-                if (n.equals("name")) {
+            Set<String> namingTags = new HashSet<String>(getNamingtagsForRelations());
+            for (String n : relation.keySet()) {
+                // #3328: "note " and " note" are name tags too
+                if (namingTags.contains(n.trim())) {
                     if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
                         nameTag = relation.getLocalName();
                     } else {
                         nameTag = relation.getName();
                     }
-                } else {
-                    nameTag =  relation.get(n);
+                    if (nameTag == null) {
+                        nameTag = relation.get(n);
+                    }
                 }
                 if (nameTag != null) {
                     break;
