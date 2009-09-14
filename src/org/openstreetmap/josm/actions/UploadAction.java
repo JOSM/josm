@@ -7,7 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -32,6 +34,7 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmServerWriter;
+import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -292,6 +295,25 @@ public class UploadAction extends JosmAction{
     }
 
     /**
+     * Handles the case that a conflict was detected while uploading where we don't
+     * know what {@see OsmPrimitive} actually caused the conflict (for whatever reason)
+     *
+     */
+    protected void handleUploadConflictForClosedChangeset(long changsetId, Date d) {
+        String msg =  tr("<html>Uploading <strong>failed</strong> because you've been using<br>"
+                + "changeset {0} which was already closed at {1}.<br>"
+                + "Please upload again with a new or an existing open changeset.",
+                changsetId, new SimpleDateFormat().format(d)
+        );
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                msg,
+                tr("Changeset closed"),
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    /**
      * handles an upload conflict, i.e. an error indicated by a HTTP return code 409.
      *
      * @param e  the exception
@@ -302,10 +324,16 @@ public class UploadAction extends JosmAction{
         Matcher m = p.matcher(e.getErrorHeader());
         if (m.matches()) {
             handleUploadConflictForKnownConflict(OsmPrimitiveType.from(m.group(3)), Long.parseLong(m.group(4)), m.group(2),m.group(1));
-        } else {
-            logger.warning(tr("Warning: error header \"{0}\" did not match expected pattern \"{1}\"", e.getErrorHeader(),pattern));
-            handleUploadConflictForUnknownConflict();
+            return;
         }
+        pattern ="The changeset (\\d+) was closed at (.*)";
+        m = p.matcher(e.getErrorHeader());
+        if (m.matches()) {
+            handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.fromString(m.group(2)));
+            return;
+        }
+        logger.warning(tr("Warning: error header \"{0}\" did not match expected pattern \"{1}\"", e.getErrorHeader(),pattern));
+        handleUploadConflictForUnknownConflict();
     }
 
     /**
