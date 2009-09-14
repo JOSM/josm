@@ -3,19 +3,20 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Action that opens a connection to the osm server and downloads map data.
@@ -34,29 +35,42 @@ public class DownloadAction extends JosmAction {
                 Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
     }
 
-    public void actionPerformed(ActionEvent e) {
+    /**
+     * Creates the download dialog
+     * @return the downlaod dialog
+     */
+    protected ExtendedDialog createUploadDialog() {
         dialog = new DownloadDialog();
+        JPanel downPanel = new JPanel(new BorderLayout());
+        downPanel.add(dialog, BorderLayout.CENTER);
 
-        JPanel downPanel = new JPanel(new GridBagLayout());
-        downPanel.add(dialog, GBC.eol().fill(GBC.BOTH));
+        final String prefName = dialog.getClass().getName()+ ".geometry";
+        ExtendedDialog dialog = new ExtendedDialog(Main.parent, tr("Download"), new String[] {tr("OK"), tr("Cancel")}) {
+            @Override
+            public void setVisible(boolean visible) {
+                if (visible) {
+                    new WindowGeometry(
+                            prefName,
+                            WindowGeometry.centerInWindow(Main.parent, new Dimension(1000,600))
+                    ).apply(this);
+                } else {
+                    new WindowGeometry(this).remember(prefName);
+                }
+                super.setVisible(visible);
+            }
+        };
+        dialog.setContent(downPanel, false /* don't use a scroll pane inside the dialog */);
+        dialog.setButtonIcons(new String[] {"ok", "cancel"});
+        return dialog;
+    }
 
-        JOptionPane pane = new JOptionPane(downPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-        JDialog dlg = pane.createDialog(Main.parent, tr("Download"));
-        dlg.setResizable(true);
-        dialog.setOptionPane(pane);
-
-        if (dlg.getWidth() > 1000) {
-            dlg.setSize(1000, dlg.getHeight());
-        }
-        if (dlg.getHeight() > 600) {
-            dlg.setSize(dlg.getWidth(),600);
-        }
-
+    public void actionPerformed(ActionEvent e) {
+        ExtendedDialog dlg = createUploadDialog();
         boolean finish = false;
         while (!finish) {
-            dlg.setVisible(true);
+            dlg.showDialog();
             Main.pref.put("download.newlayer", dialog.newLayer.isSelected());
-            if (pane.getValue() instanceof Integer && (Integer)pane.getValue() == JOptionPane.OK_OPTION) {
+            if (dlg.getValue() == 1 /* OK */) {
                 Main.pref.put("download.tab", Integer.toString(dialog.getSelectedTab()));
                 for (DownloadTask task : dialog.downloadTasks) {
                     Main.pref.put("download."+task.getPreferencesSuffix(), task.getCheckBox().isSelected());
