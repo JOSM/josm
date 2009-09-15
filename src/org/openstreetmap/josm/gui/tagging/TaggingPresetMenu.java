@@ -19,9 +19,10 @@ import org.openstreetmap.josm.tools.PresetTextComparator;
 public class TaggingPresetMenu extends TaggingPreset {
     public JMenu menu = null; // set by TaggingPresetPreferences
     public void setDisplayName() {
-        String n = getName();
-        putValue(Action.NAME, n);
-        putValue(SHORT_DESCRIPTION, tr("Preset group ''{0}''", n));
+        putValue(Action.NAME, getName());
+        putValue(SHORT_DESCRIPTION, (group != null ?
+                tr("Preset group ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
+                    tr("Preset group ''{0}''", getLocaleName())));
         putValue("toolbar", "tagginggroup_" + getRawName());
     }
     public void setIcon(String iconName) {
