@@ -196,8 +196,8 @@ public class MapStatus extends JPanel implements Helpful {
 
                         final JPanel c = new JPanel(new GridBagLayout());
                         final JLabel lbl = new JLabel(
-                                "<html>"+tr("Middle click again, to cycle through.<br>"+
-                                "Hold CTRL to select something from this list.<hr>")+"</html>",
+                                "<html>"+tr("Middle click again to cycle through.<br>"+
+                                "Hold CTRL to select directly from this list with the mouse.<hr>")+"</html>",
                                 null,
                                 JLabel.HORIZONTAL
                         );
