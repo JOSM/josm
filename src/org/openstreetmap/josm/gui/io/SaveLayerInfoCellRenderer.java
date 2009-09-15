@@ -47,7 +47,7 @@ class SaveLayerInfoCellRenderer implements TableCellRenderer {
         if (info.getLayer().requiresUploadToServer()) {
             lblRenderer.setToolTipText(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", info.getName()));
         } else {
-            lblRenderer.setToolTipText(tr("Layer ''{0}'' has no modifications to be uploaded", info.getName()));
+            lblRenderer.setToolTipText(tr("Layer ''{0}'' has no modifications to be uploaded.", info.getName()));
         }
         return lblRenderer;
     }
@@ -58,9 +58,9 @@ class SaveLayerInfoCellRenderer implements TableCellRenderer {
         String text = info.getLayer().requiresSaveToFile() ? tr("Yes") : tr("No");
         lblRenderer.setText(text);
         if (info.getLayer().requiresSaveToFile()) {
-            lblRenderer.setToolTipText(tr("Layer ''{0}'' has modifications which should be saved to its assoicated file ''{1}''.", info.getName(), info.getFile().toString()));
+            lblRenderer.setToolTipText(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.", info.getName(), info.getFile().toString()));
         } else {
-            lblRenderer.setToolTipText(tr("Layer ''{0}'' has no modifications to be saved", info.getName()));
+            lblRenderer.setToolTipText(tr("Layer ''{0}'' has no modifications to be saved.", info.getName()));
         }
         return lblRenderer;
     }

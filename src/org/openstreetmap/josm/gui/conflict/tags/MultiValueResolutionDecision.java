@@ -133,7 +133,7 @@ public class MultiValueResolutionDecision {
      */
     public String getChosenValue() throws IllegalStateException {
         switch(type) {
-            case UNDECIDED: throw new IllegalStateException(tr("not yet decided"));
+            case UNDECIDED: throw new IllegalStateException(tr("Not decided yet"));
             case KEEP_ONE: return value;
             case KEEP_NONE: return null;
             case KEEP_ALL: return tags.getJoinedValues(getKey());
