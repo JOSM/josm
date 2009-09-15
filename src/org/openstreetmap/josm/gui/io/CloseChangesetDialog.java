@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -27,10 +28,17 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+/**
+ * This dialog lets the user select changesets from a list of changesets.
+ *
+ */
 public class CloseChangesetDialog extends JDialog {
 
+    /** the list */
     private JList lstOpenChangesets;
+    /** true if the user cancelled the dialog */
     private boolean canceled;
+    /** the list model */
     private DefaultListModel model;
 
     protected JPanel buildTopPanel() {
@@ -45,7 +53,7 @@ public class CloseChangesetDialog extends JDialog {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
         model = new DefaultListModel();
-        pnl.add(lstOpenChangesets = new JList(model), BorderLayout.CENTER);
+        pnl.add(new JScrollPane(lstOpenChangesets = new JList(model)), BorderLayout.CENTER);
         lstOpenChangesets.setCellRenderer(new ChangesetCellRenderer());
         return pnl;
     }
@@ -124,14 +132,28 @@ public class CloseChangesetDialog extends JDialog {
         }
     }
 
+    /**
+     * Replies true if this dialog was canceled
+     * @return true if this dialog was canceled
+     */
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * Sets whether this dialog is canceled
+     * 
+     * @param canceled true, if this dialog is canceld
+     */
     protected void setCanceled(boolean canceled) {
         this.canceled = canceled;
     }
 
+    /**
+     * Sets the collection of changesets to be displayed
+     * 
+     * @param changesets the collection of changesets. Assumes an empty collection if null
+     */
     public void setChangesets(Collection<Changeset> changesets) {
         if (changesets == null) {
             changesets = new ArrayList<Changeset>();
@@ -142,6 +164,12 @@ public class CloseChangesetDialog extends JDialog {
         }
     }
 
+    /**
+     * Replies a collection with the changesets the user selected.
+     * Never null, but may be empty.
+     * 
+     * @return a collection with the changesets the user selected.
+     */
     public Collection<Changeset> getSelectedChangesets() {
         Object [] sel = lstOpenChangesets.getSelectedValues();
         ArrayList<Changeset> ret = new ArrayList<Changeset>();
