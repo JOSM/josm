@@ -18,7 +18,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
@@ -45,9 +44,6 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  *
  */
 public class DownloadDialog extends JPanel {
-
-    // the JOptionPane that contains this dialog. required for the closeDialog() method.
-    private JOptionPane optionPane;
 
     public interface DownloadTask {
         /**
@@ -178,7 +174,7 @@ public class DownloadDialog extends JPanel {
         add(sizeCheck, GBC.eop().insets(0,5,5,10));
 
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
-        KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), "checkClipboardContents");
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), "checkClipboardContents");
 
         getActionMap().put("checkClipboardContents", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -230,7 +226,9 @@ public class DownloadDialog extends JPanel {
      */
     public void boundingBoxChanged(DownloadSelection eventSource) {
         for (DownloadSelection s : downloadSelections) {
-            if (s != eventSource) s.boundingBoxChanged(this);
+            if (s != eventSource) {
+                s.boundingBoxChanged(this);
+            }
         }
         updateSizeCheck();
     }
@@ -240,23 +238,5 @@ public class DownloadDialog extends JPanel {
      */
     public int getSelectedTab() {
         return tabpane.getSelectedIndex();
-    }
-
-    /**
-     * Closes the download dialog. This is intended to be called by one of
-     * the various download area selection "plugins".
-     *
-     * @param download true to download selected data, false to cancel download
-     */
-    public void closeDownloadDialog(boolean download) {
-        optionPane.setValue(download ? JOptionPane.OK_OPTION : JOptionPane.CANCEL_OPTION);
-    }
-
-    /**
-     * Has to be called after this dialog has been added to a JOptionPane.
-     * @param optionPane
-     */
-    public void setOptionPane(JOptionPane optionPane) {
-        this.optionPane = optionPane;
     }
 }

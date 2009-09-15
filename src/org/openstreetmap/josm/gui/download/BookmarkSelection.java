@@ -44,18 +44,6 @@ public class BookmarkSelection implements DownloadSelection {
         gui.tabpane.addTab(tr("Bookmarks"), dlg);
 
         bookmarks = new BookmarkList();
-
-        /* add a handler for "double click" mouse events */
-        MouseListener mouseListener = new MouseAdapter() {
-            @Override public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    //int index = bookmarks.locationToIndex(e.getPoint());
-                    gui.closeDownloadDialog(true);
-                }
-            }
-        };
-        bookmarks.addMouseListener(mouseListener);
-
         bookmarks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 Preferences.Bookmark b = (Preferences.Bookmark)bookmarks.getSelectedValue();

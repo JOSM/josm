@@ -80,16 +80,6 @@ public class BoundingBoxSelection implements DownloadSelection {
             public void removeUpdate(DocumentEvent e) { parseURL(gui); }
         }
 
-        KeyListener osmUrlKeyListener = new KeyListener() {
-            public void keyPressed(KeyEvent keyEvent) {}
-            public void keyReleased(KeyEvent keyEvent) {
-                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER && parseURL(gui))
-                    gui.closeDownloadDialog(true);
-            }
-            public void keyTyped(KeyEvent keyEvent) {}
-        };
-
-        osmUrl.addKeyListener(osmUrlKeyListener);
         osmUrl.getDocument().addDocumentListener(new osmUrlRefresher());
 
         // select content on receiving focus. this seems to be the default in the
@@ -98,9 +88,9 @@ public class BoundingBoxSelection implements DownloadSelection {
         osmUrl.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            osmUrl.selectAll();
-                        }
+                    public void run() {
+                        osmUrl.selectAll();
+                    }
                 });
             }
         });
@@ -122,7 +112,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         showUrl.setEditable(false);
         showUrl.setBackground(dlg.getBackground());
         showUrl.addFocusListener(new FocusAdapter(){
-           @Override
+            @Override
             public void focusGained(FocusEvent e) {
                 showUrl.selectAll();
             }
@@ -157,12 +147,13 @@ public class BoundingBoxSelection implements DownloadSelection {
         latlon[1].setText(Double.toString(gui.minlon));
         latlon[2].setText(Double.toString(gui.maxlat));
         latlon[3].setText(Double.toString(gui.maxlon));
-        for (JTextField f : latlon)
+        for (JTextField f : latlon) {
             f.setCaretPosition(0);
+        }
     }
 
     private void updateUrl(DownloadDialog gui) {
         showUrl.setText(OsmUrlToBounds.getURL(new Bounds(
-        new LatLon(gui.minlat, gui.minlon), new LatLon(gui.maxlat, gui.maxlon))));
+                new LatLon(gui.minlat, gui.minlon), new LatLon(gui.maxlat, gui.maxlon))));
     }
 }
