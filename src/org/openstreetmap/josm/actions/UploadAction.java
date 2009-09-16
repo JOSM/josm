@@ -327,6 +327,7 @@ public class UploadAction extends JosmAction{
             return;
         }
         pattern ="The changeset (\\d+) was closed at (.*)";
+        p = Pattern.compile(pattern);
         m = p.matcher(e.getErrorHeader());
         if (m.matches()) {
             handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.fromString(m.group(2)));
