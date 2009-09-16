@@ -285,7 +285,8 @@ public class GpxReader {
                     currentData.tracks.add(currentTrack);
                 } else if (qName.equals("name") || qName.equals("cmt")
                         || qName.equals("desc") || qName.equals("src")
-                        || qName.equals("type") || qName.equals("number")) {
+                        || qName.equals("type") || qName.equals("number")
+			|| qName.equals("url")) {
                     currentTrack.attr.put(qName, accumulator.toString());
                 }
                 break;

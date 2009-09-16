@@ -118,19 +118,9 @@ public class GpxData extends WithAttributes {
         double result = 0.0; // in meters
         WayPoint last = null;
 
-        for (GpxTrack trk : tracks) {
-            for (Collection<WayPoint> trkseg : trk.trackSegs) {
-                for (WayPoint tpt : trkseg) {
-                    if(last != null){
-                        Double d = last.getCoor().greatCircleDistance(tpt.getCoor());
-                        if(!d.isNaN() && !d.isInfinite())
-                          result += d;
-                    }
-                    last = tpt;
-                }
-                last = null; // restart for each track segment
-            }
-        }
+        for (GpxTrack trk : tracks)
+	    result += trk.length();
+
         return result;
     }
 }

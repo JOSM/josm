@@ -336,10 +336,6 @@ public class GpxLayer extends Layer {
     public String getToolTipText() {
         StringBuilder info = new StringBuilder().append("<html>");
 
-        info.append(trn("{0} track, ", "{0} tracks, ", data.tracks.size(), data.tracks.size())).append(
-                trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size())).append(
-                        trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
-
         if (data.attr.containsKey("name")) {
             info.append(tr("Name: {0}", data.attr.get(GpxData.META_NAME))).append("<br>");
         }
@@ -349,15 +345,28 @@ public class GpxLayer extends Layer {
         }
 
         if (data.tracks.size() > 0) {
-            boolean first = true;
-            WayPoint earliest = null, latest = null;
+	    info.append("<table><thead align=\"center\"><tr><td colspan=\"5\">"
+		+ trn("{0} track", "{0} tracks", data.tracks.size(), data.tracks.size())
+		+ "</td></tr><tr><td>" + tr("Name") + "</td><td>"
+		+ tr("Description") + "</td><td>" + tr("Timespan")
+		+ "</td><td>" + tr("Length") + "</td><td>" + tr("URL")
+		+ "</td></tr></thead>");
 
             for (GpxTrack trk : data.tracks) {
+		WayPoint earliest = null, latest = null;
+
+		info.append("<tr><td>");
+		if (trk.attr.containsKey("name"))
+		    info.append(trk.attr.get("name"));
+		info.append("</td><td>");
+		if (trk.attr.containsKey("desc"))
+		    info.append(" ").append(trk.attr.get("desc"));
+		info.append("</td><td>");
+
                 for (Collection<WayPoint> seg : trk.trackSegs) {
                     for (WayPoint pnt : seg) {
-                        if (first) {
+                        if (latest == null) {
                             latest = earliest = pnt;
-                            first = false;
                         } else {
                             if (pnt.compareTo(earliest) < 0) {
                                 earliest = pnt;
@@ -367,18 +376,32 @@ public class GpxLayer extends Layer {
                         }
                     }
                 }
-            }
-            if (earliest != null && latest != null) {
-                DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-                info.append(tr("Timespan: ") + df.format(new Date((long) (earliest.time * 1000))) + " - "
+
+		if (earliest != null && latest != null) {
+		    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+		    info.append(df.format(new Date((long) (earliest.time * 1000))) + " - "
                         + df.format(new Date((long) (latest.time * 1000))));
-                int diff = (int) (latest.time - earliest.time);
-                info.append(" (" + (diff / 3600) + ":" + ((diff % 3600) / 60) + ")");
-                info.append("<br>");
+		    int diff = (int) (latest.time - earliest.time);
+		    info.append(" (" + (diff / 3600) + ":" + ((diff % 3600) / 60) + ")");
+		}
+
+		info.append("</td><td>");
+		info.append(new DecimalFormat("#0.00").format(trk.length() / 1000) + "km");
+		info.append("</td><td>");
+		if (trk.attr.containsKey("url"))
+		    info.append(trk.attr.get("url"));
+		info.append("</td></tr>");
             }
+
+	    info.append("</table><br><br>");
+
         }
+
         info.append(tr("Length: ") + new DecimalFormat("#0.00").format(data.length() / 1000) + "km");
         info.append("<br>");
+
+	info.append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size())).append(
+                        trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
 
         return info.append("</html>").toString();
     }
