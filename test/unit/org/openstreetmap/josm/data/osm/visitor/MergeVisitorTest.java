@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1021,5 +1022,12 @@ public class MergeVisitorTest {
         assertEquals(2, w.getNodesCount());
         assertTrue(!w.getNode(0).incomplete);
         assertTrue(!w.getNode(1).incomplete);
+    }
+
+
+    @Test
+    public void test1() throws Exception {
+        System.out.println(URLEncoder.encode("Ævar Arnfjörð Bjarmason", "UTF-8").replaceAll("\\+", "%20"));
+
     }
 }
