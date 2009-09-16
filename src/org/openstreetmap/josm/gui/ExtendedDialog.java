@@ -134,7 +134,7 @@ public class ExtendedDialog extends JDialog {
      * @param message The text that should be shown to the user
      */
     public void setContent(String message) {
-        setContent(string2label(message), true);
+        setContent(string2label(message), false);
     }
 
     /**
@@ -387,9 +387,9 @@ public class ExtendedDialog extends JDialog {
      */
     private static JMultilineLabel string2label(String msg) {
         JMultilineLabel lbl = new JMultilineLabel(msg);
-        // Make it not wider than 2/3 of the screen
+        // Make it not wider than 1/2 of the screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        lbl.setMaxWidth(Math.round(screenSize.width*2/3));
+        lbl.setMaxWidth(Math.round(screenSize.width*1/2));
         return lbl;
     }
 }

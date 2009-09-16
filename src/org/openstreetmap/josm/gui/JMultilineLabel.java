@@ -1,120 +1,85 @@
 // License: GPL. For details, see LICENSE file.
 
-// This class was taken from
-// http://forum.java.sun.com/thread.jspa?threadID=459705&messageID=2104021
-// - Removed hardcoded margin
-// -  Added constructor
-
 package org.openstreetmap.josm.gui;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
+import java.awt.Rectangle;
 
-import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.View;
 
-public class JMultilineLabel extends JComponent {
-    private String text;
+/**
+ * Creates a normal label that will wrap its contents if there less width than
+ * required to print it in one line. Additionally the maximum width of the text
+ * can be set using <code>setMaxWidth</code>.
+ * 
+ * Note that this won't work if JMultilineLabel is put into a JScrollBox or
+ * similar as the bounds will never change. Instead scrollbars will be displayed.
+ */
+public class JMultilineLabel extends JLabel {
     private int maxWidth = Integer.MAX_VALUE;
-    private boolean justify;
-    private final FontRenderContext frc = new FontRenderContext(null, false, false);
+    private Dimension superPreferred = null;
+    private Rectangle oldbounds = null;
+    private Dimension oldPreferred = null;
 
-    public JMultilineLabel(String description) {
+    /**
+     * Constructs a normal label but adds HTML tags if not already done so.
+     * Supports both newline characters (<code>\n</code>) as well as the HTML
+     * <code>&lt;br&gt;</code> to insert new lines.
+     * 
+     * Use setMaxWidth to limit the width of the label.
+     * @param text
+     */
+    public JMultilineLabel(String text)
+    {
         super();
-        setText(description);
-    }
-
-    private void morph() {
-        revalidate();
-        repaint();
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        String old = this.text;
-        this.text = text;
-        firePropertyChange("text", old, this.text);
-        if ((old == null) ? text!=null : !old.equals(text))
-            morph();
-    }
-
-    public int getMaxWidth() {
-        return maxWidth;
-    }
-
-    public void setMaxWidth(int maxWidth) {
-        if (maxWidth <= 0)
-            throw new IllegalArgumentException();
-        int old = this.maxWidth;
-        this.maxWidth = maxWidth;
-        firePropertyChange("maxWidth", old, this.maxWidth);
-        if (old !=  this.maxWidth)
-            morph();
-    }
-
-    public boolean isJustified() {
-        return justify;
-    }
-
-    public void setJustified(boolean justify) {
-        boolean old = this.justify;
-        this.justify = justify;
-        firePropertyChange("justified", old, this.justify);
-        if (old != this.justify)
-            repaint();
-    }
-
-    public Dimension getPreferredSize() {
-        return paintOrGetSize(null, getMaxWidth());
-    }
-
-    public Dimension getMinimumSize() {
-        return getPreferredSize();
-    }
-
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        paintOrGetSize((Graphics2D)g, getWidth());
-    }
-
-    private Dimension paintOrGetSize(Graphics2D g, int width) {
-        Insets insets = getInsets();
-        width -= insets.left + insets.right;
-        float w = insets.left + insets.right;
-        float x = insets.left, y=insets.top;
-
-        if (width > 0 && text != null && text.length() > 0) {
-            String[] lines = getText().split("\n");
-            for(String line : lines) {
-                // Insert a space so new lines get rendered
-                if(line.length() == 0) line = " ";
-                AttributedString as = new AttributedString(line);
-                as.addAttribute(TextAttribute.FONT, getFont());
-                AttributedCharacterIterator aci = as.getIterator();
-                LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc);
-                float max = 0;
-                while (lbm.getPosition() < aci.getEndIndex()) {
-                    TextLayout textLayout = lbm.nextLayout(width);
-                    if (g != null && isJustified() && textLayout.getVisibleAdvance() > 0.80 * width)
-                        textLayout = textLayout.getJustifiedLayout(width);
-                    if (g != null)
-                        textLayout.draw(g, x, y + textLayout.getAscent());
-                    y += textLayout.getDescent() + textLayout.getLeading() + textLayout.getAscent();
-                    max = Math.max(max, textLayout.getVisibleAdvance());
-                }
-                w = Math.max(max, w);
-            }
+        text = text.trim().replaceAll("\n", "<br>");
+        if(!text.startsWith("<html>")) {
+            text = "<html>" + text + "</html>";
         }
-        return new Dimension((int)Math.ceil(w), (int)Math.ceil(y) + insets.bottom);
+        super.setText(text);
+    }
+
+    /**
+     * Set the maximum width. Use this method instead of setMaximumSize because
+     * this saves a little bit of overhead and is actually taken into account.
+     * 
+     * @param width
+     */
+    public void setMaxWidth(int width) {
+        this.maxWidth = width;
+    }
+
+    /**
+     * Tries to determine a suitable height for the given contents and return
+     * that dimension.
+     */
+    @Override
+    public Dimension getPreferredSize()
+    {
+        // Without this check it will result in an infinite loop calling
+        // getPreferredSize. Remember the old bounds and only recalculate if
+        // the size actually changed.
+        if(this.getBounds().equals(oldbounds) && oldPreferred != null)
+            return oldPreferred;
+        oldbounds = this.getBounds();
+
+        this.superPreferred = super.getPreferredSize();
+        // Make it not larger than required
+        int width = Math.min(superPreferred.width, maxWidth);
+
+        // Calculate suitable width and height
+        final View v = (View) super.getClientProperty(BasicHTML.propertyKey);
+
+        if(v == null)
+            return superPreferred;
+
+        v.setSize(width, 0);
+        int w = (int) Math.ceil(v.getPreferredSpan(View.X_AXIS));
+        int h = (int) Math.ceil(v.getPreferredSpan(View.Y_AXIS));
+
+        oldPreferred = new Dimension(w, h);
+        return oldPreferred;
     }
 }
