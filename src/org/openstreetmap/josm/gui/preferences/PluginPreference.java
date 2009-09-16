@@ -104,6 +104,7 @@ public class PluginPreference implements PreferenceSetting {
         plugin.add(configureSites, GBC.std());
 
         selection.passTxtFilter(txtFilter);
+        selection.loadPlugins();
         selection.drawPanel(pluginPanel);
     }
 

@@ -70,6 +70,7 @@ public class PluginSelection {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+        loadPlugins();
         drawPanel(pluginPanel);
     }
 
@@ -77,6 +78,7 @@ public class PluginSelection {
         // refresh description
         int num = PluginDownloader.downloadDescription();
         Boolean done = false;
+        loadPlugins();
         drawPanel(pluginPanel);
 
         Set<PluginInformation> toUpdate = new HashSet<PluginInformation>();
@@ -119,6 +121,7 @@ public class PluginSelection {
         if (done && num >= 1) {
             Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
         }
+        loadPlugins();
         drawPanel(pluginPanel);
     }
 
@@ -169,7 +172,6 @@ public class PluginSelection {
 
     /* return true when plugin list changed */
     public void drawPanel(JPanel pluginPanel) {
-        loadPlugins();
         Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
 
         if (pluginMap == null) {
@@ -298,7 +300,7 @@ public class PluginSelection {
         return canHas;
     }
 
-    private void loadPlugins() {
+    public void loadPlugins() {
         availablePlugins = new TreeMap<String, PluginInformation>(new Comparator<String>(){
             public int compare(String o1, String o2) {
                 return o1.compareToIgnoreCase(o2);
