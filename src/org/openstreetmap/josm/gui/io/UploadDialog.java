@@ -327,11 +327,11 @@ public class UploadDialog extends JDialog {
 
     protected String getUploadComment() {
         switch(southTabbedPane.getSelectedIndex()) {
-            case 0:
-                pnlChangesetSelection.getUploadComment();
-            case 1:
-                TagModel tm = tagEditorPanel.getModel().get("comment");
-                return tm == null? "" : tm.getValue();
+        case 0:
+            return pnlChangesetSelection.getUploadComment();
+        case 1:
+            TagModel tm = tagEditorPanel.getModel().get("comment");
+            return tm == null? "" : tm.getValue();
         }
         return "";
     }
