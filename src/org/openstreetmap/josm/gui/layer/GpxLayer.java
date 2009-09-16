@@ -80,6 +80,11 @@ public class GpxLayer extends Layer {
     private int computeCacheColorTracksTune;
     private boolean isLocalFile;
 
+    private class Markers {
+        public boolean timedMarkersOmitted = false;
+        public boolean untimedMarkersOmitted = false;
+    }
+
     public GpxLayer(GpxData d) {
         super((String) d.attr.get("name"));
         data = d;
@@ -260,8 +265,10 @@ public class GpxLayer extends Layer {
                     if (sel != null) {
                         double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
                         - AudioUtil.getCalibratedDuration(sel[0]);
+
+                        Markers m = new Markers();
                         for (int i = 0; i < sel.length; i++) {
-                            importAudio(sel[i], ml, firstStartTime);
+                            importAudio(sel[i], ml, firstStartTime, m);
                         }
                     }
                     Main.main.addLayer(ml);
@@ -948,8 +955,9 @@ public class GpxLayer extends Layer {
      * timestamp on the wav file (e) (in future) voice recognised markers in the sound recording (f)
      * a single marker at the beginning of the track
      * @param wavFile : the file to be associated with the markers in the new marker layer
+     * @param markers : keeps track of warning messages to avoid repeated warnings
      */
-    private void importAudio(File wavFile, MarkerLayer ml, double firstStartTime) {
+    private void importAudio(File wavFile, MarkerLayer ml, double firstStartTime, Markers markers) {
         String uri = "file:".concat(wavFile.getAbsolutePath());
         Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
         boolean timedMarkersOmitted = false;
@@ -1150,17 +1158,19 @@ public class GpxLayer extends Layer {
             ml.data.add(am);
         }
 
-        if (timedMarkersOmitted) {
+        if (timedMarkersOmitted && !markers.timedMarkersOmitted) {
             JOptionPane
             .showMessageDialog(
                     Main.parent,
                     tr("Some waypoints with timestamps from before the start of the track or after the end were omitted or moved to the start."));
+            markers.timedMarkersOmitted = timedMarkersOmitted;
         }
-        if (untimedMarkersOmitted) {
+        if (untimedMarkersOmitted && !markers.untimedMarkersOmitted) {
             JOptionPane
             .showMessageDialog(
                     Main.parent,
                     tr("Some waypoints which were too far from the track to sensibly estimate their time were omitted."));
+            markers.untimedMarkersOmitted = untimedMarkersOmitted;
         }
     }
 
