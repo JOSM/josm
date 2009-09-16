@@ -16,10 +16,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginDownloader;
@@ -39,14 +42,43 @@ public class PluginPreference implements PreferenceSetting {
     private PreferenceDialog gui;
     private JScrollPane pluginPane;
     private PluginSelection selection = new PluginSelection();
+    private JTextField txtFilter;
 
     public void addGui(final PreferenceDialog gui) {
         this.gui = gui;
         plugin = gui.createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."), false);
+
+        txtFilter = new JTextField();
+        JLabel lbFilter = new JLabel(tr("Search: "));
+        lbFilter.setLabelFor(txtFilter);
+        plugin.add(lbFilter);
+        plugin.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));
+        txtFilter.getDocument().addDocumentListener(new DocumentListener(){
+            public void changedUpdate(DocumentEvent e) {
+                action();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                action();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                action();
+            }
+
+            private void action() {
+                selection.drawPanel(pluginPanel);
+            }
+        });
+        plugin.add(GBC.glue(0,10), GBC.eol());
+
+        /* main plugin area */
         pluginPane = new JScrollPane(pluginPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         pluginPane.setBorder(null);
         plugin.add(pluginPane, GBC.eol().fill(GBC.BOTH));
         plugin.add(GBC.glue(0,10), GBC.eol());
+
+        /* buttons at the bottom */
         JButton morePlugins = new JButton(tr("Download List"));
         morePlugins.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -71,6 +103,7 @@ public class PluginPreference implements PreferenceSetting {
         });
         plugin.add(configureSites, GBC.std());
 
+        selection.passTxtFilter(txtFilter);
         selection.drawPanel(pluginPanel);
     }
 

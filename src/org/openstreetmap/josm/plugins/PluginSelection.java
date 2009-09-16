@@ -30,6 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -44,6 +45,13 @@ public class PluginSelection {
     private Map<String, Boolean> pluginMap;
     private Map<String, PluginInformation> availablePlugins;
     private Map<String, PluginInformation> localPlugins;
+
+    private JTextField txtFilter = null;
+
+    /* Get a copy of PluginPreference's txtField so we can use it for searching */
+    public void passTxtFilter(JTextField filter) {
+        txtFilter = filter;
+    }
 
     public void updateDescription(JPanel pluginPanel) {
         int count = PluginDownloader.downloadDescription();
@@ -212,6 +220,17 @@ public class PluginSelection {
                 localversion = " (" + localversion + ")";
             }
 
+            /* If this plugin doesn't match our search parameters we don't want to display it */
+            if (txtFilter.getText() != null) {
+                boolean matches = filterNameAndDescription(txtFilter.getText(),plugin.name,
+                                                           plugin.getLinkDescription(),
+                                                           remoteversion, localversion);
+                if (!matches) {
+                    /* This is not the plugin you're looking for */
+                    continue;
+                }
+            }
+
             final JCheckBox pluginCheck = new JCheckBox(
                     tr("{0}: Version {1}{2}", plugin.name, remoteversion, localversion),
                     pluginMap.get(plugin.name));
@@ -252,6 +271,31 @@ public class PluginSelection {
             });
         }
         pluginPanel.updateUI();
+    }
+
+    private static boolean filterNameAndDescription(String filter, final String name, final String description,
+                                                    final String remoteversion, final String localversion) {
+        final String input[] = filter.split("\\s+");
+        /* We're doing case-insensitive matching */
+        final String name_lc = name.toLowerCase();
+        final String description_lc = description.toLowerCase();
+        final String remoteversion_lc = remoteversion.toLowerCase();
+        final String localversion_lc = localversion.toLowerCase();
+
+        boolean canHas = true;
+
+        /* Make 'foo bar' search for 'bar' or 'foo' in both name and description */
+        for (String bit : input) {
+            final String lc_bit = bit.toLowerCase();
+            if (!name_lc.contains(lc_bit) &&
+                !description_lc.contains(lc_bit) &&
+                !remoteversion_lc.contains(lc_bit) && 
+                !localversion_lc.contains(lc_bit)) {
+                canHas = false;
+            }
+        }
+
+        return canHas;
     }
 
     private void loadPlugins() {
