@@ -5,14 +5,19 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.event.TableModelListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.JPopupMenu;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.JScrollPane;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -37,7 +42,7 @@ import org.openstreetmap.josm.actions.search.SearchAction;
  *
  * @author Petr_Dlouhý
  */
-public class FilterDialog extends ToggleDialog implements DataChangeListener, LayerChangeListener {
+public class FilterDialog extends ToggleDialog implements DataChangeListener, LayerChangeListener, TableModelListener {
     private JTable userTable;
     private Filters filters = new Filters();
     private SideButton addButton;
@@ -120,11 +125,11 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, La
     }
 
     protected String[] columnToolTips = {
-        tr("Filter elements"),
-        tr("Disable elements"),
+        tr("Enable filter"),
+        tr("Hide elements"),
+        null,
         tr("Apply also for children"),
         tr("Inverse filter"),
-        null,
         tr("Filter mode")
     };
 
@@ -144,7 +149,9 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, La
                };
            }
         };   
-  
+
+        filters.addTableModelListener(this);
+
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         userTable.getColumnModel().getColumn(0).setMaxWidth(1);
@@ -158,6 +165,11 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, La
         userTable.getColumnModel().getColumn(3).setResizable(false);
         userTable.getColumnModel().getColumn(4).setResizable(false);
         userTable.getColumnModel().getColumn(5).setResizable(false);
+
+        userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
+        userTable.setDefaultRenderer(String.class, new StringRenderer());
+
+        tableChanged(null);
 
         pnl.add(new JScrollPane(userTable), BorderLayout.CENTER);
 
@@ -185,5 +197,28 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, La
 
    public void dataChanged(OsmDataLayer l){
       filters.filter();
+   }
+
+   class StringRenderer extends DefaultTableCellRenderer {
+      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+         Filters model = (Filters)table.getModel();
+         Component cell = (Component)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+         cell.setEnabled(model.isCellEnabled(row, column));
+         return cell;
+      }
+   }
+
+   class BooleanRenderer extends JCheckBox implements TableCellRenderer {
+      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+         Filters model = (Filters)table.getModel();
+         setSelected((Boolean)value);
+         setEnabled(model.isCellEnabled(row, column));
+         setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+         return this;
+      }
+   }
+
+   public void tableChanged(TableModelEvent e){
+      setTitle("Filter Hidden:" + filters.hiddenCount + " Disabled:" + filters.disabledCount);
    }
 }

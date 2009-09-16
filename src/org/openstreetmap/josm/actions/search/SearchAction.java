@@ -140,11 +140,11 @@ public class SearchAction extends JosmAction{
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
                 : (add.isSelected() ? SearchAction.SearchMode.add
                 : (remove.isSelected() ? SearchAction.SearchMode.remove : SearchAction.SearchMode.in_selection));
-        if(initialValues instanceof Filter){
-           return new Filter(input.getText(), mode, caseSensitive.isSelected(), regexSearch.isSelected());
-        } else {
-           return new SearchSetting(input.getText(), mode, caseSensitive.isSelected(), regexSearch.isSelected());
-        }
+        initialValues.text = input.getText();
+        initialValues.mode = mode;
+        initialValues.caseSensitive = caseSensitive.isSelected();
+        initialValues.regexSearch = regexSearch.isSelected();
+        return initialValues;
     }
 
     /**
@@ -178,10 +178,10 @@ public class SearchAction extends JosmAction{
         try {
             String searchText = s.text;
             if(s instanceof Filter){
-               searchText = ((Filter)s).inverted ? "-" : "";
-               searchText = searchText + "(" + ((Filter)s).text + ")" + (((Filter)s).applyForChildren ? ("| child (" + ((Filter)s).text + ")"): "");
+               searchText = "(" + s.text + ")" + (((Filter)s).applyForChildren ? ("| child (" + s.text + ")"): "");
+               searchText = (((Filter)s).inverted ? "-" : "") + "(" +  searchText + ")";
             }
-            /*System.out.println(searchText);  */
+            System.out.println(searchText);
             SearchCompiler.Match matcher = SearchCompiler.compile(searchText, s.caseSensitive, s.regexSearch);
             foundMatches = 0;
             for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives()) {

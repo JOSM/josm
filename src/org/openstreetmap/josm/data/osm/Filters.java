@@ -20,6 +20,8 @@ import org.openstreetmap.josm.actions.search.SearchAction;
  */
 public class Filters extends AbstractTableModel{
 
+   public int disabledCount, hiddenCount;
+
    public Filters(){
       loadPrefs();
    }
@@ -28,24 +30,27 @@ public class Filters extends AbstractTableModel{
    public void filter(){
       Collection<OsmPrimitive> seld = new LinkedList<OsmPrimitive> ();
       Collection<OsmPrimitive> self = new LinkedList<OsmPrimitive> ();
+      if(Main.main.getCurrentDataSet() == null)return;
       Main.main.getCurrentDataSet().setFiltered();
       Main.main.getCurrentDataSet().setDisabled();
       for (Filter flt : filters){
-            if(flt.filtered){
-               SearchAction.getSelection(flt, self, new Function(){
-                  public Boolean isSomething(OsmPrimitive o){
-                     return o.isFiltered();
-                  }
-               });
-            } 
-            if(flt.disabled) {
+            if(flt.enable){
                SearchAction.getSelection(flt, seld, new Function(){
                   public Boolean isSomething(OsmPrimitive o){
                      return o.isDisabled();
                   }
                });
+               if(flt.hide) {
+                  SearchAction.getSelection(flt, self, new Function(){
+                     public Boolean isSomething(OsmPrimitive o){
+                        return o.isFiltered();
+                     }
+                  });
+               }
             }
       }
+      disabledCount = seld.size() - self.size();
+      hiddenCount = self.size();
       Main.main.getCurrentDataSet().setFiltered(self);
       Main.main.getCurrentDataSet().setDisabled(seld);
       Main.map.mapView.repaint();
@@ -133,7 +138,7 @@ public class Filters extends AbstractTableModel{
    }
 
    public String getColumnName(int column){
-      String[] names = { tr("F"), tr("D"), tr("Text"), tr("C"), tr("I"), tr("M") };
+      String[] names = { tr("E"), tr("H"), tr("Text"), tr("C"), tr("I"), tr("M") };
       return names[column];
    }
 
@@ -142,7 +147,13 @@ public class Filters extends AbstractTableModel{
       return classes[column];
    }
 
+   public boolean isCellEnabled(int row, int column){
+      if(!filters.get(row).enable && column!=0) return false;
+      return true;
+   }
+
    public boolean isCellEditable(int row, int column){
+      if(!filters.get(row).enable && column!=0) return false;
       if(column < 5)return true;
       return false;
    }
@@ -150,33 +161,35 @@ public class Filters extends AbstractTableModel{
    public void setValueAt(Object aValue, int row, int column){
       Filter f = filters.get(row);
       switch(column){
-         case 0: f.filtered = (Boolean)aValue;
+         case 0: f.enable = (Boolean)aValue;
                  savePref(row);
                  filter();
-                 return;
-         case 1: f.disabled = (Boolean)aValue;
+                 fireTableRowsUpdated(row, row);
+                 break;
+         case 1: f.hide = (Boolean)aValue;
                  savePref(row);
                  filter();
-                 return;
+                 break;
          case 2: f.text = (String)aValue;
                  savePref(row);
-                 return;
+                 break;
          case 3: f.applyForChildren = (Boolean)aValue;
                  savePref(row);
                  filter();
-                 return;
+                 break;
          case 4: f.inverted = (Boolean)aValue;
                  savePref(row);
                  filter();
-                 return;
+                 break;
       }
+      if(column!=0)fireTableCellUpdated(row, column);
    }
 
    public Object getValueAt(int row, int column){
       Filter f = filters.get(row);
       switch(column){
-         case 0: return f.filtered;
-         case 1: return f.disabled;
+         case 0: return f.enable;
+         case 1: return f.hide;
          case 2: return f.text;
          case 3: return f.applyForChildren;
          case 4: return f.inverted;
