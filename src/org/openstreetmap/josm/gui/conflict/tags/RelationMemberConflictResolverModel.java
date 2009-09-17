@@ -92,11 +92,11 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
         RelationMemberConflictDecision d = decisions.get(row);
         switch(column) {
-        case 0: /* relation */ return d.getRelation();
-        case 1: /* pos */ return Integer.toString(d.getPos() + 1); // position in "user space" starting at 1
-        case 2: /* role */ return d.getRole();
-        case 3: /* original */ return d.getOriginalPrimitive();
-        case 4: /* decision */ return d.getDecision();
+            case 0: /* relation */ return d.getRelation();
+            case 1: /* pos */ return Integer.toString(d.getPos() + 1); // position in "user space" starting at 1
+            case 2: /* role */ return d.getRole();
+            case 3: /* original */ return d.getOriginalPrimitive();
+            case 4: /* decision */ return d.getDecision();
         }
         return null;
     }
@@ -105,13 +105,13 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public void setValueAt(Object value, int row, int column) {
         RelationMemberConflictDecision d = decisions.get(row);
         switch(column) {
-        case 2: /* role */
-            d.setRole((String)value);
-            break;
-        case 4: /* decision */
-            d.decide((RelationMemberConflictDecisionType)value);
-            refresh();
-            break;
+            case 2: /* role */
+                d.setRole((String)value);
+                break;
+            case 4: /* decision */
+                d.decide((RelationMemberConflictDecisionType)value);
+                refresh();
+                break;
         }
         fireTableDataChanged();
     }
@@ -159,12 +159,12 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      */
     public void populate(Collection<RelationToChildReference> references) {
         references = references == null ? new LinkedList<RelationToChildReference>() : references;
+        decisions.clear();
         if (references.isEmpty()) {
             this.relations = new HashSet<Relation>(references.size());
-            return;
+        } else {
+            this.relations = new HashSet<Relation>(references.size());
         }
-        decisions.clear();
-        this.relations = new HashSet<Relation>(references.size());
         for (RelationToChildReference reference: references) {
             decisions.add(new RelationMemberConflictDecision(reference.getParent(), reference.getPosition()));
             relations.add(reference.getParent());
@@ -233,18 +233,18 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 modifiedRelation.addMember(rm);
             } else {
                 switch(decision.getDecision()) {
-                case REPLACE:
-                    rmNew = new RelationMember(decision.getRole(),newPrimitive);
-                    modifiedRelation.addMember(rmNew);
-                    isChanged |= ! rm.equals(rmNew);
-                    break;
-                case REMOVE:
-                    isChanged = true;
-                    // do nothing
-                    break;
-                case UNDECIDED:
-                    // FIXME: this is an error
-                    break;
+                    case REPLACE:
+                        rmNew = new RelationMember(decision.getRole(),newPrimitive);
+                        modifiedRelation.addMember(rmNew);
+                        isChanged |= ! rm.equals(rmNew);
+                        break;
+                    case REMOVE:
+                        isChanged = true;
+                        // do nothing
+                        break;
+                    case UNDECIDED:
+                        // FIXME: this is an error
+                        break;
                 }
             }
         }
@@ -278,14 +278,14 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 continue;
             }
             switch(decision.getDecision()) {
-            case REMOVE: return true;
-            case REPLACE:
-                if (!relation.getMember(i).getRole().equals(decision.getRole()))
-                    return true;
-                if (relation.getMember(i).getMember() != newPrimitive)
-                    return true;
-            case UNDECIDED:
-                // FIXME: handle error
+                case REMOVE: return true;
+                case REPLACE:
+                    if (!relation.getMember(i).getRole().equals(decision.getRole()))
+                        return true;
+                    if (relation.getMember(i).getMember() != newPrimitive)
+                        return true;
+                case UNDECIDED:
+                    // FIXME: handle error
             }
         }
         return false;
