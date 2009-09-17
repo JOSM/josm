@@ -91,14 +91,14 @@ public class OsmReader {
         private OsmPrimitive primitive;
 
         public void copyTo(OsmPrimitive osm) {
-            osm.setModified(modified);
-            osm.setDeleted(deleted);
             //  id < 0 possible if read from a file
             if (id <= 0) {
                 osm.clearOsmId();
             } else {
                 osm.setOsmId(id, version);
             }
+            osm.setDeleted(deleted);
+            osm.setModified(modified);
             osm.setTimestamp(timestamp);
             osm.user = user;
             osm.setVisible(visible);
