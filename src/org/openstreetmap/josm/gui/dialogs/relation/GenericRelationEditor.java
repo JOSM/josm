@@ -69,9 +69,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
-import org.openstreetmap.josm.gui.tagging.TagCellEditor;
-import org.openstreetmap.josm.gui.tagging.TagEditorModel;
-import org.openstreetmap.josm.gui.tagging.TagTable;
+import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.io.OsmApi;
@@ -91,10 +89,7 @@ public class GenericRelationEditor extends RelationEditor {
     static private final Dimension DEFAULT_EDITOR_DIMENSION = new Dimension(700, 500);
 
     /** the tag table and its model */
-    private TagEditorModel tagEditorModel;
-    private TagTable tagTable;
-    private AutoCompletionCache acCache;
-    private AutoCompletionList acList;
+    private TagEditorPanel tagEditorPanel;
     private ReferringRelationsBrowser referrerBrowser;
     private ReferringRelationsBrowserModel referrerModel;
 
@@ -123,21 +118,20 @@ public class GenericRelationEditor extends RelationEditor {
 
         // initialize the autocompletion infrastructure
         //
-        acCache = AutoCompletionCache.getCacheForLayer(getLayer());
-        acCache.initFromDataSet();
-        acList = new AutoCompletionList();
+        AutoCompletionCache.getCacheForLayer(getLayer()).initFromDataSet();
 
         // init the various models
         //
-        tagEditorModel = new TagEditorModel();
         memberTableModel = new MemberTableModel(getLayer());
         selectionTableModel = new SelectionTableModel(getLayer());
         referrerModel = new ReferringRelationsBrowserModel(relation);
 
+        tagEditorPanel = new TagEditorPanel();
         // populate the models
         //
         if (relation != null) {
-            this.tagEditorModel.initFromPrimitive(relation);
+            tagEditorPanel.getModel().initFromPrimitive(relation);
+            //this.tagEditorModel.initFromPrimitive(relation);
             this.memberTableModel.populate(relation);
             if (!getLayer().data.relations.contains(relation)) {
                 // treat it as a new relation if it doesn't exist in the
@@ -145,10 +139,10 @@ public class GenericRelationEditor extends RelationEditor {
                 setRelation(null);
             }
         } else {
-            tagEditorModel.clear();
+            tagEditorPanel.getModel().clear();
             this.memberTableModel.populate(null);
         }
-        tagEditorModel.ensureOneTag();
+        tagEditorPanel.getModel().ensureOneTag();
 
         JSplitPane pane = buildSplitPane();
         pane.setPreferredSize(new Dimension(100, 100));
@@ -210,45 +204,6 @@ public class GenericRelationEditor extends RelationEditor {
     }
 
     /**
-     * build the panel with the buttons on the left
-     *
-     * @return
-     */
-    protected JPanel buildTagEditorControlPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
-
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.gridheight = 1;
-        gc.gridwidth = 1;
-        gc.insets = new Insets(0, 5, 0, 5);
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-
-        // -----
-        AddTagAction addTagAction = new AddTagAction();
-        pnl.add(new JButton(addTagAction), gc);
-
-        // -----
-        gc.gridy = 1;
-        DeleteTagAction deleteTagAction = new DeleteTagAction();
-        tagTable.getSelectionModel().addListSelectionListener(deleteTagAction);
-        pnl.add(new JButton(deleteTagAction), gc);
-
-        // ------
-        // just grab the remaining space
-        gc.gridy = 2;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
-        pnl.add(new JPanel(), gc);
-        return pnl;
-    }
-
-    /**
      * builds the panel with the tag editor
      *
      * @return the panel with the tag editor
@@ -257,23 +212,11 @@ public class GenericRelationEditor extends RelationEditor {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
 
-        // setting up the tag table
-        //
-        tagTable = new TagTable(tagEditorModel);
-        TagCellEditor editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor());
-        editor.setAutoCompletionCache(acCache);
-        editor.setAutoCompletionList(acList);
-        editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(1).getCellEditor());
-        editor.setAutoCompletionCache(acCache);
-        editor.setAutoCompletionList(acList);
-
-        final JScrollPane scrollPane = new JScrollPane(tagTable);
-
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
         gc.gridheight = 1;
-        gc.gridwidth = 3;
+        gc.gridwidth = 1;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 1.0;
@@ -282,21 +225,11 @@ public class GenericRelationEditor extends RelationEditor {
 
         gc.gridx = 0;
         gc.gridy = 1;
-        gc.gridheight = 1;
-        gc.gridwidth = 1;
-        gc.fill = GridBagConstraints.VERTICAL;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 0.0;
-        gc.weighty = 1.0;
-        pnl.add(buildTagEditorControlPanel(), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.8;
+        gc.weightx = 1.0;
         gc.weighty = 1.0;
-        pnl.add(scrollPane, gc);
+        pnl.add(tagEditorPanel, gc);
         return pnl;
     }
 
@@ -310,10 +243,6 @@ public class GenericRelationEditor extends RelationEditor {
         pnl.setLayout(new GridBagLayout());
         // setting up the member table
         memberTable = new MemberTable(getLayer(),memberTableModel);
-        MemberRoleCellEditor editor = ((MemberRoleCellEditor) memberTable.getColumnModel().getColumn(0).getCellEditor());
-        editor.setAutoCompletionCache(acCache);
-        editor.setAutoCompletionList(acList);
-
         memberTable.addMouseListener(new MemberTableDblClickAdapter());
         memberTableModel.addMemberModelListener(memberTable);
 
@@ -586,12 +515,13 @@ public class GenericRelationEditor extends RelationEditor {
                 tfRole.selectAll();
             }
         });
-        tfRole.setAutoCompletionList(acList);
+        tfRole.setAutoCompletionList(new AutoCompletionList());
         tfRole.addFocusListener(
                 new FocusAdapter() {
                     @Override
                     public void focusGained(FocusEvent e) {
-                        acCache.populateWithMemberRoles(acList);
+                        AutoCompletionList list = tfRole.getAutoCompletionList();
+                        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(list);
                     }
                 }
         );
@@ -628,9 +558,12 @@ public class GenericRelationEditor extends RelationEditor {
     }
 
     @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-        if (!b) {
+    public void setVisible(boolean visible) {
+        if (visible) {
+            tagEditorPanel.initAutoCompletion(Main.main.getEditLayer());
+        }
+        super.setVisible(visible);
+        if (!visible) {
             dispose();
         }
     }
@@ -1062,10 +995,10 @@ public class GenericRelationEditor extends RelationEditor {
         protected void applyNewRelation() {
             // If the user wanted to create a new relation, but hasn't added any members or
             // tags, don't add an empty relation
-            if (memberTableModel.getRowCount() == 0 && tagEditorModel.getKeys().isEmpty())
+            if (memberTableModel.getRowCount() == 0 && tagEditorPanel.getModel().getKeys().isEmpty())
                 return;
             Relation newRelation = new Relation();
-            tagEditorModel.applyToPrimitive(newRelation);
+            tagEditorPanel.getModel().applyToPrimitive(newRelation);
             memberTableModel.applyToRelation(newRelation);
             Main.main.undoRedo.add(new AddCommand(getLayer(),newRelation));
 
@@ -1088,7 +1021,7 @@ public class GenericRelationEditor extends RelationEditor {
          */
         protected void applyExistingConflictingRelation() {
             Relation editedRelation = new Relation(getRelation());
-            tagEditorModel.applyToPrimitive(editedRelation);
+            tagEditorPanel.getModel().applyToPrimitive(editedRelation);
             memberTableModel.applyToRelation(editedRelation);
             Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
             Main.main.undoRedo.add(new ConflictAddCommand(getLayer(),conflict));
@@ -1101,7 +1034,7 @@ public class GenericRelationEditor extends RelationEditor {
          */
         protected void applyExistingNonConflictingRelation() {
             Relation editedRelation = new Relation(getRelation());
-            tagEditorModel.applyToPrimitive(editedRelation);
+            tagEditorPanel.getModel().applyToPrimitive(editedRelation);
             memberTableModel.applyToRelation(editedRelation);
             Main.main.undoRedo.add(new ChangeCommand(getRelation(), editedRelation));
             DataSet.fireSelectionChanged(getLayer().data.getSelected());
@@ -1164,7 +1097,7 @@ public class GenericRelationEditor extends RelationEditor {
             if (getRelation() == null) {
                 applyNewRelation();
             } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
-                    || tagEditorModel.isDirty()) {
+                    || tagEditorPanel.getModel().isDirty()) {
                 if (isDirtyRelation()) {
                     if (confirmClosingBecauseOfDirtyState()) {
                         if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
@@ -1197,7 +1130,7 @@ public class GenericRelationEditor extends RelationEditor {
             if (getRelation() == null) {
                 applyNewRelation();
             } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
-                    || tagEditorModel.isDirty()) {
+                    || tagEditorPanel.getModel().isDirty()) {
                 if (isDirtyRelation()) {
                     if (confirmClosingBecauseOfDirtyState()) {
                         if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
@@ -1245,72 +1178,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         public void actionPerformed(ActionEvent e) {
-            tagEditorModel.appendNewTag();
-        }
-    }
-
-    class DeleteTagAction extends AbstractAction implements ListSelectionListener {
-        public DeleteTagAction() {
-            putValue(SHORT_DESCRIPTION, tr("Delete the currently selected tags"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
-            // putValue(NAME, tr("Cancel"));
-            refreshEnabled();
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            run();
-        }
-
-        /**
-         * delete a selection of tag names
-         */
-        protected void deleteTagNames() {
-            int[] rows = tagTable.getSelectedRows();
-            tagEditorModel.deleteTagNames(rows);
-        }
-
-        /**
-         * delete a selection of tag values
-         */
-        protected void deleteTagValues() {
-            int[] rows = tagTable.getSelectedRows();
-            tagEditorModel.deleteTagValues(rows);
-        }
-
-        /**
-         * delete a selection of tags
-         */
-        protected void deleteTags() {
-            tagEditorModel.deleteTags(tagTable.getSelectedRows());
-        }
-
-        public void run() {
-            if (!isEnabled())
-                return;
-            if (tagTable.getSelectedColumnCount() == 1) {
-                if (tagTable.getSelectedColumn() == 0) {
-                    deleteTagNames();
-                } else if (tagTable.getSelectedColumn() == 1) {
-                    deleteTagValues();
-                } else
-                    // should not happen
-                    //
-                    throw new IllegalStateException("unexpected selected clolumn: getSelectedColumn() is "
-                            + tagTable.getSelectedColumn());
-            } else if (tagTable.getSelectedColumnCount() == 2) {
-                deleteTags();
-            }
-            if (tagEditorModel.getRowCount() == 0) {
-                tagEditorModel.ensureOneTag();
-            }
-        }
-
-        protected void refreshEnabled() {
-            setEnabled(tagTable.getSelectedRowCount() > 0 || tagTable.getSelectedColumnCount() > 0);
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            refreshEnabled();
+            tagEditorPanel.getModel().appendNewTag();
         }
     }
 
@@ -1418,7 +1286,7 @@ public class GenericRelationEditor extends RelationEditor {
 
         public void actionPerformed(ActionEvent e) {
             Relation copy = new Relation();
-            tagEditorModel.applyToPrimitive(copy);
+            tagEditorPanel.getModel().applyToPrimitive(copy);
             memberTableModel.applyToRelation(copy);
             RelationEditor editor = RelationEditor.getEditor(getLayer(), copy, memberTableModel.getSelectedMembers());
             editor.setVisible(true);
