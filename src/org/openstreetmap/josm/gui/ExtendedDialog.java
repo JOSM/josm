@@ -282,11 +282,14 @@ public class ExtendedDialog extends JDialog {
             }
         };
 
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
         .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
-        rootPane.getActionMap().put("ESCAPE", actionListener);
+        getRootPane().getActionMap().put("ESCAPE", actionListener);
     }
 
+    /**
+     * Override setVisible to be able to save the window geometry if required
+     */
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
