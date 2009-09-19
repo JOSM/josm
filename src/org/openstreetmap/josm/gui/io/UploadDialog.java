@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -14,9 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,10 +27,11 @@ import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -40,8 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
@@ -105,6 +104,8 @@ public class UploadDialog extends JDialog {
     private TagEditorPanel tagEditorPanel;
     /** the tabbed pane used below of the list of primitives  */
     private JTabbedPane southTabbedPane;
+    /** the upload button */
+    private JButton btnUpload;
 
     private ChangesetSelectionPanel pnlChangesetSelection;
 
@@ -123,7 +124,11 @@ public class UploadDialog extends JDialog {
         return pnlLists;
     }
 
-
+    /**
+     * builds the content panel for the upload dialog
+     * 
+     * @return the content panel
+     */
     protected JPanel buildContentPanel() {
         JPanel pnl = new JPanel();
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -159,17 +164,32 @@ public class UploadDialog extends JDialog {
         return pnl;
     }
 
+    /**
+     * builds the panel with the OK and CANCEL buttons
+     * 
+     * @return
+     */
     protected JPanel buildActionPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
         // -- upload button
-        pnl.add(new SideButton(new UploadAction()));
+        UploadAction uploadAction = new UploadAction();
+        pnl.add(btnUpload = new SideButton(uploadAction));
+        btnUpload.setFocusable(true);
+        InputMap inputMap = btnUpload.getInputMap();
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "doUpload");
+        btnUpload.getActionMap().put("doUpload", uploadAction);
 
         // -- cancel button
-        pnl.add(new SideButton(new CancelAction()));
-
+        CancelAction cancelAction = new CancelAction();
+        pnl.add(new SideButton(cancelAction));
+        getRootPane().registerKeyboardAction(
+                cancelAction,
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
         return pnl;
     }
 
@@ -177,6 +197,7 @@ public class UploadDialog extends JDialog {
      * builds the gui
      */
     protected void build() {
+        setTitle(tr("Upload"));
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildContentPanel(), BorderLayout.CENTER);
         getContentPane().add(buildActionPanel(), BorderLayout.SOUTH);
@@ -311,6 +332,13 @@ public class UploadDialog extends JDialog {
         pnlChangesetSelection.setOrUpdateChangeset(cs);
     }
 
+    /**
+     * Replies true if the changeset is to be closed after the
+     * next upload
+     * 
+     * @return true if the changeset is to be closed after the
+     * next upload; false, otherwise
+     */
     public boolean isDoCloseAfterUpload() {
         return pnlChangesetSelection.isCloseAfterUpload();
     }
@@ -325,21 +353,36 @@ public class UploadDialog extends JDialog {
         return(ua == null) ? "JOSM" : ua.toString();
     }
 
+    /**
+     * Replies the current value for the upload comment
+     * 
+     * @return the current value for the upload comment
+     */
     protected String getUploadComment() {
         switch(southTabbedPane.getSelectedIndex()) {
-        case 0:
-            return pnlChangesetSelection.getUploadComment();
-        case 1:
-            TagModel tm = tagEditorPanel.getModel().get("comment");
-            return tm == null? "" : tm.getValue();
+            case 0:
+                return pnlChangesetSelection.getUploadComment();
+            case 1:
+                TagModel tm = tagEditorPanel.getModel().get("comment");
+                return tm == null? "" : tm.getValue();
         }
         return "";
     }
 
+    /**
+     * Replies true, if the dialog was canceled
+     * 
+     * @return true, if the dialog was canceled
+     */
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * Sets whether the dialog was canceld
+     * 
+     * @param canceled true, if the dialog is canceled
+     */
     protected void setCanceled(boolean canceled) {
         this.canceled = canceled;
     }
@@ -588,6 +631,13 @@ public class UploadDialog extends JDialog {
                         }
                     }
             );
+            cmt.getEditor().addActionListener(
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            btnUpload.requestFocusInWindow();
+                        }
+                    }
+            );
             pnl.add(cmt, GBC.eol().fill(GBC.HORIZONTAL));
             return pnl;
         }
@@ -701,6 +751,22 @@ public class UploadDialog extends JDialog {
             cmt.requestFocus();
         }
 
+        public void prepareDialogForNextUpload(Changeset cs) {
+            if (cs == null || cs.getId() == 0) {
+                rbUseNew.setSelected(true);
+                cbCloseAfterUpload.setSelected(true);
+            } if (cs.getId() == 0) {
+                rbUseNew.setSelected(true);
+                cbCloseAfterUpload.setSelected(true);
+            } else if (cs.isOpen()) {
+                rbExisting.setSelected(true);
+                cbCloseAfterUpload.setSelected(false);
+            } else {
+                rbUseNew.setSelected(true);
+                cbCloseAfterUpload.setSelected(true);
+            }
+        }
+
         /**
          * Replies the current upload comment
          * 
@@ -761,14 +827,12 @@ public class UploadDialog extends JDialog {
                 tagEditorPanel.getModel().clear();
                 tagEditorPanel.getModel().add("created_by", getDefaultCreatedBy());
                 tagEditorPanel.getModel().appendNewTag();
-                rbUseNew.setSelected(true);
             } else if (cs.getId() == 0) {
                 if (cs.get("created_by") == null) {
                     cs.put("created_by", getDefaultCreatedBy());
                 }
                 tagEditorPanel.getModel().initFromPrimitive(cs);
                 tagEditorPanel.getModel().appendNewTag();
-                rbUseNew.setSelected(true);
             } else if (cs.getId() > 0 && cs.isOpen()){
                 if (cs.get("created_by") == null) {
                     cs.put("created_by", getDefaultCreatedBy());
@@ -789,6 +853,7 @@ public class UploadDialog extends JDialog {
                     southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
                 }
             }
+            prepareDialogForNextUpload(cs);
         }
 
         public void setUseNew() {
