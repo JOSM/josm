@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
@@ -27,7 +27,6 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -41,8 +40,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeLayerAction;
-import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
@@ -56,7 +53,7 @@ import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
- * change the ordering the layer, to hide/show layers, to activate layers
+ * change the ordering of the layers, to hide/show layers, to activate layers,
  * and to delete layers.
  * 
  */
@@ -316,9 +313,9 @@ public class LayerListDialog extends ToggleDialog {
                 dialog.getModel().populate(layersWithUnmodifiedChanges);
                 dialog.setVisible(true);
                 switch(dialog.getUserAction()) {
-                case CANCEL: return false;
-                case PROCEED: return true;
-                default: return false;
+                    case CANCEL: return false;
+                    case PROCEED: return true;
+                    default: return false;
                 }
             }
             return true;
@@ -1030,11 +1027,13 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         protected void processMouseEvent(MouseEvent e) {
             // if the layer list is embedded in a detached dialog, the last row is
-            // is selected if a user clicks in the empty space *below* the last row.
+            // selected if a user clicks in the empty space *below* the last row.
             // This mouse event filter prevents this.
             //
             int idx = locationToIndex(e.getPoint());
-            if (getCellBounds(idx, idx).contains(e.getPoint())) {
+            // sometimes bounds can be null, see #3539
+            Rectangle bounds = getCellBounds(idx,idx);
+            if (bounds != null && bounds.contains(e.getPoint())) {
                 super.processMouseEvent(e);
             }
         }
