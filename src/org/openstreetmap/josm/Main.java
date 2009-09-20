@@ -574,8 +574,9 @@ abstract public class Main {
     }
 
     static public void saveGuiGeometry() {
-        // save the current window geometry
+        // save the current window geometry and the width of the toggle dialog area
         String newGeometry = "";
+        String newToggleDlgWidth = "";
         try {
             if (((JFrame)parent).getExtendedState() == JFrame.NORMAL) {
                 Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -598,11 +599,17 @@ abstract public class Main {
                 }
                 newGeometry = width + "x" + height + "+" + x + "+" + y;
             }
+            
+            newToggleDlgWidth = Integer.toString(map.getToggleDlgWidth());
+            if (newToggleDlgWidth.equals(Integer.toString(map.DEF_TOGGLE_DLG_WIDTH))) {
+                newToggleDlgWidth = "";
+            }
         }
         catch (Exception e) {
             System.out.println("Failed to save GUI geometry: " + e);
         }
         pref.put("gui.geometry", newGeometry);
+        pref.put("toggleDialogs.width", newToggleDlgWidth);
     }
 
 

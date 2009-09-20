@@ -96,8 +96,6 @@ public class ToggleDialog extends JPanel implements Helpful {
      */
     private boolean isCollapsed;
 
-    /** the preferred width of all docked toggle dialogs */
-    final private int TOGGLE_DIALOG_WIDTH = 330;
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
     /** the label in the title bar which shows whether the toggle dialog is expanded or collapsed */
@@ -130,7 +128,10 @@ public class ToggleDialog extends JPanel implements Helpful {
      * @param preferredHeight
      */
     private void init(String name, String iconName, String tooltip, Shortcut shortcut, final int preferredHeight) {
-        setPreferredSize(new Dimension(TOGGLE_DIALOG_WIDTH, preferredHeight));
+        /** Use the full width of the parent element */
+        setPreferredSize(new Dimension(0, preferredHeight));
+        /** Override any minimum sizes of child elements so the user can resize freely */
+        setMinimumSize(new Dimension(0,0));
         this.preferredHeight = preferredHeight;
         toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, iconName);
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
@@ -138,7 +139,7 @@ public class ToggleDialog extends JPanel implements Helpful {
 
         setLayout(new BorderLayout());
 
-        // show the minimize button
+        /** show the minimize button */
         lblMinimized = new JLabel(ImageProvider.get("misc", "normal"));
         titleBar = new TitleBar(name, iconName);
         add(titleBar, BorderLayout.NORTH);
@@ -184,8 +185,8 @@ public class ToggleDialog extends JPanel implements Helpful {
         setContentVisible(false);
         isCollapsed = true;
         Main.pref.put(preferencePrefix+".minimized", true);
-        setPreferredSize(new Dimension(TOGGLE_DIALOG_WIDTH,20));
-        setMaximumSize(new Dimension(TOGGLE_DIALOG_WIDTH,20));
+        setPreferredSize(new Dimension(0,20));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
         lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
         refreshToggleDialogsView();
     }
@@ -197,8 +198,8 @@ public class ToggleDialog extends JPanel implements Helpful {
         setContentVisible(true);
         isCollapsed = false;
         Main.pref.put(preferencePrefix+".minimized", false);
-        setPreferredSize(new Dimension(TOGGLE_DIALOG_WIDTH,preferredHeight));
-        setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        setPreferredSize(new Dimension(0,preferredHeight));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
         refreshToggleDialogsView();
     }
@@ -521,6 +522,6 @@ public class ToggleDialog extends JPanel implements Helpful {
      * Override this method to customize the initial dialog size.
      */
     protected Dimension getDefaultDetachedSize() {
-        return new Dimension(TOGGLE_DIALOG_WIDTH, preferredHeight);
+        return new Dimension(Main.map.DEF_TOGGLE_DLG_WIDTH, preferredHeight);
     }
 }

@@ -5,14 +5,19 @@ package org.openstreetmap.josm.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
@@ -23,12 +28,12 @@ import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
+import org.openstreetmap.josm.gui.dialogs.FilterDialog;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.PropertiesDialog;
 import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
 import org.openstreetmap.josm.gui.dialogs.SelectionListDialog;
-import org.openstreetmap.josm.gui.dialogs.FilterDialog;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -73,12 +78,17 @@ public class MapFrame extends JPanel implements Destroyable {
     private ArrayList<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
 
     public final ButtonGroup toolGroup = new ButtonGroup();
+    
+    /**
+     * Default width of the toggle dialog area.
+     */
+    public final int DEF_TOGGLE_DLG_WIDTH = 330;
 
     public MapFrame() {
         setSize(400,400);
         setLayout(new BorderLayout());
 
-        add(mapView = new MapView(), BorderLayout.CENTER);
+        mapView = new MapView();
 
         new FileDrop(mapView);
 
@@ -95,8 +105,35 @@ public class MapFrame extends JPanel implements Destroyable {
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 
-        add(toggleDialogs, BorderLayout.EAST);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                             mapView, toggleDialogs); 
+
+        /**
+         * All additional space goes to the mapView
+         */
+        splitPane.setResizeWeight(1.0);
+        
+        /**
+         * Some beautifications.
+         */
+        splitPane.setDividerSize(5);
+        splitPane.setBorder(null);
+        splitPane.setUI(new BasicSplitPaneUI() {
+            public BasicSplitPaneDivider createDefaultDivider() {
+                return new BasicSplitPaneDivider(this) {
+                    public void setBorder(Border b) {
+                    }
+                };
+            }
+        });
+        
+        add(splitPane, BorderLayout.CENTER);
+
         toggleDialogs.setLayout(new BoxLayout(toggleDialogs, BoxLayout.Y_AXIS));
+        toggleDialogs.setPreferredSize(new Dimension(Main.pref.getInteger("toggleDialogs.width",DEF_TOGGLE_DLG_WIDTH), 0));
+                                                                        
+        toggleDialogs.setMinimumSize(new Dimension(24, 0));
+        mapView.setMinimumSize(new Dimension(10,0));
 
         toolBarToggle.setFloatable(false);
         LayerListDialog.createInstance(this);
@@ -266,5 +303,12 @@ public class MapFrame extends JPanel implements Destroyable {
                 return type.cast(td);
         }
         return null;
+    }
+
+    /**
+     * Returns the current width of the (possibly resized) toggle dialog area
+     */
+    public int getToggleDlgWidth() {
+        return toggleDialogs.getWidth();
     }
 }
