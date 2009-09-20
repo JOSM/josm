@@ -297,7 +297,7 @@ public class ExtendedDialog extends JDialog {
         }
 
         // Ensure all required variables are available
-        if(rememberSizePref.length() == 0 && defaultWindowGeometry != null) {
+        if(rememberSizePref.length() != 0 && defaultWindowGeometry != null) {
             if(visible) {
                 new WindowGeometry(rememberSizePref,
                         defaultWindowGeometry).apply(this);

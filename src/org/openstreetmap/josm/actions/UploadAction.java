@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.upload.ApiPreconditionCheckerHook;
+import org.openstreetmap.josm.actions.upload.RelationUploadOrderHook;
+import org.openstreetmap.josm.actions.upload.UploadHook;
+import org.openstreetmap.josm.actions.upload.UploadParameterHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -66,13 +70,18 @@ public class UploadAction extends JosmAction{
         /**
          * Checks server capabilities before upload.
          */
-        uploadHooks.add(new ApiPreconditionChecker());
+        uploadHooks.add(new ApiPreconditionCheckerHook());
+
+        /**
+         * Adjusts the upload order of new relations
+         */
+        uploadHooks.add(new RelationUploadOrderHook());
 
         /**
          * Displays a screen where the actions that would be taken are displayed and
          * give the user the possibility to cancel the upload.
          */
-        uploadHooks.add(new UploadConfirmationHook());
+        uploadHooks.add(new UploadParameterHook());
     }
 
     /**
@@ -98,16 +107,6 @@ public class UploadAction extends JosmAction{
             uploadHooks.remove(hook);
         }
     }
-
-    /** Upload Hook */
-    public interface UploadHook {
-        /**
-         * Checks the upload.
-         * @param apiDataSet the data to upload
-         */
-        public boolean checkUpload(APIDataSet apiDataSet);
-    }
-
 
     public UploadAction() {
         super(tr("Upload to OSM..."), "upload", tr("Upload all changes to the OSM server."),
@@ -479,20 +478,6 @@ public class UploadAction extends JosmAction{
         @Override protected void cancel() {
             OsmApi.getOsmApi().cancel();
             uploadCancelled = true;
-        }
-    }
-
-
-    static public class UploadConfirmationHook implements UploadHook {
-
-        public boolean checkUpload(APIDataSet apiData) {
-            final UploadDialog dialog = UploadDialog.getUploadDialog();
-            dialog.setUploadedPrimitives(apiData.getPrimitivesToAdd(),apiData.getPrimitivesToUpdate(), apiData.getPrimitivesToDelete());
-            dialog.setVisible(true);
-            if (dialog.isCanceled())
-                return false;
-            dialog.rememberUserInput();
-            return true;
         }
     }
 

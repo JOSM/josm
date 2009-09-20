@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.actions;
+package org.openstreetmap.josm.actions.upload;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.UploadAction.UploadHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -18,7 +17,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 
-public class ApiPreconditionChecker implements UploadHook {
+public class ApiPreconditionCheckerHook implements UploadHook {
 
     public boolean checkUpload(APIDataSet apiData) {
         OsmApi api = OsmApi.getOsmApi();
