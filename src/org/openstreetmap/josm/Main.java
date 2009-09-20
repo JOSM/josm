@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -25,13 +24,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.actions.OpenFileAction;
-import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -43,7 +40,6 @@ import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -422,53 +418,6 @@ abstract public class Main {
         return true;
     }
 
-    /**
-     * Saves all {@see OsmDataLayer}s with an associated file and with unsaved
-     * data modifications.
-     * 
-     * @return true, if the save operation was successful; false, otherwise
-     */
-    public static boolean saveUnsavedModifications_old() {
-        Shortcut.savePrefs();
-        if (map == null)
-            return true; // nothing to save, return success
-
-        int numUnsavedLayers = 0;
-        for (final OsmDataLayer l : map.mapView.getLayersOfType(OsmDataLayer.class)) {
-            if (l.requiresSaveToFile()) {
-                numUnsavedLayers++;
-            }
-        }
-        if (numUnsavedLayers == 0)
-            return true; // nothing to save, return success
-
-        String msg = trn(
-                "There are unsaved changes in {0} layer. Discard the changes and continue?",
-                "There are unsaved changes in {0} layers. Discard the changes and continue?",
-                numUnsavedLayers,
-                numUnsavedLayers
-        );
-
-        ExtendedDialog ed = new ExtendedDialog(parent,
-                tr("Unsaved Changes"),
-                new String[] {tr("Save and Exit"), tr("Discard and Exit"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"save.png", "exit.png", "cancel.png"});
-        ed.setContent(new JLabel(msg));
-        ed.showDialog();
-
-        switch(ed.getValue()) {
-            case 2: /* discard and exit */ return true;
-            case 3: /* cancel */ return false;
-        }
-        boolean savefailed = false;
-        for (OsmDataLayer l : map.mapView.getLayersOfType(OsmDataLayer.class)) {
-            if(!new SaveAction().doSave(l)) {
-                savefailed = true;
-            }
-        }
-        return !savefailed;
-    }
-
     private static void downloadFromParamString(final boolean rawGps, String s) {
         if (s.startsWith("http:")) {
             final Bounds b = OsmUrlToBounds.parse(s);
@@ -599,7 +548,7 @@ abstract public class Main {
                 }
                 newGeometry = width + "x" + height + "+" + x + "+" + y;
             }
-            
+
             newToggleDlgWidth = Integer.toString(map.getToggleDlgWidth());
             if (newToggleDlgWidth.equals(Integer.toString(map.DEF_TOGGLE_DLG_WIDTH))) {
                 newToggleDlgWidth = "";
@@ -611,6 +560,4 @@ abstract public class Main {
         pref.put("gui.geometry", newGeometry);
         pref.put("toggleDialogs.width", newToggleDlgWidth);
     }
-
-
 }
