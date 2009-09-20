@@ -62,7 +62,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         case KEEP_NONE:
             model.addElement(tr("deleted"));
             setFont(getFont().deriveFont(Font.ITALIC));
-            setToolTipText(tr("The key ''{0}'' and all it's values are going to be removed", decision.getKey()));
+            setToolTipText(tr("The key ''{0}'' and all its values are going to be removed", decision.getKey()));
             cbDecisionRenderer.setSelectedIndex(0);
             break;
         case KEEP_ALL:
