@@ -123,7 +123,7 @@ public class CloseChangesetDialog extends JDialog {
         public CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
-            putValue(SHORT_DESCRIPTION, tr("Cancel closeing of changesets"));
+            putValue(SHORT_DESCRIPTION, tr("Cancel closing of changesets"));
         }
 
         public void actionPerformed(ActionEvent e) {

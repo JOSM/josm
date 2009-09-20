@@ -75,7 +75,7 @@ public class HistoryDataSet {
     public HistoryOsmPrimitive get(long id, long version) throws NoSuchElementException{
         ArrayList<HistoryOsmPrimitive> versions = data.get(id);
         if (versions == null)
-            throw new NoSuchElementException(tr("Didn't find an  primitive with id {0} in this dataset", id));
+            throw new NoSuchElementException(tr("Didn't find an primitive with id {0} in this dataset", id));
 
         for (HistoryOsmPrimitive primitive: versions) {
             if (primitive.matches(id, version))

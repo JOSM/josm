@@ -53,7 +53,7 @@ public class NMEAImporter extends FileImporter {
                     tr("NMEA import success"),
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(Main.parent, msg, tr("NMEA import faliure!"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.parent, msg, tr("NMEA import failure!"), JOptionPane.ERROR_MESSAGE);
         }
     }
 

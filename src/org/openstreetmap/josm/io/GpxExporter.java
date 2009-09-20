@@ -52,12 +52,12 @@ public class GpxExporter extends FileExporter {
     @Override
     public void exportData(File file, Layer layer) throws IOException {
         if (layer == null)
-            throw new IllegalArgumentException(tr("paramenter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
         if (!(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
             throw new IllegalArgumentException(tr("expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer
                     .getClass().getName()));
         if (file == null)
-            throw new IllegalArgumentException(tr("paramenter ''{0}'' must not be null", "file"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "file"));
 
         String fn = file.getPath();
         if (fn.indexOf('.') == -1) {

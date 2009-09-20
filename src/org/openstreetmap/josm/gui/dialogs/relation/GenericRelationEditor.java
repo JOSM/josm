@@ -582,7 +582,7 @@ public class GenericRelationEditor extends RelationEditor {
                     Main.parent,
                     tr("<html>There is at least one member in this relation referring<br>"
                             + "to the relation itself.<br>"
-                            + "This creates circular dependencies and is dicuraged.<br>"
+                            + "This creates circular dependencies and is discouraged.<br>"
                             + "How do you want to proceed with circular dependencies?</html>"),
                             tr("Warning"),
                             JOptionPane.YES_NO_OPTION,

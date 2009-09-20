@@ -67,7 +67,7 @@ public class GpxExportAction extends DiskAccessAction {
      */
     public void export(Layer layer) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("paramenter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
         if (! (layer instanceof OsmDataLayer) && ! (layer instanceof GpxLayer))
             throw new IllegalArgumentException(tr("expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
 

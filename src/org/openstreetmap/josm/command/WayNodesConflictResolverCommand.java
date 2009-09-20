@@ -51,7 +51,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Resolve conflicts in node list of of way {0}", conflict.getMy().getId()),
+                        tr("Resolve conflicts in node list of way {0}", conflict.getMy().getId()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )

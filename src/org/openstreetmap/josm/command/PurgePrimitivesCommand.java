@@ -248,7 +248,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     @Override
     public void undoCommand() {
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            logger.warning(tr("Can't undo command ''{0}'' because layer ''{1}'' is not present anymore",
+            logger.warning(tr("Can't undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     getLayer().toString()
             ));
