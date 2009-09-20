@@ -171,8 +171,9 @@ public final class CreateCircleAction extends JosmAction {
             if (a1 < 999) {
                 // if it is, delete it
                 CollectBackReferencesVisitor refs = new CollectBackReferencesVisitor(getCurrentDataSet());
+                refs.initialize();
                 refs.visit(n1);
-                if (refs.data.isEmpty() || ((refs.data.size() == 1) && (refs.data.contains(existingWay)))) {
+                if (refs.getData().isEmpty() || ((refs.getData().size() == 1) && (refs.getData().contains(existingWay)))) {
                     cmds.add(new DeleteCommand(n1));
                 }
 

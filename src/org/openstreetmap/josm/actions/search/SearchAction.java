@@ -181,7 +181,7 @@ public class SearchAction extends JosmAction{
                searchText = "(" + s.text + ")" + (((Filter)s).applyForChildren ? ("| child (" + s.text + ")"): "");
                searchText = (((Filter)s).inverted ? "-" : "") + "(" +  searchText + ")";
             }
-            System.out.println(searchText);
+            /*System.out.println(searchText);*/
             SearchCompiler.Match matcher = SearchCompiler.compile(searchText, s.caseSensitive, s.regexSearch);
             foundMatches = 0;
             for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives()) {

@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.osm.visitor;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -16,79 +18,90 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  * Deleted objects are not collected.
  *
- * @author imi
+ * @author imi, Petr Dlouhý
  */
 public class CollectBackReferencesVisitor extends AbstractVisitor {
 
     private final DataSet ds;
     private final boolean indirectRefs;
 
-    /**
-     * The result list of primitives stored here.
-     */
-    public final Collection<OsmPrimitive> data = new HashSet<OsmPrimitive>();
+    private Collection<OsmPrimitive> data = new HashSet<OsmPrimitive>();
+    private Map<OsmPrimitive, Collection<OsmPrimitive>> lookupTable = new HashMap<OsmPrimitive, Collection<OsmPrimitive>>();
 
 
     /**
      * Construct a back reference counter.
+     * has time complexity O(n) - so it is appropriate not to call it in cycle
      * @param ds The dataset to operate on.
      */
     public CollectBackReferencesVisitor(DataSet ds) {
-        this.ds = ds;
-        this.indirectRefs = true;
+       this(ds, true);
     }
 
+    /**
+     * Construct a back reference counter.
+     * has time complexity O(n) - so it is appropriate not to call it in cycle
+     * @param ds The dataset to operate on.
+     * @param indirectRefs Make also indirect references?
+     */
     public CollectBackReferencesVisitor(DataSet ds, boolean indirectRefs) {
-        this.ds = ds;
-        this.indirectRefs = indirectRefs;
+       this.ds = ds;
+       this.indirectRefs = indirectRefs;
+       if(ds != null)
+          makeLookupTable();
+    }
+    
+    private void makeLookupTable(){
+       for (Way w : ds.ways) {
+          for (Node n : w.getNodes()) {
+             if(!lookupTable.containsKey(n)) lookupTable.put(n, new HashSet<OsmPrimitive>());
+             lookupTable.get(n).add(w);
+          }
+       }
+       for (Relation r : ds.relations) {
+          for (RelationMember m : r.getMembers()) {
+             OsmPrimitive o = m.getMember();
+             if(!lookupTable.containsKey(o)) lookupTable.put(o, new HashSet<OsmPrimitive>());
+             lookupTable.get(o).add(r);
+          }
+       }
     }
 
+    /**
+     * Get the result collection
+     */
+    public Collection<OsmPrimitive> getData(){
+       return data;
+    }
+
+    /**
+     * Initialize data before associated visit calls 
+     */
+    public void initialize(){
+       data = new HashSet<OsmPrimitive>();
+    }
+
+    public void visit(OsmPrimitive o) {
+       if(lookupTable.containsKey(o)){
+          Collection<OsmPrimitive> c = lookupTable.get(o);
+          Collection<OsmPrimitive> oldData = new HashSet<OsmPrimitive>(data);
+          data.addAll(c);
+          if(indirectRefs)
+             for(OsmPrimitive oo : c)
+                if(!oldData.contains(oo))
+                   visit(oo);
+       }
+    }
+    
     public void visit(Node n) {
-        for (Way w : ds.ways) {
-            if (w.isDeleted() || w.incomplete) {
-                continue;
-            }
-            for (Node n2 : w.getNodes()) {
-                if (n == n2) {
-                    data.add(w);
-                    if (indirectRefs) {
-                        visit(w);
-                    }
-                }
-            }
-        }
-        checkRelationMembership(n);
+       visit((OsmPrimitive)n);
     }
 
     public void visit(Way w) {
-        checkRelationMembership(w);
+       visit((OsmPrimitive)w);
     }
 
     public void visit(Relation r) {
-        checkRelationMembership(r);
-    }
-
-    private void checkRelationMembership(OsmPrimitive p) {
-        // FIXME - this might be a candidate for optimisation
-        // if OSM primitives are made to hold a list of back
-        // references.
-        for (Relation r : ds.relations) {
-            if (r.incomplete || r.isDeleted()) {
-                continue;
-            }
-            for (RelationMember m : r.getMembers()) {
-                if (m.getMember() == p) {
-                    if (!data.contains(r)) {
-                        data.add(r);
-                        if (indirectRefs) {
-                            // move up the tree (there might be relations
-                            // referring to this relation)
-                            checkRelationMembership(r);
-                        }
-                    }
-                    break;
-                }
-            }
-        }
+       visit((OsmPrimitive)r);
     }
 }

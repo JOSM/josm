@@ -162,15 +162,16 @@ public class DeleteCommand extends Command {
      */
     public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection, boolean simulate) {
         CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data);
+        v.initialize();
         for (OsmPrimitive osm : selection) {
             osm.visit(v);
         }
-        v.data.addAll(selection);
-        if (v.data.isEmpty())
+        v.getData().addAll(selection);
+        if (v.getData().isEmpty())
             return null;
-        if (!checkAndConfirmOutlyingDeletes(layer,v.data) && !simulate)
+        if (!checkAndConfirmOutlyingDeletes(layer,v.getData()) && !simulate)
             return null;
-        return new DeleteCommand(layer,v.data);
+        return new DeleteCommand(layer,v.getData());
     }
 
     public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {
@@ -238,6 +239,7 @@ public class DeleteCommand extends Command {
      */
     protected static Collection<Node> computeNodesToDelete(OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
         Collection<Node> nodesToDelete = new HashSet<Node>();
+        CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
         for (OsmPrimitive osm : primitivesToDelete) {
             if (! (osm instanceof Way) ) {
                 continue;
@@ -246,10 +248,10 @@ public class DeleteCommand extends Command {
                 if (n.isTagged()) {
                     continue;
                 }
-                CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
+                v.initialize();
                 n.visit(v);
-                v.data.removeAll(primitivesToDelete);
-                if (v.data.isEmpty()) {
+                v.getData().removeAll(primitivesToDelete);
+                if (v.getData().isEmpty()) {
                     nodesToDelete.add(n);
                 }
             }
@@ -296,10 +298,11 @@ public class DeleteCommand extends Command {
         if (!simulate && !checkAndConfirmOutlyingDeletes(layer,primitivesToDelete))
             return null;
 
+        CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
         for (OsmPrimitive osm : primitivesToDelete) {
-            CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
+            v.initialize();
             osm.visit(v);
-            for (OsmPrimitive ref : v.data) {
+            for (OsmPrimitive ref : v.getData()) {
                 if (primitivesToDelete.contains(ref)) {
                     continue;
                 }
@@ -327,9 +330,9 @@ public class DeleteCommand extends Command {
             if (wnew.getNodesCount() < 2) {
                 primitivesToDelete.add(w);
 
-                CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
+                v.initialize();
                 w.visit(v);
-                for (OsmPrimitive ref : v.data) {
+                for (OsmPrimitive ref : v.getData()) {
                     if (primitivesToDelete.contains(ref)) {
                         continue;
                     }

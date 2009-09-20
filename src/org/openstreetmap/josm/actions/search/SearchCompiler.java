@@ -32,11 +32,13 @@ public class SearchCompiler {
     private boolean regexSearch = false;
     private String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private PushbackTokenizer tokenizer;
+    private static CollectBackReferencesVisitor childBackRefs;
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
         this.regexSearch = regexSearch;
         this.tokenizer = tokenizer;
+        childBackRefs = new CollectBackReferencesVisitor(Main.main.getCurrentDataSet());
     }
 
     abstract public static class Match {
@@ -480,9 +482,9 @@ public class SearchCompiler {
             }
 
             boolean isChild = false;
-            CollectBackReferencesVisitor backRefs = new CollectBackReferencesVisitor(Main.main.getCurrentDataSet());
-            osm.visit(backRefs);
-            for (OsmPrimitive p : backRefs.data) {
+            childBackRefs.initialize();
+            osm.visit(childBackRefs);
+            for (OsmPrimitive p : childBackRefs.getData()) {
                 isChild |= parent.match(p);
             }
             return isChild;
