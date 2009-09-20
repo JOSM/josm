@@ -43,7 +43,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -61,7 +63,7 @@ import org.xml.sax.SAXException;
  *
  * It is also able to construct dialogs out of preset definitions.
  */
-public class TaggingPreset extends AbstractAction {
+public class TaggingPreset extends AbstractAction implements LayerChangeListener {
 
     public TaggingPresetMenu group = null;
     public String name;
@@ -479,7 +481,10 @@ public class TaggingPreset extends AbstractAction {
      * will be an empty string as text. createPanel will return null.
      * Use this as default item for "do not select anything".
      */
-    public TaggingPreset() {}
+    public TaggingPreset() {
+        Layer.listeners.add(this);
+        updateEnabledState();
+    }
 
     /**
      * Change the display name without changing the toolbar value.
@@ -673,6 +678,8 @@ public class TaggingPreset extends AbstractAction {
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (Main.main == null) return;
+        if (Main.main.getCurrentDataSet() == null) return;
         Collection<OsmPrimitive> sel = createSelection(Main.main.getCurrentDataSet().getSelected());
         PresetPanel p = createPanel(sel);
         if (p == null)
@@ -769,5 +776,21 @@ public class TaggingPreset extends AbstractAction {
             return cmds.get(0);
         else
             return new SequenceCommand(tr("Change Properties"), cmds);
+    }
+
+    protected void updateEnabledState() {
+        setEnabled(Main.main != null && Main.main.getCurrentDataSet() != null);
+    }
+
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        updateEnabledState();
+    }
+
+    public void layerAdded(Layer newLayer) {
+        updateEnabledState();
+    }
+
+    public void layerRemoved(Layer oldLayer) {
+        updateEnabledState();
     }
 }
