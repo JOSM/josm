@@ -108,9 +108,9 @@ public class DeleteCommand extends Command {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
             switch(OsmPrimitiveType.from(primitive)) {
-            case NODE: msg = "Delete node {0}"; break;
-            case WAY: msg = "Delete way {0}"; break;
-            case RELATION:msg = "Delete relation {0}"; break;
+                case NODE: msg = "Delete node {0}"; break;
+                case WAY: msg = "Delete way {0}"; break;
+                case RELATION:msg = "Delete relation {0}"; break;
             }
 
             return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
@@ -129,9 +129,9 @@ public class DeleteCommand extends Command {
             OsmPrimitiveType t = typesToDelete.iterator().next();
             apiname = t.getAPIName();
             switch(t) {
-            case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
-            case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
-            case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+                case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
+                case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
+                case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
             }
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(
@@ -230,7 +230,7 @@ public class DeleteCommand extends Command {
      * can be deleted too. A node can be deleted if
      * <ul>
      *    <li>it is untagged (see {@see Node#isTagged()}</li>
-     *    <li>it is not referred to by other primitives outside of  <code>primitivesToDelete</code></li>
+     *    <li>it is not referred to by other non-deleted primitives outside of  <code>primitivesToDelete</code></li>
      * <ul>
      * @param layer  the layer in whose context primitives are deleted
      * @param primitivesToDelete  the primitives to delete
@@ -250,8 +250,15 @@ public class DeleteCommand extends Command {
                 }
                 v.initialize();
                 n.visit(v);
-                v.getData().removeAll(primitivesToDelete);
-                if (v.getData().isEmpty()) {
+                Collection<OsmPrimitive> referringPrimitives = v.getData();
+                referringPrimitives.removeAll(primitivesToDelete);
+                int count = 0;
+                for (OsmPrimitive p : referringPrimitives) {
+                    if (!p.isDeleted()) {
+                        count++;
+                    }
+                }
+                if (count == 0) {
                     nodesToDelete.add(n);
                 }
             }
