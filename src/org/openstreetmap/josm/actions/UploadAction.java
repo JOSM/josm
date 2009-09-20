@@ -299,7 +299,7 @@ public class UploadAction extends JosmAction{
      *
      */
     protected void handleUploadConflictForClosedChangeset(long changsetId, Date d) {
-        String msg =  tr("<html>Uploading <strong>failed</strong> because you've been using<br>"
+        String msg =  tr("<html>Uploading <strong>failed</strong> because you''ve been using<br>"
                 + "changeset {0} which was already closed at {1}.<br>"
                 + "Please upload again with a new or an existing open changeset.</html>",
                 changsetId, new SimpleDateFormat().format(d)
