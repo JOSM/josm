@@ -138,7 +138,14 @@ public class Filters extends AbstractTableModel{
    }
 
    public String getColumnName(int column){
-      String[] names = { tr("E"), tr("H"), tr("Text"), tr("C"), tr("I"), tr("M") };
+      String[] names = { /* translators notes must be in front */
+          /* column header: enable filter */             tr("~filter:E"),
+          /* column header: hide filter */               tr("H"),
+          /* column header: filter text */               tr("Text"),
+          /* column header: apply filter for children */ tr("C"),
+          /* column header: inverted filter */           tr("I"),
+          /* column header: filter mode */               tr("M")
+      };
       return names[column];
    }
 
@@ -194,11 +201,11 @@ public class Filters extends AbstractTableModel{
          case 3: return f.applyForChildren;
          case 4: return f.inverted;
          case 5:
-                 switch(f.mode){
-                    case replace: return tr("R");
-                    case add: return tr("A");
-                    case remove: return tr("D");
-                    case in_selection: return tr("F");
+                 switch(f.mode){ /* translators notes must be in front */
+                    case replace:      /* filter mode: replace */      return tr("R");
+                    case add:          /* filter mode: add */          return tr("A");
+                    case remove:       /* filter mode: remove */       return tr("D");
+                    case in_selection: /* filter mode: in selection */ return tr("F");
                  }
       }
       return null;

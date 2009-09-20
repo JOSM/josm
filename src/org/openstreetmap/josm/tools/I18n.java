@@ -30,14 +30,14 @@ public class I18n {
 
     public static final String tr(String text, Object... objects) {
         if (i18n == null)
-            return MessageFormat.format(text, objects);
-        return i18n.tr(text, objects);
+            return filter(MessageFormat.format(text, objects));
+        return filter(i18n.tr(text, objects));
     }
 
     public static final String tr(String text) {
         if (i18n == null)
-            return text;
-        return i18n.tr(text);
+            return filter(text);
+        return filter(i18n.tr(text));
     }
 
     public static final String marktr(String text) {
@@ -46,14 +46,22 @@ public class I18n {
 
     public static final String trn(String text, String pluralText, long n, Object... objects) {
         if (i18n == null)
-            return n == 1 ? tr(text, objects) : tr(pluralText, objects);
-        return i18n.trn(text, pluralText, n, objects);
+            return filter(n == 1 ? tr(text, objects) : tr(pluralText, objects));
+        return filter(i18n.trn(text, pluralText, n, objects));
     }
 
     public static final String trn(String text, String pluralText, long n) {
         if (i18n == null)
-            return n == 1 ? tr(text) : tr(pluralText);
-        return i18n.trn(text, pluralText, n);
+            return filter(n == 1 ? tr(text) : tr(pluralText));
+        return filter(i18n.trn(text, pluralText, n));
+    }
+
+    public static final String filter(String text)
+    {
+        int i;
+        if(text.startsWith("~") && (i = text.indexOf(":")) >= 0)
+            return text.substring(i+1);
+        return text;
     }
 
     /**

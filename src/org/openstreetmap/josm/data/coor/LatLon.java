@@ -52,7 +52,9 @@ public class LatLon extends Coordinate {
     public String latToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
-        case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ? tr("S") : tr("N"));
+        case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ?
+            /* short symbol for South */ tr("S") :
+            /* short symbol for North */ tr("N"));
         default: return "ERR";
         }
     }
@@ -64,7 +66,9 @@ public class LatLon extends Coordinate {
     public String lonToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
-        case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ? tr("W") : tr("E"));
+        case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ?
+            /* short symbol for West */ tr("W") :
+            /* short symbol for East */ tr("E"));
         default: return "ERR";
         }
     }
