@@ -131,7 +131,7 @@ public class OsmApi extends OsmConnection {
      */
     protected OsmApi(String serverUrl)  {
         if (serverUrl == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "serverUrl"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "serverUrl"));
         this.serverUrl = serverUrl;
     }
 

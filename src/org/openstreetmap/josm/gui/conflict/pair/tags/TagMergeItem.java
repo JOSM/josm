@@ -30,7 +30,7 @@ public class TagMergeItem {
      */
     public TagMergeItem(String key, String myTagValue, String theirTagValue) {
         if (key == null) {
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "key"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "key"));
         }
         this.key  = key;
         this.myTagValue = myTagValue;
@@ -49,9 +49,9 @@ public class TagMergeItem {
      * @throws IllegalArgumentException thrown if their is null
      */
     public TagMergeItem(String key, OsmPrimitive my, OsmPrimitive their) {
-        if (key == null) throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "key"));
-        if (my == null) throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "my"));
-        if (their == null) throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "their"));
+        if (key == null) throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "key"));
+        if (my == null) throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "my"));
+        if (their == null) throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "their"));
         this.key = key;
         myTagValue = my.get(key);
         theirTagValue = their.get(key);
@@ -65,7 +65,7 @@ public class TagMergeItem {
      *
      */
     public void decide(MergeDecisionType decision) throws IllegalArgumentException {
-        if (decision == null) throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "decision"));
+        if (decision == null) throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "decision"));
         this.mergeDecision = decision;
     }
 
@@ -95,7 +95,7 @@ public class TagMergeItem {
      * @exception IllegalStateException  thrown, if this merge item is undecided
      */
     public void applyToMyPrimitive(OsmPrimitive primitive) throws IllegalArgumentException, IllegalStateException {
-        if (primitive == null) throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "primitive"));
+        if (primitive == null) throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitive"));
         if (mergeDecision == MergeDecisionType.UNDECIDED) {
             throw new IllegalStateException(tr("cannot apply undecided tag merge item"));
         } else if (mergeDecision == MergeDecisionType.KEEP_THEIR) {

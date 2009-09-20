@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.QuadBuckets;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -37,7 +38,7 @@ public class DataSet implements Cloneable {
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
      */
-    public Collection<Node> nodes = new LinkedList<Node>();
+    public Collection<Node> nodes = new QuadBuckets();
 
     /**
      * All ways (Streets etc.) in the DataSet.

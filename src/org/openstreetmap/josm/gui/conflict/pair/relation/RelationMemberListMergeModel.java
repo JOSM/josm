@@ -70,9 +70,9 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
      */
     public void populate(Relation my, Relation their) {
         if (my == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "my"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "my"));
         if (their == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "their"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "their"));
 
         getMergedEntries().clear();
         getMyEntries().clear();
@@ -113,9 +113,9 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
      */
     public RelationMemberConflictResolverCommand buildResolveCommand(Relation my, Relation their) {
         if (my == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "my"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "my"));
         if (their == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "their"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "their"));
         if (! isFrozen())
             throw new IllegalArgumentException(tr("merged nodes not frozen yet. Can't build resolution command"));
         return new RelationMemberConflictResolverCommand(my, their, getMergedEntries());

@@ -30,9 +30,9 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      */
     public void populate(Way my, Way their) {
         if (my == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "my"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "my"));
         if (their == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "their"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "their"));
         getMergedEntries().clear();
         getMyEntries().clear();
         getTheirEntries().clear();
@@ -64,9 +64,9 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      */
     public WayNodesConflictResolverCommand buildResolveCommand(Way my, Way their) {
         if (my == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "my"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "my"));
         if (their == null)
-            throw new IllegalArgumentException(tr("parameter '{0}' must not be null", "their"));
+            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "their"));
         if (! isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Can't build resolution command"));
         return new WayNodesConflictResolverCommand(my, their, getMergedEntries());
