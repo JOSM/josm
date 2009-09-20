@@ -593,9 +593,9 @@ public class OsmApi extends OsmConnection {
      */
     protected void ensureValidChangeset() throws OsmTransferException {
         if (changeset == null)
-            throw new OsmTransferException(tr("current changeset is null. Can't upload data."));
+            throw new OsmTransferException(tr("Current changeset is null. Can't upload data."));
         if (changeset.getId() <= 0)
-            throw new OsmTransferException(tr("id of current changeset > required. Current id is {0}", changeset.getId()));
+            throw new OsmTransferException(tr("id of current changeset > 0 required. Current id is {0}", changeset.getId()));
     }
     /**
      * Replies the changeset data uploads are currently directed to
