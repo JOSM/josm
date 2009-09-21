@@ -155,7 +155,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         for (Collection<GpsPoint> c : data) {
             points += c.size();
         }
-        String tool = data.size()+" "+trn("track", "tracks", data.size())
+        String tool = data.size()+" "+trn("_: gps\ntrack", "_: gps\ntracks", data.size())
         +" "+points+" "+trn("point", "points", points);
         File f = getAssociatedFile();
         if (f != null) {
