@@ -59,7 +59,7 @@ public class I18n {
     public static final String filter(String text)
     {
         int i;
-        if(text.startsWith("~") && (i = text.indexOf(":")) >= 0)
+        if(text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
             return text.substring(i+1);
         return text;
     }
