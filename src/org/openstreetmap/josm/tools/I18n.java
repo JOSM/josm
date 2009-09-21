@@ -30,7 +30,7 @@ public class I18n {
 
     public static final String tr(String text, Object... objects) {
         if (i18n == null)
-            return filter(MessageFormat.format(text, objects));
+            return MessageFormat.format(filter(text), objects);
         return filter(i18n.tr(text, objects));
     }
 
@@ -40,20 +40,38 @@ public class I18n {
         return filter(i18n.tr(text));
     }
 
+    public static final String trc(String ctx, String text) {
+        if (i18n == null)
+            return text;
+        return i18n.trc(ctx, text);
+    }
+
     public static final String marktr(String text) {
         return text;
     }
 
     public static final String trn(String text, String pluralText, long n, Object... objects) {
         if (i18n == null)
-            return filter(n == 1 ? tr(text, objects) : tr(pluralText, objects));
+            return n == 1 ? tr(text, objects) : tr(pluralText, objects);
         return filter(i18n.trn(text, pluralText, n, objects));
     }
 
     public static final String trn(String text, String pluralText, long n) {
         if (i18n == null)
-            return filter(n == 1 ? tr(text) : tr(pluralText));
+            return n == 1 ? tr(text) : tr(pluralText);
         return filter(i18n.trn(text, pluralText, n));
+    }
+
+    public static final String trnc(String ctx, String text, String pluralText, long n, Object... objects) {
+        if (i18n == null)
+            return n == 1 ? tr(text, objects) : tr(pluralText, objects);
+        return i18n.trnc(ctx, text, pluralText, n, objects);
+    }
+
+    public static final String trnc(String ctx, String text, String pluralText, long n) {
+        if (i18n == null)
+            return n == 1 ? tr(text) : tr(pluralText);
+        return i18n.trnc(ctx, text, pluralText, n);
     }
 
     public static final String filter(String text)

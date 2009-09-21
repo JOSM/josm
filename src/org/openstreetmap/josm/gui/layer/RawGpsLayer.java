@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import static org.openstreetmap.josm.tools.I18n.trnc;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -155,7 +156,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         for (Collection<GpsPoint> c : data) {
             points += c.size();
         }
-        String tool = data.size()+" "+trn("_: gps\ntrack", "_: gps\ntracks", data.size())
+        String tool = data.size()+" "+trnc("gps", "track", "tracks", data.size())
         +" "+points+" "+trn("point", "points", points);
         File f = getAssociatedFile();
         if (f != null) {

@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -139,7 +140,7 @@ public class Filters extends AbstractTableModel{
 
    public String getColumnName(int column){
       String[] names = { /* translators notes must be in front */
-          /* column header: enable filter */             tr("_: filter\nE"),
+          /* column header: enable filter */             tr("filter","E"),
           /* column header: hide filter */               tr("H"),
           /* column header: filter text */               tr("Text"),
           /* column header: apply filter for children */ tr("C"),
