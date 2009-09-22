@@ -198,7 +198,7 @@ public class HistoryBrowserModel extends Observable {
         if (history == null)
             throw new IllegalStateException(tr("History not initialized yet. Failed to set current primitive."));
         if (current.getId() != history.getId())
-            throw new IllegalArgumentException(tr("Hailed to set reference. Reference ID {0} does not match history ID {1}.", current.getId(),  history.getId()));
+            throw new IllegalArgumentException(tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", current.getId(),  history.getId()));
         HistoryOsmPrimitive primitive = history.getByVersion(current.getVersion());
         if (primitive == null)
             throw new IllegalArgumentException(tr("Failed to set current primitive. Current version {0} not available in history.", current.getVersion()));
