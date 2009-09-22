@@ -24,7 +24,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     public SwingRenderingProgressMonitor(ProgressRenderer delegate) {
         super(new CancelHandler());
         if (delegate == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "delegate"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "delegate"));
         this.delegate = delegate;
     }
 

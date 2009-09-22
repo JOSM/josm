@@ -52,12 +52,12 @@ public class GpxExporter extends FileExporter {
     @Override
     public void exportData(File file, Layer layer) throws IOException {
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         if (!(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
-            throw new IllegalArgumentException(tr("expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer
+            throw new IllegalArgumentException(tr("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer
                     .getClass().getName()));
         if (file == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "file"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "file"));
 
         String fn = file.getPath();
         if (fn.indexOf('.') == -1) {
@@ -68,7 +68,7 @@ public class GpxExporter extends FileExporter {
         // open the dialog asking for options
         JPanel p = new JPanel(new GridBagLayout());
 
-        p.add(new JLabel(tr("gps track description")), GBC.eol());
+        p.add(new JLabel(tr("GPS track description")), GBC.eol());
         JTextArea desc = new JTextArea(3, 40);
         desc.setWrapStyleWord(true);
         desc.setLineWrap(true);

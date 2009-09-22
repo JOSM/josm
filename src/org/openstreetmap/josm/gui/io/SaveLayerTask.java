@@ -35,7 +35,7 @@ class SaveLayerTask extends AbstractIOTask {
      */
     protected SaveLayerTask(SaveLayerInfo layerInfo, ProgressMonitor monitor) {
         if (layerInfo == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layerInfo"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layerInfo"));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }

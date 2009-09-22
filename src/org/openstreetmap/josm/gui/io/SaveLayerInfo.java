@@ -28,7 +28,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      */
     public SaveLayerInfo(OsmDataLayer layer) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         this.layer = layer;
         this.doSaveToFile = layer.requiresSaveToFile();
         this.doUploadToServer = layer.requiresUploadToServer();

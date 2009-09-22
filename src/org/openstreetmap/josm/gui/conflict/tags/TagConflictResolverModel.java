@@ -83,7 +83,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     public void populate(TagCollection tags) {
         if (tags == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "tags"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "tags"));
         this.tags = tags;
         keys = new ArrayList<String>();
         decisions = new HashMap<String, MultiValueResolutionDecision>();

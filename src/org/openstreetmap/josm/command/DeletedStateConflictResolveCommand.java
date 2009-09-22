@@ -76,7 +76,7 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
             }
         } else
             // should not happen
-            throw new IllegalStateException(tr("cannot resolve undecided conflict"));
+            throw new IllegalStateException(tr("Cannot resolve undecided conflict."));
 
         rememberConflict(conflict);
         return true;

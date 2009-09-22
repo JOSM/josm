@@ -28,12 +28,12 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     protected void ensurePositiveLong(long value, String name) {
         if (value <= 0)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' > 0 expected, got ''{1}''", name, value));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
     }
 
     protected void ensureNotNull(Object obj, String name) {
         if (obj == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", name));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", name));
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     public int compareTo(HistoryOsmPrimitive o) {
         if (this.id != o.id)
-            throw new ClassCastException(tr("can't compare primitive with id ''{0}'' to primitive with id ''{1}''", o.id, this.id));
+            throw new ClassCastException(tr("Can't compare primitive with ID ''{0}'' to primitive with ID ''{1}''.", o.id, this.id));
         return new Long(this.version).compareTo(o.version);
     }
 

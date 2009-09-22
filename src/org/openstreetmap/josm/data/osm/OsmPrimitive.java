@@ -175,7 +175,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      */
     public OsmPrimitive(long id) throws IllegalArgumentException {
         if (id < 0)
-            throw new IllegalArgumentException(tr("expected id >= 0. Got {0}", id));
+            throw new IllegalArgumentException(tr("Expected ID >= 0. Got {0}.", id));
         this.id = id;
         this.version = 0;
         this.incomplete = id >0;
@@ -299,7 +299,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      */
     public void setVisible(boolean visible) throws IllegalStateException{
         if (id == 0 && visible == false)
-            throw new IllegalStateException(tr("a primitive with id=0 can't be invisible"));
+            throw new IllegalStateException(tr("A primitive with ID = 0 can't be invisible."));
         this.visible = visible;
     }
 
@@ -335,9 +335,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      */
     public void setOsmId(long id, int version) {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("id > 0 expected. Got {0}", id));
+            throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
         if (version <= 0)
-            throw new IllegalArgumentException(tr("version > 0 expected. Got {0}", version));
+            throw new IllegalArgumentException(tr("Version > 0 expected. Got {0}.", version));
         this.id = id;
         this.version = version;
         this.incomplete = false;

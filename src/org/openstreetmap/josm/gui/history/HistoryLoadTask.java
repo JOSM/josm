@@ -37,9 +37,9 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     public HistoryLoadTask add(long id, OsmPrimitiveType type) {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("id > 0 expected, got {0}", id));
+            throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
         if (type == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
         if (!toLoad.containsKey(id)) {
             toLoad.put(id, type);
         }
@@ -48,7 +48,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     public HistoryLoadTask add(HistoryOsmPrimitive primitive) {
         if (primitive == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitive"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
         if (!toLoad.containsKey(primitive.getId())) {
             toLoad.put(primitive.getId(), primitive.getType());
         }
@@ -57,7 +57,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     public HistoryLoadTask add(History history) {
         if (history == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "history"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "history"));
         if (!toLoad.containsKey(history.getId())) {
             toLoad.put(history.getId(), history.getEarliest().getType());
         }
@@ -66,13 +66,13 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     public HistoryLoadTask add(OsmPrimitive primitive) {
         if (primitive == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitive"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
         return add(primitive.getId(), OsmPrimitiveType.from(primitive));
     }
 
     public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitives"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitives"));
         for (OsmPrimitive primitive: primitives) {
             if (primitive == null) {
                 continue;

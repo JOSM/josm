@@ -66,7 +66,7 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
             my.setCoor(their.getCoor());
         } else
             // should not happen
-            throw new IllegalStateException(tr("cannot resolve undecided conflict"));
+            throw new IllegalStateException(tr("Cannot resolve undecided conflict."));
 
         // remember the layer this command was applied to
         //

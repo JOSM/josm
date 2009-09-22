@@ -43,7 +43,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      */
     public List<Changeset> queryChangesets(ChangesetQuery query, ProgressMonitor monitor) throws OsmTransferException {
         if (query == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "query"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "query"));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -77,7 +77,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      */
     public Changeset readChangeset(long id, ProgressMonitor monitor) throws OsmTransferException {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' > 0 expected. Got {1}", "id", id));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }

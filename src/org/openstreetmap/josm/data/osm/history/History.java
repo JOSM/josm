@@ -151,16 +151,16 @@ public class History{
             if (primitive.matches(id,version))
                 return primitive;
         }
-        throw new NoSuchElementException(tr("There's no primitive with version {0} in this history", version));
+        throw new NoSuchElementException(tr("There's no primitive with version {0} in this history.", version));
     }
 
     public HistoryOsmPrimitive getByDate(Date date) {
         sortAscending();
 
         if (versions.isEmpty())
-            throw new NoSuchElementException(tr("There's no version valid at date ''{0}'' in this history", date));
+            throw new NoSuchElementException(tr("There's no version valid at date ''{0}'' in this history.", date));
         if (get(0).getTimestamp().compareTo(date)> 0)
-            throw new NoSuchElementException(tr("There's no version valid at date ''{0}'' in this history", date));
+            throw new NoSuchElementException(tr("There's no version valid at date ''{0}'' in this history.", date));
         for (int i = 1; i < versions.size();i++) {
             if (get(i-1).getTimestamp().compareTo(date) <= 0
                     && get(i).getTimestamp().compareTo(date) >= 0)
@@ -171,19 +171,19 @@ public class History{
 
     public HistoryOsmPrimitive get(int idx) {
         if (idx < 0 || idx >= versions.size())
-            throw new IndexOutOfBoundsException(tr("parameter ''{0}'' in range 0..{1} expected, got {2}", "idx", versions.size()-1, idx));
+            throw new IndexOutOfBoundsException(tr("Parameter ''{0}'' in range 0..{1} expected. Got ''{2}''.", "idx", versions.size()-1, idx));
         return versions.get(idx);
     }
 
     public HistoryOsmPrimitive getEarliest() {
         if (isEmpty())
-            throw new NoSuchElementException(tr("no earliest version found. History is empty."));
+            throw new NoSuchElementException(tr("No earliest version found. History is empty."));
         return sortAscending().versions.get(0);
     }
 
     public HistoryOsmPrimitive getLatest() {
         if (isEmpty())
-            throw new NoSuchElementException(tr("no latest version found. History is empty."));
+            throw new NoSuchElementException(tr("No latest version found. History is empty."));
         return sortDescending().versions.get(0);
     }
 

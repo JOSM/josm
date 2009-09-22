@@ -250,7 +250,7 @@ public class UploadAction extends JosmAction{
             case 1: synchronizeDataSet(); break;
             default:
                 // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+                throw new IllegalStateException(tr("Unexpected return value. Got {0}.", ret));
         }
     }
 
@@ -289,7 +289,7 @@ public class UploadAction extends JosmAction{
             case 0: synchronizeDataSet(); break;
             default:
                 // should not happen
-                throw new IllegalStateException(tr("unexpected return value. Got {0}", ret));
+                throw new IllegalStateException(tr("Unexpected return value. Got {0}.", ret));
         }
     }
 

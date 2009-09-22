@@ -71,7 +71,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
             // caused by HttpUrlConnection in case of illegal stuff in the response
             if (cancel)
                 return null;
-            throw new SAXException("Illegal characters within the HTTP-header response", e);
+            throw new SAXException("Illegal characters within the HTTP-header response.", e);
         } catch (IOException e) {
             if (cancel)
                 return null;

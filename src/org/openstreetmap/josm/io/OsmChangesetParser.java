@@ -69,16 +69,16 @@ public class OsmChangesetParser {
             // -- id
             String value = atts.getValue("id");
             if (value == null) {
-                throwException(tr("missing mandatory attribute ''{0}''", "id"));
+                throwException(tr("Missing mandatory attribute ''{0}''.", "id"));
             }
             long id = 0;
             try {
                 id = Long.parseLong(value);
             } catch(NumberFormatException e) {
-                throwException(tr("illegal value for attribute ''{0}''. Got ''{1}''", "id", value));
+                throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "id", value));
             }
             if (id <= 0) {
-                throwException(tr("illegal nummeric value for attribute ''{0}''. Got ''{1}''", "id", id));
+                throwException(tr("Illegal nummeric value for attribute ''{0}''. Got ''{1}''.", "id", id));
             }
             current.setId(id);
 
@@ -106,13 +106,13 @@ public class OsmChangesetParser {
             //  -- open
             value = atts.getValue("open");
             if (value == null) {
-                throwException(tr("missing mandatory attribute ''{0}''", "open"));
+                throwException(tr("Missing mandatory attribute ''{0}''.", "open"));
             } else if (value.equals("true")) {
                 current.setOpen(true);
             } else if (value.equals("false")) {
                 current.setOpen(false);
             } else {
-                throwException(tr("illegal boolean value for attribute ''{0}''. Got ''{1}''", "open", value));
+                throwException(tr("Illegal boolean value for attribute ''{0}''. Got ''{1}''.", "open", value));
             }
 
             // -- min_lon and min_lat
@@ -125,13 +125,13 @@ public class OsmChangesetParser {
                 try {
                     minLon = Double.parseDouble(min_lon);
                 } catch(NumberFormatException e) {
-                    throwException(tr("illegal value for attribute ''{0}''. Got ''{1}''", "min_lon", min_lon));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lon", min_lon));
                 }
                 double minLat = 0;
                 try {
                     minLat = Double.parseDouble(min_lat);
                 } catch(NumberFormatException e) {
-                    throwException(tr("illegal value for attribute ''{0}''. Got ''{1}''", "min_lat", min_lat));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lat", min_lat));
                 }
                 current.setMin(new LatLon(minLat, minLon));
 
@@ -141,13 +141,13 @@ public class OsmChangesetParser {
                 try {
                     maxLon = Double.parseDouble(max_lon);
                 } catch(NumberFormatException e) {
-                    throwException(tr("illegal value for attribute ''{0}''. Got ''{1}''", "max_lon", max_lon));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lon", max_lon));
                 }
                 double maxLat = 0;
                 try {
                     maxLat = Double.parseDouble(max_lat);
                 } catch(NumberFormatException e) {
-                    throwException(tr("illegal value for attribute ''{0}''. Got ''{1}''", "max_lat", max_lat));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lat", max_lat));
                 }
                 current.setMax(new LatLon(maxLon, maxLat));
             }
@@ -156,11 +156,11 @@ public class OsmChangesetParser {
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             if (qName.equals("osm")) {
                 if (atts == null) {
-                    throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}", "version", "osm"));
+                    throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
                 }
                 String v = atts.getValue("version");
                 if (v == null) {
-                    throwException(tr("Missing mandatory attribute ''{0}''", "version"));
+                    throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
                 }
                 if (!(v.equals("0.6"))) {
                     throwException(tr("Unsupported version: {0}", v));
@@ -194,7 +194,7 @@ public class OsmChangesetParser {
                 long id = Long.parseLong(uid);
                 return User.createOsmUser(id, name);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for attribute ''uid''. Got ''{0}''", uid));
+                throwException(tr("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
             }
             return null;
         }

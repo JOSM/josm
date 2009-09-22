@@ -569,7 +569,7 @@ public class TagCollection implements Iterable<Tag> {
     public void applyTo(OsmPrimitive primitive) throws IllegalStateException {
         if (primitive == null) return;
         if (! isApplicableToPrimitive())
-            throw new IllegalStateException(tr("tag collection can't be applied to a primitive because there are keys with multiple values"));
+            throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
         for (Tag tag: tags) {
             if (tag.getValue() == null || tag.getValue().equals("")) {
                 primitive.remove(tag.getKey());
@@ -590,7 +590,7 @@ public class TagCollection implements Iterable<Tag> {
     public void applyTo(Collection<? extends OsmPrimitive> primitives) throws IllegalStateException{
         if (primitives == null) return;
         if (! isApplicableToPrimitive())
-            throw new IllegalStateException(tr("tag collection can't be applied to a primitive because there are keys with multiple values"));
+            throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
         for (OsmPrimitive primitive: primitives) {
             applyTo(primitive);
         }
@@ -607,7 +607,7 @@ public class TagCollection implements Iterable<Tag> {
     public void replaceTagsOf(OsmPrimitive primitive) throws IllegalStateException {
         if (primitive == null) return;
         if (! isApplicableToPrimitive())
-            throw new IllegalStateException(tr("tag collection can't be applied to a primitive because there are keys with multiple values"));
+            throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
         primitive.removeAll();
         for (Tag tag: tags) {
             primitive.put(tag.getKey(), tag.getValue());
@@ -625,7 +625,7 @@ public class TagCollection implements Iterable<Tag> {
     public void replaceTagsOf(Collection<? extends OsmPrimitive> primitives) throws IllegalStateException {
         if (primitives == null) return;
         if (! isApplicableToPrimitive())
-            throw new IllegalStateException(tr("tag collection can't be applied to a primitive because there are keys with multiple values"));
+            throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
         for (OsmPrimitive primitive: primitives) {
             replaceTagsOf(primitive);
         }

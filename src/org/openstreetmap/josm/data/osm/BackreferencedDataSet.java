@@ -102,7 +102,7 @@ public class BackreferencedDataSet {
      */
     public BackreferencedDataSet(DataSet source) {
         if (source == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null."));
         this.source = source;
         int size = source.ways.size() + source.relations.size();
         referers = new HashMap<OsmPrimitive, Set<OsmPrimitive>>(size, 0.75f);

@@ -283,7 +283,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public void moveLayer(Layer layer, int pos) {
         int curLayerPos = layers.indexOf(layer);
         if (curLayerPos == -1)
-            throw new IllegalArgumentException(tr("layer not in list."));
+            throw new IllegalArgumentException(tr("Layer not in list."));
         if (pos == curLayerPos)
             return; // already in place.
         layers.remove(curLayerPos);
@@ -300,7 +300,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public int getLayerPos(Layer layer) {
         int curLayerPos = layers.indexOf(layer);
         if (curLayerPos == -1)
-            throw new IllegalArgumentException(tr("layer not in list."));
+            throw new IllegalArgumentException(tr("Layer not in list."));
         return curLayerPos;
     }
 

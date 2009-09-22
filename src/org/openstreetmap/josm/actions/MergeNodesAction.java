@@ -137,9 +137,9 @@ public class MergeNodesAction extends JosmAction {
      */
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) throws IllegalArgumentException{
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "nodes"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "nodes"));
         if (targetNode == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "targetNode"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "targetNode"));
 
         if (nodes == null)
             return null;
@@ -219,9 +219,9 @@ public class MergeNodesAction extends JosmAction {
      */
     public static Command mergeNodes(OsmDataLayer layer, BackreferencedDataSet backreferences, Collection<Node> nodes, Node targetNode) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "nodes"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "nodes"));
         if (targetNode == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "targetNode"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "targetNode"));
         if (nodes == null)
             return null;
         if (backreferences == null) {

@@ -21,6 +21,6 @@ public abstract class FileExporter {
     }
 
     public void exportData(File file, Layer layer) throws IOException {
-        throw new IOException(tr("Could not export \"{0}\"", file.getName()));
+        throw new IOException(tr("Could not export ''{0}''.", file.getName()));
     }
 }

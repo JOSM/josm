@@ -28,10 +28,10 @@ public class RelationMember {
     public RelationMember(String role, OsmPrimitiveType primitiveType, long primitiveId) {
         this.role = (role == null ? "" : role);
         if (primitiveType == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitiveType"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitiveType"));
         this.primitiveType = primitiveType;
         if (primitiveId <=0)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' > 0 expected, got ''{1}''", "primitiveId", primitiveId));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "primitiveId", primitiveId));
         this.primitiveId = primitiveId;
     }
 

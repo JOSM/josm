@@ -290,9 +290,9 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      */
     public static void deleteRelation(OsmDataLayer layer, Relation toDelete) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         if (toDelete == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "toDelete"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "toDelete"));
 
         Command cmd = DeleteCommand.delete(layer, Collections.singleton(toDelete));
         if (cmd != null) {

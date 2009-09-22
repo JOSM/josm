@@ -179,7 +179,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
                 break;
             default:
                 // should not happen
-                throw new RuntimeException(tr("unexpected column index. Got {0}", column));
+                throw new RuntimeException(tr("Unexpected column index. Got {0}.", column));
         }
         return this;
     }

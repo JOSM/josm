@@ -21,7 +21,7 @@ public abstract class FileImporter {
     }
 
     public void importData(File file) throws IOException, IllegalDataException {
-        throw new IOException(tr("Could not read \"{0}\"", file.getName()));
+        throw new IOException(tr("Could not read ''{0}''.", file.getName()));
     }
 
 }

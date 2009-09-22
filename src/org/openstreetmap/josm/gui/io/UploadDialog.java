@@ -996,7 +996,7 @@ public class UploadDialog extends JDialog {
 
         public void addOrUpdate(Changeset cs) {
             if (cs.getId() <= 0 )
-                throw new IllegalArgumentException(tr("changeset id > 0 expected. Got {1}", "id", cs.getId()));
+                throw new IllegalArgumentException(tr("Changeset ID > 0 expected. Got {0}.", cs.getId()));
             internalAddOrUpdate(cs);
             fireContentsChanged(this, 0, getSize());
         }

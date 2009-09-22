@@ -340,7 +340,7 @@ public class ImageProvider {
      */
     public static ImageIcon get(OsmPrimitiveType type) throws IllegalArgumentException {
         if (type == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
         return get("data", type.getAPIName());
     }
 }

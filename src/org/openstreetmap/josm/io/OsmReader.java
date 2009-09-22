@@ -171,11 +171,11 @@ public class OsmReader {
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             if (qName.equals("osm")) {
                 if (atts == null) {
-                    throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}", "version", "osm"));
+                    throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
                 }
                 String v = atts.getValue("version");
                 if (v == null) {
-                    throwException(tr("Missing mandatory attribute ''{0}''", "version"));
+                    throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
                 }
                 if (!(v.equals("0.5") || v.equals("0.6"))) {
                     throwException(tr("Unsupported version: {0}", v));
@@ -202,7 +202,7 @@ public class OsmReader {
                     ds.dataSources.add(src);
                 } else {
                     throwException(tr(
-                            "Missing manadatory attributes on element ''bounds''. Got minlon=''{0}'',minlat=''{1}00,maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''",
+                            "Missing manadatory attributes on element ''bounds''. Got minlon=''{0}'',minlat=''{1}00,maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''.",
                             minlon, minlat, maxlon, maxlat, origin
                     ));
                 }
@@ -225,18 +225,18 @@ public class OsmReader {
                 Collection<Long> list = ways.get(current.id);
                 if (list == null) {
                     throwException(
-                            tr("found XML element <nd> element not as direct child of element <way>")
+                            tr("Found XML element <nd> not as direct child of element <way>.")
                     );
                 }
                 if (atts.getValue("ref") == null) {
                     throwException(
-                            tr("Missing mandatory attribute ''{0}'' on <nd> of way {1}", "ref", current.id)
+                            tr("Missing mandatory attribute ''{0}'' on <nd> of way {1}.", "ref", current.id)
                     );
                 }
                 long id = getLong(atts, "ref");
                 if (id == 0) {
                     throwException(
-                            tr("Illegal value of attribute ''ref'' of element <nd>. Got {0}", id)
+                            tr("Illegal value of attribute ''ref'' of element <nd>. Got {0}.", id)
                     );
                 }
                 list.add(id);
@@ -253,13 +253,13 @@ public class OsmReader {
                 Collection<RelationMemberData> list = relations.get(current.id);
                 if (list == null) {
                     throwException(
-                            tr("Found XML element <member> not as direct child of element <relation>")
+                            tr("Found XML element <member> not as direct child of element <relation>.")
                     );
                 }
                 RelationMemberData emd = new RelationMemberData();
                 String value = atts.getValue("ref");
                 if (value == null) {
-                    throwException(tr("Missing attribute ''ref'' on member in relation {0}",current.id));
+                    throwException(tr("Missing attribute ''ref'' on member in relation {0}.",current.id));
                 }
                 try {
                     emd.id = Long.parseLong(value);
@@ -268,7 +268,7 @@ public class OsmReader {
                 }
                 value = atts.getValue("type");
                 if (value == null) {
-                    throwException(tr("Missing attribute ''type'' on member {0} in relation {1}", Long.toString(emd.id), Long.toString(current.id)));
+                    throwException(tr("Missing attribute ''type'' on member {0} in relation {1}.", Long.toString(emd.id), Long.toString(current.id)));
                 }
                 if (! (value.equals("way") || value.equals("node") || value.equals("relation"))) {
                     throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(emd.id), Long.toString(current.id), value));
@@ -308,7 +308,7 @@ public class OsmReader {
                 long id = Long.parseLong(uid);
                 return User.createOsmUser(id, name);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for attribute ''uid''. Got ''{0}''", uid));
+                throwException(tr("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
             }
             return null;
         }
@@ -318,7 +318,7 @@ public class OsmReader {
         void readCommon(Attributes atts, OsmPrimitiveData current) throws SAXException {
             current.id = getLong(atts, "id");
             if (current.id == 0) {
-                throwException(tr("Illegal object with id=0"));
+                throwException(tr("Illegal object with ID=0."));
             }
 
             String time = atts.getValue("timestamp");
@@ -344,32 +344,32 @@ public class OsmReader {
                 try {
                     current.version = Integer.parseInt(version);
                 } catch(NumberFormatException e) {
-                    throwException(tr("Illegal value for attribute ''version'' on OSM primitive with id {0}. Got {1}", Long.toString(current.id), version));
+                    throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.id), version));
                 }
                 if (ds.version.equals("0.6")){
                     if (current.version <= 0 && current.id > 0) {
-                        throwException(tr("Illegal value for attribute ''version'' on OSM primitive with id {0}. Got {1}", Long.toString(current.id), version));
+                        throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.id), version));
                     } else if (current.version < 0 && current.id  <=0) {
-                        System.out.println(tr("WARNING: normalizing value of attribute ''version'' of element {0} to 0, API version is ''0.6''. Got {1}", current.id, current.version));
+                        System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 0, "0.6"));
                         current.version = 0;
                     }
                 } else if (ds.version.equals("0.5")) {
                     if (current.version <= 0 && current.id > 0) {
-                        System.out.println(tr("WARNING: normalizing value of attribute ''version'' of element {0} to 1, API version is ''0.5''. Got {1}", current.id, current.version));
+                        System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 1, "0.5"));
                         current.version = 1;
                     } else if (current.version < 0 && current.id  <=0) {
-                        System.out.println(tr("WARNING: normalizing value of attribute ''version'' of element {0} to 0, API version is ''0.5''. Got {1}", current.id, current.version));
+                        System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 0, "0.5"));
                         current.version = 0;
                     }
                 } else {
                     // should not happen. API version has been checked before
-                    throwException(tr("Unknown or unsupported API version. Got {0}", ds.version));
+                    throwException(tr("Unknown or unsupported API version. Got {0}.", ds.version));
                 }
             } else {
                 // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
                 //
                 if (current.id > 0 && ds.version != null && ds.version.equals("0.6")) {
-                    throwException(tr("Missing attribute ''version'' on OSM primitive with id {0}", Long.toString(current.id)));
+                    throwException(tr("Missing attribute ''version'' on OSM primitive with ID {0}.", Long.toString(current.id)));
                 }
             }
 
@@ -391,7 +391,7 @@ public class OsmReader {
             try {
                 return Long.parseLong(value);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal long value for attribute ''{0}''. Got ''{1}''",name, value));
+                throwException(tr("Illegal long value for attribute ''{0}''. Got ''{1}''.",name, value));
             }
             return 0; // should not happen
         }
@@ -415,7 +415,7 @@ public class OsmReader {
                     if (id <= 0)
                         throw new IllegalDataException (
                                 tr(
-                                        "way with external id ''{0}'' includes missing node with external id ''{1}''",
+                                        "Way with external ID ''{0}'' includes missing node with external ID ''{1}''.",
                                         externalWayId,
                                         id
                                 )
@@ -428,8 +428,8 @@ public class OsmReader {
             }
             w.setNodes(wayNodes);
             if (incomplete) {
-                logger.warning(tr("marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
-                        "loaded data and is therefore incomplete too", externalWayId, w.getNodesCount()));
+                logger.warning(tr("Marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
+                        "loaded data and is therefore incomplete too.", externalWayId, w.getNodesCount()));
                 w.incomplete = true;
                 ds.addPrimitive(w);
             } else {
@@ -476,7 +476,7 @@ public class OsmReader {
                     primitive = externalIdMap.get("r" + rm.id);
                 } else
                     throw new IllegalDataException(
-                            tr("Unknown relation member type ''{0}'' in relation with external id ''{1}''", rm.type,externalRelationId)
+                            tr("Unknown relation member type ''{0}'' in relation with external id ''{1}''.", rm.type,externalRelationId)
                     );
 
                 if (primitive == null) {
@@ -487,7 +487,7 @@ public class OsmReader {
                         //
                         throw new IllegalDataException(
                                 tr(
-                                        "Relation with external id ''{0}'' refers to missing primitive with external id ''{1}''",
+                                        "Relation with external id ''{0}'' refers to missing primitive with external id ''{1}''.",
                                         externalRelationId,
                                         rm.id
                                 )

@@ -41,7 +41,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
      */
     public MergeSourceBuildingVisitor(DataSet selectionBase) throws IllegalArgumentException {
         if (selectionBase == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "selectionBase"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "selectionBase"));
         this.selectionBase = selectionBase;
         this.hull = new DataSet();
         this.mappedPrimitives = new HashMap<OsmPrimitive, OsmPrimitive>();

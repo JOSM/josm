@@ -307,7 +307,7 @@ public class GpxReader {
 
         @Override public void endDocument() throws SAXException  {
             if (!states.empty()) {
-                throw new SAXException(tr("Parse error: invalid document structure for gpx document"));
+                throw new SAXException(tr("Parse error: invalid document structure for GPX document."));
             }
             data = currentData;
         }

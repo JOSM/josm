@@ -390,9 +390,9 @@ public class DataSet implements Cloneable {
      */
     public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("parameter {0} > 0 required. Got {1}.", "id", id));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
         if (id <= 0)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
         Collection<? extends OsmPrimitive> primitives = null;
         switch(type) {
             case NODE: primitives = nodes; break;

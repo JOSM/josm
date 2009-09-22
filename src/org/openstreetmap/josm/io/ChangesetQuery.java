@@ -22,7 +22,7 @@ public class ChangesetQuery {
 
     public ChangesetQuery forUser(long uid) {
         if (uid <= 0)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' > 0 expected. Got {1}", "uid", uid));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "uid", uid));
         this.user = uid;
         return this;
     }

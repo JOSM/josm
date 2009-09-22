@@ -294,7 +294,7 @@ public class PropertiesMergeModel extends Observable {
      */
     public void decideDeletedStateConflict(MergeDecisionType decision) throws IllegalArgumentException{
         if (decision == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "decision"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "decision"));
         this.deletedMergeDecision = decision;
         setChanged();
         notifyObservers();
@@ -309,7 +309,7 @@ public class PropertiesMergeModel extends Observable {
      */
     public void decideVisibleStateConflict(MergeDecisionType decision) throws IllegalArgumentException {
         if (decision == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "decision"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "decision"));
         this.visibleMergeDecision = decision;
         setChanged();
         notifyObservers();

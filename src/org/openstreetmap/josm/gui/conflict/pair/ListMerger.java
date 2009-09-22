@@ -435,7 +435,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, tr("> bottom"));
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements to the end of the list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements to the end of the list of merged elements."));
             setEnabled(false);
         }
 
@@ -462,7 +462,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, "> before");
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements before the first selected element in the list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements before the first selected element in the list of merged elements."));
             setEnabled(false);
         }
 
@@ -496,7 +496,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, "> after");
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements after the first selected element in the list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Copy my selected elements after the first selected element in the list of merged elements."));
             setEnabled(false);
         }
 
@@ -526,7 +526,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, "< top");
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected element to the start of the list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected element to the start of the list of merged elements."));
             setEnabled(false);
         }
 
@@ -549,7 +549,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, "< bottom");
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected elements to the end of the list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected elements to the end of the list of merged elements."));
             setEnabled(false);
         }
 
@@ -571,7 +571,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, "< before");
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected elements before the first selected element in the list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Copy their selected elements before the first selected element in the list of merged elements."));
             setEnabled(false);
         }
 
@@ -631,7 +631,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, tr("Up"));
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Move up the selected elements by one position"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Move up the selected elements by one position."));
             setEnabled(false);
         }
 
@@ -663,7 +663,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, tr("Down"));
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Move down the selected entries by one position"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Move down the selected entries by one position."));
             setEnabled(false);
         }
 
@@ -695,7 +695,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             if (icon == null) {
                 putValue(Action.NAME, tr("Remove"));
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Remove the selected entries from the list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Remove the selected entries from the list of merged elements."));
             setEnabled(false);
         }
 
@@ -725,7 +725,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
 
         public FreezeAction() {
             putValue(Action.NAME, tr("Freeze"));
-            putValue(Action.SHORT_DESCRIPTION, tr("Freeze the current list of merged elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Freeze the current list of merged elements."));
             putValue(PROP_SELECTED, false);
             setEnabled(true);
         }
@@ -758,11 +758,11 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             int state = e.getStateChange();
             if (state == ItemEvent.SELECTED) {
                 putValue(Action.NAME, tr("Unfreeze"));
-                putValue(Action.SHORT_DESCRIPTION, tr("Unfreeze the list of merged elements and start merging"));
+                putValue(Action.SHORT_DESCRIPTION, tr("Unfreeze the list of merged elements and start merging."));
                 model.setFrozen(true);
             } else if (state == ItemEvent.DESELECTED) {
                 putValue(Action.NAME, tr("Freeze"));
-                putValue(Action.SHORT_DESCRIPTION, tr("Freeze the current list of merged elements"));
+                putValue(Action.SHORT_DESCRIPTION, tr("Freeze the current list of merged elements."));
                 model.setFrozen(false);
             }
             boolean isSelected = (Boolean)getValue(PROP_SELECTED);
@@ -785,12 +785,12 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         }
         if (newValue) {
             lblFrozenState.setText(
-                    tr("<html>Click <strong>{0}</strong> to start merging my and their entries</html>",
+                    tr("<html>Click <strong>{0}</strong> to start merging my and their entries.</html>",
                             freezeAction.getValue(Action.NAME))
             );
         } else {
             lblFrozenState.setText(
-                    tr("<html>Click <strong>{0}</strong> to finish merging my and their entries</html>",
+                    tr("<html>Click <strong>{0}</strong> to finish merging my and their entries.</html>",
                             freezeAction.getValue(Action.NAME))
             );
         }
@@ -878,10 +878,10 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          */
         protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
             if (adjustable == null)
-                throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "adjustable"));
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "adjustable"));
 
             if (! synchronizedAdjustables.contains(adjustable))
-                throw new IllegalStateException(tr("adjustable {0} not registered yet. Can't set participation in synchronized adjustment",adjustable));
+                throw new IllegalStateException(tr("Adjustable {0} not registered yet. Can't set participation in synchronized adjustment.", adjustable));
 
             enabledMap.put(adjustable, isParticipating);
             observable.notifyObservers();
@@ -896,7 +896,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          */
         protected boolean isParticipatingInSynchronizedScrolling(Adjustable adjustable) throws IllegalStateException {
             if (! synchronizedAdjustables.contains(adjustable))
-                throw new IllegalStateException(tr("adjustable {0} not registered yet",adjustable));
+                throw new IllegalStateException(tr("Adjustable {0} not registered yet.", adjustable));
 
             return enabledMap.get(adjustable);
         }
@@ -919,9 +919,9 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          */
         protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalArgumentException, IllegalStateException {
             if (adjustable == null)
-                throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "adjustable"));
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "adjustable"));
             if (view == null)
-                throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "view"));
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "view"));
 
             if (! synchronizedAdjustables.contains(adjustable)) {
                 participateInSynchronizedScrolling(adjustable);

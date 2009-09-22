@@ -75,11 +75,11 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
     public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor ) {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);
         if (child == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "child"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "child"));
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         if (child.getId() == 0)
-            throw new IllegalArgumentException(tr("child.getId() >0 expected. Got {1}", child.getId()));
+            throw new IllegalArgumentException(tr("Value of child.getId() > 0 expected. Got {1}.", child.getId()));
         referrers = null;
         this.layer = layer;
         parents = new ArrayList<Relation>();
@@ -196,7 +196,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
             }
         } catch(Exception e) {
             if (cancelled) {
-                System.out.println(tr("Warning: ignoring exception because task is cancelled. Exception: {0}", e.toString()));
+                System.out.println(tr("Warning: Ignoring exception because task is cancelled. Exception: {0}", e.toString()));
                 return;
             }
             lastException = e;

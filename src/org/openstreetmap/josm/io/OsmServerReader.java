@@ -60,7 +60,7 @@ public abstract class OsmServerReader extends OsmConnection {
             try {
                 activeConnection = (HttpURLConnection)url.openConnection();
             } catch(Exception e) {
-                throw new OsmTransferException(tr("Failed to open connection to API {0}", url.toExternalForm()), e);
+                throw new OsmTransferException(tr("Failed to open connection to API {0}.", url.toExternalForm()), e);
             }
             if (cancel) {
                 activeConnection.disconnect();
@@ -85,7 +85,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 System.out.println("GET " + url);
                 activeConnection.connect();
             } catch (Exception e) {
-                throw new OsmTransferException(tr("Couldn't connect to the osm server. Please check your internet connection."), e);
+                throw new OsmTransferException(tr("Couldn't connect to the OSM server. Please check your internet connection."), e);
             }
             try {
                 if (isAuthCancelled() && activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)

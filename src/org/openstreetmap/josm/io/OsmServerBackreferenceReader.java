@@ -49,9 +49,9 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      */
     public OsmServerBackreferenceReader(OsmPrimitive primitive) throws IllegalArgumentException {
         if (primitive == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitive"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
         if (primitive.getId() == 0)
-            throw new IllegalArgumentException(tr("id parameter ''{0}'' > 0 required. Got {1}", "primitive", primitive.getId()));
+            throw new IllegalArgumentException(tr("ID parameter ''{0}'' > 0 expected. Got ''{1}''.", "primitive", primitive.getId()));
         this.id = primitive.getId();
         this.primitiveType = OsmPrimitiveType.from(primitive);
         this.readFull = false;
@@ -69,9 +69,9 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      */
     public OsmServerBackreferenceReader(long id, OsmPrimitiveType type) throws IllegalArgumentException   {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' > 0 required. Got {1}", "id", id));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
         if (type == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
         this.id = id;
         this.primitiveType = type;
         this.readFull = false;

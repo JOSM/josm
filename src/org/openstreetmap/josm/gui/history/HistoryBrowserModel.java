@@ -139,7 +139,7 @@ public class HistoryBrowserModel extends Observable {
      */
     public TagTableModel getTagTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
         if (pointInTimeType == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "pointInTimeType"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pointInTimeType"));
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentTagTableModel;
         else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
@@ -151,7 +151,7 @@ public class HistoryBrowserModel extends Observable {
 
     public NodeListTableModel getNodeListTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
         if (pointInTimeType == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "pointInTimeType"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pointInTimeType"));
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentNodeListTableModel;
         else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
@@ -163,7 +163,7 @@ public class HistoryBrowserModel extends Observable {
 
     public RelationMemberTableModel getRelationMemberTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
         if (pointInTimeType == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "pointInTimeType"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pointInTimeType"));
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentRelationMemberTableModel;
         else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
@@ -175,14 +175,14 @@ public class HistoryBrowserModel extends Observable {
 
     public void setReferencePointInTime(HistoryOsmPrimitive reference) throws IllegalArgumentException, IllegalStateException{
         if (reference == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "reference"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "reference"));
         if (history == null)
-            throw new IllegalStateException(tr("history not initialized yet. Failed to set reference primitive."));
+            throw new IllegalStateException(tr("History not initialized yet. Failed to set reference primitive."));
         if (reference.getId() != history.getId())
-            throw new IllegalArgumentException(tr("failed to set reference. reference id {0} doesn't match history id {1}", reference.getId(),  history.getId()));
+            throw new IllegalArgumentException(tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", reference.getId(),  history.getId()));
         HistoryOsmPrimitive primitive = history.getByVersion(reference.getVersion());
         if (primitive == null)
-            throw new IllegalArgumentException(tr("failed to set reference. reference version {0} not available in history", reference.getVersion()));
+            throw new IllegalArgumentException(tr("Failed to set reference. Reference version {0} not available in history.", reference.getVersion()));
 
         this.reference = reference;
         initTagTableModels();
@@ -194,14 +194,14 @@ public class HistoryBrowserModel extends Observable {
 
     public void setCurrentPointInTime(HistoryOsmPrimitive current) throws IllegalArgumentException, IllegalStateException{
         if (current == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "current"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "current"));
         if (history == null)
-            throw new IllegalStateException(tr("history not initialized yet. Failed to set current primitive."));
+            throw new IllegalStateException(tr("History not initialized yet. Failed to set current primitive."));
         if (current.getId() != history.getId())
-            throw new IllegalArgumentException(tr("failed to set reference. reference id {0} doesn't match history id {1}", current.getId(),  history.getId()));
+            throw new IllegalArgumentException(tr("Hailed to set reference. Reference ID {0} does not match history ID {1}.", current.getId(),  history.getId()));
         HistoryOsmPrimitive primitive = history.getByVersion(current.getVersion());
         if (primitive == null)
-            throw new IllegalArgumentException(tr("failed to set current. current version {0} not available in history", current.getVersion()));
+            throw new IllegalArgumentException(tr("Failed to set current primitive. Current version {0} not available in history.", current.getVersion()));
         this.current = current;
         initTagTableModels();
         initNodeListTabeModel();
@@ -237,7 +237,7 @@ public class HistoryBrowserModel extends Observable {
      */
     public HistoryOsmPrimitive getPointInTime(PointInTimeType type) throws IllegalArgumentException  {
         if (type == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
         if (type.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return current;
         else if (type.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))

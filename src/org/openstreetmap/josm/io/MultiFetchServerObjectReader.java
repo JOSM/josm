@@ -111,11 +111,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws IllegalArgumentException, NoSuchElementException{
         if (ds == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "ds"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "ds"));
         if (id <= 0) return;
         OsmPrimitive primitive = ds.getPrimitiveById(id, type);
         if (primitive == null)
-            throw new NoSuchElementException(tr("no primitive with id {0} in local dataset. Can't infer primitive type", id));
+            throw new NoSuchElementException(tr("No primitive with id {0} in local dataset. Can't infer primitive type.", id));
         remember(id, OsmPrimitiveType.from(primitive));
         return;
     }
@@ -413,7 +413,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                 multiGetIdPackage(type, pkg, progressMonitor);
             } catch(OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    logger.warning(tr("Server replied with response code 404, retrying with an individual request for each primitive"));
+                    logger.warning(tr("Server replied with response code 404, retrying with an individual request for each primitive."));
                     singleGetIdPackage(type, pkg, progressMonitor);
                 } else
                     throw e;

@@ -86,7 +86,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      */
     public RelationMember getRelationMember(int idx) throws IndexOutOfBoundsException  {
         if (idx < 0 || idx >= members.size())
-            throw new IndexOutOfBoundsException(tr("parameter {0} not in range 0..{1}, got {2}", "idx", members.size(),idx));
+            throw new IndexOutOfBoundsException(tr("Parameter {0} not in range 0..{1}. Got ''{2}''.", "idx", members.size(),idx));
         return members.get(idx);
     }
 
@@ -107,7 +107,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      */
     public void addMember(RelationMember member) throws IllegalArgumentException {
         if (member == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "member"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "member"));
         members.add(member);
     }
 }

@@ -105,7 +105,7 @@ public abstract class RelationEditor extends ExtendedDialog {
                 false
         );
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         this.layer = layer;
         setRelation(relation);
     }

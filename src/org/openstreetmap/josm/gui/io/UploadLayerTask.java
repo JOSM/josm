@@ -48,7 +48,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
      */
     public UploadLayerTask(OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset, boolean closeChangesetAfterUpload) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", layer));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", layer));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }

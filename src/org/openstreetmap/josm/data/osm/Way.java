@@ -209,7 +209,7 @@ public final class Way extends OsmPrimitive {
     public void addNode(Node n) throws IllegalStateException {
         if (n==null) return;
         if (incomplete)
-            throw new IllegalStateException(tr("can't add node {0} to incomplete way {1}", n.getId(), getId()));
+            throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
         if (incomplete) return;
         clearCached();
         nodes.add(n);
@@ -227,7 +227,7 @@ public final class Way extends OsmPrimitive {
     public void addNode(int offs, Node n) throws IllegalStateException, IndexOutOfBoundsException {
         if (n==null) return;
         if (incomplete)
-            throw new IllegalStateException(tr("can't add node {0} to incomplete way {1}", n.getId(), getId()));
+            throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
         clearCached();
         nodes.add(offs, n);
     }

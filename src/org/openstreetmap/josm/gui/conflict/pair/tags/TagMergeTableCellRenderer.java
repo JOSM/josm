@@ -36,7 +36,7 @@ public abstract class TagMergeTableCellRenderer extends JLabel implements TableC
             break;
         default:
             // should not happen, but just in case 
-            throw new IllegalArgumentException(tr("Parameter 'col' must be 0 or 1. Got {0}", col));
+            throw new IllegalArgumentException(tr("Parameter 'col' must be 0 or 1. Got {0}.", col));
         }
         return this;
     }

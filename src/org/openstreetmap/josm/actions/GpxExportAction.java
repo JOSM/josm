@@ -67,9 +67,9 @@ public class GpxExportAction extends DiskAccessAction {
      */
     public void export(Layer layer) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         if (! (layer instanceof OsmDataLayer) && ! (layer instanceof GpxLayer))
-            throw new IllegalArgumentException(tr("expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
+            throw new IllegalArgumentException(tr("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
 
         File file = createAndOpenSaveFileChooser(tr("Export GPX file"), ".gpx");
         if (file == null)

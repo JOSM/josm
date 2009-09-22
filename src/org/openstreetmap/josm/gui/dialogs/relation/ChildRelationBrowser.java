@@ -118,7 +118,7 @@ public class ChildRelationBrowser extends JPanel {
      */
     public ChildRelationBrowser(OsmDataLayer layer) throws IllegalArgumentException {
         if (layer == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         this.layer = layer;
         model = new RelationTreeModel();
         build();
@@ -175,7 +175,7 @@ public class ChildRelationBrowser extends JPanel {
      */
     class EditAction extends AbstractAction implements TreeSelectionListener {
         public EditAction() {
-            putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
+            putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             putValue(NAME, tr("Edit"));
             refreshEnabled();

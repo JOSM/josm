@@ -18,10 +18,10 @@ public class RelationMemberConflictDecision {
 
     public RelationMemberConflictDecision(Relation relation, int pos) throws IllegalArgumentException {
         if (relation == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "relation"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "relation"));
         RelationMember member = relation.getMember(pos);
         if (member == null)
-            throw new IndexOutOfBoundsException(tr("pos {0} is out of range. current number of members: {1}", pos, relation.getMembersCount()));
+            throw new IndexOutOfBoundsException(tr("Position {0} is out of range. Current number of members is {1}.", pos, relation.getMembersCount()));
         this.relation = relation;
         this.pos  = pos;
         this.originalPrimitive = member.getMember();

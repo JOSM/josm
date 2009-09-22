@@ -144,7 +144,7 @@ public class OsmServerWriter {
             }
             boolean useDiffUpload = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
             if (useDiffUpload && ! casUseDiffUploads) {
-                System.out.println(tr("WARNING: preference ''{0}'' or api version ''{1}'' of dataset requires to use diff uploads, but API is not able to handle them. Ignoring diff upload.", "osm-server.atomic-upload", apiVersion));
+                System.out.println(tr("WARNING: preference ''{0}'' or API version ''{1}'' of dataset requires to use diff uploads, but API is not able to handle them. Ignoring diff upload.", "osm-server.atomic-upload", apiVersion));
                 useDiffUpload = false;
             }
             if (changeset == null) {

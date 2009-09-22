@@ -90,7 +90,7 @@ public class OsmApiException extends OsmTransferException {
             sb.append(tr(errorBody));
             sb.append(tr("(Code={0})", responseCode));
         } else {
-            sb.append(tr("The server replied an error with code {0}", responseCode));
+            sb.append(tr("The server replied an error with code {0}.", responseCode));
         }
         return sb.toString();
     }

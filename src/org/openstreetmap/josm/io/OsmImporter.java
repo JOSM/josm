@@ -33,7 +33,7 @@ public class OsmImporter extends FileImporter {
             importData(in, file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new IOException(tr("File \"{0}\" does not exist", file.getName()));
+            throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
         }
     }
 

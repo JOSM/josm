@@ -48,11 +48,11 @@ public class MultiValueResolutionDecision {
      */
     public MultiValueResolutionDecision(TagCollection tags) throws IllegalArgumentException {
         if (tags == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "tags"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "tags"));
         if (tags.isEmpty())
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be empty", "tags"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty.", "tags"));
         if (tags.getKeys().size() != 1)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' with tags for exactly one key expected. Got {1}", "tags", tags.getKeys().size()));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' with tags for exactly one key expected. Got {1}.", "tags", tags.getKeys().size()));
         this.tags = tags;
         autoDecide();
     }
@@ -96,9 +96,9 @@ public class MultiValueResolutionDecision {
      */
     public void keepOne(String value) throws IllegalArgumentException, IllegalStateException {
         if (value == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "value"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "value"));
         if (!tags.getValues().contains(value))
-            throw new IllegalStateException(tr("tag collection doesn't include the selected value ''{0}''", value));
+            throw new IllegalStateException(tr("Tag collection doesn't include the selected value ''{0}''.", value));
         this.value = value;
         this.type = MultiValueDecisionType.KEEP_ONE;
     }
@@ -133,7 +133,7 @@ public class MultiValueResolutionDecision {
      */
     public String getChosenValue() throws IllegalStateException {
         switch(type) {
-            case UNDECIDED: throw new IllegalStateException(tr("Not decided yet"));
+            case UNDECIDED: throw new IllegalStateException(tr("Not decided yet."));
             case KEEP_ONE: return value;
             case KEEP_NONE: return null;
             case KEEP_ALL: return tags.getJoinedValues(getKey());
@@ -210,7 +210,7 @@ public class MultiValueResolutionDecision {
     public void applyTo(OsmPrimitive primitive) throws IllegalStateException{
         if (primitive == null) return;
         if (!isDecided())
-            throw new IllegalStateException(tr("Not decided yet"));
+            throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();
         String value = getChosenValue();
         if (type.equals(MultiValueDecisionType.KEEP_NONE)) {
@@ -246,9 +246,9 @@ public class MultiValueResolutionDecision {
      */
     public Command buildChangeCommand(OsmPrimitive primitive) throws IllegalArgumentException, IllegalStateException {
         if (primitive == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitive"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
         if (!isDecided())
-            throw new IllegalStateException(tr("Not decided yet"));
+            throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();
         String value = getChosenValue();
         ChangePropertyCommand cmd = new ChangePropertyCommand(primitive, key,value);
@@ -265,9 +265,9 @@ public class MultiValueResolutionDecision {
      */
     public Command buildChangeCommand(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "primitives"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitives"));
         if (!isDecided())
-            throw new IllegalStateException(tr("Not decided yet"));
+            throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();
         String value = getChosenValue();
         ChangePropertyCommand cmd = new ChangePropertyCommand(primitives, key,value);

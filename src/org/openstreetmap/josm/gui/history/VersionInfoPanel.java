@@ -73,9 +73,9 @@ public class VersionInfoPanel extends JPanel implements Observer{
      */
     public VersionInfoPanel(HistoryBrowserModel model, PointInTimeType pointInTimeType) throws IllegalArgumentException {
         if (pointInTimeType == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "pointInTimeType"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pointInTimeType"));
         if (model == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "model"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "model"));
 
         this.model = model;
         this.pointInTimeType = pointInTimeType;

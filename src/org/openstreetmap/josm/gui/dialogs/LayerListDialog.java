@@ -278,7 +278,7 @@ public class LayerListDialog extends ToggleDialog {
         public DeleteLayerAction(Layer layer) {
             this();
             if (layer == null)
-                throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
             this.layer = layer;
             putValue(NAME, tr("Delete"));
             updateEnabledState();
@@ -359,7 +359,7 @@ public class LayerListDialog extends ToggleDialog {
         public ShowHideLayerAction(Layer layer) throws IllegalArgumentException {
             this();
             if (layer == null)
-                throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
             this.layer = layer;
             putValue(NAME, tr("Show/Hide"));
             updateEnabledState();
@@ -406,7 +406,7 @@ public class LayerListDialog extends ToggleDialog {
         public ActivateLayerAction(Layer layer) throws IllegalArgumentException {
             this();
             if (layer == null)
-                throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
             this.layer = layer;
             putValue(NAME, tr("Activate"));
             updateEnabledState();
@@ -461,7 +461,7 @@ public class LayerListDialog extends ToggleDialog {
         public MergeAction(Layer layer) throws IllegalArgumentException {
             this();
             if (layer == null)
-                throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "layer"));
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
             this.layer = layer;
             putValue(NAME, tr("Merge"));
             updateEnabledState();

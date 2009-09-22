@@ -30,9 +30,9 @@ public class OsmServerHistoryReader extends OsmServerReader {
      */
     public OsmServerHistoryReader(OsmPrimitiveType type, long id) throws IllegalArgumentException {
         if (type == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
         if (id < 0)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' >= 0 expected, got ''{1}''", "id", id));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' >= 0 expected. Got ''{1}''.", "id", id));
         this.primitiveType = type;
         this.id = id;
     }

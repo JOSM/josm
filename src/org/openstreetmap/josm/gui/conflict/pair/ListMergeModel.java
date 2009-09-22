@@ -322,7 +322,7 @@ public abstract class ListMergeModel<T> extends Observable {
             return;
         ArrayList<T> mergedEntries = getMergedEntries();
         if (current < 0 || current >= mergedEntries.size())
-            throw new IllegalArgumentException(tr("parameter current out of range: got {0}", current));
+            throw new IllegalArgumentException(tr("Parameter current out of range. Got {0}.", current));
         for (int i=rows.length -1; i>=0; i--) {
             int row = rows[i];
             T n = entries.get(source).get(row);
@@ -374,7 +374,7 @@ public abstract class ListMergeModel<T> extends Observable {
         ArrayList<T> mergedEntries = getMergedEntries();
 
         if (current < 0 || current >= mergedEntries.size())
-            throw new IllegalArgumentException(tr("parameter current out of range: got {0}", current));
+            throw new IllegalArgumentException(tr("Parameter current out of range. Got {0}.", current));
         if (current == mergedEntries.size() -1) {
             copyToEnd(source, rows);
         } else {
@@ -588,7 +588,7 @@ public abstract class ListMergeModel<T> extends Observable {
          */
         public boolean isSamePositionInOppositeList(int row) {
             if (!isParticipatingInCurrentComparePair())
-                throw new IllegalStateException(tr("list in role {0} is currently not participating in a compare pair", role.toString()));
+                throw new IllegalStateException(tr("List in role {0} is currently not participating in a compare pair.", role.toString()));
             if (row >= getEntries().size()) return false;
             if (row >= getOppositeEntries().size()) return false;
 
@@ -612,7 +612,7 @@ public abstract class ListMergeModel<T> extends Observable {
          */
         public boolean isIncludedInOppositeList(int row) {
             if (!isParticipatingInCurrentComparePair())
-                throw new IllegalStateException(tr("list in role {0} is currently not participating in a compare pair", role.toString()));
+                throw new IllegalStateException(tr("List in role {0} is currently not participating in a compare pair.", role.toString()));
 
             if (row >= getEntries().size()) return false;
             T e1 = getEntries().get(row);
@@ -761,7 +761,7 @@ public abstract class ListMergeModel<T> extends Observable {
         public Object getElementAt(int index) {
             if (index < compareModes.size())
                 return compareModes.get(index);
-            throw new IllegalArgumentException(tr("unexpected value of parameter \"index\". Got {0}", index));
+            throw new IllegalArgumentException(tr("Unexpected value of parameter ''index''. Got {0}.", index));
         }
 
         public int getSize() {
@@ -775,7 +775,7 @@ public abstract class ListMergeModel<T> extends Observable {
         public void setSelectedItem(Object anItem) {
             int i = compareModes.indexOf(anItem);
             if (i < 0)
-                throw new IllegalStateException(tr("item {0} not found in list", anItem));
+                throw new IllegalStateException(tr("Item {0} not found in list.", anItem));
             selectedIdx = i;
             fireModelDataChanged();
         }

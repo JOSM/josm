@@ -65,16 +65,16 @@ public class OsmHistoryReader {
         protected long getMandatoryAttributeLong(Attributes attr, String name) throws SAXException{
             String v = attr.getValue(name);
             if (v == null) {
-                throwException(tr("mandatory attribute ''{0}'' missing", name));
+                throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
             Long l = 0l;
             try {
                 l = Long.parseLong(v);
             } catch(NumberFormatException e) {
-                throwException(tr("illegal value for mandatory attribute ''{0}'' of type long, got ''{1}''", name, v));
+                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v));
             }
             if (l < 0) {
-                throwException(tr("illegal value for mandatory attribute ''{0}'' of type long (>=0), got ''{1}''", name, v));
+                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long (>=0). Got ''{1}''.", name, v));
             }
             return l;
         }
@@ -82,16 +82,16 @@ public class OsmHistoryReader {
         protected int getMandatoryAttributeInt(Attributes attr, String name) throws SAXException{
             String v = attr.getValue(name);
             if (v == null) {
-                throwException(tr("mandatory attribute ''{0}'' missing", name));
+                throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
             Integer i = 0;
             try {
                 i = Integer.parseInt(v);
             } catch(NumberFormatException e) {
-                throwException(tr("illegal value for mandatory attribute ''{0}'' of type int, got ''{1}''", name, v));
+                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type int. Got ''{1}''.", name, v));
             }
             if (i < 0) {
-                throwException(tr("illegal value for mandatory attribute ''{0}'' of type int (>=0), got ''{1}''", name, v));
+                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type int (>=0). Got ''{1}''.", name, v));
             }
             return i;
         }
@@ -99,7 +99,7 @@ public class OsmHistoryReader {
         protected String getMandatoryAttributeString(Attributes attr, String name) throws SAXException{
             String v = attr.getValue(name);
             if (v == null) {
-                throwException(tr("mandatory attribute ''{0}'' missing", name));
+                throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
             return v;
         }
@@ -107,11 +107,11 @@ public class OsmHistoryReader {
         protected boolean getMandatoryAttributeBoolean(Attributes attr, String name) throws SAXException{
             String v = attr.getValue(name);
             if (v == null) {
-                throwException(tr("mandatory attribute ''{0}'' missing", name));
+                throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
             if (v.equals("true")) return true;
             if (v.equals("false")) return false;
-            throwException(tr("illegal value for mandatory attribute ''{0}'' of type boolean, got ''{1}''", name, v));
+            throwException(tr("Illegal value for mandatory attribute ''{0}'' of type boolean. Got ''{1}''.", name, v));
             // not reached
             return false;
         }
@@ -171,7 +171,7 @@ public class OsmHistoryReader {
             try {
                 type = OsmPrimitiveType.fromApiTypeName(v);
             } catch(IllegalArgumentException e) {
-                throwException(tr("illegal value for mandatory attribute ''{0}'' of type OsmPrimitiveType, got ''{1}''", "type", v));
+                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type OsmPrimitiveType. Got ''{1}''.", "type", v));
             }
             String role = getMandatoryAttributeString(atts, "role");
             org.openstreetmap.josm.data.osm.history.RelationMember member = new org.openstreetmap.josm.data.osm.history.RelationMember(role, type,ref);

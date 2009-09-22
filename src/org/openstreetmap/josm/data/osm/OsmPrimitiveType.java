@@ -22,7 +22,7 @@ public enum OsmPrimitiveType {
         for (OsmPrimitiveType type : OsmPrimitiveType.values()) {
             if (type.getAPIName().equals(typeName)) return type;
         }
-        throw new IllegalArgumentException(tr("parameter ''{0}'' is not a valid type name, got ''{1}''", "typeName", typeName));
+        throw new IllegalArgumentException(tr("Parameter ''{0}'' is not a valid type name. Got ''{1}''.", "typeName", typeName));
     }
 
     public static OsmPrimitiveType from(OsmPrimitive obj) {
@@ -33,7 +33,7 @@ public enum OsmPrimitiveType {
         if (cls.equals(Node.class)) return NODE;
         if (cls.equals(Way.class)) return WAY;
         if (cls.equals(Relation.class)) return RELATION;
-        throw new IllegalArgumentException(tr("parameter ''{0}'' is not an acceptable class, got ''{1}''", "cls", cls.toString()));
+        throw new IllegalArgumentException(tr("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
     }
 
     public static OsmPrimitiveType from(String value) {

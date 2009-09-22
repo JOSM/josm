@@ -75,7 +75,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
      */
     protected void addConflict(Conflict<?> conflict) throws IllegalStateException {
         if (hasConflictForMy(conflict.getMy()))
-            throw new IllegalStateException(tr("already registered a conflict for primitive ''{0}''", conflict.getMy().toString()));
+            throw new IllegalStateException(tr("Already registered a conflict for primitive ''{0}''.", conflict.getMy().toString()));
         if (!conflicts.contains(conflict)) {
             conflicts.add(conflict);
         }
@@ -91,7 +91,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
      */
     public void add(Conflict<?> conflict) throws IllegalStateException, IllegalArgumentException {
         if (conflict == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "conflict"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "conflict"));
         addConflict(conflict);
         fireConflictAdded();
     }

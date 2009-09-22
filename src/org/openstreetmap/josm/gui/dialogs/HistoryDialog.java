@@ -176,7 +176,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      */
     protected void showHistory(History h) throws IllegalArgumentException {
         if (h == null)
-            throw new IllegalArgumentException(tr("parameter ''{0}'' must not be null", "h"));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "h"));
         if (HistoryBrowserDialogManager.getInstance().existsDialog(h.getId())) {
             HistoryBrowserDialogManager.getInstance().show(h.getId());
         } else {
@@ -236,7 +236,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
 
         public History get(int idx) throws IndexOutOfBoundsException {
             if (idx < 0 || idx >= data.size())
-                throw new IndexOutOfBoundsException(tr("index out of bounds Got {0}", idx));
+                throw new IndexOutOfBoundsException(tr("Index out of bounds. Got {0}.", idx));
             return data.get(idx);
         }
     }
@@ -339,7 +339,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         public ShowHistoryAction() {
             //putValue(Action.SMALL_ICON, ImageProvider.get("dialogs","refresh"));
             putValue(Action.NAME, tr("Show"));
-            putValue(Action.SHORT_DESCRIPTION, tr("Display the history of the selected primitive"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Display the history of the selected primitive."));
         }
 
         public void actionPerformed(ActionEvent e) {
