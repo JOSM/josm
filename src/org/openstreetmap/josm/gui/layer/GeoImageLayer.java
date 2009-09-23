@@ -222,12 +222,16 @@ public class GeoImageLayer extends Layer {
             }
         }
 
+
         public synchronized boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
             if ((infoflags & ImageObserver.ALLBITS) != 0) {
                 finishImage(img, currentEntry);
                 currentEntry = null;
                 loadImage();
                 notifyAll();
+            } else if ((infoflags & ImageObserver.ERROR) != 0) {
+                currentEntry.scaledImage = new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_BINARY);
+                currentEntry = null;
             }
             return true;
         }

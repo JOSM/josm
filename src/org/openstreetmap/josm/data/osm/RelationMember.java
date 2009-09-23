@@ -9,14 +9,14 @@ package org.openstreetmap.josm.data.osm;
 public class RelationMember {
 
     /**
-     * 
+     *
      */
-    private String role;
+    private final String role;
 
     /**
-     * 
+     *
      */
-    private OsmPrimitive member;
+    private final OsmPrimitive member;
 
     /**
      *
