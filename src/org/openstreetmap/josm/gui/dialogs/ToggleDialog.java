@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -23,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -414,7 +416,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * 
      */
     private class TitleBar extends JPanel {
-        private JLabel leftPart;
+        final private JLabel lblTitle;
 
         public TitleBar(String toggleDialogName, String iconName) {
             setLayout(new GridBagLayout());
@@ -424,10 +426,25 @@ public class ToggleDialog extends JPanel implements Helpful {
             // scale down the dialog icon
             ImageIcon inIcon = ImageProvider.get("dialogs", iconName);
             ImageIcon smallIcon = new ImageIcon(inIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
-            leftPart = new JLabel("",smallIcon, JLabel.TRAILING);
-            leftPart.setIconTextGap(8);
-            add(leftPart, GBC.std());
-            add(Box.createHorizontalGlue(),GBC.std().fill(GBC.HORIZONTAL));
+            lblTitle = new JLabel("",smallIcon, JLabel.TRAILING);
+            lblTitle.setIconTextGap(8);
+            
+            JPanel conceal = new JPanel();
+            conceal.add(lblTitle);
+            conceal.setVisible(false);
+            add(conceal, GBC.std());
+            
+            // Cannot add the label directly since it would displace other elements on resize
+            JComponent lblTitle_weak = new JComponent() {
+                @Override
+                public void paintComponent(Graphics g) {
+                    lblTitle.paint(g);
+                }
+            };
+            lblTitle_weak.setPreferredSize(new Dimension(Integer.MAX_VALUE,20));
+            lblTitle_weak.setMinimumSize(new Dimension(0,20));
+            add(lblTitle_weak, GBC.std().fill(GBC.HORIZONTAL));
+
             addMouseListener(
                     new MouseAdapter() {
                         @Override
@@ -467,11 +484,11 @@ public class ToggleDialog extends JPanel implements Helpful {
         }
 
         public void setTitle(String title) {
-            leftPart.setText(title);
+            lblTitle.setText(title);
         }
 
         public String getTitle() {
-            return leftPart.getText();
+            return lblTitle.getText();
         }
     }
 
