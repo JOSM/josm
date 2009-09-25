@@ -350,7 +350,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <combo key="highway" text="Type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" delete_if_empty="true" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <check key="oneway" text="Oneway" default="on" delete_if_empty="true" />
+                <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
