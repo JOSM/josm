@@ -345,13 +345,13 @@ public class SaveLayersDialog extends JDialog {
         }
 
         public void initForSaveAndExit() {
-            putValue(NAME, tr("Save and Exit"));
+            putValue(NAME, tr("Save/Upload and Exit"));
             putValue(SHORT_DESCRIPTION, tr("Exit JOSM with saving. Unsaved changes are uploaded and/or saved."));
             putValue(SMALL_ICON, ImageProvider.get("exit"));
         }
 
         public void initForSaveAndDelete() {
-            putValue(NAME, tr("Save and Delete"));
+            putValue(NAME, tr("Save/Upload and Delete"));
             putValue(SHORT_DESCRIPTION, tr("Save/Upload layers before deleting. Unsaved changes are not lost."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
         }
@@ -479,9 +479,9 @@ public class SaveLayersDialog extends JDialog {
             if (numProblems == 0) return;
             String msg = tr(
                     "<html>An upload and/or save operation of one layer with modifications<br>"
-                    + "was cancelled or has been failed.</html>",
+                    + "was cancelled or has failed.</html>",
                     "<html>Upload and/or save operations of {0} layers with modifications<br>"
-                    + "were cancelled or have been failed.</html>",
+                    + "were cancelled or have failed.</html>",
                     numProblems,
                     numProblems
             );
