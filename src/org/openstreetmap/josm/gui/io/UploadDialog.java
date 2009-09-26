@@ -398,7 +398,7 @@ public class UploadDialog extends JDialog {
                     )
             ).apply(this);
             startUserInput();
-        } else {
+        } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
