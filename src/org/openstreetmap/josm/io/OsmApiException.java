@@ -85,7 +85,7 @@ public class OsmApiException extends OsmTransferException {
         if (errorHeader != null) {
             sb.append(tr(errorHeader));
             sb.append(tr("(Code={0})", responseCode));
-        } else if (errorBody != null) {
+        } else if (errorBody != null && !errorBody.trim().equals("")) {
             errorBody = errorBody.trim();
             sb.append(tr(errorBody));
             sb.append(tr("(Code={0})", responseCode));

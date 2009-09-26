@@ -173,6 +173,21 @@ public class ExceptionUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because a resource wasn't found.
+     * 
+     * @param e the exception
+     */
+    public static String explainNotFound(OsmApiException e) {
+        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String message = tr("The OSM server ''{0}'' doesn't know about an object<br>"
+                + "you tried to update or delete."
+                , apiUrl);
+        message = "<html>" + message + "</html>";
+        e.printStackTrace();
+        return message;
+    }
+
+    /**
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.

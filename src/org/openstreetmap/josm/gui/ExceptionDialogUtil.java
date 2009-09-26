@@ -132,6 +132,17 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because a resource wasn't found
+     * on the server
+     * 
+     * @param e the exception
+     */
+    public static void explainNotFound(OsmApiException e) {
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNotFound(e), tr("Not Found"),
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
@@ -215,6 +226,11 @@ public class ExceptionDialogUtil {
                 explainBadRequest(oae);
                 return;
             }
+            if (oae.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                explainNotFound(oae);
+                return;
+            }
+
         }
         explainGeneric(e);
     }

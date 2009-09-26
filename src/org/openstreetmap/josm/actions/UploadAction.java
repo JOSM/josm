@@ -414,6 +414,13 @@ public class UploadAction extends JosmAction{
                 handleGone(ex);
                 return;
             }
+            // Tried to update or delete a primitive which never existed on
+            // the server?
+            //
+            else if (ex.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                ExceptionDialogUtil.explainNotFound(ex);
+                return;
+            }
             // any other API exception
             //
             else {
