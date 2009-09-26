@@ -99,7 +99,7 @@ public class CloseChangesetDialog extends JDialog {
     class CloseAction extends AbstractAction implements ListSelectionListener {
         public CloseAction() {
             putValue(NAME, tr("Close changesets"));
-            //putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
             putValue(SHORT_DESCRIPTION, tr("Close the selected open changesets"));
             refreshEnabledState();
         }

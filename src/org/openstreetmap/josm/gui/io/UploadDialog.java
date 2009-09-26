@@ -856,17 +856,31 @@ public class UploadDialog extends JDialog {
             prepareDialogForNextUpload(cs);
         }
 
-        public void setUseNew() {
+        /**
+         * Sets whether a new changeset is to be used
+         * 
+         */
+        public void setUseNewChangeset() {
             rbUseNew.setSelected(true);
         }
 
-        public void setUseExisting() {
+        /**
+         * Sets whether an existing changeset is to be used
+         */
+        public void setUseExistingChangeset() {
             rbExisting.setSelected(true);
             if (cbOpenChangesets.getSelectedItem() == null && model.getSize() > 0) {
                 cbOpenChangesets.setSelectedItem(model.getElementAt(0));
             }
         }
 
+        /**
+         * Replies true if the selected changeset should be closed after the
+         * next upload
+         * 
+         * @return true if the selected changeset should be closed after the
+         * next upload
+         */
         public boolean isCloseAfterUpload() {
             return cbCloseAfterUpload.isSelected();
         }
@@ -902,7 +916,6 @@ public class UploadDialog extends JDialog {
 
         class ChangesetListItemStateListener implements ItemListener {
             public void itemStateChanged(ItemEvent e) {
-
                 Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
                 if (cs == null) {
                     southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
@@ -917,8 +930,6 @@ public class UploadDialog extends JDialog {
                     cs.put("comment", cmt.getText());
                     tagEditorPanel.getModel().initFromPrimitive(cs);
                 } else {
-                    southTabbedPane.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
-                    cs.put("comment", cmt.getText());
                     southTabbedPane.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
                     if (cs.get("created_by") == null) {
                         cs.put("created_by", getDefaultCreatedBy());
@@ -948,6 +959,7 @@ public class UploadDialog extends JDialog {
         class CloseChangesetAction extends AbstractAction implements ItemListener{
             public CloseChangesetAction() {
                 putValue(NAME, tr("Close"));
+                putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
                 putValue(SHORT_DESCRIPTION, tr("Close the currently selected open changeset"));
                 refreshEnabledState();
             }
