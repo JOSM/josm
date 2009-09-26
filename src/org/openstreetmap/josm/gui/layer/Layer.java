@@ -70,8 +70,9 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * The layer should be handled as a background layer in automatic handling
+     * 
      */
-    public boolean background = false;
+    private boolean background = false;
 
     /**
      * The name of this layer.
@@ -169,51 +170,22 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
         }
     }
 
-
-    public static class LayerSaveAction extends AbstractAction {
-        private Layer layer;
-        public LayerSaveAction(Layer layer) {
-            putValue(SMALL_ICON, ImageProvider.get("save"));
-            putValue(SHORT_DESCRIPTION, tr("Save the current data."));
-            putValue(NAME, tr("Save"));
-            setEnabled(true);
-            this.layer = layer;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            new SaveAction().doSave(layer);
-
-        }
+    /**
+     * Replies true if this layer is a background layer
+     * 
+     * @return true if this layer is a background layer
+     */
+    public boolean isBackgroundLayer() {
+        return background;
     }
 
-    public static class LayerSaveAsAction extends AbstractAction {
-        private Layer layer;
-        public LayerSaveAsAction(Layer layer) {
-            putValue(SMALL_ICON, ImageProvider.get("save_as"));
-            putValue(SHORT_DESCRIPTION, tr("Save the current data to a new file."));
-            putValue(NAME, tr("Save As..."));
-            setEnabled(true);
-            this.layer = layer;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            new SaveAsAction().doSave(layer);
-        }
-    }
-
-    public static class LayerGpxExportAction extends AbstractAction {
-        private Layer layer;
-        public LayerGpxExportAction(Layer layer) {
-            putValue(SMALL_ICON, ImageProvider.get("exportgpx"));
-            putValue(SHORT_DESCRIPTION, tr("Export the data to GPX file."));
-            putValue(NAME, tr("Export to GPX..."));
-            setEnabled(true);
-            this.layer = layer;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            new GpxExportAction().export(layer);
-        }
+    /**
+     * Sets whether this layer is a background layer
+     * 
+     * @param background true, if this layer is a background layer
+     */
+    public void setBackgroundLayer(boolean background) {
+        this.background = background;
     }
 
     /**
@@ -271,5 +243,54 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      */
     protected void fireVisibleChanged(boolean oldValue, boolean newValue) {
         propertyChangeSupport.firePropertyChange(VISIBLE_PROP, oldValue, newValue);
+    }
+
+    /**
+     * The action to save a layer
+     * 
+     */
+    public static class LayerSaveAction extends AbstractAction {
+        private Layer layer;
+        public LayerSaveAction(Layer layer) {
+            putValue(SMALL_ICON, ImageProvider.get("save"));
+            putValue(SHORT_DESCRIPTION, tr("Save the current data."));
+            putValue(NAME, tr("Save"));
+            setEnabled(true);
+            this.layer = layer;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            new SaveAction().doSave(layer);
+        }
+    }
+
+    public static class LayerSaveAsAction extends AbstractAction {
+        private Layer layer;
+        public LayerSaveAsAction(Layer layer) {
+            putValue(SMALL_ICON, ImageProvider.get("save_as"));
+            putValue(SHORT_DESCRIPTION, tr("Save the current data to a new file."));
+            putValue(NAME, tr("Save As..."));
+            setEnabled(true);
+            this.layer = layer;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            new SaveAsAction().doSave(layer);
+        }
+    }
+
+    public static class LayerGpxExportAction extends AbstractAction {
+        private Layer layer;
+        public LayerGpxExportAction(Layer layer) {
+            putValue(SMALL_ICON, ImageProvider.get("exportgpx"));
+            putValue(SHORT_DESCRIPTION, tr("Export the data to GPX file."));
+            putValue(NAME, tr("Export to GPX..."));
+            setEnabled(true);
+            this.layer = layer;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            new GpxExportAction().export(layer);
+        }
     }
 }

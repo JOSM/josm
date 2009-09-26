@@ -63,7 +63,6 @@ import org.openstreetmap.josm.tools.AudioPlayer;
  */
 public class MapView extends NavigatableComponent implements PropertyChangeListener {
 
-
     /**
      * A list of all layers currently loaded.
      */
@@ -155,11 +154,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (layer instanceof MarkerLayer && playHeadMarker == null) {
             playHeadMarker = PlayHeadMarker.create();
         }
-        int pos = layers.size();
-        while(pos > 0 && layers.get(pos-1).background) {
-            --pos;
+
+        if (layer.isBackgroundLayer() || layers.isEmpty()) {
+            layers.add(layer);
+        } else {
+            layers.add(0, layer);
         }
-        layers.add(pos, layer);
 
         for (Layer.LayerChangeListener l : Layer.listeners) {
             l.layerAdded(layer);
