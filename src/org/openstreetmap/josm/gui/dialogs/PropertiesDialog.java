@@ -526,13 +526,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // combine both tables and wrap them in a scrollPane
         JPanel bothTables = new JPanel();
+        boolean top = Main.pref.getBoolean("properties.presets.top", true);
         bothTables.setLayout(new GridBagLayout());
-        bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
+        if(top)
+            bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
         bothTables.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         bothTables.add(membershipTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         bothTables.add(membershipTable, GBC.eol().fill(GBC.BOTH));
+        if(!top)
+            bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
 
         DblClickWatch dblClickWatch = new DblClickWatch();
         propertyTable.addMouseListener(dblClickWatch);
@@ -643,10 +647,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
 
         for(TaggingPreset t : TaggingPresetPreference.taggingPresets) {
-            if(t.types == null || !((relations > 0 && !t.types.contains("relation")) &&
+            if((t.types == null || !((relations > 0 && !t.types.contains("relation")) &&
                     (nodes > 0 && !t.types.contains("node")) &&
                     (ways+closedways > 0 && !t.types.contains("way")) &&
-                    (closedways > 0 && !t.types.contains("closedway"))))
+                    (closedways > 0 && !t.types.contains("closedway")))) && t.isShowable())
             {
                 int found = 0;
                 for(TaggingPreset.Item i : t.data) {

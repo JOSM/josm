@@ -677,6 +677,16 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
         return p;
     }
 
+    public boolean isShowable()
+    {
+        for(Item i : data)
+        {
+            if(!(i instanceof Optional || i instanceof Space || i instanceof Key))
+                return true;
+        }
+        return false;
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (Main.main == null) return;
         if (Main.main.getCurrentDataSet() == null) return;
