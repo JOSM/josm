@@ -76,7 +76,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         model = new RelationListModel();
         displaylist = new JList(model);
         displaylist.setCellRenderer(new OsmPrimitivRenderer());
-        displaylist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         displaylist.addMouseListener(new DoubleClickAdapter());
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
@@ -96,7 +96,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         displaylist.addListSelectionListener(editAction);
         buttonPanel.add(new SideButton(editAction), GBC.std());
 
-        // the edit action
+        // the duplicate action
         //
         DuplicateAction duplicateAction = new DuplicateAction();
         displaylist.addListSelectionListener(duplicateAction);
@@ -107,6 +107,14 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         deleteAction = new DeleteAction();
         displaylist.addListSelectionListener(deleteAction);
         buttonPanel.add(new SideButton(deleteAction), GBC.eol());
+
+        // the select action
+        //
+        SelectAction selectAction = new SelectAction();
+        displaylist.addListSelectionListener(selectAction);
+        buttonPanel.add(new SideButton(selectAction), GBC.eol());
+
+
         add(buttonPanel, BorderLayout.SOUTH);
 
         // register as layer listener
@@ -274,7 +282,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     class EditAction extends AbstractAction implements ListSelectionListener{
         public EditAction() {
             putValue(SHORT_DESCRIPTION,tr( "Open an editor for the selected relation"));
-            putValue(NAME, tr("Edit"));
+            //putValue(NAME, tr("Edit"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             setEnabled(false);
         }
@@ -302,7 +310,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public void valueChanged(ListSelectionEvent e) {
-            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
+            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length == 1);
         }
     }
 
@@ -310,19 +318,17 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * The delete action
      *
      */
-    class DeleteAction extends AbstractAction implements ListSelectionListener, Runnable {
+    class DeleteAction extends AbstractAction implements ListSelectionListener {
         class AbortException extends Exception {}
 
         public DeleteAction() {
             putValue(SHORT_DESCRIPTION,tr("Delete the selected relation"));
-            putValue(NAME, tr("Delete"));
+            //putValue(NAME, tr("Delete"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             setEnabled(false);
         }
 
-        public void run() {
-            if (!isEnabled()) return;
-            Relation toDelete = getSelected();
+        protected void deleteRelation(Relation toDelete) {
             if (toDelete == null)
                 return;
             org.openstreetmap.josm.actions.mapmode.DeleteAction.deleteRelation(
@@ -332,7 +338,15 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public void actionPerformed(ActionEvent e) {
-            run();
+            if (!isEnabled()) return;
+            int [] idx  = displaylist.getSelectedIndices();
+            ArrayList<Relation> toDelete = new ArrayList<Relation>(idx.length);
+            for (int i: idx) {
+                toDelete.add(model.getRelation(i));
+            }
+            for (Relation r: toDelete) {
+                deleteRelation(r);
+            }
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -347,7 +361,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     class NewAction extends AbstractAction implements LayerChangeListener{
         public NewAction() {
             putValue(SHORT_DESCRIPTION,tr("Create a new relation"));
-            putValue(NAME, tr("New"));
+            //putValue(NAME, tr("New"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "addrelation"));
             setEnabled(false);
         }
@@ -384,9 +398,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     class DuplicateAction extends AbstractAction implements ListSelectionListener {
         public DuplicateAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
-            // FIXME provide an icon
             putValue(SMALL_ICON, ImageProvider.get("duplicate"));
-            putValue(NAME, tr("Duplicate"));
+            //putValue(NAME, tr("Duplicate"));
             updateEnabledState();
         }
 
@@ -418,11 +431,44 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
+    /**
+     * Sets the current selection to the list of relations selected in this dialog
+     *
+     */
+    class SelectAction extends AbstractAction implements ListSelectionListener{
+        public SelectAction() {
+            putValue(SHORT_DESCRIPTION,tr("Set the current selection to the list of selected relations"));
+            //putValue(NAME, tr("Select"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+            setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled()) return;
+            int [] idx = displaylist.getSelectedIndices();
+            if (idx == null || idx.length == 0) return;
+            ArrayList<OsmPrimitive> selection = new ArrayList<OsmPrimitive>(idx.length);
+            for (int i: idx) {
+                selection.add(model.getRelation(i));
+            }
+            Main.map.mapView.getEditLayer().data.setSelected(selection);
+            DataSet.fireSelectionChanged(selection);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
+        }
+    }
+
     private static  class RelationListModel extends AbstractListModel {
         private ArrayList<Relation> relations;
 
         public ArrayList<Relation> getRelations() {
             return relations;
+        }
+
+        public Relation getRelation(int idx) {
+            return relations.get(idx);
         }
 
         public void setRelations(ArrayList<Relation> relations) {
