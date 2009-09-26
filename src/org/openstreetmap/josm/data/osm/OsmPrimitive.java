@@ -34,8 +34,19 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  */
 abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
+    /**
+     * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
+     * another collection of {@see OsmPrimitive}s. The result collection is a list.
+     * 
+     * If <code>list</code> is null, replies an empty list.
+     * 
+     * @param <T>
+     * @param list  the original list
+     * @param type the type to filter for
+     * @return the sub-list of OSM primitives of type <code>type</code>
+     */
     static public <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
-        if (list == null) return null;
+        if (list == null) return Collections.emptyList();
         List<T> ret = new LinkedList<T>();
         for(OsmPrimitive p: list) {
             if (type.isInstance(p)) {
@@ -45,8 +56,19 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         return ret;
     }
 
+    /**
+     * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
+     * another collection of {@see OsmPrimitive}s. The result collection is a set.
+     * 
+     * If <code>list</code> is null, replies an empty set.
+     * 
+     * @param <T>
+     * @param list  the original collection
+     * @param type the type to filter for
+     * @return the sub-set of OSM primitives of type <code>type</code>
+     */
     static public <T extends OsmPrimitive>  Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
-        if (set == null) return null;
+        if (set == null) return Collections.emptySet();
         HashSet<T> ret = new HashSet<T>();
         for(OsmPrimitive p: set) {
             if (type.isInstance(p)) {
@@ -90,11 +112,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * Unique identifier in OSM. This is used to identify objects on the server.
      * An id of 0 means an unknown id. The object has not been uploaded yet to
      * know what id it will get.
-     *
-     * Do not write to this attribute except you know exactly what you are doing.
-     * More specific, it is not good to set this to 0 and think the object is now
-     * new to the server! To create a new object, call the default constructor of
-     * the respective class.
      *
      */
     private long id = 0;
@@ -741,7 +758,4 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @return the display name
      */
     public abstract String getDisplayName(NameFormatter formatter);
-
 }
-
-

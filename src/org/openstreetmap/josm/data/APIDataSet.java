@@ -27,7 +27,6 @@ import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
  * API.
  * The collection is derived from the modified primitives of an {@see DataSet}.
  * 
- * 
  */
 public class APIDataSet {
     private LinkedList<OsmPrimitive> toAdd;
@@ -44,9 +43,9 @@ public class APIDataSet {
     }
 
     /**
-     * initializes the API data set with the modified primitives in <code>ds</ds>
+     * initializes the API data set with the modified primitives in <code>ds</code>
      * 
-     * @param ds the data set. Ignore, if null.
+     * @param ds the data set. Ignored, if null.
      */
     public void init(DataSet ds) {
         if (ds == null) return;
@@ -62,16 +61,16 @@ public class APIDataSet {
                 toAdd.addLast(osm);
             } else if (osm.isModified() && !osm.isDeleted()) {
                 toUpdate.addLast(osm);
-            } else if (osm.isDeleted() && osm.getId() != 0) {
+            } else if (osm.isDeleted() && osm.getId() != 0 && osm.isModified()) {
                 toDelete.addFirst(osm);
             }
         }
     }
 
     /**
-     * initializes the API data set with the modified primitives in <code>ds</ds>
+     * initializes the API data set with the modified primitives in <code>ds</code>
      * 
-     * @param ds the data set. Ignore, if null.
+     * @param ds the data set. Ignored, if null.
      */
     public APIDataSet(DataSet ds) {
         this();
