@@ -180,8 +180,10 @@ public class ExceptionUtil {
     public static String explainNotFound(OsmApiException e) {
         String apiUrl = OsmApi.getOsmApi().getBaseUrl();
         String message = tr("The OSM server ''{0}'' doesn't know about an object<br>"
-                + "you tried to update or delete."
-                , apiUrl);
+                + "you tried to read, update, or delete. Either the respective object<br>"
+                + "doesn''t exist on the server or you''re using an invalid URL to access<br>"
+                + "it. Please carefully check the servers address ''{1}'' for typos."
+                , apiUrl, apiUrl);
         message = "<html>" + message + "</html>";
         e.printStackTrace();
         return message;
