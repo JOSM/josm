@@ -581,10 +581,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //if(restrictionDebug)
             //    System.out.println("member " + m.member + " selected " + r.selected);
 
-            if(m.getMember() == null) {
-                // TODO Nullable member will not be allowed after RelationMember.member is encalupsed
-                r.putError(tr("Empty member in relation."), true);
-            } else if(m.getMember().isDeleted()) {
+            if (m.getMember().isDeleted()) {
                 r.putError(tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
             } else if(m.getMember().incomplete)
@@ -677,7 +674,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 if("-1".equals(onewayviastr)) {
                     onewayvia = true;
-                    Node t = firstNode;
                     firstNode = lastNode;
                     lastNode = firstNode;
                 }
@@ -850,10 +846,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         for (RelationMember m : r.getMembers())
         {
-            if(m.getMember() == null) {
-                //TODO Remove useless nullcheck when RelationMember.member is encalupsed
-                r.putError(tr("Empty member in relation."), true);
-            } else if(m.getMember().isDeleted()) {
+            if (m.getMember().isDeleted()) {
                 r.putError(tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
             } else if(m.getMember().incomplete) {

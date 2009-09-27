@@ -24,8 +24,6 @@ public class RelationMember {
      * @since 1930
      */
     public String getRole() {
-        if (role == null)
-            return "";
         return role;
     }
 
@@ -35,7 +33,7 @@ public class RelationMember {
      * @since 1930
      */
     public boolean hasRole() {
-        return role != null && !"".equals(role);
+        return !"".equals(role);
     }
 
     /**
@@ -94,25 +92,37 @@ public class RelationMember {
 
     /**
      *
-     * @return Member
+     * @return Member. Returned value is never null.
      * @since 1937
      */
     public OsmPrimitive getMember() {
         return member;
     }
 
+    /**
+     *
+     * @param role Can be null, in this case it's save as ""
+     * @param member Cannot be null
+     */
     public RelationMember(String role, OsmPrimitive member) {
+        if (role == null) {
+            role = "";
+        }
+        if (member == null) {
+            throw new IllegalArgumentException("Relation member cannot be null");
+        }
         this.role = role;
         this.member = member;
     }
 
     /**
      * Copy constructor.
+     * This constructor is left only for backwards compatibility. Copying RelationMember doesn't make sense
+     * because it's immutable
      * @param other relation member to be copied.
      */
     public RelationMember(RelationMember other) {
-        role = other.role;
-        member = other.member;
+        this(other.role, other.member);
     }
 
     @Override public String toString() {
@@ -126,8 +136,6 @@ public class RelationMember {
      * @return true, if this relation member refers to the primitive
      */
     public boolean refersTo(OsmPrimitive primitive) {
-        if (primitive == null) return false;
-        if (member == null) return false;
         return member == primitive;
     }
 
@@ -135,30 +143,18 @@ public class RelationMember {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((member == null) ? 0 : member.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
+        result = prime * result + member.hashCode();
+        result = prime * result + role.hashCode();
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+        if (obj instanceof RelationMember) {
+            RelationMember other = (RelationMember) obj;
+            return member.equals(other.getMember()) && role.equals(other.getRole());
+        } else {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RelationMember other = (RelationMember) obj;
-        if (member == null) {
-            if (other.member != null)
-                return false;
-        } else if (!member.equals(other.member))
-            return false;
-        if (role == null) {
-            if (other.role != null)
-                return false;
-        } else if (!role.equals(other.role))
-            return false;
-        return true;
+        }
     }
 }

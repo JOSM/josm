@@ -34,12 +34,19 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  */
 abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
+    private static final int FLAG_MODIFIED = 1 << 0;
+    private static final int FLAG_VISIBLE  = 1 << 1;
+    private static final int FLAG_DISABLED = 1 << 2;
+    private static final int FLAG_DELETED  = 1 << 3;
+    private static final int FLAG_FILTERED = 1 << 4;
+    private static final int FLAG_SELECTED = 1 << 5;
+
     /**
      * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
      * another collection of {@see OsmPrimitive}s. The result collection is a list.
-     * 
+     *
      * If <code>list</code> is null, replies an empty list.
-     * 
+     *
      * @param <T>
      * @param list  the original list
      * @param type the type to filter for
@@ -59,9 +66,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
      * another collection of {@see OsmPrimitive}s. The result collection is a set.
-     * 
+     *
      * If <code>list</code> is null, replies an empty set.
-     * 
+     *
      * @param <T>
      * @param list  the original collection
      * @param type the type to filter for
@@ -116,52 +123,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      */
     private long id = 0;
 
-    /**
-     * <code>true</code> if the object has been modified since it was loaded from
-     * the server. In this case, on next upload, this object will be updated.
-     * Deleted objects are deleted from the server. If the objects are added (id=0),
-     * the modified is ignored and the object is added to the server.
-     *
-     */
-    private boolean modified = false;
+    private volatile byte flags;
 
-    /**
-     * <code>true</code>, if the object has been deleted.
-     *
-     */
-    private boolean deleted = false;
-
-    /**
-     * Visibility status as specified by the server. The visible attribute was
-     * introduced with the 0.4 API to be able to communicate deleted objects
-     * (they will have visible=false).
-     *
-     */
-    private boolean visible = true;
-
-    /**
-     * <code>true</code>, if the object has been set inactive
-     *
-     */
-    private boolean disabled = false;
-
-    /**
-     * <code>true</code>, if the object has been filtered out
-     *
-     */
-    private boolean filtered = false;
 
     /**
      * User that last modified this primitive, as specified by the server.
      * Never changed by JOSM.
      */
     public User user = null;
-
-    /**
-     * If set to true, this object is currently selected.
-     *
-     */
-    private volatile boolean selected = false;
 
     /**
      * If set to true, this object is incomplete, which means only the id
@@ -207,7 +176,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @param selected  true, if this primitive is disabled; false, otherwise
      */
     public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
+        if (disabled) {
+            flags |= FLAG_DISABLED;
+        } else {
+            flags &= ~FLAG_DISABLED;
+        }
+
     }
 
     /**
@@ -216,7 +190,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @return true, if this primitive is disabled
      */
     public boolean isDisabled() {
-        return disabled;
+        return (flags & FLAG_DISABLED) != 0;
     }
     /**
      * Sets whether this primitive is filtered out or not.
@@ -224,7 +198,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @param selected  true, if this primitive is filtered out; false, otherwise
      */
     public void setFiltered(boolean filtered) {
-        this.filtered = filtered;
+        if (filtered) {
+            flags |= FLAG_FILTERED;
+        } else {
+            flags &= ~FLAG_FILTERED;
+        }
     }
     /**
      * Replies true, if this primitive is filtered out.
@@ -232,7 +210,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @return true, if this primitive is filtered out
      */
     public boolean isFiltered() {
-        return filtered;
+        return (flags & FLAG_FILTERED) != 0;
     }
 
     /**
@@ -242,7 +220,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @since 1899
      */
     public void setSelected(boolean selected) {
-        this.selected = selected;
+        if (selected) {
+            flags |= FLAG_SELECTED;
+        } else {
+            flags &= ~FLAG_SELECTED;
+        }
     }
     /**
      * Replies true, if this primitive is selected.
@@ -251,7 +233,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @since 1899
      */
     public boolean isSelected() {
-        return selected;
+        return (flags & FLAG_SELECTED) != 0;
     }
 
     /**
@@ -260,18 +242,25 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @param modified true, if this primitive is to be modified
      */
     public void setModified(boolean modified) {
-        this.modified = modified;
+        if (modified) {
+            flags |= FLAG_MODIFIED;
+        } else {
+            flags &= ~FLAG_MODIFIED;
+        }
     }
 
     /**
      * Replies <code>true</code> if the object has been modified since it was loaded from
      * the server. In this case, on next upload, this object will be updated.
      *
+     * Deleted objects are deleted from the server. If the objects are added (id=0),
+     * the modified is ignored and the object is added to the server.
+     *
      * @return <code>true</code> if the object has been modified since it was loaded from
      * the server
      */
     public boolean isModified() {
-        return modified;
+        return (flags & FLAG_MODIFIED) != 0;
     }
 
     /**
@@ -281,7 +270,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @see #setDeleted(boolean)
      */
     public boolean isDeleted() {
-        return deleted;
+        return (flags & FLAG_DELETED) != 0;
     }
 
     /**
@@ -291,7 +280,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @see #delete(boolean)
      */
     public boolean isUsable() {
-        return !deleted && !incomplete && !disabled;
+        return !isDeleted() && !incomplete && !isDisabled();
     }
 
     /**
@@ -303,7 +292,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @see #setVisible(boolean)
      */
     public boolean isVisible() {
-        return visible;
+        return (flags & FLAG_VISIBLE) != 0;
     }
 
     /**
@@ -317,7 +306,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     public void setVisible(boolean visible) throws IllegalStateException{
         if (id == 0 && visible == false)
             throw new IllegalStateException(tr("A primitive with ID = 0 can't be invisible."));
-        this.visible = visible;
+        if (visible) {
+            flags |= FLAG_VISIBLE;
+        } else {
+            flags &= ~FLAG_VISIBLE;
+        }
     }
 
     /**
@@ -455,9 +448,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @param deleted  true, if this primitive is deleted; false, otherwise
      */
     public void setDeleted(boolean deleted) {
-        this.modified = deleted;
-        this.deleted = deleted;
-        this.selected = false;
+        if (deleted) {
+            flags |= FLAG_DELETED;
+        } else {
+            flags &= ~FLAG_DELETED;
+        }
+        setModified(deleted);
+        setSelected(false);
     }
 
     /**
@@ -622,13 +619,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     public void cloneFrom(OsmPrimitive osm) {
         keys = osm.keys == null ? null : new HashMap<String, String>(osm.keys);
         id = osm.id;
-        modified = osm.modified;
-        deleted = osm.deleted;
-        setSelected(osm.isSelected());
         timestamp = osm.timestamp;
         version = osm.version;
         incomplete = osm.incomplete;
-        visible = osm.visible;
+        flags = osm.flags;
         clearCached();
         clearErrors();
     }
@@ -673,11 +667,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         if (other == null) return false;
 
         return
-        deleted == other.deleted
-        && modified == other.modified
+        isDeleted() == other.isDeleted()
+        && isModified() == other.isModified()
         && timestamp == other.timestamp
         && version == other.version
-        && visible == other.visible
+        && isVisible() == other.isVisible()
         && (user == null ? other.user==null : user==other.user);
     }
 
