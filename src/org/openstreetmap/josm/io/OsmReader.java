@@ -487,7 +487,7 @@ public class OsmReader {
                         //
                         throw new IllegalDataException(
                                 tr(
-                                        "Relation with external id ''{0}'' refers to missing primitive with external id ''{1}''.",
+                                        "Relation with external id ''{0}'' refers to a missing primitive with external id ''{1}''.",
                                         externalRelationId,
                                         rm.id
                                 )
