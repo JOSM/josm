@@ -1,8 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
-import java.util.ArrayList;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * One full way, consisting of a list of way nodes.
@@ -23,7 +23,7 @@ public final class Way extends OsmPrimitive {
      * All way nodes in this way
      *
      */
-    private final List<Node> nodes = new ArrayList<Node>();
+    private Node[] nodes = new Node[0];
 
     /**
      *
@@ -33,34 +33,38 @@ public final class Way extends OsmPrimitive {
      * @since 1862
      */
     public List<Node> getNodes() {
-        return new CopyList<Node>(nodes.toArray(new Node[nodes.size()]));
+        return new CopyList<Node>(nodes);
     }
 
     /**
+     * Set new list of nodes to way. This method is preferred to multiple calls to addNode/removeNode
+     * and similar methods because nodes are internally saved as array which means lower memory overhead
+     * but also slower modifying operations.
      * @param nodes New way nodes. Can be null, in that case all way nodes are removed
      * @since 1862
      */
     public void setNodes(List<Node> nodes) {
-        this.nodes.clear();
-        if (nodes != null) {
-            this.nodes.addAll(nodes);
+        if (nodes == null) {
+            this.nodes = new Node[0];
+        } else {
+            this.nodes = nodes.toArray(new Node[nodes.size()]);
         }
         clearCached();
     }
 
     /**
      * Replies the number of nodes in this ways.
-     * 
+     *
      * @return the number of nodes in this ways.
      * @since 1862
      */
     public int getNodesCount() {
-        return nodes.size();
+        return nodes.length;
     }
 
     /**
      * Replies the node at position <code>index</code>.
-     * 
+     *
      * @param index the position
      * @return  the node at position <code>index</code>
      * @exception IndexOutOfBoundsException thrown if <code>index</code> < 0
@@ -68,13 +72,13 @@ public final class Way extends OsmPrimitive {
      * @since 1862
      */
     public Node getNode(int index) {
-        return nodes.get(index);
+        return nodes[index];
     }
 
     /**
      * Replies true if this way contains the node <code>node</code>, false
      * otherwise. Replies false if  <code>node</code> is null.
-     * 
+     *
      * @param node the node. May be null.
      * @return true if this way contains the node <code>node</code>, false
      * otherwise
@@ -82,7 +86,12 @@ public final class Way extends OsmPrimitive {
      */
     public boolean containsNode(Node node) {
         if (node == null) return false;
-        return nodes.contains(node);
+        for (int i=0; i<nodes.length; i++) {
+            if (nodes[i].equals(node)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /* mappaint data */
@@ -121,7 +130,7 @@ public final class Way extends OsmPrimitive {
 
     /**
      * Creates a new way with id 0.
-     * 
+     *
      */
     public Way(){
         super(0);
@@ -129,7 +138,7 @@ public final class Way extends OsmPrimitive {
 
     /**
      * Create an identical clone of the argument (including the id).
-     * 
+     *
      * @param original  the original way. Must not be null.
      */
     public Way(Way original) {
@@ -140,7 +149,7 @@ public final class Way extends OsmPrimitive {
     /**
      * Creates a new way for the given id. If the id > 0, the way is marked
      * as incomplete.
-     * 
+     *
      * @param id the id. > 0 required
      * @throws IllegalArgumentException thrown if id < 0
      */
@@ -150,13 +159,14 @@ public final class Way extends OsmPrimitive {
 
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
-        nodes.clear();
-        nodes.addAll(((Way)osm).nodes);
+        Way otherWay = (Way)osm;
+        nodes = new Node[otherWay.nodes.length];
+        System.arraycopy(otherWay.nodes, 0, nodes, 0, otherWay.nodes.length);
     }
 
     @Override public String toString() {
         if (incomplete) return "{Way id="+getId()+" version="+getVersion()+" (incomplete)}";
-        return "{Way id="+getId()+" version="+getVersion()+" nodes="+Arrays.toString(nodes.toArray())+"}";
+        return "{Way id="+getId()+" version="+getVersion()+" nodes="+Arrays.toString(nodes)+"}";
     }
 
     @Override
@@ -179,15 +189,17 @@ public final class Way extends OsmPrimitive {
         if (incomplete) return;
         boolean closed = (lastNode() == n && firstNode() == n);
         int i;
-        while ((i = nodes.indexOf(n)) >= 0) {
-            nodes.remove(i);
+        List<Node> copy = getNodes();
+        while ((i = copy.indexOf(n)) >= 0) {
+            copy.remove(i);
         }
-        i = nodes.size();
+        i = copy.size();
         if (closed && i > 2) {
             addNode(firstNode());
-        } else if (i >= 2 && i <= 3 && nodes.get(0) == nodes.get(i-1)) {
-            nodes.remove(i-1);
+        } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
+            copy.remove(i-1);
         }
+        setNodes(copy);
     }
 
     public void removeNodes(Collection<? extends OsmPrimitive> selection) {
@@ -201,7 +213,7 @@ public final class Way extends OsmPrimitive {
 
     /**
      * Adds a node to the end of the list of nodes. Ignored, if n is null.
-     * 
+     *
      * @param n the node. Ignored, if null.
      * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
      * to an incomplete way
@@ -210,14 +222,16 @@ public final class Way extends OsmPrimitive {
         if (n==null) return;
         if (incomplete)
             throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
-        if (incomplete) return;
         clearCached();
-        nodes.add(n);
+        Node[] newNodes = new Node[nodes.length + 1];
+        System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
+        newNodes[nodes.length] = n;
+        nodes = newNodes;
     }
 
     /**
      * Adds a node at position offs.
-     * 
+     *
      * @param int offs the offset
      * @param n the node. Ignored, if null.
      * @throws IllegalStateException thrown, if this way is marked as incomplete. We can't add a node
@@ -229,26 +243,30 @@ public final class Way extends OsmPrimitive {
         if (incomplete)
             throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
         clearCached();
-        nodes.add(offs, n);
+        Node[] newNodes = new Node[nodes.length + 1];
+        System.arraycopy(nodes, 0, newNodes, 0, offs);
+        System.arraycopy(nodes, offs, newNodes, offs + 1, nodes.length - offs);
+        newNodes[offs] = n;
+        nodes = newNodes;
     }
 
     public boolean isClosed() {
         if (incomplete) return false;
-        return nodes.size() >= 3 && lastNode() == firstNode();
+        return nodes.length >= 3 && lastNode() == firstNode();
     }
 
     public Node lastNode() {
-        if (incomplete || nodes.size() == 0) return null;
-        return nodes.get(nodes.size()-1);
+        if (incomplete || nodes.length == 0) return null;
+        return nodes[nodes.length-1];
     }
 
     public Node firstNode() {
-        if (incomplete || nodes.size() == 0) return null;
-        return nodes.get(0);
+        if (incomplete || nodes.length == 0) return null;
+        return nodes[0];
     }
 
     public boolean isFirstLastNode(Node n) {
-        if (incomplete || nodes.size() == 0) return false;
+        if (incomplete || nodes.length == 0) return false;
         return n == firstNode() || n == lastNode();
     }
 
