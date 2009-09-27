@@ -32,7 +32,7 @@ import org.openstreetmap.josm.actions.upload.UploadHook;
  */
 public class RelationUploadOrderHook implements UploadHook {
 
-    /** the data to be analysed */
+    /** the data to be analyzed */
     private APIDataSet data;
 
     /**

@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.UploadDialog;
@@ -36,8 +38,10 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
 import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmServerWriter;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
@@ -349,9 +353,9 @@ public class UploadAction extends JosmAction{
      *
      * @see UpdateSelectionAction#handlePrimitiveGoneException(long)
      */
-    protected void handleGoneForKnownPrimitive(OsmPrimitiveType primitiveType, String id) {
+    protected void handleGoneForKnownPrimitive(OsmPrimitiveType primitiveType, long id) {
         UpdateSelectionAction act = new UpdateSelectionAction();
-        act.handlePrimitiveGoneException(Long.parseLong(id),primitiveType);
+        act.handlePrimitiveGoneException(id,primitiveType);
     }
 
     /**
@@ -362,14 +366,10 @@ public class UploadAction extends JosmAction{
      *
      * @param e the exception
      */
-    protected void handleGone(OsmApiException e) {
-        String pattern = "The (\\S+) with the id (\\d+) has already been deleted";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(e.getErrorHeader());
-        if (m.matches()) {
-            handleGoneForKnownPrimitive(OsmPrimitiveType.from(m.group(1)), m.group(2));
+    protected void handleGone(OsmApiPrimitiveGoneException e) {
+        if (e.isKnownPrimitive()) {
+            handleGoneForKnownPrimitive(e.getPrimitiveType(), e.getPrimitiveId());
         } else {
-            logger.warning(tr("Error header \"{0}\" does not match expected pattern \"{1}\"",e.getErrorHeader(), pattern));
             ExceptionDialogUtil.explainGoneForUnknownPrimitive(e);
         }
     }
@@ -392,6 +392,10 @@ public class UploadAction extends JosmAction{
             ExceptionDialogUtil.explainOsmChangesetCloseException((OsmChangesetCloseException)e);
             return;
         }
+        if (e instanceof OsmApiPrimitiveGoneException) {
+            handleGone((OsmApiPrimitiveGoneException)e);
+            return;
+        }
         if (e instanceof OsmApiException) {
             OsmApiException ex = (OsmApiException)e;
             // There was an upload conflict. Let the user decide whether
@@ -405,13 +409,6 @@ public class UploadAction extends JosmAction{
             //
             else if (ex.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
                 ExceptionDialogUtil.explainPreconditionFailed(ex);
-                return;
-            }
-            // Tried to delete an already deleted primitive? Let the user
-            // decide whether and how to resolve this conflict.
-            //
-            else if (ex.getResponseCode() == HttpURLConnection.HTTP_GONE) {
-                handleGone(ex);
                 return;
             }
             // Tried to update or delete a primitive which never existed on
@@ -488,15 +485,15 @@ public class UploadAction extends JosmAction{
         }
     }
 
-    public UploadDiffTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
-        return new UploadDiffTask(layer, toUpload, changeset, closeChangesetAfterUpload);
+    public UploadPrimitivesTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
+        return new UploadPrimitivesTask(layer, toUpload, changeset, closeChangesetAfterUpload);
     }
 
     /**
      * The task for uploading a collection of primitives
      *
      */
-    public class UploadDiffTask extends  PleaseWaitRunnable {
+    public class UploadPrimitivesTask extends  PleaseWaitRunnable {
         private boolean uploadCancelled = false;
         private Exception lastException = null;
         private Collection <OsmPrimitive> toUpload;
@@ -504,6 +501,7 @@ public class UploadAction extends JosmAction{
         private OsmDataLayer layer;
         private Changeset changeset;
         private boolean closeChangesetAfterUpload;
+        private HashSet<OsmPrimitive> processedPrimitives;
 
         /**
          * 
@@ -512,25 +510,81 @@ public class UploadAction extends JosmAction{
          * @param changeset the changeset to use for uploading
          * @param closeChangesetAfterUpload true, if the changeset is to be closed after uploading
          */
-        private UploadDiffTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
+        private UploadPrimitivesTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
             super(tr("Uploading data for layer ''{0}''", layer.getName()),false /* don't ignore exceptions */);
             this.toUpload = toUpload;
             this.layer = layer;
             this.changeset = changeset;
             this.closeChangesetAfterUpload = closeChangesetAfterUpload;
+            this.processedPrimitives = new HashSet<OsmPrimitive>();
+        }
+
+        protected OsmPrimitive getPrimitive(OsmPrimitiveType type, long id) {
+            for (OsmPrimitive p: toUpload) {
+                if (OsmPrimitiveType.from(p).equals(type) && p.getId() == id)
+                    return p;
+            }
+            return null;
+        }
+
+        /**
+         * Retries to recover the upload operation from an exception which was thrown because
+         * an uploaded primitive was already deleted on the server.
+         * 
+         * @param e the exception throw by the API
+         * @param monitor a progress monitor
+         * @throws OsmTransferException  thrown if we can't recover from the exception
+         */
+        protected void recoverFromGoneOnServer(OsmApiPrimitiveGoneException e, ProgressMonitor monitor) throws OsmTransferException{
+            if (!e.isKnownPrimitive()) throw e;
+            OsmPrimitive p = getPrimitive(e.getPrimitiveType(), e.getPrimitiveId());
+            if (p == null) throw e;
+            if (p.isDeleted()) {
+                // we tried to delete an already deleted primitive.
+                //
+                System.out.println(tr("Warning: primitive ''{0}'' is already deleted on the server. Skipping this primitive and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
+                processedPrimitives.addAll(writer.getProcessedPrimitives());
+                processedPrimitives.add(p);
+                toUpload.removeAll(processedPrimitives);
+                return;
+            }
+            // exception was thrown because we tried to *update* an already deleted
+            // primitive. We can't resolve this automatically. Re-throw exception,
+            // a conflict is going to be created later.
+            throw e;
         }
 
         @Override protected void realRun() throws SAXException, IOException {
             writer = new OsmServerWriter();
             try {
-                ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                writer.uploadOsm(layer.data.version, toUpload, changeset,closeChangesetAfterUpload, monitor);
-            } catch (Exception sxe) {
+                //
+                while(true) {
+                    try {
+                        ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
+                        writer.uploadOsm(layer.data.version, toUpload, changeset, monitor);
+                        processedPrimitives.addAll(writer.getProcessedPrimitives());
+                        // if we get here we've successfully uploaded the data. We
+                        // can exit the loop.
+                        //
+                        break;
+                    } catch(OsmApiPrimitiveGoneException e) {
+                        // try to recover from the 410 Gone
+                        recoverFromGoneOnServer(e, getProgressMonitor());
+                    }
+                }
+                // if required close the changeset
+                //
+                if (closeChangesetAfterUpload) {
+                    if (changeset != null && changeset.getId() > 0) {
+                        OsmApi.getOsmApi().closeChangeset(changeset, progressMonitor.createSubTaskMonitor(0,false));
+                    }
+                }
+            } catch (Exception e) {
                 if (uploadCancelled) {
-                    System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
+                    System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + e.toString());
                     return;
                 }
-                lastException = sxe;
+                lastException = e;
             }
         }
 
@@ -538,22 +592,17 @@ public class UploadAction extends JosmAction{
             if (uploadCancelled)
                 return;
 
-            // we always clean the data, even in case of errors. It's possible the data was
+            // we always clean up the data, even in case of errors. It's possible the data was
             // partially uploaded
             //
-            layer.cleanupAfterUpload(writer.getProcessedPrimitives());
+            layer.cleanupAfterUpload(processedPrimitives);
             DataSet.fireSelectionChanged(layer.data.getSelected());
             layer.fireDataChange();
             if (lastException != null) {
                 handleFailedUpload(lastException);
-            } else {
-                // run post upload action on the layer
-                //
-                layer.onPostUploadToServer();
-                // refresh changeset dialog with the updated changeset
-                //
-                UploadDialog.getUploadDialog().setOrUpdateChangeset(changeset);
             }
+            layer.onPostUploadToServer();
+            UploadDialog.getUploadDialog().setOrUpdateChangeset(changeset);
         }
 
         @Override protected void cancel() {
@@ -561,18 +610,6 @@ public class UploadAction extends JosmAction{
             if (writer != null) {
                 writer.cancel();
             }
-        }
-
-        public boolean isSuccessful() {
-            return !isCancelled() && !isFailed();
-        }
-
-        public boolean isCancelled() {
-            return uploadCancelled;
-        }
-
-        public boolean isFailed() {
-            return lastException != null;
         }
     }
 }

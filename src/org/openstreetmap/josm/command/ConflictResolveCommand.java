@@ -11,11 +11,11 @@ import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
- * This is the common basse class for {@see Command}s which manipulate {@see Conflict}s in
+ * This is the common base class for {@see Command}s which manipulate {@see Conflict}s in
  * addition to {@see OsmPrimitive}s.
  * 
  * A ConflictResolverCommand can remember a collection of conflicts it resolves. Upon undoing
- * it reconstitutes these conflicts.
+ * it reconstitutes them.
  *
  */
 public abstract class ConflictResolveCommand extends Command {
@@ -29,12 +29,17 @@ public abstract class ConflictResolveCommand extends Command {
         resolvedConflicts = new ConflictCollection();
     }
 
+    public ConflictResolveCommand(OsmDataLayer layer) {
+        super(layer);
+        resolvedConflicts = new ConflictCollection();
+    }
+
     /**
      * remembers a conflict in the internal list of remembered conflicts
      * 
      * @param c the remembered conflict
      */
-    protected void rememberConflict(Conflict c) {
+    protected void rememberConflict(Conflict<?> c) {
         if (! resolvedConflicts.hasConflictForMy(c.getMy())) {
             resolvedConflicts.add(c);
         }
@@ -47,7 +52,7 @@ public abstract class ConflictResolveCommand extends Command {
      */
     protected void reconstituteConflicts() {
         OsmDataLayer editLayer = getLayer();
-        for(Conflict c : resolvedConflicts) {
+        for(Conflict<?> c : resolvedConflicts) {
             if (!editLayer.getConflicts().hasConflictForMy(c.getMy())) {
                 editLayer.getConflicts().add(c);
             }
@@ -59,7 +64,7 @@ public abstract class ConflictResolveCommand extends Command {
         super.undoCommand();
 
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            logger.warning(tr("Can't undo command ''{0}'' because layer ''{1}'' is not present any more",
+            logger.warning(tr("Can''t undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     getLayer().toString()
             ));
@@ -69,7 +74,4 @@ public abstract class ConflictResolveCommand extends Command {
         Main.map.mapView.setActiveLayer(getLayer());
         reconstituteConflicts();
     }
-
-
-
 }

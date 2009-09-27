@@ -50,7 +50,4 @@ public class MergeSelectionAction extends AbstractMergeAction {
         }
         setEnabled(!getEditLayer().data.getSelected().isEmpty());
     }
-
-
-
 }

@@ -5,7 +5,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * Represents a conflict between two {@see OsmPrimitive}s. It is represented as
- * a pair if {@see OsmPrimitive} where one element of the pair has the role <em>my</em>
+ * a pair of {@see OsmPrimitive}s where one element of the pair has the role <em>my</em>
  * and the other has the role <em>their</em>.
  * <ul>
  *   <li><code>my</code> is the {@see OsmPrimitive} in the local dataset</li>

@@ -397,42 +397,41 @@ public class OsmApi extends OsmConnection {
      * Uploads a list of changes in "diff" form to the server.
      *
      * @param list the list of changed OSM Primitives
+     * @param  monitor the progress monitor
      * @return list of processed primitives
      * @throws OsmTransferException if something is wrong
      */
-    public Collection<OsmPrimitive> uploadDiff(Collection<OsmPrimitive> list, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public Collection<OsmPrimitive> uploadDiff(Collection<OsmPrimitive> list, ProgressMonitor monitor) throws OsmTransferException {
         try {
-            progressMonitor.beginTask("", list.size() * 2);
+            monitor.beginTask("", list.size() * 2);
             if (changeset == null)
                 throw new OsmTransferException(tr("No changeset present for diff upload."));
 
-            initialize(progressMonitor);
+            initialize(monitor);
             final ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
 
             CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
 
-            progressMonitor.subTask(tr("Preparing..."));
+            monitor.subTask(tr("Preparing..."));
             for (OsmPrimitive osm : list) {
                 osm.visit(duv);
-                progressMonitor.worked(1);
+                monitor.worked(1);
             }
-            progressMonitor.indeterminateSubTask(tr("Uploading..."));
+            monitor.indeterminateSubTask(tr("Uploading..."));
 
             String diff = duv.getDocument();
-            String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff,progressMonitor);
+            String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff,monitor);
             DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(),
-                    progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                    monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             return processed;
         } catch(OsmTransferException e) {
             throw e;
         } catch(Exception e) {
             throw new OsmTransferException(e);
         } finally {
-            progressMonitor.finishTask();
+            monitor.finishTask();
         }
     }
-
-
 
     private void sleepAndListen(int retry, ProgressMonitor monitor) throws OsmTransferCancelledException {
         System.out.print(tr("Waiting 10 seconds ... "));
@@ -547,13 +546,17 @@ public class OsmApi extends OsmConnection {
                 }
                 activeConnection.disconnect();
 
-                if (retCode != 200)
-                    throw new OsmApiException(
-                            retCode,
-                            errorHeader == null? null : errorHeader.trim(),
-                                    responseBody == null ? null : responseBody.toString().trim()
-                    );
+                errorHeader = errorHeader == null? null : errorHeader.trim();
+                String errorBody = responseBody == null ? null : responseBody.toString().trim();
+                switch(retCode) {
+                    case HttpURLConnection.HTTP_OK:
+                        break; // do nothing
+                    case HttpURLConnection.HTTP_GONE:
+                        throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
+                    default:
+                        throw new OsmApiException(retCode, errorHeader, errorBody);
 
+                }
                 return responseBody.toString();
             } catch (UnknownHostException e) {
                 throw new OsmTransferException(e);

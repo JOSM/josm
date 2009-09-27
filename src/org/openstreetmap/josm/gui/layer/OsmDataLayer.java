@@ -37,6 +37,7 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.command.PurgePrimitivesCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
@@ -284,31 +286,112 @@ public class OsmDataLayer extends Layer {
         // copy the merged layer's API version, downgrade if required
         if (data.version == null) {
             data.version = from.version;
-        } else {
-            if ("0.5".equals(data.version) ^ "0.5".equals(from.version)) {
-                System.err.println(tr("Warning: mixing 0.6 and 0.5 data results in version 0.5"));
-                data.version = "0.5";
-            }
+        } else if ("0.5".equals(data.version) ^ "0.5".equals(from.version)) {
+            System.err.println(tr("Warning: mixing 0.6 and 0.5 data results in version 0.5"));
+            data.version = "0.5";
         }
-        fireDataChange();
-        // repaint to make sure new data is displayed properly.
-        Main.map.mapView.repaint();
 
         int numNewConflicts = 0;
-        for (Conflict c : visitor.getConflicts()) {
+        for (Conflict<?> c : visitor.getConflicts()) {
             if (!conflicts.hasConflict(c)) {
                 numNewConflicts++;
                 conflicts.add(c);
             }
         }
+        PurgePrimitivesCommand cmd = buildPurgeCommand();
+        if (cmd != null) {
+            Main.main.undoRedo.add(cmd);
+        }
+        fireDataChange();
+        // repaint to make sure new data is displayed properly.
+        Main.map.mapView.repaint();
+        warnNumNewConflicts(
+                numNewConflicts,
+                cmd == null ? 0 : cmd.getPurgedPrimitives().size()
+        );
+    }
+
+    /**
+     * Warns the user about the number of detected conflicts
+     * 
+     * @param numNewConflicts the number of detected conflicts
+     * @param numPurgedPrimitives the number of automatically purged objects
+     */
+    protected void warnNumNewConflicts(int numNewConflicts, int numPurgedPrimitives) {
+        if (numNewConflicts == 0 && numPurgedPrimitives == 0) return;
+
+        String msg1 = trn(
+                "There was {0} conflict detected.",
+                "There were {0} conflicts detected.",
+                numNewConflicts,
+                numNewConflicts
+        );
+        String msg2 = trn(
+                "{0} object has been purged from the local dataset because it is deleted on the server.",
+                "{0} objects have been purged from the local dataset because they are deleted on the server.",
+                numPurgedPrimitives,
+                numPurgedPrimitives
+        );
+        StringBuffer sb = new StringBuffer();
+        sb.append("<html>").append(msg1);
+        if (numPurgedPrimitives > 0) {
+            sb.append("<br>").append(msg2);
+        }
+        sb.append("</html>");
         if (numNewConflicts > 0) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("There were {0} conflicts during import.", numNewConflicts),
-                    tr("Warning"),
+                    sb.toString(),
+                    tr("Conflicts detected"),
                     JOptionPane.WARNING_MESSAGE
             );
         }
+    }
+
+    /**
+     * Builds the purge command for primitives which can be purged automatically
+     * from the local dataset because they've been deleted on the
+     * server.
+     * 
+     * @return the purge command. <code>null</code> if no primitives have to
+     * be purged
+     */
+    protected PurgePrimitivesCommand buildPurgeCommand() {
+        BackreferencedDataSet ds = new BackreferencedDataSet(data);
+        ds.build();
+        ArrayList<OsmPrimitive> toPurge = new ArrayList<OsmPrimitive>();
+        conflictLoop: for (Conflict<?> c: conflicts) {
+            if (c.getMy().isDeleted() && !c.getTheir().isVisible()) {
+                // Local and server version of the primitive are deleted. We
+                // can purge it from the local dataset.
+                //
+                toPurge.add(c.getMy());
+            } else if (!c.getMy().isModified() && ! c.getTheir().isVisible()) {
+                // We purge deleted *ways* and *relations* automatically if they are
+                // deleted on the server and if they aren't modified in the local
+                // dataset.
+                //
+                if (c.getMy() instanceof Way || c.getMy() instanceof Relation) {
+                    toPurge.add(c.getMy());
+                    continue conflictLoop;
+                }
+                // We only purge nodes if they aren't part of a modified way.
+                // Otherwise the number of nodes of a modified way could drop
+                // below 2 and we would lose the modified data when the way
+                // gets purged.
+                //
+                for (OsmPrimitive parent: ds.getParents(c.getMy())) {
+                    if (parent.isModified() && parent instanceof Way) {
+                        continue conflictLoop;
+                    }
+                }
+                toPurge.add(c.getMy());
+            }
+        }
+        if (toPurge.isEmpty()) return null;
+        PurgePrimitivesCommand cmd = new PurgePrimitivesCommand(this, toPurge);
+        cmd.setBackreferenceDataSet(ds);
+        return cmd;
     }
 
     @Override public boolean isMergable(final Layer other) {
@@ -579,7 +662,7 @@ public class OsmDataLayer extends Layer {
      * 
      */
     public void onPostUploadToServer() {
-        setRequiresUploadToServer(false);
+        setRequiresUploadToServer(data.isModified());
         // keep requiresSaveToDisk unchanged
     }
 }

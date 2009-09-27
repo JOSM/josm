@@ -3,9 +3,11 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
@@ -14,12 +16,13 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -37,218 +40,179 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
 
     static private final Logger logger = Logger.getLogger(PurgePrimitivesCommand.class.getName());
 
-    /**
-     * Represents a pair of {@see OsmPrimitive} where the parent referrs to
-     * the child, either because a {@see Way} includes a {@see Node} or
-     * because a {@see Relation} refers to any other {@see OsmPrimitive}
-     * via a relation member.
-     *
-     */
-    static class OsmParentChildPair {
-        private OsmPrimitive parent;
-        private OsmPrimitive child;
-
-
-        public OsmParentChildPair(OsmPrimitive parent, OsmPrimitive child) {
-            this.parent = parent;
-            this.child = child;
-        }
-
-        public OsmPrimitive getParent() {
-            return parent;
-        }
-
-        public OsmPrimitive getChild() {
-            return child;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((child == null) ? 0 : child.hashCode());
-            result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            OsmParentChildPair other = (OsmParentChildPair) obj;
-            if (child == null) {
-                if (other.child != null)
-                    return false;
-            } else if (child != other.child)
-                return false;
-            if (parent == null) {
-                if (other.parent != null)
-                    return false;
-            } else if (parent != other.parent)
-                return false;
-            return true;
-        }
-    }
-
-    /**
-     * creates a list of all {@see OsmParentChildPair}s for a given {@see OsmPrimitive}
-     * as child and given set of parents. We don't use {@see CollectBackReferencesVisitor}
-     * because it seems quite inefficient.
-     *
-     * @param parents  the set of potential parents
-     * @param child the child
-     * @return the list of {@see OsmParentChildPair}
-     */
-    protected List<OsmParentChildPair> getParentChildPairs(List<OsmPrimitive> parents, OsmPrimitive child) {
-        ArrayList<OsmParentChildPair> pairs = new ArrayList<OsmParentChildPair>();
-        for (OsmPrimitive parent : parents) {
-            if (parent instanceof Way) {
-                Way w = (Way)parent;
-                for (OsmPrimitive node : w.getNodes()) {
-                    if (node == child) {
-                        OsmParentChildPair pair = new OsmParentChildPair(parent, node);
-                        if (! pairs.contains(pair)) {
-                            pairs.add(pair);
-                        }
-                    }
-                }
-            } else if (parent instanceof Relation) {
-                Relation r = (Relation)parent;
-                for (RelationMember member : r.getMembers()) {
-                    if (member.getMember() == child) {
-                        OsmParentChildPair pair = new OsmParentChildPair(parent, member.getMember());
-                        if (! pairs.contains(pair)) {
-                            pairs.add(pair);
-                        }
-                    }
-                }
-            }
-        }
-        return pairs;
-    }
-
-    /** the primitive to purge */
-    private OsmPrimitive primitive;
+    /** the primitives to purge */
+    private Collection<OsmPrimitive> toPurge;
 
     /** the set of primitives to purge as consequence of purging
      * {@see #primitive}, including {@see #primitive}
      */
-    private ArrayList<OsmPrimitive> purgedPrimitives;
+    private Set<OsmPrimitive> purgedPrimitives;
 
-    /** the set of {@see OsmParentChildPair}. We keep a reference
-     * to this set for the {@see #fillModifiedData(Collection, Collection, Collection)} operation
+    private Set<OsmPrimitive> origVersionsOfTouchedPrimitives;
+
+    /**
+     * the data structure with child->parent references
      */
-    private ArrayList<OsmParentChildPair> pairs;
+    private BackreferencedDataSet backreferenceDataSet;
 
+    protected void init(Collection<OsmPrimitive> toPurge) {
+        this.toPurge = toPurge;
+        this.purgedPrimitives = new HashSet<OsmPrimitive>();
+        this.origVersionsOfTouchedPrimitives = new HashSet<OsmPrimitive>();
+    }
 
     /**
      * constructor
-     * @param node  the node to undelete
+     * @param primitive the primitive to purge
+     * 
      */
     public PurgePrimitivesCommand(OsmPrimitive primitive) {
-        this.primitive = primitive;
-        purgedPrimitives = new ArrayList<OsmPrimitive>();
-        pairs = new ArrayList<OsmParentChildPair>();
+        init(Collections.singleton(primitive));
     }
 
-    @Override
-    public MutableTreeNode description() {
+    /**
+     * constructor
+     * @param layer the OSM data layer
+     * @param primitive the primitive to purge
+     * 
+     */
+    public PurgePrimitivesCommand(OsmDataLayer layer, OsmPrimitive primitive) {
+        super(layer);
+        init(Collections.singleton(primitive));
+    }
+
+    /**
+     * constructor
+     * @param layer the OSM data layer
+     * @param primitives the primitives to purge
+     * 
+     */
+    public PurgePrimitivesCommand(OsmDataLayer layer, Collection<OsmPrimitive> primitives) {
+        super(layer);
+        init(primitives);
+    }
+
+    /**
+     * Replies a collection with the purged primitives
+     * 
+     * @return a collection with the purged primitives
+     */
+    public Collection<OsmPrimitive> getPurgedPrimitives() {
+        return purgedPrimitives;
+    }
+
+    protected MutableTreeNode getDescription(OsmPrimitive primitive) {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Purging 1 primitive"),
+                        tr("Purged object ''{0}''", primitive.getDisplayName(DefaultNameFormatter.getInstance())),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )
         );
     }
 
+    protected MutableTreeNode getDescription(Collection<OsmPrimitive> primitives) {
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(
+                tr("Purged {0} objects", primitives.size())
+        );
+        for (OsmPrimitive p : primitives) {
+            root.add(getDescription(p));
+        }
+        return root;
+    }
+
+    @Override
+    public MutableTreeNode description() {
+        if (purgedPrimitives.size() == 1)
+            return getDescription(purgedPrimitives.iterator().next());
+        else
+            return getDescription(purgedPrimitives);
+    }
+
     /**
-     * Purges an {@see OsmPrimitive} <code>toPurge</code> from a {@see DataSet}.
+     * Purges an {@see OsmPrimitive} <code>child</code> from a {@see DataSet}.
      *
-     * @param toPurge the primitive to purge
-     * @param ds  the dataset to purge from
+     * @param child the primitive to purge
      * @param hive the hive of {@see OsmPrimitive}s we remember other {@see OsmPrimitive}
-     * we have to purge because we purge <code>toPurge</code>.
+     * we have to purge because we purge <code>child</code>.
      *
      */
-    protected void purge(OsmPrimitive toPurge, DataSet ds, ArrayList<OsmPrimitive> hive) {
-        ArrayList<OsmPrimitive> parents = new ArrayList<OsmPrimitive>();
-        parents.addAll(getLayer().data.ways);
-        parents.addAll(getLayer().data.relations);
-        List<OsmParentChildPair> pairs = getParentChildPairs(parents, primitive);
-        hive.remove(toPurge);
-        for (OsmParentChildPair pair: pairs) {
-            if (pair.getParent() instanceof Way) {
-                Way w = (Way)pair.getParent();
-                System.out.println(tr("removing reference from way {0}",w.getId()));
+    protected void removeReferecesToPrimitive(OsmPrimitive child, Set<OsmPrimitive> hive) {
+        hive.remove(child);
+        for (OsmPrimitive parent: this.backreferenceDataSet.getParents(child)) {
+            if (toPurge.contains(parent))
+                // parent itself is to be purged. This method is going to be
+                // invoked for parent later
+                return;
+            if (parent instanceof Way) {
+                Way w = (Way)parent;
+                if (!origVersionsOfTouchedPrimitives.contains(w)) {
+                    origVersionsOfTouchedPrimitives.add(w);
+                }
                 List<Node> wayNodes = w.getNodes();
-                wayNodes.remove(primitive);
+                wayNodes.remove(child);
                 w.setNodes(wayNodes);
-                // if a way ends up with less than two node we
+                // if a way ends up with less than two nodes we
                 // remember it on the "hive"
                 //
                 if (w.getNodesCount() < 2) {
                     System.out.println(tr("Warning: Purging way {0} because number of nodes dropped below 2. Current is {1}",
                             w.getId(),w.getNodesCount()));
-                    if (!hive.contains(w)) {
-                        hive.add(w);
-                    }
+                    hive.add(w);
                 }
-            } else if (pair.getParent() instanceof Relation) {
-                Relation r = (Relation)pair.getParent();
-                System.out.println(tr("removing reference from relation {0}",r.getId()));
-                r.removeMembersFor(primitive);
+            } else if (parent instanceof Relation) {
+                Relation r = (Relation)parent;
+                if (!origVersionsOfTouchedPrimitives.contains(r)) {
+                    origVersionsOfTouchedPrimitives.add(r);
+                }
+                System.out.println(tr("Removing reference from relation {0}",r.getId()));
+                r.removeMembersFor(child);
+            } else {
+                // should not happen. parent can't be a node
             }
         }
     }
 
     @Override
     public boolean executeCommand() {
-        ArrayList<OsmPrimitive> hive = new ArrayList<OsmPrimitive>();
+        if (backreferenceDataSet == null) {
+            backreferenceDataSet = new BackreferencedDataSet(getLayer().data);
+            backreferenceDataSet.build();
+        }
+        HashSet<OsmPrimitive> hive = new HashSet<OsmPrimitive>();
 
         // iteratively purge the primitive and all primitives
-        // which violate invariants after they loose a reference to
+        // which violate invariants after they lose a reference to
         // the primitive (i.e. ways which end up with less than two
         // nodes)
-        hive.add(primitive);
+        hive.addAll(toPurge);
         while(! hive.isEmpty()) {
-            OsmPrimitive toPurge = hive.get(0);
-            purge(toPurge, getLayer().data, hive);
-            if (toPurge instanceof Node) {
-                getLayer().data.nodes.remove(toPurge);
-            } else if (primitive instanceof Way) {
-                getLayer().data.ways.remove(toPurge);
-            } else if (primitive instanceof Relation) {
-                getLayer().data.relations.remove(toPurge);
-            }
-            purgedPrimitives.add(toPurge);
+            OsmPrimitive p = hive.iterator().next();
+            removeReferecesToPrimitive(p, hive);
+            getLayer().data.removePrimitive(p);
+            purgedPrimitives.add(p);
             ConflictCollection conflicts = getLayer().getConflicts();
-            if (conflicts.hasConflictForMy(toPurge)) {
-                rememberConflict(conflicts.getConflictForMy(toPurge));
-                conflicts.remove(toPurge);
+            if (conflicts.hasConflictForMy(p)) {
+                rememberConflict(conflicts.getConflictForMy(p));
+                conflicts.remove(p);
             }
         }
+        // we don't need this any more
+        backreferenceDataSet = null;
         return super.executeCommand();
     }
 
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
-        for (OsmParentChildPair pair : pairs) {
-            modified.add(pair.getParent());
-        }
-        // we don't need pairs anymore
-        pairs = null;
+        modified.addAll(origVersionsOfTouchedPrimitives);
     }
 
     @Override
     public void undoCommand() {
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            logger.warning(tr("Can't undo command ''{0}'' because layer ''{1}'' is not present any more",
+            logger.warning(tr("Can''t undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     getLayer().toString()
             ));
@@ -262,8 +226,19 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
             getLayer().data.addPrimitive(purged);
         }
         reconstituteConflicts();
-        // will restore the former references to the purged nodes
-        //
+
+        // will restore the primitives referring to one
+        // of the purged primitives
         super.undoCommand();
+    }
+
+    /**
+     * Use to inject a backreference data set used when the command
+     * is executed.
+     * 
+     * @param ds the backreference data set
+     */
+    public void setBackreferenceDataSet(BackreferencedDataSet ds) {
+        this.backreferenceDataSet = ds;
     }
 }

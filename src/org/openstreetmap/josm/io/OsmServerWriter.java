@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
@@ -110,8 +111,6 @@ public class OsmServerWriter {
      * @throws OsmTransferException thrown if an exception occurs
      */
     protected void uploadChangesAsDiffUpload(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
-        // upload everything in one changeset
-        //
         try {
             progressMonitor.beginTask(tr("Starting to upload in one request ..."));
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
@@ -129,55 +128,49 @@ public class OsmServerWriter {
      *
      * @param apiVersion version of the data set
      * @param primitives list of objects to send
+     * @param changeset the changeset the data is uploaded to. Must not be null.
+     * @param monitor the progress monitor. If null, assumes {@see NullProgressMonitor#INSTANCE}
+     * @throws IllegalArgumentException thrown if changeset is null
+     * @throws OsmTransferException thrown if something goes wrong
      */
-    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, Changeset changeset, boolean closeChangesetAfterUpload, ProgressMonitor progressMonitor) throws OsmTransferException {
+    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
+        if (changeset == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "changeset"));
         processed = new LinkedList<OsmPrimitive>();
-        progressMonitor.beginTask(tr("Uploading data ..."));
-        api.initialize(progressMonitor);
+        monitor = monitor == null ? NullProgressMonitor.INSTANCE : monitor;
+        monitor.beginTask(tr("Uploading data ..."));
         try {
+            api.initialize(monitor);
             // check whether we can use diff upload
             //
-            boolean casUseDiffUploads = api.hasSupportForDiffUploads();
+            boolean canUseDiffUpload = api.hasSupportForDiffUploads();
             if (apiVersion == null) {
                 System.out.println(tr("WARNING: no API version defined for data to upload. Falling back to version 0.6"));
                 apiVersion = "0.6";
             }
             boolean useDiffUpload = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
-            if (useDiffUpload && ! casUseDiffUploads) {
+            if (useDiffUpload && ! canUseDiffUpload) {
                 System.out.println(tr("WARNING: preference ''{0}'' or API version ''{1}'' of dataset requires to use diff uploads, but API is not able to handle them. Ignoring diff upload.", "osm-server.atomic-upload", apiVersion));
                 useDiffUpload = false;
             }
-            if (changeset == null) {
-                changeset = new Changeset();
-            }
             if (changeset.getId() == 0) {
-                api.openChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
+                api.openChangeset(changeset,monitor.createSubTaskMonitor(0, false));
             } else {
-                api.updateChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
+                api.updateChangeset(changeset,monitor.createSubTaskMonitor(0, false));
             }
             api.setChangeset(changeset);
             if (useDiffUpload) {
-                uploadChangesAsDiffUpload(primitives,progressMonitor.createSubTaskMonitor(0,false));
+                uploadChangesAsDiffUpload(primitives,monitor.createSubTaskMonitor(0,false));
             } else {
-                uploadChangesIndividually(primitives,progressMonitor.createSubTaskMonitor(0,false));
+                uploadChangesIndividually(primitives,monitor.createSubTaskMonitor(0,false));
             }
         } catch(OsmTransferException e) {
             throw e;
         } catch(Exception e) {
             throw new OsmTransferException(e);
         } finally {
-            try {
-                if (closeChangesetAfterUpload && api.getChangeset() != null && api.getChangeset().getId() > 0) {
-                    api.closeChangeset(changeset,progressMonitor.createSubTaskMonitor(0, false));
-                    api.setChangeset(null);
-                }
-            } catch (Exception ee) {
-                OsmChangesetCloseException closeException = new OsmChangesetCloseException(ee);
-                closeException.setChangeset(api.getChangeset());
-                throw closeException;
-            } finally {
-                progressMonitor.finishTask();
-            }
+            monitor.finishTask();
+            api.setChangeset(null);
         }
     }
 
