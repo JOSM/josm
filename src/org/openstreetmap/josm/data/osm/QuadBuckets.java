@@ -667,29 +667,51 @@ public class QuadBuckets implements Collection<Node>
     public void unsupported()
     {
         out("unsupported operation");
-        Object o = null;
-        o.hashCode();
         throw new UnsupportedOperationException();
     }
     public boolean retainAll(Collection nodes)
     {
-        unsupported();
-        return false;
+        for (Node n : this) {
+            if (nodes.contains(n))
+                continue;
+            if (!this.remove(n))
+                return false;
+        }
+        return true;
     }
     public boolean removeAll(Collection nodes)
     {
-        unsupported();
-        return false;
+        for (Object o : nodes) {
+            if (!(o instanceof Node))
+                return false;
+            Node n = (Node)o;
+            if (!this.remove(n))
+                return false;
+        }
+        return true;
     }
     public boolean addAll(Collection nodes)
     {
-        unsupported();
-        return false;
+        for (Object o : nodes) {
+            if (!(o instanceof Node))
+                return false;
+            Node n = (Node)o;
+            if (!this.add(n))
+                return false;
+        }
+        return true;
     }
     public boolean containsAll(Collection nodes)
     {
-        unsupported();
-        return false;
+        boolean ret = true;
+        for (Object o : nodes) {
+            if (!(o instanceof Node))
+                return false;
+            Node n = (Node)o;
+            if (!this.contains(n))
+                return false;
+        }
+        return true;
     }
     private void check_type(Object o)
     {
@@ -711,7 +733,8 @@ public class QuadBuckets implements Collection<Node>
     }
     public boolean contains(Object o)
     {
-        check_type(o);
+        if (!(o instanceof Node))
+            return false;
         QBLevel bucket = root.find_exact((Node)o);
         if (bucket == null)
             return false;
@@ -807,8 +830,12 @@ public class QuadBuckets implements Collection<Node>
         }
         public void remove()
         {
-            Node object = peek();
-            current_leaf.content.remove(object);
+            // two uses
+            // 1. Back up to the thing we just returned
+            // 2. move the index back since we removed
+            //    an element
+            index_in_leaf--;
+            current_leaf.content.remove(index_in_leaf);
         }
     }
     public Iterator<Node> iterator()
