@@ -11,6 +11,7 @@ import javax.swing.JCheckBox;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -27,6 +28,7 @@ public class DownloadGpsTask implements DownloadTask {
         private BoundingBoxDownloader reader;
         private GpxData rawData;
         private final boolean newLayer;
+        private OsmTransferException lastException;
 
         public Task(boolean newLayer, BoundingBoxDownloader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading GPS data"));
@@ -35,20 +37,31 @@ public class DownloadGpsTask implements DownloadTask {
         }
 
         @Override public void realRun() throws IOException, SAXException, OsmTransferException {
-            rawData = reader.parseRawGps(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            try {
+                rawData = reader.parseRawGps(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            } catch(OsmTransferException e) {
+                lastException = e;
+            } catch(Exception e) {
+                lastException = new OsmTransferException(e);
+            }
         }
 
         @Override protected void finish() {
+            if (lastException != null) {
+                ExceptionDialogUtil.explainException(lastException);
+                return;
+            }
             if (rawData == null)
                 return;
             rawData.recalculateBounds();
             String name = tr("Downloaded GPX Data");
             GpxLayer layer = new GpxLayer(rawData, name);
             Layer x = findMergeLayer();
-            if (newLayer || x == null)
+            if (newLayer || x == null) {
                 Main.main.addLayer(layer);
-            else
+            } else {
                 x.mergeFrom(layer);
+            }
         }
 
         private Layer findMergeLayer() {
@@ -65,8 +78,9 @@ public class DownloadGpsTask implements DownloadTask {
         }
 
         @Override protected void cancel() {
-            if (reader != null)
+            if (reader != null) {
                 reader.cancel();
+            }
         }
     }
 
@@ -104,8 +118,8 @@ public class DownloadGpsTask implements DownloadTask {
         try {
             Task t = task.get();
             return t.getProgressMonitor().getErrorMessage() == null
-                ? ""
-                : t.getProgressMonitor().getErrorMessage();
+            ? ""
+                    : t.getProgressMonitor().getErrorMessage();
         } catch (Exception e) {
             return "";
         }
