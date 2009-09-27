@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
@@ -92,6 +93,19 @@ public class MergeNodesAction extends JosmAction {
     }
 
     /**
+     * Combines tags from TIGER data
+     * 
+     * @param tc the tag collection
+     */
+    protected static void combineTigerTags(TagCollection tc) {
+        for (String key: tc.getKeys()) {
+            if (TigerUtils.isTigerTag(key)) {
+                tc.setUniqueForKey(key, TigerUtils.combineTags(key, tc.getValues(key)));
+            }
+        }
+    }
+
+    /**
      * Selects a node out of a collection of candidate nodes. The selected
      * node will become the target node the remaining nodes are merged to.
      * 
@@ -152,13 +166,13 @@ public class MergeNodesAction extends JosmAction {
     /**
      * Fixes the parent ways referring to one of the nodes.
      * 
-     * Replies null, if the ways could not be fixed, i.e. because a way would have to be delted
+     * Replies null, if the ways could not be fixed, i.e. because a way would have to be deleted
      * which is referred to by a relation.
      * 
      * @param backreferences the backreference data set
      * @param nodesToDelete the collection of nodes to be deleted
      * @param targetNode the target node the other nodes are merged to
-     * @return a list of command; null, the ways could not be fixed
+     * @return a list of commands; null, if the ways could not be fixed
      */
     protected static List<Command> fixParentWays(BackreferencedDataSet backreferences, Collection<OsmPrimitive> nodesToDelete, Node targetNode) {
         List<Command> cmds = new ArrayList<Command>();
@@ -206,12 +220,12 @@ public class MergeNodesAction extends JosmAction {
 
     /**
      * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
-     * managed by <code>layer</code> as reference. <code>backreferences</code> is precomputed
+     * managed by <code>layer</code> as reference. <code>backreferences</code> is a precomputed
      * collection of all parent/child references in the dataset.
      *
      * @param layer layer the reference data layer. Must not be null.
-     * @param backreferences if null, backreferneces are first computed from layer.data; otherwise
-     *    backreferences.getSource() == layer.data must hold
+     * @param backreferences if null, backreferences are first computed from layer.data; otherwise
+     *    backreferences.getSource() == layer.data must be true
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
      * @throw IllegalArgumentException thrown if layer is null
@@ -234,6 +248,7 @@ public class MergeNodesAction extends JosmAction {
         // build the tag collection
         //
         TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
+        combineTigerTags(nodeTags);
         completeTagCollectionWithMissingTags(nodeTags, nodes);
         TagCollection nodeTagsToEdit = new TagCollection(nodeTags);
         completeTagCollectionForEditing(nodeTagsToEdit);
@@ -257,7 +272,7 @@ public class MergeNodesAction extends JosmAction {
         Collection<OsmPrimitive> nodesToDelete = new HashSet<OsmPrimitive>(nodes);
         nodesToDelete.remove(targetNode);
 
-        // change the ways referring to at least one of the merge nodes
+        // fix the ways referring to at least one of the merged nodes
         //
         Collection<Way> waysToDelete= new HashSet<Way>();
         List<Command> wayFixCommands = fixParentWays(
@@ -286,7 +301,7 @@ public class MergeNodesAction extends JosmAction {
 
 
     /**
-     * Enable the "Merge Nodes" menu option if more then one node is selected
+     * Enable the "Merge Nodes" menu option if more than one node is selected
      */
     @Override
     public void updateEnabledState() {

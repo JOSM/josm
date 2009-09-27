@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
@@ -45,24 +46,6 @@ public class CombineWayAction extends JosmAction {
     public CombineWayAction() {
         super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
                 Shortcut.registerShortcut("tools:combineway", tr("Tool: {0}", tr("Combine Way")), KeyEvent.VK_C, Shortcut.GROUP_EDIT), true);
-    }
-
-    protected Set<OsmPrimitive> intersect(Set<? extends OsmPrimitive> s1, Set<? extends OsmPrimitive> s2) {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>(s1);
-        ret.retainAll(s2);
-        return ret;
-    }
-
-    protected boolean confirmCombiningWithConflictsInRelationMemberships() {
-        ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                tr("Combine ways with different memberships?"),
-                new String[] {tr("Combine Anyway"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"combineway.png", "cancel.png"});
-        ed.setContent(tr("The selected ways have differing relation memberships.  "
-                + "Do you still want to combine them?"));
-        ed.showDialog();
-
-        return ed.getValue() == 1;
     }
 
     protected boolean confirmChangeDirectionOfWays() {
@@ -81,7 +64,7 @@ public class CombineWayAction extends JosmAction {
                 + "(They could not be merged into a single string of nodes)");
         JOptionPane.showMessageDialog(
                 Main.parent,
-                msg,  //FIXME: not sure whether this fits in a dialog
+                msg,
                 tr("Information"),
                 JOptionPane.INFORMATION_MESSAGE
         );
@@ -119,6 +102,19 @@ public class CombineWayAction extends JosmAction {
         tc.removeByKey("created_by");
     }
 
+    /**
+     * Combines tags from TIGER data
+     * 
+     * @param tc the tag collection
+     */
+    protected static void combineTigerTags(TagCollection tc) {
+        for (String key: tc.getKeys()) {
+            if (TigerUtils.isTigerTag(key)) {
+                tc.setUniqueForKey(key, TigerUtils.combineTags(key, tc.getValues(key)));
+            }
+        }
+    }
+
     protected static void completeTagCollectionForEditing(TagCollection tc) {
         for (String key: tc.getKeys()) {
             // make sure the empty value is in the tag set such that we can delete the tag
@@ -147,8 +143,8 @@ public class CombineWayAction extends JosmAction {
         TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
 
 
-        // try to build a new way out of the combination of ways
-        // which are combined
+        // try to build a new way which includes all the combined
+        // ways
         //
         NodeGraph graph = NodeGraph.createDirectedGraphFromWays(ways);
         List<Node> path = graph.buildSpanningPath();
@@ -171,6 +167,7 @@ public class CombineWayAction extends JosmAction {
         modifiedTargetWay.setNodes(path);
 
         TagCollection completeWayTags = new TagCollection(wayTags);
+        combineTigerTags(completeWayTags);
         completeTagCollectionWithMissingTags(completeWayTags, ways);
         TagCollection tagsToEdit = new TagCollection(completeWayTags);
         completeTagCollectionForEditing(tagsToEdit);
@@ -215,7 +212,6 @@ public class CombineWayAction extends JosmAction {
             SwingUtilities.invokeLater(guiTask);
         }
     }
-
 
     public void actionPerformed(ActionEvent event) {
         if (getCurrentDataSet() == null)
