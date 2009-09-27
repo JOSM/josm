@@ -23,6 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -129,7 +130,9 @@ public class OsmServerBackreferenceReaderTest {
         primitives.addAll(ds.ways);
         primitives.addAll(ds.relations);
         OsmServerWriter writer = new OsmServerWriter();
-        writer.uploadOsm("0.6", primitives, null, true, NullProgressMonitor.INSTANCE);
+        Changeset cs  = new Changeset();
+        writer.uploadOsm("0.6", primitives, cs, NullProgressMonitor.INSTANCE);
+        OsmApi.getOsmApi().closeChangeset(cs, NullProgressMonitor.INSTANCE);
     }
 
     static Properties testProperties;
