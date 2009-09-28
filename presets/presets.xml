@@ -2293,6 +2293,11 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <label text="Edit Tower" />
             <key key="man_made" value="tower" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="tower:type" text="Tower type" values="communication,observation" />
+            <optional>
+                <text key="height" text="Height (meters)" delete_if_empty="true" />
+                <text key="operator" text="Operator" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Water Tower" icon="presets/water_tower.png" type="node,closedway">
             <label text="Edit Water Tower" />
@@ -2317,10 +2322,13 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Pipeline" icon="presets/empty.png" type="way">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pipeline"/>
             <label text="Edit Pipeline" />
             <key key="man_made" value="pipeline" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="type" text="Type" values="water,oil,gas,sewage,heat,any substance" default="" delete_if_empty="true" />
+            <combo key="location" text="Location" values="underground,underwater,overground" default="" delete_if_empty="true" />
         </item>
         <item name="Wastewater Plant" icon="presets/wastewater_plant.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=wastewater_plant"
@@ -2369,7 +2377,9 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line" />
             <label text="Edit Power Station" />
             <key key="power" value="station" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
         </item>
         <item name="Power Sub Station" icon="presets/power.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=sub_station"
@@ -2385,17 +2395,19 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=tower"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=tower" />
             <label text="Edit Power Tower" />
-            <key key="power" value="tower" />
+            <combo key="power" text="Type" values="tower,pole" default="tower" delete_if_empty="true" />
+            <text key="ref" text="Tower reference" default="" delete_if_empty="true" />
         </item>
         <item name="Power Line" icon="presets/power.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line" />
             <label text="Edit Power Line" />
-            <key key="power" value="line" />
+            <combo key="power" text="Line type" values="line,minor_line" default="line" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
             <text key="voltage" text="Voltage" default="" delete_if_empty="true" />
-            <text key="wires" text="Amount of Wires" default="" delete_if_empty="true" />
+            <text key="cables" text="Amount of Cables" default="" delete_if_empty="true" />
+            <combo key="wires" text="Number of wires (better: conductors) per power cable" values="single,double,triple,quad" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Man Made -->
     <group name="Amenities" icon="presets/telephone.png">
