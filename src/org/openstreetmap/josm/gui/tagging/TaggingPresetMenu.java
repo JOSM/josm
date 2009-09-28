@@ -28,6 +28,28 @@ public class TaggingPresetMenu extends TaggingPreset {
     public void setIcon(String iconName) {
         super.setIcon(iconName);
     }
+
+    private Component copyMenuComponent(Component menuComponent) {
+        if (menuComponent instanceof JMenu) {
+            JMenu menu = (JMenu)menuComponent;
+            JMenu result = new JMenu(menu.getAction());
+            for (Component item:menu.getMenuComponents()) {
+                result.add(copyMenuComponent(item));
+            }
+            result.setText(menu.getText());
+            return result;
+        } else if (menuComponent instanceof JMenuItem) {
+            JMenuItem menuItem = (JMenuItem)menuComponent;
+            JMenuItem result = new JMenuItem(menuItem.getAction());
+            result.setText(menuItem.getText());
+            return result;
+        } else if(menuComponent instanceof JSeparator) {
+            return new JSeparator();
+        } else {
+            return menuComponent;
+        }
+    }
+
     public void actionPerformed(ActionEvent e) {
         Object s = e.getSource();
         if(menu != null && s instanceof Component)
@@ -35,15 +57,8 @@ public class TaggingPresetMenu extends TaggingPreset {
             Component co = (Component)s;
             JPopupMenu pm = new JPopupMenu(getName());
             for(Component c : menu.getMenuComponents())
+                pm.add(copyMenuComponent(c));
             {
-                if(c instanceof JMenuItem)
-                {
-                    JMenuItem j = new JMenuItem(((JMenuItem)c).getAction());
-                    j.setText(((JMenuItem)c).getText());
-                    pm.add(j);
-                }
-                else if(c instanceof JSeparator)
-                    pm.addSeparator();
             }
             pm.show(co, co.getWidth()/2, co.getHeight()/2);
         }
