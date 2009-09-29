@@ -200,10 +200,11 @@ public class DownloadOsmTask implements DownloadTask {
      * @param True if the data should be saved to a new layer
      * @param The URL as String
      */
-    public void loadUrl(boolean new_layer, String url) {
+    public void loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
         Task t = new Task(new_layer,
                 new OsmServerLocationReader(url),
-                NullProgressMonitor.INSTANCE);
+                progressMonitor);
+        currentBounds = new Bounds(new LatLon(0,0), new LatLon(0,0));
         task = Main.worker.submit(t, t);
     }
 

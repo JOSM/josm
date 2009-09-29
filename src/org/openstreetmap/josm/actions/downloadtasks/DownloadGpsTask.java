@@ -103,7 +103,7 @@ public class DownloadGpsTask implements DownloadTask {
         return "gps";
     }
 
-    public void loadUrl(boolean a,java.lang.String b) {
+    public void loadUrl(boolean a,java.lang.String b,  ProgressMonitor progressMonitor) {
         // FIXME this is not currently used
     }
 

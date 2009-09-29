@@ -57,7 +57,7 @@ public class OpenLocationAction extends JosmAction {
      * Open the given file.
      */
     public void openUrl(boolean new_layer, String url) {
-        new DownloadOsmTask().loadUrl(new_layer, url);
+        new DownloadOsmTask().loadUrl(new_layer, url, null);
     }
 
 }

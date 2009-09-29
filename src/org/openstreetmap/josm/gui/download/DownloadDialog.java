@@ -58,7 +58,7 @@ public class DownloadDialog extends JPanel {
          * @param newLayer
          * @param url
          */
-        void loadUrl(boolean newLayer, String url);
+        void loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor);
 
         /**
          * @return The checkbox presented to the user
