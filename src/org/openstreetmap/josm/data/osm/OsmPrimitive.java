@@ -129,7 +129,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         & ~FLAG_FILTERED
         & ~FLAG_MODIFIED
         & ~FLAG_SELECTED
-        & FLAG_VISIBLE;   // visible per default
+        | FLAG_VISIBLE;   // visible per default
 
     /**
      * User that last modified this primitive, as specified by the server.
