@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -508,13 +509,57 @@ public class CombineWayAction extends JosmAction {
 
         private Set<NodePair> edges;
         private int numUndirectedEges = 0;
+        private HashMap<Node, List<NodePair>> successors;
+        private HashMap<Node, List<NodePair>> predecessors;
 
-        protected void computeNumEdges() {
+
+        protected void rememberSuccessor(NodePair pair) {
+            if (successors.containsKey(pair.getA())) {
+                if (!successors.get(pair.getA()).contains(pair)) {
+                    successors.get(pair.getA()).add(pair);
+                }
+            } else {
+                ArrayList<NodePair> l = new ArrayList<NodePair>();
+                l.add(pair);
+                successors.put(pair.getA(), l);
+            }
+        }
+
+        protected void rememberPredecessors(NodePair pair) {
+            if (predecessors.containsKey(pair.getB())) {
+                if (!predecessors.get(pair.getB()).contains(pair)) {
+                    predecessors.get(pair.getB()).add(pair);
+                }
+            } else {
+                ArrayList<NodePair> l = new ArrayList<NodePair>();
+                l.add(pair);
+                predecessors.put(pair.getB(), l);
+            }
+        }
+
+        protected boolean isTerminalNode(Node n) {
+            if (successors.get(n) == null) return false;
+            if (successors.get(n).size() != 1) return false;
+            if (predecessors.get(n) == null) return true;
+            if (predecessors.get(n).size() == 1) {
+                NodePair p1 = successors.get(n).iterator().next();
+                NodePair p2 = predecessors.get(n).iterator().next();
+                return p1.equals(p2.swap());
+            }
+            return false;
+        }
+
+        protected void prepare() {
             Set<NodePair> undirectedEdges = new HashSet<NodePair>();
+            successors = new HashMap<Node, List<NodePair>>();
+            predecessors = new HashMap<Node, List<NodePair>>();
+
             for (NodePair pair: edges) {
                 if (!undirectedEdges.contains(pair) && ! undirectedEdges.contains(pair.swap())) {
                     undirectedEdges.add(pair);
                 }
+                rememberSuccessor(pair);
+                rememberPredecessors(pair);
             }
             numUndirectedEges = undirectedEdges.size();
         }
@@ -536,7 +581,22 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Node getStartNode() {
-            return edges.iterator().next().getA();
+            Set<Node> nodes = getNodes();
+            for (Node n: nodes) {
+                if (successors.get(n) != null && successors.get(n).size() ==1)
+                    return n;
+            }
+            return null;
+        }
+
+        protected Set<Node> getTerminalNodes() {
+            Set<Node> ret = new HashSet<Node>();
+            for (Node n: getNodes()) {
+                if (isTerminalNode(n)) {
+                    ret.add(n);
+                }
+            }
+            return ret;
         }
 
         protected Set<Node> getNodes(Stack<NodePair> pairs) {
@@ -549,26 +609,12 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected List<NodePair> getOutboundPairs(NodePair pair) {
-            LinkedList<NodePair> outbound = new LinkedList<NodePair>();
-            for (NodePair candidate:edges) {
-                if (candidate.equals(pair)) {
-                    continue;
-                }
-                if (candidate.isSuccessorOf(pair)) {
-                    outbound.add(candidate);
-                }
-            }
-            return outbound;
+            return getOutboundPairs(pair.getB());
         }
 
         protected List<NodePair> getOutboundPairs(Node node) {
-            LinkedList<NodePair> outbound = new LinkedList<NodePair>();
-            for (NodePair candidate:edges) {
-                if (candidate.getA() == node) {
-                    outbound.add(candidate);
-                }
-            }
-            return outbound;
+            List<NodePair> l = successors.get(node);
+            return l == null ? Collections.EMPTY_LIST : l;
         }
 
         protected Set<Node> getNodes() {
@@ -584,29 +630,6 @@ public class CombineWayAction extends JosmAction {
             return numUndirectedEges == way.size();
         }
 
-
-        protected boolean advance(Stack<NodePair> path) {
-            // found a spanning path ?
-            //
-            if (isSpanningWay(path))
-                return true;
-
-            // advance with one of the possible follow up nodes
-            //
-            Stack<NodePair> nextPairs = new Stack<NodePair>();
-            nextPairs.addAll(getOutboundPairs(path.peek()));
-            while(!nextPairs.isEmpty()) {
-                NodePair next = nextPairs.pop();
-                if (path.contains(next) || path.contains(next.swap())) {
-                    continue;
-                }
-                path.push(next);
-                if (advance(path)) return true;
-                path.pop();
-            }
-            return false;
-        }
-
         protected List<Node> buildPathFromNodePairs(Stack<NodePair> path) {
             LinkedList<Node> ret = new LinkedList<Node>();
             for (NodePair pair: path) {
@@ -616,26 +639,53 @@ public class CombineWayAction extends JosmAction {
             return ret;
         }
 
+        /**
+         * Tries to find a spanning path starting from node <code>startNode</code>.
+         * 
+         * Traverses the path in depth-first order.
+         * 
+         * @param startNode the start node
+         * @return the spanning path; null, if no path is found
+         */
         protected List<Node> buildSpanningPath(Node startNode) {
             if (startNode == null)
                 return null;
             Stack<NodePair> path = new Stack<NodePair>();
-            // advance with one of the possible follow up nodes
-            //
             Stack<NodePair> nextPairs  = new Stack<NodePair>();
             nextPairs.addAll(getOutboundPairs(startNode));
             while(!nextPairs.isEmpty()) {
-                path.push(nextPairs.pop());
-                if (advance(path))
-                    return buildPathFromNodePairs(path);
-                path.pop();
+                NodePair cur= nextPairs.pop();
+                if (! path.contains(cur) && ! path.contains(cur.swap())) {
+                    while(!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
+                        path.pop();
+                    }
+                    path.push(cur);
+                    if (isSpanningWay(path)) return buildPathFromNodePairs(path);
+                    nextPairs.addAll(getOutboundPairs(path.peek()));
+                }
             }
             return null;
         }
 
+        /**
+         * Tries to find a path through the graph which visits each edge (i.e.
+         * the segment of a way) exactly one.
+         * 
+         * @return the path; null, if no path was found
+         */
         public List<Node> buildSpanningPath() {
-            computeNumEdges();
-            for (Node n : getNodes()) {
+            prepare();
+            // try to find a path from each "terminal node", i.e. from a
+            // node which is connected by exactly one undirected edges (or
+            // two directed edges in opposite direction) to the graph. A
+            // graph built up from way segments is likely to include such
+            // nodes, unless all ways are closed.
+            // In the worst case this loops over all nodes which is
+            // very slow for large ways.
+            //
+            Set<Node> nodes = getTerminalNodes();
+            nodes = nodes.isEmpty() ? getNodes() : nodes;
+            for (Node n: nodes) {
                 List<Node> path = buildSpanningPath(n);
                 if (path != null)
                     return path;
