@@ -248,31 +248,30 @@ public class MapStatus extends JPanel implements Helpful {
         private final Popup popupCreatePopup(Component content, MouseState ms) {
             Point p = mv.getLocationOnScreen();
             Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension dim = content.getPreferredSize();
 
-            int xPos = p.x + ms.mousePos.x + 16;
-            // Display the popup to the left of the cursor if it would be cut
-            // off on its right
-            if(xPos + dim.width > scrn.width) {
-                xPos = p.x + ms.mousePos.x - 4 - dim.width;
-            }
-            int yPos = p.y + ms.mousePos.y + 16;
-            // Move the popup up if it would be cut off at its bottom but do not
-            // move it off screen on the top
-            if(yPos + dim.height > scrn.height - 5) {
-                yPos = Math.max(5, scrn.height - dim.height - 5);
-            }
-
-            // Create a JScrollPane around the content, in case there's still
-            // not enough space
+            // Create a JScrollPane around the content, in case there's not
+            // enough space
             JScrollPane sp = new JScrollPane(content);
             sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             sp.setBorder(BorderFactory.createRaisedBevelBorder());
             // Implement max-size content-independent
             Dimension prefsize = sp.getPreferredSize();
-            int w = Math.min(prefsize.width, scrn.width/2);
+            int w = Math.min(prefsize.width, Math.min(800, (scrn.width/2) - 16));
             int h = Math.min(prefsize.height, scrn.height - 10);
             sp.setPreferredSize(new Dimension(w, h));
+
+            int xPos = p.x + ms.mousePos.x + 16;
+            // Display the popup to the left of the cursor if it would be cut
+            // off on its right, but only if more space is available
+            if(xPos + w > scrn.width && xPos > scrn.width/2) {
+                xPos = p.x + ms.mousePos.x - 4 - w;
+            }
+            int yPos = p.y + ms.mousePos.y + 16;
+            // Move the popup up if it would be cut off at its bottom but do not
+            // move it off screen on the top
+            if(yPos + h > scrn.height - 5) {
+                yPos = Math.max(5, scrn.height - h - 5);
+            }
 
             PopupFactory pf = PopupFactory.getSharedInstance();
             return pf.getPopup(mv, sp, xPos, yPos);
@@ -323,7 +322,6 @@ public class MapStatus extends JPanel implements Helpful {
                 }
             }
             DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
-            mv.repaint();
         }
 
         /**
@@ -382,7 +380,7 @@ public class MapStatus extends JPanel implements Helpful {
         /**
          * Sets the colors for the given label depending on the selected status of
          * the given OsmPrimitive
-         * 
+         *
          * @param lbl The label to color
          * @param osm The primitive to derive the colors from
          */
@@ -452,7 +450,6 @@ public class MapStatus extends JPanel implements Helpful {
                     // Let the user toggle the selection
                     osm.setSelected(!osm.isSelected());
                     DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
-                    mv.repaint();
                     l.validate();
                 }
             });
