@@ -123,13 +123,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      */
     private long id = 0;
 
-    private volatile byte flags =
-        ~FLAG_DELETED
-        & ~FLAG_DISABLED
-        & ~FLAG_FILTERED
-        & ~FLAG_MODIFIED
-        & ~FLAG_SELECTED
-        | FLAG_VISIBLE;   // visible per default
+    private volatile byte flags = FLAG_VISIBLE;   // visible per default
 
     /**
      * User that last modified this primitive, as specified by the server.
