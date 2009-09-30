@@ -1,6 +1,9 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
+import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.completeTagCollectionForEditing;
+import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -22,9 +25,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
-import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
@@ -58,50 +59,11 @@ public class MergeNodesAction extends JosmAction {
             return;
         }
 
-
         Node targetNode = selectTargetNode(selectedNodes);
         Command cmd = mergeNodes(Main.main.getEditLayer(), selectedNodes, targetNode);
         if (cmd != null) {
             Main.main.undoRedo.add(cmd);
             Main.main.getEditLayer().data.setSelected(targetNode);
-        }
-    }
-
-    protected static void completeTagCollectionWithMissingTags(TagCollection tc, Collection<Node> mergedNodes) {
-        for (String key: tc.getKeys()) {
-            // make sure the empty value is in the tag set if a tag is not present
-            // on all merged nodes
-            //
-            for (Node n: mergedNodes) {
-                if (n.get(key) == null) {
-                    tc.add(new Tag(key)); // add a tag with key and empty value
-                }
-            }
-        }
-        // remove irrelevant tags
-        //
-        tc.removeByKey("created_by");
-    }
-
-    protected static void completeTagCollectionForEditing(TagCollection tc) {
-        for (String key: tc.getKeys()) {
-            // make sure the empty value is in the tag set such that we can delete the tag
-            // in the conflict dialog if necessary
-            //
-            tc.add(new Tag(key,""));
-        }
-    }
-
-    /**
-     * Combines tags from TIGER data
-     * 
-     * @param tc the tag collection
-     */
-    protected static void combineTigerTags(TagCollection tc) {
-        for (String key: tc.getKeys()) {
-            if (TigerUtils.isTigerTag(key)) {
-                tc.setUniqueForKey(key, TigerUtils.combineTags(key, tc.getValues(key)));
-            }
         }
     }
 
@@ -219,7 +181,7 @@ public class MergeNodesAction extends JosmAction {
     }
 
     /**
-     * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
+     * Merges the nodes in <code>nodes</code> onto one of the nodes. Uses the dataset
      * managed by <code>layer</code> as reference. <code>backreferences</code> is a precomputed
      * collection of all parent/child references in the dataset.
      *
@@ -249,17 +211,20 @@ public class MergeNodesAction extends JosmAction {
         //
         TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
         combineTigerTags(nodeTags);
-        completeTagCollectionWithMissingTags(nodeTags, nodes);
+        normalizeTagCollectionBeforeEditing(nodeTags, nodes);
         TagCollection nodeTagsToEdit = new TagCollection(nodeTags);
         completeTagCollectionForEditing(nodeTagsToEdit);
 
         // launch a conflict resolution dialog, if necessary
         //
         CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
-        dialog.getTagConflictResolverModel().populate(nodeTagsToEdit);
+        dialog.getTagConflictResolverModel().populate(nodeTagsToEdit, nodeTags.getKeysWithMultipleValues());
         dialog.getRelationMemberConflictResolverModel().populate(relationToNodeReferences);
         dialog.setTargetPrimitive(targetNode);
         dialog.prepareDefaultDecisions();
+        // conflict resolution is necessary if there are conflicts in the merged tags
+        // or if at least one of the merged nodes is referred to by a relation
+        //
         if (! nodeTags.isApplicableToPrimitive() || relationToNodeReferences.size() > 1) {
             dialog.setVisible(true);
             if (dialog.isCancelled())
@@ -282,9 +247,7 @@ public class MergeNodesAction extends JosmAction {
         );
         if (wayFixCommands == null)
             return null;
-        else {
-            cmds.addAll(wayFixCommands);
-        }
+        cmds.addAll(wayFixCommands);
 
         // build the commands
         //
@@ -298,7 +261,6 @@ public class MergeNodesAction extends JosmAction {
         Command cmd = new SequenceCommand(tr("Merge {0} nodes", nodes.size()), cmds);
         return cmd;
     }
-
 
     /**
      * Enable the "Merge Nodes" menu option if more than one node is selected

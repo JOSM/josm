@@ -7,6 +7,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.HierarchyBoundsListener;
+import java.awt.event.HierarchyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -35,8 +37,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
- * This dialog helps to resolve conflicts occurring when ways are combined ore
- * primitives are merged.
+ * This dialog helps to resolve conflicts occurring when ways are combined or
+ * nodes are merged.
  * 
  * There is a singleton instance of this dialog which can be retrieved using
  * {@see #getInstance()}.
@@ -56,7 +58,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * You should also set the target primitive which other primitives (ways or nodes) are
  * merged to, see {@see #setTargetPrimitive(OsmPrimitive)}.
  * 
- * After the dialog closed use {@see #isCancelled()} to check whether the user cancelled
+ * After the dialog is closed use {@see #isCancelled()} to check whether the user canceled
  * the dialog. If it wasn't canceled you may build a collection of {@see Command} objects
  * which reflect the conflict resolution decisions the user made in the dialog:
  * see {@see #buildResolutionCommands()}
@@ -65,8 +67,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class CombinePrimitiveResolverDialog extends JDialog {
 
+    /** the unique instance of the dialog */
     static private CombinePrimitiveResolverDialog instance;
 
+    /**
+     * Replies the unique instance of the dialog
+     * 
+     * @return the unique instance of the dialog
+     */
     public static CombinePrimitiveResolverDialog getInstance() {
         if (instance == null) {
             instance = new CombinePrimitiveResolverDialog(Main.parent);
@@ -74,19 +82,29 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         return instance;
     }
 
-    private JSplitPane spTagConflictTypes;
+    private AutoAdjustingSplitPane spTagConflictTypes;
     private TagConflictResolver pnlTagConflictResolver;
     private RelationMemberConflictResolver pnlRelationMemberConflictResolver;
     private boolean cancelled;
     private JPanel pnlButtons;
     private OsmPrimitive targetPrimitive;
 
-
-
+    /**
+     * Replies the target primitive the collection of primitives is merged
+     * or combined to.
+     * 
+     * @return the target primitive
+     */
     public OsmPrimitive getTargetPrimitmive() {
         return targetPrimitive;
     }
 
+    /**
+     * Sets the primitive the collection of primitives is merged or combined
+     * to.
+     * 
+     * @param primitive the target primitive
+     */
     public void setTargetPrimitive(OsmPrimitive primitive) {
         this.targetPrimitive = primitive;
         updateTitle();
@@ -117,7 +135,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     protected void build() {
         getContentPane().setLayout(new BorderLayout());
         updateTitle();
-        spTagConflictTypes = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        spTagConflictTypes = new AutoAdjustingSplitPane(JSplitPane.VERTICAL_SPLIT);
         spTagConflictTypes.setTopComponent(buildTagConflictResolverPanel());
         spTagConflictTypes.setBottomComponent(buildRelationMemberConflictResolverPanel());
         getContentPane().add(pnlButtons = buildButtonPanel(), BorderLayout.SOUTH);
@@ -217,7 +235,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 decision.keepAll();
             }
         }
-        model.refresh();
+        model.rebuild();
     }
 
     protected void prepareDefaultRelationDecisions() {
@@ -244,17 +262,25 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         RelationMemberConflictResolverModel relModel = getRelationMemberConflictResolverModel();
         TagConflictResolverModel tagModel = getTagConflictResolverModel();
         getContentPane().removeAll();
+
         if (relModel.getNumDecisions() > 0 && tagModel.getNumDecisions() > 0) {
+            // display both, the dialog for resolving relation conflicts and for resolving
+            // tag conflicts
             spTagConflictTypes.setTopComponent(pnlTagConflictResolver);
             spTagConflictTypes.setBottomComponent(pnlRelationMemberConflictResolver);
             getContentPane().add(spTagConflictTypes, BorderLayout.CENTER);
         } else if (relModel.getNumDecisions() > 0) {
+            // relation conflicts only
+            //
             getContentPane().add(pnlRelationMemberConflictResolver, BorderLayout.CENTER);
         } else if (tagModel.getNumDecisions() >0) {
+            // tag conflicts only
+            //
             getContentPane().add(pnlTagConflictResolver, BorderLayout.CENTER);
         } else {
             getContentPane().add(buildEmptyConflictsPanel(), BorderLayout.CENTER);
         }
+
         getContentPane().add(pnlButtons, BorderLayout.SOUTH);
         validate();
         int numTagDecisions = getTagConflictResolverModel().getNumDecisions();
@@ -344,6 +370,33 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             int numRelationDecisions = getRelationMemberConflictResolverModel().getNumDecisions();
             if (numTagDecisions > 0 &&  numRelationDecisions > 0) {
                 spTagConflictTypes.setDividerLocation(0.5);
+            }
+        }
+    }
+
+    class AutoAdjustingSplitPane extends JSplitPane implements PropertyChangeListener, HierarchyBoundsListener {
+        private double dividerLocation;
+
+        public AutoAdjustingSplitPane(int newOrientation) {
+            super(newOrientation);
+            addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY,this);
+            addHierarchyBoundsListener(this);
+        }
+
+        public void ancestorResized(HierarchyEvent e) {
+            setDividerLocation((int)(dividerLocation * getHeight()));
+        }
+
+        public void ancestorMoved(HierarchyEvent e) {
+            // do nothing
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+                int newVal = (Integer)evt.getNewValue();
+                if (getHeight() != 0) {
+                    dividerLocation = (double)newVal / (double)getHeight();
+                }
             }
         }
     }

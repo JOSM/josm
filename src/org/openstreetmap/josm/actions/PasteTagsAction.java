@@ -37,7 +37,7 @@ public final class PasteTagsAction extends JosmAction {
     }
 
     static private List<Class<? extends OsmPrimitive>> osmPrimitiveClasses;
-    {
+    static {
         osmPrimitiveClasses = new ArrayList<Class<? extends OsmPrimitive>>();
         osmPrimitiveClasses.add(Node.class);
         osmPrimitiveClasses.add(Way.class);
@@ -59,24 +59,6 @@ public final class PasteTagsAction extends JosmAction {
     }
 
     /**
-     * Replies the subset  of {@see OsmPrimitive}s of <code>type</code> from <code>superSet</code>.
-     * 
-     * @param <T>
-     * @param superSet  the super set of primitives
-     * @param type  the type
-     * @return
-     */
-    protected <T extends OsmPrimitive> Collection<? extends OsmPrimitive> getSubcollectionByType(Collection<? extends OsmPrimitive> superSet, Class<T> type) {
-        Collection<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
-        for (OsmPrimitive p : superSet) {
-            if (type.isInstance(p)) {
-                ret.add(p);
-            }
-        }
-        return ret;
-    }
-
-    /**
      * Replies all primitives of type <code>type</code> in the current selection.
      * 
      * @param <T>
@@ -84,7 +66,7 @@ public final class PasteTagsAction extends JosmAction {
      * @return all primitives of type <code>type</code> in the current selection.
      */
     protected <T extends OsmPrimitive> Collection<? extends OsmPrimitive> getSourcePrimitivesByType(Class<T> type) {
-        return getSubcollectionByType(Main.pasteBuffer.getSelected(), type);
+        return OsmPrimitive.getFilteredList(Main.pasteBuffer.getSelected(), type);
     }
 
     /**
@@ -144,7 +126,7 @@ public final class PasteTagsAction extends JosmAction {
     protected Map<OsmPrimitiveType, Integer> getTargetStatistics() {
         HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
         for (Class<? extends OsmPrimitive> type: osmPrimitiveClasses) {
-            int count = getSubcollectionByType(getEditLayer().data.getSelected(), type).size();
+            int count = OsmPrimitive.getFilteredList(getEditLayer().data.getSelected(), type).size();
             if (count > 0) {
                 ret.put(OsmPrimitiveType.from(type), count);
             }
@@ -173,7 +155,6 @@ public final class PasteTagsAction extends JosmAction {
             // no tags found to paste. Abort.
             return;
 
-
         if (!tc.isApplicableToPrimitive()) {
             PasteTagsConflictResolverDialog dialog = new PasteTagsConflictResolverDialog(Main.parent);
             dialog.populate(tc, getSourceStatistics(), getTargetStatistics());
@@ -201,8 +182,8 @@ public final class PasteTagsAction extends JosmAction {
      * @return true if there is at least one primitive of type <code>type</code> in the collection
      * <code>selection</code>
      */
-    protected <T extends OsmPrimitive> boolean hasTargetPrimitives(Collection<? extends OsmPrimitive> selection, Class<T> type) {
-        return !getSubcollectionByType(selection, type).isEmpty();
+    protected <T extends OsmPrimitive> boolean hasTargetPrimitives(Collection<OsmPrimitive> selection, Class<T> type) {
+        return !OsmPrimitive.getFilteredList(selection, type).isEmpty();
     }
 
     /**
@@ -211,7 +192,7 @@ public final class PasteTagsAction extends JosmAction {
      * @param targets the collection of target primitives
      * @return true if this a heterogeneous source can be pasted without conflicts to targets
      */
-    protected boolean canPasteFromHeterogeneousSourceWithoutConflict(Collection<? extends OsmPrimitive> targets) {
+    protected boolean canPasteFromHeterogeneousSourceWithoutConflict(Collection<OsmPrimitive> targets) {
         if (hasTargetPrimitives(targets, Node.class)) {
             TagCollection tc = TagCollection.unionOfAllPrimitives(getSourcePrimitivesByType(Node.class));
             if (!tc.isEmpty() && ! tc.isApplicableToPrimitive())
@@ -236,7 +217,7 @@ public final class PasteTagsAction extends JosmAction {
      * 
      * @param targets the collection of target primitives
      */
-    protected void pasteFromHeterogeneousSource(Collection<? extends OsmPrimitive> targets) {
+    protected void pasteFromHeterogeneousSource(Collection<OsmPrimitive> targets) {
         if (canPasteFromHeterogeneousSourceWithoutConflict(targets)) {
             if (hasSourceTagsByType(Node.class) && hasTargetPrimitives(targets, Node.class)) {
                 Command cmd = buildChangeCommand(targets, getSourceTagsByType(Node.class));
@@ -263,15 +244,15 @@ public final class PasteTagsAction extends JosmAction {
             if (dialog.isCanceled())
                 return;
             if (hasSourceTagsByType(Node.class) && hasTargetPrimitives(targets, Node.class)) {
-                Command cmd = buildChangeCommand(getSubcollectionByType(targets, Node.class), dialog.getResolution(OsmPrimitiveType.NODE));
+                Command cmd = buildChangeCommand(OsmPrimitive.getFilteredList(targets, Node.class), dialog.getResolution(OsmPrimitiveType.NODE));
                 Main.main.undoRedo.add(cmd);
             }
             if (hasSourceTagsByType(Way.class) && hasTargetPrimitives(targets, Way.class)) {
-                Command cmd = buildChangeCommand(getSubcollectionByType(targets, Way.class), dialog.getResolution(OsmPrimitiveType.WAY));
+                Command cmd = buildChangeCommand(OsmPrimitive.getFilteredList(targets, Way.class), dialog.getResolution(OsmPrimitiveType.WAY));
                 Main.main.undoRedo.add(cmd);
             }
             if (hasSourceTagsByType(Relation.class) && hasTargetPrimitives(targets, Relation.class)) {
-                Command cmd = buildChangeCommand(getSubcollectionByType(targets, Relation.class), dialog.getResolution(OsmPrimitiveType.RELATION));
+                Command cmd = buildChangeCommand(OsmPrimitive.getFilteredList(targets, Relation.class), dialog.getResolution(OsmPrimitiveType.RELATION));
                 Main.main.undoRedo.add(cmd);
             }
         }

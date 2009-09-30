@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -38,6 +39,8 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
         getActionMap().put("selectPreviousColumnCell", selectPreviousColumnCellAction);
 
         ((MultiValueCellEditor)getColumnModel().getColumn(2).getCellEditor()).addNavigationListeners(this);
+
+        setRowHeight((int)new JComboBox().getPreferredSize().getHeight());
     }
 
     /**

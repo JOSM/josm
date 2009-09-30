@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -19,10 +21,12 @@ public class TagConflictResolverModel extends DefaultTableModel {
     static public final String NUM_CONFLICTS_PROP = TagConflictResolverModel.class.getName() + ".numConflicts";
 
     private TagCollection tags;
-    private List<String> keys;
+    private List<String> displayedKeys;
+    private Set<String> keysWithConflicts;
     private HashMap<String, MultiValueResolutionDecision> decisions;
     private int numConflicts;
     private PropertyChangeSupport support;
+    private boolean showTagsWithConflictsOnly = false;
 
     public TagConflictResolverModel() {
         numConflicts = 0;
@@ -36,7 +40,6 @@ public class TagConflictResolverModel extends DefaultTableModel {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         support.removePropertyChangeListener(listener);
     }
-
 
     protected void setNumConflicts(int numConflicts) {
         int oldValue = this.numConflicts;
@@ -58,50 +61,73 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     protected void sort() {
         Collections.sort(
-                keys,
+                displayedKeys,
                 new Comparator<String>() {
-                    public int compare(String o1, String o2) {
-                        if (decisions.get(o1).isDecided() && ! decisions.get(o2).isDecided())
+                    public int compare(String key1, String key2) {
+                        if (decisions.get(key1).isDecided() && ! decisions.get(key2).isDecided())
                             return 1;
-                        else if (!decisions.get(o1).isDecided() && decisions.get(o2).isDecided())
+                        else if (!decisions.get(key1).isDecided() && decisions.get(key2).isDecided())
                             return -1;
-                        return o1.compareTo(o2);
+                        return key1.compareTo(key2);
                     }
                 }
         );
     }
 
-    protected void init() {
-        keys.clear();
-        keys.addAll(tags.getKeys());
+    /**
+     * initializes the model from the current tags
+     * 
+     */
+    protected void rebuild() {
+        if (tags == null) return;
         for(String key: tags.getKeys()) {
             MultiValueResolutionDecision decision = new MultiValueResolutionDecision(tags.getTagsFor(key));
-            decisions.put(key,decision);
+            if (decisions.get(key) == null) {
+                decisions.put(key,decision);
+            }
         }
+        displayedKeys.clear();
+        Set<String> keys = tags.getKeys();
+        if (showTagsWithConflictsOnly) {
+            keys.retainAll(keysWithConflicts);
+            for (String key: tags.getKeys()) {
+                if (!decisions.get(key).isDecided() && !keys.contains(key)) {
+                    keys.add(key);
+                }
+            }
+        }
+        displayedKeys.addAll(keys);
         refreshNumConflicts();
-    }
-
-    public void populate(TagCollection tags) {
-        if (tags == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "tags"));
-        this.tags = tags;
-        keys = new ArrayList<String>();
-        decisions = new HashMap<String, MultiValueResolutionDecision>();
-        init();
         sort();
         fireTableDataChanged();
     }
 
+    /**
+     * Populates the model with the tags for which conflicts are to be resolved.
+     * 
+     * @param tags  the tag collection with the tags. Must not be null.
+     * @param keysWithConflicts the set of tag keys with conflicts
+     * @throws IllegalArgumentException thrown if tags is null
+     */
+    public void populate(TagCollection tags, Set<String> keysWithConflicts) {
+        if (tags == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "tags"));
+        this.tags = tags;
+        displayedKeys = new ArrayList<String>();
+        this.keysWithConflicts = keysWithConflicts == null ? new HashSet<String>() : keysWithConflicts;
+        decisions = new HashMap<String, MultiValueResolutionDecision>();
+        rebuild();
+    }
 
     @Override
     public int getRowCount() {
-        if (keys == null) return 0;
-        return keys.size();
+        if (displayedKeys == null) return 0;
+        return displayedKeys.size();
     }
 
     @Override
     public Object getValueAt(int row, int column) {
-        return decisions.get(keys.get(row));
+        return decisions.get(displayedKeys.get(row));
     }
 
     @Override
@@ -111,7 +137,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     @Override
     public void setValueAt(Object value, int row, int column) {
-        MultiValueResolutionDecision decision = decisions.get(keys.get(row));
+        MultiValueResolutionDecision decision = decisions.get(displayedKeys.get(row));
         if (value instanceof String) {
             decision.keepOne((String)value);
         } else if (value instanceof MultiValueDecisionType) {
@@ -149,18 +175,41 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     public TagCollection getResolution() {
         TagCollection tc = new TagCollection();
-        for (String key: keys) {
+        for (String key: displayedKeys) {
             tc.add(decisions.get(key).getResolution());
         }
         return tc;
     }
 
     public MultiValueResolutionDecision getDecision(int row) {
-        return decisions.get(keys.get(row));
+        return decisions.get(displayedKeys.get(row));
     }
 
-    public void refresh() {
-        fireTableDataChanged();
-        refreshNumConflicts();
+    /**
+     * Sets whether all tags or only tags with conflicts are displayed
+     * 
+     * @param showTagsWithConflictsOnly if true, only tags with conflicts are displayed
+     */
+    public void setShowTagsWithConflictsOnly(boolean showTagsWithConflictsOnly) {
+        this.showTagsWithConflictsOnly = showTagsWithConflictsOnly;
+        rebuild();
     }
+
+    /**
+     * Prepare the default decisions for the current model
+     * 
+     */
+    public void prepareDefaultTagDecisions() {
+        for (MultiValueResolutionDecision decision: decisions.values()) {
+            List<String> values = decision.getValues();
+            values.remove("");
+            if (values.size() == 1) {
+                decision.keepOne(values.get(0));
+            } else {
+                decision.keepAll();
+            }
+        }
+        rebuild();
+    }
+
 }

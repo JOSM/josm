@@ -106,7 +106,6 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         getContentPane().add(buildButtonPanel(), gc);
     }
 
-
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -134,29 +133,40 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         return pnl;
     }
 
+    /**
+     * Initializes the conflict resolver for a specific type of primitives
+     * 
+     * @param type the type of primitives
+     * @param tc the tags belonging to this type of primitives
+     * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
+     */
     protected void initResolver(OsmPrimitiveType type, TagCollection tc, Map<OsmPrimitiveType,Integer> targetStatistics) {
-        resolvers.get(type).getModel().populate(tc);
+        resolvers.get(type).getModel().populate(tc,tc.getKeysWithMultipleValues());
+        resolvers.get(type).getModel().prepareDefaultTagDecisions();
         if (!tc.isEmpty() && targetStatistics.get(type) != null && targetStatistics.get(type) > 0) {
             tpResolvers.add(PANE_TITLES.get(type), resolvers.get(type));
         }
     }
 
-    protected String formatStatisticsMessage(OsmPrimitiveType type, int count) {
-        String msg = "";
-        switch(type) {
-            case NODE: msg= trn("{0} node", "{0} nodes", count, count); break;
-            case WAY: msg= trn("{0} way", "{0} ways", count, count); break;
-            case RELATION: msg= trn("{0} relation", "{0} relations", count, count); break;
-        }
-        return msg;
-    }
-
+    /**
+     * Populates the conflict resolver with one tag collection
+     * 
+     * @param tagsForAllPrimitives  the tag collection
+     * @param sourceStatistics histogram of tag source, number of primitives of each type in the source
+     * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
+     */
     public void populate(TagCollection tagsForAllPrimitives, Map<OsmPrimitiveType, Integer> sourceStatistics, Map<OsmPrimitiveType,Integer> targetStatistics) {
         mode = Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY;
         tagsForAllPrimitives = tagsForAllPrimitives == null? new TagCollection() : tagsForAllPrimitives;
         sourceStatistics = sourceStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() :sourceStatistics;
         targetStatistics = targetStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() : targetStatistics;
-        allPrimitivesResolver.getModel().populate(tagsForAllPrimitives);
+
+        // init the resolver
+        //
+        allPrimitivesResolver.getModel().populate(tagsForAllPrimitives,tagsForAllPrimitives.getKeysWithMultipleValues());
+        allPrimitivesResolver.getModel().prepareDefaultTagDecisions();
+
+        // prepare the dialog with one tag resolver
         pnlTagResolver.setLayout(new BorderLayout());
         pnlTagResolver.removeAll();
         pnlTagResolver.add(allPrimitivesResolver, BorderLayout.CENTER);
@@ -182,6 +192,15 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         return (TagConflictResolver)tpResolvers.getComponentAt(idx);
     }
 
+    /**
+     * Populate the tag conflict resolver with tags for each type of primitives
+     * 
+     * @param tagsForNodes the tags belonging to nodes in the paste source
+     * @param tagsForWays the tags belonging to way in the paste source
+     * @param tagsForRelations the tags belonging to relations in the paste source
+     * @param sourceStatistics histogram of tag source, number of primitives of each type in the source
+     * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
+     */
     public void populate(TagCollection tagsForNodes, TagCollection tagsForWays, TagCollection tagsForRelations, Map<OsmPrimitiveType,Integer> sourceStatistics, Map<OsmPrimitiveType, Integer> targetStatistics) {
         tagsForNodes = (tagsForNodes == null) ? new TagCollection() : tagsForNodes;
         tagsForWays = (tagsForWays == null) ? new TagCollection() : tagsForWays;
@@ -425,18 +444,17 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             setText(trn("{0} tag", "{0} tags", info.numTags, info.numTags));
         }
 
-        protected void renderFrom(StatisticsInfo info) {
-            if (info == null) return;
-            if (info.sourceInfo == null) return;
-            if (info.sourceInfo.isEmpty()) return;
-            if (info.sourceInfo.size() == 1) {
-                setIcon(ImageProvider.get(info.sourceInfo.keySet().iterator().next()));
+        protected void renderStatistics(Map<OsmPrimitiveType, Integer> stat) {
+            if (stat == null) return;
+            if (stat.isEmpty()) return;
+            if (stat.size() == 1) {
+                setIcon(ImageProvider.get(stat.keySet().iterator().next()));
             } else {
                 setIcon(ImageProvider.get("data", "object"));
             }
             String text = "";
-            for (OsmPrimitiveType type: info.sourceInfo.keySet()) {
-                int numPrimitives = info.sourceInfo.get(type) == null ? 0 : info.sourceInfo.get(type);
+            for (OsmPrimitiveType type: stat.keySet()) {
+                int numPrimitives = stat.get(type) == null ? 0 : stat.get(type);
                 if (numPrimitives == 0) {
                     continue;
                 }
@@ -451,30 +469,12 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             setText(text);
         }
 
+        protected void renderFrom(StatisticsInfo info) {
+            renderStatistics(info.sourceInfo);
+        }
+
         protected void renderTo(StatisticsInfo info) {
-            if (info == null) return;
-            if (info.targetInfo == null) return;
-            if (info.targetInfo.isEmpty()) return;
-            if (info.targetInfo.size() == 1) {
-                setIcon(ImageProvider.get(info.targetInfo.keySet().iterator().next()));
-            } else {
-                setIcon(ImageProvider.get("data", "object"));
-            }
-            String text = "";
-            for (OsmPrimitiveType type: info.targetInfo.keySet()) {
-                int numPrimitives = info.targetInfo.get(type) == null ? 0 : info.targetInfo.get(type);
-                if (numPrimitives == 0) {
-                    continue;
-                }
-                String msg = "";
-                switch(type) {
-                    case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
-                    case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
-                    case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
-                }
-                text = text.equals("") ? msg : text + ", " + msg;
-            }
-            setText(text);
+            renderStatistics(info.targetInfo);
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
