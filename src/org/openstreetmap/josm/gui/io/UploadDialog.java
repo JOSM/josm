@@ -51,10 +51,10 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.historycombobox.SuggestingJHistoryComboBox;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
+import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -587,7 +587,7 @@ public class UploadDialog extends JDialog {
         private JButton btnClose;
         private JCheckBox cbCloseAfterUpload;
         private OpenChangesetModel model;
-        private SuggestingJHistoryComboBox cmt;
+        private HistoryComboBox cmt;
         private JCheckBox cbUseAtomicUpload;
 
         /**
@@ -615,9 +615,9 @@ public class UploadDialog extends JDialog {
             JPanel pnl = new JPanel();
             pnl.setLayout(new GridBagLayout());
             pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
-            cmt = new SuggestingJHistoryComboBox();
+            cmt = new HistoryComboBox();
             List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
-            cmt.setHistory(cmtHistory);
+            cmt.setPossibleItems(cmtHistory);
             cmt.getEditor().addActionListener(
                     new ActionListener() {
                         public void actionPerformed(ActionEvent e) {

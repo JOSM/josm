@@ -1,0 +1,36 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.widgets;
+
+import java.util.List;
+
+import javax.swing.text.JTextComponent;
+
+public class HistoryComboBox extends AutoCompleteComboBox {
+    private ComboBoxHistory model;
+
+    public HistoryComboBox() {
+        setModel(model = new ComboBoxHistory(15));
+        setEditable(true);
+    }
+
+    public String getText() {
+        return ((JTextComponent)getEditor().getEditorComponent()).getText();
+    }
+
+    public void setText(String value) {
+        ((JTextComponent)getEditor().getEditorComponent()).setText(value);
+    }
+
+    public void addCurrentItemToHistory() {
+        String regex = (String)getEditor().getItem();
+        model.addElement(regex);
+    }
+
+    public void setHistory(List<String> history) {
+        model.setItems(history);
+    }
+
+    public List<String> getHistory() {
+        return model.asList();
+    }
+}

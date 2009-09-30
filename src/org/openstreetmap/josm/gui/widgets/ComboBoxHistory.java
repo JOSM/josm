@@ -25,7 +25,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.openstreetmap.josm.gui.historycombobox;
+package org.openstreetmap.josm.gui.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,8 +38,6 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
 
     private int maxSize = 10;
 
-    private List<HistoryChangedListener> listeners = new ArrayList<HistoryChangedListener>();
-
     public ComboBoxHistory(int size) {
         maxSize = size;
     }
@@ -47,6 +45,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
     /**
      * Adds or moves an element to the top of the history
      */
+    @Override
     public void addElement(Object o) {
         String newEntry = (String)o;
 
@@ -69,8 +68,6 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
 
         // set selected item to the one just added
         setSelectedItem(o);
-
-        fireHistoryChanged();
     }
 
     public Iterator<String> iterator() {
@@ -83,9 +80,8 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
             }
 
             public boolean hasNext() {
-                if(position < getSize()-1 && getSize()>0) {
+                if(position < getSize()-1 && getSize()>0)
                     return true;
-                }
                 return false;
             }
 
@@ -112,19 +108,5 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
             list.add(item);
         }
         return list;
-    }
-
-    public void addHistoryChangedListener(HistoryChangedListener l) {
-        listeners.add(l);
-    }
-
-    public void removeHistoryChangedListener(HistoryChangedListener l) {
-        listeners.remove(l);
-    }
-
-    private void fireHistoryChanged() {
-        for (HistoryChangedListener l : listeners) {
-            l.historyChanged(asList());
-        }
     }
 }

@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.gui.widgets;
 
 import java.util.Collection;
 
@@ -54,8 +54,9 @@ public class AutoCompleteComboBox extends JComboBox {
             // lookup and select a matching item
             Object item = lookupItem(curText);
             setSelectedItem(item);
-            if(initial)
+            if(initial) {
                 start = 0;
+            }
             if (item != null) {
                 String newText = item.toString();
                 if(!newText.equals(curText))
@@ -99,7 +100,9 @@ public class AutoCompleteComboBox extends JComboBox {
         DefaultComboBoxModel model = (DefaultComboBoxModel)this.getModel();
         Object oldValue = this.getEditor().getItem();
         model.removeAllElements();
-        for (String elem : elems) model.addElement(elem);
+        for (String elem : elems) {
+            model.addElement(elem);
+        }
         this.getEditor().setItem(oldValue);
     }
 }
