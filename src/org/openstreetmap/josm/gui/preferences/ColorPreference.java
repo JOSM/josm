@@ -67,8 +67,8 @@ public class ColorPreference implements PreferenceSetting {
     public void setColorModel(Map<String, String> colorMap) {
         if(tableModel == null) {
             tableModel = new DefaultTableModel();
-            tableModel.addColumn(tr("Color"));
             tableModel.addColumn(tr("Name"));
+            tableModel.addColumn(tr("Color"));
         }
 
         // clear old model:
