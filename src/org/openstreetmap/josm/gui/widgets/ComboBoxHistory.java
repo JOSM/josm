@@ -38,6 +38,8 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
 
     private int maxSize = 10;
 
+    private List<HistoryChangedListener> listeners = new ArrayList<HistoryChangedListener>();
+
     public ComboBoxHistory(int size) {
         maxSize = size;
     }
@@ -68,6 +70,8 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
 
         // set selected item to the one just added
         setSelectedItem(o);
+
+        fireHistoryChanged();
     }
 
     public Iterator<String> iterator() {
@@ -108,5 +112,19 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
             list.add(item);
         }
         return list;
+    }
+
+    public void addHistoryChangedListener(HistoryChangedListener l) {
+        listeners.add(l);
+    }
+
+    public void removeHistoryChangedListener(HistoryChangedListener l) {
+        listeners.remove(l);
+    }
+
+    private void fireHistoryChanged() {
+        for (HistoryChangedListener l : listeners) {
+            l.historyChanged(asList());
+        }
     }
 }
