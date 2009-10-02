@@ -162,7 +162,7 @@ public class OsmApi extends OsmConnection {
         cancel = false;
         initAuthentication();
         try {
-            String s = sendRequest("GET", "capabilities", null,monitor);
+            String s = sendRequest("GET", "capabilities", null,monitor, false);
             InputSource inputSource = new InputSource(new StringReader(s));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
             if (capabilities.supportsVersion("0.6")) {
@@ -458,6 +458,10 @@ public class OsmApi extends OsmConnection {
         return Math.max(ret,0);
     }
 
+    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
+        return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true);
+    }
+
     /**
      * Generic method for sending requests to the OSM API.
      *
@@ -473,9 +477,8 @@ public class OsmApi extends OsmConnection {
      * @exception OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
-    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
+    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate) throws OsmTransferException {
         StringBuffer responseBody = new StringBuffer();
-
         int retries = getMaxRetries();
 
         while(true) { // the retry loop
@@ -485,7 +488,9 @@ public class OsmApi extends OsmConnection {
                 activeConnection = (HttpURLConnection)url.openConnection();
                 activeConnection.setConnectTimeout(15000);
                 activeConnection.setRequestMethod(requestMethod);
-                addAuth(activeConnection);
+                if (doAuthenticate) {
+                    addAuth(activeConnection);
+                }
 
                 if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals("DELETE")) {
                     activeConnection.setDoOutput(true);
