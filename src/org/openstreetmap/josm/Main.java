@@ -219,7 +219,7 @@ abstract public class Main {
             setMapFrame(mapFrame);
             mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction());
             mapFrame.setVisible(true);
-            mapFrame.setVisibleDialogs();
+            mapFrame.initializeDialogsPane();
             // bootstrapping problem: make sure the layer list dialog is going to
             // listen to change events of the very first layer
             //
@@ -242,7 +242,7 @@ abstract public class Main {
 
     /**
      * Replies the current edit layer
-     * 
+     *
      * @return the current edit layer. null, if no current edit layer exists
      */
     public OsmDataLayer getEditLayer() {
@@ -548,7 +548,7 @@ abstract public class Main {
                 }
                 newGeometry = width + "x" + height + "+" + x + "+" + y;
             }
-            
+
             if (map  != null) {
                 newToggleDlgWidth = Integer.toString(map.getToggleDlgWidth());
                 if (newToggleDlgWidth.equals(Integer.toString(map.DEF_TOGGLE_DLG_WIDTH))) {

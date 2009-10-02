@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
+import org.openstreetmap.josm.gui.dialogs.DialogsPanel;
 import org.openstreetmap.josm.gui.dialogs.FilterDialog;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -74,11 +76,11 @@ public class MapFrame extends JPanel implements Destroyable {
      * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
      * instead of adding directly to this list.
      */
-    private JPanel toggleDialogs = new JPanel();
-    private ArrayList<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
+    private List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
+    private DialogsPanel dialogsPanel = new DialogsPanel();
 
     public final ButtonGroup toolGroup = new ButtonGroup();
-    
+
     /**
      * Default width of the toggle dialog area.
      */
@@ -106,13 +108,13 @@ public class MapFrame extends JPanel implements Destroyable {
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                             mapView, toggleDialogs); 
+                             mapView, dialogsPanel);
 
         /**
          * All additional space goes to the mapView
          */
         splitPane.setResizeWeight(1.0);
-        
+
         /**
          * Some beautifications.
          */
@@ -126,13 +128,13 @@ public class MapFrame extends JPanel implements Destroyable {
                 };
             }
         });
-        
+
         add(splitPane, BorderLayout.CENTER);
 
-        toggleDialogs.setLayout(new BoxLayout(toggleDialogs, BoxLayout.Y_AXIS));
-        toggleDialogs.setPreferredSize(new Dimension(Main.pref.getInteger("toggleDialogs.width",DEF_TOGGLE_DLG_WIDTH), 0));
-                                                                        
-        toggleDialogs.setMinimumSize(new Dimension(24, 0));
+        dialogsPanel.setLayout(new BoxLayout(dialogsPanel, BoxLayout.Y_AXIS));
+        dialogsPanel.setPreferredSize(new Dimension(Main.pref.getInteger("toggleDialogs.width",DEF_TOGGLE_DLG_WIDTH), 0));
+
+        dialogsPanel.setMinimumSize(new Dimension(24, 0));
         mapView.setMinimumSize(new Dimension(10,0));
 
         toolBarToggle.setFloatable(false);
@@ -172,9 +174,7 @@ public class MapFrame extends JPanel implements Destroyable {
      * Delegates the call to all Destroyables within this component (e.g. MapModes)
      */
     public void destroy() {
-        for (ToggleDialog t : allDialogs) {
-            t.closeDetachedDialog();
-        }
+        dialogsPanel.destroy();
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
                 ((Destroyable)toolBarActions).destroy();
@@ -202,18 +202,8 @@ public class MapFrame extends JPanel implements Destroyable {
     /**
      * Open all ToggleDialogs that have their preferences property set. Close all others.
      */
-    public void setVisibleDialogs() {
-        toggleDialogs.removeAll();
-        for (ToggleDialog dialog: allDialogs) {
-            dialog.setVisible(false);
-            toggleDialogs.add(dialog);
-            dialog.setParent(toggleDialogs);
-            if (Main.pref.getBoolean(dialog.getPreferencePrefix()+".visible")) {
-                dialog.showDialog();
-            } else {
-                dialog.hideDialog();
-            }
-        }
+    public void initializeDialogsPane() {
+        dialogsPanel.initialize(allDialogs);
     }
 
     /**
@@ -242,8 +232,6 @@ public class MapFrame extends JPanel implements Destroyable {
             firePropertyChange("visible", old, aFlag);
         }
     }
-
-
 
     /**
      * Change the operating map mode for the view. Will call unregister on the
@@ -298,17 +286,13 @@ public class MapFrame extends JPanel implements Destroyable {
      *
      */
     public <T> T getToggleDialog(Class<T> type) {
-        for (ToggleDialog td : allDialogs) {
-            if (type.isInstance(td))
-                return type.cast(td);
-        }
-        return null;
+        return dialogsPanel.getToggleDialog(type);
     }
 
     /**
      * Returns the current width of the (possibly resized) toggle dialog area
      */
     public int getToggleDlgWidth() {
-        return toggleDialogs.getWidth();
+        return dialogsPanel.getWidth();
     }
 }

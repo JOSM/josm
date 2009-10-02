@@ -441,10 +441,6 @@ public class Preferences {
 
     public final void resetToDefault(){
         properties.clear();
-        put("layerlist.visible", true);
-        put("propertiesdialog.visible", true);
-        put("selectionlist.visible", true);
-        put("commandstack.visible", true);
         if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
             put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
         } else {

@@ -33,103 +33,72 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.HelpAction.Helpful;
+import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This class is a toggle dialog that can be turned on and off.
- * 
+ *
  *
  */
 public class ToggleDialog extends JPanel implements Helpful {
-//    private static final Logger logger = Logger.getLogger(ToggleDialog.class.getName());
-
-    /**
-     * The action to toggle the visibility state of this toggle dialog.
-     * 
-     * Emits {@see PropertyChangeEvent}s for the property <tt>selected</tt>:
-     * <ul>
-     *   <li>true, if the dialog is currently visible</li>
-     *   <li>false, if the dialog is currently invisible</li>
-     * </ul>
-     *
-     */
-    public final class ToggleDialogAction extends JosmAction {
-        private ToggleDialogAction(String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
-            super(name, iconName, tooltip, shortcut, false);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            toggleVisibility();
-        }
-
-        public void toggleVisibility() {
-            if (isShowing) {
-                hideDialog();
-            } else {
-                showDialog();
-            }
-        }
-    }
-
-    /**
-     * The action to toggle this dialog.
-     */
+    /** The action to toggle this dialog */
     private ToggleDialogAction toggleAction;
     private String preferencePrefix;
 
-    private JPanel parent;
+    /** DialogsPanel that manages all ToggleDialogs */
+    private DialogsPanel dialogsPanel;
+
     private  TitleBar titleBar;
     private String title;
 
-    /** 
+    /**
      * Indicates whether the dialog is showing or not.
      */
     private boolean isShowing;
-    /** 
+    /**
      * If isShowing is true, indicates whether the dialog is docked or not, e. g.
      * shown as part of the main window or as a seperate dialog window.
      */
     private boolean isDocked;
-    /** 
-     * If isShowing and isDocked are true, indicates whether the dialog is 
+    /**
+     * If isShowing and isDocked are true, indicates whether the dialog is
      * currently minimized or not.
      */
     private boolean isCollapsed;
 
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
+
     /** the label in the title bar which shows whether the toggle dialog is expanded or collapsed */
     private JLabel lblMinimized;
+
     /** the JDialog displaying the toggle dialog as undocked dialog */
     private JDialog detachedDialog;
 
     /**
      * Constructor
-     * 
+     * (see below)
+     */
+    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight) {
+        this(name, iconName, tooltip, shortcut, preferredHeight, false);
+    }
+    /**
+     * Constructor
+     *
      * @param name  the name of the dialog
      * @param iconName the name of the icon to be displayed
      * @param tooltip  the tool tip
      * @param shortcut  the shortcut
      * @param preferredHeight the preferred height for the dialog
+     * @param defShow if the dialog should be shown by default, if there is no preference
      */
-    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight) {
+    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow) {
         super(new BorderLayout());
         this.preferencePrefix = iconName;
-        init(name, iconName, tooltip, shortcut, preferredHeight);
-    }
 
-    /**
-     * Initializes the toggle dialog
-     * 
-     * @param name
-     * @param iconName
-     * @param tooltip
-     * @param shortcut
-     * @param preferredHeight
-     */
-    private void init(String name, String iconName, String tooltip, Shortcut shortcut, final int preferredHeight) {
         /** Use the full width of the parent element */
         setPreferredSize(new Dimension(0, preferredHeight));
         /** Override any minimum sizes of child elements so the user can resize freely */
@@ -146,16 +115,118 @@ public class ToggleDialog extends JPanel implements Helpful {
         titleBar = new TitleBar(name, iconName);
         add(titleBar, BorderLayout.NORTH);
 
-        setVisible(false);
         setBorder(BorderFactory.createEtchedBorder());
 
+        isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
     }
 
     /**
+     * The action to toggle the visibility state of this toggle dialog.
+     *
+     * Emits {@see PropertyChangeEvent}s for the property <tt>selected</tt>:
+     * <ul>
+     *   <li>true, if the dialog is currently visible</li>
+     *   <li>false, if the dialog is currently invisible</li>
+     * </ul>
+     *
+     */
+    public final class ToggleDialogAction extends JosmAction {
+        private ToggleDialogAction(String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
+            super(name, iconName, tooltip, shortcut, false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (isShowing) {
+                hideDialog();
+                dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+            } else {
+                showDialog();
+                expand();
+                dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
+            }
+        }
+    }
+
+    /**
+     * Shows the dialog
+     */
+    public void showDialog() {
+        setIsShowing(true);
+        if (!isDocked) {
+            detach();
+        } else {
+            dock();
+            this.setVisible(true);
+        }
+        // toggling the selected value in order to enforce PropertyChangeEvents
+        setIsShowing(true);
+        toggleAction.putValue("selected", false);
+        toggleAction.putValue("selected", true);
+    }
+
+    /**
+     * Hides the dialog
+     */
+    public void hideDialog() {
+        closeDetachedDialog();
+        this.setVisible(false);
+        setIsShowing(false);
+        toggleAction.putValue("selected", false);
+    }
+
+    /**
+     * Displays the toggle dialog in the toggle dialog view on the right
+     * of the main map window.
+     *
+     */
+    protected void dock() {
+        detachedDialog = null;
+        titleBar.setVisible(true);
+        setIsDocked(true);
+    }
+
+    /**
+     * Display the dialog in a detached window.
+     *
+     */
+    protected void detach() {
+        setContentVisible(true);
+        this.setVisible(true);
+        titleBar.setVisible(false);
+        detachedDialog = new DetachedDialog();
+        detachedDialog.setVisible(true);
+        setIsDocked(false);
+    }
+
+    /**
+     * Collapses the toggle dialog to the title bar only
+     *
+     */
+    public void collapse() {
+        setContentVisible(false);
+        setIsCollapsed(true);
+        setPreferredSize(new Dimension(0,20));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
+        setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
+        lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
+    }
+
+    /**
+     * Expands the toggle dialog
+     */
+    protected void expand() {
+        setContentVisible(true);
+        setIsCollapsed(false);
+        setPreferredSize(new Dimension(0,preferredHeight));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
+    }
+
+    /**
      * Sets the visibility of all components in this toggle dialog, except the title bar
-     * 
+     *
      * @param visible true, if the components should be visible; false otherwise
      */
     protected void setContentVisible(boolean visible) {
@@ -168,189 +239,9 @@ public class ToggleDialog extends JPanel implements Helpful {
     }
 
     /**
-     * Toggles between collapsed and expanded state
-     * 
-     */
-    protected void toggleExpandedState() {
-        if (isCollapsed) {
-            expand();
-        } else {
-            collapse();
-        }
-    }
-
-    /**
-     * Collapses the toggle dialog to the title bar only
-     * 
-     */
-    protected void collapse() {
-        setContentVisible(false);
-        isCollapsed = true;
-        Main.pref.put(preferencePrefix+".minimized", true);
-        setPreferredSize(new Dimension(0,20));
-        setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
-        lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
-        refreshToggleDialogsView();
-    }
-
-    /**
-     * Expands the toggle dialog
-     */
-    protected void expand() {
-        setContentVisible(true);
-        isCollapsed = false;
-        Main.pref.put(preferencePrefix+".minimized", false);
-        setPreferredSize(new Dimension(0,preferredHeight));
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
-        refreshToggleDialogsView();
-    }
-
-    /**
-     * Replies the index of this toggle dialog in the view of
-     * toggle dialog.
-     * 
-     * @return
-     */
-    protected int getDialogPosition() {
-        if (parent == null) return -1;
-        for (int i=0; i< parent.getComponentCount(); i++) {
-            String name = parent.getComponent(i).getName();
-            if (name != null && name.equals(this.getName()))
-                return i;
-        }
-        return -1;
-    }
-
-    /**
-     * Displays the toggle dialog in the toggle dialog view on the right
-     * of the main map window.
-     * 
-     */
-    protected void dock() {
-        detachedDialog = null;
-        if (parent == null) return;
-
-        // check whether the toggle dialog view contains a placeholder
-        // for this toggle dialog. If so, replace it with this dialog.
-        //
-        int idx = getDialogPosition();
-        if (idx > -1) {
-            parent.remove(idx);
-            if (idx >= parent.getComponentCount()) {
-                parent.add(ToggleDialog.this);
-            } else {
-                parent.add(ToggleDialog.this,idx);
-            }
-        } else {
-            parent.add(ToggleDialog.this);
-        }
-        parent.validate();
-
-        if(Main.pref.getBoolean(preferencePrefix+".visible")) {
-            setVisible(true);
-        } else {
-            setVisible(false);
-        }
-        titleBar.setVisible(true);
-        isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
-        if (isCollapsed) {
-            collapse();
-        } else {
-            expand();
-        }
-        isDocked = true;
-        Main.pref.put(preferencePrefix+".docked", isDocked);
-    }
-
-    /**
-     * Display the dialog in a detached window.
-     * 
-     */
-    protected void detach() {
-        setContentVisible(true);
-        setVisible(true);
-        // replace the toggle dialog by an invisible place holder. Makes sure
-        // we can place the toggle dialog where it was when it becomes docked
-        // again.
-        //
-        if (parent != null) {
-            int idx = getDialogPosition();
-            if (idx > -1) {
-                JPanel placeHolder = new JPanel();
-                placeHolder.setName(this.getName());
-                placeHolder.setVisible(false);
-                parent.add(placeHolder,idx);
-            }
-            parent.remove(ToggleDialog.this);
-        }
-        
-
-        titleBar.setVisible(false);
-        detachedDialog = new DetachedDialog();
-        detachedDialog.setVisible(true);
-        refreshToggleDialogsView();
-        isDocked = false;
-        Main.pref.put(preferencePrefix+".docked", isDocked);
-    }
-
-    /**
-     * Hides the dialog
-     */
-    public void hideDialog() {
-        closeDetachedDialog();
-        setVisible(false);
-        isShowing = false;
-        Main.pref.put(preferencePrefix+".visible", false);
-        refreshToggleDialogsView();
-        toggleAction.putValue("selected", false);
-    }
-
-    /**
-     * Replies true if this dialog is showing either as docked or as detached dialog
-     */
-    public boolean isDialogShowing() {
-        return this.isShowing;
-    }
-
-    /**
-     * Shows the dialog
-     */
-    public void showDialog() {
-        if (!isDocked) {
-            detach();
-        } else {
-            dock();
-            if (!isCollapsed) {
-                expand();
-                setVisible(true);
-                refreshToggleDialogsView();
-            } else {
-                setVisible(true);
-                refreshToggleDialogsView();
-            }
-        }
-        isShowing = true;
-        // toggling the selected value in order to enforce PropertyChangeEvents
-        toggleAction.putValue("selected", false);
-        toggleAction.putValue("selected", true);
-        Main.pref.put(preferencePrefix+".visible", true);
-    }
-
-    /**
-     * Refreshes the layout of the parent toggle dialog view
-     * 
-     */
-    protected void refreshToggleDialogsView() {
-        if(parent != null){
-            parent.validate();
-        }
-    }
-
-    /**
      * Closes the the detached dialog if this toggle dialog is currently displayed
      * in a detached dialog.
-     * 
+     *
      */
     public void closeDetachedDialog() {
         if (detachedDialog != null) {
@@ -360,60 +251,10 @@ public class ToggleDialog extends JPanel implements Helpful {
         }
     }
 
-    public String helpTopic() {
-        String help = getClass().getName();
-        help = help.substring(help.lastIndexOf('.')+1, help.length()-6);
-        return "Dialog/"+help;
-    }
-
-    /**
-     * Replies the action to toggle the visible state of this toggle dialog
-     * 
-     * @return the action to toggle the visible state of this toggle dialog
-     */
-    public AbstractAction getToggleAction() {
-        return toggleAction;
-    }
-
-    /**
-     * Replies the prefix for the preference settings of this dialog.
-     * 
-     * @return the prefix for the preference settings of this dialog.
-     */
-    public String getPreferencePrefix() {
-        return preferencePrefix;
-    }
-
-    /**
-     * Sets the parent displaying all toggle dialogs
-     * 
-     * @param parent the parent
-     */
-    public void setParent(JPanel parent) {
-        this.parent = parent;
-    }
-
-    /**
-     * Replies the name of this toggle dialog
-     *
-     */
-    @Override
-    public String getName() {
-        return "toggleDialog." + preferencePrefix;
-    }
-
-    /**
-     * Sets the title
-     * 
-     * @param title the title
-     */
-    public void setTitle(String title) {
-        titleBar.setTitle(title);
-    }
 
     /**
      * The title bar displayed in docked mode
-     * 
+     *
      */
     private class TitleBar extends JPanel {
         final private JLabel lblTitle;
@@ -428,12 +269,12 @@ public class ToggleDialog extends JPanel implements Helpful {
             ImageIcon smallIcon = new ImageIcon(inIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
             lblTitle = new JLabel("",smallIcon, JLabel.TRAILING);
             lblTitle.setIconTextGap(8);
-            
+
             JPanel conceal = new JPanel();
             conceal.add(lblTitle);
             conceal.setVisible(false);
             add(conceal, GBC.std());
-            
+
             // Cannot add the label directly since it would displace other elements on resize
             JComponent lblTitle_weak = new JComponent() {
                 @Override
@@ -449,7 +290,14 @@ public class ToggleDialog extends JPanel implements Helpful {
                     new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            toggleExpandedState();
+//                            toggleExpandedState();
+                            if (isCollapsed) {
+                                expand();
+                                dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, ToggleDialog.this);
+                            } else {
+                                collapse();
+                                dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                            }
                         }
                     }
             );
@@ -462,6 +310,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                     new ActionListener(){
                         public void actionPerformed(ActionEvent e) {
                             detach();
+                            dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
                         }
                     }
             );
@@ -475,6 +324,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                     new ActionListener(){
                         public void actionPerformed(ActionEvent e) {
                             hideDialog();
+                            dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
                         }
                     }
             );
@@ -494,7 +344,7 @@ public class ToggleDialog extends JPanel implements Helpful {
 
     /**
      * The dialog class used to display toggle dialogs in a detached window.
-     * 
+     *
      */
     private class DetachedDialog extends JDialog {
         public DetachedDialog() {
@@ -506,6 +356,8 @@ public class ToggleDialog extends JPanel implements Helpful {
                     getContentPane().removeAll();
                     dispose();
                     dock();
+                    expand();
+                    dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                 }
             });
             String bounds = Main.pref.get(preferencePrefix+".bounds",null);
@@ -533,12 +385,98 @@ public class ToggleDialog extends JPanel implements Helpful {
     protected Rectangle getDetachedGeometry(Rectangle last) {
         return last;
     }
-    
+
     /**
      * Default size of the detached dialog.
      * Override this method to customize the initial dialog size.
      */
     protected Dimension getDefaultDetachedSize() {
         return new Dimension(Main.map.DEF_TOGGLE_DLG_WIDTH, preferredHeight);
+    }
+
+    /**
+     * Replies the action to toggle the visible state of this toggle dialog
+     *
+     * @return the action to toggle the visible state of this toggle dialog
+     */
+    public AbstractAction getToggleAction() {
+        return toggleAction;
+    }
+
+    /**
+     * Replies the prefix for the preference settings of this dialog.
+     *
+     * @return the prefix for the preference settings of this dialog.
+     */
+    public String getPreferencePrefix() {
+        return preferencePrefix;
+    }
+
+    /**
+     * Sets the dialogsPanel managing all toggle dialogs
+     */
+    public void setDialogsPanel(DialogsPanel dialogsPanel) {
+        this.dialogsPanel = dialogsPanel;
+    }
+
+    /**
+     * Replies the name of this toggle dialog
+     */
+    @Override
+    public String getName() {
+        return "toggleDialog." + preferencePrefix;
+    }
+
+    /**
+     * Sets the title
+     */
+    public void setTitle(String title) {
+        titleBar.setTitle(title);
+    }
+
+    private void setIsShowing(boolean val) {
+        isShowing = val;
+        Main.pref.put(preferencePrefix+".visible", val);
+    }
+
+    private void setIsDocked(boolean val) {
+        isDocked = val;
+        Main.pref.put(preferencePrefix+".docked", val);
+    }
+
+    private void setIsCollapsed(boolean val) {
+        isCollapsed = val;
+        Main.pref.put(preferencePrefix+".minimized", val);
+    }
+
+    public int getPreferredHeight() {
+        return preferredHeight;
+    }
+
+    /**
+     * Replies true if this dialog is showing either as docked or as detached dialog
+     */
+    public boolean isDialogShowing() {
+        return isShowing;
+    }
+
+    /**
+     * Replies true if this dialog is docked and expanded
+     */
+    public boolean isDialogInDefaultView() {
+        return isShowing && isDocked && (! isCollapsed);
+    }
+
+    /**
+     * Replies true if this dialog is docked and collapsed
+     */
+    public boolean isDialogInCollapsedView() {
+        return isShowing && isDocked && isCollapsed;
+    }
+
+    public String helpTopic() {
+        String help = getClass().getName();
+        help = help.substring(help.lastIndexOf('.')+1, help.length()-6);
+        return "Dialog/"+help;
     }
 }
