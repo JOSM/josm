@@ -46,7 +46,12 @@ public class I18n {
         return i18n.trc(ctx, text);
     }
 
+    /* NOTE: marktr does NOT support context strings - use marktrc instead */
     public static final String marktr(String text) {
+        return text;
+    }
+
+    public static final String marktrc(String context, String text) {
         return text;
     }
 
