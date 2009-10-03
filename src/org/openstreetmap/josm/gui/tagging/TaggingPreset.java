@@ -448,7 +448,7 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
             if(locale_text == null) {
                 if(text == null)
                     locale_text = tr("More information about this feature");
-                if(text_context != null)
+                else if(text_context != null)
                     locale_text = trc(text_context, text);
                 else
                     locale_text = tr(text);
