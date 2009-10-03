@@ -704,14 +704,14 @@ public class UploadDialog extends JDialog {
             model.addListDataListener(this);
             add(cbOpenChangesets, gc);
 
-            gc.gridx = 3;
+            gc.gridx = 2;
             gc.gridy = 3;
             gc.gridwidth = 1;
             gc.weightx = 0.0;
             btnRefresh = new JButton(new RefreshAction());
             add(btnRefresh, gc);
 
-            gc.gridx = 4;
+            gc.gridx = 3;
             gc.gridy = 3;
             gc.gridwidth = 1;
             gc.weightx = 0.0;
