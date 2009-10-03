@@ -51,8 +51,7 @@ public class ToggleDialog extends JPanel implements Helpful {
     /** DialogsPanel that manages all ToggleDialogs */
     private DialogsPanel dialogsPanel;
 
-    private  TitleBar titleBar;
-    private String title;
+    private TitleBar titleBar;
 
     /**
      * Indicates whether the dialog is showing or not.
@@ -258,6 +257,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      */
     private class TitleBar extends JPanel {
         final private JLabel lblTitle;
+        final private JComponent lblTitle_weak;
 
         public TitleBar(String toggleDialogName, String iconName) {
             setLayout(new GridBagLayout());
@@ -276,7 +276,7 @@ public class ToggleDialog extends JPanel implements Helpful {
             add(conceal, GBC.std());
 
             // Cannot add the label directly since it would displace other elements on resize
-            JComponent lblTitle_weak = new JComponent() {
+            lblTitle_weak = new JComponent() {
                 @Override
                 public void paintComponent(Graphics g) {
                     lblTitle.paint(g);
@@ -335,6 +335,7 @@ public class ToggleDialog extends JPanel implements Helpful {
 
         public void setTitle(String title) {
             lblTitle.setText(title);
+            lblTitle_weak.repaint();
         }
 
         public String getTitle() {
