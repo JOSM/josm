@@ -52,8 +52,10 @@ public class GpxImporter extends FileImporter {
             //
             Runnable task = new Runnable() {
                 public void run() {
-                    Main.main.addLayer(gpxLayer);
-                    if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+                    if (!r.data.tracks.isEmpty() || ! r.data.routes.isEmpty()) {
+                        Main.main.addLayer(gpxLayer);
+                    }
+                    if (Main.pref.getBoolean("marker.makeautomarkers", true) && !r.data.waypoints.isEmpty()) {
                         MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
                         if (ml.data.size() > 0) {
                             Main.main.addLayer(ml);
