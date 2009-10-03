@@ -59,12 +59,12 @@ public class OsmApiException extends OsmTransferException {
         StringBuilder sb = new StringBuilder();
         sb.append("ResponseCode=")
         .append(responseCode);
-        if (errorHeader != null) {
+        if (errorHeader != null && !errorBody.trim().equals("")) {
             sb.append(", Error Header=<")
             .append(tr(errorHeader))
             .append(">");
         }
-        if (errorBody != null) {
+        if (errorBody != null && !errorBody.trim().equals("")) {
             errorBody = errorBody.trim();
             if(!errorBody.equals(errorHeader)) {
                 sb.append(", Error Body=<")

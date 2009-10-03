@@ -144,7 +144,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     protected ArrayList<Relation> getDisplayedRelationsInSortOrder(DataSet ds) {
         ArrayList<Relation> relations = new ArrayList<Relation>(ds.relations.size());
         for (Relation r: ds.relations ){
-            if (r.isDeleted() || r.incomplete) {
+            if (!r.isUsable() || !r.isVisible()) {
                 continue;
             }
             relations.add(r);
@@ -491,6 +491,4 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             return relations.indexOf(relation);
         }
     }
-
-
 }

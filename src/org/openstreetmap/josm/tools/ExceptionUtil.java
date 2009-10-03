@@ -276,8 +276,12 @@ public class ExceptionUtil {
      * @param e the exception
      */
     public static String explainGoneForUnknownPrimitive(OsmApiException e) {
-        String msg = tr("<html>Uploading <strong>failed</strong> because a primitive you tried to<br>"
-                + "delete on the server is already deleted.<br>" + "<br>" + "The error message is:<br>" + "{0}"
+        String msg = tr(
+                "<html>The server reports that an object is deleted.<br>"
+                + "<strong>Uploading failed</strong> if you tried to update or delete this object.<br> "
+                + "<strong>Downloading failed</strong> if you tried to download this object.<br>"
+                + "<br>"
+                + "The error message is:<br>" + "{0}"
                 + "</html>", e.getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
         return msg;
 
@@ -289,8 +293,13 @@ public class ExceptionUtil {
      * @param e the {@see Exception}
      */
     public static String explainException(Exception e) {
-        if (e instanceof OsmTransferException)
-            return explainOsmTransferException((OsmTransferException) e);
-        return explainGeneric(e);
+        String msg = "";
+        if (e instanceof OsmTransferException) {
+            msg = explainOsmTransferException((OsmTransferException) e);
+        } else {
+            msg = explainGeneric(e);
+        }
+        e.printStackTrace();
+        return msg;
     }
 }

@@ -244,7 +244,7 @@ public class ExceptionDialogUtil {
      */
     public static void explainGoneForUnknownPrimitive(OsmApiException e) {
         JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainGoneForUnknownPrimitive(e),
-                tr("Primitive already deleted"), JOptionPane.ERROR_MESSAGE);
+                tr("Object deleted"), JOptionPane.ERROR_MESSAGE);
 
     }
 
