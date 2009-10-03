@@ -34,6 +34,8 @@ combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
   text: fixed label to display
   values: comma seperated list of values
+  display_values: comma seperated list of values to be displayed instead of the
+                  database values, order and number must be equal to values
   default: default string to display
   delete_if_empty: true/false
 
@@ -52,6 +54,15 @@ For external files the <annotations> should have following elements:
 - The fields description, shortdescription and link may also be localized (e.g. de.link)
 
 See also http://josm.openstreetmap.de/wiki/TaggingPresets.
+
+The fields "name", "text", "display_values" may also be localized (e.g. de.name).
+When translations of equal words but different meanings may conflict, a translation
+context should be specified. Use "name_conext", "text_context" or "values_context"
+for this. The context should be a meaningful short description to help translators.
+
+In JOSM internally all "name", "text" and "display_values" are translated when
+no specific translation has been given in XML file. When no "display_values"
+are supplied, then "values" will be treated as "display_values" and translated instead.
 -->
 <annotations>
   <group name="Highways" icon="presets/way_secondary.png">
@@ -1366,9 +1377,9 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
             <key key="aerialway" value="gondola" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Station" icon="presets/aerialway_station.png" type="node,closedway">
+        <item name="Station" name_context="aerialway" icon="presets/aerialway_station.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps" />
-            <label text="Edit Station" />
+            <label text="Edit Station" text_context="aerialway" />
             <key key="aerialway" value="station" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
@@ -1461,10 +1472,10 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
         </item>
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/bus.png">
-        <item name="Station" icon="presets/station.png" type="node,closedway">
+        <item name="Station" name_context="railway" icon="presets/station.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=station" />
-            <label text="Edit Station" />
+            <label text="Edit Station" text_context="railway" />
             <space />
             <key key="railway" value="station" />
             <optional>
