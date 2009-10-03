@@ -1,29 +1,25 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -40,39 +36,27 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialog;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.OsmApiException;
-import org.openstreetmap.josm.io.OsmServerHistoryReader;
-import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.xml.sax.SAXException;
 
 /**
- * History dialog works like follows:
- *
- * There is a history cache hold in the back for primitives of the last refresh.
- * When the user refreshes, this cache is cleared and all currently selected items
- * are reloaded.
- * If the user has selected at least one primitive not in the cache, the list
- * is not displayed. Elsewhere, the list of all changes of all currently selected
- * objects are displayed.
- *
- * @author imi
+ * HistoryDialog displays a list of the currently selected primitives and provides
+ * two actions for (1) (re)loading the history of the selected primitives and (2)
+ * for launching a history browser for each selected primitive.
+ * 
  */
 public class HistoryDialog extends ToggleDialog implements HistoryDataSetListener {
 
     /** the table model */
-    protected HistoryItemDataModel model;
+    protected HistoryItemTableModel model;
     /** the table with the history items */
     protected JTable historyTable;
 
@@ -102,13 +86,13 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      * builds the GUI
      */
     protected void build() {
-        model = new HistoryItemDataModel();
-        //setLayout(new BorderLayout());
+        DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         historyTable = new JTable(
-                model,
-                new HistoryTableColumnModel()
+                model = new HistoryItemTableModel(selectionModel),
+                new HistoryTableColumnModel(),
+                selectionModel
         );
-        historyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        historyTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         historyTable.setName("table.historyitems");
         final TableCellRenderer oldRenderer = historyTable.getTableHeader().getDefaultRenderer();
         historyTable.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer(){
@@ -125,18 +109,6 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                 return l;
             }
         });
-        historyTable.addMouseListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 2) {
-                            int row = historyTable.rowAtPoint(e.getPoint());
-                            History h = model.get(row);
-                            showHistory(h);
-                        }
-                    }
-                }
-        );
 
         JScrollPane pane = new JScrollPane(historyTable);
         pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -150,7 +122,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         // wire actions
         //
         historyTable.getSelectionModel().addListSelectionListener(showHistoryAction);
-        DataSet.selListeners.add(reloadAction);
+        historyTable.getSelectionModel().addListSelectionListener(reloadAction);
     }
 
     public HistoryDialog() {
@@ -161,8 +133,6 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         DataSet.selListeners.add(model);
         HistoryDataSet.getInstance().addHistoryDataSetListener(this);
     }
-
-
 
     public void historyUpdated(HistoryDataSet source, long primitiveId) {
         model.refresh();
@@ -190,11 +160,13 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      * The table model with the history items
      *
      */
-    class HistoryItemDataModel extends DefaultTableModel implements SelectionChangedListener{
-        private ArrayList<History> data;
+    class HistoryItemTableModel extends DefaultTableModel implements SelectionChangedListener{
+        private ArrayList<OsmPrimitive> data;
+        private DefaultListSelectionModel selectionModel;
 
-        public HistoryItemDataModel() {
-            data = new ArrayList<History>();
+        public HistoryItemTableModel(DefaultListSelectionModel selectionModel) {
+            data = new ArrayList<OsmPrimitive>();
+            this.selectionModel = selectionModel;
         }
 
         @Override
@@ -214,7 +186,28 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             return false;
         }
 
+        protected List<OsmPrimitive> getSelectedPrimitives() {
+            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            for (int i=0; i< data.size(); i++) {
+                if (selectionModel.isSelectedIndex(i)) {
+                    ret.add(data.get(i));
+                }
+            }
+            return ret;
+        }
+
+        protected void selectPrimitives(Collection<OsmPrimitive> primitives) {
+            for (OsmPrimitive p: primitives) {
+                int idx = data.indexOf(p);
+                if (idx < 0) {
+                    continue;
+                }
+                selectionModel.addSelectionInterval(idx, idx);
+            }
+        }
+
         public void refresh() {
+            List<OsmPrimitive> selectedPrimitives = getSelectedPrimitives();
             data.clear();
             if (Main.main.getCurrentDataSet() == null)
                 return;
@@ -222,69 +215,23 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                 if (primitive.getId() == 0) {
                     continue;
                 }
-                History h = HistoryDataSet.getInstance().getHistory(primitive.getId());
-                if (h !=null) {
-                    data.add(h);
-                }
+                data.add(primitive);
             }
             fireTableDataChanged();
+            selectPrimitives(selectedPrimitives);
         }
 
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             refresh();
         }
 
-        public History get(int idx) throws IndexOutOfBoundsException {
-            if (idx < 0 || idx >= data.size())
-                throw new IndexOutOfBoundsException(tr("Index out of bounds. Got {0}.", idx));
-            return data.get(idx);
-        }
-    }
-
-
-    /**
-     * The table cell renderer for the history items.
-     *
-     */
-    class HistoryTableCellRenderer extends JLabel implements TableCellRenderer {
-
-        public final Color BGCOLOR_SELECTED = new Color(143,170,255);
-
-        private HashMap<OsmPrimitiveType, ImageIcon> icons;
-
-        public HistoryTableCellRenderer() {
-            setOpaque(true);
-            icons = new HashMap<OsmPrimitiveType, ImageIcon>();
-            icons.put(OsmPrimitiveType.NODE, ImageProvider.get("data", "node"));
-            icons.put(OsmPrimitiveType.WAY, ImageProvider.get("data", "way"));
-            icons.put(OsmPrimitiveType.RELATION, ImageProvider.get("data", "relation"));
-        }
-
-        protected void renderIcon(History history) {
-            setIcon(icons.get(history.getEarliest().getType()));
-        }
-
-        protected void renderText(History h) {
-            String msg = "";
-            switch(h.getEarliest().getType()) {
-                case NODE:  msg = marktr("Node {0}"); break;
-                case WAY: msg = marktr("Way {0}"); break;
-                case RELATION: msg = marktr("Relation {0}"); break;
+        public List<OsmPrimitive> getPrimitives(int [] rows) {
+            if (rows == null || rows.length == 0) return Collections.emptyList();
+            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(rows.length);
+            for (int row: rows) {
+                ret.add(data.get(row));
             }
-            setText(tr(msg,h.getId()));
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
-            History h = (History)value;
-            renderIcon(h);
-            renderText(h);
-            if (isSelected) {
-                setBackground(BGCOLOR_SELECTED);
-            } else {
-                setBackground(Color.WHITE);
-            }
-            return this;
+            return ret;
         }
     }
 
@@ -294,10 +241,10 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     class HistoryTableColumnModel extends DefaultTableColumnModel {
         protected void createColumns() {
             TableColumn col = null;
-            HistoryTableCellRenderer renderer = new HistoryTableCellRenderer();
+            OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
             // column 0 - History item
             col = new TableColumn(0);
-            col.setHeaderValue(tr("History item"));
+            col.setHeaderValue(tr("Object with history"));
             col.setCellRenderer(renderer);
             addColumn(col);
         }
@@ -311,24 +258,30 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      * The action for reloading history information of the currently selected primitives.
      *
      */
-    class ReloadAction extends AbstractAction implements SelectionChangedListener {
+    class ReloadAction extends AbstractAction implements ListSelectionListener {
         public ReloadAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs","refresh"));
+            putValue(Action.NAME, tr("Reload"));
             putValue(Action.SHORT_DESCRIPTION, tr("Reload all currently selected objects and refresh the list."));
+            updateEnabledState();
         }
 
         public void actionPerformed(ActionEvent e) {
+            int [] rows = historyTable.getSelectedRows();
+            if (rows == null || rows.length == 0) return;
+
+            List<OsmPrimitive> selectedItems = model.getPrimitives(rows);
             HistoryLoadTask task = new HistoryLoadTask();
-            task.add(Main.main.getCurrentDataSet().getSelected());
+            task.add(selectedItems);
             Main.worker.execute(task);
         }
 
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            if (Main.main.getCurrentDataSet() == null) {
-                setEnabled(false);
-            } else {
-                setEnabled(Main.main.getCurrentDataSet().getSelected().size() > 0);
-            }
+        protected void updateEnabledState() {
+            setEnabled(historyTable.getSelectedRowCount() > 0);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
         }
     }
 
@@ -337,20 +290,54 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      */
     class ShowHistoryAction extends AbstractAction implements ListSelectionListener {
         public ShowHistoryAction() {
-            //putValue(Action.SMALL_ICON, ImageProvider.get("dialogs","refresh"));
+            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs","history"));
             putValue(Action.NAME, tr("Show"));
-            putValue(Action.SHORT_DESCRIPTION, tr("Display the history of the selected primitive."));
+            putValue(Action.SHORT_DESCRIPTION, tr("Display the history of the selected objects."));
+            updateEnabledState();
+        }
+
+        protected List<OsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<OsmPrimitive> primitives) {
+            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(primitives.size());
+            for (OsmPrimitive p: primitives) {
+                if (HistoryDataSet.getInstance().getHistory(p.getId()) == null) {
+                    ret.add(p);
+                }
+            }
+            return ret;
         }
 
         public void actionPerformed(ActionEvent e) {
-            int row = historyTable.getSelectionModel().getMinSelectionIndex();
-            if (row < 0) return;
-            History h = model.get(row);
-            showHistory(h);
+            int [] rows = historyTable.getSelectedRows();
+            if (rows == null || rows.length == 0) return;
+
+            final List<OsmPrimitive> selectedItems = model.getPrimitives(rows);
+            List<OsmPrimitive> toLoad = filterPrimitivesWithUnloadedHistory(selectedItems);
+            if (!toLoad.isEmpty()) {
+                HistoryLoadTask task = new HistoryLoadTask();
+                task.add(selectedItems);
+                Main.worker.submit(task);
+            }
+
+            Runnable r = new Runnable() {
+                public void run() {
+                    for (OsmPrimitive p : selectedItems) {
+                        History h = HistoryDataSet.getInstance().getHistory(p.getId());
+                        if (h == null) {
+                            continue;
+                        }
+                        showHistory(h);
+                    }
+                }
+            };
+            Main.worker.submit(r);
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(historyTable.getSelectedRowCount() > 0);
         }
 
         public void valueChanged(ListSelectionEvent e) {
-            setEnabled(historyTable.getSelectionModel().getMinSelectionIndex() >= 0);
+            updateEnabledState();
         }
     }
 }
