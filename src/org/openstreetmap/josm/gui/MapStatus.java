@@ -211,7 +211,9 @@ public class MapStatus extends JPanel implements Helpful {
                         // effect though, because it does not change selection
                         // of the first middle click)
                         if(isAtOldPosition && middleMouseDown) {
-                            popupCycleSelection(osms);
+                            // Hand down mouse modifiers so the SHIFT mod can be
+                            // handled correctly (see funcion)
+                            popupCycleSelection(osms, ms.modifiers);
                         }
 
                         // These labels may need to be updated from the outside
@@ -294,8 +296,9 @@ public class MapStatus extends JPanel implements Helpful {
          * Call this with a set of primitives to cycle through them. Method
          * will automatically select the next item and update the map
          * @param osms
+         * @param mouse modifiers
          */
-        private final void popupCycleSelection(Collection<OsmPrimitive> osms) {
+        private final void popupCycleSelection(Collection<OsmPrimitive> osms, int mods) {
             // Find some items that are required for cycling through
             OsmPrimitive firstItem = null;
             OsmPrimitive firstSelected = null;
@@ -309,6 +312,15 @@ public class MapStatus extends JPanel implements Helpful {
                 }
                 if(firstSelected == null && osm.isSelected()) {
                     firstSelected = osm;
+                }
+            }
+
+            // Clear previous selection if SHIFT (add to selection) is not
+            // pressed. Cannot use "setSelected()" because it will cause a
+            // fireSelectionChanged event which is unnecessary at this point.
+            if((mods & MouseEvent.SHIFT_DOWN_MASK) == 0) {
+                for(OsmPrimitive o : Main.main.getCurrentDataSet().getSelected()) {
+                    o.setSelected(false);
                 }
             }
 
