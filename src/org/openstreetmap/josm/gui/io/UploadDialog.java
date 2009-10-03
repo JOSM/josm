@@ -622,6 +622,10 @@ public class UploadDialog extends JDialog {
             pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
             cmt = new HistoryComboBox();
             List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+            // we have to reverse the history, because ComboBoxHistory will reverse it again
+            // in addElement()
+            //
+            Collections.reverse(cmtHistory);
             cmt.setPossibleItems(cmtHistory);
             cmt.getEditor().addActionListener(
                     new ActionListener() {
