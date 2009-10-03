@@ -28,7 +28,8 @@ import org.openstreetmap.josm.data.osm.Filter;
 
 public class SearchAction extends JosmAction{
 
-    public static final int SEARCH_HISTORY_SIZE = 10;
+    public static final int DEFAULT_SEARCH_HISTORY_SIZE = 10;
+
 
     public static enum SearchMode {
         replace, add, remove, in_selection
@@ -157,9 +158,9 @@ public class SearchAction extends JosmAction{
      */
     public static void searchWithHistory(SearchSetting s) {
         if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
-            searchHistory.addFirst(s);
+            searchHistory.addFirst(new SearchSetting(s));
         }
-        while (searchHistory.size() > SEARCH_HISTORY_SIZE) {
+        while (searchHistory.size() > Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE)) {
             searchHistory.removeLast();
         }
         lastSearch = s;
@@ -277,6 +278,14 @@ public class SearchAction extends JosmAction{
             this.regexSearch = regexSearch;
             this.mode = mode;
             this.text = text;
+        }
+
+        public SearchSetting(SearchSetting original) {
+            super();
+            this.caseSensitive = original.caseSensitive;
+            this.regexSearch = original.regexSearch;
+            this.mode = original.mode;
+            this.text = original.text;
         }
 
         @Override
