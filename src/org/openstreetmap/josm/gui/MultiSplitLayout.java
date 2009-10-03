@@ -759,7 +759,7 @@ public class MultiSplitLayout implements LayoutManager {
                 weight += splitChild.getWeight();
                 checkLayout(splitChild);
             }
-            if (weight > 1.0) {
+            if (weight > 1.0 + 0.000000001) { /* add some epsilon to a double check */
                 throwInvalidLayout("Split children's total weight > 1.0", root);
             }
         }
