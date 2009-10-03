@@ -38,7 +38,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     /**
      * constructor
-     * 
+     *
      * @param id the id (>0 required)
      * @param version the version (> 0 required)
      * @param visible whether the primitive is still visible
@@ -46,13 +46,14 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      * @param uid the user id (> 0 required)
      * @param changesetId the changeset id (> 0 required)
      * @param timestamp the timestamp (! null required)
-     * 
+     *
      * @throws IllegalArgumentException thrown if preconditions are violated
      */
     public HistoryOsmPrimitive(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp) throws IllegalArgumentException {
         ensurePositiveLong(id, "id");
         ensurePositiveLong(version, "version");
-        ensurePositiveLong(uid, "uid");
+        if(uid != -1) /* allow -1 for anonymous users */
+            ensurePositiveLong(uid, "uid");
         ensurePositiveLong(changesetId, "changesetId");
         ensureNotNull(user, "user");
         ensureNotNull(timestamp, "timestamp");

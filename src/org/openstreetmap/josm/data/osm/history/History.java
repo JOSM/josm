@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+
 public class History{
     private static interface FilterPredicate {
         boolean matches(HistoryOsmPrimitive primitive);
@@ -193,5 +195,11 @@ public class History{
 
     public boolean isEmpty() {
         return versions.isEmpty();
+    }
+
+    public OsmPrimitiveType getType() {
+        if (isEmpty())
+            throw new NoSuchElementException(tr("No type found. History is empty."));
+        return versions.get(0).getType();
     }
 }

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.history;
 import java.util.Date;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.coor.LatLon;
 
 
 /**
@@ -12,12 +13,19 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
  *
  */
 public class HistoryNode extends HistoryOsmPrimitive {
-    public HistoryNode(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp) {
+    private LatLon coor;
+    public HistoryNode(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp,
+    double lat, double lon) {
         super(id, version, visible, user, uid, changesetId, timestamp);
+        coor = new LatLon(lat, lon);
     }
 
     @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.NODE;
+    }
+
+    public LatLon getCoordinate() {
+        return coor;
     }
 }

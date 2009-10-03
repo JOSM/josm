@@ -11,16 +11,16 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 /**
- * TagInfoViewer is a UI component which displays the list of tags of two
+ * CoordinateViewer is a UI component which displays the list of coordinates of two
  * version of a {@see OsmPrimitive} in a {@see History}.
  *
  * <ul>
- *   <li>on the left, it displays the list of tags for the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
- *   <li>on the right, it displays the list of tags for the version at {@see PointInTimeType#CURRENT_POINT_IN_TIME}</li>
+ *   <li>on the left, it displays the list of coordinates for the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
+ *   <li>on the right, it displays the list of coordinates for the version at {@see PointInTimeType#CURRENT_POINT_IN_TIME}</li>
  * </ul>
  *
  */
-public class TagInfoViewer extends JPanel{
+public class CoordinateViewer extends JPanel{
 
     private HistoryBrowserModel model;
     private VersionInfoPanel referenceInfoPanel;
@@ -36,23 +36,23 @@ public class TagInfoViewer extends JPanel{
         return pane;
     }
 
-    protected JTable buildReferenceTagTable() {
+    protected JTable buildReferenceCoordinateTable() {
         JTable table = new JTable(
-                model.getTagTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
-                new TagTableColumnModel()
+                model.getCoordinateTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
+                new CoordinateTableColumnModel()
         );
-        table.setName("table.referencetagtable");
+        table.setName("table.referencecoordinatetable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         return table;
     }
 
-    protected JTable buildCurrentTagTable() {
+    protected JTable buildCurrentCoordinateTable() {
         JTable table = new JTable(
-                model.getTagTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),
-                new TagTableColumnModel()
+                model.getCoordinateTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),
+                new CoordinateTableColumnModel()
         );
-        table.setName("table.currenttagtable");
+        table.setName("table.currentcoordinatetable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         return table;
@@ -98,7 +98,7 @@ public class TagInfoViewer extends JPanel{
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embeddInScrollPane(buildReferenceTagTable()),gc);
+        add(embeddInScrollPane(buildReferenceCoordinateTable()),gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -108,10 +108,10 @@ public class TagInfoViewer extends JPanel{
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embeddInScrollPane(buildCurrentTagTable()),gc);
+        add(embeddInScrollPane(buildCurrentCoordinateTable()),gc);
     }
 
-    public TagInfoViewer(HistoryBrowserModel model) {
+    public CoordinateViewer(HistoryBrowserModel model) {
         setModel(model);
         build();
     }

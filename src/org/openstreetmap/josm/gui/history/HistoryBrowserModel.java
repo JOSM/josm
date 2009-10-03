@@ -11,15 +11,18 @@ import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
 
+import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 
 /**
  * This is the model used by the history browser.
- * 
+ *
  * The state this model manages consists of the following elements:
  * <ul>
  *   <li>the {@see History} of a specific {@see OsmPrimitive}</li>
@@ -39,7 +42,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryWay;
  *  <li> {@see #getRelationMemberTableModel(PointInTimeType)} replies a {@see TableModel} for the list of relation
  *  members  of the two selected versions (if the current history provides information about a {@see Relation}</li>
  *  </ul>
- * 
+ *
  * @see HistoryBrowser
  */
 public class HistoryBrowserModel extends Observable {
@@ -58,6 +61,8 @@ public class HistoryBrowserModel extends Observable {
     private NodeListTableModel referenceNodeListTableModel;
     private RelationMemberTableModel currentRelationMemberTableModel;
     private RelationMemberTableModel referenceRelationMemberTableModel;
+    private CoordinateTableModel currentCoordinateTableModel;
+    private CoordinateTableModel referenceCoordinateTableModel;
 
     public HistoryBrowserModel() {
         versionTableModel = new VersionTableModel();
@@ -67,6 +72,8 @@ public class HistoryBrowserModel extends Observable {
         referenceNodeListTableModel = new NodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
         currentRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         referenceRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
+        currentCoordinateTableModel = new CoordinateTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
+        referenceCoordinateTableModel = new CoordinateTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
     }
 
     public HistoryBrowserModel(History history) {
@@ -84,9 +91,9 @@ public class HistoryBrowserModel extends Observable {
 
     /**
      * sets the history to be managed by this model
-     * 
+     *
      * @param history the history
-     * 
+     *
      */
     public void setHistory(History history) {
         this.history = history;
@@ -108,7 +115,7 @@ public class HistoryBrowserModel extends Observable {
     /**
      * Replies the table model to be used in a {@see JTable} which
      * shows the list of versions in this history.
-     * 
+     *
      * @return the table model
      */
     public VersionTableModel getVersionTableModel() {
@@ -120,19 +127,24 @@ public class HistoryBrowserModel extends Observable {
         referenceTagTableModel.initKeyList();
     }
 
-    protected void initNodeListTabeModel() {
+    protected void initNodeListTabeModels() {
         currentNodeListTableModel.fireTableDataChanged();
         referenceNodeListTableModel.fireTableDataChanged();
     }
 
-    protected void initMemberListTableModel() {
+    protected void initMemberListTableModels() {
         currentRelationMemberTableModel.fireTableDataChanged();
         referenceRelationMemberTableModel.fireTableDataChanged();
     }
 
+    protected void initCoordinateTableModels() {
+        currentCoordinateTableModel.fireTableDataChanged();
+        referenceCoordinateTableModel.fireTableDataChanged();
+    }
+
     /**
      * replies the tag table model for the respective point in time
-     * 
+     *
      * @param pointInTimeType the type of the point in time (must not be null)
      * @return the tag table model
      * @exception IllegalArgumentException thrown, if pointInTimeType is null
@@ -173,6 +185,18 @@ public class HistoryBrowserModel extends Observable {
         return null;
     }
 
+    public CoordinateTableModel getCoordinateTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
+        if (pointInTimeType == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pointInTimeType"));
+        if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
+            return currentCoordinateTableModel;
+        else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
+            return referenceCoordinateTableModel;
+
+        // should not happen
+        return null;
+    }
+
     public void setReferencePointInTime(HistoryOsmPrimitive reference) throws IllegalArgumentException, IllegalStateException{
         if (reference == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "reference"));
@@ -186,8 +210,9 @@ public class HistoryBrowserModel extends Observable {
 
         this.reference = reference;
         initTagTableModels();
-        initNodeListTabeModel();
-        initMemberListTableModel();
+        initNodeListTabeModels();
+        initMemberListTableModels();
+        initCoordinateTableModels();
         setChanged();
         notifyObservers();
     }
@@ -204,15 +229,16 @@ public class HistoryBrowserModel extends Observable {
             throw new IllegalArgumentException(tr("Failed to set current primitive. Current version {0} not available in history.", current.getVersion()));
         this.current = current;
         initTagTableModels();
-        initNodeListTabeModel();
-        initMemberListTableModel();
+        initNodeListTabeModels();
+        initMemberListTableModels();
+        initCoordinateTableModels();
         setChanged();
         notifyObservers();
     }
 
     /**
      * Replies the history OSM primitive for the {@see PointInTimeType#CURRENT_POINT_IN_TIME}
-     * 
+     *
      * @return the history OSM primitive for the {@see PointInTimeType#CURRENT_POINT_IN_TIME} (may be null)
      */
     public HistoryOsmPrimitive getCurrentPointInTime() {
@@ -221,7 +247,7 @@ public class HistoryBrowserModel extends Observable {
 
     /**
      * Replies the history OSM primitive for the {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
-     * 
+     *
      * @return the history OSM primitive for the {@see PointInTimeType#REFERENCE_POINT_IN_TIME} (may be null)
      */
     public HistoryOsmPrimitive getReferencePointInTime() {
@@ -230,7 +256,7 @@ public class HistoryBrowserModel extends Observable {
 
     /**
      * replies the history OSM primitive for a given point in time
-     * 
+     *
      * @param type the type of the point in time (must not be null)
      * @return the respective primitive. Can be null.
      * @exception IllegalArgumentException thrown, if type is null
@@ -305,7 +331,7 @@ public class HistoryBrowserModel extends Observable {
     /**
      * The table model for the tags of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
      * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
-     * 
+     *
      */
     public class TagTableModel extends DefaultTableModel {
 
@@ -400,7 +426,7 @@ public class HistoryBrowserModel extends Observable {
     /**
      * The table model for the nodes of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
      * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
-     * 
+     *
      */
     public class NodeListTableModel extends DefaultTableModel {
 
@@ -492,7 +518,7 @@ public class HistoryBrowserModel extends Observable {
     /**
      * The table model for the relation members of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
      * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
-     * 
+     *
      */
 
     public class RelationMemberTableModel extends DefaultTableModel {
@@ -581,6 +607,70 @@ public class HistoryBrowserModel extends Observable {
             if (thisRelation == null || oppositeRelation == null)
                 return false;
             return oppositeRelation.getMembers().contains(thisRelation.getMembers().get(row));
+        }
+    }
+
+    /**
+     * The table model for the coordinates of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
+     * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
+     *
+     */
+    public class CoordinateTableModel extends DefaultTableModel {
+
+        private LatLon currentCoor = null;
+        private LatLon referenceCoor = null;
+        private PointInTimeType pointInTimeType;
+
+        protected CoordinateTableModel(PointInTimeType type) {
+            pointInTimeType = type;
+        }
+
+        @Override
+        public int getRowCount() {
+            if (current != null && current instanceof HistoryNode)
+                currentCoor = ((HistoryNode)current).getCoordinate();
+            else
+                return 0;
+            if (reference != null && reference instanceof HistoryNode)
+                referenceCoor = ((HistoryNode)reference).getCoordinate();
+            return 2;
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            if(currentCoor == null)
+                return null;
+            else if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
+                return row == 0 ? currentCoor.latToString(CoordinateFormat.getDefaultFormat())
+                : currentCoor.lonToString(CoordinateFormat.getDefaultFormat());
+            else
+                return row == 0 ? referenceCoor.latToString(CoordinateFormat.getDefaultFormat())
+                : referenceCoor.lonToString(CoordinateFormat.getDefaultFormat());
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+
+        public boolean hasSameValueAsOpposite(int row) {
+            if(currentCoor == null)
+                return false;
+            else if(row == 0)
+                return currentCoor.lat() == referenceCoor.lat();
+            return currentCoor.lon() == referenceCoor.lon();
+        }
+
+        public PointInTimeType getPointInTimeType() {
+            return pointInTimeType;
+        }
+
+        public boolean isCurrentPointInTime() {
+            return pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME);
+        }
+
+        public boolean isReferencePointInTime() {
+            return pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME);
         }
     }
 }

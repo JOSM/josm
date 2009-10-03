@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * VersionInfoPanel is an UI component which displays the basic properties of a version
  * of a {@see OsmPrimitive}.
- * 
+ *
  */
 public class VersionInfoPanel extends JPanel implements Observer{
 
@@ -50,7 +50,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
                 "<html>Version <strong>{0}</strong> created on <strong>{1}</strong> by <strong>{2}</strong> in changeset <strong>{3}</strong></html>",
                 Long.toString(primitive.getVersion()),
                 new SimpleDateFormat().format(primitive.getTimestamp()),
-                primitive.getUser(),
+                primitive.getUser().replace("<", "&lt;").replace(">", "&gt;"),
                 primitive.getChangesetId()
         );
         return text;
@@ -64,7 +64,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
 
     /**
      * constructor
-     * 
+     *
      * @param model  the model (must not be null)
      * @param pointInTimeType the point in time this panel visualizes (must not be null)
      * @exception IllegalArgumentException thrown, if model is null
