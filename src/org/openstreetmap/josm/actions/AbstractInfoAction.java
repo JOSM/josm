@@ -76,6 +76,29 @@ public abstract class AbstractInfoAction extends JosmAction {
         );
     }
 
+    protected boolean confirmLaunchMultiple(int numPrimitives) {
+        String msg  = tr(
+                "You''re about to launch {0} browser windows.<br>"
+                + "This may both clutter your screen with browser windows<br>"
+                + "and take some time to finish.", numPrimitives);
+        msg = "<html>" + msg + "</html>";
+        String [] options = new String [] {
+                tr("Continue"),
+                tr("Cancel")
+        };
+        int ret = JOptionPane.showOptionDialog(
+                Main.parent,
+                msg,
+                tr("Warning"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+        return ret == JOptionPane.YES_OPTION;
+    }
+
     protected void launchInfoBrowsersForSelectedPrimitives() {
         ArrayList<OsmPrimitive> primitivesToShow = new ArrayList<OsmPrimitive>(getCurrentDataSet().getSelected());
 
@@ -101,9 +124,8 @@ public abstract class AbstractInfoAction extends JosmAction {
         // don't launch more than 10 browser instances / browser windows
         //
         int max = Math.min(10, primitivesToShow.size());
-        if (max < primitivesToShow.size()) {
-            System.out.println(tr("WARNING: launching browser windows for the first {0} of {1} selected primitives only", 10, primitivesToShow.size()));
-        }
+        if (primitivesToShow.size() > max && ! confirmLaunchMultiple(primitivesToShow.size()))
+            return;
         for(int i = 0; i < max; i++) {
             launchBrowser(createInfoUrl(primitivesToShow.get(i)));
         }
