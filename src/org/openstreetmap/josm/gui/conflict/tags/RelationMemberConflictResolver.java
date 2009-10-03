@@ -65,7 +65,7 @@ public class RelationMemberConflictResolver extends JPanel {
         cbTagRelations = new JCheckBox(tr("Tag modified relations with   "));
         cbTagRelations.addChangeListener(new ToggleTagRelationsAction());
         pnl.add(cbTagRelations);
-        pnl.add(new JLabel(tr("Key:")));
+        pnl.add(new JLabel(trc("tag","Key:")));
         pnl.add(tfKey = new AutoCompletingTextField(10));
         pnl.add(new JLabel(tr("Value:")));
         pnl.add(tfValue = new AutoCompletingTextField(10));
