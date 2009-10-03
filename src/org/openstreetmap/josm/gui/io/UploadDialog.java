@@ -45,6 +45,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -202,7 +203,7 @@ public class UploadDialog extends JDialog {
         getContentPane().add(buildContentPanel(), BorderLayout.CENTER);
         getContentPane().add(buildActionPanel(), BorderLayout.SOUTH);
 
-        addWindowListener(new WindowClosingAdapter());
+        addWindowListener(new WindowEventHandler());
     }
 
     /**
@@ -397,7 +398,6 @@ public class UploadDialog extends JDialog {
                             new Dimension(400,600)
                     )
             ).apply(this);
-            startUserInput();
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
@@ -565,10 +565,15 @@ public class UploadDialog extends JDialog {
      * Listens to window closing events and processes them as cancel events
      *
      */
-    class WindowClosingAdapter extends WindowAdapter {
+    class WindowEventHandler extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
             setCanceled(true);
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+            startUserInput();
         }
     }
 
@@ -747,8 +752,12 @@ public class UploadDialog extends JDialog {
          * Initializes the panel for user input
          */
         public void startUserInput() {
-            cmt.getEditor().selectAll();
-            cmt.requestFocus();
+            List<String> history = cmt.getHistory();
+            if (history != null && !history.isEmpty()) {
+                cmt.setText(history.get(0));
+            }
+            cmt.requestFocusInWindow();
+            cmt.getEditor().getEditorComponent().requestFocusInWindow();
         }
 
         public void prepareDialogForNextUpload(Changeset cs) {

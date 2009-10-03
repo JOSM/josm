@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Collection;
 
 import javax.swing.ComboBoxModel;
@@ -92,8 +94,17 @@ public class AutoCompleteComboBox extends JComboBox {
     }
 
     public AutoCompleteComboBox() {
-        JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
+        final JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
         editor.setDocument(new AutoCompleteComboBoxDocument(this));
+        editor.addFocusListener(
+                new FocusListener() {
+                    public void focusLost(FocusEvent e) {
+                    }
+                    public void focusGained(FocusEvent e) {
+                        editor.selectAll();
+                    }
+                }
+        );
     }
 
     public void setPossibleItems(Collection<String> elems) {
