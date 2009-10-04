@@ -179,7 +179,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.weightx = 0.0;
             gc.insets = new Insets(5,5,5,5);
             gc.anchor = GridBagConstraints.NORTHWEST;
-            add(new JLabel(tr("Lat: ")), gc);
+            add(new JLabel(tr("Latitude: ")), gc);
 
             // --------
             gc.gridx = 1;
@@ -197,7 +197,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.fill = GridBagConstraints.NONE;
             gc.weightx = 0.0;
             gc.anchor = GridBagConstraints.NORTHWEST;
-            add(new JLabel(tr("Lon: ")), gc);
+            add(new JLabel(tr("Longitude: ")), gc);
 
             // --------
             gc.gridx = 1;
