@@ -80,19 +80,32 @@ public class OsmHistoryReader {
             return l;
         }
 
+        protected long getAttributeLong(Attributes attr, String name, long defaultValue) throws SAXException{
+            String v = attr.getValue(name);
+            if (v == null)
+                return defaultValue;
+            Long l = 0l;
+            try {
+                l = Long.parseLong(v);
+            } catch(NumberFormatException e) {
+                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long. Got ''{1}''.", name, v));
+            }
+            if (l < 0) {
+                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type long (>=0). Got ''{1}''.", name, v));
+            }
+            return l;
+        }
+
         protected Double getMandatoryAttributeDouble(Attributes attr, String name) throws SAXException{
             String v = attr.getValue(name);
             if (v == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
-            double d = 0;
+            double d = 0.0;
             try {
                 d = Double.parseDouble(v);
             } catch(NumberFormatException e) {
                 throwException(tr("Illegal value for mandatory attribute ''{0}'' of type double. Got ''{1}''.", name, v));
-            }
-            if (d < 0) {
-                throwException(tr("Illegal value for mandatory attribute ''{0}'' of type double (>=0). Got ''{1}''.", name, v));
             }
             return d;
         }
@@ -102,6 +115,13 @@ public class OsmHistoryReader {
             if (v == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
+            return v;
+        }
+
+        protected String getAttributeString(Attributes attr, String name, String defaultValue) {
+            String v = attr.getValue(name);
+            if (v == null)
+                return defaultValue;
             return v;
         }
 
@@ -122,8 +142,8 @@ public class OsmHistoryReader {
             long version = getMandatoryAttributeLong(atts,"version");
             long changesetId = getMandatoryAttributeLong(atts,"changeset");
             boolean visible= getMandatoryAttributeBoolean(atts, "visible");
-            long uid = getMandatoryAttributeLong(atts, "uid");
-            String user = getMandatoryAttributeString(atts, "user");
+            long uid = getAttributeLong(atts, "uid",-1);
+            String user = getAttributeString(atts, "user", tr("<anonymous>"));
             String v = getMandatoryAttributeString(atts, "timestamp");
             Date timestamp = DateUtils.fromString(v);
             HistoryOsmPrimitive primitive = null;
