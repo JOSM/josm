@@ -137,13 +137,6 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             }
         });
 
-        buttonPanel.add(new SideButton(marktr("Reload"), "refresh", "SelectionList", tr("Refresh the selection list."),
-                new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                selectionChanged(Main.main.getCurrentDataSet().getSelected());
-            }
-        }));
-
         searchButton = new SideButton(marktr("Search"), "search", "SelectionList", tr("Search for objects."),
                 Main.main.menu.search);
         buttonPanel.add(searchButton);

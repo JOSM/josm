@@ -109,6 +109,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                 return l;
             }
         });
+        historyTable.addMouseListener(new ShowHistoryMouseAdapter());
 
         JScrollPane pane = new JScrollPane(historyTable);
         pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -137,24 +138,6 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     public void historyUpdated(HistoryDataSet source, long primitiveId) {
         model.refresh();
     }
-
-    /**
-     * shows the {@see HistoryBrowserDialog} for a given {@see History}
-     *
-     * @param h the history. Must not be null.
-     * @exception IllegalArgumentException thrown, if h is null
-     */
-    protected void showHistory(History h) throws IllegalArgumentException {
-        if (h == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "h"));
-        if (HistoryBrowserDialogManager.getInstance().existsDialog(h.getId())) {
-            HistoryBrowserDialogManager.getInstance().show(h.getId());
-        } else {
-            HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
-            HistoryBrowserDialogManager.getInstance().show(h.getId(), dialog);
-        }
-    }
-
 
     /**
      * The table model with the history items
@@ -233,6 +216,10 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             }
             return ret;
         }
+
+        public OsmPrimitive getPrimitive(int row) {
+            return data.get(row);
+        }
     }
 
     /**
@@ -285,6 +272,16 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         }
     }
 
+    class ShowHistoryMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                int row = historyTable.rowAtPoint(e.getPoint());
+                new ShowHistoryAction().showHistory(Collections.singletonList(model.getPrimitive(row)));
+            }
+        }
+    }
+
     /**
      * The action for showing history information of the current history item.
      */
@@ -306,21 +303,34 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             return ret;
         }
 
-        public void actionPerformed(ActionEvent e) {
-            int [] rows = historyTable.getSelectedRows();
-            if (rows == null || rows.length == 0) return;
+        /**
+         * shows the {@see HistoryBrowserDialog} for a given {@see History}
+         *
+         * @param h the history. Must not be null.
+         * @exception IllegalArgumentException thrown, if h is null
+         */
+        protected void showHistory(History h) throws IllegalArgumentException {
+            if (h == null)
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "h"));
+            if (HistoryBrowserDialogManager.getInstance().existsDialog(h.getId())) {
+                HistoryBrowserDialogManager.getInstance().show(h.getId());
+            } else {
+                HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
+                HistoryBrowserDialogManager.getInstance().show(h.getId(), dialog);
+            }
+        }
 
-            final List<OsmPrimitive> selectedItems = model.getPrimitives(rows);
-            List<OsmPrimitive> toLoad = filterPrimitivesWithUnloadedHistory(selectedItems);
+        public void showHistory(final List<OsmPrimitive> primitives) {
+            List<OsmPrimitive> toLoad = filterPrimitivesWithUnloadedHistory(primitives);
             if (!toLoad.isEmpty()) {
                 HistoryLoadTask task = new HistoryLoadTask();
-                task.add(selectedItems);
+                task.add(primitives);
                 Main.worker.submit(task);
             }
 
             Runnable r = new Runnable() {
                 public void run() {
-                    for (OsmPrimitive p : selectedItems) {
+                    for (OsmPrimitive p : primitives) {
                         History h = HistoryDataSet.getInstance().getHistory(p.getId());
                         if (h == null) {
                             continue;
@@ -330,6 +340,12 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                 }
             };
             Main.worker.submit(r);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            int [] rows = historyTable.getSelectedRows();
+            if (rows == null || rows.length == 0) return;
+            showHistory(model.getPrimitives(rows));
         }
 
         protected void updateEnabledState() {

@@ -12,23 +12,28 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 
-import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.history.History;
 
 /**
  * HistoryBrowser is an UI component which displays history information about an {@see OsmPrimitive}.
- *
+ * 
  *
  */
 public class HistoryBrowser extends JPanel {
 
     /** the model */
     private HistoryBrowserModel model;
-    private JTabbedPane dataPane;
+    private TagInfoViewer tagInfoViewer;
+    private NodeListViewer nodeListViewer;
+    private RelationMemberListViewer relationMemberListViewer;
+    private CoordinateInfoViewer coordinateInfoViewer;
+    private JTabbedPane tpViewers;
+
 
     /**
      * embedds table in a {@see JScrollPane}
-     *
+     * 
      * @param table the table
      * @return the {@see JScrollPane} with the embedded table
      */
@@ -41,7 +46,7 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * creates the table which shows the list of versions
-     *
+     * 
      * @return  the panel with the version table
      */
     protected JPanel createVersionTablePanel() {
@@ -56,27 +61,22 @@ public class HistoryBrowser extends JPanel {
     /**
      * creates the panel which shows information about two different versions
      * of the same {@see OsmPrimitive}.
-     *
+     * 
      * @return the panel
      */
-
     protected JPanel createVersionComparePanel() {
-        dataPane = new JTabbedPane();
-        dataPane.add(new TagInfoViewer(model));
-        dataPane.setTitleAt(0, tr("Tags"));
+        tpViewers = new JTabbedPane();
 
-        dataPane.add(new NodeListViewer(model));
-        dataPane.setTitleAt(1, tr("Nodes"));
-
-        dataPane.add(new RelationMemberListViewer(model));
-        dataPane.setTitleAt(2, tr("Members"));
-
-        dataPane.add(new CoordinateViewer(model));
-        dataPane.setTitleAt(3, tr("Coordinate"));
-
+        // create the viewers, but don't add them yet.
+        // see populate()
+        //
+        tagInfoViewer = new TagInfoViewer(model);
+        nodeListViewer = new NodeListViewer(model);
+        relationMemberListViewer = new RelationMemberListViewer(model);
+        coordinateInfoViewer = new CoordinateInfoViewer(model);
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
-        pnl.add(dataPane, BorderLayout.CENTER);
+        pnl.add(tpViewers, BorderLayout.CENTER);
         return pnl;
     }
 
@@ -121,34 +121,31 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * populates the browser with the history of a specific {@see OsmPrimitive}
-     *
+     * 
      * @param history the history
      */
     public void populate(History history) {
         model.setHistory(history);
-        OsmPrimitiveType type = history.getType();
-        if(type != null)
-        {
-            if(type == OsmPrimitiveType.NODE)
-            {
-                dataPane.setEnabledAt(1, false);
-                dataPane.setEnabledAt(2, false);
-            }
-            else if(type == OsmPrimitiveType.WAY)
-            {
-                dataPane.setEnabledAt(2, false);
-                dataPane.setEnabledAt(3, false);
-            }
-            else
-            {
-                dataPane.setEnabledAt(3, false);
-            }
+
+        tpViewers.add(tagInfoViewer);
+        tpViewers.setTitleAt(0, tr("Tags"));
+
+        if (history.getEarliest().getType().equals(OsmPrimitiveType.NODE)) {
+            tpViewers.add(coordinateInfoViewer);
+            tpViewers.setTitleAt(1, tr("Coordinates"));
+        } else if (history.getEarliest().getType().equals(OsmPrimitiveType.WAY)) {
+            tpViewers.add(nodeListViewer);
+            tpViewers.setTitleAt(1, tr("Nodes"));
+        } else if (history.getEarliest().getType().equals(OsmPrimitiveType.RELATION)) {
+            tpViewers.add(relationMemberListViewer);
+            tpViewers.setTitleAt(2, tr("Members"));
         }
+        revalidate();
     }
 
     /**
      * replies the {@see History} currently displayed by this browser
-     *
+     * 
      * @return the current history
      */
     public History getHistory() {

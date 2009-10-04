@@ -142,5 +142,4 @@ public class NodeListViewer extends JPanel {
             registerAsObserver(model);
         }
     }
-
 }

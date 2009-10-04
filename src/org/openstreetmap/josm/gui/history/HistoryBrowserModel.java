@@ -61,8 +61,6 @@ public class HistoryBrowserModel extends Observable {
     private NodeListTableModel referenceNodeListTableModel;
     private RelationMemberTableModel currentRelationMemberTableModel;
     private RelationMemberTableModel referenceRelationMemberTableModel;
-    private CoordinateTableModel currentCoordinateTableModel;
-    private CoordinateTableModel referenceCoordinateTableModel;
 
     public HistoryBrowserModel() {
         versionTableModel = new VersionTableModel();
@@ -72,8 +70,6 @@ public class HistoryBrowserModel extends Observable {
         referenceNodeListTableModel = new NodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
         currentRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         referenceRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
-        currentCoordinateTableModel = new CoordinateTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
-        referenceCoordinateTableModel = new CoordinateTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
     }
 
     public HistoryBrowserModel(History history) {
@@ -137,11 +133,6 @@ public class HistoryBrowserModel extends Observable {
         referenceRelationMemberTableModel.fireTableDataChanged();
     }
 
-    protected void initCoordinateTableModels() {
-        currentCoordinateTableModel.fireTableDataChanged();
-        referenceCoordinateTableModel.fireTableDataChanged();
-    }
-
     /**
      * replies the tag table model for the respective point in time
      *
@@ -185,18 +176,6 @@ public class HistoryBrowserModel extends Observable {
         return null;
     }
 
-    public CoordinateTableModel getCoordinateTableModel(PointInTimeType pointInTimeType) throws IllegalArgumentException {
-        if (pointInTimeType == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pointInTimeType"));
-        if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
-            return currentCoordinateTableModel;
-        else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
-            return referenceCoordinateTableModel;
-
-        // should not happen
-        return null;
-    }
-
     public void setReferencePointInTime(HistoryOsmPrimitive reference) throws IllegalArgumentException, IllegalStateException{
         if (reference == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "reference"));
@@ -212,7 +191,6 @@ public class HistoryBrowserModel extends Observable {
         initTagTableModels();
         initNodeListTabeModels();
         initMemberListTableModels();
-        initCoordinateTableModels();
         setChanged();
         notifyObservers();
     }
@@ -231,7 +209,6 @@ public class HistoryBrowserModel extends Observable {
         initTagTableModels();
         initNodeListTabeModels();
         initMemberListTableModels();
-        initCoordinateTableModels();
         setChanged();
         notifyObservers();
     }
@@ -607,70 +584,6 @@ public class HistoryBrowserModel extends Observable {
             if (thisRelation == null || oppositeRelation == null)
                 return false;
             return oppositeRelation.getMembers().contains(thisRelation.getMembers().get(row));
-        }
-    }
-
-    /**
-     * The table model for the coordinates of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
-     * or {@see PointInTimeType#CURRENT_POINT_IN_TIME}
-     *
-     */
-    public class CoordinateTableModel extends DefaultTableModel {
-
-        private LatLon currentCoor = null;
-        private LatLon referenceCoor = null;
-        private PointInTimeType pointInTimeType;
-
-        protected CoordinateTableModel(PointInTimeType type) {
-            pointInTimeType = type;
-        }
-
-        @Override
-        public int getRowCount() {
-            if (current != null && current instanceof HistoryNode)
-                currentCoor = ((HistoryNode)current).getCoordinate();
-            else
-                return 0;
-            if (reference != null && reference instanceof HistoryNode)
-                referenceCoor = ((HistoryNode)reference).getCoordinate();
-            return 2;
-        }
-
-        @Override
-        public Object getValueAt(int row, int column) {
-            if(currentCoor == null)
-                return null;
-            else if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
-                return row == 0 ? currentCoor.latToString(CoordinateFormat.getDefaultFormat())
-                : currentCoor.lonToString(CoordinateFormat.getDefaultFormat());
-            else
-                return row == 0 ? referenceCoor.latToString(CoordinateFormat.getDefaultFormat())
-                : referenceCoor.lonToString(CoordinateFormat.getDefaultFormat());
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-
-        public boolean hasSameValueAsOpposite(int row) {
-            if(currentCoor == null)
-                return false;
-            else if(row == 0)
-                return currentCoor.lat() == referenceCoor.lat();
-            return currentCoor.lon() == referenceCoor.lon();
-        }
-
-        public PointInTimeType getPointInTimeType() {
-            return pointInTimeType;
-        }
-
-        public boolean isCurrentPointInTime() {
-            return pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME);
-        }
-
-        public boolean isReferencePointInTime() {
-            return pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME);
         }
     }
 }
