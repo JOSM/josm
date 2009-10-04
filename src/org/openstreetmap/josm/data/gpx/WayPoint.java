@@ -40,16 +40,11 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
      * Convert the time stamp of the waypoint into seconds from the epoch
      */
     public void setTime() {
-        for(String key : new String[]{"time", "cmt", "desc"})
+        if(attr.containsKey("time"))
         {
-            if(attr.containsKey("time"))
-            {
-                double t = DateUtils.fromString(attr.get("time").toString()).getTime();
-                if(t != 0.0)
-                {
-                    time = t / 1000.0; /* ms => seconds */
-                    break;
-                }
+            double t = DateUtils.fromString(attr.get("time").toString()).getTime();
+            if(t != 0.0) {
+                time = t / 1000.0; /* ms => seconds */
             }
         }
     }

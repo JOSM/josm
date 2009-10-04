@@ -116,10 +116,10 @@ public class GpxData extends WithAttributes {
      */
     public double length(){
         double result = 0.0; // in meters
-        WayPoint last = null;
 
-        for (GpxTrack trk : tracks)
-	    result += trk.length();
+        for (GpxTrack trk : tracks) {
+            result += trk.length();
+        }
 
         return result;
     }
