@@ -9,8 +9,11 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -50,6 +53,24 @@ public class ExceptionUtil {
         return msg;
     }
 
+    /**
+     * Explains a precondition exception when a child relation could not be deleted because
+     * it is still referred to by an undeleted parent relation.
+     * 
+     * @param e the exception
+     * @param childRelation the child relation
+     * @param parentRelation the parent relation
+     * @return
+     */
+    public static String explainDeletedRelationStillInUse(OsmApiException e, long childRelation, long parentRelation) {
+        String msg = tr(
+                "<html><strong>Failed</strong> to delete <strong>relation {0}</strong>."
+                + " It is still referred to by relation {1}.<br>"
+                + "Please load relation {1}, remove the reference to relation {0}, and upload again.</html>",
+                childRelation,parentRelation
+        );
+        return msg;
+    }
 
     /**
      * Explains an upload error due to a violated precondition, i.e. a HTTP return code 412
@@ -58,7 +79,18 @@ public class ExceptionUtil {
      */
     public static String explainPreconditionFailed(OsmApiException e) {
         e.printStackTrace();
-        String msg = tr(
+        String msg = e.getErrorHeader();
+        if (msg != null) {
+            String pattern = "Precondition failed: The relation (\\d+) is used in relation (\\d+)\\.";
+            Pattern p = Pattern.compile(pattern);
+            Matcher m = p.matcher(msg);
+            if (m.matches()) {
+                long childRelation = Long.parseLong(m.group(1));
+                long parentRelation = Long.parseLong(m.group(2));
+                return explainDeletedRelationStillInUse(e, childRelation, parentRelation);
+            }
+        }
+        msg = tr(
                 "<html>Uploading to the server <strong>failed</strong> because your current<br>"
                 + "dataset violates a precondition.<br>" + "The error message is:<br>" + "{0}" + "</html>", e
                 .getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
