@@ -1023,11 +1023,4 @@ public class MergeVisitorTest {
         assertTrue(!w.getNode(0).incomplete);
         assertTrue(!w.getNode(1).incomplete);
     }
-
-
-    @Test
-    public void test1() throws Exception {
-        System.out.println(URLEncoder.encode("Ævar Arnfjörð Bjarmason", "UTF-8").replaceAll("\\+", "%20"));
-
-    }
 }

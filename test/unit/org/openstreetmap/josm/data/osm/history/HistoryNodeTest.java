@@ -5,6 +5,7 @@ package org.openstreetmap.josm.data.osm.history;
 import java.util.Date;
 
 import org.junit.Test;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 
 import static org.junit.Assert.*;
@@ -21,7 +22,8 @@ public class HistoryNodeTest {
                 "testuser",
                 3,
                 4,
-                d
+                d,
+                new LatLon(0,0)
         );
 
         assertEquals(1, node.getId());
@@ -43,7 +45,8 @@ public class HistoryNodeTest {
                 "testuser",
                 3,
                 4,
-                d
+                d,
+                new LatLon(0,0)
         );
 
         assertEquals(OsmPrimitiveType.NODE, node.getType());

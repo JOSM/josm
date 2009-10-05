@@ -11,7 +11,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.HelpAction.Helpful;
+import org.openstreetmap.josm.gui.help.Helpful;
 
 public class MapScaler extends JComponent implements Helpful {
 

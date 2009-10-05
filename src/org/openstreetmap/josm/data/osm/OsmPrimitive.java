@@ -633,6 +633,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         version = osm.version;
         incomplete = osm.incomplete;
         flags = osm.flags;
+        user= osm.user;
         clearCached();
         clearErrors();
     }

@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.properties.OperationCancelledException;
+import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -142,6 +143,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         getContentPane().add(buildButtonRow(), BorderLayout.SOUTH);
 
         resolver.addPropertyChangeListener(this);
+        HelpBuilder.setHelpContext(this.getRootPane(), "Dialog/ConflictDialog");
     }
 
 

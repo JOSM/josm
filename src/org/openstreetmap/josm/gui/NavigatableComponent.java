@@ -14,7 +14,6 @@ import java.util.TreeMap;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.help.Helpful;
 
 /**
  * An component that can be navigated by a mapmover. Used as map view and for the

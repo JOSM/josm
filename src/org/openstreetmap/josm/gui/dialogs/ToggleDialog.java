@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.HelpAction.Helpful;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
+import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -290,7 +290,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                     new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-//                            toggleExpandedState();
+                            //                            toggleExpandedState();
                             if (isCollapsed) {
                                 expand();
                                 dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, ToggleDialog.this);
