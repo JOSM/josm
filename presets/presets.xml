@@ -2206,6 +2206,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Post Office" />
             <key key="amenity" value="post_office" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+	    <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Kindergarten" icon="presets/kindergarten.png" type="node,closedway,relation">
