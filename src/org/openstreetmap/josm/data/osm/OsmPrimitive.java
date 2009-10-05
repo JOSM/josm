@@ -40,6 +40,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     private static final int FLAG_DELETED  = 1 << 3;
     private static final int FLAG_FILTERED = 1 << 4;
     private static final int FLAG_SELECTED = 1 << 5;
+    private static final int FLAG_HAS_DIRECTIONS = 1 << 6;
+    private static final int FLAG_TAGGED = 1 << 7;
 
     /**
      * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
@@ -526,6 +528,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         } else {
             this.keys = new HashMap<String, String>(keys);
         }
+        keysChangedImpl();
     }
 
     /**
@@ -549,6 +552,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
             keys.put(key, value);
         }
         mappaintStyle = null;
+        keysChangedImpl();
     }
     /**
      * Remove the given key from the list
@@ -563,6 +567,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
             }
         }
         mappaintStyle = null;
+        keysChangedImpl();
     }
 
     /**
@@ -573,6 +578,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     public final void removeAll() {
         keys = null;
         mappaintStyle = null;
+        keysChangedImpl();
     }
 
     /**
@@ -609,6 +615,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      */
     public final boolean hasKeys() {
         return keys != null && !keys.isEmpty();
+    }
+
+    private void keysChangedImpl() {
+        updateHasDirectionKeys();
+        updateTagged();
     }
 
     /**
@@ -674,6 +685,19 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         && (user == null ? other.user==null : user==other.user);
     }
 
+    private void updateTagged() {
+        getUninterestingKeys();
+        if (keys != null) {
+            for (Entry<String,String> e : keys.entrySet()) {
+                if (!uninteresting.contains(e.getKey())) {
+                    flags |= FLAG_TAGGED;
+                    return;
+                }
+            }
+        }
+        flags &= ~FLAG_TAGGED;
+    }
+
     /**
      * true if this object is considered "tagged". To be "tagged", an object
      * must have one or more "interesting" tags. "created_by" and "source"
@@ -681,29 +705,26 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * "tagged".
      */
     public boolean isTagged() {
-        // TODO Cache value after keys are made private
-        getUninterestingKeys();
+        return (flags & FLAG_TAGGED) != 0;
+    }
+
+    private void updateHasDirectionKeys() {
+        getDirectionKeys();
         if (keys != null) {
             for (Entry<String,String> e : keys.entrySet()) {
-                if (!uninteresting.contains(e.getKey()))
-                    return true;
+                if (directionKeys.contains(e.getKey())) {
+                    flags |= FLAG_HAS_DIRECTIONS;
+                    return;
+                }
             }
         }
-        return false;
+        flags &= ~FLAG_HAS_DIRECTIONS;
     }
     /**
      * true if this object has direction dependent tags (e.g. oneway)
      */
     public boolean hasDirectionKeys() {
-        // TODO Cache value after keys are made private
-        getDirectionKeys();
-        if (keys != null) {
-            for (Entry<String,String> e : keys.entrySet()) {
-                if (directionKeys.contains(e.getKey()))
-                    return true;
-            }
-        }
-        return false;
+        return (flags & FLAG_HAS_DIRECTIONS) != 0;
     }
 
 
