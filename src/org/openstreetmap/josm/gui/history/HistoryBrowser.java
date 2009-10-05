@@ -95,7 +95,7 @@ public class HistoryBrowser extends JPanel {
         add(pane, BorderLayout.CENTER);
 
         pane.setOneTouchExpandable(true);
-        pane.setDividerLocation(150);
+        pane.setDividerLocation(200);
 
         Dimension minimumSize = new Dimension(100, 50);
         left.setMinimumSize(minimumSize);

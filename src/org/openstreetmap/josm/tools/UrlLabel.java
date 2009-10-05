@@ -33,7 +33,11 @@ public class UrlLabel extends JEditorPane implements HyperlinkListener {
 
     protected void refresh() {
         setContentType("text/html");
-        setText("<html><a href=\""+url+"\">"+description+"</a></html>");
+        if (url != null) {
+            setText("<html><a href=\""+url+"\">"+description+"</a></html>");
+        } else {
+            setText("<html>" + description + "</html>");
+        }
         setToolTipText(url);
     }
 

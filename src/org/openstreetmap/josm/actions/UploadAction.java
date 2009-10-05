@@ -151,6 +151,28 @@ public class UploadAction extends JosmAction{
         return true;
     }
 
+    public void uploadData(OsmDataLayer layer, APIDataSet apiData) {
+        if (apiData.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("No changes to upload."),
+                    tr("Warning"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+        if (!checkPreUploadConditions(layer, apiData))
+            return;
+        Main.worker.execute(
+                createUploadTask(
+                        layer,
+                        apiData.getPrimitives(),
+                        UploadDialog.getUploadDialog().getChangeset(),
+                        UploadDialog.getUploadDialog().isDoCloseAfterUpload()
+                )
+        );
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
@@ -163,27 +185,8 @@ public class UploadAction extends JosmAction{
             );
             return;
         }
-
         APIDataSet apiData = new APIDataSet(Main.main.getCurrentDataSet());
-        if (apiData.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("No changes to upload."),
-                    tr("Warning"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-            return;
-        }
-        if (!checkPreUploadConditions(Main.map.mapView.getEditLayer(), apiData))
-            return;
-        Main.worker.execute(
-                createUploadTask(
-                        Main.map.mapView.getEditLayer(),
-                        apiData.getPrimitives(),
-                        UploadDialog.getUploadDialog().getChangeset(),
-                        UploadDialog.getUploadDialog().isDoCloseAfterUpload()
-                )
-        );
+        uploadData(Main.map.mapView.getEditLayer(), apiData);
     }
 
     /**

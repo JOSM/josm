@@ -65,6 +65,7 @@ import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UpdateDataAction;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.actions.UploadAction;
+import org.openstreetmap.josm.actions.UploadSelectionAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
@@ -103,6 +104,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction update = new UpdateDataAction();
     public final JosmAction updateSelection = new UpdateSelectionAction();
     public final JosmAction upload = new UploadAction();
+    public final JosmAction uploadSelection = new UploadSelectionAction();
     public final JosmAction exit = new ExitAction();
 
     /* Edit menu */
@@ -205,6 +207,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, download);
         add(fileMenu, downloadReferrers);
         add(fileMenu, upload);
+        add(fileMenu, uploadSelection);
         add(fileMenu, update);
         add(fileMenu, updateSelection);
         add(fileMenu, closeChangesetAction);

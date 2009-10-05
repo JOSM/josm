@@ -58,7 +58,13 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
         if (primitive == null) {
             sb.append("");
         } else {
-            sb.append(tr("Version {0}", Long.toString(primitive.getVersion())));
+            String msg = tr(
+                    "Version {0}, {1} (by {2})",
+                    Long.toString(primitive.getVersion()),
+                    new SimpleDateFormat().format(primitive.getTimestamp()),
+                    primitive.getUser()
+            );
+            sb.append(msg);
         }
         setText(sb.toString());
 

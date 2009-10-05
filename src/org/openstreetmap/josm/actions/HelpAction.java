@@ -122,8 +122,13 @@ public class HelpAction extends AbstractAction {
             setHelpUrl(url);
         } else if (e.getActionCommand() == null) {
             String topic = null;
-            Point mouse = Main.parent.getMousePosition();
-            if (mouse != null) {
+            if (e.getSource() instanceof Component) {
+                Component c = SwingUtilities.getRoot((Component)e.getSource());
+                Point mouse = c.getMousePosition();
+                c = SwingUtilities.getDeepestComponentAt(c, mouse.x, mouse.y);
+                topic = contextSensitiveHelp(c);
+            } else {
+                Point mouse = Main.parent.getMousePosition();
                 topic = contextSensitiveHelp(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
             }
             if (topic == null) {
@@ -142,6 +147,8 @@ public class HelpAction extends AbstractAction {
      * @return The topic of the help. <code>null</code> for "don't know"
      */
     private String contextSensitiveHelp(Object c) {
+        if (c == null)
+            return null;
         if (c instanceof Helpful)
             return ((Helpful)c).helpTopic();
         if (c instanceof JMenu) {
@@ -158,6 +165,8 @@ public class HelpAction extends AbstractAction {
         }
         if (c instanceof Action)
             return (String)((Action)c).getValue("help");
+        if (c instanceof JComponent && ((JComponent)c).getClientProperty("help") != null)
+            return (String)((JComponent)c).getClientProperty("help");
         if (c instanceof Component)
             return contextSensitiveHelp(((Component)c).getParent());
         return null;

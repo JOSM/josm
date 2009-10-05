@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Observable;
 import java.util.Observer;
@@ -107,10 +109,19 @@ public class VersionInfoPanel extends JPanel implements Observer{
 
         String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + getPrimitive().getChangesetId();
         lblChangeset.setUrl(url);
-        lblChangeset.setDescription(tr("{0}", getPrimitive().getChangesetId()));
+        lblChangeset.setDescription(Long.toString(getPrimitive().getChangesetId()));
 
-        url = AbstractInfoAction.getBaseUserUrl() + "/" + getPrimitive().getUser();
-        lblUser.setUrl(url);
-        lblUser.setDescription(tr("{0}", getPrimitive().getUser()));
+        try {
+            if (getPrimitive().getUid() != -1) {
+                url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(getPrimitive().getUser(), "UTF-8").replaceAll("\\+", "%20");
+                lblUser.setUrl(url);
+            } else {
+                lblUser.setUrl(null);
+            }
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+            lblUser.setUrl(null);
+        }
+        lblUser.setDescription(getPrimitive().getUser());
     }
 }

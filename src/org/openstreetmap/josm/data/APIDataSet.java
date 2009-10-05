@@ -65,8 +65,38 @@ public class APIDataSet {
                 toDelete.addFirst(osm);
             }
         }
+        sortDeleted();
     }
 
+    /**
+     * Ensures that primitives are deleted in the following order: Relations, then Ways,
+     * then Nodes.
+     * 
+     */
+    protected void sortDeleted() {
+        Collections.sort(
+                toDelete,
+                new Comparator<OsmPrimitive>() {
+                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+                        if (o1 instanceof Node && o2 instanceof Node)
+                            return 0;
+                        else if (o1 instanceof Node)
+                            return 1;
+                        else if (o2 instanceof Node)
+                            return -1;
+
+                        if (o1 instanceof Way && o2 instanceof Way)
+                            return 0;
+                        else if (o1 instanceof Way && o2 instanceof Relation)
+                            return 1;
+                        else if (o2 instanceof Way && o1 instanceof Relation)
+                            return -1;
+
+                        return 0;
+                    }
+                }
+        );
+    }
     /**
      * initializes the API data set with the modified primitives in <code>ds</code>
      * 
@@ -75,6 +105,28 @@ public class APIDataSet {
     public APIDataSet(DataSet ds) {
         this();
         init(ds);
+    }
+
+    /**
+     * initializes the API data set with the primitives in <code>primitives</code>
+     * 
+     * @param primitives the collection of primitives
+     */
+    public APIDataSet(Collection<OsmPrimitive> primitives) {
+        this();
+        toAdd.clear();
+        toUpdate.clear();
+        toDelete.clear();
+        for (OsmPrimitive osm: primitives) {
+            if (osm.getId() == 0 && !osm.isDeleted()) {
+                toAdd.addLast(osm);
+            } else if (osm.isModified() && !osm.isDeleted()) {
+                toUpdate.addLast(osm);
+            } else if (osm.isDeleted() && osm.getId() != 0 && osm.isModified()) {
+                toDelete.addFirst(osm);
+            }
+        }
+        sortDeleted();
     }
 
     /**
