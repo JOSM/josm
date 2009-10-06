@@ -206,10 +206,12 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, download);
         add(fileMenu, downloadReferrers);
-        add(fileMenu, upload);
-        add(fileMenu, uploadSelection);
         add(fileMenu, update);
         add(fileMenu, updateSelection);
+        fileMenu.addSeparator();
+        add(fileMenu, upload);
+        add(fileMenu, uploadSelection);
+        fileMenu.addSeparator();
         add(fileMenu, closeChangesetAction);
         fileMenu.addSeparator();
         add(fileMenu, exit);

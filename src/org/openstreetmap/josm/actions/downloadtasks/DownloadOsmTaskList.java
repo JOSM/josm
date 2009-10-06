@@ -165,7 +165,7 @@ public class DownloadOsmTaskList implements Runnable {
         }
         for (OsmPrimitive primitive : ds.relations) {
             if (! primitive.incomplete && primitive.getId() == 0) {
-                ret.add(primitive);;
+                ret.add(primitive);
             }
         }
         return ret;
@@ -231,9 +231,9 @@ public class DownloadOsmTaskList implements Runnable {
                 options[0]
         );
         switch(ret) {
-        case JOptionPane.CLOSED_OPTION: return;
-        case JOptionPane.NO_OPTION: return;
-        case JOptionPane.YES_OPTION: updatePotentiallyDeletedPrimitives(potentiallyDeleted); break;
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.NO_OPTION: return;
+            case JOptionPane.YES_OPTION: updatePotentiallyDeletedPrimitives(potentiallyDeleted); break;
         }
     }
 

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -16,6 +17,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -32,6 +35,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
+import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -43,7 +48,9 @@ import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.WindowGeometry;
 import org.xml.sax.SAXException;
 
 
@@ -113,8 +120,8 @@ public class UploadAction extends JosmAction{
     }
 
     public UploadAction() {
-        super(tr("Upload to OSM..."), "upload", tr("Upload all changes to the OSM server."),
-                Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload to OSM...")), KeyEvent.VK_U, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
+        super(tr("Upload data"), "upload", tr("Upload all changes in the current data layer to the OSM server"),
+                Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload data")), KeyEvent.VK_U, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
     }
 
     /**
@@ -221,13 +228,17 @@ public class UploadAction extends JosmAction{
      * @param serverVersion  the version of the primitive on the server
      * @param myVersion  the version of the primitive in the local dataset
      */
-    protected void handleUploadConflictForKnownConflict(OsmPrimitiveType primitiveType, long id, String serverVersion, String myVersion) {
-        Object[] options = new Object[] {
-                tr("Synchronize {0} {1} only", tr(primitiveType.getAPIName()), id),
-                tr("Synchronize entire dataset"),
-                tr("Cancel")
+    protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion, String myVersion) {
+        JButton[] options = new JButton[] {
+                new JButton(tr("Synchronize {0} {1} only", tr(primitiveType.getAPIName()), id)),
+                new JButton(tr("Synchronize entire dataset")),
+                new JButton(tr("Cancel")),
+                new JButton(tr("Help"))
         };
-        Object defaultOption = options[0];
+        options[0].setIcon(ImageProvider.get("updatedata"));
+        options[1].setIcon(ImageProvider.get("updatedata"));
+        options[2].setIcon(ImageProvider.get("cancel"));
+        options[3].setIcon(ImageProvider.get("help"));
         String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                 + "of your nodes, ways, or relations.<br>"
                 + "The conflict is caused by the <strong>{0}</strong> with id <strong>{1}</strong>,<br>"
@@ -237,28 +248,57 @@ public class UploadAction extends JosmAction{
                 + "Click <strong>{5}</strong> to synchronize the entire local dataset with the server.<br>"
                 + "Click <strong>{6}</strong> to abort and continue editing.<br></html>",
                 tr(primitiveType.getAPIName()), id, serverVersion, myVersion,
-                options[0], options[1], options[2]
+                options[0].getText(), options[1].getText(), options[2].getText()
         );
-        int optionsType = JOptionPane.YES_NO_CANCEL_OPTION;
-        int ret = JOptionPane.showOptionDialog(
-                null,
+        final JOptionPane pane = new JOptionPane(
                 msg,
-                tr("Conflict detected"),
-                optionsType,
                 JOptionPane.ERROR_MESSAGE,
+                JOptionPane.DEFAULT_OPTION,
                 null,
                 options,
-                defaultOption
+                options[0]
         );
-        switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case JOptionPane.CANCEL_OPTION: return;
-            case 0: synchronizePrimitive(primitiveType, id); break;
-            case 1: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("Unexpected return value. Got {0}.", ret));
-        }
+        final JDialog dialog = new JDialog(
+                JOptionPane.getFrameForComponent(Main.parent),
+                tr("Conflicts detected"),
+                true);
+        options[0].addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.setVisible(false);
+                        synchronizePrimitive(primitiveType, id);
+                    }
+                }
+        );
+        options[1].addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.setVisible(false);
+                        synchronizeDataSet();
+                    }
+                }
+        );
+        options[2].addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.setVisible(false);
+                    }
+                }
+        );
+        options[3].addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        HelpBrowser b = new HelpBrowser();
+                        b.setUrlForHelpTopic("Help/Concepts/Conflict");
+                        b.setVisible(true);
+                    }
+                }
+        );
+        dialog.setContentPane(pane);
+        dialog.pack();
+        HelpBuilder.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
+        WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
+        dialog.setVisible(true);
     }
 
     /**
@@ -267,9 +307,10 @@ public class UploadAction extends JosmAction{
      *
      */
     protected void handleUploadConflictForUnknownConflict() {
-        Object[] options = new Object[] {
-                tr("Synchronize entire dataset"),
-                tr("Cancel")
+        JButton[] options = new JButton[] {
+                new JButton(tr("Synchronize entire dataset")),
+                new JButton(tr("Cancel")),
+                new JButton(tr("Help"))
         };
         Object defaultOption = options[0];
         String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
@@ -277,27 +318,50 @@ public class UploadAction extends JosmAction{
                 + "<br>"
                 + "Click <strong>{0}</strong> to synchronize the entire local dataset with the server.<br>"
                 + "Click <strong>{1}</strong> to abort and continue editing.<br></html>",
-                options[0], options[1]
+                options[0].getText(), options[1].getText()
         );
-        int optionsType = JOptionPane.YES_NO_OPTION;
-        int ret = JOptionPane.showOptionDialog(
-                null,
+        final JOptionPane pane = new JOptionPane(
                 msg,
-                tr("Conflict detected"),
-                optionsType,
                 JOptionPane.ERROR_MESSAGE,
+                JOptionPane.DEFAULT_OPTION,
                 null,
                 options,
-                defaultOption
+                options[0]
         );
-        switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return;
-            case 1: return;
-            case 0: synchronizeDataSet(); break;
-            default:
-                // should not happen
-                throw new IllegalStateException(tr("Unexpected return value. Got {0}.", ret));
-        }
+        final JDialog dialog = new JDialog(
+                JOptionPane.getFrameForComponent(Main.parent),
+                tr("Conflicts detected"),
+                true);
+
+        options[0].addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.setVisible(false);
+                        synchronizeDataSet();
+                    }
+                }
+        );
+        options[1].addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.setVisible(false);
+                    }
+                }
+        );
+        options[2].addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        HelpBrowser b = new HelpBrowser();
+                        b.setUrlForHelpTopic("Help/Concepts/Conflict");
+                        b.setVisible(true);
+                    }
+                }
+        );
+        dialog.setContentPane(pane);
+        dialog.pack();
+        HelpBuilder.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
+        WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
+        dialog.setVisible(true);
     }
 
     /**

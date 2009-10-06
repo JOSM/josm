@@ -86,9 +86,9 @@ public class UpdateSelectionAction extends JosmAction {
      * constructor
      */
     public UpdateSelectionAction() {
-        super(tr("Update Selection"),
+        super(tr("Update selections"),
                 "updateselection",
-                tr("Updates the currently selected primitives from the server"),
+                tr("Updates the currently selected objects from the server (re-downloads data)"),
                 Shortcut.registerShortcut("file:updateselection",
                         tr("Update Selection"),
                         KeyEvent.VK_U,

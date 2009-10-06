@@ -16,9 +16,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class UpdateDataAction extends JosmAction{
     public UpdateDataAction() {
-        super(tr("Update Data"),
+        super(tr("Update data"),
                 "updatedata",
-                tr("Updates the current data layer from the server (re-downloads data)"),
+                tr("Updates the objects in the current data layer from the server "),
                 Shortcut.registerShortcut("file:updatedata",
                         tr("Update Data"),
                         KeyEvent.VK_U,

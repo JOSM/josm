@@ -43,9 +43,9 @@ public class UploadSelectionAction extends JosmAction{
 
     public UploadSelectionAction() {
         super(
-                tr("Upload selection..."),
+                tr("Upload selection"),
                 "uploadselection",
-                tr("Upload the current selection to the OSM server."),
+                tr("Upload all changes in the current current selection to the OSM server."),
                 null, /* no shortcut */
                 true);
     }

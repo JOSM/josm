@@ -17,8 +17,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +32,8 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -61,9 +66,12 @@ import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
+import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * A layer holding data from a specific dataset.
@@ -337,14 +345,48 @@ public class OsmDataLayer extends Layer {
         if (numPurgedPrimitives > 0) {
             sb.append("<br>").append(msg2);
         }
+        sb.append("<br>").append(tr("Please consult the Conflict List Dialog<br>and manually resolve them."));
         sb.append("</html>");
         if (numNewConflicts > 0) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
+            JButton[] options = new JButton[] {
+                    new JButton(tr("OK")),
+                    new JButton(tr("Help"))
+            };
+            options[0].setIcon(ImageProvider.get("ok"));
+            options[1].setIcon(ImageProvider.get("help"));
+            final JOptionPane pane = new JOptionPane(
                     sb.toString(),
-                    tr("Conflicts detected"),
-                    JOptionPane.WARNING_MESSAGE
+                    JOptionPane.WARNING_MESSAGE,
+                    JOptionPane.DEFAULT_OPTION,
+                    null,
+                    options,
+                    options[0]
             );
+            final JDialog dialog = new JDialog(
+                    JOptionPane.getFrameForComponent(Main.parent),
+                    tr("Conflicts detected"),
+                    true);
+            options[0].addActionListener(
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            dialog.setVisible(false);
+                        }
+                    }
+            );
+            options[1].addActionListener(
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            HelpBrowser b = new HelpBrowser();
+                            b.setUrlForHelpTopic("Help/Concepts/Conflict");
+                            b.setVisible(true);
+                        }
+                    }
+            );
+            dialog.setContentPane(pane);
+            dialog.pack();
+            HelpBuilder.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
+            WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
+            dialog.setVisible(true);
         }
     }
 

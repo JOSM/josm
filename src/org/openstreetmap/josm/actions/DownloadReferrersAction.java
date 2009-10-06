@@ -34,8 +34,8 @@ import org.xml.sax.SAXException;
 public class DownloadReferrersAction extends JosmAction{
 
     public DownloadReferrersAction() {
-        super(tr("Download referrers from OSM..."), "downloadreferrers", tr("Download primitives referring to one of the selected primitives"),
-                Shortcut.registerShortcut("file:downloadreferrers", tr("File: {0}", tr("Download referrers...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY), true);
+        super(tr("Download parent ways/relations..."), "downloadreferrers", tr("Download primitives referring to one of the selected primitives"),
+                Shortcut.registerShortcut("file:downloadreferrers", tr("File: {0}", tr("Download parent ways/relations ...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY), true);
     }
 
     /**
