@@ -70,7 +70,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         if (primitive == null)
             return "";
         String text = tr(
-                "<html>Version <strong>{0}</strong> created on <strong>{1}</strong>",
+                "<html>Version <strong>{0}</strong> created on <strong>{1}</strong></html>",
                 Long.toString(primitive.getVersion()),
                 new SimpleDateFormat().format(primitive.getTimestamp())
         );

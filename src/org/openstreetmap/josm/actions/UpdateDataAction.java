@@ -18,9 +18,9 @@ public class UpdateDataAction extends JosmAction{
     public UpdateDataAction() {
         super(tr("Update data"),
                 "updatedata",
-                tr("Updates the objects in the current data layer from the server "),
+                tr("Updates the objects in the current data layer from the server."),
                 Shortcut.registerShortcut("file:updatedata",
-                        tr("Update Data"),
+                        tr("Update data"),
                         KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY),
                         true);
