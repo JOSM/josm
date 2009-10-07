@@ -34,7 +34,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.gui.io.UploadDialog;
@@ -229,16 +231,32 @@ public class UploadAction extends JosmAction{
      * @param myVersion  the version of the primitive in the local dataset
      */
     protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion, String myVersion) {
-        JButton[] options = new JButton[] {
-                new JButton(tr("Synchronize {0} {1} only", tr(primitiveType.getAPIName()), id)),
-                new JButton(tr("Synchronize entire dataset")),
-                new JButton(tr("Cancel")),
-                new JButton(tr("Help"))
+        String lbl = "";
+        switch(primitiveType) {
+            case NODE: lbl =  tr("Synchronize node {0} only", id); break;
+            case WAY: lbl =  tr("Synchronize way {0} only", id); break;
+            case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
+        }
+        ButtonSpec[] spec = new ButtonSpec[] {
+                new ButtonSpec(
+                        lbl,
+                        ImageProvider.get("updatedata"),
+                        null,
+                        null
+                ),
+                new ButtonSpec(
+                        tr("Synchronize entire dataset"),
+                        ImageProvider.get("updatedata"),
+                        null,
+                        null
+                ),
+                new ButtonSpec(
+                        tr("Cancel"),
+                        ImageProvider.get("cancel"),
+                        null,
+                        null
+                )
         };
-        options[0].setIcon(ImageProvider.get("updatedata"));
-        options[1].setIcon(ImageProvider.get("updatedata"));
-        options[2].setIcon(ImageProvider.get("cancel"));
-        options[3].setIcon(ImageProvider.get("help"));
         String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                 + "of your nodes, ways, or relations.<br>"
                 + "The conflict is caused by the <strong>{0}</strong> with id <strong>{1}</strong>,<br>"
@@ -248,57 +266,23 @@ public class UploadAction extends JosmAction{
                 + "Click <strong>{5}</strong> to synchronize the entire local dataset with the server.<br>"
                 + "Click <strong>{6}</strong> to abort and continue editing.<br></html>",
                 tr(primitiveType.getAPIName()), id, serverVersion, myVersion,
-                options[0].getText(), options[1].getText(), options[2].getText()
+                spec[0].text, spec[1].text, spec[2].text
         );
-        final JOptionPane pane = new JOptionPane(
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
                 msg,
-                JOptionPane.ERROR_MESSAGE,
-                JOptionPane.DEFAULT_OPTION,
-                null,
-                options,
-                options[0]
-        );
-        final JDialog dialog = new JDialog(
-                JOptionPane.getFrameForComponent(Main.parent),
                 tr("Conflicts detected"),
-                true);
-        options[0].addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        dialog.setVisible(false);
-                        synchronizePrimitive(primitiveType, id);
-                    }
-                }
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                spec,
+                spec[0],
+                "Concepts/Conflict"
         );
-        options[1].addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        dialog.setVisible(false);
-                        synchronizeDataSet();
-                    }
-                }
-        );
-        options[2].addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        dialog.setVisible(false);
-                    }
-                }
-        );
-        options[3].addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        HelpBrowser b = new HelpBrowser();
-                        b.setUrlForHelpTopic("Help/Concepts/Conflict");
-                        b.setVisible(true);
-                    }
-                }
-        );
-        dialog.setContentPane(pane);
-        dialog.pack();
-        HelpBuilder.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
-        WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
-        dialog.setVisible(true);
+        switch(ret) {
+            case 0: synchronizePrimitive(primitiveType, id); break;
+            case 1: synchronizeDataSet(); break;
+            default: return;
+        }
     }
 
     /**
@@ -307,61 +291,40 @@ public class UploadAction extends JosmAction{
      *
      */
     protected void handleUploadConflictForUnknownConflict() {
-        JButton[] options = new JButton[] {
-                new JButton(tr("Synchronize entire dataset")),
-                new JButton(tr("Cancel")),
-                new JButton(tr("Help"))
+        ButtonSpec[] spec = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Synchronize entire dataset"),
+                        ImageProvider.get("updatedata"),
+                        null,
+                        null
+                ),
+                new ButtonSpec(
+                        tr("Cancel"),
+                        ImageProvider.get("cancel"),
+                        null,
+                        null
+                )
         };
-        Object defaultOption = options[0];
         String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                 + "of your nodes, ways, or relations.<br>"
                 + "<br>"
                 + "Click <strong>{0}</strong> to synchronize the entire local dataset with the server.<br>"
                 + "Click <strong>{1}</strong> to abort and continue editing.<br></html>",
-                options[0].getText(), options[1].getText()
+                spec[0].text, spec[1].text
         );
-        final JOptionPane pane = new JOptionPane(
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
                 msg,
-                JOptionPane.ERROR_MESSAGE,
-                JOptionPane.DEFAULT_OPTION,
-                null,
-                options,
-                options[0]
-        );
-        final JDialog dialog = new JDialog(
-                JOptionPane.getFrameForComponent(Main.parent),
                 tr("Conflicts detected"),
-                true);
-
-        options[0].addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        dialog.setVisible(false);
-                        synchronizeDataSet();
-                    }
-                }
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                spec,
+                spec[0],
+                "Concepts/Conflict"
         );
-        options[1].addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        dialog.setVisible(false);
-                    }
-                }
-        );
-        options[2].addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        HelpBrowser b = new HelpBrowser();
-                        b.setUrlForHelpTopic("Help/Concepts/Conflict");
-                        b.setVisible(true);
-                    }
-                }
-        );
-        dialog.setContentPane(pane);
-        dialog.pack();
-        HelpBuilder.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
-        WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
-        dialog.setVisible(true);
+        if (ret == 0) {
+            synchronizeDataSet();
+        }
     }
 
     /**
@@ -532,7 +495,7 @@ public class UploadAction extends JosmAction{
                 act.updatePrimitive(type, id);
             } catch (Exception sxe) {
                 if (uploadCancelled) {
-                    System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + sxe.toString());
+                    System.out.println("Ignoring exception caught because upload is canceled. Exception is: " + sxe.toString());
                     return;
                 }
                 uploadFailed = true;

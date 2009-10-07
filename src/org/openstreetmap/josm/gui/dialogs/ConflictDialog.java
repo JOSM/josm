@@ -117,7 +117,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
      * constructor
      */
     public ConflictDialog() {
-        super(tr("Conflict"), "conflict", tr("Merging conflicts."),
+        super(tr("Conflict"), "conflict", tr("Resolve conflicts."),
                 Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
 
         build();
@@ -143,7 +143,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
         if (selectedRows == null || selectedRows.length == 0)
             return;
         int row = selectedRows[0];
-        Conflict c = conflicts.get(row);
+        Conflict<?> c = conflicts.get(row);
         OsmPrimitive my = c.getMy();
         OsmPrimitive their = c.getTheir();
         ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
@@ -261,6 +261,11 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
         }
     }
 
+    @Override
+    public String helpTopic() {
+        return "Dialogs/ConflictListDialog";
+    }
+
     /**
      * The {@see ListModel} for conflicts
      *
@@ -327,6 +332,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
             putValue(NAME, tr("Resolve"));
             putValue(SHORT_DESCRIPTION,  tr("Open a merge dialog of all selected items in the list above."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "conflict"));
+            putValue("help", "Dialogs/ConflictListDialog#ResolveAction");
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -346,6 +352,7 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+            putValue("help", "Dialogs/ConflictListDialog#SelectAction");
         }
 
         public void actionPerformed(ActionEvent e) {

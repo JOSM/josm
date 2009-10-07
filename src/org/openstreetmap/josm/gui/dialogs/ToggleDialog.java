@@ -11,17 +11,13 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -33,6 +29,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
+import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -347,7 +344,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * The dialog class used to display toggle dialogs in a detached window.
      *
      */
-    private class DetachedDialog extends JDialog {
+    private class DetachedDialog extends JDialog{
         public DetachedDialog() {
             super(JOptionPane.getFrameForComponent(Main.parent));
             getContentPane().add(ToggleDialog.this);
@@ -361,6 +358,17 @@ public class ToggleDialog extends JPanel implements Helpful {
                     dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                 }
             });
+            addMouseListener(
+                    new MouseAdapter() {
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                            super.mouseEntered(e);
+                            System.out.println("requesting focus ...");
+                            requestFocusInWindow();
+                        }
+                    }
+            );
+
             String bounds = Main.pref.get(preferencePrefix+".bounds",null);
             if (bounds != null) {
                 String[] b = bounds.split(",");
@@ -372,6 +380,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                 setLocationRelativeTo(Main.parent);
             }
             setTitle(titleBar.getTitle());
+            HelpBuilder.setHelpContext(getRootPane(), helpTopic());
         }
 
         protected void rememberGeometry() {
