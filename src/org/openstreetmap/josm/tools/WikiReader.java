@@ -122,6 +122,8 @@ public class WikiReader {
                 inside = true;
             } else if (line.contains("<div class=\"buttons\">")) {
                 inside = false;
+            } else if (line.contains("<h3>Attachments</h3>")) {
+                inside = false;
             }
             if (inside && !transl) {
                 b += line.replaceAll("<img src=\"/", "<img src=\"" + baseurl + "/").replaceAll("href=\"/",
