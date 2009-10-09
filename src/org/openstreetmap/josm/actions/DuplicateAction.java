@@ -6,7 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class DuplicateAction extends JosmAction{
@@ -21,9 +23,17 @@ public final class DuplicateAction extends JosmAction{
         new PasteAction().pasteData(new CopyAction().copyData(), getEditLayer(), e);
     }
 
-
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
+        }
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 }

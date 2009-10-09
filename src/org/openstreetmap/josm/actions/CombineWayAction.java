@@ -201,8 +201,12 @@ public class CombineWayAction extends JosmAction {
             return;
         }
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
-        int numWays = 0;
+        updateEnabledState(selection);
+    }
 
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        int numWays = 0;
         for (OsmPrimitive osm : selection)
             if (osm instanceof Way) {
                 numWays++;

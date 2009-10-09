@@ -50,13 +50,18 @@ public class UploadSelectionAction extends JosmAction{
                 true);
     }
 
-    /**
-     * Refreshes the enabled state
-     *
-     */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getEditLayer() != null);
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
+        }
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {

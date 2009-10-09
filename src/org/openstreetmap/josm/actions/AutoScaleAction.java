@@ -174,4 +174,11 @@ public class AutoScaleAction extends JosmAction {
             );
         }
     }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        if ("selection".equals(mode)) {
+            setEnabled(selection != null && !selection.isEmpty());
+        }
+    }
 }

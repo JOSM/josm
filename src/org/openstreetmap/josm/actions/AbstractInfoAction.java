@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -140,5 +141,10 @@ public abstract class AbstractInfoAction extends JosmAction {
     @Override
     protected void updateEnabledState() {
         setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 }

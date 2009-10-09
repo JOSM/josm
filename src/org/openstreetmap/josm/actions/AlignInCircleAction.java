@@ -259,4 +259,9 @@ public final class AlignInCircleAction extends JosmAction {
     protected void updateEnabledState() {
         setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
     }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
+    }
 }

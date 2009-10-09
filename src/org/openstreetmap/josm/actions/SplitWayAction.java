@@ -365,8 +365,17 @@ public class SplitWayAction extends JosmAction {
     protected void updateEnabledState() {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
+        }
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        if (selection == null) {
+            setEnabled(false);
             return;
         }
-        setEnabled(checkSelection(getCurrentDataSet().getSelected()));
+        setEnabled(checkSelection(selection));
     }
 }

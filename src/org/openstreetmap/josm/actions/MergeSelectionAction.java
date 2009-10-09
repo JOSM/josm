@@ -5,9 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.MergeSourceBuildingVisitor;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -44,10 +46,15 @@ public class MergeSelectionAction extends AbstractMergeAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getEditLayer() == null) {
+        if (getCurrentDataSet() == null) {
             setEnabled(false);
-            return;
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
         }
-        setEnabled(!getEditLayer().data.getSelected().isEmpty());
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 }

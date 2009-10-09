@@ -96,15 +96,18 @@ public class UpdateSelectionAction extends JosmAction {
                         true);
     }
 
-    /**
-     * Refreshes the enabled state
-     *
-     */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null
-                && ! getCurrentDataSet().getSelected().isEmpty()
-        );
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
+        }
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 
     /**

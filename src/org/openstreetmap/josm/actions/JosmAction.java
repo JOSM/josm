@@ -148,21 +148,20 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         selectionChangeAdapter = new SelectionChangeAdapter();
         Layer.listeners.add(layerChangeAdapter);
         DataSet.selListeners.add(selectionChangeAdapter);
-        updateEnabledState();
+        initEnabledState();
     }
 
-    /**
-     * This method is called when a layer change event or a selection update event
-     * occurs, see {@see LayerChangeListener} and {@see SelectionChangedListener}.
-     * 
-     * The default implementation is empty. Subclasses can override the method
-     * in order to set the {@see #isEnabled()}-state of a JosmAction depending on
-     * the {@see #getCurrentDataSet()} and the current layers (see
-     * also {@see #getEditLayer()}).
-     * 
-     */
+
+    protected void initEnabledState() {
+        setEnabled(true);
+    }
+
     protected void updateEnabledState() {
-        // override in subclasses
+
+    }
+
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+
     }
 
     /**
@@ -189,7 +188,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      */
     private class SelectionChangeAdapter implements SelectionChangedListener {
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            updateEnabledState();
+            updateEnabledState(newSelection);
         }
     }
 }

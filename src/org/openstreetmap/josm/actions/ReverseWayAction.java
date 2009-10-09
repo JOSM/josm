@@ -96,6 +96,25 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getNumWaysInSelection() > 0);
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
+        }
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        if (selection == null) {
+            setEnabled(false);
+            return;
+        }
+        int n = 0;
+        for (OsmPrimitive primitive : selection) {
+            if (primitive instanceof Way) {
+                n++;
+            }
+        }
+        setEnabled(n > 0);
     }
 }

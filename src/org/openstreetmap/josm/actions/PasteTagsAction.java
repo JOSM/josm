@@ -283,4 +283,12 @@ public final class PasteTagsAction extends JosmAction {
                 && !TagCollection.unionOfAllPrimitives(Main.pasteBuffer.getSelected()).isEmpty()
         );
     }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(
+                selection!= null && !selection.isEmpty()
+                && !TagCollection.unionOfAllPrimitives(Main.pasteBuffer.getSelected()).isEmpty()
+        );
+    }
 }

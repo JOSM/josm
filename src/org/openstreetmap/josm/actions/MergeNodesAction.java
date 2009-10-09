@@ -262,21 +262,27 @@ public class MergeNodesAction extends JosmAction {
         return cmd;
     }
 
-    /**
-     * Enable the "Merge Nodes" menu option if more than one node is selected
-     */
     @Override
-    public void updateEnabledState() {
-        if (getCurrentDataSet() == null || getCurrentDataSet().getSelected().isEmpty()) {
+    protected void updateEnabledState() {
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
+        }
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        if (selection == null || selection.isEmpty()) {
             setEnabled(false);
             return;
         }
         boolean ok = true;
-        if (getCurrentDataSet().getSelected().size() < 2) {
+        if (selection.size() < 2) {
             setEnabled(false);
             return;
         }
-        for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
+        for (OsmPrimitive osm : selection) {
             if (!(osm instanceof Node)) {
                 ok = false;
                 break;

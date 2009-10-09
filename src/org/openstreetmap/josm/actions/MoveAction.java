@@ -70,18 +70,18 @@ public class MoveAction extends JosmAction {
         double disty = en2.north() - en1.north();
 
         switch (myDirection) {
-        case UP:
-            distx = 0;
-            disty = -disty;
-            break;
-        case DOWN:
-            distx = 0;
-            break;
-        case LEFT:
-            disty = 0;
-            distx = -distx;
-        default:
-            disty = 0;
+            case UP:
+                distx = 0;
+                disty = -disty;
+                break;
+            case DOWN:
+                distx = 0;
+                break;
+            case LEFT:
+                disty = 0;
+                distx = -distx;
+            default:
+                disty = 0;
         }
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
@@ -116,6 +116,15 @@ public class MoveAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
+        if (getCurrentDataSet() == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(getCurrentDataSet().getSelected());
+        }
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 }
