@@ -61,6 +61,8 @@ public class PluginHandler {
                 "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
                 "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
                 "namefinder", "waypoints", "slippy_map_chooser", "tcx-support"};
+        String [] unmaintained = new String[] {"multipoly", "gpsbabelgui",
+                "Intersect_way"};
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
                 plugins.remove(p);
@@ -72,6 +74,12 @@ public class PluginHandler {
                         JOptionPane.WARNING_MESSAGE
                 );
             }
+        }
+        for (String p : unmaintained) {
+            if (plugins.contains(p) && disablePlugin(tr("<html>Loading of {0} plugin was requested."
+            +"<br>This plugin is no longer developed and very likely will produce errors."
+            +"<br>It should be disabled.<br>Delete from preferences?</html>", p), p))
+                plugins.remove(p);
         }
 
         if (plugins.isEmpty())
@@ -170,25 +178,31 @@ public class PluginHandler {
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
-                    ExtendedDialog dialog = new ExtendedDialog(
-                            Main.parent,
-                            tr("Disable plugin"),
-                            new String[] {tr("Disable plugin"), tr("Keep plugin")}
-                    );
-                    dialog.setContent(tr("Could not load plugin {0}. Delete from preferences?", info.name));
-                    dialog.setButtonIcons( new String[] {"dialogs/delete.png", "cancel.png"});
-                    dialog.showDialog();
-                    int result = dialog.getValue();
-
-                    if(result == 1)
-                    {
-                        plugins.remove(info.name);
-                        Main.pref.removeFromCollection("plugins", info.name);
-                    }
+                    disablePlugin(tr("Could not load plugin {0}. Delete from preferences?", info.name), info.name);
                 }
             }
         }
     }
+    public static boolean disablePlugin(String reason, String name)
+    {
+        ExtendedDialog dialog = new ExtendedDialog(
+                Main.parent,
+                tr("Disable plugin"),
+                new String[] {tr("Disable plugin"), tr("Keep plugin")}
+        );
+        dialog.setContent(reason);
+        dialog.setButtonIcons( new String[] {"dialogs/delete.png", "cancel.png"});
+        dialog.showDialog();
+        int result = dialog.getValue();
+
+        if(result == 1)
+        {
+            Main.pref.removeFromCollection("plugins", name);
+            return true;
+        }
+        return false;
+    }
+
     public static void setMapFrame(MapFrame old, MapFrame map) {
         for (PluginProxy plugin : pluginList) {
             plugin.mapFrameInitialized(old, map);
