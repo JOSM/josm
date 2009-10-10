@@ -51,9 +51,11 @@ public class DownloadReferrersAction extends JosmAction{
 
 
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled())
+        if (!isEnabled() || Main.map == null || Main.map.mapView == null)
             return;
         OsmDataLayer layer = Main.map.mapView.getEditLayer();
+        if (layer == null)
+            return;
         Collection<OsmPrimitive> primitives = layer.data.getSelected();
         downloadReferrers(primitives);
     }
