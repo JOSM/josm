@@ -77,7 +77,7 @@ public class MapFrame extends JPanel implements Destroyable {
      * instead of adding directly to this list.
      */
     private List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
-    private DialogsPanel dialogsPanel = new DialogsPanel();
+    private DialogsPanel dialogsPanel;
 
     public final ButtonGroup toolGroup = new ButtonGroup();
 
@@ -107,8 +107,10 @@ public class MapFrame extends JPanel implements Destroyable {
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                             mapView, dialogsPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+        dialogsPanel = new DialogsPanel(splitPane);
+        splitPane.setLeftComponent(mapView);
+        splitPane.setRightComponent(dialogsPanel);
 
         /**
          * All additional space goes to the mapView

@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 import org.openstreetmap.josm.gui.MultiSplitLayout;
 import org.openstreetmap.josm.gui.MultiSplitLayout.Node;
@@ -29,6 +30,11 @@ public class DialogsPanel extends JPanel {
      * Panels that are added to the multisplitpane.
      */
     private List<JPanel> panels = new ArrayList<JPanel>();
+    
+    final private JSplitPane parent;
+    public DialogsPanel(JSplitPane parent) {
+        this.parent = parent;
+    }
 
     private boolean initialized = false;
     public void initialize(List<ToggleDialog> allDialogs) {
@@ -258,6 +264,20 @@ public class DialogsPanel extends JPanel {
         mSpltPane.getMultiSplitLayout().setDividerSize(DIVIDER_SIZE);
         mSpltPane.getMultiSplitLayout().setFloatingDividers(true);
         mSpltPane.revalidate();
+
+        /**
+         * Hide the Panel, if there is nothing to show
+         */
+        if (numPanels == 1 && panels.get(N-1).getComponents().length == 0)
+        {
+            this.setVisible(false);
+        } else {
+            if (this.getWidth() != 0) { // only if josm started with hidden panel
+                this.setPreferredSize(new Dimension(this.getWidth(), 0));
+            }
+            this.setVisible(true);
+            parent.resetToPreferredSizes();
+        }
     }
 
     public void destroy() {
