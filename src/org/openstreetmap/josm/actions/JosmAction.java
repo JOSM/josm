@@ -151,17 +151,44 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         initEnabledState();
     }
 
-
+    /**
+     * Override in subclasses to init the enabled state of an action when it is
+     * created. Default behaviour is to call {@see #updateEnabledState()}
+     * 
+     * @see #updateEnabledState()
+     * @see #updateEnabledState(Collection)
+     */
     protected void initEnabledState() {
-        setEnabled(true);
+        updateEnabledState();
     }
 
+    /**
+     * Override in subclasses to update the enabled state of the action when
+     * something in the JOSM state changes, i.e. when a layer is removed or added.
+     * 
+     * See {@see #updateEnabledState(Collection)} to respond to changes in the collection
+     * of selected primitives.
+     * 
+     * Default behavior is empty.
+     * 
+     * @see #updateEnabledState(Collection)
+     * @see #initEnabledState()
+     */
     protected void updateEnabledState() {
-
     }
 
+    /**
+     * Override in subclasses to update the enabled state of the action if the
+     * collection of selected primitives changes. This method is called with the
+     * new selection. Avoid calling getCurrentDataSet().getSelected() because this
+     * loops over the complete data set.
+     * 
+     * @param selection the collection of selected primitives
+     * 
+     * @see #updateEnabledState()
+     * @see #initEnabledState()
+     */
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-
     }
 
     /**
