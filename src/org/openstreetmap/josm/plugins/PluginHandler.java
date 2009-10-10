@@ -255,43 +255,23 @@ public class PluginHandler {
             /**
              * Analyze the stack of the argument and find a name of a plugin, if
              * some known problem pattern has been found.
-             *
-             * Note: This heuristic is not meant as discrimination against specific
-             * plugins, but only to stop the flood of similar bug reports about plugins.
-             * Of course, plugin writers are free to install their own version of
-             * an exception handler with their email address listed to receive
-             * bug reports ;-).
              */
-            for (StackTraceElement element : e.getStackTrace()) {
-                String c = element.getClassName();
-
-                if (c.contains("wmsplugin.") || c.contains(".WMSLayer")) {
-                    name = "wmsplugin";
-                }
-                if (c.contains("livegps.")) {
-                    name = "livegps";
-                }
-                if (c.startsWith("UtilsPlugin.")) {
-                    name = "UtilsPlugin";
-                }
-
-                if (c.startsWith("org.openstreetmap.josm.plugins.")) {
-                    String p = c.substring("org.openstreetmap.josm.plugins.".length());
-                    if (p.indexOf('.') != -1 && p.matches("[a-z].*")) {
-                        name = p.substring(0,p.indexOf('.'));
-                    }
-                }
-                if(name != null) {
-                    break;
-                }
-            }
             for (PluginProxy p : pluginList)
             {
-                if (p.info.name.equals(name))
+                String baseClass = p.info.className;
+                int i = baseClass.lastIndexOf(".");
+                baseClass = baseClass.substring(0, i);
+                for (StackTraceElement element : e.getStackTrace())
                 {
-                    plugin = p;
-                    break;
+                    String c = element.getClassName();
+                    if(c.startsWith(baseClass))
+                    {
+                        plugin = p;
+                        break;
+                    }
                 }
+                if(plugin != null)
+                    break;
             }
         }
 
