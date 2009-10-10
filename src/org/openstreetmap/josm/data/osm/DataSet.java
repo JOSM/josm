@@ -216,6 +216,19 @@ public class DataSet implements Cloneable {
         }
     }
 
+    public boolean addSelected(OsmPrimitive osm) {
+        osm.setSelected(true);
+        return true;
+    }
+
+    public boolean toggleSelected(OsmPrimitive osm) {
+        osm.setSelected(!osm.isSelected());
+        return true;
+    }
+    public boolean isSelected(OsmPrimitive osm) {
+        return osm.isSelected();
+    }
+
     public void setDisabled(OsmPrimitive... osm) {
         if (osm.length == 1 && osm[0] == null) {
             setDisabled();
@@ -282,6 +295,9 @@ public class DataSet implements Cloneable {
      * Remove the selection from every value in the collection.
      * @param list The collection to remove the selection from.
      */
+    public void clearSelection(OsmPrimitive... osm) {
+        clearSelection(Arrays.asList(osm));
+    }
     private void clearSelection(Collection<? extends OsmPrimitive> list) {
         if (list == null)
             return;

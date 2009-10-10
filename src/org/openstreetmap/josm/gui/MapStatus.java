@@ -299,6 +299,7 @@ public class MapStatus extends JPanel implements Helpful {
          * @param mouse modifiers
          */
         private final void popupCycleSelection(Collection<OsmPrimitive> osms, int mods) {
+            DataSet ds = Main.main.getCurrentDataSet();
             // Find some items that are required for cycling through
             OsmPrimitive firstItem = null;
             OsmPrimitive firstSelected = null;
@@ -310,7 +311,7 @@ public class MapStatus extends JPanel implements Helpful {
                 if(firstSelected != null && nextSelected == null) {
                     nextSelected = osm;
                 }
-                if(firstSelected == null && osm.isSelected()) {
+                if(firstSelected == null && ds.isSelected(osm)) {
                     firstSelected = osm;
                 }
             }
@@ -318,22 +319,19 @@ public class MapStatus extends JPanel implements Helpful {
             // Clear previous selection if SHIFT (add to selection) is not
             // pressed. Cannot use "setSelected()" because it will cause a
             // fireSelectionChanged event which is unnecessary at this point.
-            if((mods & MouseEvent.SHIFT_DOWN_MASK) == 0) {
-                for(OsmPrimitive o : Main.main.getCurrentDataSet().getSelected()) {
-                    o.setSelected(false);
-                }
-            }
+            if((mods & MouseEvent.SHIFT_DOWN_MASK) == 0)
+                ds.clearSelection();
 
             // This will cycle through the available items.
             if(firstSelected == null) {
-                firstItem.setSelected(true);
+                ds.addSelected(firstItem);
             } else {
-                firstSelected.setSelected(false);
+                ds.clearSelection(firstSelected);
                 if(nextSelected != null) {
-                    nextSelected.setSelected(true);
+                    ds.addSelected(nextSelected);
                 }
             }
-            DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
+            DataSet.fireSelectionChanged(ds.getSelected());
         }
 
         /**
@@ -397,7 +395,8 @@ public class MapStatus extends JPanel implements Helpful {
          * @param osm The primitive to derive the colors from
          */
         private final void popupSetLabelColors(JLabel lbl, OsmPrimitive osm) {
-            if(osm.isSelected()) {
+            DataSet ds = Main.main.getCurrentDataSet();
+            if(ds.isSelected(osm)) {
                 lbl.setBackground(SystemColor.textHighlight);
                 lbl.setForeground(SystemColor.textHighlightText);
             } else {
@@ -459,9 +458,10 @@ public class MapStatus extends JPanel implements Helpful {
                     popupSetLabelColors(l, osm);
                 }
                 @Override public void mouseClicked(MouseEvent e) {
+                    DataSet ds = Main.main.getCurrentDataSet();
                     // Let the user toggle the selection
-                    osm.setSelected(!osm.isSelected());
-                    DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
+                    ds.toggleSelected(osm);
+                    DataSet.fireSelectionChanged(ds.getSelected());
                     l.validate();
                 }
             });

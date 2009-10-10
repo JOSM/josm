@@ -151,7 +151,7 @@ public class UnGlueAction extends JosmAction {
 
         Node c = new Node(selectedNode);
         c.removeAll();
-        c.setSelected(false);
+        getCurrentDataSet().clearSelection(c);
         cmds.add(new ChangeCommand(selectedNode, c));
 
         Node n = new Node(selectedNode);

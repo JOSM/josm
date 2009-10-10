@@ -220,7 +220,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @param selected  true, if this primitive is selected; false, otherwise
      * @since 1899
      */
-    public void setSelected(boolean selected) {
+    @Deprecated public void setSelected(boolean selected) {
         if (selected) {
             flags |= FLAG_SELECTED;
         } else {
@@ -233,7 +233,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @return true, if this primitive is selected
      * @since 1899
      */
-    public boolean isSelected() {
+    @Deprecated public boolean isSelected() {
         return (flags & FLAG_SELECTED) != 0;
     }
 

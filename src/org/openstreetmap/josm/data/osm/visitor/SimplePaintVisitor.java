@@ -127,7 +127,9 @@ public class SimplePaintVisitor extends AbstractVisitor {
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
+    DataSet ds;
     public void visitAll(DataSet data, Boolean virtual) {
+        this.ds = data;
         //boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
         //long profilerStart = java.lang.System.currentTimeMillis();
         //long profilerLast = profilerStart;
@@ -148,7 +150,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
            require changing the colour while painting... */
         //profilerN = 0;
         for (final OsmPrimitive osm : data.relations)
-            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered())
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -162,7 +164,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered() && osm.isTagged())
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && osm.isTagged())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -170,7 +172,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         displaySegments();
 
         for (final OsmPrimitive osm : data.ways)
-            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered() && !osm.isTagged())
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && !osm.isTagged())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -201,7 +203,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.isDeleted() && !osm.isSelected() && !osm.isFiltered())
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -252,7 +254,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
         } else if (n.highlighted) {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        } else if (n.isSelected()) {
+        } else if (ds.isSelected(n)) {
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         } else if(n.isTagged()) {
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
@@ -304,18 +306,18 @@ public class SimplePaintVisitor extends AbstractVisitor {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
            (even if the tag is negated as in oneway=false) or the way is selected */
 
-        boolean showThisDirectionArrow = w.isSelected()
+        boolean showThisDirectionArrow = ds.isSelected(w)
         || (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys()));
         /* head only takes over control if the option is true,
            the direction should be shown at all and not only because it's selected */
-        boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !w.isSelected() && showHeadArrowOnly;
+        boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !ds.isSelected(w) && showHeadArrowOnly;
         Color wayColor;
 
         if (inactive || w.isDisabled()) {
             wayColor = inactiveColor;
         } else if(w.highlighted) {
             wayColor = highlightColor;
-        } else if(w.isSelected()) {
+        } else if(ds.isSelected(w)) {
             wayColor = selectedColor;
         } else if (!w.isTagged()) {
             wayColor = untaggedWayColor;
@@ -346,7 +348,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         Color col;
         if (inactive || r.isDisabled()) {
             col = inactiveColor;
-        } else if (r.isSelected()) {
+        } else if (ds.isSelected(r)) {
             col = selectedColor;
         } else {
             col = relationColor;

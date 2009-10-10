@@ -423,7 +423,7 @@ public class SearchCompiler {
 
     private static class Selected extends Match {
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.isSelected();
+            return Main.main.getCurrentDataSet().isSelected(osm);
         }
         @Override public String toString() {return "selected";}
     }

@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.data.osm.Filter;
+import org.openstreetmap.josm.data.osm.DataSet;
 
 public class SearchAction extends JosmAction{
 
@@ -88,6 +89,7 @@ public class SearchAction extends JosmAction{
         left.add(label, GBC.eop());
         left.add(input, GBC.eop().fill(GBC.HORIZONTAL));
         left.add(replace, GBC.eol());
+        DataSet ds = Main.main.getCurrentDataSet();
         left.add(add, GBC.eol());
         left.add(remove, GBC.eol());
         left.add(in_selection, GBC.eop());
@@ -236,13 +238,14 @@ public class SearchAction extends JosmAction{
         //            }
         //        }
 
-        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+        final DataSet ds = Main.main.getCurrentDataSet();
+        Collection<OsmPrimitive> sel = ds.getSelected();
         int foundMatches = getSelection(s, sel, new Function(){
             public Boolean isSomething(OsmPrimitive o){
-                return o.isSelected();
+                return ds.isSelected(o);
             }
         });
-        Main.main.getCurrentDataSet().setSelected(sel);
+        ds.setSelected(sel);
         if (foundMatches == 0) {
             String msg = null;
             if (s.mode == SearchMode.replace) {

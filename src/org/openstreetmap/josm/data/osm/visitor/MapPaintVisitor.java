@@ -151,10 +151,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //    return;
 
         if (nodeStyle != null && isZoomOk(nodeStyle) && showIcons > dist) {
-            drawNode(n, nodeStyle.icon, nodeStyle.annotate, n.isSelected());
+            drawNode(n, nodeStyle.icon, nodeStyle.annotate, data.isSelected(n));
         } else if (n.highlighted) {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        } else if (n.isSelected()) {
+        } else if (data.isSelected(n)) {
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         } else if (n.isTagged()) {
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
@@ -226,14 +226,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /* way without style */
             //profilerVisibleWays++;
             //if(!profilerOmitDraw)
-            drawWay(w, null, untaggedColor, w.isSelected());
+            drawWay(w, null, untaggedColor, data.isSelected(w));
         }
         else if(wayStyle instanceof LineElemStyle)
         {
             /* way with line style */
             //profilerVisibleWays++;
             //if(!profilerOmitDraw)
-            drawWay(w, (LineElemStyle)wayStyle, untaggedColor, w.isSelected());
+            drawWay(w, (LineElemStyle)wayStyle, untaggedColor, data.isSelected(w));
         }
         else if (wayStyle instanceof AreaElemStyle)
         {
@@ -244,12 +244,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if (fillAreas > dist)
             {
                 //    profilerVisibleAreas++;
-                drawArea(w, w.isSelected() ? selectedColor : areaStyle.color);
+                drawArea(w, data.isSelected(w) ? selectedColor : areaStyle.color);
                 if(!w.isClosed()) {
                     w.putError(tr("Area style way is not closed."), true);
                 }
             }
-            drawWay(w, areaStyle.line, areaStyle.color, w.isSelected());
+            drawWay(w, areaStyle.line, areaStyle.color, data.isSelected(w));
             //}
         }
     }
@@ -258,11 +258,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
            the way is tagged with a direction key
            (even if the tag is negated as in oneway=false) or the way is selected */
-        boolean showDirection = w.isSelected() || ((!useRealWidth) && (showDirectionArrow
+        boolean showDirection = data.isSelected(w) || ((!useRealWidth) && (showDirectionArrow
                 && (!showRelevantDirectionsOnly || w.hasDirectionKeys())));
         /* head only takes over control if the option is true,
            the direction should be shown at all and not only because it's selected */
-        boolean showOnlyHeadArrowOnly = showDirection && !w.isSelected() && showHeadArrowOnly;
+        boolean showOnlyHeadArrowOnly = showDirection && !data.isSelected(w) && showHeadArrowOnly;
         int width = defaultSegmentWidth;
         int realWidth = 0; /* the real width of the element in meters */
         float dashed[] = new float[0];
@@ -306,7 +306,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(w.highlighted) {
             color = highlightColor;
-        } else if(w.isSelected()) {
+        } else if(data.isSelected(w)) {
             color = selectedColor;
         } else if(w.isDisabled()) {
             color = inactiveColor;
@@ -324,7 +324,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     {
                         if(lastN != null)
                         {
-                            drawSeg(lastN, n, s.color != null  && !w.isSelected() ? s.color : color,
+                            drawSeg(lastN, n, s.color != null  && !data.isSelected(w) ? s.color : color,
                                     false, s.getWidth(width), s.dashed, s.dashedColor);
                         }
                         lastN = n;
@@ -358,7 +358,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     {
                         if(lastN != null)
                         {
-                            drawSeg(lastN, n, s.color != null && !w.isSelected() ? s.color : color,
+                            drawSeg(lastN, n, s.color != null && !data.isSelected(w) ? s.color : color,
                                     false, s.getWidth(width), s.dashed, s.dashedColor);
                         }
                         lastN = n;
@@ -404,7 +404,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     {
                         Way c = (Way)joinArray[i];
                         if(w == null)
-                        { w = c; selected = w.isSelected(); joinArray[i] = null; --left; }
+                        { w = c; selected = data.isSelected(w); joinArray[i] = null; --left; }
                         else
                         {
                             int mode = 0;
@@ -440,7 +440,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                             {
                                 joinArray[i] = null;
                                 joined = true;
-                                if(c.isSelected()) {
+                                if(data.isSelected(c)) {
                                     selected = true;
                                 }
                                 --left;
@@ -473,7 +473,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 w = new Way(w);
                 w.setNodes(n);
-                w.setSelected(selected);
+                if (selected)
+                    data.setSelected(w);
+                else
+                    data.clearSelection(w);
             }
             if(!w.isClosed())
             {
@@ -550,7 +553,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             drawRestriction(r);
         }
 
-        if(r.isSelected()) /* draw ways*/
+        if(data.isSelected(r)) /* draw ways*/
         {
             for (RelationMember m : r.getMembers())
             {
@@ -827,7 +830,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         int w = smallIcon.getIconWidth(), h=smallIcon.getIconHeight();
         smallIcon.paintIcon ( Main.map.mapView, g, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2 );
 
-        if (r.isSelected())
+        if (data.isSelected(r))
         {
             g.setColor (  selectedColor );
             g.drawRect ((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
@@ -871,7 +874,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                                 m.getRole(), w.getDisplayName(DefaultNameFormatter.getInstance())), true);
                         if(!m.hasRole()) {
                             outer.add(w);
-                        } else if(r.isSelected()) {
+                        } else if(data.isSelected(r)) {
                             drawSelectedMember(m.getMember(), styles != null
                                     ? getPrimitiveStyle(m.getMember()) : null, true, true);
                         }
@@ -1051,7 +1054,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     Polygon p = pd.get();
                     if(isPolygonVisible(p))
                     {
-                        drawAreaPolygon(p, (pd.way.isSelected() || r.isSelected()) ? selectedColor
+                        drawAreaPolygon(p, (data.isSelected(pd.way) || data.isSelected(r)) ? selectedColor
                                 : areaStyle.color);
                         visible = true;
                     }
@@ -1077,23 +1080,23 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                             || outer.size() == 0))
                     {
                         drawWay(wInner, ((AreaElemStyle)wayStyle).line,
-                                ((AreaElemStyle)wayStyle).color, wInner.isSelected()
-                                || r.isSelected());
+                                ((AreaElemStyle)wayStyle).color, data.isSelected(wInner)
+                                || data.isSelected(r));
                     }
                     wInner.mappaintDrawnCode = paintid;
                 }
                 else
                 {
-                    if(r.isSelected())
+                    if(data.isSelected(r))
                     {
                         drawSelectedMember(wInner, innerStyle,
-                                !wayStyle.equals(innerStyle), wInner.isSelected());
+                                !wayStyle.equals(innerStyle), data.isSelected(wInner));
                     }
                     if(wayStyle.equals(innerStyle))
                     {
                         r.putError(tr("Style for inner way ''{0}'' equals multipolygon.",
                                 wInner.getDisplayName(DefaultNameFormatter.getInstance())), false);
-                        if(!r.isSelected()) {
+                        if(!data.isSelected(r)) {
                             wInner.mappaintDrawnAreaCode = paintid;
                         }
                     }
@@ -1107,8 +1110,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     if(zoomok)
                     {
                         drawWay(wOuter, ((AreaElemStyle)wayStyle).line,
-                                ((AreaElemStyle)wayStyle).color, wOuter.isSelected()
-                                || r.isSelected());
+                                ((AreaElemStyle)wayStyle).color, data.isSelected(wOuter)
+                                || data.isSelected(r));
                     }
                     wOuter.mappaintDrawnCode = paintid;
                 }
@@ -1120,7 +1123,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         r.putError(tr("Style for outer way ''{0}'' mismatches.",
                                 wOuter.getDisplayName(DefaultNameFormatter.getInstance())), true);
                     }
-                    if(r.isSelected())
+                    if(data.isSelected(r))
                     {
                         drawSelectedMember(wOuter, outerStyle, false, false);
                     }
@@ -1325,10 +1328,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
     }
 
+    DataSet data;
+
     /* Shows areas before non-areas */
     @Override
     public void visitAll(DataSet data, Boolean virtual) {
-
+        this.data = data;
         //boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
         //profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
 
@@ -1449,7 +1454,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** WAYS (filling disabled)  ***/
             //    profilerN = 0;
             for (final OsmPrimitive osm : data.ways)
-                if (!osm.incomplete && !osm.isDeleted() && !osm.isFiltered() && !osm.isSelected()
+                if (!osm.incomplete && !osm.isDeleted() && !osm.isFiltered() && !data.isSelected(osm)
                         && osm.mappaintVisibleCode != viewid )
                 {
                     osm.visit(this);
@@ -1488,7 +1493,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /*** NODES ***/
         //profilerN = 0;
         for (final OsmPrimitive osm : data.nodes)
-            if (!osm.incomplete && !osm.isDeleted() && (osm.isSelected() || !osm.isFiltered())
+            if (!osm.incomplete && !osm.isDeleted() && (data.isSelected(osm) || !osm.isFiltered())
                     && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 osm.visit(this);

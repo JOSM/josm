@@ -324,7 +324,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         updateKeyModifiers(e);
         mousePos = e.getPoint();
 
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        DataSet ds = getCurrentDataSet();
+        Collection<OsmPrimitive> selection = ds.getSelected();
         Collection<Command> cmds = new LinkedList<Command>();
 
         ArrayList<Way> reuseWays = new ArrayList<Way>(),
@@ -404,7 +405,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     // but pressing ALT prevents this. Therefore we must de-select the way manually
                     // here so /only/ the new way will be selected after this method finishes.
                     if(alt) {
-                        wnew.setSelected(false);
+                        ds.addSelected(wnew);
                     }
 
                     cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
@@ -518,7 +519,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
                 extendedWay = true;
                 getCurrentDataSet().setSelected(way);
-                DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
+                DataSet.fireSelectionChanged(ds.getSelected());
             }
         }
 
@@ -531,7 +532,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             } else {
                 title = tr("Add node into way");
                 for (Way w : reuseWays) {
-                    w.setSelected(false);
+                    ds.clearSelection(w);
                 }
             }
             getCurrentDataSet().setSelected(n);
