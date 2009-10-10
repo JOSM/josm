@@ -1,6 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
-
+import org.openstreetmap.josm.tools.ReverseLookup;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
@@ -38,14 +38,14 @@ public class DataSet implements Cloneable {
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
      */
-    public Collection<Node> nodes = new QuadBuckets();
+    public QuadBuckets<Node> nodes = new QuadBuckets<Node>();
 
     /**
      * All ways (Streets etc.) in the DataSet.
      *
      * The way nodes are stored only in the way list.
      */
-    public Collection<Way> ways = new LinkedList<Way>();
+    public QuadBuckets<Way> ways = new QuadBuckets<Way>();
 
     /**
      * All relations/relationships

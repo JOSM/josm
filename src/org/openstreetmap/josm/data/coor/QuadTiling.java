@@ -97,15 +97,14 @@ public class QuadTiling
         int total_shift = TILES_PER_LEVEL_SHIFT*(NR_LEVELS-level-1);
         return (int)(mask & (quad >> total_shift));
     }
-    static public int index(Node n, int level)
+    static public int index(LatLon coor, int level)
     {
-        LatLon coor = n.getCoor();
         // The nodes that don't return coordinates will all get
         // stuck in a single tile.  Hopefully there are not too
         // many of them
         if (coor == null)
             return 0;
-        long quad = coorToTile(n.getCoor());
+        long quad = coorToTile(coor);
         return index(level, quad);
     }
 }

@@ -1,4 +1,5 @@
 package org.openstreetmap.josm.data.osm;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +9,8 @@ import java.util.TreeMap;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Pair;
 
 import java.nio.MappedByteBuffer;
@@ -34,7 +37,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
 
-public class QuadBuckets implements Collection<Node>
+public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
     public static boolean debug = false;
     static boolean consistency_testing = false;
@@ -79,12 +82,13 @@ public class QuadBuckets implements Collection<Node>
     // has to be a power of 2
     public static int TILES_PER_LEVEL_SHIFT = 2;
     public static int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
+    // Maybe this should just be a Rectangle??
     class BBox
     {
-        private double xmin;
-        private double xmax;
-        private double ymin;
-        private double ymax;
+        private double xmin = Double.POSITIVE_INFINITY;
+        private double xmax = Double.NEGATIVE_INFINITY;
+        private double ymin = Double.POSITIVE_INFINITY;
+        private double ymax = Double.NEGATIVE_INFINITY;
         void sanity()
         {
             if (xmin < -180.0)
@@ -106,8 +110,8 @@ public class QuadBuckets implements Collection<Node>
         }
         public String toString()
         {
-            return "[ " + xmin + " -> " + xmax + ", " +
-                         ymin + " -> " + ymax + " ]";
+            return "[ x: " + xmin + " -> " + xmax +
+                   ", y: " + ymin + " -> " + ymax + " ]";
         }
         double min(double a, double b)
         {
@@ -121,12 +125,17 @@ public class QuadBuckets implements Collection<Node>
                 return a;
             return b;
         }
+        private void add(LatLon c)
+        {
+            xmin = min(xmin, c.lon());
+            xmax = max(xmax, c.lon());
+            ymin = min(ymin, c.lat());
+            ymax = max(ymax, c.lat());
+        }
         public BBox(LatLon a, LatLon b)
         {
-            xmin = min(a.lon(), b.lon());
-            xmax = max(a.lon(), b.lon());
-            ymin = min(a.lat(), b.lat());
-            ymax = max(a.lat(), b.lat());
+            add(a);
+            add(b);
             sanity();
         }
         public BBox(double a_x, double a_y, double b_x, double b_y)
@@ -136,6 +145,16 @@ public class QuadBuckets implements Collection<Node>
             ymin = min(a_y, b_y);
             ymax = max(a_y, b_y);
             sanity();
+        }
+        public BBox(Way w)
+        {
+            for (Node n : w.getNodes()) {
+                LatLon coor = n.getCoor();
+                if (coor == null)
+                    continue;
+                add(coor);
+            }
+            this.sanity();
         }
         public double height()
         {
@@ -179,6 +198,19 @@ public class QuadBuckets implements Collection<Node>
         {
             return this.inside(b) || b.inside(this);
         }
+        List<LatLon> points()
+        {
+            LatLon p1 = new LatLon(ymin, xmin);
+            LatLon p2 = new LatLon(ymin, xmax);
+            LatLon p3 = new LatLon(ymax, xmin);
+            LatLon p4 = new LatLon(ymax, xmax);
+            List<LatLon> ret = new ArrayList<LatLon>();
+            ret.add(p1);
+            ret.add(p2);
+            ret.add(p3);
+            ret.add(p4);
+            return ret;
+        }
     }
     class QBLevel
     {
@@ -186,15 +218,81 @@ public class QuadBuckets implements Collection<Node>
         long quad;
         QBLevel parent;
 
-        public List<Node> content;
+        public List<T> content;
         public QBLevel children[];
+        public String toString()
+        {
+            return super.toString()+ "["+level+"]: " + bbox;
+        }
         public QBLevel(QBLevel parent)
         {
             init(parent);
         }
-        String quads(Node n)
+        String quads(T o)
         {
-            return Long.toHexString(QuadTiling.quadTile(n.getCoor()));
+            if (o instanceof Node) {
+                LatLon coor = ((Node)o).getCoor();
+                if (coor == null)
+                    return "null node coordinates";
+                return Long.toHexString(QuadTiling.quadTile(coor));
+            }
+            return "Way??";
+        }
+        boolean remove_content(T o)
+        {
+            boolean ret = this.content.remove(o);
+            if (this.content.size() == 0)
+                this.content = null;
+            return ret;
+        }
+        // Get the correct index for the given primitive
+        // at the given level.  If the primitive can not
+        // fit into a single quad at this level, return -1
+        int get_index(T o, int level)
+        {
+            if (debug)
+                out("getting index for " + o + " at level: " + level);
+            if (o instanceof Node) {
+                Node n = (Node)o;
+                LatLon coor = ((Node)o).getCoor();
+                if (coor == null)
+                    return -1;
+                return QuadTiling.index(coor, level);
+            }
+            if (o instanceof Way) {
+                Way w = (Way)o;
+                int index = -1;
+                //for (Node n : w.getNodes()) {
+                for (LatLon c : way_bbox(w).points()) {
+                //    LatLon c = n.getCoor();
+                    if (debug)
+                        out("getting index for point: " + c);
+                    if (index == -1) {
+                        index = QuadTiling.index(c, level);
+                        if (debug)
+                            out("set initial way index to: " + index);
+                        continue;
+                    }
+                    int node_index = QuadTiling.index(c, level);
+                    if (debug)
+                        out("other node way index: " + node_index);
+                    if (node_index != index) {
+                        // This happens at level 0 sometimes when a way has no
+                        // nodes present.
+                        if (debug) {
+                            out("way ("+w.getId()+") would have gone across two quads "
+                                    + node_index + "/" + index + " at level: " + level + "    ");
+                            out("node count: " + w.getNodes().size());
+                            for (LatLon c2 : way_bbox(w).points())
+                                out("points: " + c2);
+                        }
+                        return -1;
+                    }
+                }
+                return index;
+            }
+            abort("bad primitive: " + o);
+            return -1;
         }
         void split()
         {
@@ -205,36 +303,47 @@ public class QuadBuckets implements Collection<Node>
             if (children != null) {
                 abort("overwrote children");
             }
-            children = new QBLevel[QuadTiling.TILES_PER_LEVEL];
+            // This is ugly and hackish.  But, it seems to work,
+            // and using an ArrayList here seems to cost us
+            // a significant performance penalty -- 50% in my
+            // testing.  Child access is one of the single
+            // hottest code paths in this entire class.
+            children = (QBLevel[])Array.newInstance(this.getClass(), QuadTiling.TILES_PER_LEVEL);
             // deferring allocation of children until use
             // seems a bit faster
             //for (int i = 0; i < TILES_PER_LEVEL; i++)
             //    children[i] = new QBLevel(this, i);
-            List<Node> tmpcontent = content;
+            List<T> tmpcontent = content;
             content = null;
-            for (Node n : tmpcontent) {
-                int new_index = QuadTiling.index(n, level);
+            for (T o : tmpcontent) {
+                int new_index = get_index(o, level);
+                if (new_index == -1) {
+                    this.add_content(o);
+                    //out("adding content to branch: " + this);
+                    continue;
+                }
                 if (children[new_index] == null)
                     children[new_index] = new QBLevel(this, new_index);
                 QBLevel child = children[new_index];
                 if (debug)
-                    out("putting "+n+"(q:"+quads(n)+") into ["+new_index+"] " + child.bbox());
-                child.add(n);
+                    out("putting "+o+"(q:"+quads(o)+") into ["+new_index+"] " + child.bbox());
+                child.add(o);
             }
         }
-        void add_leaf(Node n)
+        boolean add_content(T o)
         {
-            LatLon c = n.getCoor();
+            boolean ret = false;
+            if (content == null)
+                content = new LinkedList<T>();
+            ret = content.add(o);
+            if (debug && !this.isLeaf())
+                pout("added "+o.getClass().getName()+" to non-leaf with size: " + content.size());
+            return ret;
+        }
+        void add_to_leaf(T o)
+        {
             QBLevel ret = this;
-            if (content == null) {
-                if (debug)
-                    out("   new content array");
-                // I chose a LinkedList because we do not do
-                // any real random access to this.  We generally
-                // just run through the whole thing all at once
-                content = new LinkedList<Node>();
-            }
-            content.add(n);
+            add_content(o);
             if (content.size() > MAX_OBJECTS_PER_LEVEL) {
                 if (debug)
                     out("["+level+"] deciding to split");
@@ -254,23 +363,52 @@ public class QuadBuckets implements Collection<Node>
                 }
                 return;
             }
-            if (debug) {
-                out("   plain content put now have " + content.size());
-                if (content.contains(c))
-                    out("   and I already have that one");
+        }
+        /*
+         * This is a quick hack.  The problem is that we need the
+         * way's bounding box a *bunch* of times when it gets
+         * inserted.  It gets expensive if we have to recreate
+         * them each time.
+         *
+         * An alternative would be to calculate it at .add() time
+         * and passing it down the call chain.
+         */
+        HashMap<Way,BBox> way_bbox_cache = new HashMap<Way, BBox>();
+        BBox way_bbox(Way w)
+        {
+            if (way_bbox_cache.size() > 100)
+                way_bbox_cache.clear();
+            BBox b = way_bbox_cache.get(w);
+            if (b == null) {
+                b = new BBox(w);
+                way_bbox_cache.put(w, b);
             }
+            return b;
+            //return new BBox(w);
         }
 
-        List<Node> search(BBox bbox, LatLon point, double radius)
+        boolean matches(T o, BBox search_bbox)
         {
-            if (isLeaf())
-                return search_leaf(bbox, point, radius);
-            return search_branch(bbox, point, radius);
+            if (o instanceof Node) {
+                LatLon coor = ((Node)o).getCoor();
+                if (coor == null)
+                    return false;
+                return search_bbox.bounds(coor);
+            }
+            if (o instanceof Way) {
+                BBox bbox = way_bbox((Way)o);
+                return bbox.intersects(search_bbox);
+            }
+            abort("matches() bad primitive: " + o);
+            return false;
         }
-        private List<Node> search_leaf(BBox bbox, LatLon point, double radius)
+        private List<T> search_contents(BBox search_bbox)
         {
+            String size = "null";
+            if (content != null)
+                size = ""+content.size();
             if (debug)
-                out("searching contents in tile " + this.bbox() + " for " + bbox);
+                out("searching contents (size: "+size+") for " + search_bbox);
             /*
              * It is possible that this was created in a split
              * but never got any content populated.
@@ -283,28 +421,10 @@ public class QuadBuckets implements Collection<Node>
             //
             // the iterator's calls to ArrayList.size() were showing up in
             // some profiles, so I'm trying a LinkedList instead
-            List<Node> ret = new LinkedList<Node>();
-            for (Node n : content) {
-                // This supports two modes: one where the bbox is just
-                // an outline of the point/radius combo, and one where
-                // it is *just* the bbox.  If it is *just* the bbox,
-                // don't consider the points below
-                if (point == null) {
-                    ret.add(n);
-                    continue;
-                }
-                LatLon c = n.getCoor();
-                // is greatCircleDistance really necessary?
-                double d = c.greatCircleDistance(point);
-                if (debug)
-                    out("[" + level + "] Checking coor: " + c + " dist: " + d + " vs. " + radius + " " + quads(n));
-                if (d > radius)
-                    continue;
-                if (debug)
-                    out("hit in quad: "+Long.toHexString(this.quad)+"\n");
-                //if (ret == null)
-                //    ret = new LinkedList<Node>();
-                ret.add(n);
+            List<T> ret = new LinkedList<T>();
+            for (T o : content) {
+                if (matches(o, search_bbox))
+                    ret.add(o);
             }
             if (debug)
                 out("done searching quad " + Long.toHexString(this.quad));
@@ -354,7 +474,13 @@ public class QuadBuckets implements Collection<Node>
             }
             return null;
         }
-        QBLevel nextLeaf()
+        boolean hasContent()
+        {
+            if (content == null)
+                return false;
+            return true;
+        }
+        QBLevel nextContentNode()
         {
             QBLevel next = this;
             if (this.isLeaf()) {
@@ -380,8 +506,10 @@ public class QuadBuckets implements Collection<Node>
             // leaf.  So, walk back down the tree
             // and find the first leaf
             while (!next.isLeaf()) {
+                if (next.hasContent() && next != this)
+                    break;
                 if (debug)
-                    out("["+next.level+"] next node is a branch, moving down...");
+                    out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
                 for (QBLevel child : next.children) {
                     if (child == null)
                         continue;
@@ -416,31 +544,33 @@ public class QuadBuckets implements Collection<Node>
                     continue;
                 ret += l.size();
             }
+            if (content != null)
+                ret += content.size();
             if (debug)
                 out("["+level+"] branch size: " + ret);
             return ret;
         }
-        boolean contains(Node n)
+        boolean contains(T n)
         {
             QBLevel res = find_exact(n);
             if (res == null)
                 return false;
             return true;
         }
-        QBLevel find_exact(Node n)
+        QBLevel find_exact(T n)
         {
             if (isLeaf())
                 return find_exact_leaf(n);
             return find_exact_branch(n);
         }
-        QBLevel find_exact_leaf(Node n)
+        QBLevel find_exact_leaf(T n)
         {
             QBLevel ret = null;
             if (content != null && content.contains(n))
                 ret = this;
             return ret;
         }
-        QBLevel find_exact_branch(Node n)
+        QBLevel find_exact_branch(T n)
         {
             QBLevel ret = null;
             for (QBLevel l : children) {
@@ -452,84 +582,81 @@ public class QuadBuckets implements Collection<Node>
             }
             return ret;
         }
-        boolean add(Node n)
+        boolean add(T n)
         {
+            if (consistency_testing) {
+                if (!matches(n, this.bbox())) {
+                    out("-----------------------------");
+                    debug = true;
+                    get_index(n, level);
+                    abort("object " + n + " does not belong in node at level: " + level + " bbox: " + this.bbox());
+                }
+            }
             if (isLeaf())
-                add_leaf(n);
+                add_to_leaf(n);
             else
-                add_branch(n);
+                add_to_branch(n);
             return true;
         }
-        QBLevel add_branch(Node n)
+        QBLevel add_to_branch(T n)
         {
-            LatLon c = n.getCoor();
-            int index = QuadTiling.index(n, level);
-            if (debug)
+            int index = get_index(n, level);
+            if (index == -1) {
+                if (debug)
+                    out("unable to get index for " + n + "at level: " + level + ", adding content to branch: " + this);
+                this.add_content(n);
+                return this;
+            }
+            if (debug) {
                 out("[" + level + "]: " + n +
                     " index " + index + " levelquad:" + this.quads() + " level bbox:" + this.bbox());
-            if (debug)
                 out("   put in child["+index+"]");
+            }
             if (children[index] == null)
                 children[index] = new QBLevel(this, index);
             children[index].add(n);
-            /* this is broken at the moment because we need to handle the null n.getCoor()
-            if (consistency_testing && !children[index].bbox().bounds(n.getCoor())) {
-                out("target child["+index+"] does not bound " + children[index].bbox() + " " + c);
-                for (int i = 0; i < children.length; i++) {
-                    QBLevel ch = children[i];
-                    if (ch == null)
-                        continue;
-                    out("child["+i+"] quad: " + ch.quads() + " bounds: " + ch.bbox.bounds(n.getCoor()));
-                }
-                out(" coor quad: " + quads(n));
-                abort("");
-            }*/
-
-            if (consistency_testing) {
-                for (int i = 0; i < children.length; i++) {
-                    QBLevel ch = children[i];
-                    if (ch == null)
-                        continue;
-                    if (ch.bbox().bounds(c) && i != index) {
-                        out("multible bounding?? expected: " + index + " but saw at " + i + " " + ch.quads());
-                        out("child["+i+"] bbox: " + ch.bbox());
-                    }
-                }
-            }
             return this;
         }
-        private List<Node> search_branch(BBox bbox, LatLon point, double radius)
+        private List<T> search(BBox search_bbox)
         {
-            List<Node> ret = null;
+            List<T> ret = null;
             if (debug)
                 System.out.print("[" + level + "] qb bbox: " + this.bbox() + " ");
-            if (!this.bbox().intersects(bbox)) {
+            if (!this.bbox().intersects(search_bbox)) {
                 if (debug) {
                     out("miss " + Long.toHexString(this.quad));
                     //QuadTiling.tile2xy(this.quad);
                 }
                 return ret;
             }
+            if (this.hasContent())
+                ret = this.search_contents(search_bbox);
+            if (this.isLeaf()) {
+                return ret;
+            }
+            //if (this.hasContent())
+            //    abort("branch had stuff");
             if (debug)
                 out("hit " + this.quads());
 
             if (debug)
                 out("[" + level + "] not leaf, moving down");
-            int child_nr = 0;
-            for (QBLevel q : children) {
+            for (int i = 0; i < children.length; i++) {
+                QBLevel q = children[i];
+                if (debug)
+                    out("child["+i+"]: " + q);
                 if (q == null)
                     continue;
-                child_nr++;
                 if (debug)
-                    System.out.print(child_nr+": ");
-                List<Node> coors = q.search(bbox, point, radius);
+                    System.out.print(i+": ");
+                List<T> coors = q.search(search_bbox);
                 if (coors == null)
                     continue;
                 if (ret == null)
                     ret = coors;
                 else
                     ret.addAll(coors);
-                if (q.bbox().bounds(bbox)) {
+                if (q.bbox().bounds(search_bbox)) {
                     search_cache = q;
                     // optimization: do not continue searching
                     // other tiles if this one wholly contained
@@ -550,7 +677,9 @@ public class QuadBuckets implements Collection<Node>
         public void init(QBLevel parent)
         {
                 this.parent = parent;
-                if (parent != null)
+                if (parent == null)
+                    this.level = 0;
+                else
                     this.level = parent.level + 1;
                 this.quad = 0;
         }
@@ -568,8 +697,6 @@ public class QuadBuckets implements Collection<Node>
         public QBLevel(QBLevel parent, int parent_index)
         {
             this.init(parent);
-            this.level = parent.level+1;
-            this.parent = parent;
             int shift = (QuadBuckets.NR_LEVELS - level) * 2;
             long mult = 1;
             // Java blows the big one.  It seems to wrap when
@@ -644,17 +771,25 @@ public class QuadBuckets implements Collection<Node>
     {
         root = new QBLevel(null);
         search_cache = null;
-        if (debug)
+        if (debug) {
             out("QuadBuckets() cleared: " + this);
+            out("root: " + root + " level: " + root.level + " bbox: " + root.bbox());
+        }
     }
-    public boolean add(Node n)
+    public boolean add(T n)
     {
         if (debug)
-            out(this + " QuadBuckets() add: " + n + " size now: " + this.size());
+            out("QuadBuckets() add: " + n + " size now: " + this.size());
         int before_size = -1;
         if (consistency_testing)
             before_size = root.size();
-        boolean ret = root.add(n);
+        boolean ret;
+        // A way with no nodes will have an infinitely large
+        // bounding box.  Just stash it in the root node.
+        if (!n.isUsable())
+            ret = root.add_content(n);
+        else
+            ret = root.add(n);
         if (consistency_testing) {
             int end_size = root.size();
             if (ret)
@@ -662,90 +797,116 @@ public class QuadBuckets implements Collection<Node>
             if (before_size != end_size)
                 abort("size inconsistency before add: " + before_size + " after: " + end_size);
         }
+        if (debug)
+            out("QuadBuckets() add: " + n + " size after: " + this.size());
         return ret;
+    }
+    public void reindex()
+    {
+        QBLevel newroot = new QBLevel(null);
+        Iterator<T> i = this.iterator();
+        while (i.hasNext()) {
+            T o = i.next();
+            newroot.add(o);
+        }
+        root = newroot;
     }
     public void unsupported()
     {
         out("unsupported operation");
         throw new UnsupportedOperationException();
     }
-    public boolean retainAll(Collection nodes)
+    public boolean retainAll(Collection objects)
     {
-        for (Node n : this) {
-            if (nodes.contains(n))
+        for (T o : this) {
+            if (objects.contains(o))
                 continue;
-            if (!this.remove(n))
+            if (!this.remove(o))
                 return false;
         }
         return true;
     }
-    public boolean removeAll(Collection nodes)
+    boolean canStore(Object o)
     {
-        for (Object o : nodes) {
-            if (!(o instanceof Node))
-                return false;
-            Node n = (Node)o;
-            if (!this.remove(n))
-                return false;
-        }
-        return true;
+        if (o instanceof Way)
+            return true;
+        if (o instanceof Node)
+            return true;
+        return false;
     }
-    public boolean addAll(Collection nodes)
+    public boolean removeAll(Collection objects)
     {
-        for (Object o : nodes) {
-            if (!(o instanceof Node))
+        for (Object o : objects) {
+            if (!canStore(o))
                 return false;
-            Node n = (Node)o;
-            if (!this.add(n))
+            if (!this.remove(o))
                 return false;
         }
         return true;
     }
-    public boolean containsAll(Collection nodes)
+    public boolean addAll(Collection objects)
+    {
+        for (Object o : objects) {
+            if (!canStore(o))
+                return false;
+            if (!this.add(convert(o)))
+                return false;
+        }
+        return true;
+    }
+    public boolean containsAll(Collection objects)
     {
         boolean ret = true;
-        for (Object o : nodes) {
-            if (!(o instanceof Node))
+        for (Object o : objects) {
+            if (!canStore(o))
                 return false;
-            Node n = (Node)o;
-            if (!this.contains(n))
+            if (!this.contains(o))
                 return false;
         }
         return true;
     }
     private void check_type(Object o)
     {
-        if (o instanceof Node)
+        if (canStore(o))
             return;
         unsupported();
+    }
+    // If anyone has suggestions for how to fix
+    // this properly, I'm listening :)
+    private T convert(Object raw)
+    {
+        //@SuppressWarnings("unchecked")
+        return (T)raw;
     }
     public boolean remove(Object o)
     {
         check_type(o);
-        return this.remove((Node)o);
+        return this.remove(convert(o));
     }
-    public boolean remove(Node n)
+    public boolean remove(T n)
     {
         QBLevel bucket = root.find_exact(n);
         if (!bucket.isLeaf())
             abort("found branch where leaf expected");
-        return bucket.content.remove(n);
+        boolean ret = bucket.remove_content(n);
+        return ret;
     }
     public boolean contains(Object o)
     {
-        if (!(o instanceof Node))
+        if (!canStore(o))
             return false;
-        QBLevel bucket = root.find_exact((Node)o);
+        QBLevel bucket = root.find_exact(convert(o));
         if (bucket == null)
             return false;
         return true;
     }
-    public ArrayList<Node> toArrayList()
+    public ArrayList<T> toArrayList()
     {
-        ArrayList<Node> a = new ArrayList<Node>();
-        for (Node n : this)
+        ArrayList<T> a = new ArrayList<T>();
+        for (T n : this)
             a.add(n);
-        out("returning array list with size: " + a.size());
+        if (debug)
+           out("returning array list with size: " + a.size());
         return a;
     }
     public Object[] toArray()
@@ -756,31 +917,32 @@ public class QuadBuckets implements Collection<Node>
     {
         return this.toArrayList().toArray(template);
     }
-    class QuadBucketIterator implements Iterator<Node>
+    class QuadBucketIterator implements Iterator<T>
     {
-        QBLevel current_leaf;
-        int index_in_leaf;
+        QBLevel current_node;
+        int content_index;
         int iterated_over;
-        QBLevel next_leaf(QBLevel q)
+        QBLevel next_content_node(QBLevel q)
         {
             if (q == null)
                 return null;
             QBLevel orig = q;
-            QBLevel next = q.nextLeaf();
-            if (consistency_testing && (orig == next))
+            QBLevel next = q.nextContentNode();
+            //if (consistency_testing && (orig == next))
+            if (orig == next)
                 abort("got same leaf back leaf: " + q.isLeaf());
             return next;
         }
-        public QuadBucketIterator(QuadBuckets qb)
+        public QuadBucketIterator(QuadBuckets<T> qb)
         {
             if (debug)
-                out(this + " is a new iterator qb.root: " + qb.root + " size: " + qb.size());
-            if (qb.root.isLeaf())
-                current_leaf = qb.root;
+                out(this + " is a new iterator qb: " + qb + " size: " + qb.size());
+            if (qb.root.isLeaf() || qb.root.hasContent())
+                current_node = qb.root;
             else
-                current_leaf = next_leaf(qb.root);
+                current_node = next_content_node(qb.root);
             if (debug)
-                out("\titerator first leaf: " + current_leaf);
+                out("\titerator first leaf: " + current_node);
             iterated_over = 0;
         }
         public boolean hasNext()
@@ -792,35 +954,35 @@ public class QuadBuckets implements Collection<Node>
             }
             return true;
         }
-        Node peek()
+        T peek()
         {
-            if (current_leaf == null) {
+            if (current_node == null) {
                 if (debug)
                     out("null current leaf, nowhere to go");
                 return null;
             }
-            while((current_leaf.content == null) ||
-                  (index_in_leaf >= current_leaf.content.size())) {
+            while((current_node.content == null) ||
+                  (content_index >= current_node.content.size())) {
                 if (debug)
                     out("moving to next leaf");
-                index_in_leaf = 0;
-                current_leaf = next_leaf(current_leaf);
-                if (current_leaf == null)
+                content_index = 0;
+                current_node = next_content_node(current_node);
+                if (current_node == null)
                     break;
             }
-            if (current_leaf == null || current_leaf.content == null) {
+            if (current_node == null || current_node.content == null) {
                 if (debug)
-                    out("late nowhere to go " + current_leaf);
+                    out("late nowhere to go " + current_node);
                 return null;
             }
-            return current_leaf.content.get(index_in_leaf);
+            return current_node.content.get(content_index);
         }
-        public Node next()
+        public T next()
         {
-            Node ret = peek();
-            index_in_leaf++;
+            T ret = peek();
+            content_index++;
             if (debug)
-                out("iteration["+iterated_over+"] " + index_in_leaf + " leaf: " + current_leaf);
+                out("iteration["+iterated_over+"] " + content_index + " leaf: " + current_node);
             iterated_over++;
             if (ret == null) {
                 if (debug)
@@ -834,11 +996,12 @@ public class QuadBuckets implements Collection<Node>
             // 1. Back up to the thing we just returned
             // 2. move the index back since we removed
             //    an element
-            index_in_leaf--;
-            current_leaf.content.remove(index_in_leaf);
+            content_index--;
+            T object = peek();
+            current_node.content.remove(content_index);
         }
     }
-    public Iterator<Node> iterator()
+    public Iterator<T> iterator()
     {
         return new QuadBucketIterator(this);
     }
@@ -849,6 +1012,16 @@ public class QuadBuckets implements Collection<Node>
         if (debug)
             out(this + " QuadBuckets size: " + ret);
         return ret;
+    }
+    public int size_iter()
+    {
+        int count = 0;
+        Iterator<T> i = this.iterator();
+        while (i.hasNext()) {
+            i.next();
+            count++;
+        }
+        return count;
     }
     public boolean isEmpty()
     {
@@ -867,27 +1040,34 @@ public class QuadBuckets implements Collection<Node>
             out("search bbox after sanity: " +  bbox);
         return bbox;
     }
-    List<Node> search(LatLon point, double radius)
+    List<T> search(Way w)
     {
-        return this.search(search_to_bbox(point, radius), point, radius);
+        BBox way_bbox = new BBox(w);
+        return this.search(way_bbox);
     }
-    List<Node> search(BBox bbox)
+    public List<T> search(Node n, double radius)
     {
-        return this.search(bbox, null, -1);
+        return this.search(n.getCoor(), radius);
     }
-    public List<Node> search(LatLon b1, LatLon b2)
+    public List<T> search(LatLon point, double radius)
+    {
+        if (point == null)
+            return Collections.emptyList();
+        return this.search(search_to_bbox(point, radius));
+    }
+    public List<T> search(LatLon b1, LatLon b2)
     {
         BBox bbox = new BBox(b1.lon(), b1.lat(), b2.lon(), b2.lat());
         bbox.sanity();
         return this.search(bbox);
     }
-    List<Node> search(BBox bbox, LatLon point, double radius)
+    List<T> search(BBox search_bbox)
     {
         if (debug) {
-            out("qb root search at " + point + " around: " + radius);
+            out("qb root search at " + search_bbox);
             out("root bbox: " + root.bbox());
         }
-        List<Node> ret = null;
+        List<T> ret;
         // Doing this cuts down search cost on a real-life data
         // set by about 25%
         boolean cache_searches = true;
@@ -897,12 +1077,35 @@ public class QuadBuckets implements Collection<Node>
             // Walk back up the tree when the last
             // search spot can not cover the current
             // search
-            while (!search_cache.bbox().bounds(bbox)) {
+            while (!search_cache.bbox().bounds(search_bbox)) {
+                out("bbox: " + search_bbox);
+                if (debug) {
+                    out("search_cache: " + search_cache + " level: " + search_cache.level);
+                    out("search_cache.bbox(): " + search_cache.bbox());
+                }
                 search_cache = search_cache.parent;
+                if (debug)
+                    out("new search_cache: " + search_cache);
             }
         } else {
             search_cache = root;
         }
-        return search_cache.search(bbox, point, radius);
+        ret = search_cache.search(search_bbox);
+        if (ret == null)
+            ret = new ArrayList<T>();
+        // A way that spans this bucket may be stored in one
+        // of the nodes which is a parent of the search cache
+        QBLevel tmp = search_cache.parent;
+        while (tmp != null) {
+            List<T> content_result = tmp.search_contents(search_bbox);
+            if (content_result != null)
+                ret.addAll(content_result);
+            tmp = tmp.parent;
+        }
+        if (ret == null || ret.size() == 0)
+            return Collections.emptyList();
+        if (debug)
+            out("search of QuadBuckets for " + search_bbox + " ret len: " + ret.size());
+        return ret;
     }
 }
