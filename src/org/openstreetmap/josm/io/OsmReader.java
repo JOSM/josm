@@ -98,7 +98,7 @@ public class OsmReader {
                 osm.setOsmId(id, version);
             }
             osm.setDeleted(deleted);
-            osm.setModified(modified);
+            osm.setModified(modified | deleted);
             osm.setTimestamp(timestamp);
             osm.user = user;
             osm.setVisible(visible);
