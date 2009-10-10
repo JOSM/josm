@@ -75,11 +75,14 @@ public class PluginHandler {
                 );
             }
         }
-        for (String p : unmaintained) {
-            if (plugins.contains(p) && disablePlugin(tr("<html>Loading of {0} plugin was requested."
-            +"<br>This plugin is no longer developed and very likely will produce errors."
-            +"<br>It should be disabled.<br>Delete from preferences?</html>", p), p))
-                plugins.remove(p);
+        if(early)
+        {
+            for (String p : unmaintained) {
+                if (plugins.contains(p) && disablePlugin(tr("<html>Loading of {0} plugin was requested."
+                +"<br>This plugin is no longer developed and very likely will produce errors."
+                +"<br>It should be disabled.<br>Delete from preferences?</html>", p), p))
+                    plugins.remove(p);
+            }
         }
 
         if (plugins.isEmpty())
