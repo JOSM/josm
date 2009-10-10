@@ -163,12 +163,12 @@ public class SearchAction extends JosmAction{
         while (searchHistory.size() > Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE)) {
             searchHistory.removeLast();
         }
-        lastSearch = s;
+        lastSearch = new SearchSetting(s);
         search(s);
     }
 
     public static void searchWithoutHistory(SearchSetting s) {
-        lastSearch = s;
+        lastSearch = new SearchSetting(s);
         search(s);
     }
 
