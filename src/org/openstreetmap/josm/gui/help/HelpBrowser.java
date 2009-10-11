@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.help;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -36,7 +35,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HelpBrowser extends JFrame {
 

@@ -2,10 +2,15 @@
 package org.openstreetmap.josm.gui.help;
 
 import java.io.File;
+import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
+import org.openstreetmap.josm.Main;
 
 /**
  * This is the proxy class for the help browser running in its own process.
@@ -44,7 +49,7 @@ public class HelpBrowserProxy {
         if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
             javaBin = "javaw.exe";
         } else {
-            javaBin = "javaw";
+            javaBin = "java";
         }
         cmdLine.add(new File(new File(System.getProperty("java.home"), "bin"), javaBin).toString());
         cmdLine.add("-classpath");
@@ -60,11 +65,13 @@ public class HelpBrowserProxy {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        pw = new PrintWriter(
-                new OutputStreamWriter(
-                        helpBrowserProcess.getOutputStream()
-                )
-        );
+        if (helpBrowserProcess != null) {
+            pw = new PrintWriter(
+                    new OutputStreamWriter(
+                            helpBrowserProcess.getOutputStream()
+                    )
+            );
+        }
     }
 
     /**
@@ -78,6 +85,12 @@ public class HelpBrowserProxy {
             launch();
         }
         if (helpBrowserProcess == null) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("Failed to launch the external help browser"),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
             System.err.println("Failed to launch browser");
             return;
         }
