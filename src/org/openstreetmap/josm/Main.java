@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
+import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -281,36 +282,12 @@ abstract public class Main {
         }
     };
 
-    static public void setProjection(String name)
-    {
-        Bounds b = (map != null && map.mapView != null) ? map.mapView.getRealBounds() : null;
-        Projection oldProj = Main.proj;
-        try {
-            Main.proj = (Projection)Class.forName(name).newInstance();
-        } catch (final Exception e) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("The projection {0} could not be activated. Using Mercator", name),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-            Main.proj = new Mercator();
-        }
-        if(!Main.proj.equals(oldProj))
-        {
-            if(b != null) {
-                map.mapView.zoomTo(b);
-                /* TODO - remove layers with fixed projection */
-            }
-        }
-    }
-
     /**
      * Should be called before the main constructor to setup some parameter stuff
      * @param args The parsed argument list.
      */
     public static void preConstructorInit(Map<String, Collection<String>> args) {
-        setProjection(Main.pref.get("projection", Mercator.class.getName()));
+        ProjectionPreference.setProjection();
 
         try {
             try {

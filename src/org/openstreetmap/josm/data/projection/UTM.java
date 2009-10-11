@@ -3,9 +3,19 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagLayout;
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Directly use latitude / longitude values as x/y.
@@ -13,7 +23,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * @author Dirk Stöcker
  * code based on JavaScript from Chuck Taylor
  */
-public class UTM implements Projection {
+public class UTM implements Projection, ProjectionSubPrefs {
+
+    private int zone = 33;
 
     final private double UTMScaleFactor = 0.9996;
 
@@ -335,21 +347,20 @@ public class UTM implements Projection {
     }
 
     @Override public String toString() {
-        return tr("UTM Zone {0}", getzone());
+        return tr("UTM");
     }
 
-    /* TODO - support all UTM's not only zone 33 */
     public int getzone()
     {
-        return 33;
+        return zone;
     }
 
     public String toCode() {
-        return "EPSG:325833";
+        return "EPSG:"+ (325800 + getzone());
     }
 
     public String getCacheDirectoryName() {
-        return "epsg325833";
+        return "epsg"+ (325800 + getzone());
     }
 
     public Bounds getWorldBoundsLatLon()
@@ -362,5 +373,49 @@ public class UTM implements Projection {
     public double getDefaultZoomInPPD() {
         // this will set the map scaler to about 1000 m
         return 10;
+    }
+
+    private JPanel prefpanel = null;
+    private JComboBox prefcb = null;
+    public JPanel getPreferencePanel() {
+        if(prefpanel != null)
+            return prefpanel;
+
+        prefcb = new JComboBox();
+        for(int i = 1; i <= 60; i++) {
+            prefcb.addItem(i);
+        }
+
+        prefcb.setSelectedIndex(zone - 1);
+        prefpanel = new JPanel(new GridBagLayout());
+        prefpanel.add(new JLabel(tr("UTM Zone")), GBC.std().insets(5,5,0,5));
+        prefpanel.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        prefpanel.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
+        prefpanel.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+        return prefpanel;
+    }
+
+    public Collection<String> getPreferences() {
+        if(prefcb == null)
+            return null;
+        int zone = prefcb.getSelectedIndex() + 1;
+        return Collections.singleton(Integer.toString(zone));
+    }
+
+    public void destroyCachedPanel() {
+        prefpanel = null;
+        prefcb = null;
+    }
+
+    public void setPreferences(Collection<String> args)
+    {
+        /* TODO: parse args instead of fixed value */
+        zone = 33;
+    }
+
+    public Collection<String> getPreferencesFromCode(String code)
+    {
+        /* TODO: implement */
+        return null;
     }
 }
