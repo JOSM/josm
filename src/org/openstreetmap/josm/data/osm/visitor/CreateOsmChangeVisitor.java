@@ -51,7 +51,7 @@ public class CreateOsmChangeVisitor extends AbstractVisitor {
             osmwriter.setWithBody(false);
             osmwriter.visit(n);
         } else {
-            switchMode((n.getId() == 0) ? "create" : "modify");
+            switchMode(n.isNew() ? "create" : "modify");
             osmwriter.setWithBody(true);
             osmwriter.visit(n);
         }
@@ -62,7 +62,7 @@ public class CreateOsmChangeVisitor extends AbstractVisitor {
             osmwriter.setWithBody(false);
             osmwriter.visit(w);
         } else {
-            switchMode((w.getId() == 0) ? "create" : "modify");
+            switchMode(w.isNew() ? "create" : "modify");
             osmwriter.setWithBody(true);
             osmwriter.visit(w);
         }
@@ -73,7 +73,7 @@ public class CreateOsmChangeVisitor extends AbstractVisitor {
             osmwriter.setWithBody(false);
             osmwriter.visit(r);
         } else {
-            switchMode((r.getId() == 0) ? "create" : "modify");
+            switchMode(r.isNew() ? "create" : "modify");
             osmwriter.setWithBody(true);
             osmwriter.visit(r);
         }

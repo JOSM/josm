@@ -554,12 +554,12 @@ public class OsmApi extends OsmConnection {
                 errorHeader = errorHeader == null? null : errorHeader.trim();
                 String errorBody = responseBody == null ? null : responseBody.toString().trim();
                 switch(retCode) {
-                    case HttpURLConnection.HTTP_OK:
-                        break; // do nothing
-                    case HttpURLConnection.HTTP_GONE:
-                        throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
-                    default:
-                        throw new OsmApiException(retCode, errorHeader, errorBody);
+                case HttpURLConnection.HTTP_OK:
+                    break; // do nothing
+                case HttpURLConnection.HTTP_GONE:
+                    throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
+                default:
+                    throw new OsmApiException(retCode, errorHeader, errorBody);
 
                 }
                 return responseBody.toString();

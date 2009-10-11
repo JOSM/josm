@@ -78,7 +78,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "child"));
         if (layer == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
-        if (child.getId() == 0)
+        if (child.isNew())
             throw new IllegalArgumentException(tr("Value of child.getId() > 0 expected. Got {1}.", child.getId()));
         referrers = null;
         this.layer = layer;

@@ -75,7 +75,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
 
     @Override
     public boolean isEqualEntry(Node e1, Node e2) {
-        if (e1.getId() > 0)
+        if (!e1.isNew())
             return e1.getId() == e2.getId();
         else
             return e1 == e2;

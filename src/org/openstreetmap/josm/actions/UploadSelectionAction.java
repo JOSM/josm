@@ -67,17 +67,17 @@ public class UploadSelectionAction extends JosmAction{
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (OsmPrimitive p : ds.nodes) {
-            if (p.isDeleted() && p.getId() > 0 && p.isVisible() && p.isModified()) {
+            if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
             }
         }
         for (OsmPrimitive p : ds.ways) {
-            if (p.isDeleted() && p.getId() > 0 && p.isVisible() && p.isModified()) {
+            if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
             }
         }
         for (OsmPrimitive p : ds.relations) {
-            if (p.isDeleted() && p.getId() > 0 && p.isVisible() && p.isModified()) {
+            if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
             }
         }
@@ -87,7 +87,7 @@ public class UploadSelectionAction extends JosmAction{
     protected Set<OsmPrimitive> getModifiedPrimitives(Collection<OsmPrimitive> primitives) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (OsmPrimitive p: primitives) {
-            if (p.getId() == 0) {
+            if (p.isNew()) {
                 ret.add(p);
             } else if (p.isVisible() && p.isModified() && !p.incomplete) {
                 ret.add(p);
@@ -134,7 +134,7 @@ public class UploadSelectionAction extends JosmAction{
 
     protected boolean hasPrimitivesToDelete(Collection<OsmPrimitive> primitives) {
         for (OsmPrimitive p: primitives)
-            if (p.isDeleted() && p.isModified() && p.getId() > 0)
+            if (p.isDeleted() && p.isModified() && !p.isNew())
                 return true;
         return false;
     }
@@ -187,14 +187,14 @@ public class UploadSelectionAction extends JosmAction{
         }
 
         public void visit(Node n) {
-            if (n.getId() == 0 || ((n.isModified() || n.isDeleted()) && n.isVisible())) {
+            if (n.isNew() || ((n.isModified() || n.isDeleted()) && n.isVisible())) {
                 // upload new nodes as well as modified and deleted ones
                 hull.add(n);
             }
         }
 
         public void visit(Way w) {
-            if (w.getId() == 0 || ((w.isModified() || w.isDeleted()) && w.isVisible())) {
+            if (w.isNew() || ((w.isModified() || w.isDeleted()) && w.isVisible())) {
                 // upload new ways as well as modified and deleted ones
                 hull.add(w);
                 for (Node n: w.getNodes()) {
@@ -206,14 +206,14 @@ public class UploadSelectionAction extends JosmAction{
         }
 
         public void visit(Relation r) {
-            if (r.getId() == 0 || ((r.isModified() || r.isDeleted()) && r.isVisible())) {
+            if (r.isNew() || ((r.isModified() || r.isDeleted()) && r.isVisible())) {
                 hull.add(r);
                 for (OsmPrimitive p : r.getMemberPrimitives()) {
                     // add new relation members. Don't include modified
                     // relation members. r shouldn't refer to deleted primitives,
                     // so wont check here for deleted primitives here
                     //
-                    if (p.getId() == 0) {
+                    if (p.isNew()) {
                         p.visit(this);
                     }
                 }
@@ -296,7 +296,7 @@ public class UploadSelectionAction extends JosmAction{
         protected Set<OsmPrimitive> getPrimitivesToCheckForParents() {
             HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
             for (OsmPrimitive p: toUpload) {
-                if (p.isDeleted() && p.getId() >0) {
+                if (p.isDeleted() && !p.isNew()) {
                     ret.add(p);
                 }
             }

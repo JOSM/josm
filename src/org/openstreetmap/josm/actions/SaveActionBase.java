@@ -35,7 +35,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
     public boolean doSave() {
         Layer layer = null;
-        if (layer == null && Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
+        if (Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
                 || Main.map.mapView.getActiveLayer() instanceof GpxLayer)) {
             layer = Main.map.mapView.getActiveLayer();
         }
@@ -139,7 +139,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     private boolean isDataSetEmpty(OsmDataLayer layer) {
         for (OsmPrimitive osm : layer.data.allNonDeletedPrimitives())
-            if (!osm.isDeleted() || osm.getId() > 0)
+            if (!osm.isDeleted() || !osm.isNew())
                 return false;
         return true;
     }

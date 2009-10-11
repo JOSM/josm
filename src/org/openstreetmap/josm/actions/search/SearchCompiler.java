@@ -32,7 +32,7 @@ public class SearchCompiler {
     private boolean regexSearch = false;
     private String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private PushbackTokenizer tokenizer;
-    private static CollectBackReferencesVisitor childBackRefs;
+    private CollectBackReferencesVisitor childBackRefs;
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
@@ -229,44 +229,44 @@ public class SearchCompiler {
                 return mode == Mode.NONE;
 
             switch (mode) {
-                case NONE:
-                    return false;
-                case MISSING_KEY:
-                    return osm.get(key) == null;
-                case ANY:
-                    return true;
-                case ANY_VALUE:
-                    return osm.get(key) != null;
-                case ANY_KEY:
-                    for (String v:osm.getKeys().values()) {
-                        if (v.equals(value))
+            case NONE:
+                return false;
+            case MISSING_KEY:
+                return osm.get(key) == null;
+            case ANY:
+                return true;
+            case ANY_VALUE:
+                return osm.get(key) != null;
+            case ANY_KEY:
+                for (String v:osm.getKeys().values()) {
+                    if (v.equals(value))
+                        return true;
+                }
+                return false;
+            case EXACT:
+                return value.equals(osm.get(key));
+            case ANY_KEY_REGEXP:
+                for (String v:osm.getKeys().values()) {
+                    if (valuePattern.matcher(v).matches())
+                        return true;
+                }
+                return false;
+            case ANY_VALUE_REGEXP:
+            case EXACT_REGEXP:
+                for (Entry<String, String> entry:osm.entrySet()) {
+                    if (keyPattern.matcher(entry.getKey()).matches()) {
+                        if (mode == Mode.ANY_VALUE_REGEXP
+                                || valuePattern.matcher(entry.getValue()).matches())
                             return true;
                     }
-                    return false;
-                case EXACT:
-                    return value.equals(osm.get(key));
-                case ANY_KEY_REGEXP:
-                    for (String v:osm.getKeys().values()) {
-                        if (valuePattern.matcher(v).matches())
-                            return true;
-                    }
-                    return false;
-                case ANY_VALUE_REGEXP:
-                case EXACT_REGEXP:
-                    for (Entry<String, String> entry:osm.entrySet()) {
-                        if (keyPattern.matcher(entry.getKey()).matches()) {
-                            if (mode == Mode.ANY_VALUE_REGEXP
-                                    || valuePattern.matcher(entry.getValue()).matches())
-                                return true;
-                        }
-                    }
-                    return false;
-                case MISSING_KEY_REGEXP:
-                    for (String k:osm.keySet()) {
-                        if (keyPattern.matcher(k).matches())
-                            return false;
-                    }
-                    return true;
+                }
+                return false;
+            case MISSING_KEY_REGEXP:
+                for (String k:osm.keySet()) {
+                    if (keyPattern.matcher(k).matches())
+                        return false;
+                }
+                return true;
             }
             throw new AssertionError("Missed state");
         }
@@ -416,7 +416,7 @@ public class SearchCompiler {
 
     private static class Modified extends Match {
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.isModified() || osm.getId() == 0;
+            return osm.isModified() || osm.isNew();
         }
         @Override public String toString() {return "modified";}
     }
@@ -472,15 +472,21 @@ public class SearchCompiler {
     }
 
     private static class Child extends Match {
-        private Match parent;
-        public Child(Match m) { parent = m; }
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+        private final Match parent;
+        private final CollectBackReferencesVisitor childBackRefs;
+
+        public Child(Match m, CollectBackReferencesVisitor childBackRefs) {
             // "child" (null) should mean the same as "child()"
             // (Always). I.e. match everything
-            if (parent == null) {
+            if (m == null) {
                 parent = new Always();
+            } else {
+                parent = m;
             }
+            this.childBackRefs = childBackRefs;
+        }
 
+        @Override public boolean match(OsmPrimitive osm) throws ParseError {
             boolean isChild = false;
             childBackRefs.initialize();
             osm.visit(childBackRefs);
@@ -591,7 +597,7 @@ public class SearchCompiler {
         else if (tok.equals("selected"))
             return new Selected();
         else if (tok.equals("child"))
-            return new Child(parseParens());
+            return new Child(parseParens(), childBackRefs);
         else if (tok.equals("parent"))
             return new Parent(parseParens());
         else

@@ -143,7 +143,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      * The table model with the history items
      *
      */
-    class HistoryItemTableModel extends DefaultTableModel implements SelectionChangedListener{
+    static class HistoryItemTableModel extends DefaultTableModel implements SelectionChangedListener{
         private ArrayList<OsmPrimitive> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -195,7 +195,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             if (Main.main.getCurrentDataSet() == null)
                 return;
             for (OsmPrimitive primitive: Main.main.getCurrentDataSet().getSelected()) {
-                if (primitive.getId() == 0) {
+                if (primitive.isNew()) {
                     continue;
                 }
                 data.add(primitive);
@@ -225,7 +225,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     /**
      * The column model
      */
-    class HistoryTableColumnModel extends DefaultTableColumnModel {
+    static class HistoryTableColumnModel extends DefaultTableColumnModel {
         protected void createColumns() {
             TableColumn col = null;
             OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();

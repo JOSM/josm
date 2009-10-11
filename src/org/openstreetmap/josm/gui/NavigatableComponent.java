@@ -317,8 +317,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
             // when multiple nodes on one point, prefer new or selected nodes
             else if(dist == minDistanceSq && minPrimitive != null
-                    && ((n.getId() == 0 && ds.isSelected(n))
-                            || (!ds.isSelected(minPrimitive) && (ds.isSelected(n) || n.getId() == 0)))) {
+                    && ((n.isNew() && ds.isSelected(n))
+                            || (!ds.isSelected(minPrimitive) && (ds.isSelected(n) || n.isNew())))) {
                 minPrimitive = n;
             }
         }

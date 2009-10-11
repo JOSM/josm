@@ -364,7 +364,7 @@ public class ChildRelationBrowser extends JPanel {
             for (RelationMember member: parent.getMembers()) {
                 if (member.isRelation()) {
                     Relation child = member.getRelation();
-                    if (!downloadedRelationIds.contains(child)) {
+                    if (!downloadedRelationIds.contains(child.getId())) {
                         relationsToDownload.push(child);
                     }
                 }
@@ -402,7 +402,7 @@ public class ChildRelationBrowser extends JPanel {
             try {
                 while(! relationsToDownload.isEmpty() && !cancelled) {
                     Relation r = relationsToDownload.pop();
-                    if (r.getId() == 0) {
+                    if (r.isNew()) {
                         continue;
                     }
                     rememberChildRelationsToDownload(r);
@@ -513,7 +513,7 @@ public class ChildRelationBrowser extends JPanel {
                 Iterator<Relation> it = relations.iterator();
                 while(it.hasNext() && !cancelled) {
                     Relation r = it.next();
-                    if (r.getId() == 0) {
+                    if (r.isNew()) {
                         continue;
                     }
                     progressMonitor.setCustomText(tr("Downloading relation {0}", r.getDisplayName(DefaultNameFormatter.getInstance())));

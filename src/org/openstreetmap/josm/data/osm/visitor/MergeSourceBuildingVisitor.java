@@ -122,7 +122,6 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         } else if (primitive instanceof Relation) {
             clone = new Relation(primitive.getId());
         }
-        clone.incomplete = true;
         mappedPrimitives.put(primitive, clone);
     }
 
@@ -174,10 +173,6 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         rememberWay(w);
     }
 
-    protected boolean isNew(OsmPrimitive primitive) {
-        return primitive.getId() == 0;
-    }
-
     protected boolean isInSelectionBase(OsmPrimitive primitive) {
         return selectionBase.getSelected().contains(primitive);
     }
@@ -201,7 +196,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
                 Node node = member.getNode();
                 if (isInSelectionBase(node)) {
                     rememberNode(node);
-                } else if (isNew(node)) {
+                } else if (node.isNew()) {
                     rememberNode(node);
                 } else  {
                     rememberNodeIncomplete(node);
@@ -210,7 +205,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
                 Way way = member.getWay();
                 if (isInSelectionBase(way)) {
                     way.visit(this);
-                } else if (isNew(way)) {
+                } else if (way.isNew()) {
                     way.visit(this);
                 } else {
                     rememberWayIncomplete(way);
@@ -219,7 +214,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
                 Relation relation = member.getRelation();
                 if (isInSelectionBase(member.getMember())) {
                     relation.visit(this);
-                } else if (isNew(relation)) {
+                } else if (relation.isNew()) {
                     relation.visit(this);
                 } else {
                     rememberRelationIncomplete(relation);

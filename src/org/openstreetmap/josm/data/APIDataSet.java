@@ -57,11 +57,11 @@ public class APIDataSet {
             if (osm.get("josm/ignore") != null) {
                 continue;
             }
-            if (osm.getId() == 0 && !osm.isDeleted()) {
+            if (osm.isNew() && !osm.isDeleted()) {
                 toAdd.addLast(osm);
             } else if (osm.isModified() && !osm.isDeleted()) {
                 toUpdate.addLast(osm);
-            } else if (osm.isDeleted() && osm.getId() != 0 && osm.isModified()) {
+            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified()) {
                 toDelete.addFirst(osm);
             }
         }
@@ -118,11 +118,11 @@ public class APIDataSet {
         toUpdate.clear();
         toDelete.clear();
         for (OsmPrimitive osm: primitives) {
-            if (osm.getId() == 0 && !osm.isDeleted()) {
+            if (osm.isNew() && !osm.isDeleted()) {
                 toAdd.addLast(osm);
             } else if (osm.isModified() && !osm.isDeleted()) {
                 toUpdate.addLast(osm);
-            } else if (osm.isDeleted() && osm.getId() != 0 && osm.isModified()) {
+            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified()) {
                 toDelete.addFirst(osm);
             }
         }
@@ -215,7 +215,7 @@ public class APIDataSet {
         for (Relation relation: relations) {
             boolean refersToNewRelation = false;
             for (RelationMember m : relation.getMembers()) {
-                if (m.isRelation() && m.getMember().getId() <= 0) {
+                if (m.isRelation() && m.getMember().isNew()) {
                     refersToNewRelation = true;
                     break;
                 }
@@ -252,12 +252,12 @@ public class APIDataSet {
         public void build(Collection<Relation> relations) {
             this.relations = new HashSet<Relation>();
             for(Relation relation: relations) {
-                if (relation.getId() > 0 ) {
+                if (!relation.isNew() ) {
                     continue;
                 }
                 this.relations.add(relation);
                 for (RelationMember m: relation.getMembers()) {
-                    if (m.isRelation() && m.getMember().getId() == 0) {
+                    if (m.isRelation() && m.getMember().isNew()) {
                         addDependency(relation, (Relation)m.getMember());
                     }
                 }
@@ -305,7 +305,7 @@ public class APIDataSet {
                     ret,
                     new Comparator<Relation>() {
                         public int compare(Relation o1, Relation o2) {
-                            return new Integer(uploadOrder.indexOf(o1)).compareTo(uploadOrder.indexOf(o2));
+                            return Integer.valueOf(uploadOrder.indexOf(o1)).compareTo(uploadOrder.indexOf(o2));
                         }
                     }
             );

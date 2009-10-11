@@ -80,7 +80,7 @@ public class CombineWayAction extends JosmAction {
         // the server
         for (Way w : combinedWays) {
             targetWay = w;
-            if (w.getId() != 0) {
+            if (!w.isNew()) {
                 break;
             }
         }

@@ -107,7 +107,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         //
         Iterator<OsmPrimitive> it = primitivesToShow.iterator();
         while(it.hasNext()) {
-            if (it.next().getId() == 0) {
+            if (it.next().isNew()) {
                 it.remove();
             }
         }

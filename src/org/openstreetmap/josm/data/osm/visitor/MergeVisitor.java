@@ -61,13 +61,13 @@ public class MergeVisitor extends AbstractVisitor {
         this.myDataSet = myDataSet;
         this.theirDataSet = theirDataSet;
 
-        for (Node n : myDataSet.nodes) if (n.getId() != 0) {
+        for (Node n : myDataSet.nodes) if (!n.isNew()) {
             nodeshash.put(n.getId(), n);
         }
-        for (Way w : myDataSet.ways) if (w.getId() != 0) {
+        for (Way w : myDataSet.ways) if (!w.isNew()) {
             wayshash.put(w.getId(), w);
         }
-        for (Relation r : myDataSet.relations) if (r.getId() != 0) {
+        for (Relation r : myDataSet.relations) if (!r.isNew()) {
             relshash.put(r.getId(), r);
         }
         conflicts = new ConflictCollection();
@@ -97,7 +97,7 @@ public class MergeVisitor extends AbstractVisitor {
             Collection<P> myPrimitives, Collection<P> otherPrimitives,
             HashMap<Long, P> primitivesWithDefinedIds) {
 
-        if (other.getId() > 0 ) {
+        if (!other.isNew() ) {
             // try to merge onto a matching primitive with the same
             // defined id
             //
@@ -108,7 +108,7 @@ public class MergeVisitor extends AbstractVisitor {
             // yet but which is equal in its semantic attributes
             //
             for (P my : myPrimitives) {
-                if (my.getId() >0 ) {
+                if (!my.isNew()) {
                     continue;
                 }
                 if (my.hasEqualSemanticAttributes(other)) {

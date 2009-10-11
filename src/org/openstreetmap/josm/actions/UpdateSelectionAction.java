@@ -133,7 +133,7 @@ public class UpdateSelectionAction extends JosmAction {
      * The asynchronous task for updating the data using multi fetch.
      *
      */
-    class UpdatePrimitivesTask extends PleaseWaitRunnable {
+    static class UpdatePrimitivesTask extends PleaseWaitRunnable {
         private DataSet ds;
         private boolean canceled;
         private Exception lastException;
@@ -169,12 +169,12 @@ public class UpdateSelectionAction extends JosmAction {
 
         protected void initMultiFetchReaderWithNodes(MultiFetchServerObjectReader reader) {
             for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Node && primitive.getId() > 0) {
+                if (primitive instanceof Node && !primitive.isNew()) {
                     reader.append((Node)primitive);
                 } else if (primitive instanceof Way) {
                     Way way = (Way)primitive;
                     for (Node node: way.getNodes()) {
-                        if (node.getId() > 0) {
+                        if (!node.isNew()) {
                             reader.append(node);
                         }
                     }
@@ -184,7 +184,7 @@ public class UpdateSelectionAction extends JosmAction {
 
         protected void initMultiFetchReaderWithWays(MultiFetchServerObjectReader reader) {
             for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Way && primitive.getId() > 0) {
+                if (primitive instanceof Way && !primitive.isNew()) {
                     reader.append((Way)primitive);
                 }
             }
@@ -192,7 +192,7 @@ public class UpdateSelectionAction extends JosmAction {
 
         protected void initMultiFetchReaderWithRelations(MultiFetchServerObjectReader reader) {
             for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Relation && primitive.getId() > 0) {
+                if (primitive instanceof Relation && !primitive.isNew()) {
                     reader.append((Relation)primitive);
                 }
             }

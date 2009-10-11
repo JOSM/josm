@@ -211,9 +211,9 @@ public class PropertiesMergeModel extends Observable {
      */
     public LatLon getMergedCoords() {
         switch(coordMergeDecision) {
-            case KEEP_MINE: return myCoords;
-            case KEEP_THEIR: return theirCoords;
-            case UNDECIDED: return null;
+        case KEEP_MINE: return myCoords;
+        case KEEP_THEIR: return theirCoords;
+        case UNDECIDED: return null;
         }
         // should not happen
         return null;
@@ -245,9 +245,9 @@ public class PropertiesMergeModel extends Observable {
 
     public Boolean getMergedDeletedState() {
         switch(deletedMergeDecision) {
-            case KEEP_MINE: return myDeletedState;
-            case KEEP_THEIR: return theirDeletedState;
-            case UNDECIDED: return null;
+        case KEEP_MINE: return myDeletedState;
+        case KEEP_THEIR: return theirDeletedState;
+        case UNDECIDED: return null;
         }
         // should not happen
         return null;
@@ -278,9 +278,9 @@ public class PropertiesMergeModel extends Observable {
      */
     public Boolean getMergedVisibleState() {
         switch(visibleMergeDecision) {
-            case KEEP_MINE: return myVisibleState;
-            case KEEP_THEIR: return theirVisibleState;
-            case UNDECIDED: return null;
+        case KEEP_MINE: return myVisibleState;
+        case KEEP_THEIR: return theirVisibleState;
+        case UNDECIDED: return null;
         }
         // should not happen
         return null;
@@ -483,9 +483,9 @@ public class PropertiesMergeModel extends Observable {
         );
 
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return false;
-            case JOptionPane.YES_OPTION: return true;
-            case JOptionPane.NO_OPTION: return false;
+        case JOptionPane.CLOSED_OPTION: return false;
+        case JOptionPane.YES_OPTION: return true;
+        case JOptionPane.NO_OPTION: return false;
         }
         return false;
 
@@ -512,9 +512,9 @@ public class PropertiesMergeModel extends Observable {
         );
 
         switch(ret) {
-            case JOptionPane.CLOSED_OPTION: return false;
-            case JOptionPane.YES_OPTION: return true;
-            case JOptionPane.NO_OPTION: return false;
+        case JOptionPane.CLOSED_OPTION: return false;
+        case JOptionPane.YES_OPTION: return true;
+        case JOptionPane.NO_OPTION: return false;
         }
         return false;
 
@@ -534,7 +534,7 @@ public class PropertiesMergeModel extends Observable {
 
         HashMap<Long,OsmPrimitive> candidates = new HashMap<Long,OsmPrimitive>();
         for (Node n : way.getNodes()) {
-            if (n.getId() > 0 && ! candidates.values().contains(n)) {
+            if (!n.isNew() && !candidates.values().contains(n)) {
                 candidates.put(n.getId(), n);
             }
         }
@@ -571,7 +571,7 @@ public class PropertiesMergeModel extends Observable {
 
         HashMap<Long,OsmPrimitive> candidates = new HashMap<Long, OsmPrimitive>();
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().getId() > 0 && !candidates.values().contains(m.getMember())) {
+            if (!m.getMember().isNew() && !candidates.values().contains(m.getMember())) {
                 candidates.put(m.getMember().getId(), m.getMember());
             }
         }

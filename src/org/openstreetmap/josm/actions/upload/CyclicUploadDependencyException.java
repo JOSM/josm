@@ -21,7 +21,7 @@ public class CyclicUploadDependencyException extends Exception {
         StringBuffer sb = new StringBuffer();
         if (r.getName() != null) {
             sb.append("'").append(r.getName()).append("'");
-        } else if (r.getId() > 0) {
+        } else if (!r.isNew()) {
             sb.append(r.getId());
         } else {
             sb.append("relation@").append(r.hashCode());

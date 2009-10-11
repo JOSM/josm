@@ -50,7 +50,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     public OsmServerBackreferenceReader(OsmPrimitive primitive) throws IllegalArgumentException {
         if (primitive == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
-        if (primitive.getId() == 0)
+        if (primitive.isNew())
             throw new IllegalArgumentException(tr("ID parameter ''{0}'' > 0 expected. Got ''{1}''.", "primitive", primitive.getId()));
         this.id = primitive.getId();
         this.primitiveType = OsmPrimitiveType.from(primitive);
@@ -221,7 +221,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             Collection<Way> waysToCheck = new ArrayList<Way>(ds.ways);
             if (isReadFull() ||primitiveType.equals(OsmPrimitiveType.NODE)) {
                 for (Way way: waysToCheck) {
-                    if (way.getId() > 0 && way.incomplete) {
+                    if (!way.isNew() && way.incomplete) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(way.getId(), OsmPrimitiveType.from(way), true /* read full */);
                         DataSet wayDs = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                         MergeVisitor visitor = new MergeVisitor(ds, wayDs);
@@ -232,7 +232,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             if (isReadFull()) {
                 Collection<Relation> relationsToCheck  = new ArrayList<Relation>(ds.relations);
                 for (Relation relation: relationsToCheck) {
-                    if (relation.getId() > 0 && relation.incomplete) {
+                    if (!relation.isNew() && relation.incomplete) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* read full */);
                         DataSet wayDs = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                         MergeVisitor visitor = new MergeVisitor(ds, wayDs);

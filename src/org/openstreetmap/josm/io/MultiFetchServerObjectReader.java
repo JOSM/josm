@@ -154,7 +154,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     public MultiFetchServerObjectReader append(Node node) {
         if (node == null) return this;
-        if (node.getId() == 0) return this;
+        if (node.isNew()) return this;
         remember(node.getId(), OsmPrimitiveType.NODE);
         return this;
     }
@@ -168,9 +168,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     public MultiFetchServerObjectReader append(Way way) {
         if (way == null) return this;
-        if (way.getId() == 0) return this;
+        if (way.isNew()) return this;
         for (Node node: way.getNodes()) {
-            if (node.getId() > 0) {
+            if (!node.isNew()) {
                 remember(node.getId(), OsmPrimitiveType.NODE);
             }
         }
@@ -187,7 +187,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     public MultiFetchServerObjectReader append(Relation relation) {
         if (relation == null) return this;
-        if (relation.getId() == 0) return this;
+        if (relation.isNew()) return this;
         remember(relation.getId(), OsmPrimitiveType.RELATION);
         for (RelationMember member : relation.getMembers()) {
             if (OsmPrimitiveType.from(member.getMember()).equals(OsmPrimitiveType.RELATION)) {

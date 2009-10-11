@@ -78,9 +78,9 @@ public class OsmServerWriter {
                 String time_left_str = timeLeft(progress, primitives.size());
                 String msg = "";
                 switch(OsmPrimitiveType.from(osm)) {
-                    case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
-                    case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
-                    case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
+                case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
+                case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
+                case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
                 }
                 progressMonitor.subTask(
                         tr(msg,
@@ -177,7 +177,7 @@ public class OsmServerWriter {
     void makeApiRequest(OsmPrimitive osm, ProgressMonitor progressMonitor) throws OsmTransferException {
         if (osm.isDeleted()) {
             api.deletePrimitive(osm, progressMonitor);
-        } else if (osm.getId() == 0) {
+        } else if (osm.isNew()) {
             api.createPrimitive(osm, progressMonitor);
         } else {
             api.modifyPrimitive(osm,progressMonitor);

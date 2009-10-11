@@ -24,7 +24,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
         boolean ret = e1.getRole().equals(e2.getRole());
-        if (e1.getMember().getId() > 0 ) {
+        if (!e1.getMember().isNew() ) {
             ret = ret && (e1.getMember().getId() == e2.getMember().getId());
         } else {
             ret = ret && (e1 == e2);

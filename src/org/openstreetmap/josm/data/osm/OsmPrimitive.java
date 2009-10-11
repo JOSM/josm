@@ -334,6 +334,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     }
 
     /**
+     * 
+     * @return True if primitive is new (not yet uploaded the server, id <= 0)
+     */
+    public boolean isNew() {
+        return id <= 0;
+    }
+
+    /**
      * Sets the id and the version of this primitive if it is known to the OSM API.
      *
      * Since we know the id and its version it can't be incomplete anymore. incomplete

@@ -96,7 +96,7 @@ public class DefaultNameFormatter implements NameFormatter {
                 name = node.getName();
             }
             if (name == null) {
-                name = node.getId() == 0 ? tr("node") : ""+ node.getId();
+                name = node.isNew() ? tr("node") : ""+ node.getId();
             }
             name += " (" + node.getCoor().latToString(CoordinateFormat.getDefaultFormat()) + ", " + node.getCoor().lonToString(CoordinateFormat.getDefaultFormat()) + ")";
         }

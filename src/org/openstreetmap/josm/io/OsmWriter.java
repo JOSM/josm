@@ -86,7 +86,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     private boolean shouldWrite(OsmPrimitive osm) {
-        return osm.getId() != 0 || !osm.isDeleted();
+        return !osm.isNew() || !osm.isDeleted();
     }
 
     public void writeDataSources(DataSet ds) {
@@ -172,7 +172,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
      * Return the id for the given osm primitive (may access the usedId map)
      */
     private long getUsedId(OsmPrimitive osm) {
-        if (osm.getId() != 0)
+        if (!osm.isNew())
             return osm.getId();
         if (usedNewIds.containsKey(osm))
             return usedNewIds.get(osm);

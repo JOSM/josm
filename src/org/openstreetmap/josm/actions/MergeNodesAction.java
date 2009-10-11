@@ -88,7 +88,7 @@ public class MergeNodesAction extends JosmAction {
         // (2) is not implemented yet.)  :-(
         Node targetNode = null;
         for (Node n: candidates) {
-            if (n.getId() > 0) {
+            if (!n.isNew()) {
                 targetNode = n;
                 break;
             }

@@ -154,17 +154,17 @@ public class DownloadOsmTaskList implements Runnable {
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (OsmPrimitive primitive : ds.nodes) {
-            if (!primitive.incomplete && primitive.getId() == 0) {
+            if (!primitive.incomplete && primitive.isNew()) {
                 ret.add(primitive);
             }
         }
         for (OsmPrimitive primitive : ds.ways) {
-            if (! primitive.incomplete && primitive.getId() == 0) {
+            if (! primitive.incomplete && primitive.isNew()) {
                 ret.add(primitive);
             }
         }
         for (OsmPrimitive primitive : ds.relations) {
-            if (! primitive.incomplete && primitive.getId() == 0) {
+            if (! primitive.incomplete && primitive.isNew()) {
                 ret.add(primitive);
             }
         }

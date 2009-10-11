@@ -90,7 +90,7 @@ public class RelationTree extends JTree {
         public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
             TreePath path  = event.getPath();
             Relation parent = (Relation)event.getPath().getLastPathComponent();
-            if (! parent.incomplete || parent.getId() == 0)
+            if (! parent.incomplete || parent.isNew())
                 // we don't load complete  or new relations
                 return;
             // launch the download task

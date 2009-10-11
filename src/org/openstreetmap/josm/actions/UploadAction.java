@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -17,8 +16,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -37,8 +34,6 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
-import org.openstreetmap.josm.gui.help.HelpBrowser;
-import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -52,7 +47,6 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.WindowGeometry;
 import org.xml.sax.SAXException;
 
 
@@ -233,9 +227,9 @@ public class UploadAction extends JosmAction{
     protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion, String myVersion) {
         String lbl = "";
         switch(primitiveType) {
-            case NODE: lbl =  tr("Synchronize node {0} only", id); break;
-            case WAY: lbl =  tr("Synchronize way {0} only", id); break;
-            case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
+        case NODE: lbl =  tr("Synchronize node {0} only", id); break;
+        case WAY: lbl =  tr("Synchronize way {0} only", id); break;
+        case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
         }
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
@@ -279,9 +273,9 @@ public class UploadAction extends JosmAction{
                 "Concepts/Conflict"
         );
         switch(ret) {
-            case 0: synchronizePrimitive(primitiveType, id); break;
-            case 1: synchronizeDataSet(); break;
-            default: return;
+        case 0: synchronizePrimitive(primitiveType, id); break;
+        case 1: synchronizeDataSet(); break;
+        default: return;
         }
     }
 

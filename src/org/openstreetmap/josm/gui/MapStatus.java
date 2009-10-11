@@ -319,8 +319,9 @@ public class MapStatus extends JPanel implements Helpful {
             // Clear previous selection if SHIFT (add to selection) is not
             // pressed. Cannot use "setSelected()" because it will cause a
             // fireSelectionChanged event which is unnecessary at this point.
-            if((mods & MouseEvent.SHIFT_DOWN_MASK) == 0)
+            if((mods & MouseEvent.SHIFT_DOWN_MASK) == 0) {
                 ds.clearSelection();
+            }
 
             // This will cycle through the available items.
             if(firstSelected == null) {
@@ -414,12 +415,12 @@ public class MapStatus extends JPanel implements Helpful {
         private final JLabel popupBuildPrimitiveLabels(final OsmPrimitive osm) {
             final StringBuilder text = new StringBuilder();
             String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
-            if (osm.getId() == 0 || osm.isModified()) {
+            if (osm.isNew() || osm.isModified()) {
                 name = "<i><b>"+ name + "*</b></i>";
             }
             text.append(name);
 
-            if (osm.getId() != 0) {
+            if (!osm.isNew()) {
                 text.append(" [id="+osm.getId()+"]");
             }
 
