@@ -9,21 +9,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -32,7 +40,37 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HelpBrowser extends JFrame {
 
+    private static HelpBrowser instance;
+
+    /**
+     * Replies the unique instance of the help browser
+     * 
+     * @return the unique instance of the help browser
+     */
+    static public HelpBrowser getInstance() {
+        if (instance == null) {
+            instance = new HelpBrowser();
+        }
+        return instance;
+    }
+
+    /**
+     * Launches the internal help browser and directs it to the help page for
+     * <code>helpTopic</code>.
+     * 
+     * @param helpTopic the help topic
+     */
+    static public void launchBrowser(String helpTopic) {
+        HelpBrowser browser = getInstance();
+        browser.setUrlForHelpTopic(helpTopic);
+        browser.setVisible(true);
+        browser.toFront();
+    }
+
+    /** the help browser */
     private JEditorPane help;
+    /** the help browser history */
+    private HelpBrowserHistory history;
 
     /** the currently displayed URL */
     private String url;
@@ -42,9 +80,52 @@ public class HelpBrowser extends JFrame {
     private String pathbase = Main.pref.get("help.pathbase", "/wiki/");
     private WikiReader reader = new WikiReader(baseurl);
 
+    /**
+     * Builds the style sheet used in the internal help browser
+     * 
+     * @return the style sheet
+     */
+    protected StyleSheet buildStyleSheet() {
+        StyleSheet ss = new StyleSheet();
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        getClass().getResourceAsStream("help-browser.css")
+                )
+        );
+        StringBuffer css = new StringBuffer();
+        try {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                css.append(line);
+                css.append("\n");
+            }
+            reader.close();
+        } catch(Exception e) {
+            System.err.println(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
+            e.printStackTrace();
+            return ss;
+        }
+        ss.addRule(css.toString());
+        return ss;
+    }
+
+    protected JToolBar buildToolBar() {
+        JToolBar tb = new JToolBar();
+        tb.add(new JButton(new HomeAction()));
+        tb.add(new JButton(new BackAction(history)));
+        tb.add(new JButton(new ForwardAction(history)));
+        tb.add(new JButton(new ReloadAction()));
+        tb.add(new JSeparator());
+        tb.add(new JButton(new OpenInBrowserAction()));
+        tb.add(new JButton(new EditAction()));
+        return tb;
+    }
 
     protected void build() {
         help = new JEditorPane();
+        HTMLEditorKit kit = new HTMLEditorKit();
+        kit.setStyleSheet(buildStyleSheet());
+        help.setEditorKit(kit);
         help.setEditable(false);
         help.addHyperlinkListener(new HyperlinkListener(){
             public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -55,23 +136,20 @@ public class HelpBrowser extends JFrame {
                 } else if (e.getURL().toString().endsWith("action=edit")) {
                     OpenBrowser.displayUrl(e.getURL().toString());
                 } else {
+                    url = e.getURL().toString();
                     setUrl(e.getURL().toString());
                 }
             }
         });
         help.setContentType("text/html");
 
+
+        history = new HelpBrowserHistory(this);
+
         JPanel p = new JPanel(new BorderLayout());
         setContentPane(p);
 
         p.add(new JScrollPane(help), BorderLayout.CENTER);
-
-        JPanel buttons = new JPanel();
-        p.add(buttons, BorderLayout.SOUTH);
-
-        buttons.add(new SideButton(new OpenInBrowserAction()));
-        buttons.add(new SideButton(new EditAction()));
-        buttons.add(new SideButton(new ReloadAction()));
 
         addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(WindowEvent e) {
@@ -79,6 +157,7 @@ public class HelpBrowser extends JFrame {
             }
         });
 
+        p.add(buildToolBar(), BorderLayout.NORTH);
         help.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Close");
         help.getActionMap().put("Close", new AbstractAction(){
             public void actionPerformed(ActionEvent e) {
@@ -93,27 +172,11 @@ public class HelpBrowser extends JFrame {
         build();
     }
 
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            new WindowGeometry(
-                    getClass().getName() + ".geometry",
-                    WindowGeometry.centerInWindow(
-                            Main.parent,
-                            new Dimension(800,600)
-                    )
-            ).applySafe(this);
-        } else if (!visible && isShowing()){
-            new WindowGeometry(this).remember(getClass().getName() + ".geometry");
-        }
-        super.setVisible(visible);
-    }
-
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    protected void loadUrl(String url) {
         String langurl = url;
         if(url.startsWith(baseurl+pathbase)){
             int i = pathbase.length()+baseurl.length();
@@ -133,12 +196,17 @@ public class HelpBrowser extends JFrame {
         if(!loaded) {
             help.setText(tr("Error while loading page {0}",url));
         }
+    }
+
+    public void setUrl(String url) {
+        loadUrl(url);
         if (!isVisible()) {
             setVisible(true);
             toFront();
         } else {
             toFront();
         }
+        history.setCurrentUrl(url);
     }
 
     public void setUrlForHelpTopic(String topic) {
@@ -171,9 +239,9 @@ public class HelpBrowser extends JFrame {
 
     class OpenInBrowserAction extends AbstractAction {
         public OpenInBrowserAction() {
-            putValue(NAME, tr("Open in Browser"));
+            //putValue(NAME, tr("Open in Browser"));
             putValue(SHORT_DESCRIPTION, tr("Open the current help page in an external browser"));
-            // provide icon
+            putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -183,7 +251,7 @@ public class HelpBrowser extends JFrame {
 
     class EditAction extends AbstractAction {
         public EditAction() {
-            putValue(NAME, tr("Edit"));
+            // putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, tr("Edit the current help page"));
             putValue(SMALL_ICON,ImageProvider.get("dialogs", "edit"));
         }
@@ -204,13 +272,64 @@ public class HelpBrowser extends JFrame {
 
     class ReloadAction extends AbstractAction {
         public ReloadAction() {
-            putValue(NAME, tr("Reload"));
+            //putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr("Reload the current help page"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
 
         public void actionPerformed(ActionEvent e) {
             setUrl(url);
+        }
+    }
+
+    class BackAction extends AbstractAction implements Observer {
+        private HelpBrowserHistory history;
+        public BackAction(HelpBrowserHistory history) {
+            this.history = history;
+            history.addObserver(this);
+            //putValue(NAME, tr("Back"));
+            putValue(SHORT_DESCRIPTION, tr("Go to the previous page"));
+            putValue(SMALL_ICON, ImageProvider.get("help", "previous"));
+            setEnabled(history.canGoBack());
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            history.back();
+        }
+        public void update(Observable o, Object arg) {
+            System.out.println("BackAction: canGoBoack=" + history.canGoBack() );
+            setEnabled(history.canGoBack());
+        }
+    }
+
+    class ForwardAction extends AbstractAction implements Observer {
+        private HelpBrowserHistory history;
+        public ForwardAction(HelpBrowserHistory history) {
+            this.history = history;
+            history.addObserver(this);
+            //putValue(NAME, tr("Forward"));
+            putValue(SHORT_DESCRIPTION, tr("Go to the next page"));
+            putValue(SMALL_ICON, ImageProvider.get("help", "next"));
+            setEnabled(history.canGoForward());
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            history.forward();
+        }
+        public void update(Observable o, Object arg) {
+            setEnabled(history.canGoForward());
+        }
+    }
+
+    class HomeAction extends AbstractAction  {
+        public HomeAction() {
+            //putValue(NAME, tr("Home"));
+            putValue(SHORT_DESCRIPTION, tr("Go to the JOSM help home page"));
+            putValue(SMALL_ICON, ImageProvider.get("help", "home"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            setUrlForHelpTopic("Help");
         }
     }
 }

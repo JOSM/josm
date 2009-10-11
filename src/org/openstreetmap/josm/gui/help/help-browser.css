@@ -1,0 +1,20 @@
+@CHARSET "ISO-8859-1";
+/*
+ * This is the CSS file used in the internal help browser
+ */
+body {margin-left: 0.2cm; font-family: Arial, sans-serif; font-size:14pt; font-weight:normal}
+p {margin-top: 5px; margin-bottom: 5px;}
+h1 {font-family: Arial, sans-serif; font-size:24pt; font-weight:bold}
+h2 {margin-top: 14pt; font-family: Arial, sans-serif; font-size:20pt; font-weight:bold}
+h3 {margin-top: 14pt; font-family: Arial, sans-serif; font-size:16pt; font-weight:bold}
+h4 {margin-top: 14pt; font-family: Arial, sans-serif; font-size:14pt; font-weight:bold}
+a {font-family: Arial, sans-serif; font-size:14pt; font-weight:normal; text-decoration: underline; color: blue}
+ul {margin-left: 1cm; list-style-type: disc}
+ul ul {margin-left: 1cm; list-style-type: circle}
+ol {margin-left: 1cm;}
+strong {font-weight: bold}
+b {font-weight: bold}
+em {font-style: italic}
+i {font-style: italic}
+tt {font-family: Courier New}
+pre {font-family: Courier New}

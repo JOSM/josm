@@ -22,13 +22,16 @@
 		<delete file="REVISION"/>
 		<property name="version.entry.commit.revision" value="UNKNOWN"/>
 		<property name="version.entry.commit.date" value="UNKNOWN"/>
-
+	    <echo>Revision ${version.entry.commit.revision}</echo>
 		<copy file="CONTRIBUTION" todir="build"/>
 		<copy file="README" todir="build"/>
 		<copy file="LICENSE" todir="build"/>
 
                 <!-- styles -->
 		<copy file="styles/standard/elemstyles.xml" todir="build/styles/standard"/>
+
+        <!-- css-->
+		<copy file="src/org/openstreetmap/josm/gui/help/help-browser.css" todir="build/org/openstreetmap/josm/gui/help"/>
 
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>

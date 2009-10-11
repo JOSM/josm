@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
+import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -373,6 +374,16 @@ abstract public class Main {
         }
     }
 
+    /**
+     * Run any cleanup operation before exit
+     * 
+     */
+    public static  void cleanupBeforeExit() {
+        // try to close and exit the help browser running in another process
+        //
+        HelpBrowserProxy.getInstance().exit();
+    }
+
     public static boolean saveUnsavedModifications() {
         if (map == null) return true;
         SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
@@ -392,6 +403,7 @@ abstract public class Main {
                 default: return false;
             }
         }
+
         return true;
     }
 

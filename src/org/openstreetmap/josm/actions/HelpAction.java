@@ -15,7 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.help.HelpBrowser;
+import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -26,14 +26,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class HelpAction extends AbstractAction {
 
-    private HelpBrowser helpBrowser;
 
     private String pathhelp = Main.pref.get("help.pathhelp", "Help/");
     private String pathmenu = Main.pref.get("help.pathmenu", "Menu/");
 
     public HelpAction() {
         super(tr("Help"), ImageProvider.get("help"));
-        this.helpBrowser = new HelpBrowser();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -42,21 +40,23 @@ public class HelpAction extends AbstractAction {
             if (e.getSource() instanceof Component) {
                 Component c = SwingUtilities.getRoot((Component)e.getSource());
                 Point mouse = c.getMousePosition();
-                c = SwingUtilities.getDeepestComponentAt(c, mouse.x, mouse.y);
-                topic = contextSensitiveHelp(c);
+                if (mouse != null) {
+                    c = SwingUtilities.getDeepestComponentAt(c, mouse.x, mouse.y);
+                    topic = contextSensitiveHelp(c);
+                } else {
+                    topic = null;
+                }
             } else {
                 Point mouse = Main.parent.getMousePosition();
                 topic = contextSensitiveHelp(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
             }
             if (topic == null) {
-                helpBrowser.setVisible(false);
-                helpBrowser.setUrlForHelpTopic("Help");
+                HelpBrowserProxy.getInstance().setUrlForHelpTopic("Help");
             } else {
                 help(topic);
             }
         } else {
-            helpBrowser.setVisible(false);
-            helpBrowser.setUrlForHelpTopic("Help");
+            HelpBrowserProxy.getInstance().setUrlForHelpTopic("Help");
         }
     }
 
@@ -94,7 +94,6 @@ public class HelpAction extends AbstractAction {
      * with the given help topic. Use this for larger help descriptions.
      */
     public void help(String topic) {
-        helpBrowser.setVisible(false);
-        helpBrowser.setUrlForHelpTopic(pathhelp + topic);
+        HelpBrowserProxy.getInstance().setUrlForHelpTopic(pathhelp + topic);
     }
 }

@@ -126,7 +126,10 @@ public class WikiReader {
                 inside = false;
             }
             if (inside && !transl) {
-                b += line.replaceAll("<img src=\"/", "<img src=\"" + baseurl + "/").replaceAll("href=\"/",
+                // add a border="0" attribute to images, otherwise the internal help browser
+                // will render a thick  border around images inside an <a> element
+                //
+                b += line.replaceAll("<img src=\"/", "<img border=\"0\" src=\"" + baseurl + "/").replaceAll("href=\"/",
                         "href=\"" + baseurl + "/").replaceAll(" />", ">")
                         + "\n";
             } else if (transl && line.contains("</div>")) {

@@ -27,6 +27,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.properties.OperationCancelledException;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
+import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
 import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -126,6 +128,10 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         btn.setName("button.cancel");
         pnl.add(btn);
 
+        btn = new JButton(new HelpAction());
+        btn.setName("button.help");
+        pnl.add(btn);
+
         pnl.setBorder(BorderFactory.createLoweredBevelBorder());
         return pnl;
     }
@@ -170,6 +176,22 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
         public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
+        }
+    }
+
+    /**
+     * Action for canceling conflict resolution
+     */
+    class HelpAction extends AbstractAction {
+        public HelpAction() {
+            putValue(Action.SHORT_DESCRIPTION, tr("Show help information"));
+            putValue(Action.NAME, tr("Help"));
+            putValue(Action.SMALL_ICON, ImageProvider.get("help"));
+            setEnabled(true);
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            HelpBrowserProxy.getInstance().setUrlForHelpTopic("/Help/Dialog/ConflictDialog");
         }
     }
 

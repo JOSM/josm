@@ -12,10 +12,10 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class HistoryInfoAction extends AbstractInfoAction {
 
     public HistoryInfoAction() {
-        super(tr("History of Element"), "about",
+        super(tr("Object history"), "about",
                 tr("Display history information about OSM ways, nodes, or relations."),
                 Shortcut.registerShortcut("core:history",
-                        tr("History of Element"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
+                        tr("Object history"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
     }
 
     @Override
