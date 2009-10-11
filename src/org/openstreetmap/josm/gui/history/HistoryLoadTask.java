@@ -21,6 +21,25 @@ import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
+/**
+ * Loads the the object history of an collection of objects from the
+ * server.
+ *
+ * It provides a fluent API for configuration.
+ * 
+ * Sample usage:
+ * 
+ * <pre>
+ *   HistoryLoadTask task  = new HistoryLoadTask()
+ *      .add(1, OsmPrimitiveType.NODE)
+ *      .add(1233, OsmPrimitiveType.WAY)
+ *      .add(37234, OsmPrimitveType.RELATION)
+ *      .add(aHistoryItem);
+ * 
+ *   Main.worker.execute(task);
+ * 
+ * </pre>
+ */
 public class HistoryLoadTask extends PleaseWaitRunnable {
 
     private boolean cancelled = false;
@@ -33,6 +52,13 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         toLoad = new HashMap<Long, OsmPrimitiveType>();
     }
 
+    /**
+     * Adds an object whose history is to be loaded.
+     * 
+     * @param id the object id
+     * @param type the object type
+     * @return this task
+     */
     public HistoryLoadTask add(long id, OsmPrimitiveType type) {
         if (id <= 0)
             throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
@@ -44,7 +70,14 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         return this;
     }
 
-    public HistoryLoadTask add(HistoryOsmPrimitive primitive) {
+    /**
+     * Adds an object to be loaded, the object is specified by a history item.
+     * 
+     * @param primitive the history item
+     * @return this task
+     * @throws IllegalArgumentException thrown if primitive is null
+     */
+    public HistoryLoadTask add(HistoryOsmPrimitive primitive) throws IllegalArgumentException  {
         if (primitive == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
         if (!toLoad.containsKey(primitive.getId())) {
@@ -53,7 +86,14 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         return this;
     }
 
-    public HistoryLoadTask add(History history) {
+    /**
+     * Adds an object to be loaded, the object is specified by an already loaded object history.
+     * 
+     * @param history the history. Must not be null.
+     * @return this task
+     * @throws IllegalArgumentException thrown if history is null
+     */
+    public HistoryLoadTask add(History history)throws IllegalArgumentException {
         if (history == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "history"));
         if (!toLoad.containsKey(history.getId())) {
@@ -62,13 +102,32 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         return this;
     }
 
-    public HistoryLoadTask add(OsmPrimitive primitive) {
+    /**
+     * Adds an object to be loaded, the object is specified by an OSM primitive.
+     * 
+     * @param primitive the OSM primitive. Must not be null. primitive.getId() > 0 required.
+     * @return this task
+     * @throws IllegalArgumentException thrown if the primitive is null
+     * @throws IllegalArgumentException thrown if primitive.getId() <= 0
+     */
+    public HistoryLoadTask add(OsmPrimitive primitive) throws IllegalArgumentException {
         if (primitive == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
+        if (primitive.getId() <= 0)
+            throw new IllegalArgumentException(tr("Object id > 0 expected. Got {0}", primitive.getId()));
+
         return add(primitive.getId(), OsmPrimitiveType.from(primitive));
     }
 
-    public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) {
+    /**
+     * Adds a collection of objects to loaded, specified by a collection of OSM primitives.
+     * 
+     * @param primitive the OSM primitive. Must not be null. primitive.getId() > 0 required.
+     * @return this task
+     * @throws IllegalArgumentException thrown if primitives is null
+     * @throws IllegalArgumentException thrown if one of the ids in the collection <= 0
+     */
+    public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) throws IllegalArgumentException{
         if (primitives == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitives"));
         for (OsmPrimitive primitive: primitives) {

@@ -138,7 +138,7 @@ public class HistoryBrowser extends JPanel {
             tpViewers.setTitleAt(1, tr("Nodes"));
         } else if (history.getEarliest().getType().equals(OsmPrimitiveType.RELATION)) {
             tpViewers.add(relationMemberListViewer);
-            tpViewers.setTitleAt(2, tr("Members"));
+            tpViewers.setTitleAt(1, tr("Members"));
         }
         revalidate();
     }
