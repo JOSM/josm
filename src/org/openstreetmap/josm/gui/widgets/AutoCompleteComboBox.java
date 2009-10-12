@@ -18,12 +18,15 @@ import javax.swing.text.PlainDocument;
  */
 public class AutoCompleteComboBox extends JComboBox {
 
+
+    private boolean autocompleteEnabled = true;
+
     /**
      * Auto-complete a JComboBox.
      *
      * Inspired by http://www.orbital-computer.de/JComboBox/
      */
-    private class AutoCompleteComboBoxDocument extends PlainDocument {
+    class AutoCompleteComboBoxDocument extends PlainDocument {
         private JComboBox comboBox;
         private boolean selecting = false;
 
@@ -47,6 +50,8 @@ public class AutoCompleteComboBox extends JComboBox {
             // Note: this is done after calling super method because we need
             // ActionListener informed
             if (selecting)
+                return;
+            if (!autocompleteEnabled)
                 return;
 
             int size = getLength();
@@ -115,5 +120,13 @@ public class AutoCompleteComboBox extends JComboBox {
             model.addElement(elem);
         }
         this.getEditor().setItem(oldValue);
+    }
+
+    protected boolean isAutocompleteEnabled() {
+        return autocompleteEnabled;
+    }
+
+    protected void setAutocompleteEnabled(boolean autocompleteEnabled) {
+        this.autocompleteEnabled = autocompleteEnabled;
     }
 }

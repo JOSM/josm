@@ -361,11 +361,11 @@ public class UploadDialog extends JDialog {
      */
     protected String getUploadComment() {
         switch(southTabbedPane.getSelectedIndex()) {
-        case 0:
-            return pnlChangesetSelection.getUploadComment();
-        case 1:
-            TagModel tm = tagEditorPanel.getModel().get("comment");
-            return tm == null? "" : tm.getValue();
+            case 0:
+                return pnlChangesetSelection.getUploadComment();
+            case 1:
+                TagModel tm = tagEditorPanel.getModel().get("comment");
+                return tm == null? "" : tm.getValue();
         }
         return "";
     }
@@ -801,7 +801,7 @@ public class UploadDialog extends JDialog {
         public void initEditingOfUploadComment(String comment) {
             setUploadComment(comment);
             cmt.getEditor().selectAll();
-            cmt.requestFocus();
+            cmt.requestFocusInWindow();
         }
 
         protected void refreshGUI() {

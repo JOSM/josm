@@ -18,7 +18,9 @@ public class HistoryComboBox extends AutoCompleteComboBox {
     }
 
     public void setText(String value) {
+        setAutocompleteEnabled(false);
         ((JTextComponent)getEditor().getEditorComponent()).setText(value);
+        setAutocompleteEnabled(true);
     }
 
     public void addCurrentItemToHistory() {
