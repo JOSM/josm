@@ -18,6 +18,7 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -473,10 +474,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 w = new Way(w);
                 w.setNodes(n);
-                if (selected)
-                    data.setSelected(w);
-                else
+                if (selected) {
+                    data.setSelected(Collections.singleton(w),false /* don't notify listeners */);
+                } else {
                     data.clearSelection(w);
+                }
             }
             if(!w.isClosed())
             {
@@ -679,9 +681,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     onewayvia = true;
                     firstNode = lastNode;
                     lastNode = firstNode;
-                }
-                else
+                } else {
                     onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
+                }
             }
 
             if(fromWay.isFirstLastNode(firstNode)) {
