@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
+import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
@@ -78,7 +79,7 @@ public class UpdateSelectionAction extends JosmAction {
             throw new IllegalStateException(tr("No current dataset found"));
         OsmPrimitive primitive = getEditLayer().data.getPrimitiveById(id, type);
         if (primitive == null)
-            throw new IllegalStateException(tr("Didn't find a primitive with id {0} in the current dataset", id));
+            throw new IllegalStateException(tr("Didn''t find an object with id {0} in the current dataset", id));
         updatePrimitives(Collections.singleton(primitive));
     }
 
@@ -211,6 +212,18 @@ public class UpdateSelectionAction extends JosmAction {
                 theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                 MergeVisitor merger = new MergeVisitor(ds, theirDataSet);
                 merger.merge();
+                // a ways loaded with MultiFetch may be incomplete because at least one of its
+                // nodes isn't present in the local data set. We therefore fully load all
+                // incomplete ways.
+                //
+                for (Way w: ds.ways) {
+                    if (w.incomplete) {
+                        OsmServerObjectReader reader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
+                        theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                        merger = new MergeVisitor(ds, theirDataSet);
+                        merger.merge();
+                    }
+                }
             } catch(Exception e) {
                 if (canceled)
                     return;
