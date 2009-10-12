@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -39,6 +41,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class PluginHandler {
+
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
@@ -62,6 +65,9 @@ public class PluginHandler {
                 "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
                 "namefinder", "waypoints", "slippy_map_chooser", "tcx-support"};
         String [] unmaintained = new String[] {"gpsbabelgui", "Intersect_way"};
+        Map<String, Integer> requiredUpdate = new HashMap<String, Integer>();
+        requiredUpdate.put("validator", 18092);
+
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
                 plugins.remove(p);
@@ -78,11 +84,13 @@ public class PluginHandler {
         {
             for (String p : unmaintained) {
                 if (plugins.contains(p) && disablePlugin(tr("<html>Loading of {0} plugin was requested."
-                +"<br>This plugin is no longer developed and very likely will produce errors."
-                +"<br>It should be disabled.<br>Delete from preferences?</html>", p), p))
+                        +"<br>This plugin is no longer developed and very likely will produce errors."
+                        +"<br>It should be disabled.<br>Delete from preferences?</html>", p), p)) {
                     plugins.remove(p);
+                }
             }
         }
+
 
         if (plugins.isEmpty())
             return;
@@ -104,6 +112,26 @@ public class PluginHandler {
                     );
                     continue;
                 }
+                if (requiredUpdate.containsKey(info.name)) {
+                    int minimumVersion = requiredUpdate.get(info.name);
+                    boolean badVersion;
+                    try {
+                        badVersion = Integer.parseInt(info.version) < minimumVersion;
+                    } catch (NumberFormatException e) {
+                        badVersion = true;
+                    }
+                    if (badVersion) {
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                tr("Plugin {0} version {1} found but for this version of JOSM is at least version {2} required. "
+                                        + "Please update the plugin.", info.name, info.version, String.valueOf(minimumVersion)),
+                                        tr("Warning"),
+                                        JOptionPane.WARNING_MESSAGE
+                        );
+                        continue;
+                    }
+                }
+
                 if(info.requires != null)
                 {
                     String warn = null;
@@ -251,7 +279,6 @@ public class PluginHandler {
 
         if (plugin == null)
         {
-            String name = null;
             /**
              * Analyze the stack of the argument and find a name of a plugin, if
              * some known problem pattern has been found.
@@ -270,8 +297,9 @@ public class PluginHandler {
                         break;
                     }
                 }
-                if(plugin != null)
+                if(plugin != null) {
                     break;
+                }
             }
         }
 
