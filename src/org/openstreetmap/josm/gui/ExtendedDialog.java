@@ -22,6 +22,8 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
+import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -40,7 +42,14 @@ public class ExtendedDialog extends JDialog {
     private Component parent;
     private Component content;
     private final String[] bTexts;
+    private String[] bToolTipTexts;
     private String[] bIcons;
+
+    /** true, if the dialog should include a help button */
+    private boolean showHelpButton;
+    /** the help topic */
+    private String helpTopic;
+
     /**
      * set to true if the content of the extended dialog should
      * be placed in a {@see JScrollPane}
@@ -95,6 +104,16 @@ public class ExtendedDialog extends JDialog {
      */
     public void setButtonIcons(String[] buttonIcons) {
         this.bIcons = buttonIcons;
+    }
+
+    /**
+     * Allows decorating the buttons with tooltips. Expects an String[] with translated
+     * tooltip texts.
+     * 
+     * @param toolTipTexts the tool tip texts. Ignored, if null.
+     */
+    public void setToolTipTexts(String[] toolTipTexts) {
+        this.bToolTipTexts = toolTipTexts;
     }
 
     /**
@@ -186,12 +205,19 @@ public class ExtendedDialog extends JDialog {
             if(bIcons != null && bIcons[i] != null) {
                 button.setIcon(ImageProvider.get(bIcons[i]));
             }
+            if (bToolTipTexts != null && i < bToolTipTexts.length && bToolTipTexts[i] != null) {
+                button.setToolTipText(bToolTipTexts[i]);
+            }
 
             if(i == 0) {
                 rootPane.setDefaultButton(button);
             }
             buttonsPanel.add(button, GBC.std().insets(2,2,2,2));
             buttons.add(button);
+        }
+        if (showHelpButton) {
+            buttonsPanel.add(new JButton(new HelpAction()), GBC.std().insets(2,2,2,2));
+            HelpBuilder.setHelpContext(getRootPane(),helpTopic);
         }
 
         JPanel cp = new JPanel(new GridBagLayout());
@@ -394,5 +420,36 @@ public class ExtendedDialog extends JDialog {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         lbl.setMaxWidth(Math.round(screenSize.width*1/2));
         return lbl;
+    }
+
+    /**
+     * Configures how this dialog support for context sensitive help.
+     * <ul>
+     *  <li>if helpTopic is null, the dialog doesn't provide context sensitive help</li>
+     *  <li>if helpTopic != null, the dialog redirect user to the help page for this helpTopic when
+     *  the user clicks F1 in the dialog</li>
+     *  <li>if showHelpButton is true, the dialog displays "Help" button (rightmost button in
+     *  the button row)</li>
+     * </ul>
+     * 
+     * @param helpTopic the help topic
+     * @param showHelpButton true, if the dialog displays a help button
+     */
+    public void configureContextsensitiveHelp(String helpTopic, boolean showHelpButton) {
+        this.helpTopic = helpTopic;
+        this.showHelpButton = showHelpButton;
+    }
+
+
+    class HelpAction extends AbstractAction {
+        public HelpAction() {
+            putValue(SHORT_DESCRIPTION, tr("Show help information"));
+            putValue(NAME, tr("Help"));
+            putValue(SMALL_ICON, ImageProvider.get("help"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            HelpBrowserProxy.getInstance().setUrlForHelpTopic(helpTopic);
+        }
     }
 }

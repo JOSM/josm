@@ -103,14 +103,14 @@ public class RelationMember {
      *
      * @param role Can be null, in this case it's save as ""
      * @param member Cannot be null
+     * @throw IllegalArgumentException thrown if member is null
      */
-    public RelationMember(String role, OsmPrimitive member) {
+    public RelationMember(String role, OsmPrimitive member) throws IllegalArgumentException{
         if (role == null) {
             role = "";
         }
-        if (member == null) {
+        if (member == null)
             throw new IllegalArgumentException("Relation member cannot be null");
-        }
         this.role = role;
         this.member = member;
     }
@@ -153,8 +153,7 @@ public class RelationMember {
         if (obj instanceof RelationMember) {
             RelationMember other = (RelationMember) obj;
             return member.equals(other.getMember()) && role.equals(other.getRole());
-        } else {
+        } else
             return false;
-        }
     }
 }
