@@ -271,6 +271,32 @@ public class DataSet implements Cloneable {
         setSelected(selection, true /* fire selection change event */);
     }
 
+    /**
+     * Adds   the primitives in <code>selection</code> to the current selection
+     * and notifies all {@see SelectionChangedListener}.
+     * 
+     * @param selection the selection
+     */
+    public void addSelected(Collection<? extends OsmPrimitive> selection) {
+        addSelected(selection, true /* fire selection change event */);
+    }
+
+    /**
+     * Adds the primitives in <code>selection</code> to the current selection.
+     * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
+     * 
+     * @param selection the selection
+     * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
+     */
+    public void addSelected(Collection<? extends OsmPrimitive> selection, boolean fireSelectionChangeEvent) {
+        for (OsmPrimitive osm : selection) {
+            osm.setSelected(true);
+        }
+        if (fireSelectionChangeEvent) {
+            fireSelectionChanged(selection);
+        }
+    }
+
 
     public void setSelected(OsmPrimitive... osm) {
         if (osm.length == 1 && osm[0] == null) {

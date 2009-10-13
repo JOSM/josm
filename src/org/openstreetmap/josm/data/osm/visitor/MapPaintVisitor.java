@@ -475,7 +475,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 w = new Way(w);
                 w.setNodes(n);
                 if (selected) {
-                    data.setSelected(Collections.singleton(w),false /* don't notify listeners */);
+                    data.addSelected(Collections.singleton(w),false /* don't notify listeners */);
                 } else {
                     data.clearSelection(w);
                 }
