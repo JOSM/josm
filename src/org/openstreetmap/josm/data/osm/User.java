@@ -72,7 +72,9 @@ public class User {
      * no such users exist
      */
     public static List<User> getByName(String name) {
-        name = name == null ? "" : name;
+        if (name == null) {
+            name = "";
+        }
         List<User> ret = new ArrayList<User>();
         for (User user: userMap.values()) {
             if (user.getName().equals(name)) {
@@ -83,9 +85,9 @@ public class User {
     }
 
     /** the user name */
-    private String name;
+    private final String name;
     /** the user id */
-    private long uid;
+    private final long uid;
 
     /**
      * Replies the user name
@@ -93,7 +95,7 @@ public class User {
      * @return the user name. Never null, but may be the empty string
      */
     public String getName() {
-        return name == null ? "" : name;
+        return name;
     }
 
     /**
@@ -112,7 +114,11 @@ public class User {
     /** private constructor, only called from get method. */
     private User(long uid, String name) {
         this.uid = uid;
-        this.name = name;
+        if (name == null) {
+            this.name = "";
+        } else {
+            this.name = name;
+        }
     }
 
     public boolean isOsmUser() {
@@ -127,27 +133,21 @@ public class User {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + name.hashCode();
         result = prime * result + (int) (uid ^ (uid >>> 32));
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        User other = (User) obj;
-        if (name == null) {
-            if (other.name != null)
+        if (obj instanceof User) {
+            User other = (User) obj;
+            if (!name.equals(other.name))
                 return false;
-        } else if (!name.equals(other.name))
+            if (uid != other.uid)
+                return false;
+            return true;
+        } else
             return false;
-        if (uid != other.uid)
-            return false;
-        return true;
     }
 }

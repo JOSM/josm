@@ -1,8 +1,10 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -18,7 +20,7 @@ public final class Relation extends OsmPrimitive {
     /**
      * All members of this relation. Note that after changing this,
      * makeBackReferences and/or removeBackReferences should be called.
-     * 
+     *
      */
     private final List<RelationMember> members = new ArrayList<RelationMember>();
 
@@ -105,30 +107,39 @@ public final class Relation extends OsmPrimitive {
         visitor.visit(this);
     }
 
+    protected Relation(long id, boolean allowNegative) {
+        super(id, allowNegative);
+    }
+
     /**
      * Create a new relation with id 0
      */
     public Relation() {
-        super(0);
+        super(0, false);
     }
 
     /**
      * Create an identical clone of the argument (including the id)
      */
     public Relation(Relation clone) {
-        super(clone.getId());
+        super(clone.getUniqueId(), true);
         cloneFrom(clone);
     }
 
     /**
      * Creates a new relation for the given id. If the id > 0, the way is marked
      * as incomplete.
-     * 
+     *
      * @param id the id. > 0 required
      * @throws IllegalArgumentException thrown if id < 0
      */
     public Relation(long id) throws IllegalArgumentException {
-        super(id);
+        super(id, false);
+    }
+
+    public Relation(RelationData data, DataSet dataSet) {
+        super(data);
+        load(data, dataSet);
     }
 
 
@@ -140,6 +151,87 @@ public final class Relation extends OsmPrimitive {
         for (RelationMember em : ((Relation)osm).getMembers()) {
             members.add(new RelationMember(em));
         }
+    }
+
+    @Override public void load(PrimitiveData data, DataSet dataSet) {
+        super.load(data, dataSet);
+
+        RelationData relationData = (RelationData)data;
+
+        // TODO Make this faster
+
+        Node nodeMarker = new Node();
+        Way wayMarker = new Way();
+        Relation relationMarker = new Relation();
+        Map<Long, Node> nodes = new HashMap<Long, Node>();
+        Map<Long, Way> ways = new HashMap<Long, Way>();
+        Map<Long, Relation> relations = new HashMap<Long, Relation>();
+
+        for (RelationMemberData member:relationData.getMembers()) {
+            switch (member.getMemberType()) {
+            case NODE:
+                nodes.put(member.getMemberId(), nodeMarker);
+                break;
+            case WAY:
+                ways.put(member.getMemberId(), wayMarker);
+                break;
+            case RELATION:
+                relations.put(member.getMemberId(), relationMarker);
+                break;
+            }
+        }
+
+        for (Node node:dataSet.nodes) {
+            if (nodes.get(node.getUniqueId()) == nodeMarker) {
+                nodes.put(node.getUniqueId(), node);
+            }
+        }
+        for (Way way:dataSet.ways) {
+            if (ways.get(way.getUniqueId()) == wayMarker) {
+                ways.put(way.getUniqueId(), way);
+            }
+        }
+        for (Relation relation:dataSet.relations) {
+            if (relations.get(relation.getUniqueId()) == relationMarker) {
+                relations.put(relation.getUniqueId(), relation);
+            }
+        }
+
+        List<RelationMember> newMembers = new ArrayList<RelationMember>();
+        for (RelationMemberData member:relationData.getMembers()) {
+            OsmPrimitive foundMember = null;
+            switch (member.getMemberType()) {
+            case NODE:
+                foundMember = nodes.get(member.getMemberId());
+                if (foundMember == nodeMarker) {
+                    foundMember = new Node(member.getMemberId(), true);
+                }
+                break;
+            case WAY:
+                foundMember = ways.get(member.getMemberId());
+                if (foundMember == wayMarker) {
+                    foundMember = new Way(member.getMemberId(), true);
+                }
+                break;
+            case RELATION:
+                foundMember = relations.get(member.getMemberId());
+                if (foundMember == relationMarker) {
+                    foundMember = new Relation(member.getMemberId(), true);
+                }
+                break;
+            }
+            newMembers.add(new RelationMember(member.getRole(), foundMember));
+        }
+        setMembers(newMembers);
+    }
+
+    @Override public RelationData save() {
+        RelationData data = new RelationData();
+        saveCommonAttributes(data);
+        for (RelationMember member:getMembers()) {
+            data.getMembers().add(new RelationMemberData(member.getRole(), member.getMember()));
+        }
+        return data;
     }
 
     @Override public String toString() {
@@ -205,7 +297,7 @@ public final class Relation extends OsmPrimitive {
     /**
      * Replies the set of  {@see OsmPrimitive}s referred to by at least one
      * member of this relation
-     * 
+     *
      * @return the set of  {@see OsmPrimitive}s referred to by at least one
      * member of this relation
      */

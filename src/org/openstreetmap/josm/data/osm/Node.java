@@ -45,12 +45,17 @@ public final class Node extends OsmPrimitive {
     }
 
 
+    protected Node(long id, boolean allowNegative) {
+        super(id, allowNegative);
+    }
+
+
     /**
-     * Create a new local node with id 0.
-     * 
+     * Create a new local node.
+     *
      */
     public Node() {
-        this(0);
+        this(0, false);
     }
 
 
@@ -58,25 +63,30 @@ public final class Node extends OsmPrimitive {
      * Create an incomplete Node object
      */
     public Node(long id) {
-        super(id);
+        super(id, false);
     }
 
     /**
      * Create an identical clone of the argument (including the id)
      */
     public Node(Node clone) {
-        super(clone.getId());
+        super(clone.getUniqueId(), true);
         cloneFrom(clone);
     }
 
     public Node(LatLon latlon) {
-        super(0);
+        super(0, false);
         setCoor(latlon);
     }
 
     public Node(EastNorth eastNorth) {
-        super(0);
+        super(0, false);
         setEastNorth(eastNorth);
+    }
+
+    public Node(NodeData data, DataSet dataSet) {
+        super(data);
+        load(data, dataSet);
     }
 
     @Override public void visit(Visitor visitor) {
@@ -86,6 +96,18 @@ public final class Node extends OsmPrimitive {
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
         setCoor(((Node)osm).coor);
+    }
+
+    @Override public void load(PrimitiveData data, DataSet dataSet) {
+        super.load(data, dataSet);
+        setCoor(((NodeData)data).getCoor());
+    }
+
+    @Override public NodeData save() {
+        NodeData data = new NodeData();
+        saveCommonAttributes(data);
+        data.setCoor(getCoor());
+        return data;
     }
 
     @Override public String toString() {

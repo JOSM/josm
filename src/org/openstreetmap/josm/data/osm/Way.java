@@ -6,7 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
@@ -127,12 +129,16 @@ public final class Way extends OsmPrimitive {
         visitor.visit(this);
     }
 
+    protected Way(long id, boolean allowNegative) {
+        super(id, allowNegative);
+    }
+
     /**
      * Creates a new way with id 0.
      *
      */
     public Way(){
-        super(0);
+        super(0, false);
     }
 
     /**
@@ -141,7 +147,7 @@ public final class Way extends OsmPrimitive {
      * @param original  the original way. Must not be null.
      */
     public Way(Way original) {
-        super(original.getId());
+        super(original.getUniqueId(), true);
         cloneFrom(original);
     }
 
@@ -153,7 +159,55 @@ public final class Way extends OsmPrimitive {
      * @throws IllegalArgumentException thrown if id < 0
      */
     public Way(long id) throws IllegalArgumentException {
-        super(id);
+        super(id, false);
+    }
+
+    public Way(WayData data, DataSet dataSet) {
+        super(data);
+        load(data, dataSet);
+    }
+
+    /**
+     *
+     * @param data
+     * @param dataSet Dataset this way is part of. This parameter will be removed in future
+     */
+    public void load(PrimitiveData data, DataSet dataSet) {
+        super.load(data, dataSet);
+
+        WayData wayData = (WayData)data;
+
+        // TODO We should have some lookup by id mechanism in future to speed this up
+        Node marker = new Node(0);
+        Map<Long, Node> foundNodes = new HashMap<Long, Node>();
+        for (Long nodeId:wayData.getNodes()) {
+            foundNodes.put(nodeId, marker);
+        }
+        for (Node node:dataSet.nodes) {
+            if (foundNodes.get(node.getUniqueId()) == marker) {
+                foundNodes.put(node.getUniqueId(), node);
+            }
+        }
+
+        List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
+        for (Long nodeId:wayData.getNodes()) {
+            Node node = foundNodes.get(nodeId);
+            if (node != marker) {
+                newNodes.add(foundNodes.get(nodeId));
+            } else {
+                newNodes.add(new Node(nodeId, true));
+            }
+        }
+        setNodes(newNodes);
+    }
+
+    @Override public WayData save() {
+        WayData data = new WayData();
+        saveCommonAttributes(data);
+        for (Node node:getNodes()) {
+            data.getNodes().add(node.getUniqueId());
+        }
+        return data;
     }
 
     @Override public void cloneFrom(OsmPrimitive osm) {

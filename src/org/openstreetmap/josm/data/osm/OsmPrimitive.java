@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -33,6 +34,8 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  * @author imi
  */
 abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
+
+    private static AtomicLong idCounter = new AtomicLong(0);
 
     private static final int FLAG_MODIFIED = 1 << 0;
     private static final int FLAG_VISIBLE  = 1 << 1;
@@ -146,26 +149,33 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     private int version = 0;
 
     /**
-     * Creates a new primitive with id 0.
-     *
-     */
-    public OsmPrimitive() {
-        this(0);
-    }
-
-    /**
      * Creates a new primitive for the given id. If the id > 0, the primitive is marked
      * as incomplete.
      *
      * @param id the id. > 0 required
-     * @throws IllegalArgumentException thrown if id < 0
+     * @param allowNegativeId Allows to set negative id. For internal use
+     * @throws IllegalArgumentException thrown if id < 0 and allowNegativeId is false
      */
-    public OsmPrimitive(long id) throws IllegalArgumentException {
-        if (id < 0)
-            throw new IllegalArgumentException(tr("Expected ID >= 0. Got {0}.", id));
-        this.id = id;
+    protected OsmPrimitive(long id, boolean allowNegativeId) throws IllegalArgumentException {
+        if (allowNegativeId) {
+            this.id = id;
+        } else {
+            if (id < 0) {
+                throw new IllegalArgumentException(tr("Expected ID >= 0. Got {0}.", id));
+            } else if (id == 0) {
+                this.id = idCounter.decrementAndGet();
+            } else {
+                this.id = id;
+            }
+
+        }
         this.version = 0;
-        this.incomplete = id >0;
+        this.incomplete = id > 0;
+    }
+
+    protected OsmPrimitive(PrimitiveData data) {
+        version = data.getVersion();
+        id = data.getId();
     }
 
     /* ------------------------------------------------------------------------------------ */
@@ -305,7 +315,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * id==0
      */
     public void setVisible(boolean visible) throws IllegalStateException{
-        if (id == 0 && visible == false)
+        if (isNew() && visible == false)
             throw new IllegalStateException(tr("A primitive with ID = 0 can't be invisible."));
         if (visible) {
             flags |= FLAG_VISIBLE;
@@ -330,11 +340,19 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @return the id of this primitive.
      */
     public long getId() {
+        return id >= 0?id:0;
+    }
+
+    /**
+     *
+     * @return Osm id if primitive already exists on the server. Unique negative value if primitive is new
+     */
+    public long getUniqueId() {
         return id;
     }
 
     /**
-     * 
+     *
      * @return True if primitive is new (not yet uploaded the server, id <= 0)
      */
     public boolean isNew() {
@@ -472,7 +490,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * An primitive is equal to its incomplete counter part.
      */
     @Override public boolean equals(Object obj) {
-        if (id == 0) return obj == this;
+        if (isNew()) return obj == this;
         if (obj instanceof OsmPrimitive)
             return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
         return false;
@@ -659,7 +677,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * semantic attributes.
      */
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
-        if (id != other.id)
+        if (!isNew() &&  id != other.id)
             return false;
         if (incomplete && ! other.incomplete || !incomplete  && other.incomplete)
             return false;
@@ -781,4 +799,37 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @return the display name
      */
     public abstract String getDisplayName(NameFormatter formatter);
+
+    /**
+     * Loads (clone) this primitive from provided PrimitiveData
+     * @param data
+     * @param dataSet Dataset this primitive is part of. This parameter is used only
+     * temporarily. OsmPrimitive will have final field dataset in future
+     */
+    public void load(PrimitiveData data, DataSet dataSet) {
+        setKeys(data.getKeys());
+        timestamp = data.getTimestamp();
+        user = data.getUser();
+        setDeleted(data.isDeleted());
+        setModified(data.isModified());
+        setVisible(data.isVisible());
+    }
+
+    /**
+     * Save parameters of this primitive to the transport object
+     * @return
+     */
+    public abstract PrimitiveData save();
+
+    protected void saveCommonAttributes(PrimitiveData data) {
+        data.getKeys().clear();
+        data.getKeys().putAll(getKeys());
+        data.setTimestamp(timestamp);
+        data.setUser(user);
+        data.setDeleted(isDeleted());
+        data.setModified(isModified());
+        data.setVisible(isVisible());
+    }
+
 }
+
