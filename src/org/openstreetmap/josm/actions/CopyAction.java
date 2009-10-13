@@ -78,6 +78,7 @@ public final class CopyAction extends JosmAction {
                     return;
                 Way wnew = new Way();
                 wnew.cloneFrom(w);
+                map.put(w, wnew);
                 List<Node> nodes = new ArrayList<Node>();
                 for (Node n : w.getNodes()) {
                     if (! map.containsKey(n)) {
@@ -92,6 +93,7 @@ public final class CopyAction extends JosmAction {
                 if (map.containsKey(e))
                     return;
                 Relation enew = new Relation(e);
+                map.put(e, enew);
                 List<RelationMember> members = new ArrayList<RelationMember>();
                 for (RelationMember m : e.getMembers()) {
                     if (! map.containsKey(m.getMember())) {
