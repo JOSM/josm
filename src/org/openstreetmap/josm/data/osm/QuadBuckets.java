@@ -886,8 +886,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     public boolean remove(T n)
     {
         QBLevel bucket = root.find_exact(n);
-        if (!bucket.isLeaf())
-            abort("found branch where leaf expected");
+        if (bucket == null)
+            return false;
         boolean ret = bucket.remove_content(n);
         return ret;
     }
