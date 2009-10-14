@@ -45,11 +45,7 @@ public class ExtensionFileFilter extends FileFilter {
 
     private final String extensions;
     private final String description;
-    /**
-     * @deprecated use {@see #getDefaultExtension()
-     */
-    @Deprecated
-    public final String defaultExtension;
+    private final String defaultExtension;
 
 
     static protected void sort(List<ExtensionFileFilter> filters) {
