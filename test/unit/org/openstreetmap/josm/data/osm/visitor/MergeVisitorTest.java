@@ -381,7 +381,7 @@ public class MergeVisitorTest {
         Node n = new Node();
         n.setCoor(new LatLon(0,0));
         n.put("key1", "value1");
-        n.user = myUser;
+        n.setUser(myUser);
         n.setTimestamp(cal.getTime());
 
         my.addPrimitive(n);
@@ -394,7 +394,7 @@ public class MergeVisitorTest {
         cal.add(Calendar.HOUR, 1);
         Date timestamp = cal.getTime();
         n1.setTimestamp(timestamp);
-        n1.user = theirUser;
+        n1.setUser(theirUser);
         their.addPrimitive(n1);
 
 
@@ -405,7 +405,7 @@ public class MergeVisitorTest {
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",n2.get("key1"));
         assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));
-        assertEquals(theirUser,n2.user);
+        assertEquals(theirUser,n2.getUser());
     }
 
     /**
@@ -739,7 +739,7 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.addNode(n3);
         theirWay.addNode(n4);
-        theirWay.user = User.createOsmUser(1111, "their");
+        theirWay.setUser(User.createOsmUser(1111, "their"));
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -747,9 +747,9 @@ public class MergeVisitorTest {
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals("their", myWay.user.getName());
-        assertEquals(1111, myWay.user.getId());
-        assertEquals(1111, myWay.user.getId());
+        assertEquals("their", myWay.getUser().getName());
+        assertEquals(1111, myWay.getUser().getId());
+        assertEquals(1111, myWay.getUser().getId());
         assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
     }
 
@@ -788,7 +788,7 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.addNode(n3);
         theirWay.addNode(n4);
-        theirWay.user = User.createOsmUser(1111, "their");
+        theirWay.setUser(User.createOsmUser(1111, "their"));
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -796,9 +796,9 @@ public class MergeVisitorTest {
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals("their", myWay.user.getName());
-        assertEquals(1111, myWay.user.getId());
-        assertEquals(1111, myWay.user.getId());
+        assertEquals("their", myWay.getUser().getName());
+        assertEquals(1111, myWay.getUser().getId());
+        assertEquals(1111, myWay.getUser().getId());
         assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
     }
 
@@ -843,7 +843,7 @@ public class MergeVisitorTest {
         theirWay.addNode(n3);
         theirWay.addNode(n4);
         theirWay.addNode(n5);
-        theirWay.user = User.createOsmUser(1111, "their");
+        theirWay.setUser(User.createOsmUser(1111, "their"));
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
