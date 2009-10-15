@@ -18,8 +18,8 @@ public class NMEAImporter extends FileImporter {
 
     public NMEAImporter() {
         super(
-                new ExtensionFileFilter("nmea,nme,nma,txt", "nmea", tr("NMEA-0183 Files")
-                        + " (*.nmea *.nme *.nma *.txt)"));
+                new ExtensionFileFilter("nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files")
+                        + " (*.nmea *.nme *.nma *.log *.txt)"));
     }
 
     @Override public void importData(File file) throws IOException {
