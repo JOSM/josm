@@ -9,10 +9,15 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
@@ -94,6 +99,58 @@ public class ExceptionUtil {
                 "<html>Uploading to the server <strong>failed</strong> because your current<br>"
                 + "dataset violates a precondition.<br>" + "The error message is:<br>" + "{0}" + "</html>", e
                 .getMessage().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
+        return msg;
+    }
+
+    /**
+     * Explains an error due to a 409 conflict
+     *
+     * @param e the exception
+     */
+    public static String explainConflict(OsmApiException e) {
+        e.printStackTrace();
+        String msg = e.getErrorHeader();
+        if (msg != null) {
+            String pattern = "The changeset (\\d+) was closed at (.*)";
+            Pattern p = Pattern.compile(pattern);
+            Matcher m = p.matcher(msg);
+            if (m.matches()) {
+                long changesetId = Long.parseLong(m.group(1));
+                // Example: Tue Oct 15 10:00:00 UTC 2009
+                DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+                Date closeDate = null;
+                try {
+                    closeDate = formatter.parse(m.group(2));
+                } catch(ParseException ex) {
+                    System.err.println(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
+                    ex.printStackTrace();
+                }
+                if (closeDate == null) {
+                    msg = tr(
+                            "<html>Closing of changeset <strong>{0}</strong> failed <br>because it has already been closed.</html>",
+                            changesetId
+                    );
+                } else {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat();
+                    msg = tr(
+                            "<html>Closing of changeset <strong>{0}</strong> failed<br>"
+                            +" because it has already been closed on {1}.</html>",
+                            changesetId,
+                            dateFormat.format(closeDate)
+                    );
+                }
+                return msg;
+            }
+            msg = tr(
+                    "<html>The server reported that it has detected a conflict.<br>" +
+                    "Error message (untranslated):<br>" +
+                    "{0}",
+                    msg
+            );
+        }
+        msg = tr(
+                "<html>The server reported that it has detected a conflict.</html>"
+        );
         return msg;
     }
 

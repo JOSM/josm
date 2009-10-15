@@ -51,6 +51,8 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
+import org.openstreetmap.josm.gui.help.HelpBuilder;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
@@ -63,11 +65,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This is a dialog for entering upload options like the parameters for
  * the upload changeset and the strategy for opening/closing a changeset.
- * 
- * 
+ *
  */
 public class UploadDialog extends JDialog {
-
 
     public static final String HISTORY_KEY = "upload.comment.history";
 
@@ -108,7 +108,6 @@ public class UploadDialog extends JDialog {
     private JButton btnUpload;
 
     private ChangesetSelectionPanel pnlChangesetSelection;
-
     private boolean canceled = false;
 
     /**
@@ -151,7 +150,9 @@ public class UploadDialog extends JDialog {
         southTabbedPane.add(tagEditorPanel);
         southTabbedPane.setComponentAt(0, pnlChangesetSelection = new ChangesetSelectionPanel());
         southTabbedPane.setTitleAt(0, tr("Settings"));
+        southTabbedPane.setToolTipTextAt(0, tr("Decide how to upload the data and which changeset to use"));
         southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
+        southTabbedPane.setToolTipTextAt(1, tr("Apply tags to the changeset data is uploaded to"));
         southTabbedPane.addChangeListener(new TabbedPaneChangeLister());
         JPanel pnl1 = new JPanel();
         pnl1.setLayout(new BorderLayout());
@@ -190,6 +191,9 @@ public class UploadDialog extends JDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW
         );
+
+        pnl.add(new SideButton(new ContextSensitiveHelpAction("/Help/Dialogs/UploadDialog")));
+        HelpBuilder.setHelpContext(getRootPane(),"/Help/Dialogs/UploadDialog");
         return pnl;
     }
 
@@ -561,7 +565,8 @@ public class UploadDialog extends JDialog {
     }
 
     /**
-     * Listens to window closing events and processes them as cancel events
+     * Listens to window closing events and processes them as cancel events.
+     * Listens to window open events and initializes user input
      *
      */
     class WindowEventHandler extends WindowAdapter {
@@ -571,7 +576,7 @@ public class UploadDialog extends JDialog {
         }
 
         @Override
-        public void windowActivated(WindowEvent e) {
+        public void windowOpened(WindowEvent e) {
             startUserInput();
         }
     }
@@ -620,6 +625,7 @@ public class UploadDialog extends JDialog {
             pnl.setLayout(new GridBagLayout());
             pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
             cmt = new HistoryComboBox();
+            cmt.setToolTipText(tr("Enter an upload comment (min. 3 characters)"));
             List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
             // we have to reverse the history, because ComboBoxHistory will reverse it again
             // in addElement()
@@ -993,6 +999,10 @@ public class UploadDialog extends JDialog {
         }
     }
 
+    /**
+     * A combobox model for the list of open changesets
+     *
+     */
     public class OpenChangesetModel extends DefaultComboBoxModel {
         private List<Changeset> changesets;
         private long uid;
@@ -1033,20 +1043,12 @@ public class UploadDialog extends JDialog {
             fireContentsChanged(this, 0, getSize());
         }
 
-        /**
-         * Updates the current list of open changesets with the changesets
-         * in <code>changesets</code>
-         * 
-         * @param changesets the collection of changesets. If null, removes
-         * all changesets from the current list of changesets
-         */
-        public void addOrUpdate(Collection<Changeset> changesets) {
-            if (changesets == null){
-                this.changesets.clear();
-                setSelectedItem(null);
-            }
-            for (Changeset cs: changesets) {
-                internalAddOrUpdate(cs);
+        public void setChangesets(Collection<Changeset> changesets) {
+            this.changesets.clear();
+            if (changesets != null) {
+                for (Changeset cs: changesets) {
+                    internalAddOrUpdate(cs);
+                }
             }
             fireContentsChanged(this, 0, getSize());
             if (getSelectedItem() == null && !this.changesets.isEmpty()) {
@@ -1054,8 +1056,10 @@ public class UploadDialog extends JDialog {
             } else if (getSelectedItem() != null) {
                 if (changesets.contains(getSelectedItem())) {
                     setSelectedItem(getSelectedItem());
-                } else {
+                } else if (!this.changesets.isEmpty()){
                     setSelectedItem(this.changesets.get(0));
+                } else {
+                    setSelectedItem(null);
                 }
             } else {
                 setSelectedItem(null);

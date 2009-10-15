@@ -143,6 +143,16 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because of a conflict
+     * 
+     * @param e the exception
+     */
+    public static void explainConflict(OsmApiException e) {
+        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainConflict(e), tr("Conflict"),
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
@@ -228,6 +238,10 @@ public class ExceptionDialogUtil {
             }
             if (oae.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                 explainNotFound(oae);
+                return;
+            }
+            if (oae.getResponseCode() == HttpURLConnection.HTTP_CONFLICT) {
+                explainConflict(oae);
                 return;
             }
 

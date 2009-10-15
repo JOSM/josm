@@ -69,7 +69,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        model.addOrUpdate(changesets);
+                        model.setChangesets(changesets);
                     }
                 }
         );
