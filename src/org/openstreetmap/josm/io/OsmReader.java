@@ -100,7 +100,7 @@ public class OsmReader {
             osm.setDeleted(deleted);
             osm.setModified(modified | deleted);
             osm.setTimestamp(timestamp);
-            osm.user = user;
+            osm.setUser(user);
             osm.setVisible(visible);
             osm.mappaintStyle = null;
         }

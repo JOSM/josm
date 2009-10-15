@@ -424,8 +424,8 @@ public class MapStatus extends JPanel implements Helpful {
                 text.append(" [id="+osm.getId()+"]");
             }
 
-            if(osm.user != null) {
-                text.append(" [" + tr("User:") + " " + osm.user.getName() + "]");
+            if(osm.getUser() != null) {
+                text.append(" [" + tr("User:") + " " + osm.getUser().getName() + "]");
             }
 
             for (Entry<String, String> e1 : osm.entrySet()) {

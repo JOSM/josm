@@ -134,7 +134,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * User that last modified this primitive, as specified by the server.
      * Never changed by JOSM.
      */
-    public User user = null;
+    private User user = null;
 
     /**
      * If set to true, this object is incomplete, which means only the id
@@ -160,9 +160,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         if (allowNegativeId) {
             this.id = id;
         } else {
-            if (id < 0) {
+            if (id < 0)
                 throw new IllegalArgumentException(tr("Expected ID >= 0. Got {0}.", id));
-            } else if (id == 0) {
+            else if (id == 0) {
                 this.id = idCounter.decrementAndGet();
             } else {
                 this.id = id;
@@ -482,6 +482,24 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         }
         setModified(deleted);
         setSelected(false);
+    }
+
+    /**
+     * Replies the user who has last touched this object. May be null.
+     * 
+     * @return the user who has last touched this object. May be null.
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the user who has last touched this object.
+     * 
+     * @param user the user
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**

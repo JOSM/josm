@@ -224,13 +224,13 @@ public class OsmWriter extends XmlWriter implements Visitor {
             out.print(" timestamp='"+DateUtils.fromDate(osm.getTimestamp())+"'");
         }
         // user and visible added with 0.4 API
-        if (osm.user != null) {
-            if(osm.user.isLocalUser()) {
-                out.print(" user='"+XmlWriter.encode(osm.user.getName())+"'");
-            } else if (osm.user.isOsmUser()) {
+        if (osm.getUser() != null) {
+            if(osm.getUser().isLocalUser()) {
+                out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
+            } else if (osm.getUser().isOsmUser()) {
                 // uid added with 0.6
-                out.print(" uid='"+ osm.user.getId()+"'");
-                out.print(" user='"+XmlWriter.encode(osm.user.getName())+"'");
+                out.print(" uid='"+ osm.getUser().getId()+"'");
+                out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+"'");
             }
         }
         out.print(" visible='"+osm.isVisible()+"'");

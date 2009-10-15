@@ -120,7 +120,7 @@ public class MergeVisitor extends AbstractVisitor {
                         // copy the technical attributes from other
                         // version
                         my.setVisible(other.isVisible());
-                        my.user = other.user;
+                        my.setUser(other.getUser());
                         my.setTimestamp(other.getTimestamp());
                         my.setModified(other.isModified());
                         merged.put(other, my);

@@ -229,44 +229,44 @@ public class SearchCompiler {
                 return mode == Mode.NONE;
 
             switch (mode) {
-            case NONE:
-                return false;
-            case MISSING_KEY:
-                return osm.get(key) == null;
-            case ANY:
-                return true;
-            case ANY_VALUE:
-                return osm.get(key) != null;
-            case ANY_KEY:
-                for (String v:osm.getKeys().values()) {
-                    if (v.equals(value))
-                        return true;
-                }
-                return false;
-            case EXACT:
-                return value.equals(osm.get(key));
-            case ANY_KEY_REGEXP:
-                for (String v:osm.getKeys().values()) {
-                    if (valuePattern.matcher(v).matches())
-                        return true;
-                }
-                return false;
-            case ANY_VALUE_REGEXP:
-            case EXACT_REGEXP:
-                for (Entry<String, String> entry:osm.entrySet()) {
-                    if (keyPattern.matcher(entry.getKey()).matches()) {
-                        if (mode == Mode.ANY_VALUE_REGEXP
-                                || valuePattern.matcher(entry.getValue()).matches())
+                case NONE:
+                    return false;
+                case MISSING_KEY:
+                    return osm.get(key) == null;
+                case ANY:
+                    return true;
+                case ANY_VALUE:
+                    return osm.get(key) != null;
+                case ANY_KEY:
+                    for (String v:osm.getKeys().values()) {
+                        if (v.equals(value))
                             return true;
                     }
-                }
-                return false;
-            case MISSING_KEY_REGEXP:
-                for (String k:osm.keySet()) {
-                    if (keyPattern.matcher(k).matches())
-                        return false;
-                }
-                return true;
+                    return false;
+                case EXACT:
+                    return value.equals(osm.get(key));
+                case ANY_KEY_REGEXP:
+                    for (String v:osm.getKeys().values()) {
+                        if (valuePattern.matcher(v).matches())
+                            return true;
+                    }
+                    return false;
+                case ANY_VALUE_REGEXP:
+                case EXACT_REGEXP:
+                    for (Entry<String, String> entry:osm.entrySet()) {
+                        if (keyPattern.matcher(entry.getKey()).matches()) {
+                            if (mode == Mode.ANY_VALUE_REGEXP
+                                    || valuePattern.matcher(entry.getValue()).matches())
+                                return true;
+                        }
+                    }
+                    return false;
+                case MISSING_KEY_REGEXP:
+                    for (String k:osm.keySet()) {
+                        if (keyPattern.matcher(k).matches())
+                            return false;
+                    }
+                    return true;
             }
             throw new AssertionError("Missed state");
         }
@@ -330,8 +330,8 @@ public class SearchCompiler {
                         return true;
                 }
             }
-            if (osm.user != null) {
-                String name = osm.user.getName();
+            if (osm.getUser() != null) {
+                String name = osm.getUser().getName();
                 // is not Java 1.5
                 //String name = java.text.Normalizer.normalize(name, java.text.Normalizer.Form.NFC);
                 if (!caseSensitive) {
@@ -376,9 +376,9 @@ public class SearchCompiler {
             }
         }
         @Override public boolean match(OsmPrimitive osm) {
-            if (osm.user == null && user == null) return true;
-            if (osm.user == null) return false;
-            return osm.user.equals(user);
+            if (osm.getUser() == null && user == null) return true;
+            if (osm.getUser() == null) return false;
+            return osm.getUser().equals(user);
         }
         @Override public String toString() {
             return "user=" + user == null ? "" : user.getName();
