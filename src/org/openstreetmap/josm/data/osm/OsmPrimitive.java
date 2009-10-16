@@ -399,7 +399,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      *
      */
     public void clearOsmId() {
-        this.id = 0;
+        this.id = idCounter.getAndDecrement();
         this.version = 0;
         this.incomplete = false;
     }
