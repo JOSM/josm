@@ -117,10 +117,6 @@ public class Marker implements ActionListener {
                 String name_desc = "";
                 if (wpt.attr.containsKey("name")) {
                     name_desc = wpt.getString("name");
-                    if (wpt.attr.containsKey("desc")) {
-                        name_desc+=", ";
-                        name_desc+=wpt.getString("desc");
-                    }
                 } else if (wpt.attr.containsKey("desc")) {
                     name_desc = wpt.getString("desc");
                 }
