@@ -426,13 +426,32 @@ public class DeleteCommand extends Command {
     }
 
     public static Command deleteWaySegment(OsmDataLayer layer, WaySegment ws) {
+        if (ws.way.getNodesCount() < 3) {
+            // If the way contains less than three nodes, it can't have more
+            // than one segment, so the way should be deleted.
+
+            return new DeleteCommand(layer, Collections.singleton(ws.way));
+        }
+
+        if (ws.way.firstNode() == ws.way.lastNode()) {
+            // If the way is circular (first and last nodes are the same),
+            // the way shouldn't be splitted
+
+            List<Node> n = new ArrayList<Node>();
+
+            n.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount() - 1));
+            n.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
+
+            Way wnew = new Way(ws.way);
+            wnew.setNodes(n);
+
+            return new ChangeCommand(ws.way, wnew);
+        }
+
         List<Node> n1 = new ArrayList<Node>(), n2 = new ArrayList<Node>();
 
         n1.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
         n2.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount()));
-
-        if (n1.size() < 2 && n2.size() < 2)
-            return new DeleteCommand(layer, Collections.singleton(ws.way));
 
         Way wnew = new Way(ws.way);
 
@@ -452,6 +471,8 @@ public class DeleteCommand extends Command {
             wnew2.setKeys(wnew.getKeys());
             wnew2.setNodes(n2);
             cmds.add(new AddCommand(wnew2));
+
+            // FIXME: relation memberships are not handled
 
             return new SequenceCommand(tr("Split way segment"), cmds);
         }
