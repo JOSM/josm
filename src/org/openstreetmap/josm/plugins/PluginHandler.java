@@ -65,8 +65,6 @@ public class PluginHandler {
                 "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
                 "namefinder", "waypoints", "slippy_map_chooser", "tcx-support"};
         String [] unmaintained = new String[] {"gpsbabelgui", "Intersect_way"};
-        Map<String, Integer> requiredUpdate = new HashMap<String, Integer>();
-        requiredUpdate.put("validator", 18092);
 
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
@@ -111,25 +109,6 @@ public class PluginHandler {
                                     JOptionPane.WARNING_MESSAGE
                     );
                     continue;
-                }
-                if (requiredUpdate.containsKey(info.name)) {
-                    int minimumVersion = requiredUpdate.get(info.name);
-                    boolean badVersion;
-                    try {
-                        badVersion = Integer.parseInt(info.version) < minimumVersion;
-                    } catch (NumberFormatException e) {
-                        badVersion = true;
-                    }
-                    if (badVersion) {
-                        JOptionPane.showMessageDialog(
-                                Main.parent,
-                                tr("Plugin {0} version {1} found but for this version of JOSM is at least version {2} required. "
-                                        + "Please update the plugin.", info.name, info.version, String.valueOf(minimumVersion)),
-                                        tr("Warning"),
-                                        JOptionPane.WARNING_MESSAGE
-                        );
-                        continue;
-                    }
                 }
 
                 if(info.requires != null)
