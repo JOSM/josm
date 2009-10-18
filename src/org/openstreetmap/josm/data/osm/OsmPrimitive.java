@@ -35,7 +35,7 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  */
 abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
-    private static AtomicLong idCounter = new AtomicLong(0);
+    static final AtomicLong idCounter = new AtomicLong(0);
 
     private static final int FLAG_MODIFIED = 1 << 0;
     private static final int FLAG_VISIBLE  = 1 << 1;
@@ -399,7 +399,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      *
      */
     public void clearOsmId() {
-        this.id = idCounter.getAndDecrement();
+        this.id = idCounter.decrementAndGet();
         this.version = 0;
         this.incomplete = false;
     }
@@ -486,7 +486,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Replies the user who has last touched this object. May be null.
-     * 
+     *
      * @return the user who has last touched this object. May be null.
      */
     public User getUser() {
@@ -495,7 +495,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
     /**
      * Sets the user who has last touched this object.
-     * 
+     *
      * @param user the user
      */
     public void setUser(User user) {
