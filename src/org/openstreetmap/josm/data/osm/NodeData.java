@@ -15,4 +15,9 @@ public class NodeData extends PrimitiveData {
         this.coor = coor;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " NODE " + coor;
+    }
+
 }

@@ -36,4 +36,9 @@ public class RelationMemberData {
         this.memberType = memberType;
     }
 
+    @Override
+    public String toString() {
+        return memberType.getAPIName() + " " + memberId;
+    }
+
 }

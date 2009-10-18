@@ -840,6 +840,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     public abstract PrimitiveData save();
 
     protected void saveCommonAttributes(PrimitiveData data) {
+        data.setId(data.getId());
         data.getKeys().clear();
         data.getKeys().putAll(getKeys());
         data.setTimestamp(timestamp);

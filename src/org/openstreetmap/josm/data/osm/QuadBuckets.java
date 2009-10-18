@@ -572,6 +572,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         QBLevel find_exact_branch(T n)
         {
+            if (content != null && content.contains(n)) {
+                return this;
+            }
+            
             QBLevel ret = null;
             for (QBLevel l : children) {
                 if (l == null)

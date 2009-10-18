@@ -12,4 +12,9 @@ public class WayData extends PrimitiveData {
         return nodes;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " WAY" + nodes.toString();
+    }
+
 }

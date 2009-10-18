@@ -12,4 +12,9 @@ public class RelationData extends PrimitiveData {
         return members;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " REL " + members;
+    }
+
 }

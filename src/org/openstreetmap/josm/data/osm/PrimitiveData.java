@@ -11,7 +11,7 @@ import java.util.Map;
  * reported by events
  *
  */
-public class PrimitiveData {
+public abstract class PrimitiveData {
 
     // Useful?
     //private boolean disabled;
@@ -72,6 +72,25 @@ public class PrimitiveData {
     }
     public Map<String, String> getKeys() {
         return keys;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(id).append(keys);
+        if (modified) {
+            builder.append("M");
+        }
+        if (visible) {
+            builder.append("V");
+        }
+        if (deleted) {
+            builder.append("D");
+        }
+
+        return builder.toString();
     }
 
 
