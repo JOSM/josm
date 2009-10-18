@@ -547,7 +547,7 @@ public class MemberTableModel extends AbstractTableModel {
      */
     private static Node getUnusedNode(RelationMember element, RelationMember linked_element)
     {
-        Node    result = null;
+        Node result = null;
 
         if (element.isWay()) {
             Way w = element.getWay();

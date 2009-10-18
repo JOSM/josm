@@ -14,6 +14,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
         renderForeground(isSelected);
         setText(value.toString());
+        setToolTipText(((WayConnectionType)value).getToolTip());
         renderBackground(getModel(table), null, isSelected);
         return this;
     }
