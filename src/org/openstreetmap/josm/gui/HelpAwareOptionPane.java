@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
@@ -147,6 +148,11 @@ public class HelpAwareOptionPane {
                 }
             }
         }
+
+        if (msg instanceof String) {
+            msg = new JLabel((String)msg);
+        }
+
         final JOptionPane pane = new JOptionPane(
                 msg,
                 messageType,

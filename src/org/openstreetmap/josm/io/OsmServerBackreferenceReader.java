@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
@@ -133,7 +134,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
         InputStream in = null;
         progressMonitor.beginTask(null, 2);
         try {
-            progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
+            progressMonitor.indeterminateSubTask(tr("Downloading from OSM Server..."));
             StringBuffer sb = new StringBuffer();
             sb.append(primitiveType.getAPIName())
             .append("/").append(id).append("/ways");
@@ -159,10 +160,11 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             }
         }
     }
-    /**
 
+    /**
      * Reads referring relations from the API server and replies them in a {@see DataSet}
      *
+     * @param progressMonitor the progress monitor
      * @return the data set
      * @throws OsmTransferException
      */
@@ -212,6 +214,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * The method replies the modified dataset.
      *
      * @param ds the original dataset
+     * @param progressMonitor  the progress monitor
      * @return the modified dataset
      * @throws OsmTransferException thrown if an exception occurs.
      */
@@ -250,13 +253,17 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * Reads the referring primitives from the OSM server, parses them and
      * replies them as {@see DataSet}
      *
+     * @param progressMonitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null.
      * @return the dataset with the referring primitives
      * @exception OsmTransferException thrown if an error occurs while communicating with the server
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask(null, 3);
+        if (progressMonitor == null) {
+            progressMonitor = NullProgressMonitor.INSTANCE;
+        }
         try {
+            progressMonitor.beginTask(null, 3);
             DataSet ret = new DataSet();
             if (primitiveType.equals(OsmPrimitiveType.NODE)) {
                 DataSet ds = getReferringWays(progressMonitor.createSubTaskMonitor(1, false));

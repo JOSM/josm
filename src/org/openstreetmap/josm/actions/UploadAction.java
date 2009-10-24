@@ -227,9 +227,9 @@ public class UploadAction extends JosmAction{
     protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion, String myVersion) {
         String lbl = "";
         switch(primitiveType) {
-        case NODE: lbl =  tr("Synchronize node {0} only", id); break;
-        case WAY: lbl =  tr("Synchronize way {0} only", id); break;
-        case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
+            case NODE: lbl =  tr("Synchronize node {0} only", id); break;
+            case WAY: lbl =  tr("Synchronize way {0} only", id); break;
+            case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
         }
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
@@ -270,12 +270,12 @@ public class UploadAction extends JosmAction{
                 null,
                 spec,
                 spec[0],
-                "Concepts/Conflict"
+                "/Concepts/Conflict"
         );
         switch(ret) {
-        case 0: synchronizePrimitive(primitiveType, id); break;
-        case 1: synchronizeDataSet(); break;
-        default: return;
+            case 0: synchronizePrimitive(primitiveType, id); break;
+            case 1: synchronizeDataSet(); break;
+            default: return;
         }
     }
 
@@ -340,6 +340,48 @@ public class UploadAction extends JosmAction{
         );
     }
 
+
+    /**
+     * Handles the case where deleting a node failed because it is still in use in
+     * a non-deleted way on the server.
+     */
+    protected void handleUploadConflictForNodeStillInUse(long nodeId, long wayId) {
+        ButtonSpec[] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Prepare conflict resolution"),
+                        ImageProvider.get("ok"),
+                        tr("Click to download all parent ways for node {0}", nodeId),
+                        null /* no specific help context */
+                ),
+                new ButtonSpec(
+                        tr("Cancel"),
+                        ImageProvider.get("cancel"),
+                        tr("Click to cancel and to resume editing the map", nodeId),
+                        null /* no specific help context */
+                )
+        };
+        String msg =  tr("<html>Uploading <strong>failed</strong> because you tried "
+                + "to delete node {0} which is still in use in way {1}.<br><br>"
+                + "Click <strong>{2}</strong> to download all parent ways of node {0}.<br>"
+                + "If necessary JOSM will create conflicts which you can resolve in the Conflict Resolution Dialog."
+                + "</html>",
+                nodeId, wayId, options[0].text
+        );
+
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                msg,
+                tr("Node still in use"),
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                options,
+                options[0],
+                "/Action/Upload#NodeStillInUseInWay"
+        );
+        if (ret != 0) return;
+        DownloadReferrersAction.downloadReferrers(Main.map.mapView.getEditLayer(), nodeId, OsmPrimitiveType.NODE);
+    }
+
     /**
      * handles an upload conflict, i.e. an error indicated by a HTTP return code 409.
      *
@@ -360,8 +402,32 @@ public class UploadAction extends JosmAction{
             handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.fromString(m.group(2)));
             return;
         }
-        logger.warning(tr("Warning: error header \"{0}\" did not match expected pattern \"{1}\"", e.getErrorHeader(),pattern));
+        pattern = "Node (\\d+) is still used by way (\\d+).";
+        p = Pattern.compile(pattern);
+        m = p.matcher(e.getErrorHeader());
+        if (m.matches()) {
+            handleUploadConflictForNodeStillInUse(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)));
+            return;
+        }
+        logger.warning(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
         handleUploadConflictForUnknownConflict();
+    }
+
+    /**
+     * handles an precondition failed conflict, i.e. an error indicated by a HTTP return code 412.
+     *
+     * @param e  the exception
+     */
+    protected void handlePreconditionFailed(OsmApiException e) {
+        String pattern = "Precondition failed: Node (\\d+) is still used by way (\\d+).";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(e.getErrorHeader());
+        if (m.matches()) {
+            handleUploadConflictForNodeStillInUse(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)));
+            return;
+        }
+        logger.warning(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
+        ExceptionDialogUtil.explainPreconditionFailed(e);
     }
 
     /**
@@ -432,7 +498,7 @@ public class UploadAction extends JosmAction{
             // There was a precondition failed. Notify the user.
             //
             else if (ex.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
-                ExceptionDialogUtil.explainPreconditionFailed(ex);
+                handlePreconditionFailed(ex);
                 return;
             }
             // Tried to update or delete a primitive which never existed on

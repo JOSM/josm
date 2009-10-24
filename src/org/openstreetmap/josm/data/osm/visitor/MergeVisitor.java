@@ -22,8 +22,6 @@ import org.openstreetmap.josm.data.osm.Way;
  * A visitor that gets a data set at construction time and merges every visited object
  * into it.
  *
- * @author imi
- * @author Gubaer
  */
 public class MergeVisitor extends AbstractVisitor {
     private static Logger logger = Logger.getLogger(MergeVisitor.class.getName());
@@ -187,6 +185,11 @@ public class MergeVisitor extends AbstractVisitor {
             if (mergedNode != null) {
                 if (!mergedNode.isDeleted()) {
                     newNodes.add(mergedNode);
+                } else {
+                    // we've removed a node from a way during merging.
+                    // Flag the way as being modified.
+                    //
+                    w.setModified(true);
                 }
                 replacedSomething =  true;
             } else {

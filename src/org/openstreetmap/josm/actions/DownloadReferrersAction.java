@@ -7,6 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -14,21 +17,20 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
 /**
  * This action loads the set of primitives referring to the current selection from the OSM
  * server.
- *
  *
  */
 public class DownloadReferrersAction extends JosmAction{
@@ -39,16 +41,52 @@ public class DownloadReferrersAction extends JosmAction{
     }
 
     /**
-     * Downloads the primitives referring to the primitives in <code>primitives</code>.
+     * Downloads the primitives referring to the primitives in <code>primitives</code>
+     * into the target layer <code>targetLayer</code>.
      * Does nothing if primitives is null or empty.
      *
-     * @param primitives the collection of primitives.
+     * @param targetLayer  the target layer. Must not be null.
+     * @param children the collection of child primitives.
+     * @exception IllegalArgumentException thrown if targetLayer is null
      */
-    public void downloadReferrers(Collection<OsmPrimitive> primitives) {
-        if (primitives == null || primitives.isEmpty()) return;
-        Main.worker.submit(new DownloadReferrersTask(primitives));
+    static public void downloadReferrers(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) throws IllegalArgumentException {
+        if (children == null || children.isEmpty()) return;
+        Main.worker.submit(new DownloadReferrersTask(targetLayer, children));
     }
 
+    /**
+     * Downloads the primitives referring to the primitives in <code>primitives</code>
+     * into the target layer <code>targetLayer</code>.
+     * Does nothing if primitives is null or empty.
+     *
+     * @param targetLayer  the target layer. Must not be null.
+     * @param children the collection of primitives, given as map of ids and types
+     * @exception IllegalArgumentException thrown if targetLayer is null
+     */
+    static public void downloadReferrers(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) throws IllegalArgumentException {
+        if (children == null || children.isEmpty()) return;
+        Main.worker.submit(new DownloadReferrersTask(targetLayer, children));
+    }
+
+    /**
+     * Downloads the primitives referring to the primitive given by <code>id</code> and
+     * <code>type</code>.
+     * 
+     *
+     * @param targetLayer  the target layer. Must not be null.
+     * @param id the primitive id. id > 0 required.
+     * @param type the primitive type. type != null required
+     * @exception IllegalArgumentException thrown if targetLayer is null
+     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if type == null
+     */
+    static public void downloadReferrers(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
+        if (id <= 0)
+            throw new IllegalArgumentException(tr("Id > 0 required, got {0}", id));
+        if (type == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+        Main.worker.submit(new DownloadReferrersTask(targetLayer, id, type));
+    }
 
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || Main.map == null || Main.map.mapView == null)
@@ -57,44 +95,107 @@ public class DownloadReferrersAction extends JosmAction{
         if (layer == null)
             return;
         Collection<OsmPrimitive> primitives = layer.data.getSelected();
-        downloadReferrers(primitives);
+        downloadReferrers(layer,primitives);
     }
 
     /**
      * The asynchronous task for downloading referring primitives
      *
      */
-    class DownloadReferrersTask extends PleaseWaitRunnable {
-        private DataSet ds;
+    public static class DownloadReferrersTask extends PleaseWaitRunnable {
         private boolean cancelled;
-        Exception lastException;
-        private Collection<OsmPrimitive> primitives;
+        private Exception lastException;
+        private OsmServerBackreferenceReader reader;
+        /** the target layer */
+        private OsmDataLayer targetLayer;
+        /** the collection of child primitives */
+        private Map<Long, OsmPrimitiveType> children;
+        /** the parents */
         private DataSet parents;
 
-        public DownloadReferrersTask(Collection<OsmPrimitive> primitives) {
+        /**
+         * constructor
+         * 
+         * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
+         * @param children the collection of child primitives for which parents are to be downloaded
+         * 
+         */
+        public DownloadReferrersTask(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) {
             super("Download referrers", false /* don't ignore exception*/);
+            if (targetLayer == null)
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetLayer"));
             cancelled = false;
-            this.primitives = primitives;
+            this.children = new HashMap<Long, OsmPrimitiveType>();
+            if (children != null) {
+                for (OsmPrimitive p: children) {
+                    if (! p.isNew()) {
+                        this.children.put(p.getId(), OsmPrimitiveType.from(p));
+                    }
+                }
+            }
+            this.targetLayer = targetLayer;
             parents = new DataSet();
         }
 
-        protected void showLastException() {
-            String msg = lastException.getMessage();
-            if (msg == null) {
-                msg = lastException.toString();
+        /**
+         * constructor
+         * 
+         * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
+         * @param primitives  the collection of children for which parents are to be downloaded. Children
+         * are specified by their id and  their type.
+         * 
+         */
+        public DownloadReferrersTask(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) {
+            super("Download referrers", false /* don't ignore exception*/);
+            if (targetLayer == null)
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetLayer"));
+            cancelled = false;
+            this.children = new HashMap<Long, OsmPrimitiveType>();
+            if (children != null) {
+                for (Entry<Long, OsmPrimitiveType> entry : children.entrySet()) {
+                    if (entry.getKey() > 0 && entry.getValue() != null) {
+                        children.put(entry.getKey(), entry.getValue());
+                    }
+                }
             }
-            JOptionPane.showMessageDialog(
-                    Main.map,
-                    msg,
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+            this.targetLayer = targetLayer;
+            parents = new DataSet();
+        }
+
+        /**
+         * constructor
+         * 
+         * @param targetLayer  the target layer. Must not be null.
+         * @param id the primitive id. id > 0 required.
+         * @param type the primitive type. type != null required
+         * @exception IllegalArgumentException thrown if id <= 0
+         * @exception IllegalArgumentException thrown if type == null
+         * @exception IllegalArgumentException thrown if targetLayer == null
+         * 
+         */
+        public DownloadReferrersTask(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
+            super("Download referrers", false /* don't ignore exception*/);
+            if (targetLayer == null)
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetLayer"));
+            if (id <= 0)
+                throw new IllegalArgumentException(tr("Id > 0 required, got {0}", id));
+            if (type == null)
+                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+            cancelled = false;
+            this.children = new HashMap<Long, OsmPrimitiveType>();
+            this.children.put(id, type);
+            this.targetLayer = targetLayer;
+            parents = new DataSet();
         }
 
         @Override
         protected void cancel() {
             cancelled = true;
-            OsmApi.getOsmApi().cancel();
+            synchronized(this) {
+                if (reader != null) {
+                    reader.cancel();
+                }
+            }
         }
 
         @Override
@@ -102,23 +203,23 @@ public class DownloadReferrersAction extends JosmAction{
             if (cancelled)
                 return;
             if (lastException != null) {
-                showLastException();
+                ExceptionUtil.explainException(lastException);
                 return;
             }
 
-            MergeVisitor visitor = new MergeVisitor(Main.map.mapView.getEditLayer().data, parents);
+            MergeVisitor visitor = new MergeVisitor(targetLayer.data, parents);
             visitor.merge();
             SwingUtilities.invokeLater(
                     new Runnable() {
                         public void run() {
-                            Main.map.mapView.getEditLayer().fireDataChange();
+                            targetLayer.fireDataChange();
                             Main.map.mapView.repaint();
                         }
                     }
             );
             if (visitor.getConflicts().isEmpty())
                 return;
-            Main.map.mapView.getEditLayer().getConflicts().add(visitor.getConflicts());
+            targetLayer.getConflicts().add(visitor.getConflicts());
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("There were {0} conflicts during import.",
@@ -129,9 +230,12 @@ public class DownloadReferrersAction extends JosmAction{
             );
         }
 
-        protected void downloadParents(OsmPrimitive primitive, ProgressMonitor progressMonitor) throws OsmTransferException{
-            OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(primitive);
+        protected void downloadParents(long id, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{
+            reader = new OsmServerBackreferenceReader(id, type);
             DataSet ds = reader.parseOsm(progressMonitor);
+            synchronized(this) { // avoid race condition in cancel()
+                reader = null;
+            }
             MergeVisitor visitor = new MergeVisitor(parents, ds);
             visitor.merge();
         }
@@ -139,13 +243,19 @@ public class DownloadReferrersAction extends JosmAction{
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                progressMonitor.setTicksCount(primitives.size());
+                progressMonitor.setTicksCount(children.size());
                 int i=1;
-                for (OsmPrimitive primitive: primitives) {
+                for (Entry<Long, OsmPrimitiveType> entry: children.entrySet()) {
                     if (cancelled)
                         return;
-                    progressMonitor.subTask(tr("({0}/{1}) Loading parents of primitive {2}", i+1,primitives.size(), primitive.getDisplayName(DefaultNameFormatter.getInstance())));
-                    downloadParents(primitive, progressMonitor.createSubTaskMonitor(1, false));
+                    String msg = "";
+                    switch(entry.getValue()) {
+                        case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i+1,children.size(), entry.getKey()); break;
+                        case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i+1,children.size(), entry.getKey()); break;
+                        case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1,children.size(), entry.getKey()); break;
+                    }
+                    progressMonitor.subTask(msg);
+                    downloadParents(entry.getKey(), entry.getValue(), progressMonitor.createSubTaskMonitor(1, false));
                     i++;
                 }
             } catch(Exception e) {
