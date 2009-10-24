@@ -8,10 +8,10 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 
-public class HelpBuilder {
+public class HelpUtil {
 
     /**
-     * Makes a component aware of context sensitive help
+     * Makes a component aware of context sensitive help.
      * 
      * @param component the component
      * @param topic the help topic
@@ -21,4 +21,5 @@ public class HelpBuilder {
         component.getActionMap().put("help", Main.main.menu.help);
         component.putClientProperty("help", topic);
     }
+
 }

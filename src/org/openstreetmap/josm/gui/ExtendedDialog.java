@@ -23,7 +23,7 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
-import org.openstreetmap.josm.gui.help.HelpBuilder;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -217,7 +217,7 @@ public class ExtendedDialog extends JDialog {
         }
         if (showHelpButton) {
             buttonsPanel.add(new JButton(new HelpAction()), GBC.std().insets(2,2,2,2));
-            HelpBuilder.setHelpContext(getRootPane(),helpTopic);
+            HelpUtil.setHelpContext(getRootPane(),helpTopic);
         }
 
         JPanel cp = new JPanel(new GridBagLayout());

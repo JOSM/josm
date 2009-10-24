@@ -52,7 +52,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
-import org.openstreetmap.josm.gui.help.HelpBuilder;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
@@ -193,7 +193,7 @@ public class UploadDialog extends JDialog {
         );
 
         pnl.add(new SideButton(new ContextSensitiveHelpAction("/Help/Dialogs/UploadDialog")));
-        HelpBuilder.setHelpContext(getRootPane(),"/Help/Dialogs/UploadDialog");
+        HelpUtil.setHelpContext(getRootPane(),"/Help/Dialogs/UploadDialog");
         return pnl;
     }
 

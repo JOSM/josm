@@ -54,10 +54,12 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
     @Override
     public boolean executeCommand() {
         super.executeCommand();
-        conflict.getMy().setOsmId(
-                conflict.getMy().getId(),
-                (int)Math.max(conflict.getMy().getVersion(), conflict.getTheir().getVersion())
-        );
+        if (!conflict.getMy().isNew()) {
+            conflict.getMy().setOsmId(
+                    conflict.getMy().getId(),
+                    (int)Math.max(conflict.getMy().getVersion(), conflict.getTheir().getVersion())
+            );
+        }
         getLayer().getConflicts().remove(conflict);
         rememberConflict(conflict);
         return true;

@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
-import org.openstreetmap.josm.gui.help.HelpBuilder;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -380,7 +380,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                 setLocationRelativeTo(Main.parent);
             }
             setTitle(titleBar.getTitle());
-            HelpBuilder.setHelpContext(getRootPane(), helpTopic());
+            HelpUtil.setHelpContext(getRootPane(), helpTopic());
         }
 
         protected void rememberGeometry() {

@@ -17,7 +17,8 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
-import org.openstreetmap.josm.gui.help.HelpBuilder;
+import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -60,12 +61,65 @@ public class HelpAwareOptionPane {
         }
     }
 
+    static private List<JButton> createOptionButtons(ButtonSpec[] options, String helpTopic) {
+        List<JButton> buttons = new ArrayList<JButton>();
+        if (options == null) {
+            buttons.add(new JButton(tr("OK")));
+        } else {
+            for (ButtonSpec spec: options) {
+                JButton b = new JButton(spec.text);
+                b.setIcon(spec.icon);
+                b.setToolTipText(spec.tooltipText == null? "" : spec.tooltipText);
+                if (helpTopic != null) {
+                    HelpUtil.setHelpContext(b, helpTopic);
+                }
+                b.setFocusable(true);
+                buttons.add(b);
+
+            }
+        }
+        return buttons;
+    }
+
+    static private JButton createHelpButton(final String helpTopic) {
+        JButton b = new JButton(tr("Help"));
+        b.setIcon(ImageProvider.get("help"));
+        b.setToolTipText(tr("Show help information"));
+        HelpUtil.setHelpContext(b, helpTopic);
+        b.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        HelpBrowserProxy.getInstance().setUrlForHelpTopic(completeHelpTopic(helpTopic));
+                    }
+                }
+        );
+        return b;
+    }
+
+    static private String completeHelpTopic(String helpTopic) {
+        if (helpTopic == null) return null;
+        if (! helpTopic.startsWith("/")) {
+            helpTopic = "/" + helpTopic;
+        }
+        return "Help" + helpTopic;
+    }
+
     /**
      * Displays an option dialog which is aware of a help context. If <code>helpTopic</code> isn't null,
      * the dialog includes a "Help" button and launches the help browser if the user presses F1. If the
      * user clicks on the "Help" button the option dialog remains open and JOSM launches the help
      * browser.
      * 
+     * <code>helpTopic</code> is the trailing part of a JOSM online help URL, i.e. the part after the leading
+     * <code>http://josm.openstreetmap.de/wiki/Help</code>. It should start with a leading '/' and it
+     * may include and anchor after a '#'.
+     * 
+     * <strong>Examples</strong>
+     * <ul>
+     *    <li>/Dialogs/RelationEditor</li>
+     *    <li>/Dialogs/RelationEditor#ConflictInData</li>
+     * </ul>
+     *
      * In addition, the option buttons display JOSM icons, similar to ExtendedDialog.
      * 
      * @param parentComponent the parent component
@@ -78,38 +132,10 @@ public class HelpAwareOptionPane {
      * @param helpTopic the help topic. Can be null.
      * @return the index of the selected option or {@link JOptionPane#CLOSED_OPTION}
      */
-    static public int showOptionDialog(Component parentComponent, Object msg, String title, int messageType, Icon icon, ButtonSpec[] options, Object defaultOption, final String helpTopic)  {
-        List<JButton> buttons = new ArrayList<JButton>();
-
-        if (options == null) {
-            buttons.add(new JButton(tr("OK")));
-        } else {
-            for (ButtonSpec spec: options) {
-                JButton b = new JButton(spec.text);
-                b.setIcon(spec.icon);
-                b.setToolTipText(spec.tooltipText == null? "" : spec.tooltipText);
-                if (helpTopic != null) {
-                    HelpBuilder.setHelpContext(b, helpTopic);
-                }
-                buttons.add(b);
-
-            }
-        }
+    static public int showOptionDialog(Component parentComponent, Object msg, String title, int messageType, Icon icon, final ButtonSpec[] options, final ButtonSpec defaultOption, final String helpTopic)  {
+        final List<JButton> buttons = createOptionButtons(options, helpTopic);
         if (helpTopic != null) {
-            JButton b = new JButton(tr("Help"));
-            b.setIcon(ImageProvider.get("help"));
-            b.setToolTipText(tr("Show help information"));
-            HelpBuilder.setHelpContext(b, helpTopic);
-            b.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            HelpBrowser browser = new HelpBrowser();
-                            browser.setUrlForHelpTopic("Help/" + helpTopic);
-                            browser.setVisible(true);
-                        }
-                    }
-            );
-            buttons.add(b);
+            buttons.add(createHelpButton(helpTopic));
         }
 
         JButton defaultButton = null;
@@ -144,6 +170,21 @@ public class HelpAwareOptionPane {
                         pane.setValue(JOptionPane.CLOSED_OPTION);
                         super.windowClosed(e);
                     }
+
+                    @Override
+                    public void windowOpened(WindowEvent e) {
+                        if (defaultOption != null && options != null && options.length > 0) {
+                            int i;
+                            for (i=0; i<options.length;i++) {
+                                if (options[i] == defaultOption) {
+                                    break;
+                                }
+                            }
+                            if (i >= options.length) return; // default option not an option?
+
+                            buttons.get(i).requestFocusInWindow();
+                        }
+                    }
                 }
         );
         if (options != null) {
@@ -154,7 +195,7 @@ public class HelpAwareOptionPane {
         dialog.pack();
         WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
         if (helpTopic != null) {
-            HelpBuilder.setHelpContext(dialog.getRootPane(), helpTopic);
+            HelpUtil.setHelpContext(dialog.getRootPane(), helpTopic);
         }
         dialog.setVisible(true);
         return (Integer)pane.getValue();

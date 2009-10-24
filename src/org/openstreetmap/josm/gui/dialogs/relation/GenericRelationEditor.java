@@ -63,8 +63,10 @@ import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -86,7 +88,6 @@ import org.xml.sax.SAXException;
 public class GenericRelationEditor extends RelationEditor {
 
     static private final Logger logger = Logger.getLogger(GenericRelationEditor.class.getName());
-    static private final Dimension DEFAULT_EDITOR_DIMENSION = new Dimension(700, 500);
 
     /** the tag table and its model */
     private TagEditorPanel tagEditorPanel;
@@ -591,12 +592,12 @@ public class GenericRelationEditor extends RelationEditor {
                             tr("Remove them, clean up relation")
             );
             switch(ret) {
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
-            case JOptionPane.CLOSED_OPTION: return;
-            case JOptionPane.NO_OPTION: return;
-            case JOptionPane.YES_OPTION:
-                memberTableModel.removeMembersReferringTo(toCheck);
-                break;
+                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
+                case JOptionPane.CLOSED_OPTION: return;
+                case JOptionPane.NO_OPTION: return;
+                case JOptionPane.YES_OPTION:
+                    memberTableModel.removeMembersReferringTo(toCheck);
+                    break;
             }
         }
     }
@@ -627,11 +628,11 @@ public class GenericRelationEditor extends RelationEditor {
                     null
             );
             switch(ret) {
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
-            case JOptionPane.YES_OPTION: return true;
-            case JOptionPane.NO_OPTION: return false;
-            case JOptionPane.CLOSED_OPTION: return false;
-            case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
+                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
+                case JOptionPane.YES_OPTION: return true;
+                case JOptionPane.NO_OPTION: return false;
+                case JOptionPane.CLOSED_OPTION: return false;
+                case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
             }
             // should not happen
             return false;
@@ -1045,29 +1046,35 @@ public class GenericRelationEditor extends RelationEditor {
         }
 
         protected boolean confirmClosingBecauseOfDirtyState() {
-            String [] options = new String[] {
-                    tr("Yes, create a conflict and close"),
-                    tr("No, continue editing")
+            ButtonSpec [] options = new ButtonSpec[] {
+                    new ButtonSpec(
+                            tr("Yes, create a conflict and close"),
+                            ImageProvider.get("ok"),
+                            tr("Click to create a conflict and close this relation editor") ,
+                            null /* no specific help topic */
+                    ),
+                    new ButtonSpec(
+                            tr("No, continue editing"),
+                            ImageProvider.get("cancel"),
+                            tr("Click to to return to the relation editor and to resume relation editing") ,
+                            null /* no specific help topic */
+                    )
             };
-            int ret = JOptionPane.showOptionDialog(
+
+            int ret = HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
                     tr("<html>This relation has been changed outside of the editor.<br>"
                             + "You can't apply your changes and continue editing.<br>"
                             + "<br>"
                             + "Do you want to create a conflict and close the editor?</html>"),
                             tr("Conflict in data"),
-                            JOptionPane.YES_NO_OPTION,
                             JOptionPane.WARNING_MESSAGE,
                             null,
                             options,
-                            options[0]
+                            options[0], // OK is default
+                            "/Dialog/RelationEditor#RelationChangedOutsideOfEditor"
             );
-            switch(ret) {
-            case JOptionPane.CANCEL_OPTION: return false;
-            case JOptionPane.YES_OPTION: return true;
-            case JOptionPane.NO_OPTION: return false;
-            }
-            return false;
+            return ret == 0;
         }
 
         protected void warnDoubleConflict() {
@@ -1239,10 +1246,10 @@ public class GenericRelationEditor extends RelationEditor {
                     options[0]
             );
             switch(ret) {
-            case JOptionPane.YES_OPTION: return true;
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return true;
-            default:
-                return false;
+                case JOptionPane.YES_OPTION: return true;
+                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return true;
+                default:
+                    return false;
             }
         }
 

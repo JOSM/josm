@@ -20,6 +20,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -114,8 +115,9 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         displaylist.addListSelectionListener(selectAction);
         buttonPanel.add(new SideButton(selectAction), GBC.eol());
 
-
         add(buttonPanel, BorderLayout.SOUTH);
+        displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
+        displaylist.getActionMap().put("deleteRelation", deleteAction);
 
         // register as layer listener
         //

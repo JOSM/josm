@@ -65,7 +65,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
-import org.openstreetmap.josm.gui.help.HelpBuilder;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -382,7 +382,7 @@ public class OsmDataLayer extends Layer {
             );
             dialog.setContentPane(pane);
             dialog.pack();
-            HelpBuilder.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
+            HelpUtil.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
             WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
             dialog.setVisible(true);
         }
