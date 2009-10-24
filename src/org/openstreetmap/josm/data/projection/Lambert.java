@@ -140,11 +140,11 @@ public class Lambert implements Projection {
     }
 
     @Override public String toString() {
-        return tr("Lambert Zone (France)");
+        return tr("Lambert 4 Zones (France)");
     }
 
     public String toCode() {
-        return "EPSG:"+(27571+currentZone);
+        return "EPSG:"+(27561+currentZone);
     }
 
     public String getCacheDirectoryName() {

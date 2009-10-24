@@ -30,7 +30,8 @@ public interface Projection {
         new UTM_20N_Guadeloupe_Ste_Anne(),
         new UTM_20N_Guadeloupe_Fort_Marigot(),
         new UTM_20N_Martinique_Fort_Desaix(),
-        new GaussLaborde_Reunion()
+        new GaussLaborde_Reunion(),
+        new LambertCC9Zones()    // Still needs proper default zoom
     };
 
     /**

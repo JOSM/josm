@@ -10,7 +10,7 @@ package org.openstreetmap.josm.data.projection;
 /**
  * the reference ellipsoids
  */
-class Ellipsoid {
+public class Ellipsoid {
     /**
      * Clarke's ellipsoid (NTF system)
      */
@@ -21,9 +21,14 @@ class Ellipsoid {
     public static final Ellipsoid hayford =
         new Ellipsoid(6378388.0, 6356911.9461);
     /**
+     * GRS80 ellipsoid
+     */
+    public static final Ellipsoid GRS80 = new Ellipsoid(6378137.0, 6356752.3141);
+
+    /**
      * WGS84 ellipsoid
      */
-    public static final Ellipsoid GRS80 = new Ellipsoid(6378137.0, 6356752.314);
+    public static final Ellipsoid WGS84 = new Ellipsoid(6378137.0, 6356752.3142);
 
     /**
      * half long axis
