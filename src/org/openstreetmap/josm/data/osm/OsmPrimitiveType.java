@@ -4,18 +4,30 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 public enum OsmPrimitiveType {
 
-    NODE ("node"),
-    WAY  ("way"),
-    RELATION ("relation");
+    NODE ("node", Node.class, NodeData.class),
+    WAY  ("way", Way.class, WayData.class),
+    RELATION ("relation", Relation.class, RelationData.class);
 
-    private String apiTypeName;
+    private final String apiTypeName;
+    private final Class<? extends OsmPrimitive> osmClass;
+    private final Class<? extends PrimitiveData> dataClass;
 
-    OsmPrimitiveType(String apiTypeName) {
+    OsmPrimitiveType(String apiTypeName, Class<? extends OsmPrimitive> osmClass, Class<? extends PrimitiveData> dataClass) {
         this.apiTypeName = apiTypeName;
+        this.osmClass = osmClass;
+        this.dataClass = dataClass;
     }
 
     public String getAPIName() {
         return apiTypeName;
+    }
+
+    public Class<? extends OsmPrimitive> getOsmClass() {
+        return osmClass;
+    }
+
+    public Class<? extends PrimitiveData> getDataClass() {
+        return dataClass;
     }
 
     public static OsmPrimitiveType fromApiTypeName(String typeName) {
@@ -29,11 +41,22 @@ public enum OsmPrimitiveType {
         return from(obj.getClass());
     }
 
-    public static OsmPrimitiveType from(Class cls) {
+    public static OsmPrimitiveType from(Class<? extends OsmPrimitive> cls) {
         if (cls.equals(Node.class)) return NODE;
         if (cls.equals(Way.class)) return WAY;
         if (cls.equals(Relation.class)) return RELATION;
         throw new IllegalArgumentException(tr("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
+    }
+
+    public static OsmPrimitiveType fromData(Class<? extends PrimitiveData> cls) {
+        if (cls.equals(NodeData.class)) return NODE;
+        if (cls.equals(WayData.class)) return WAY;
+        if (cls.equals(RelationData.class)) return RELATION;
+        throw new IllegalArgumentException(tr("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
+    }
+
+    public static OsmPrimitiveType fromData(PrimitiveData data) {
+        return fromData(data.getClass());
     }
 
     public static OsmPrimitiveType from(String value) {

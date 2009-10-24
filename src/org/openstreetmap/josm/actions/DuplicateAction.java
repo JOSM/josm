@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public final class DuplicateAction extends JosmAction{
@@ -20,7 +21,7 @@ public final class DuplicateAction extends JosmAction{
     }
 
     public void actionPerformed(ActionEvent e) {
-        new PasteAction().pasteData(new CopyAction().copyData(), getEditLayer(), e);
+        new PasteAction().pasteData(new PrimitiveDeepCopy(getCurrentDataSet().getSelected()), getEditLayer(), e);
     }
 
     @Override

@@ -8,8 +8,27 @@ public class WayData extends PrimitiveData {
 
     private final List<Long> nodes = new ArrayList<Long>();
 
+    public WayData() {
+
+    }
+
+    public WayData(WayData data) {
+        super(data);
+        nodes.addAll(data.getNodes());
+    }
+
     public List<Long> getNodes() {
         return nodes;
+    }
+
+    @Override
+    public WayData makeCopy() {
+        return new WayData(this);
+    }
+
+    @Override
+    public OsmPrimitive makePrimitive(DataSet dataSet) {
+        return new Way(this, dataSet);
     }
 
     @Override

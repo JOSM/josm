@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -21,13 +22,13 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Base class helper for all Actions in JOSM. Just to make the life easier.
- * 
+ *
  * A JosmAction is a {@see LayerChangeListener} and a {@see SelectionChangedListener}. Upon
  * a layer change event or a selection change event it invokes {@see #updateEnabled()}.
  * Subclasses can override {@see #updateEnabled()} in order to update the {@see #isEnabled()}-state
  * of a JosmAction depending on the {@see #getCurrentDataSet()} and the current layers
  * (see also {@see #getEditLayer()}).
- * 
+ *
  * destroy() from interface Destroyable is called e.g. for MapModes, when the last layer has
  * been removed and so the mapframe will be destroyed. For other JosmActions, destroy() may never
  * be called (currently).
@@ -104,7 +105,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     /**
      * needs to be overridden to be useful
      */
-    public void pasteBufferChanged(DataSet newPasteBuffer) {
+    public void pasteBufferChanged(PrimitiveDeepCopy newPasteBuffer) {
         return;
     }
 
@@ -125,7 +126,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     /**
      * Replies the current edit layer
-     * 
+     *
      * @return the current edit layer. null, if no edit layer exists
      */
     protected OsmDataLayer getEditLayer() {
@@ -134,7 +135,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     /**
      * Replies the current dataset
-     * 
+     *
      * @return the current dataset. null, if no current dataset exists
      */
     protected DataSet getCurrentDataSet() {
@@ -154,7 +155,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Override in subclasses to init the enabled state of an action when it is
      * created. Default behaviour is to call {@see #updateEnabledState()}
-     * 
+     *
      * @see #updateEnabledState()
      * @see #updateEnabledState(Collection)
      */
@@ -165,12 +166,12 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Override in subclasses to update the enabled state of the action when
      * something in the JOSM state changes, i.e. when a layer is removed or added.
-     * 
+     *
      * See {@see #updateEnabledState(Collection)} to respond to changes in the collection
      * of selected primitives.
-     * 
+     *
      * Default behavior is empty.
-     * 
+     *
      * @see #updateEnabledState(Collection)
      * @see #initEnabledState()
      */
@@ -182,9 +183,9 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      * collection of selected primitives changes. This method is called with the
      * new selection. Avoid calling getCurrentDataSet().getSelected() because this
      * loops over the complete data set.
-     * 
+     *
      * @param selection the collection of selected primitives
-     * 
+     *
      * @see #updateEnabledState()
      * @see #initEnabledState()
      */

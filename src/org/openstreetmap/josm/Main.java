@@ -38,7 +38,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
@@ -88,7 +88,7 @@ abstract public class Main {
     /**
      * The global paste buffer.
      */
-    public static DataSet pasteBuffer = new DataSet();
+    public static PrimitiveDeepCopy pasteBuffer = new PrimitiveDeepCopy();
     public static Layer pasteSource;
     /**
      * The projection method used.
@@ -376,7 +376,7 @@ abstract public class Main {
 
     /**
      * Run any cleanup operation before exit
-     * 
+     *
      */
     public static  void cleanupBeforeExit() {
         // try to close and exit the help browser running in another process

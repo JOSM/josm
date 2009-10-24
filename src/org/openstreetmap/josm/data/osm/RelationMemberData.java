@@ -3,37 +3,28 @@ package org.openstreetmap.josm.data.osm;
 
 public class RelationMemberData {
 
-    private String role;
-    private long memberId;
-    private OsmPrimitiveType memberType;
+    private final String role;
+    private final long memberId;
+    private final OsmPrimitiveType memberType;
 
-    public RelationMemberData() {
-
+    public RelationMemberData(String role, OsmPrimitiveType type, long id) {
+        this.role = role;
+        this.memberType = type;
+        this.memberId = id;
     }
 
     public RelationMemberData(String role, OsmPrimitive primitive) {
-        this.role = role;
-        this.memberId = primitive.getUniqueId();
-        this.memberType = OsmPrimitiveType.from(primitive);
+        this(role, OsmPrimitiveType.from(primitive), primitive.getUniqueId());
     }
 
     public long getMemberId() {
         return memberId;
     }
-    public void setMemberId(long memberId) {
-        this.memberId = memberId;
-    }
     public String getRole() {
         return role;
     }
-    public void setRole(String role) {
-        this.role = role;
-    }
     public OsmPrimitiveType getMemberType() {
         return memberType;
-    }
-    public void setMemberType(OsmPrimitiveType memberType) {
-        this.memberType = memberType;
     }
 
     @Override

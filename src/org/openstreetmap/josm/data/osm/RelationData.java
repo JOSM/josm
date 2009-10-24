@@ -8,8 +8,27 @@ public class RelationData extends PrimitiveData {
 
     private final List<RelationMemberData> members = new ArrayList<RelationMemberData>();
 
+    public RelationData() {
+
+    }
+
+    public RelationData(RelationData data) {
+        super(data);
+        members.addAll(data.members);
+    }
+
     public List<RelationMemberData> getMembers() {
         return members;
+    }
+
+    @Override
+    public RelationData makeCopy() {
+        return new RelationData(this);
+    }
+
+    @Override
+    public Relation makePrimitive(DataSet dataSet) {
+        return new Relation(this, dataSet);
     }
 
     @Override

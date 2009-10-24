@@ -195,7 +195,7 @@ public final class Way extends OsmPrimitive {
             if (node != marker) {
                 newNodes.add(foundNodes.get(nodeId));
             } else {
-                newNodes.add(new Node(nodeId, true));
+                throw new AssertionError("Data consistency problem - way with missing node detected");
             }
         }
         setNodes(newNodes);

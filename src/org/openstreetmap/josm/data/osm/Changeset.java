@@ -49,7 +49,7 @@ public final class Changeset implements Tagged {
 
     /**
      * Creates a changeset with id <code>id</code>. If id > 0, sets incomplete to true.
-     * 
+     *
      * @param id the id
      */
     public Changeset(long id) {
@@ -60,7 +60,7 @@ public final class Changeset implements Tagged {
 
     /**
      * Creates a clone of <code>other</code>
-     * 
+     *
      * @param other the other changeset. If null, creates a new changeset with id 0.
      */
     public Changeset(Changeset other) {
@@ -191,6 +191,11 @@ public final class Changeset implements Tagged {
     public void remove(String key) {
         this.tags.remove(key);
     }
+
+    public void removeAll() {
+        this.tags.clear();
+    }
+
 
     public boolean hasEqualSemanticAttributes(Changeset other) {
         if (other == null)

@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 /**
  * TagCollection is a collection of tags which can be used to manipulate
  * tags managed by {@see OsmPrimitive}s.
- * 
+ *
  * A TagCollection can be created:
  * <ul>
  *  <li>from the tags managed by a specific {@see OsmPrimitive} with {@see #from(OsmPrimitive)}</li>
@@ -24,13 +24,13 @@ import java.util.Map.Entry;
  *  <li>from the union of all tags managed by a {@see DataSet} with {@see #unionOfAllPrimitives(DataSet)}</li>
  *  <li>from the intersection of all tags managed by a collection of primitives with {@see #commonToAllPrimitives(Collection)}</li>
  * </ul>
- * 
+ *
  * It  provides methods to query the collection, like {@see #size()}, {@see #hasTagsFor(String)}, etc.
- * 
+ *
  * Basic set operations allow to create the union, the intersection and  the difference
  * of tag collections, see {@see #union(TagCollection)}, {@see #intersect(TagCollection)},
  * and {@see #minus(TagCollection)}.
- * 
+ *
  *
  */
 public class TagCollection implements Iterable<Tag> {
@@ -39,12 +39,12 @@ public class TagCollection implements Iterable<Tag> {
      * Creates a tag collection from the tags managed by a specific
      * {@see OsmPrimitive}. If <code>primitive</code> is null, replies
      * an empty tag collection.
-     * 
+     *
      * @param primitive  the primitive
      * @return a tag collection with the tags managed by a specific
      * {@see OsmPrimitive}
      */
-    public static TagCollection from(OsmPrimitive primitive) {
+    public static TagCollection from(Tagged primitive) {
         TagCollection tags = new TagCollection();
         for (String key: primitive.keySet()) {
             tags.add(new Tag(key, primitive.get(key)));
@@ -61,10 +61,10 @@ public class TagCollection implements Iterable<Tag> {
      * @return  a tag collection with the union of the tags managed by
      * a collection of primitives
      */
-    public static TagCollection unionOfAllPrimitives(Collection<? extends OsmPrimitive> primitives) {
+    public static TagCollection unionOfAllPrimitives(Collection<? extends Tagged> primitives) {
         TagCollection tags = new TagCollection();
         if (primitives == null) return tags;
-        for (OsmPrimitive primitive: primitives) {
+        for (Tagged primitive: primitives) {
             if (primitive == null) {
                 continue;
             }
@@ -77,11 +77,11 @@ public class TagCollection implements Iterable<Tag> {
      * Replies a tag collection with the tags which are common to all primitives in in
      * <code>primitives</code>. Replies an empty tag collection of <code>primitives</code>
      * is null.
-     * 
+     *
      * @param primitives the primitives
      * @return  a tag collection with the tags which are common to all primitives
      */
-    public static TagCollection commonToAllPrimitives(Collection<? extends OsmPrimitive> primitives) {
+    public static TagCollection commonToAllPrimitives(Collection<? extends Tagged> primitives) {
         TagCollection tags = new TagCollection();
         if (primitives == null || primitives.isEmpty()) return tags;
         // initialize with the first
@@ -90,7 +90,7 @@ public class TagCollection implements Iterable<Tag> {
 
         // intersect with the others
         //
-        for (OsmPrimitive primitive: primitives) {
+        for (Tagged primitive: primitives) {
             if (primitive == null) {
                 continue;
             }
@@ -102,7 +102,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies a tag collection with the union of the tags which are common to all primitives in
      * the dataset <code>ds</code>. Returns an empty tag collection of <code>ds</code> is null.
-     * 
+     *
      * @param ds the dataset
      * @return a tag collection with the union of the tags which are common to all primitives in
      * the dataset <code>ds</code>
@@ -128,7 +128,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Creates a clone of the tag collection <code>other</code>. Creats an empty
      * tag collection if <code>other</code> is null.
-     * 
+     *
      * @param other the other collection
      */
     public TagCollection(TagCollection other) {
@@ -140,7 +140,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the number of tags in this tag collection
-     * 
+     *
      * @return the number of tags in this tag collection
      */
     public int size() {
@@ -149,7 +149,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies true if this tag collection is empty
-     * 
+     *
      * @return true if this tag collection is empty; false, otherwise
      */
     public boolean isEmpty() {
@@ -158,7 +158,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Adds a tag to the tag collection. If <code>tag</code> is null, nothing is added.
-     * 
+     *
      * @param tag the tag to add
      */
     public void add(Tag tag){
@@ -170,7 +170,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Adds a collection of tags to the tag collection. If <code>tags</code> is null, nothing
      * is added. null values in the collection are ignored.
-     * 
+     *
      * @param tags the collection of tags
      */
     public void add(Collection<Tag> tags) {
@@ -183,7 +183,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Adds the tags of another tag collection to this collection. Adds nothing, if
      * <code>tags</code> is null.
-     * 
+     *
      * @param tags the other tag collection
      */
     public void add(TagCollection tags) {
@@ -194,7 +194,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Removes a specific tag from the tag collection. Does nothing if <code>tag</code> is
      * null.
-     * 
+     *
      * @param tag the tag to be removed
      */
     public void remove(Tag tag) {
@@ -205,7 +205,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Removes a collection of tags from the tag collection. Does nothing if <code>tags</code> is
      * null.
-     * 
+     *
      * @param tags the tags to be removed
      */
     public void remove(Collection<Tag> tags) {
@@ -216,7 +216,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Removes all tags in the tag collection <code>tags</code> from the current tag collection.
      * Does nothing if <code>tags</code> is null.
-     * 
+     *
      * @param tags the tag collection to be removed.
      */
     public void remove(TagCollection tags) {
@@ -227,7 +227,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Removes all tags whose keys are equal to  <code>key</code>. Does nothing if <code>key</code>
      * is null.
-     * 
+     *
      * @param key the key to be removed
      */
     public void removeByKey(String key) {
@@ -243,7 +243,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Removes all tags whose key is in the collection <code>keys</code>. Does nothing if
      * <code>keys</code> is null.
-     * 
+     *
      * @param keys the collection of keys to be removed
      */
     public void removeByKey(Collection<String> keys) {
@@ -255,7 +255,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies true if the this tag collection contains <code>tag</code>.
-     * 
+     *
      * @param tag the tag to look up
      * @return true if the this tag collection contains <code>tag</code>; false, otherwise
      */
@@ -265,7 +265,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies true if this tag collection contains at least one tag with key <code>key</code>.
-     * 
+     *
      * @param key the key to look up
      * @return true if this tag collection contains at least one tag with key <code>key</code>; false, otherwise
      */
@@ -280,20 +280,20 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies true if this tag collection contains all tags in <code>tags</code>. Replies
      * false, if tags is null.
-     * 
+     *
      * @param tags the tags to look up
      * @return true if this tag collection contains all tags in <code>tags</code>. Replies
      * false, if tags is null.
      */
     public boolean containsAll(Collection<Tag> tags) {
         if (tags == null) return false;
-        return tags.containsAll(tags);
+        return this.tags.containsAll(tags);
     }
 
     /**
      * Replies true if this tag collection at least one tag for every key in <code>keys</code>.
      * Replies false, if <code>keys</code> is null. null values in <code>keys</code> are ignored.
-     * 
+     *
      * @param keys the keys to lookup
      * @return true if this tag collection at least one tag for every key in <code>keys</code>.
      */
@@ -310,7 +310,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the number of tags with key <code>key</code>
-     * 
+     *
      * @param key the key to look up
      * @return the number of tags with key <code>key</code>. 0, if key is null.
      */
@@ -327,7 +327,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies true if there is at least one tag for the given key.
-     * 
+     *
      * @param key the key to look up
      * @return true if there is at least one tag for the given key. false, if key is null.
      */
@@ -338,7 +338,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies true it there is at least one tag with a non empty value for key.
      * Replies false if key is null.
-     * 
+     *
      * @param key the key
      * @return true it there is at least one tag with a non empty value for key.
      */
@@ -353,7 +353,7 @@ public class TagCollection implements Iterable<Tag> {
      * Replies true if there is exactly one tag for <code>key</code> and
      * if the value of this tag is not empty. Replies false if key is
      * null.
-     * 
+     *
      * @param key the key
      * @return true if there is exactly one tag for <code>key</code> and
      * if the value of this tag is not empty
@@ -367,7 +367,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies true if there is a tag with an empty value for <code>key</code>.
      * Replies false, if key is null.
-     * 
+     *
      * @param key the key
      * @return true if there is a tag with an empty value for <code>key</code>
      */
@@ -380,7 +380,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies true if there is exactly one tag for <code>key</code> and if
      * the value for this tag is empty. Replies false if key is null.
-     * 
+     *
      * @param key the key
      * @return  true if there is exactly one tag for <code>key</code> and if
      * the value for this tag is empty
@@ -394,7 +394,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies a tag collection with the tags for a given key. Replies an empty collection
      * if key is null.
-     * 
+     *
      * @param key the key to look up
      * @return a tag collection with the tags for a given key. Replies an empty collection
      * if key is null.
@@ -414,7 +414,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies a tag collection with all tags whose key is equal to one of the keys in
      * <code>keys</code>. Replies an empty collection if keys is null.
-     * 
+     *
      * @param keys the keys to look up
      * @return a tag collection with all tags whose key is equal to one of the keys in
      * <code>keys</code>
@@ -433,7 +433,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the tags of this tag collection as set
-     * 
+     *
      * @return the tags of this tag collection as set
      */
     public Set<Tag> asSet() {
@@ -443,7 +443,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies the tags of this tag collection as list.
      * Note that the order of the list is not preserved between method invocations.
-     * 
+     *
      * @return the tags of this tag collection as list.
      */
     public List<Tag> asList() {
@@ -452,7 +452,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies an iterator to iterate over the tags in this collection
-     * 
+     *
      * @return the iterator
      */
     public Iterator<Tag> iterator() {
@@ -461,7 +461,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the set of keys of this tag collection.
-     * 
+     *
      * @return the set of keys of this tag collection
      */
     public Set<String> getKeys() {
@@ -474,7 +474,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the set of keys which have at least 2 matching tags.
-     * 
+     *
      * @return the set of keys which have at least 2 matching tags.
      */
     public Set<String> getKeysWithMultipleValues() {
@@ -495,7 +495,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Sets a unique tag for the key of this tag. All other tags with the same key are
      * removed from the collection. Does nothing if tag is null.
-     * 
+     *
      * @param tag the tag to set
      */
     public void setUniqueForKey(Tag tag) {
@@ -508,7 +508,7 @@ public class TagCollection implements Iterable<Tag> {
      * Sets a unique tag for the key of this tag. All other tags with the same key are
      * removed from the collection. Assume the empty string for key and value if either
      * key or value is null.
-     * 
+     *
      * @param key the key
      * @param value the value
      */
@@ -519,7 +519,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the set of values in this tag collection
-     * 
+     *
      * @return the set of values
      */
     public Set<String> getValues() {
@@ -533,7 +533,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replies the set of values for a given key. Replies an empty collection if there
      * are no values for the given key.
-     * 
+     *
      * @param key the key to look up
      * @return the set of values for a given key. Replies an empty collection if there
      * are no values for the given key
@@ -551,7 +551,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies true if for every key there is one tag only, i.e. exactly one value.
-     * 
+     *
      * @return
      */
     public boolean isApplicableToPrimitive() {
@@ -561,12 +561,12 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Applies this tag collection to an {@see OsmPrimitive}. Does nothing if
      * primitive is null
-     * 
+     *
      * @param primitive  the primitive
      * @throws IllegalStateException thrown if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void applyTo(OsmPrimitive primitive) throws IllegalStateException {
+    public void applyTo(Tagged primitive) throws IllegalStateException {
         if (primitive == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
@@ -582,16 +582,16 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Applies this tag collection to a collection of {@see OsmPrimitive}s. Does nothing if
      * primitives is null
-     * 
+     *
      * @param primitives  the collection of primitives
      * @throws IllegalStateException thrown if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void applyTo(Collection<? extends OsmPrimitive> primitives) throws IllegalStateException{
+    public void applyTo(Collection<? extends Tagged> primitives) throws IllegalStateException{
         if (primitives == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
-        for (OsmPrimitive primitive: primitives) {
+        for (Tagged primitive: primitives) {
             applyTo(primitive);
         }
     }
@@ -599,12 +599,12 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replaces the tags of an {@see OsmPrimitive} by the tags in this collection . Does nothing if
      * primitive is null
-     * 
+     *
      * @param primitive  the primitive
      * @throws IllegalStateException thrown if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void replaceTagsOf(OsmPrimitive primitive) throws IllegalStateException {
+    public void replaceTagsOf(Tagged primitive) throws IllegalStateException {
         if (primitive == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
@@ -617,23 +617,23 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Replaces the tags of a collection of{@see OsmPrimitive}s by the tags in this collection.
      * Does nothing if primitives is null
-     * 
+     *
      * @param primitive  the collection of primitives
      * @throws IllegalStateException thrown if this tag collection can't be applied
      * because there are keys with multiple values
      */
-    public void replaceTagsOf(Collection<? extends OsmPrimitive> primitives) throws IllegalStateException {
+    public void replaceTagsOf(Collection<? extends Tagged> primitives) throws IllegalStateException {
         if (primitives == null) return;
         if (! isApplicableToPrimitive())
             throw new IllegalStateException(tr("Tag collection can't be applied to a primitive because there are keys with multiple values."));
-        for (OsmPrimitive primitive: primitives) {
+        for (Tagged primitive: primitives) {
             replaceTagsOf(primitive);
         }
     }
 
     /**
      * Builds the intersection of this tag collection and another tag collection
-     * 
+     *
      * @param other the other tag collection. If null, replies an empty tag collection.
      * @return the intersection of this tag collection and another tag collection
      */
@@ -652,7 +652,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the difference of this tag collection and another tag collection
-     * 
+     *
      * @param other the other tag collection. May be null.
      * @return the difference of this tag collection and another tag collection
      */
@@ -666,7 +666,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the union of this tag collection and another tag collection
-     * 
+     *
      * @param other the other tag collection. May be null.
      * @return the union of this tag collection and another tag collection
      */
@@ -689,7 +689,7 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Replies the concatenation of all tag values (concatenated by a semicolon)
-     * 
+     *
      * @return the concatenation of all tag values
      */
     public String getJoinedValues(String key) {
@@ -705,5 +705,10 @@ public class TagCollection implements Iterable<Tag> {
             }
         }
         return buffer.toString();
+    }
+
+    @Override
+    public String toString() {
+        return tags.toString();
     }
 }

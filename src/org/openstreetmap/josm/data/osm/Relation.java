@@ -204,19 +204,19 @@ public final class Relation extends OsmPrimitive {
             case NODE:
                 foundMember = nodes.get(member.getMemberId());
                 if (foundMember == nodeMarker) {
-                    foundMember = new Node(member.getMemberId(), true);
+                    throw new AssertionError("Data consistency problem - relation with missing member detected");
                 }
                 break;
             case WAY:
                 foundMember = ways.get(member.getMemberId());
                 if (foundMember == wayMarker) {
-                    foundMember = new Way(member.getMemberId(), true);
+                    throw new AssertionError("Data consistency problem - relation with missing member detected");
                 }
                 break;
             case RELATION:
                 foundMember = relations.get(member.getMemberId());
                 if (foundMember == relationMarker) {
-                    foundMember = new Relation(member.getMemberId(), true);
+                    throw new AssertionError("Data consistency problem - relation with missing member detected");
                 }
                 break;
             }

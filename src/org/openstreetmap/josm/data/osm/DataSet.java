@@ -1,7 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.QuadBuckets;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -112,14 +109,30 @@ public class DataSet implements Cloneable {
      * @param primitive the primitive. Ignored if null.
      */
     public void addPrimitive(OsmPrimitive primitive) {
-        if (primitive == null)
-            return;
         if (primitive instanceof Node) {
             nodes.add((Node) primitive);
         } else if (primitive instanceof Way) {
             ways.add((Way) primitive);
         } else if (primitive instanceof Relation) {
             relations.add((Relation) primitive);
+        }
+    }
+
+    public OsmPrimitive addPrimitive(PrimitiveData data) {
+        if (data instanceof NodeData) {
+            Node node = new Node((NodeData)data, this);
+            nodes.add(node);
+            return node;
+        } else if (data instanceof WayData) {
+            Way way = new Way((WayData)data, this);
+            ways.add(way);
+            return way;
+        } else if (data instanceof RelationData) {
+            Relation relation = new Relation((RelationData)data, this);
+            relations.add(relation);
+            return relation;
+        } else {
+            throw new AssertionError();
         }
     }
 
@@ -142,6 +155,10 @@ public class DataSet implements Cloneable {
         } else if (primitive instanceof Relation) {
             relations.remove(primitive);
         }
+    }
+
+    public void removePrimitive(long id, OsmPrimitiveType type) {
+        removePrimitive(getPrimitiveById(id, type));
     }
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
@@ -245,7 +262,7 @@ public class DataSet implements Cloneable {
     /**
      * Sets the current selection to the primitives in <code>selection</code>.
      * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
-     * 
+     *
      * @param selection the selection
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
      */
@@ -264,7 +281,7 @@ public class DataSet implements Cloneable {
     /**
      * Sets the current selection to the primitives in <code>selection</code>
      * and notifies all {@see SelectionChangedListener}.
-     * 
+     *
      * @param selection the selection
      */
     public void setSelected(Collection<? extends OsmPrimitive> selection) {
@@ -274,7 +291,7 @@ public class DataSet implements Cloneable {
     /**
      * Adds   the primitives in <code>selection</code> to the current selection
      * and notifies all {@see SelectionChangedListener}.
-     * 
+     *
      * @param selection the selection
      */
     public void addSelected(Collection<? extends OsmPrimitive> selection) {
@@ -284,7 +301,7 @@ public class DataSet implements Cloneable {
     /**
      * Adds the primitives in <code>selection</code> to the current selection.
      * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
-     * 
+     *
      * @param selection the selection
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
      */
@@ -442,18 +459,16 @@ public class DataSet implements Cloneable {
      * returns a  primitive with a given id from the data set. null, if no such primitive
      * exists
      *
-     * @param id  the id, > 0 required
+     * @param id  uniqueId of the primitive. Might be < 0 for newly created primitives
      * @param type the type of  the primitive. Must not be null.
      * @return the primitive
-     * @exception IllegalArgumentException thrown, if id <= 0
-     * @exception IllegalArgumentException thrown, if type is null
-     * @exception IllegalArgumentException thrown, if type is neither NODE, or WAY or RELATION
+     * @exception NullPointerException thrown, if type is null
      */
     public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
-        if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
-        if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
+        return getPrimitiveById(id, type, false);
+    }
+
+    public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type, boolean createNew) {
         Collection<? extends OsmPrimitive> primitives = null;
         switch(type) {
             case NODE: primitives = nodes; break;
@@ -461,9 +476,21 @@ public class DataSet implements Cloneable {
             case RELATION: primitives = relations; break;
         }
         for (OsmPrimitive primitive : primitives) {
-            if (primitive.getId() == id) return primitive;
+            if (primitive.getUniqueId() == id) return primitive;
         }
-        return null;
+
+        if (createNew) {
+            OsmPrimitive result = null;
+            switch (type) {
+            case NODE: result = new Node(id, true); break;
+            case WAY: result = new Way(id, true); break;
+            case RELATION: result = new Relation(id, true); break;
+            }
+            addPrimitive(result);
+            return result;
+        } else {
+            return null;
+        }
     }
 
     public Set<Long> getPrimitiveIds() {
@@ -564,7 +591,7 @@ public class DataSet implements Cloneable {
     /**
      * Replies true if there is at least one primitive in this dataset with
      * {@see OsmPrimitive#isModified()} == <code>true</code>.
-     * 
+     *
      * @return true if there is at least one primitive in this dataset with
      * {@see OsmPrimitive#isModified()} == <code>true</code>.
      */

@@ -35,7 +35,11 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
  */
 abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
 
-    static final AtomicLong idCounter = new AtomicLong(0);
+    private static final AtomicLong idCounter = new AtomicLong(0);
+
+    static long generateUniqueId() {
+        return idCounter.decrementAndGet();
+    }
 
     private static final int FLAG_MODIFIED = 1 << 0;
     private static final int FLAG_VISIBLE  = 1 << 1;
@@ -163,7 +167,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
             if (id < 0)
                 throw new IllegalArgumentException(tr("Expected ID >= 0. Got {0}.", id));
             else if (id == 0) {
-                this.id = idCounter.decrementAndGet();
+                this.id = generateUniqueId();
             } else {
                 this.id = id;
             }
@@ -399,7 +403,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      *
      */
     public void clearOsmId() {
-        this.id = idCounter.decrementAndGet();
+        this.id = generateUniqueId();
         this.version = 0;
         this.incomplete = false;
     }
@@ -455,7 +459,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     public static Collection<String> getDirectionKeys() {
         if(directionKeys == null) {
             directionKeys = Main.pref.getCollection("tags.direction",
-                    Arrays.asList(new String[]{"oneway","incline","incline_steep","aerialway"}));
+                    Arrays.asList("oneway","incline","incline_steep","aerialway"));
         }
         return directionKeys;
     }
@@ -840,7 +844,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     public abstract PrimitiveData save();
 
     protected void saveCommonAttributes(PrimitiveData data) {
-        data.setId(data.getId());
+        data.setId(id);
         data.getKeys().clear();
         data.getKeys().putAll(getKeys());
         data.setTimestamp(timestamp);

@@ -1,7 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,13 +14,28 @@ import java.util.Map;
  * reported by events
  *
  */
-public abstract class PrimitiveData {
+public abstract class PrimitiveData implements Tagged {
 
     // Useful?
     //private boolean disabled;
     //private boolean filtered;
     //private boolean selected;
     //private boolean highlighted;
+
+    public PrimitiveData() {
+        id = OsmPrimitive.generateUniqueId();
+    }
+
+    public PrimitiveData(PrimitiveData data) {
+        this.keys.putAll(data.keys);
+        this.modified = data.modified;
+        this.visible = data.visible;
+        this.deleted = data.deleted;
+        this.id = data.id;
+        this.user = data.user;
+        this.version = data.version;
+        this.timestamp = data.timestamp;
+    }
 
     private final Map<String, String> keys = new HashMap<String, String>();
     private boolean modified;
@@ -74,6 +92,13 @@ public abstract class PrimitiveData {
         return keys;
     }
 
+    public void clearOsmId() {
+        id = OsmPrimitive.generateUniqueId();
+    }
+
+    public abstract PrimitiveData makeCopy();
+
+    public abstract OsmPrimitive makePrimitive(DataSet dataSet);
 
     @Override
     public String toString() {
@@ -92,6 +117,57 @@ public abstract class PrimitiveData {
 
         return builder.toString();
     }
+
+    // Tagged implementation
+
+    public String get(String key) {
+        return keys.get(key);
+    }
+
+    public boolean hasKeys() {
+        return !keys.isEmpty();
+    }
+
+    public Collection<String> keySet() {
+        return keys.keySet();
+    }
+
+    public void put(String key, String value) {
+        keys.put(key, value);
+    }
+
+    public void remove(String key) {
+        keys.remove(key);
+    }
+
+    public void removeAll() {
+        keys.clear();
+    }
+
+    public void setKeys(Map<String, String> keys) {
+        this.keys.clear();
+        this.keys.putAll(keys);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    static public <T extends PrimitiveData>  List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
+        List<T> ret = new ArrayList<T>();
+        for(PrimitiveData p: list) {
+            if (type.getDataClass().isInstance(p)) {
+                ret.add((T)p);
+            }
+        }
+        return ret;
+    }
+
+    protected void setKeysAsList(String... keys) {
+        assert keys.length % 2 == 0;
+        for (int i=0; i<keys.length/2; i++) {
+            this.keys.put(keys[i * 2], keys[i * 2 + 1]);
+        }
+    }
+
 
 
 }

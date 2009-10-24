@@ -80,6 +80,7 @@ public class MoveAction extends JosmAction {
             case LEFT:
                 disty = 0;
                 distx = -distx;
+                break;
             default:
                 disty = 0;
         }
